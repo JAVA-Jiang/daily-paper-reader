@@ -25,3 +25,49 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: code-paper
+      description: 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。
+      enabled: true
+      paper_sources:
+        - arxiv
+      keywords:
+        - keyword: Data Center
+          keyword_cn: 数据中心
+          query: D
+        - keyword: Grid
+          keyword_cn: 电网
+          query: G
+        - keyword: Multi-Agent
+          keyword_cn: 多智能体
+          query: j
+        - keyword: source code
+          keyword_cn: 源代码
+          query: papers that provide source code
+      intent_queries:
+        - query: Search thesis which has code with it.
+          query_cn: 搜索含代码的论文
+          enabled: true
+          source: manual
+          note: ''
+        - query: Retrieve reproducible research papers with open source code.
+          query_cn: 检索有开源代码的可重复性研究论文。
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-05-31T11:47:03.292Z'
+source_backends:
+  arxiv:
+    papers_table: arxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_arxiv_papers
+    vector_rpc_exact: match_arxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_arxiv_papers_bm25
+    sync_table: arxiv_sync_status
+    sync_success_value: success
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq
