@@ -7,21 +7,31 @@
 
 ## 每次日报
 - 最新运行日期：2026-05-22 ~ 2026-05-31
-- 运行时间：2026-05-31 11:27:08 UTC
+- 运行时间：2026-05-31 11:55:20 UTC
 - 运行状态：成功
-- 本次总论文数：0
-- 精读区：0
-- 速读区：0
+- 本次总论文数：4
+- 精读区：3
+- 速读区：1
 
 ### 今日简报（AI）
-> 今日无新推荐，系统未产出可展示论文。
+今日精读两篇高分论文：FPMoE用稀疏专家混合优化功能代码生成，Search for Coverage提出覆盖感知检索增强问答。最值得关注的是代码生成与检索模型的效率提升方向。建议关注后续实际应用落地，特别是稀疏门控与覆盖建模的工程实现。
 - 详情：[/20260522-20260531/README](/20260522-20260531/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [FPMoE: A Sparse Mixture-of-Experts Approach to Functional Code Generation](/20260522-20260531/2605.27849v1-fpmoe-a-sparse-mixture-of-experts-approach-to-functional-code-generation)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：开源代码生成模型提供源代码
+2. [Search for Coverage: Learning Coverage-Aware Retrieval with Augmented Sub-Question Answerability](/20260522-20260531/2605.28522v1-search-for-coverage-learning-coverage-aware-retrieval-with-augmented-sub-question-answerability)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：明确提供源代码和数据集的链接
+3. [Formalizing Mathematics at Scale](/20260522-20260531/2605.29955v1-formalizing-mathematics-at-scale)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：开源了AutoformBot多智能体框架和Atlas形式化库
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [Automating Formal Verification with Agent-Guided Tree Search](/20260522-20260531/2605.27485v1-automating-formal-verification-with-agent-guided-tree-search)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：含代码的学位论文，研究验证代码生成
 
 
 <div class="dpr-home-promo-card">
