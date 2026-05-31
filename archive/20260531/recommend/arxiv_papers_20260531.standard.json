@@ -1,0 +1,155 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-31T20:22:44.056077+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2605.24461v2",
+      "source": "arxiv",
+      "title": "Provisioning to Runtime Optimization of a 100 MW-Scale AI Cluster",
+      "abstract": "The electric power supply for AI data centers is now the most significant bottleneck in the race toward Artificial General Intelligence, surpassing even the constraint of AI accelerator availability. To our knowledge, this paper is the first to describe the end-to-end power management process for a hyper-scale AI datacenter; from early power planning to accommodate next-generation accelerators 6--12 months before their general availability, to tuning power settings after large scale deployment, and finally to dynamic, runtime power management for evolving workloads. We present detailed power measurements for a 150 MW datacenter hosting a cluster of 83K GB200 GPUs. We share insights from building this state-of-the-art AI cluster. We hope this work encourages practitioners across the industry to share their own experiences as well.",
+      "authors": [
+        "Ehsan K. Ardestani",
+        "Leonardo Piga",
+        "Jovan Stojkovic",
+        "Pavan Balaji",
+        "Mustafa Ozdal",
+        "Mikel Jimenez Fernandez",
+        "Mihaela Dimovska",
+        "Luka Tadic",
+        "Hao Shen",
+        "Devika Vishwanath",
+        "Richa Mishra",
+        "Melaku Mihret",
+        "Valentin Andrei",
+        "Mauricio Cespedes",
+        "Julien Prigent",
+        "James Monahan",
+        "Tyler Graf",
+        "Bin Li",
+        "Charles Marquez",
+        "Shobhit Kanaujia",
+        "Kaushik Veeraraghavan",
+        "Chunqiang Tang"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.DC",
+        "eess.SY"
+      ],
+      "published": "2026-05-23T08:18:01+00:00",
+      "link": "https://arxiv.org/pdf/2605.24461v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "power management for 100MW AI data center",
+      "llm_evidence_cn": "面向100MW AI数据中心的功耗管理",
+      "llm_evidence": "面向100MW AI数据中心的功耗管理",
+      "canonical_evidence": "面向100MW AI数据中心的功耗管理",
+      "llm_tldr_en": "This paper describes end-to-end power management for a hyper-scale AI data center, covering planning, tuning, and runtime optimization, with measurements from a 150MW cluster of 83K GPUs.",
+      "llm_tldr_cn": "针对超大规模AI数据中心的电力瓶颈，本文首次描述了从早期电力规划到运行时动态功耗管理的全流程。基于一个150MW、83K GPU集群的实测数据，展示了电力规划、部署后调优和负载感知的运行时优化方法。这项工作为数据中心电力调度提供了实际经验，对电网和任务调度有直接启示。",
+      "llm_tldr": "针对超大规模AI数据中心的电力瓶颈，本文首次描述了从早期电力规划到运行时动态功耗管理的全流程。基于一个150MW、83K GPU集群的实测数据，展示了电力规划、部署后调优和负载感知的运行时优化方法。这项工作为数据中心电力调度提供了实际经验，对电网和任务调度有直接启示。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.24453v1",
+      "source": "arxiv",
+      "title": "Code2UML: Agentic LLMs with context engineering for scalable software visualization",
+      "abstract": "Large Language Model (LLM)-based code analysis tools are adopted to automate software documentation tasks. However, the scalability of these approaches to real codebases, where Intermediate Representations (IR) exceed LLM context limits, remains underexplored. This paper introduces an agentic architecture with context engineering for automated UML diagram generation from source code repositories. It employs a hierarchy of five specialized agents: PlannerAgent, AnalyzerAgent, DiagramAgent, CorrectorAgent and DependencyAnalyzerAgent, built on the Claude Agent SDK, each addressing a distinct cognitive subtask. A deterministic, importance-weighted IR compaction layer transforms full project IRs into diagram-specific views guaranteed to fit within token constraints, requiring no LLM calls and completing in milliseconds. Thus, we evaluate the system across 12 open-source repositories in 4 programming languages (Java, JavaScript, PHP, Python) and 7 UML diagram types, producing 84 observations assessed on 5 automated metrics. Results demonstrate high syntactic validity (mean: 91.5%, with component and deployment diagrams reaching 100%), strong relationship precision (mean: 0.858) and consistent structural quality (mean: 81.7/100, with cross-language variance of 3.1 points). Entity recall averaged 0.313, reflecting deliberate architectural prioritization over exhaustive coverage. A sensitivity analysis (31 to 4,578 IR entities) confirms that quality scores remain stable regardless of scale.",
+      "authors": [
+        "Alin-Gabriel Văduva",
+        "Anca-Ioana Andreescu",
+        "Simona-Vasilica Oprea",
+        "Adela Bâra"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-05-23T08:01:26+00:00",
+      "link": "https://arxiv.org/pdf/2605.24453v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "code analysis tool for UML generation with source",
+      "llm_evidence_cn": "提供源代码的UML生成工具",
+      "llm_evidence": "提供源代码的UML生成工具",
+      "canonical_evidence": "提供源代码的UML生成工具",
+      "llm_tldr_en": "Code2UML uses agentic LLMs with context engineering to generate UML diagrams from source code, employing five specialized agents for scalable software visualization.",
+      "llm_tldr_cn": "Code2UML提出了一种基于智能体LLM的架构，通过上下文工程从源代码自动生成UML图。它使用五个专门智能体（规划、分析、绘图、修正、依赖分析）处理大型代码库，通过确定性压缩层保证上下文适应性。该系统可能附带代码，适用于需要代码的论文需求。",
+      "llm_tldr": "Code2UML提出了一种基于智能体LLM的架构，通过上下文工程从源代码自动生成UML图。它使用五个专门智能体（规划、分析、绘图、修正、依赖分析）处理大型代码库，通过确定性压缩层保证上下文适应性。该系统可能附带代码，适用于需要代码的论文需求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.26144v1",
+      "source": "arxiv",
+      "title": "VISTA: An End-to-End Benchmark for Visual Spec-to-Web-App Coding Agents",
+      "abstract": "We present VISTA (VIsual Spec-To-App Benchmark), a benchmark for evaluating the end-to-end web-app generation capabilities of LLM-based agents. Unlike prior code generation benchmarks that focus on algorithmic tasks, VISTA targets realistic UI-centric development, where agents must produce functional, visually coherent applications from underspecified inputs. We define five prompt-information conditions that vary along two axes, visual/structural fidelity and stack constraint: (1) text only with free stack choice, (2) text with reference screenshots under three specified stacks, (3) text with reference screenshots under free stack choice, (4) text with screenshots and pruned Figma structure under a single specified stack, and (5) text with screenshots and pruned Figma structure under free stack choice. To enable robust evaluation, each page in the benchmark is manually annotated with interactive UI components and around three visual anchor points, addressing the well-known limitations of script-based testing tools such as Playwright in open-ended code generation settings. Evaluation combines DOM-grounded reference matching, behavior-specific browser tests, and CLIP-based visual similarity, jointly measuring structural alignment, behavioral completeness, and overall visual fidelity. We use VISTA to assess four agent systems drawn from two model families and two harnesses, finding that visual fidelity and functional correctness are partially decoupled across both input conditions and agents, and that agent editing style varies sharply but is largely orthogonal to task quality. VISTA establishes a rigorous and reproducible foundation for advancing agent-based software engineering research.",
+      "authors": [
+        "JunJia Guo",
+        "Yuhang Yao",
+        "Jiawei",
+        "Zhou",
+        "Jingdi Chen"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-05-22T20:29:12+00:00",
+      "link": "https://arxiv.org/pdf/2605.26144v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark for coding agents with source code",
+      "llm_evidence_cn": "提供源代码的编码智能体基准",
+      "llm_evidence": "提供源代码的编码智能体基准",
+      "canonical_evidence": "提供源代码的编码智能体基准",
+      "llm_tldr_en": "VISTA benchmarks LLM-based agents for end-to-end web-app generation from visual specs, with five prompt conditions varying visual fidelity and stack constraints.",
+      "llm_tldr_cn": "VISTA是一个用于评估基于LLM的智能体从视觉规格生成Web应用能力的基准。它定义了五种提示条件，从纯文本到包含截图和Figma结构，以测试代码生成智能体的端到端能力。该基准提供了完整的评估框架和可能附带源代码，适合需要代码的论文需求。",
+      "llm_tldr": "VISTA是一个用于评估基于LLM的智能体从视觉规格生成Web应用能力的基准。它定义了五种提示条件，从纯文本到包含截图和Figma结构，以测试代码生成智能体的端到端能力。该基准提供了完整的评估框架和可能附带源代码，适合需要代码的论文需求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

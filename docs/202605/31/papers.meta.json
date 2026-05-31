@@ -1,0 +1,54 @@
+{
+  "label": "2026-05-31",
+  "date": "2026-05-31",
+  "generated_at": "2026-05-31T20:25:23",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202605/31/2605.24461v2-provisioning-to-runtime-optimization-of-a-100-mw-scale-ai-cluster",
+      "section": "deep",
+      "title_en": "Provisioning to Runtime Optimization of a 100 MW-Scale AI Cluster",
+      "authors": "Ehsan K. Ardestani, Leonardo Piga, Jovan Stojkovic, Pavan Balaji, Mustafa Ozdal, Mikel Jimenez Fernandez, Mihaela Dimovska, Luka Tadic, Hao Shen, Devika Vishwanath, Richa Mishra, Melaku Mihret, Valentin Andrei, Mauricio Cespedes, Julien Prigent, James Monahan, Tyler Graf, Bin Li, Charles Marquez, Shobhit Kanaujia, Kaushik Veeraraghavan, Chunqiang Tang",
+      "date": "2026-05-23",
+      "pdf": "https://arxiv.org/pdf/2605.24461v2",
+      "score": "8.0",
+      "evidence": "面向100MW AI数据中心的功耗管理",
+      "tldr": "AI数据中心电力供应已成为AGI竞赛的最大瓶颈。本文首次描述了从提前6-12个月的电源规划到大规模部署后调优、再到运行时动态功耗管理的端到端流程，基于一个150MW数据中心、83K GB200 GPU集群提供详细功耗测量，分享了建设最先进AI集群的经验，旨在鼓励业界分享实践。",
+      "tags": "query:code-paper",
+      "abstract_en": "The electric power supply for AI data centers is now the most significant bottleneck in the race toward Artificial General Intelligence, surpassing even the constraint of AI accelerator availability. To our knowledge, this paper is the first to describe the end-to-end power management process for a hyper-scale AI datacenter; from early power planning to accommodate next-generation accelerators 6--12 months before their general availability, to tuning power settings after large scale deployment, and finally to dynamic, runtime power management for evolving workloads. We present detailed power measurements for a 150 MW datacenter hosting a cluster of 83K GB200 GPUs. We share insights from building this state-of-the-art AI cluster. We hope this work encourages practitioners across the industry to share their own experiences as well.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/31/2605.24453v1-code2uml-agentic-llms-with-context-engineering-for-scalable-software-visualization",
+      "section": "quick",
+      "title_en": "Code2UML: Agentic LLMs with context engineering for scalable software visualization",
+      "authors": "Alin-Gabriel Văduva, Anca-Ioana Andreescu, Simona-Vasilica Oprea, Adela Bâra",
+      "date": "2026-05-23",
+      "pdf": "https://arxiv.org/pdf/2605.24453v1",
+      "score": "6.0",
+      "evidence": "提供源代码的UML生成工具",
+      "tldr": "大型代码库中LLM上下文限制阻碍了自动化软件可视化。本文提出Code2UML，一种基于智能体架构的上下文工程方法，通过五个专门智能体协作，结合确定性加权IR压缩层生成UML图。在12个开源仓库（4语言、7种UML类型）上评估，语法有效性达91.5%，结构质量81.7/100，关系精度0.858，且质量不随规模下降。该方法实现了可伸缩、无需LLM调用的代码可视化。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large Language Model (LLM)-based code analysis tools are adopted to automate software documentation tasks. However, the scalability of these approaches to real codebases, where Intermediate Representations (IR) exceed LLM context limits, remains underexplored. This paper introduces an agentic architecture with context engineering for automated UML diagram generation from source code repositories. It employs a hierarchy of five specialized agents: PlannerAgent, AnalyzerAgent, DiagramAgent, CorrectorAgent and DependencyAnalyzerAgent, built on the Claude Agent SDK, each addressing a distinct cognitive subtask. A deterministic, importance-weighted IR compaction layer transforms full project IRs into diagram-specific views guaranteed to fit within token constraints, requiring no LLM calls and completing in milliseconds. Thus, we evaluate the system across 12 open-source repositories in 4 programming languages (Java, JavaScript, PHP, Python) and 7 UML diagram types, producing 84 observations assessed on 5 automated metrics. Results demonstrate high syntactic validity (mean: 91.5%, with component and deployment diagrams reaching 100%), strong relationship precision (mean: 0.858) and consistent structural quality (mean: 81.7/100, with cross-language variance of 3.1 points). Entity recall averaged 0.313, reflecting deliberate architectural prioritization over exhaustive coverage. A sensitivity analysis (31 to 4,578 IR entities) confirms that quality scores remain stable regardless of scale.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/31/2605.26144v1-vista-an-end-to-end-benchmark-for-visual-spec-to-web-app-coding-agents",
+      "section": "quick",
+      "title_en": "VISTA: An End-to-End Benchmark for Visual Spec-to-Web-App Coding Agents",
+      "authors": "JunJia Guo, Yuhang Yao, Jiawei, Zhou, Jingdi Chen",
+      "date": "2026-05-22",
+      "pdf": "https://arxiv.org/pdf/2605.26144v1",
+      "score": "6.0",
+      "evidence": "提供源代码的编码智能体基准",
+      "tldr": "现有代码生成基准聚焦算法任务，忽略UI密集型Web应用开发。VISTA针对这一空白，提出五种输入条件（从纯文本到含Figma结构），要求智能体产生功能与视觉一致的Web应用。手动标注交互组件和视觉锚点，结合DOM匹配、行为测试和CLIP视觉相似度进行多维评估。评估四个智能体系统发现视觉与功能部分解耦，编辑风格与任务质量正交，为智能体驱动软件工程提供严格可重复的基准。",
+      "tags": "query:code-paper",
+      "abstract_en": "We present VISTA (VIsual Spec-To-App Benchmark), a benchmark for evaluating the end-to-end web-app generation capabilities of LLM-based agents. Unlike prior code generation benchmarks that focus on algorithmic tasks, VISTA targets realistic UI-centric development, where agents must produce functional, visually coherent applications from underspecified inputs. We define five prompt-information conditions that vary along two axes, visual/structural fidelity and stack constraint: (1) text only with free stack choice, (2) text with reference screenshots under three specified stacks, (3) text with reference screenshots under free stack choice, (4) text with screenshots and pruned Figma structure under a single specified stack, and (5) text with screenshots and pruned Figma structure under free stack choice. To enable robust evaluation, each page in the benchmark is manually annotated with interactive UI components and around three visual anchor points, addressing the well-known limitations of script-based testing tools such as Playwright in open-ended code generation settings. Evaluation combines DOM-grounded reference matching, behavior-specific browser tests, and CLIP-based visual similarity, jointly measuring structural alignment, behavioral completeness, and overall visual fidelity. We use VISTA to assess four agent systems drawn from two model families and two harnesses, finding that visual fidelity and functional correctness are partially decoupled across both input conditions and agents, and that agent editing style varies sharply but is largely orthogonal to task quality. VISTA establishes a rigorous and reproducible foundation for advancing agent-based software engineering research.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
