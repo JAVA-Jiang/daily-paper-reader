@@ -1,15 +1,15 @@
 {
   "mode": "standard",
-  "generated_at": "2026-05-31T12:14:50.851258+00:00",
+  "generated_at": "2026-05-31T12:22:42.338545+00:00",
   "stats": {
     "mode": "standard",
     "tag_count": 1,
     "deep_divecandidates": 5,
     "deep_cap": 6,
-    "deep_selected": 5,
-    "quick_candidates": 3,
+    "deep_selected": 3,
+    "quick_candidates": 5,
     "quick_skim_target": 11,
-    "quick_selected": 3
+    "quick_selected": 5
   },
   "deep_dive": [
     {
@@ -39,14 +39,14 @@
       "tags": [
         "query:code-paper"
       ],
-      "llm_score": 10.0,
-      "llm_evidence_en": "open-source AI-driven scheduling framework for cloud-HPC-edge",
-      "llm_evidence_cn": "开源AI驱动调度框架，覆盖云-HPC-边缘",
-      "llm_evidence": "开源AI驱动调度框架，覆盖云-HPC-边缘",
-      "canonical_evidence": "开源AI驱动调度框架，覆盖云-HPC-边缘",
-      "llm_tldr_en": "Presents DECICE, an open-source framework for intelligent workload scheduling across the cloud-HPC-edge compute continuum with AI-driven scheduling and digital twin integration.",
-      "llm_tldr_cn": "云-HPC-边缘计算连续体内的智能工作负载调度面临异构性与约束复杂等挑战。该文介绍DECICE开源框架，核心贡献包括集成AI调度器（基于RNN预测与形式化工作流建模）和数字孪生基础设施，实现约束感知的负载映射。已在多个用例中验证其有效性，代码开源促进可复现研究。",
-      "llm_tldr": "云-HPC-边缘计算连续体内的智能工作负载调度面临异构性与约束复杂等挑战。该文介绍DECICE开源框架，核心贡献包括集成AI调度器（基于RNN预测与形式化工作流建模）和数字孪生基础设施，实现约束感知的负载映射。已在多个用例中验证其有效性，代码开源促进可复现研究。",
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source framework for AI-driven scheduling across cloud-HPC-edge",
+      "llm_evidence_cn": "面向云-HPC-边缘计算连续体的AI驱动调度开源框架",
+      "llm_evidence": "面向云-HPC-边缘计算连续体的AI驱动调度开源框架",
+      "canonical_evidence": "面向云-HPC-边缘计算连续体的AI驱动调度开源框架",
+      "llm_tldr_en": "DECICE project develops an open-source AI scheduler for workload scheduling across cloud-HPC-edge continuum, with digital twin integration, matching task scheduling in data centers.",
+      "llm_tldr_cn": "该论文介绍了DECICE项目，一个面向云-HPC-边缘计算连续体的开源AI调度框架。核心贡献包括集成AI调度器，采用RNN预测和形式化工作流建模，以及数字孪生基础设施。框架支持约束感知的工作负载映射和调度，非常适合数据中心任务调度场景。代码开源，可直接复现和扩展。",
+      "llm_tldr": "该论文介绍了DECICE项目，一个面向云-HPC-边缘计算连续体的开源AI调度框架。核心贡献包括集成AI调度器，采用RNN预测和形式化工作流建模，以及数字孪生基础设施。框架支持约束感知的工作负载映射和调度，非常适合数据中心任务调度场景。代码开源，可直接复现和扩展。",
       "llm_tags": [
         "query:code-paper"
       ],
@@ -78,13 +78,13 @@
         "query:code-paper"
       ],
       "llm_score": 9.0,
-      "llm_evidence_en": "Provides open source code on GitHub",
-      "llm_evidence_cn": "在GitHub上提供了开源代码",
-      "llm_evidence": "在GitHub上提供了开源代码",
-      "canonical_evidence": "在GitHub上提供了开源代码",
-      "llm_tldr_en": "CoveR is a dense retrieval method for coverage-aware scenarios; its code and data are publicly available.",
-      "llm_tldr_cn": "本文针对长文本检索增强生成中的覆盖性排名问题，提出CoveR稠密检索方法。该方法通过基于覆盖性的对比和蒸馏目标训练双编码器，能捕捉信息需求的多个方面。实验表明CoveR在覆盖性检索任务上表现优异。代码和数据集均已开源，便于复现。",
-      "llm_tldr": "本文针对长文本检索增强生成中的覆盖性排名问题，提出CoveR稠密检索方法。该方法通过基于覆盖性的对比和蒸馏目标训练双编码器，能捕捉信息需求的多个方面。实验表明CoveR在覆盖性检索任务上表现优异。代码和数据集均已开源，便于复现。",
+      "llm_evidence_en": "Provides source code and training data for coverage-aware retrieval in RAG",
+      "llm_evidence_cn": "提供了RAG中覆盖感知检索的源代码和训练数据",
+      "llm_evidence": "提供了RAG中覆盖感知检索的源代码和训练数据",
+      "canonical_evidence": "提供了RAG中覆盖感知检索的源代码和训练数据",
+      "llm_tldr_en": "Proposes CoveR, a bi-encoder trained with coverage-based contrastive and distillation objectives for coverage-aware retrieval in long-form RAG. Code and training data are publicly available, enabling reproducible research on coverage-oriented ranking.",
+      "llm_tldr_cn": "长文本检索增强生成（RAG）面临覆盖性排序挑战，现有方法难以确保全面覆盖相关信息片段。本文提出CoveR，一种基于双编码器的稠密检索方法，通过覆盖性对比学习和蒸馏目标优化，捕捉信息需求的多样方面。为训练CoveR，构建了包含9万查询的SCOPE数据集。实验表明CoveR在覆盖性指标上显著优于基线。代码和数据已开源，为覆盖感知检索提供了可复现的基础。",
+      "llm_tldr": "长文本检索增强生成（RAG）面临覆盖性排序挑战，现有方法难以确保全面覆盖相关信息片段。本文提出CoveR，一种基于双编码器的稠密检索方法，通过覆盖性对比学习和蒸馏目标优化，捕捉信息需求的多样方面。为训练CoveR，构建了包含9万查询的SCOPE数据集。实验表明CoveR在覆盖性指标上显著优于基线。代码和数据已开源，为覆盖感知检索提供了可复现的基础。",
       "llm_tags": [
         "query:code-paper"
       ],
@@ -117,130 +117,78 @@
         "query:code-paper"
       ],
       "llm_score": 8.0,
-      "llm_evidence_en": "directly addresses data center dispatch and workload scheduling with a virtual water-aware framework",
-      "llm_evidence_cn": "直接针对数据中心调度问题，提出虚拟水感知的电力-计算-水协同框架",
-      "llm_evidence": "直接针对数据中心调度问题，提出虚拟水感知的电力-计算-水协同框架",
-      "canonical_evidence": "直接针对数据中心调度问题，提出虚拟水感知的电力-计算-水协同框架",
-      "llm_tldr_en": "Proposes a virtual water-aware framework for data center dispatch that dynamically optimizes workload and power flow to reduce water footprint, offering a novel scheduling mechanism for sustainable data center operation.",
-      "llm_tldr_cn": "针对数据中心扩张带来的水电消耗问题，本文提出一个虚拟水感知的电-算-水协同框架，将水足迹动态纳入调度优化。该框架通过建模网络潮流与负荷调度，实现了工作量重定位对取水量的动态影响分析。实验表明该方法能有效兼顾能耗与水资源约束，为数据中心绿色调度提供了新思路，虽未明确开源代码但方法本身高度相关。",
-      "llm_tldr": "针对数据中心扩张带来的水电消耗问题，本文提出一个虚拟水感知的电-算-水协同框架，将水足迹动态纳入调度优化。该框架通过建模网络潮流与负荷调度，实现了工作量重定位对取水量的动态影响分析。实验表明该方法能有效兼顾能耗与水资源约束，为数据中心绿色调度提供了新思路，虽未明确开源代码但方法本身高度相关。",
+      "llm_evidence_en": "paper releases open-source multi-agent framework AutoformBot and formal library Atlas",
+      "llm_evidence_cn": "论文开源了多智能体框架AutoformBot和形式化库Atlas",
+      "llm_evidence": "论文开源了多智能体框架AutoformBot和形式化库Atlas",
+      "canonical_evidence": "论文开源了多智能体框架AutoformBot和形式化库Atlas",
+      "llm_tldr_en": "AutoformBot uses thousands of LLM agents with task scheduling to autoformalize textbook content into Lean 4 code, releasing open-source tools and a 45k-declaration library.",
+      "llm_tldr_cn": "该论文提出AutoformBot，一个多智能体系统，利用数千个LLM智能体、依赖感知任务调度和协作版本控制，将26本开源教科书自动形式化为Lean 4代码，构建了包含超过45,000个声明和50万行代码的Atlas库。开源了AutoformBot和Atlas，为数学形式化提供了可复现的工具。",
+      "llm_tldr": "该论文提出AutoformBot，一个多智能体系统，利用数千个LLM智能体、依赖感知任务调度和协作版本控制，将26本开源教科书自动形式化为Lean 4代码，构建了包含超过45,000个声明和50万行代码的Atlas库。开源了AutoformBot和Atlas，为数学形式化提供了可复现的工具。",
       "llm_tags": [
         "query:code-paper"
       ],
       "matched_query_tag": "query:code-paper",
-      "matched_query_text": "Papers with code for task scheduling in data centers",
-      "matched_requirement_id": "req-7",
-      "selection_source": "fresh_fetch"
-    },
-    {
-      "id": "2605.27652v1",
-      "source": "arxiv",
-      "title": "Carbon-Aware Mapping and Scheduling for Deadline-Constrained Workflows",
-      "abstract": "As datacenters continue to grow in scale, their energy consumption and resulting carbon footprint have become pressing concerns. With the increasing share of renewable energy in a datacenter's mixed energy supply, shifting task execution to periods of high green-power availability is a promising strategy to reduce carbon emissions. However, in heterogeneous computing environments, the power consumption of compute nodes in a datacenter can also vary. In practice, workloads submitted to datacenters are often not isolated tasks, but entire workflows consisting of interdependent tasks with precedence constraints. A further challenge arises from the fact that carbon emission reductions must typically be achieved under strict workflow deadlines. In this work, we show that the problem posed by these challenges for the scheduler is NP-hard and admits no constant-factor approximation even for the uni-processor case. Motivated by this hardness, we present a novel algorithm CWM that combines carbon-aware mapping and scheduling to construct feasible solutions. Our approach integrates dynamic programming with efficient heuristics to exploit renewable energy availability and infrastructure heterogeneity. To assess the quality of the new algorithm, we evaluate it against the state-of-the-art approach CaWoSched and show that CWM achieves significant reductions in terms of carbon emissions in experiments. In particular, we are able to achieve a median carbon cost reduction of 42% over the best version of CaWoSched when the deadline is two times the makespan of a carbon-agnostic baseline. Note that CaWoSched itself already reduces the carbon-agnostic baseline by 36%.",
-      "authors": [
-        "Dominik Schweisgut",
-        "Anne Benoit",
-        "Yves Robert",
-        "Henning Meyerhenke"
-      ],
-      "primary_category": "cs.DC",
-      "categories": [
-        "cs.DC"
-      ],
-      "published": "2026-05-26T20:11:50+00:00",
-      "link": "https://arxiv.org/pdf/2605.27652v1",
-      "tags": [
-        "query:code-paper"
-      ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "carbon-aware scheduling for datacenter workflows",
-      "llm_evidence_cn": "数据中心工作流的碳感知调度",
-      "llm_evidence": "数据中心工作流的碳感知调度",
-      "canonical_evidence": "数据中心工作流的碳感知调度",
-      "llm_tldr_en": "Proposes carbon-aware mapping and scheduling for deadline-constrained workflows in datacenters to reduce carbon footprint.",
-      "llm_tldr_cn": "数据中心能耗与碳足迹日益严重，利用可再生能源时段执行任务是减排策略。该文面向异构计算环境中有截止期限约束的工作流，提出碳感知的映射与调度方法，在满足时限前提下最大化绿色能源使用。实验表明该方法能显著降低碳排放，同时保证工作流按期完成。",
-      "llm_tldr": "数据中心能耗与碳足迹日益严重，利用可再生能源时段执行任务是减排策略。该文面向异构计算环境中有截止期限约束的工作流，提出碳感知的映射与调度方法，在满足时限前提下最大化绿色能源使用。实验表明该方法能显著降低碳排放，同时保证工作流按期完成。",
-      "llm_tags": [
-        "query:code-paper"
-      ],
-      "matched_query_tag": "query:code-paper",
-      "matched_query_text": "Papers with code for task scheduling in data centers",
-      "matched_requirement_id": "req-7",
-      "selection_source": "fresh_fetch"
-    },
-    {
-      "id": "2605.29641v1",
-      "source": "arxiv",
-      "title": "Experimentation for Different Scheduling Policies on Queues: Mixed Differences-in-Q Estimators Based on Little's Law",
-      "abstract": "In data centers, tasks are dispatched to various servers to evenly distribute the workload. When a data center considers implementing a new scheduling algorithm, it typically conducts an A/B test prior to deployment to assess the real-world impact of this new method. However, a straightforward A/B test might be interfered with so-called ``Markovian'' interference. We utilized the Differences-in-Q estimator, as developed by Farias et al. (2022), and introduced mixed Differences-in-Q estimators grounded in Little's Law. We show that our A/B testing methods significantly reduce bias and variance when testing various scheduling policies. Extensive simulations were conducted under scenarios like non-stationary arrival rates, heterogeneous service rates, and communication delays. These simulations highlight the robustness and efficacy of our A/B testing approach.",
-      "authors": [
-        "Nanshan Jia",
-        "Ramesh Johari",
-        "Nian Si",
-        "Zeyu Zheng"
-      ],
-      "primary_category": "stat.ME",
-      "categories": [
-        "stat.ME",
-        "cs.PF",
-        "math.PR"
-      ],
-      "published": "2026-05-28T09:07:44+00:00",
-      "link": "https://arxiv.org/pdf/2605.29641v1",
-      "tags": [
-        "keyword:code-paper",
-        "query:code-paper"
-      ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "directly addresses scheduling policies in data centers with A/B testing",
-      "llm_evidence_cn": "直接涉及数据中心调度策略的A/B测试方法",
-      "llm_evidence": "直接涉及数据中心调度策略的A/B测试方法",
-      "canonical_evidence": "直接涉及数据中心调度策略的A/B测试方法",
-      "llm_tldr_en": "Proposes mixed Differences-in-Q estimators based on Little's Law to reduce bias and variance in A/B testing for scheduling policies in data centers.",
-      "llm_tldr_cn": "针对数据中心调度策略的A/B测试问题，现有方法受马尔可夫干扰影响存在偏差。本文提出基于Little定律的混合Differences-in-Q估计器，显著降低了测试偏差和方差。模拟实验验证了该方法在非平稳等场景下的有效性，为数据中心调度评估提供了可靠工具。",
-      "llm_tldr": "针对数据中心调度策略的A/B测试问题，现有方法受马尔可夫干扰影响存在偏差。本文提出基于Little定律的混合Differences-in-Q估计器，显著降低了测试偏差和方差。模拟实验验证了该方法在非平稳等场景下的有效性，为数据中心调度评估提供了可靠工具。",
-      "llm_tags": [
-        "query:code-paper"
-      ],
-      "matched_query_tag": "query:code-paper",
-      "matched_query_text": "Papers with code for task scheduling in data centers",
-      "matched_requirement_id": "req-7",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
       "selection_source": "fresh_fetch"
     }
   ],
   "quick_skim": [
     {
-      "id": "2605.24725v1",
+      "id": "2605.24461v1",
       "source": "arxiv",
-      "title": "Differentially Private Obfuscation of Power Grid Dynamics",
-      "abstract": "Dynamic models of power systems are critical for analyzing grid response to disturbances and blackouts, but the release of real-world dynamic models is hindered by privacy and cybersecurity concerns, as such models carry sensitive information about transmission, generation, and load parameters. We develop an algorithm for synthesizing dynamic grid models from real-world power grids balancing two objectives: the privacy of the source grid, quantitatively measured using the notion of differential privacy, and the fidelity of the synthesized model. The algorithm applies privacy-preserving noise to obfuscate the original grid parameters, but then optimizes the perturbed parameters to ensure that the resulting model dynamics are statistically consistent with those observed in the source grid. Application to the frequency dynamics of the IEEE 30-bus system reveals the inherent privacy-fidelity trade-off: stricter privacy requirements degrade modeling fidelity, yet optimization significantly improves the quality of the synthesized models.",
+      "title": "Provisioning to Runtime Optimization of a +100 MW AI Cluster",
+      "abstract": "The electric power supply for AI data centers is now the most significant bottleneck in the race toward Artificial General Intelligence, surpassing even the constraint of AI accelerator availability. To our knowledge, this paper is the first to describe the end-to-end power management process for a hyper-scale AI datacenter; from early power planning to accommodate next-generation accelerators 6--12 months before their general availability, to tuning power settings after large scale deployment, and finally to dynamic, runtime power management for evolving workloads. We present detailed power measurements for a 150 MW datacenter hosting a cluster of 83K GB200 GPUs. We share insights from building this state-of-the-art AI cluster. We hope this work encourages practitioners across the industry to share their own experiences as well.",
       "authors": [
-        "Shengyang Wu",
-        "Vladimir Dvorkin"
+        "Ehsan K. Ardestani",
+        "Leonardo Piga",
+        "Jovan Stojkovic",
+        "Pavan Balaji",
+        "Mustafa Ozdal",
+        "Mikel Jimenez Fernandez",
+        "Mihaela Dimovska",
+        "Luka Tadic",
+        "Hao Shen",
+        "Devika Vishwanath",
+        "Richa Mishra",
+        "Melaku Mihret",
+        "Valentin Andrei",
+        "Mauricio Cespedes",
+        "Julien Prigent",
+        "James Monahan",
+        "Tyler Graf",
+        "Bin Li",
+        "Charles Marquez",
+        "Shobhit Kanaujia",
+        "Kaushik Veeraraghavan",
+        "Chunqiang Tang"
       ],
-      "primary_category": "eess.SY",
+      "primary_category": "cs.AR",
       "categories": [
+        "cs.AR",
+        "cs.DC",
         "eess.SY"
       ],
-      "published": "2026-05-23T20:32:44+00:00",
-      "link": "https://arxiv.org/pdf/2605.24725v1",
+      "published": "2026-05-23T08:18:01+00:00",
+      "link": "https://arxiv.org/pdf/2605.24461v1",
       "tags": [
-        "keyword:code-paper"
+        "keyword:code-paper",
+        "query:code-paper"
       ],
       "llm_score": 7.0,
-      "llm_evidence_en": "power grid, privacy preserving obfuscation",
-      "llm_evidence_cn": "电力系统动态模型隐私保护",
-      "llm_evidence": "电力系统动态模型隐私保护",
-      "canonical_evidence": "电力系统动态模型隐私保护",
-      "llm_tldr_en": "Proposes an algorithm to obfuscate power grid dynamics while preserving differential privacy and model fidelity.",
-      "llm_tldr_cn": "电力系统动态模型对分析电网响应至关重要，但公开模型存在隐私与安全风险。该文提出一种差分隐私保护的电网动态模型合成算法，通过添加噪声并优化扰动参数，在保护敏感参数的同时保持模型动态的统计一致性。实验表明该方法能有效平衡隐私与保真度，为电网数据安全发布提供了新思路。",
-      "llm_tldr": "电力系统动态模型对分析电网响应至关重要，但公开模型存在隐私与安全风险。该文提出一种差分隐私保护的电网动态模型合成算法，通过添加噪声并优化扰动参数，在保护敏感参数的同时保持模型动态的统计一致性。实验表明该方法能有效平衡隐私与保真度，为电网数据安全发布提供了新思路。",
+      "llm_evidence_en": "paper addresses power management in AI datacenters, relevant to task scheduling in datacenters",
+      "llm_evidence_cn": "论文涉及AI数据中心的电力管理，与数据中心任务调度相关",
+      "llm_evidence": "论文涉及AI数据中心的电力管理，与数据中心任务调度相关",
+      "canonical_evidence": "论文涉及AI数据中心的电力管理，与数据中心任务调度相关",
+      "llm_tldr_en": "Describes end-to-end power management for a 150MW AI datacenter with 83K GPUs, covering planning to runtime optimization, directly relevant to datacenter scheduling.",
+      "llm_tldr_cn": "该论文首次端到端描述超大规模AI数据中心的电力管理过程，从早期规划到运行时优化，基于150MW数据中心83K GB200 GPU的实测数据。虽未明确提供源代码，但其电力调度经验对数据中心任务调度具有直接参考价值，符合用户对含代码数据中心调度论文的需求。",
+      "llm_tldr": "该论文首次端到端描述超大规模AI数据中心的电力管理过程，从早期规划到运行时优化，基于150MW数据中心83K GB200 GPU的实测数据。虽未明确提供源代码，但其电力调度经验对数据中心任务调度具有直接参考价值，符合用户对含代码数据中心调度论文的需求。",
       "llm_tags": [
-        "query:code-paper:composite"
+        "query:code-paper"
       ],
-      "matched_query_tag": "query:code-paper:composite",
-      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
-      "matched_requirement_id": "req-composite-code-paper",
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
       "selection_source": "fresh_fetch",
       "quick_tier": "7"
     },
@@ -266,13 +214,50 @@
         "query:code-paper"
       ],
       "llm_score": 6.0,
-      "llm_evidence_en": "grid-responsive power control for data centers",
-      "llm_evidence_cn": "面向数据中心的电网响应式电力控制",
-      "llm_evidence": "面向数据中心的电网响应式电力控制",
-      "canonical_evidence": "面向数据中心的电网响应式电力控制",
-      "llm_tldr_en": "GridPilot presents a three-tier predictive controller for real-time grid-responsive power adjustment in AI supercomputers, achieving sub-second response on real GPU hardware.",
-      "llm_tldr_cn": "当前数据中心电力需求快速增长，需要秒级功率调节以支持电网灵活性。本文提出GridPilot，一个三层预测控制器，包括毫秒、秒和小时级控制，并结合确定性安全岛旁路实现快速响应。在NVIDIA V100三GPU平台上测试，实现了从电网请求到GPU功率变化的端到端响应。该工作为大规模AI设施的电网友好运行提供了可复用的控制方案。",
-      "llm_tldr": "当前数据中心电力需求快速增长，需要秒级功率调节以支持电网灵活性。本文提出GridPilot，一个三层预测控制器，包括毫秒、秒和小时级控制，并结合确定性安全岛旁路实现快速响应。在NVIDIA V100三GPU平台上测试，实现了从电网请求到GPU功率变化的端到端响应。该工作为大规模AI设施的电网友好运行提供了可复用的控制方案。",
+      "llm_evidence_en": "Real-time grid-responsive control for AI supercomputers, directly relevant to power scheduling in data centers and grid coordination",
+      "llm_evidence_cn": "针对AI超级计算机的实时电网响应控制，直接相关数据中心电力调度与电网协同",
+      "llm_evidence": "针对AI超级计算机的实时电网响应控制，直接相关数据中心电力调度与电网协同",
+      "canonical_evidence": "针对AI超级计算机的实时电网响应控制，直接相关数据中心电力调度与电网协同",
+      "llm_tldr_en": "GridPilot is a three-tier predictive controller that adjusts GPU power in data centers within milliseconds to respond to grid requests, demonstrated on real hardware with measured end-to-end response time.",
+      "llm_tldr_cn": "本文针对数据中心电力需求激增及电网对柔性负荷的快速响应需求，提出GridPilot三层预测控制器，在毫秒、秒和小时尺度上调整GPU功率，并通过确定性安全岛旁路实现超快响应。在三卡V100试验台上验证了端到端快速调节能力，为AI数据中心参与电网调度提供了可行的软件方案。",
+      "llm_tldr": "本文针对数据中心电力需求激增及电网对柔性负荷的快速响应需求，提出GridPilot三层预测控制器，在毫秒、秒和小时尺度上调整GPU功率，并通过确定性安全岛旁路实现超快响应。在三卡V100试验台上验证了端到端快速调节能力，为AI数据中心参与电网调度提供了可行的软件方案。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.27652v1",
+      "source": "arxiv",
+      "title": "Carbon-Aware Mapping and Scheduling for Deadline-Constrained Workflows",
+      "abstract": "As datacenters continue to grow in scale, their energy consumption and resulting carbon footprint have become pressing concerns. With the increasing share of renewable energy in a datacenter's mixed energy supply, shifting task execution to periods of high green-power availability is a promising strategy to reduce carbon emissions. However, in heterogeneous computing environments, the power consumption of compute nodes in a datacenter can also vary. In practice, workloads submitted to datacenters are often not isolated tasks, but entire workflows consisting of interdependent tasks with precedence constraints. A further challenge arises from the fact that carbon emission reductions must typically be achieved under strict workflow deadlines. In this work, we show that the problem posed by these challenges for the scheduler is NP-hard and admits no constant-factor approximation even for the uni-processor case. Motivated by this hardness, we present a novel algorithm CWM that combines carbon-aware mapping and scheduling to construct feasible solutions. Our approach integrates dynamic programming with efficient heuristics to exploit renewable energy availability and infrastructure heterogeneity. To assess the quality of the new algorithm, we evaluate it against the state-of-the-art approach CaWoSched and show that CWM achieves significant reductions in terms of carbon emissions in experiments. In particular, we are able to achieve a median carbon cost reduction of 42% over the best version of CaWoSched when the deadline is two times the makespan of a carbon-agnostic baseline. Note that CaWoSched itself already reduces the carbon-agnostic baseline by 36%.",
+      "authors": [
+        "Dominik Schweisgut",
+        "Anne Benoit",
+        "Yves Robert",
+        "Henning Meyerhenke"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-05-26T20:11:50+00:00",
+      "link": "https://arxiv.org/pdf/2605.27652v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "task scheduling in data centers with carbon awareness",
+      "llm_evidence_cn": "数据中心中的碳感知任务调度",
+      "llm_evidence": "数据中心中的碳感知任务调度",
+      "canonical_evidence": "数据中心中的碳感知任务调度",
+      "llm_tldr_en": "This paper addresses deadline-constrained workflow scheduling in datacenters with heterogeneous compute nodes and variable green energy. It proposes a carbon-aware mapping and scheduling algorithm to reduce emissions under strict deadlines. Although the paper likely provides scheduling algorithms, no explicit mention of source code availability.",
+      "llm_tldr_cn": "该论文针对数据中心中异构计算节点和可再生能源波动环境下的截止时间约束工作流调度问题，提出了碳感知的映射与调度算法。通过在绿色电力充裕时执行任务，在满足截止时间的前提下降低碳排放。实验表明该方法有效减少了碳足迹。论文未明确提及是否提供源代码，但调度算法本身与任务调度需求高度相关。",
+      "llm_tldr": "该论文针对数据中心中异构计算节点和可再生能源波动环境下的截止时间约束工作流调度问题，提出了碳感知的映射与调度算法。通过在绿色电力充裕时执行任务，在满足截止时间的前提下降低碳排放。实验表明该方法有效减少了碳足迹。论文未明确提及是否提供源代码，但调度算法本身与任务调度需求高度相关。",
       "llm_tags": [
         "query:code-paper"
       ],
@@ -280,40 +265,77 @@
       "matched_query_text": "Papers with code for task scheduling in data centers",
       "matched_requirement_id": "req-7",
       "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.27485v1",
+      "source": "arxiv",
+      "title": "Automating Formal Verification with Agent-Guided Tree Search",
+      "abstract": "Formal verification offers a path to provably correct software, but writing verified code remains expensive enough that the technique is rarely used in production. Recent large language models can accelerate this work, and recent benchmarks measure their ability to translate specifications into code and machine-checked proofs of correctness. This thesis evaluates the state of such LLM-driven verified-code generation (\"vericoding\") in Lean and develops search-based methods for improving verification performance. We first reproduce a subset of the vericoding-benchmark Lean leaderboard on a current cross-vendor model pool, finding that non-reasoning performance remains roughly steady on US closed-source models while open-weight models have slightly improved. We update the iterative methodology of vericoding-benchmark with an agentic loop equipped with mathlib search, finding that model performance greatly improves and scales with agent budget. GPT-5.4 nearly saturates the benchmark at 95.0% on 423 specs with $K=50$ LLM calls. We then design two agent-directed tree-search formulations: a state-based orchestrator that branches on partial-proof states, and a context-based orchestrator that branches on full subagent contexts. Compared against the agent baseline, the context-based design solves a wider range of intermediate-difficulty specs at lower token cost, while the agent baseline retains an advantage on the hardest specs, where uninterrupted iteration matters most. We conclude that search structure has selective advantages over a strong agent baseline, and that more challenging benchmarks drawn from modern code are important to measure and drive further progress in automated formal verification.   Code available upon request by contacting the author at leoy@mit.edu.",
+      "authors": [
+        "Leo Yao"
+      ],
+      "primary_category": "cs.LO",
+      "categories": [
+        "cs.LO",
+        "cs.LG",
+        "cs.SE"
+      ],
+      "published": "2026-05-26T14:50:47+00:00",
+      "link": "https://arxiv.org/pdf/2605.27485v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "paper develops search-based methods for verified-code generation in Lean, likely includes source code",
+      "llm_evidence_cn": "论文开发了基于搜索的验证代码生成方法，可能包含源代码",
+      "llm_evidence": "论文开发了基于搜索的验证代码生成方法，可能包含源代码",
+      "canonical_evidence": "论文开发了基于搜索的验证代码生成方法，可能包含源代码",
+      "llm_tldr_en": "Evaluates LLM-driven verified-code generation in Lean and proposes search-based methods to improve verification performance, with reproducibility implied.",
+      "llm_tldr_cn": "该论文评估了当前大语言模型在Lean中驱动验证代码生成的性能，发现非推理模型性能稳定，开源模型略有提升，并开发了基于引导树搜索的方法来改进验证效率。研究展示了将LLM用于形式化验证的潜力，但未直接涉及电网或调度。",
+      "llm_tldr": "该论文评估了当前大语言模型在Lean中驱动验证代码生成的性能，发现非推理模型性能稳定，开源模型略有提升，并开发了基于引导树搜索的方法来改进验证效率。研究展示了将LLM用于形式化验证的潜力，但未直接涉及电网或调度。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
       "quick_tier": "6"
     },
     {
-      "id": "2605.28510v1",
+      "id": "2605.29277v1",
       "source": "arxiv",
-      "title": "Efficient and Scalable Provenance Tracking for LLM-Generated Code Snippets",
-      "abstract": "Large language models (LLMs) for code completion and generation are increasingly used in software development, yet they may reproduce training examples verbatim and without authorship attribution, raising legal and ethical concerns around plagiarism and license compliance. Classical fingerprint-based plagiarism detectors based on fingerprinting, such as Winnowing, remain highly effective, yet the inspection requires comparing fragments of code to the entire training set, and their linear-time search makes them impractical for the billion-scale corpora used to train modern code LLMs. To bridge this gap, we introduce SOURCETRACKER, a 300M-parameter encoder tailored for code retrieval, together with a hybrid two-stage provenance-tracking pipeline HYBRIDSOURCETRACKER (HST). HST first narrows down a small set of candidate snippets via vector search, then re-ranks those candidates using Winnowing on exact fingerprints. We train and evaluate our system on a 10M-snippet subset of the THESTACKV2 dataset, with both verbatim and adapted snippets that emulate realistic identifier renaming. On an in vitro 100k-snippet search space with adapted queries, our hybrid approach reaches a mean reciprocal rank on par with Winnowing for 30-token fragments. Then, starting from windows >= 60 tokens, it consistently over-performs by up to 5.4% while preserving logarithmic-time query complexity. In a complementary evaluation using an LLM-based judge, we find that many retrieved snippets not labeled as ground truth are still highly similar to the expected sources, particularly with longer context windows, and thus remain useful for end users. Overall, our results demonstrate that integrating vector search with fingerprinting enables scalable, high-precision provenance tracking for code produced by LLMs.",
+      "title": "Code-QA-Bench: Separating Code Reasoning from Documentation Memorization in Repository-Level QA",
+      "abstract": "We present Code-QA-Bench, a fully automated framework for synthesizing repository-level code understanding benchmarks that separates genuine code comprehension from documentation recall and pretraining memorization. The framework makes two methodological contributions: (1) an answer-first generation pipeline where a tool-equipped agent explores source code to produce verified gold answers before deriving questions, ensuring every task is grounded in real code structure; and (2) a three-condition experimental design evaluating agents under closed-book (no repository), code-only (documentation removed), and documented (full repository) conditions, with deltas directly quantifying documentation utility and memorization.   We generate 528 code-derivable and 100 doc-dependent tasks across 10 Python repositories from SWE-Bench, scored by an LLM judge on accuracy, completeness, and specificity. Experiments on four frontier models reveal that code access is the dominant factor (+0.23 mean gain over closed-book), documentation provides modest additional benefit (+0.071 on doc-dependent tasks), and code-only $\\approx$ documented on code-derivable tasks, validating the design. The framework is open-source and applicable to any well-documented Python repository.",
       "authors": [
-        "Andrea Gurioli",
-        "Davide D'Ascenzo",
-        "Federico Pennino",
-        "Maurizio Gabbrielli",
-        "Stefano Zacchiroli"
+        "Jun Zhang",
+        "JianYing Qu",
+        "Hanwen Du",
+        "Zhongkai Sun",
+        "Yehua Yang",
+        "Qiao Zhao"
       ],
       "primary_category": "cs.SE",
       "categories": [
         "cs.SE",
-        "cs.AI",
-        "cs.IR"
+        "cs.AI"
       ],
-      "published": "2026-05-27T14:12:17+00:00",
-      "link": "https://arxiv.org/pdf/2605.28510v1",
+      "published": "2026-05-28T02:52:58+00:00",
+      "link": "https://arxiv.org/pdf/2605.29277v1",
       "tags": [
         "keyword:code-paper",
         "query:code-paper"
       ],
       "llm_score": 7.0,
-      "llm_evidence_en": "code provenance tracking for LLM-generated code",
-      "llm_evidence_cn": "LLM生成代码的溯源追踪",
-      "llm_evidence": "LLM生成代码的溯源追踪",
-      "canonical_evidence": "LLM生成代码的溯源追踪",
-      "llm_tldr_en": "Introduces SOURCETRACKER, a 300M-parameter encoder for code retrieval and provenance tracking of LLM-generated code snippets.",
-      "llm_tldr_cn": "大型语言模型生成的代码片段可能未经授权复制训练数据，引发侵权问题。现有指纹检测方法在大规模语料库上不可扩展。该文提出SOURCETRACKER，一个3亿参数的专用编码器，结合混合两阶段溯源流水线，能够高效地从数十亿规模的代码库中检索并追踪代码来源，大幅提升代码溯源的可扩展性。",
-      "llm_tldr": "大型语言模型生成的代码片段可能未经授权复制训练数据，引发侵权问题。现有指纹检测方法在大规模语料库上不可扩展。该文提出SOURCETRACKER，一个3亿参数的专用编码器，结合混合两阶段溯源流水线，能够高效地从数十亿规模的代码库中检索并追踪代码来源，大幅提升代码溯源的可扩展性。",
+      "llm_evidence_en": "Repository-level code QA benchmark with automated pipeline, source code likely provided",
+      "llm_evidence_cn": "仓库级代码问答基准，自动生成管道，可能提供源码",
+      "llm_evidence": "仓库级代码问答基准，自动生成管道，可能提供源码",
+      "canonical_evidence": "仓库级代码问答基准，自动生成管道，可能提供源码",
+      "llm_tldr_en": "Presents Code-QA-Bench, a framework for generating repository-level code understanding benchmarks separating reasoning from memorization; includes automated pipeline and likely open-source code.",
+      "llm_tldr_cn": "现有仓库级代码理解基准难以区分真实推理与文档记忆或预训练记忆。该文提出Code-QA-Bench框架，采用答案优先生成流水线和三条件实验设计，由工具增强的代理探索源码得到验证答案。该框架提供全自动基准合成方法，极有可能附带开源代码，直接满足用户对含代码论文的需求。",
+      "llm_tldr": "现有仓库级代码理解基准难以区分真实推理与文档记忆或预训练记忆。该文提出Code-QA-Bench框架，采用答案优先生成流水线和三条件实验设计，由工具增强的代理探索源码得到验证答案。该框架提供全自动基准合成方法，极有可能附带开源代码，直接满足用户对含代码论文的需求。",
       "llm_tags": [
         "query:code-paper"
       ],
