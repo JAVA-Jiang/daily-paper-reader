@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-01",
+  "date": "2026-06-01",
+  "generated_at": "2026-06-01T22:04:58",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/01/2605.29641v1-experimentation-for-different-scheduling-policies-on-queues-mixed-differences-in-q-estimators-based-on-littles-law",
+      "section": "deep",
+      "title_en": "Experimentation for Different Scheduling Policies on Queues: Mixed Differences-in-Q Estimators Based on Little's Law",
+      "authors": "Nanshan Jia, Ramesh Johari, Nian Si, Zeyu Zheng",
+      "date": "2026-05-28",
+      "pdf": "https://arxiv.org/pdf/2605.29641v1",
+      "score": "8.0",
+      "evidence": "数据中心任务调度策略的A/B测试与仿真",
+      "tldr": "数据中心调度策略的A/B测试面临马尔可夫干扰，导致偏差。本文基于Little's Law提出混合Differences-in-Q估计器，显著降低了非平稳到达率、异构服务率和通信延迟下的偏差与方差。仿真结果验证了方法的鲁棒性和有效性。",
+      "tags": "query:code-paper",
+      "abstract_en": "In data centers, tasks are dispatched to various servers to evenly distribute the workload. When a data center considers implementing a new scheduling algorithm, it typically conducts an A/B test prior to deployment to assess the real-world impact of this new method. However, a straightforward A/B test might be interfered with so-called ``Markovian'' interference. We utilized the Differences-in-Q estimator, as developed by Farias et al. (2022), and introduced mixed Differences-in-Q estimators grounded in Little's Law. We show that our A/B testing methods significantly reduce bias and variance when testing various scheduling policies. Extensive simulations were conducted under scenarios like non-stationary arrival rates, heterogeneous service rates, and communication delays. These simulations highlight the robustness and efficacy of our A/B testing approach.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/01/2605.29955v1-formalizing-mathematics-at-scale",
+      "section": "deep",
+      "title_en": "Formalizing Mathematics at Scale",
+      "authors": "Ahmad Rammal, Niket Patel, Fabian Gloeckle, Amaury Hayat, Julia Kempe, Remi Munos, Charles Arnal, Vivien Cabannes",
+      "date": "2026-05-28",
+      "pdf": "https://arxiv.org/pdf/2605.29955v1",
+      "score": "8.0",
+      "evidence": "开源多智能体框架和50万行代码",
+      "tldr": "大规模自动形式化数学面临人力成本高、扩展性差的挑战。我们提出AutoformBot多智能体系统，集成形式验证工具、依赖感知任务调度和协作版本控制，自动将非正式教科书翻译为机器可检查的Lean 4代码。应用于26本教材，生成Atlas库，含45,000+声明和50万行代码。该工作证明自动形式化研究生级数学在经济和技术上可行，开源框架和库为数学自动验证开辟新路径。",
+      "tags": "query:code-paper",
+      "abstract_en": "We present AutoformBot, a multi-agent system for building an Autoformalized Textbook Library At Scale (Atlas) in Lean 4. AutoformBot orchestrates thousands of LLM agents, equipped with formal verification tools, dependency-aware task scheduling, and collaborative version control, to translate informal textbook prose into machine-checked definitions and proofs. We apply our methods to a corpus of 26 open-access textbooks spanning analysis, algebra, topology, combinatorics, and probability, producing Atlas: a verified library of over 45,000 Lean 4 declarations and 500 thousand lines of code. We release two artifacts: (i) AutoformBot, the open-source multi-agent framework; and (ii) Atlas, the resulting formal library. Our results suggest that autoformalizing the core content of graduate-level mathematics at scale is now economically and technically feasible. This opens the door to the automated verification of both human- and machine-generated mathematics at a research level.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/01/2605.31575v1-spectra-synthetic-ir-test-collections-with-relevance-oracles-and-controlled-distractor-diagnostics",
+      "section": "deep",
+      "title_en": "SPECTRA: Synthetic IR Test Collections with Relevance Oracles and Controlled Distractor Diagnostics",
+      "authors": "Eric Liang",
+      "date": "2026-05-29",
+      "pdf": "https://arxiv.org/pdf/2605.31575v1",
+      "score": "8.0",
+      "evidence": "可复现框架，提供Python开源代码",
+      "tldr": "信息检索测试需要大规模语料，但人工标注昂贵且私密文档难以获取。本文提出SPECTRA框架，通过分离潜在主题结构、文本生成、元数据控制和确定性相关标准，生成合成语料与检索测试集。单进程原型生成6万文档、960万词，速度约12k-14k文档/秒。引入干扰文本后，BM25 nDCG@10从1.00降至0.43。该框架作为人工评估的补充，可在构建昂贵集合前暴露系统扩展和失效模式。",
+      "tags": "query:code-paper",
+      "abstract_en": "Scalable information retrieval testing needs corpora that are large enough to stress index construction, ranking latency, query routing, and evaluation tooling, yet human-judged test collections remain expensive and may be unavailable when documents are private or still under design. This paper introduces SPECTRA, a reproducible framework for generating synthetic text corpora and retrieval test collections through a separation of latent topical structure, surface text realization, metadata controls, query intent generation, and deterministic relevance oracles. The framework is intended as a diagnostic complement to Cranfield-style and TREC-style evaluation, not as a replacement for human assessment. A single-process Python prototype generated corpora up to 60,000 documents and 9.61 million tokens while preserving controllable long-tail vocabulary growth and producing graded relevance labels for 96 queries. In the local simulation study, generation remained close to linear at roughly 12K to 14K documents per second, estimated Zipf slopes stayed near 0.86 in absolute value, and increasing cross-topic distractor text reduced BM25 nDCG@10 from 1.00 at 2% distractors to 0.43 at 36% distractors. These results show that lightweight synthetic corpora can expose retrieval-system scaling and failure modes before costly collection construction begins.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/01/2605.26384v1-gridpilot-real-time-grid-responsive-control-for-ai-supercomputers",
+      "section": "quick",
+      "title_en": "GridPilot: Real-Time Grid-Responsive Control for AI Supercomputers",
+      "authors": "Denisa-Andreea Constantinescu, David Atienza",
+      "date": "2026-05-25",
+      "pdf": "https://arxiv.org/pdf/2605.26384v1",
+      "score": "7.0",
+      "evidence": "数据中心电力调度与电网响应控制",
+      "tldr": "AI/HPC数据中心电力需求快速增长，需快速响应电网调度。GridPilot提出三阶预测控制器（毫秒/秒/小时）搭配安全旁路，在V100测试平台实现97.2ms端到端响应，比北欧FFR要求快6.9倍。引入实时PUE校正，在六种欧洲电网场景中减少2.5-5.8%冷却开销。开源证明MW级AI负载可被设计为可控电网灵活性资源。",
+      "tags": "query:code-paper",
+      "abstract_en": "At global scale, data-center electricity demand is growing faster than the grids that supply it, while system operators increasingly require large flexible loads that can adjust power within seconds to absorb variable wind and solar generation. For multi-megawatt AI/HPC facilities, the key unresolved question is practical and measurable: how quickly can the software stack translate a grid request into a real change in GPU power at the facility meter, where commitments are settled? We answer this on real hardware with GridPilot, a three-tier predictive controller operating across milliseconds, seconds, and hours, augmented by a deterministic safety-island bypass for fast response. On a three-GPU NVIDIA V100 testbed, GridPilot achieves a measured end-to-end trigger-to-target response of 97.2 ms, which is 6.9x faster than the 700 ms requirement of Nordic Fast Frequency Reserve. We further incorporate an instantaneous Power Usage Effectiveness (PUE) correction so dispatched commitments remain robust at meter level rather than only at IT load level. In replay experiments across six representative European grids (from Sweden to Poland), the PUE-aware controller closes 2.5-5.8 percentage points of cooling-overhead drag. GridPilot is released as open source and serves as a proof of concept that MW-scale AI/HPC demand can be engineered as controllable, grid-responsive flexibility by design.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

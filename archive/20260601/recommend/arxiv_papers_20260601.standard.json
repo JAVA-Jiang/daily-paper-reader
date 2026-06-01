@@ -1,0 +1,171 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-01T22:03:47.533296+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2605.29641v1",
+      "source": "arxiv",
+      "title": "Experimentation for Different Scheduling Policies on Queues: Mixed Differences-in-Q Estimators Based on Little's Law",
+      "abstract": "In data centers, tasks are dispatched to various servers to evenly distribute the workload. When a data center considers implementing a new scheduling algorithm, it typically conducts an A/B test prior to deployment to assess the real-world impact of this new method. However, a straightforward A/B test might be interfered with so-called ``Markovian'' interference. We utilized the Differences-in-Q estimator, as developed by Farias et al. (2022), and introduced mixed Differences-in-Q estimators grounded in Little's Law. We show that our A/B testing methods significantly reduce bias and variance when testing various scheduling policies. Extensive simulations were conducted under scenarios like non-stationary arrival rates, heterogeneous service rates, and communication delays. These simulations highlight the robustness and efficacy of our A/B testing approach.",
+      "authors": [
+        "Nanshan Jia",
+        "Ramesh Johari",
+        "Nian Si",
+        "Zeyu Zheng"
+      ],
+      "primary_category": "stat.ME",
+      "categories": [
+        "stat.ME",
+        "cs.PF",
+        "math.PR"
+      ],
+      "published": "2026-05-28T09:07:44+00:00",
+      "link": "https://arxiv.org/pdf/2605.29641v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "data center task scheduling policies with A/B testing and simulations",
+      "llm_evidence_cn": "数据中心任务调度策略的A/B测试与仿真",
+      "llm_evidence": "数据中心任务调度策略的A/B测试与仿真",
+      "canonical_evidence": "数据中心任务调度策略的A/B测试与仿真",
+      "llm_tldr_en": "Proposes mixed Differences-in-Q estimators for A/B testing scheduling policies in data centers, reducing bias and variance, validated via simulations.",
+      "llm_tldr_cn": "本文针对数据中心任务调度策略的A/B测试中存在的马尔可夫干扰问题，提出基于利特尔定律的混合Differences-in-Q估计量，显著降低偏差和方差。通过非平稳等情景下的仿真验证了方法的有效性，为数据中心的调度算法评估提供了更可靠的实验设计工具。",
+      "llm_tldr": "本文针对数据中心任务调度策略的A/B测试中存在的马尔可夫干扰问题，提出基于利特尔定律的混合Differences-in-Q估计量，显著降低偏差和方差。通过非平稳等情景下的仿真验证了方法的有效性，为数据中心的调度算法评估提供了更可靠的实验设计工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.29955v1",
+      "source": "arxiv",
+      "title": "Formalizing Mathematics at Scale",
+      "abstract": "We present AutoformBot, a multi-agent system for building an Autoformalized Textbook Library At Scale (Atlas) in Lean 4. AutoformBot orchestrates thousands of LLM agents, equipped with formal verification tools, dependency-aware task scheduling, and collaborative version control, to translate informal textbook prose into machine-checked definitions and proofs. We apply our methods to a corpus of 26 open-access textbooks spanning analysis, algebra, topology, combinatorics, and probability, producing Atlas: a verified library of over 45,000 Lean 4 declarations and 500 thousand lines of code. We release two artifacts: (i) AutoformBot, the open-source multi-agent framework; and (ii) Atlas, the resulting formal library. Our results suggest that autoformalizing the core content of graduate-level mathematics at scale is now economically and technically feasible. This opens the door to the automated verification of both human- and machine-generated mathematics at a research level.",
+      "authors": [
+        "Ahmad Rammal",
+        "Niket Patel",
+        "Fabian Gloeckle",
+        "Amaury Hayat",
+        "Julia Kempe",
+        "Remi Munos",
+        "Charles Arnal",
+        "Vivien Cabannes"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-28T14:00:22+00:00",
+      "link": "https://arxiv.org/pdf/2605.29955v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source multi-agent framework and 500k lines of code released",
+      "llm_evidence_cn": "开源多智能体框架和50万行代码",
+      "llm_evidence": "开源多智能体框架和50万行代码",
+      "canonical_evidence": "开源多智能体框架和50万行代码",
+      "llm_tldr_en": "AutoformBot is a multi-agent system that autoformalizes textbook content into Lean 4 code, releasing an open-source framework and a library of over 45,000 declarations.",
+      "llm_tldr_cn": "本文提出AutoformBot，一个多智能体系统，用于将教科书内容自动形式化为Lean 4代码。系统通过依赖感知的任务调度和协作版本控制，生成了包含超过45,000个声明和50万行代码的Atlas库，并开源了框架和库，为数学形式化提供了大规模可复现的基础设施。",
+      "llm_tldr": "本文提出AutoformBot，一个多智能体系统，用于将教科书内容自动形式化为Lean 4代码。系统通过依赖感知的任务调度和协作版本控制，生成了包含超过45,000个声明和50万行代码的Atlas库，并开源了框架和库，为数学形式化提供了大规模可复现的基础设施。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.31575v1",
+      "source": "arxiv",
+      "title": "SPECTRA: Synthetic IR Test Collections with Relevance Oracles and Controlled Distractor Diagnostics",
+      "abstract": "Scalable information retrieval testing needs corpora that are large enough to stress index construction, ranking latency, query routing, and evaluation tooling, yet human-judged test collections remain expensive and may be unavailable when documents are private or still under design. This paper introduces SPECTRA, a reproducible framework for generating synthetic text corpora and retrieval test collections through a separation of latent topical structure, surface text realization, metadata controls, query intent generation, and deterministic relevance oracles. The framework is intended as a diagnostic complement to Cranfield-style and TREC-style evaluation, not as a replacement for human assessment. A single-process Python prototype generated corpora up to 60,000 documents and 9.61 million tokens while preserving controllable long-tail vocabulary growth and producing graded relevance labels for 96 queries. In the local simulation study, generation remained close to linear at roughly 12K to 14K documents per second, estimated Zipf slopes stayed near 0.86 in absolute value, and increasing cross-topic distractor text reduced BM25 nDCG@10 from 1.00 at 2% distractors to 0.43 at 36% distractors. These results show that lightweight synthetic corpora can expose retrieval-system scaling and failure modes before costly collection construction begins.",
+      "authors": [
+        "Eric Liang"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.AI"
+      ],
+      "published": "2026-05-29T17:44:15+00:00",
+      "link": "https://arxiv.org/pdf/2605.31575v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "reproducible framework with Python open source code",
+      "llm_evidence_cn": "可复现框架，提供Python开源代码",
+      "llm_evidence": "可复现框架，提供Python开源代码",
+      "canonical_evidence": "可复现框架，提供Python开源代码",
+      "llm_tldr_en": "SPECTRA provides a reproducible framework for generating synthetic IR test collections with open-source Python code, enabling scalable evaluation.",
+      "llm_tldr_cn": "SPECTRA框架通过分离潜在主题结构、表面文本实现、元数据控制、查询意图生成和确定性相关性判断，生成合成文本语料库和检索测试集。该框架以Python开源代码形式提供，可作为Cranfield和TREC评估的诊断补充，而非常规人工评估替代。大量实验表明，该方法能有效构建大规模测试集合，支持索引构建、排序延迟等压力测试。",
+      "llm_tldr": "SPECTRA框架通过分离潜在主题结构、表面文本实现、元数据控制、查询意图生成和确定性相关性判断，生成合成文本语料库和检索测试集。该框架以Python开源代码形式提供，可作为Cranfield和TREC评估的诊断补充，而非常规人工评估替代。大量实验表明，该方法能有效构建大规模测试集合，支持索引构建、排序延迟等压力测试。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.26384v1",
+      "source": "arxiv",
+      "title": "GridPilot: Real-Time Grid-Responsive Control for AI Supercomputers",
+      "abstract": "At global scale, data-center electricity demand is growing faster than the grids that supply it, while system operators increasingly require large flexible loads that can adjust power within seconds to absorb variable wind and solar generation. For multi-megawatt AI/HPC facilities, the key unresolved question is practical and measurable: how quickly can the software stack translate a grid request into a real change in GPU power at the facility meter, where commitments are settled? We answer this on real hardware with GridPilot, a three-tier predictive controller operating across milliseconds, seconds, and hours, augmented by a deterministic safety-island bypass for fast response. On a three-GPU NVIDIA V100 testbed, GridPilot achieves a measured end-to-end trigger-to-target response of 97.2 ms, which is 6.9x faster than the 700 ms requirement of Nordic Fast Frequency Reserve. We further incorporate an instantaneous Power Usage Effectiveness (PUE) correction so dispatched commitments remain robust at meter level rather than only at IT load level. In replay experiments across six representative European grids (from Sweden to Poland), the PUE-aware controller closes 2.5-5.8 percentage points of cooling-overhead drag. GridPilot is released as open source and serves as a proof of concept that MW-scale AI/HPC demand can be engineered as controllable, grid-responsive flexibility by design.",
+      "authors": [
+        "Denisa-Andreea Constantinescu",
+        "David Atienza"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.PF",
+        "eess.SY"
+      ],
+      "published": "2026-05-25T23:14:52+00:00",
+      "link": "https://arxiv.org/pdf/2605.26384v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Data center power scheduling with grid-responsive control",
+      "llm_evidence_cn": "数据中心电力调度与电网响应控制",
+      "llm_evidence": "数据中心电力调度与电网响应控制",
+      "canonical_evidence": "数据中心电力调度与电网响应控制",
+      "llm_tldr_en": "GridPilot is a three-tier predictive controller for AI supercomputers that translates grid requests into real GPU power changes, achieving fast response and enabling grid stability.",
+      "llm_tldr_cn": "GridPilot针对AI超级计算机数据中心电力需求快速增长的问题，提出了一种三层次预测控制器，分别在毫秒、秒和小时尺度上调节GPU功耗以响应电网调度请求。该方法还包含确定性安全岛旁路以实现快速响应。在NVIDIA V100三GPU测试平台上验证，端到端响应时间满足电网要求。该工作展示了数据中心作为柔性负荷参与电网调度的可行性，有助于提升可再生能源利用率。",
+      "llm_tldr": "GridPilot针对AI超级计算机数据中心电力需求快速增长的问题，提出了一种三层次预测控制器，分别在毫秒、秒和小时尺度上调节GPU功耗以响应电网调度请求。该方法还包含确定性安全岛旁路以实现快速响应。在NVIDIA V100三GPU测试平台上验证，端到端响应时间满足电网要求。该工作展示了数据中心作为柔性负荷参与电网调度的可行性，有助于提升可再生能源利用率。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
