@@ -1,0 +1,699 @@
+Title: Certificates without Electrons? Theory and Evidence on Impacts from AI-Driven Power Demand
+
+URL Source: https://arxiv.org/pdf/2606.00811v1
+
+Published Time: Tue, 02 Jun 2026 01:10:16 GMT
+
+Number of Pages: 34
+
+Markdown Content:
+# Highlights 
+
+## Certificates without Electrons? Theory and Evidence on Impacts from AI-Driven Power Demand 
+
+Dana Golden, Aruna Balasubramanian, Niranjan Balasubramanian 
+
+• First causal estimates of AI model releases on U.S. power grid stability using staggered difference-in-differences 
+
+• AI activity degrades power quality equivalent to 0.5–1 additional outages per year and increases fossil fuel demand by hundreds of GWh 
+
+• Wholesale electricity prices increase up to 25% in treated PJM zones during AI model activity periods 
+
+• On-site colocated generation and distributed edge inference substantially mitigate grid impacts 
+
+> arXiv:2606.00811v1 [econ.EM] 30 May 2026
+
+# Certificates without Electrons? Theory and Evidence on Impacts from AI-Driven Power Demand 
+
+## Dana Golden a,∗, Aruna Balasubramanian b and Niranjan Balasubramanian b
+
+> a
+
+Department of Economics, Stony Brook University, Stony Brook, 11794, New York, USA 
+
+> b
+
+Department of Computer Science, Stony Brook University, Stony Brook, 11794, New York, USA 
+
+A R T I C L E I N F O 
+
+Keywords :Artificial intelligence Power grids Electricity markets Reliability Power quality Econometrics Difference-in-differences 
+
+Abstract 
+
+Data centers now account for 4.4% of United States electricity demand, yet the grid-level effectiveness of the renewable energy certificates (RECs) and power purchase agreements (PPAs) hyperscalers use to claim carbon neutrality remains unclear. We develop a game-theoretic model in which a data center operator chooses among RECs, PPAs, and behind-the-meter colocation while generators make entry decisions under endogenous financing costs. The model identifies a timing wedge—the mismatch between consumption and credited renewable generation—as a central mechanism through which AI demand degrades reliability, raises prices, and increases emissions even when RECs cover 100% of annual consumption. Colocation with storage addresses this wedge directly and induces the greatest renewable entry by eliminating generator revenue risk. We test these predictions by exploiting the staggered release of large language models as a natural experiment, using difference-in-differences on a novel dataset linking AI activity to local grid outcomes. AI demand significantly increases fossil generation, wholesale prices (up to 25% in treated PJM zones), and outage frequency (0.5–1 additional outages per year) near data centers, with impacts scaling in model size. Data centers with on-site generation exhibit a sign reversal in power-quality effects, consistent with the model’s prediction that behind-the-meter capacity absorbs demand spikes. Counterfactual analyses show that edge inference, spatial reallocation, and colocated storage each substantially mitigate grid impacts, while REC-only strategies do not. Together, our results demonstrate that the externalities of AI to the grid are tightly coupled to procurement design and the spatial organization of data center infrastructure. 
+
+## 1. Introduction 
+
+Over the past six years, data centers have expanded from consuming 1.9% to 4.4% of total U.S. electricity demand (Figure 1, DOE). This rapid growth—driven largely by artificial intelligence—follows two decades of flat electricity consumption and coincides with nationwide efforts to electrify transport and heating. The combination poses a challenge: grid infrastructure was planned for stable demand, not simultaneous load growth from multiple sectors. Recent anecdotal evidence points to data centers reducing local power quality and raising prices Nicoletti, Malik and Tartar (2024a), yet systematic empirical evidence on these grid-level impacts remains scarce. Existing work does not provide causal estimates of how AI deployments affect power systems at the grid level .Techno-economic assessments from international organizations broadly characterize rising AI workloads in the data center market IEA (2024); EPRI (2024). Micro-level studies examine energy performance of AI accelerators and identify workload management opportunities Shankar and Reuther (2022); Patel, Choukse, Zhang, Goiri, Warrier, Mahalingam and Bianchini (2024). A large computer science literature quantifies the compute, energy, and environ-mental costs of model development and deployment Strubell, Ganesh and McCallum (2019); Schwartz, Dodge, Smith and Etzioni (2020); Wu, Raghavendra, Gupta, Acun, Ardalani, Maeng, Chang, Aga, Huang and Bai (2022); Berthelot, Caron, Jay and Lefèvre (2024); Morrison, Na, Fernandez, Dettmers, Strubell and Dodge (2025). These provide a foundation for understanding datacenter-level dynamics, but do not address the externalities experienced by other grid users—impacts on power quality, prices, and reliability that matter for energy security. Quantifying and understanding these power grid level impacts is critical from the perspectives of energy reliability and security. In this paper, we ask seek to answer four specific questions: 1) What are the effects of AI model releases on local power quality and power frequency? 2) How do AI training and inference affect electricity consumption 
+
+> ∗
+
+Corresponding author 
+
+dana.golden@stonybrook.edu (D. Golden); arunab@cs.stonybrook.edu (A. Balasubramanian); 
+
+niranjan@cs.stonybrook.edu (N. Balasubramanian) 
+
+> ORCID
+
+(s): 
+
+First Author et al.: Preprint submitted to Elsevier Page 1 of 32 Certificates without Electrons  
+
+> Figure 1: Projected data center growth over time. Source: DOE.
+
+around data centers owned by model developers? 3) How do these impacts translate into price effects in the wholesale and retail markets? Additional demand will likely increase prices, but understanding the magnitude of these price increases is important to determining the severity of the issue. 4) How will these impacts be different based on counterfactual scenarios articulating different technical evolutions of AI computing at scale? These scenarios include a shift away from cloud-based inference to edge-based computing, a geographic realignment of data centers away from population clusters, an evolution towards primarily inference-based or primarily training-based workloads, and a significant improvement in overall energy efficiency. One way to answer the above questions is to extrapolate from energy usage measurements (micro measures) within a datacenter to system-level (macro measures) impacts on the grid. This is however, is near infeasible because it requires a great deal of specific internal information that isolates what is run within the datacenter and when. While this data with level of detail is not available (for proprietary and other practical reasons), there are data sources that provide high-level observational data about various aspects of power consumption and quality at the grid-level over the time periods when models were trained and released. How can we answer specific questions about the impact of AI models with this high-level observational data alone? 
+
+We can draw upon econometric approaches for addressing this problem. In particular, we focus on the Difference-in-Differences (DiD) models which allows us to estimate the causal effects of AI model deployments on power systems, even when some contributing factors are unobservable. By comparing areas around data centers running AI models against control areas, and partitioning observations into pre- and post-release periods, we isolate AI-specific impacts while controlling for temporal and geographic factors. There are multiple technical challenges in applying this standard DiD approach in our setting: (i) There is a lack of specific information about when and where models are trained and released. Further model releases can be staggered, affecting the validity of the standard model which only uses one timepoint. (ii) The DiD method at its core relies on the parallel trends assumption i.e. we would know what would happen if the AI model were not run; in other words the estimates are valid only if we have a fairly accurate estimate of the trend of the variable of interest over time. (iii) There could be other confounding factors contributing to change in the variable of interest (e.g. extreme weather events coinciding with model release times could also cause increased power demand). (iv) No one clean dataset exists including all data useful for analysis. Often data are at different scales, lack linking tables, or require significant   
+
+> First Author et al.: Preprint submitted to Elsevier Page 2 of 32 Certificates without Electrons
+
+processing prior to use for analysis. In some cases, this requires significant efforts for manual mapping, combination, and labeling. Our solution methodology addresses the above challenges: 
+
+1) Addressing Inexact Information and Staggered Releases We use a Staggered DiD approach with multiple horizons, which has been used to overcome similar challenges in other applications Cengiz, Dube, Lindner and Zipperer (2019); Deshpande and Li (2019). Staggered DiD with multiple horizons extends the standard two-period (pre/post), two-group setup to settings where treatment activates for different units at different times, leveraging this variation in rollout timing to assess different potential points of impact—analogous to how a staged feature rollout lets you compare early adopters against users still in the control group at each point in time. For the question on fossil fuel demand effects, we address confounds such as alternative fuel prices or generator efficiency issues using a two stage regression, where we first factor out the impact of these confounds, and explain the remaining demand using a second stage staggered DiD. Similarly, for estimating price effects, we need to isolate effects from other sources of power demand that can cause price changes. We handle confounds such as weather-driven and industry production driven shifts in demand (and thus price) via a two-stage regression. 
+
+2) Addressing validity of the DiD method and other confounds We conduct a wide-array of statistical robustness checks supported by integration of large amounts of data from a diverse array of sources. We run statistical tests to show that we cannot reject the null hypothesis of parallel trends. We also run placebo tests with random treatment dates and randomized locations to show that our treatment effects are not the result of randomness, and we vary treatment definitions geographically and temporally. We use time series testing for anomaly detection and structural breaks to show that the differences we find in our regressions show up in model free analysis. Together, these robustness checks provide evidence of an experiment that is valid across all relevant dimensions. 
+
+3) Addressing data disparity and relevance issues Training dates and facilities are generally unobserved, and for inference—which occurs continuously—these dates are not well-defined. We therefore rely primarily on model release dates. To strengthen identification, we supplement this with training locations, training dates, and API release dates gathered from press releases and news articles. We obtain verified training information for four models and confirmed API release dates for over half of the foundational models in our sample. We construct estimates using this most robust subset, then expand our model definitions to exploit exogenous variation for counterfactual analysis. Throughout, we use the most conservative feasible treated subset for each analysis. To construct suitable control groups, we employ propensity score matching as detailed in Appendix Subsection A.9, excluding observations without comparable pre-treatment trends. We apply this methodology using publicly available data and proprietary on datacenter locations, power grid conditions, AI model release dates, and controls including weather and market prices. Our data creation process is described in detail in Section 5. While all data pre-exist our analysis, the combination of the data creates a novel dataset that represents a significant contribution. Because the data are from government agencies, ISOs, or proprietary datasets, the data are highly trustworthy. We perform data validation to verify this. We estimate DiD models for outcomes measuring both power quality and electricity demand. Our findings presented in Section 6 speak to the large magnitude of the impacts of AI data centers and the increasing effects of training ever-larger models over time. We find that large model releases (including the likes of GPT-3, Claude 2.1, Llama 2 documented in subsection A.5) cause significant power quality deterioration in nearby areas – well above half the standard deviation of U.S. power-quality distributions – and increase fossil fuel consumption on the order of terawatt-hours— equivalent to around 45,000 households annual consumption – in both training and inference phases. We also find wholesale electricity prices increase in treated PJM zones with increases of 25% during treatment in the American Electric Power (AEP) PJM Zone. Using these estimates, we show in Subsection 8 how altering the trajectory of AI along disparate dimensions impacts the grid. We are able to provide evidence for the separate impacts of training and inference, the effects of a shift to edge computing or more concentrated training loads, and how differential efficiency improvements impact AI’s effects on power usage. We also show compelling evidence that significantly increasing on-site power generation provides a promising avenue for future reductions in grid impact. This work makes three contributions. First, we develop a methodology for assessing macro-level grid impacts of AI models using publicly available data, even when fine-grained operational information is unavailable. Second, we provide the first causal estimates of these impacts for major frontier models, complementing the emerging literature on environmental and system-level effects of AI data centers Murino, Monaco, Nielsen, Liu, Esposito and Scognamiglio (2023); Guidi, Dominici, Gilmour, Butler, Bell, Delaney and Bargagli-Stoffi (2024); Thangam,   
+
+> First Author et al.: Preprint submitted to Elsevier Page 3 of 32 Certificates without Electrons
+
+Muniraju, Ramesh, Narasimhaiah, Khan, Booshan, Booshan, Manickam and Ganesh (2024). Finally, we provide policy-relevant counterfactual estimates for the impacts of technical evolution of AI on the grid. 
+
+## 2. Related Work 
+
+This paper contributes to four interrelated literatures. First, techno-economic assessments document the scale of data center electricity demand: Lawrence Berkeley estimates U.S. data center consumption could reach 6.7–12% of national electricity by 2028 Shehabi, Smith, Sartor, Brown, Herrlin, Koomey, Masanet, Horner, Azevedo and Lintner (2024), while utility five-year peak demand forecasts jumped from 38 GW to 128 GW between 2023 and 2024, with approximately 90 GW attributable to data centers Goggin and Gramlich (2025). Recent simulation studies examine AI-driven load growth implications for grid planning Lin, Wijayawardana, Rao, Nguyen, Gnibga and Chien (2024a); Chien, Lin, Nguyen, Rao, Sharma and Wijayawardana (2023), but these assessments characterize aggregate trends rather than isolating causal mechanisms. Second, computer science research quantifies AI’s computational and environmental costs, from training emissions Strubell et al. (2019); Schwartz et al. (2020) to debates over efficiency improvements Patterson, Gonzalez, Le, Liang, Munguia, Rothchild, So, Texier and Dean (2021); Patterson, Gonzalez, Hoelzle, Le, Liang, Munguia, Rothchild, So, Texier and Dean (2022) and inference-time scaling Kim, Shin, Chung and Rhu (2025), including data center carbon emissions Maji, Hanafy, Wu, Irwin, Shenoy and Sitaraman (2025). Related work has developed carbon intensity forecasting methods Maji, Bashir, Irwin, Shenoy and Sitaraman (2022a); Li, Xie, Dou and Guo (2023) and examined power forecasting for grids Lechowicz, Comden and Bernstein (2025); Maji, Sitaraman and Shenoy (2022b), but not in the context of AI workload impacts on market outcomes. Recent empirical projections analyze the tension between AI energy growth and grid decarbonization Maji, Bashir, Irwin, Shenoy and Sitaraman (2024), while others consider grid planning for AI demand Lin, Wijayawardana, Rao, Nguyen, GNIBGA and Chien (2024b), yet the causal effect of AI deployment on wholesale markets remains unstudied. Third, emerging evidence points to grid-level externalities from data center concentration. Sensor data reveals spatial correlation between data center proximity and power quality degradation Nicoletti, Malik and Tartar (2024b), PJM capacity prices increased from $30 to $270/MW-day between 2023–2024 amid data center load growth Luby, Sergi, Azevedo, Davis and Bergman (2025), and transmission costs are increasingly socialized across ratepayers Jacobs (2025). The systems literature has examined carbon-aware geographical load shifting using locational marginal prices Lindberg, Abdennadher, Lesieutre and Roald (2021) and data center demand response participation Chen, Zhang, Caramanis and Coskun (2019); Liu, Liu, Low and Wierman (2014); Klingert, Niedermeier, Dupont, Giuliani, Schulze and de Meer (2018). These studies establish correlational patterns or propose optimization frameworks but lack causal identification. Fourth, the econometric literature on electricity markets provides methodological foundations, including difference-in-differences for demand responses Roth, Sant’Anna, Bilinski and Poe (2023) and event studies for policy interventions Pacific Northwest National Laboratory (2022), but has not applied quasi-experimental methods to AI deployment impacts. We address this gap by treating AI model releases as plausibly exogenous demand shocks, using difference-in-differences to estimate causal effects on locational marginal prices and power quality. Unlike prior work building from computational requirements or facility audits, we analyze grid-level impacts using wholesale market data, capturing realized demand effects without requiring proprietary operational information. 
+
+## 3. Problem and Challenges 
+
+Our goal is to investigate three primary effects of AI data centers on power markets. We also conduct counterfactual analyses that could inform policy: assessing different scenarios of parameter size, training versus inference proportions, edge compute preference, relocation to low-population areas etc. 
+
+3.1. Problem introduced by AI workloads 
+
+First, we quantify the effect of frontier AI models on power quality. AI workloads affect power quality through three main mechanisms. First, data centers and AI computing facilities add substantial baseload demand that can strain grid capacity and compromise voltage regulation, especially during peak periods. Second, AI workloads fluctuate rapidly with computational needs, creating unpredictable load variations that challenge stability and frequency regulation.                  
+
+> First Author et al.: Preprint submitted to Elsevier Page 4 of 32 Certificates without Electrons
+> Figure 2: Difference-in-differences estimation. Under the parallel trends assumption, the counterfactual (dashed) projects treatment group outcomes absent intervention. The ATT is identified as the divergence between observed and counterfactual outcomes post-treatment.
+
+Third, the switching power supplies and electronics essential to AI hardware generate harmonic distortion, introducing waveform distortions that spread through distribution networks and degrade power quality. See Figure 6 in Appendix for an illustration of this harmonic distortion. Second, we analyze how training and inference workloads differentially affect local power demand given that training produces sharp, episodic spikes while inference generates steadier ongoing consumption. Third, we estimate how wholesale electricity prices have responded to LLM development. AI workloads affect wholesale electricity prices through the demand channel, with potentially indeterminate long-run retail market impacts. Wholesale prices are determined hourly in day-ahead markets via sealed-bid, uniform-price auctions subject to network constraints. Locational price variation reflects transmission limitations within the network. Increased demand raises wholesale prices by necessitating dispatch of higher-cost marginal generators. The wholesale price increases are passed through to retail consumers with substantial lag. Understanding wholesale demand and price shifts thus provides useful intuition regarding the direction and magnitude of retail price changes. 
+
+3.2. An Econometric Model 
+
+We want to quantify the effects of running AI models on the power grid but we only have overall observational data about power demand, power quality, prices, exogenous controls, locations of data centers, and dates of model activity. We do not have access to data that specifically isolates the effects with respect to running the AI models because these require proprietary knowledge. To address this challenge, we can turn to Difference-in-differences (DiD), a widely-used statistical estimation technique in econometrics for causal inference with observational data. This approach has been used to answer a wide range of empirical economics questions from observational data such as telecom demand from price and quantity variation, Fowlie, Holland and Mansur (2012) evaluate environmental regulation in electricity using emissions and price data, and Card and Krueger (1994) study minimum wage effects via cross-state employment variation. The key idea behind this technique is to estimate treatment effects by comparing the change in outcomes over time for a treated group to the change for a control group, as illustrated in Figure 2. For power quality, as an example, this translates to estimating the change in utility-level power quality within the geographically-defined utility area before and after the release of a major AI model. The treated group in this case would be utility areas containing data centers engaged in model training or inference during the time period of activity, and the control group would be utilities without AI activity in the same time period. The outcome variable, power quality in our example, is modeled as a function of the treatment (i.e. the running of the AI model), and other contributing factors. Formally, we can specify the power quality effect as: 
+
+𝑌 𝑖𝑡 = 𝛼 + 𝛽 (Treatment 𝑖 × Post 𝑡 ) + 𝛾 𝑖 + 𝛿 𝑡 + 𝜀 𝑖𝑡 , (1)   
+
+> First Author et al.: Preprint submitted to Elsevier Page 5 of 32 Certificates without Electrons
+
+where 𝑌 𝑖𝑡 is power quality for utility 𝑖 at time 𝑡 , Treatment 𝑖 indicates proximity to a data center, and Post 𝑡 captures periods after the release of a major AI model. The coefficient of interest, 𝛽 , measures the causal impact of model releases on local power quality. 𝛾 𝑖 captures unobserved factors common across all utilities, 𝛿 𝑡 captures unobserved factors that remain fixed across time, and 𝜀 𝑖𝑡 is an error term that captures random disturbances or shocks. We can learn the co-efficients, given appropriate data about the outcome variables over time — in this case with data about the power-quality values over time across a range of utilities containing AI data centers, and the knowledge of when and where the AI models of interest are run. 
+
+3.3. Technical Challenges and Validating Model Assumptions 
+
+The validity of this basic DiD approach for our problem is affected by the following issues: 1. Lack of specific information about when and where models are trained and released The model as described requires knowing specifics of the training windows, e.g., when training began, and when it was released. It is not always possible to obtain such specific information. 2. Staggered Events The model also assumes a single temporal event of interest to capture pre and post treatment effects. However, models are not always released at a single time point and are often staggered. 3. Parallel Trends Assumption The effects of running a model on an AI data center is estimated by the difference from what would have been in the model were not run on that data center. This assumes that we have a fair estimate of the trend that the variable of interest would have over time but for the training and inference of the AI models. 4. External Confounds The effects we observe and attribute to AI models could be due to other confounds such as random weather events, pre-existing trends in load, or variation in fuel price. 5. Data Engineering Challenge No single clean dataset contains all variables needed for analysis. Data often exist at different scales, lack linking tables, or require substantial preprocessing—sometimes necessitating manual mapping, combination, and labeling. An example is the zonal mapping effort used to assign generators to zones with the zonal map shown in Figure 8 in the Appendix. We address the first two challenges with a stacked modification of the DiD model (subsection 4.1). We address the next two through appropriate statistical tests and robustness checks (subsection 4.5) and the final issue through our data creation (section 5). 
+
+## 4. Methodology 
+
+To address the inexact information about training windows and release times, we estimate dynamic treatment effects at multiple horizons relative to model release dates. This approach, referred to as an event study or stacked difference-in-differences in econometrics, offers three advantages over the standard pre/post comparison discussed earlier: (1) it does not require observing the true training start date, instead using release timing as the anchor; (2) it also provides a direct test of the parallel trends assumption through examination of pre-release coefficients; and (3) it allows the data to reveal the temporal profile of effects rather than imposing an arbitrary discontinuous treatment structure. 
+
+4.1. Stacked DiD with Multiple Horizons 
+
+Formally, we define treatment exposure relative to each model’s release date 𝑟 𝑚 for both training and release: 1) Training windows: The period [𝑟 𝑚 −̄𝜏 train , 𝑟 𝑚 ) preceding release, during which computational resources are devoted to model training. We remain agnostic about the exact training start date; our identifying assumption is that training activity is elevated in the months before release and that any pre-existing differential trends would manifest in the earlier leads. 2) Inference window: The period [𝑟 𝑚 , 𝑟 𝑚 +̄𝜏 infer ] following release, during which the model is deployed for inference via API access or public availability.   
+
+> First Author et al.: Preprint submitted to Elsevier Page 6 of 32 Certificates without Electrons
+
+4.1.1. Stacked Difference-in-Difference 
+
+Model releases occur at different calendar dates, creating a staggered adoption setting. Recent econometric literature has demonstrated that conventional two-way fixed effects (TWFE) estimators as is the case in the estimates from Equation 1. can produce biased estimates under treatment effect heterogeneity Goodman-Bacon (2021); Sun, Munro, Kalashnov, Du and Wager (2021); Callaway and Sant’Anna (2021); Borusyak, Jaravel and Spiess (2024). Treatment effect heterogeneity means the policy works differently for different places or periods, which can distort standard difference-in-differences estimates. The bias arises because TWFE implicitly uses already-treated units as controls for later-treated units, and differences in treatment effects across cohorts or over time contaminate the estimated average. In our setting, consider regions as units and AI model releases as treatments inducing increased data center power demand. A "cohort" comprises regions whose data centers began significant AI workloads at the same time. Suppose Region A adopted AI workloads in 2022 while Region B adopted in 2023. When estimating treatment effects for Region B, TWFE implicitly uses Region A as a control—but Region A in 2023 is not untreated; its data centers have been running AI workloads for a year. If treatment effects evolve over time (e.g., power demand grows as AI infrastructure scales), comparing Region B’s outcomes against Region A’s already-treated outcomes introduces bias. Staggered design provides heterogeneity-robust estimators that solve for this exact issue. To address this, we use a stacked DiD model Cengiz et al. (2019); Deshpande and Li (2019), where we construct a stacked dataset where each model release defines a separate “sub-experiment.” The idea here is to construct, for each treatment cohort, a separate sub-experiment using only units that are genuinely untreated at the time of that cohort’s adoption. By stacking these sub-experiments—each with its own clean control group of not-yet-treated regions—we ensure that no already-treated unit ever serves as a control, thereby eliminating the bias that arises when treatment effects are heterogeneous across cohorts or time. Formally, for each release event 𝑚 , we create a dataset containing: (i) Treated units – Regions linked to the releasing company’s AI data centers. (ii) Control units – Regions with no AI data center exposure during the event window, or regions whose treatment occurs sufficiently far from event 𝑚 that they serve as clean controls. 
+
+• Time window: A symmetric window around 𝑟 𝑚 , e.g., [𝑟 𝑚 − 𝐾, 𝑟 𝑚 + 𝐾 ] for some horizon 𝐾 .Following we then stack these sub-experiments and estimate: 
+
+𝑌 𝑖,𝑡,𝑚 =
+
+> 𝐾
+
+∑
+
+> 𝑘 =− 𝐾
+
+𝛽 𝑘 ⋅ 𝐷 𝑘 𝑢𝑡 + 𝛿 𝑡 + 𝐗 ′
+
+> 𝑢𝑡
+
+𝜃 + 𝜀 𝑢𝑡 (2) where 𝛾 𝑢 are unit-by-event fixed effects, 𝛿 𝑢 are time-by-event fixed effects, 𝐗 ′
+
+> 𝑢𝑡
+
+𝜃 represents controls, and the coefficients 
+
+{𝛽 𝑘 } trace out the dynamic treatment effect at each event-time horizon 𝑘 . Standard errors are clustered at the unit level to account for correlation across events within the same region. 
+
+4.2. Estimating Power Quality 
+
+Our power quality analysis estimates the following stacked DiD specification at the utility-month level: PowerQuality 𝑢𝑡 =
+
+> 𝐾
+
+∑
+
+> 𝑘 =− 𝐾
+
+𝛽 𝑃 𝑄 𝑘 ⋅ 𝐷 𝑘 𝑢𝑡 + 𝛾 𝑢 + 𝛿 𝑡 + 𝐗 ′
+
+> 𝑢𝑡
+
+𝜃 + 𝜀 𝑢𝑡 (3) where: 
+
+• PowerQuality 𝑢𝑡 is the Whisker Labs Consumer Power Quality Index for utility 𝑢 in month 𝑡 ;
+
+• 𝐷 𝑘 𝑢𝑡 = 𝟏 [event-time = 𝑘 ] × Treated 𝑢 indicates that utility 𝑢 is 𝑘 periods from the release date of a model linked to an AI data center in its service territory; 
+
+• 𝛾 𝑢 are utility fixed effects absorbing time-invariant characteristics; 
+
+• 𝛿 𝑡 are calendar month fixed effects absorbing common temporal shocks; 
+
+• 𝐗 𝑢𝑡 includes time-varying controls (weather, regional load).   
+
+> First Author et al.: Preprint submitted to Elsevier Page 7 of 32 Certificates without Electrons
+
+We estimate an analogous specification for total harmonic distortion (THD): THD 𝑢𝑡 =
+
+> 𝐾
+
+∑
+
+> 𝑘 =− 𝐾
+
+𝛽 𝑇 𝐻𝐷 𝑘 ⋅ 𝐷 𝑘 𝑢𝑡 + 𝛾 𝑢 + 𝛿 𝑡 + 𝐗 ′
+
+> 𝑢𝑡
+
+𝜃 + 𝜀 𝑢𝑡 (4) 
+
+4.3. Estimating Fossil Fuel Demand 
+
+Power demand analysis proceeds at the generator-month level, exploiting finer geographic resolution. We maintain the stacked DiD structure while incorporating instrumental variables to address the price endogeneity concern. Price endogeneity arises because electricity prices and demand are simultaneously determined—high demand pushes prices up, while high prices suppress demand—making it impossible to identify the causal effect of price on consumption from their correlation alone. Two-stage least squares resolves this by isolating variation in price that is plausibly exogenous: in the first stage, we predict prices using an instrument that affects prices but has no direct effect on demand; in the second stage, we regress demand on these predicted prices rather than observed prices, recovering an unbiased estimate of the price elasticity. 
+
+First Stage. We instrument for electricity prices using supply-side cost shifters: 
+
+𝑝 𝑖𝑡 = 𝜋 0 + 𝜋 1HeatRate 𝑖𝑡 + 𝜋 2GasPrice 𝑡 + 𝛾 𝑖 + 𝛿 𝑡 + 𝐗 ′
+
+> 𝑖𝑡
+
+𝜋 3 + 𝜈 𝑖𝑡 (5) where HeatRate 𝑖𝑡 captures the thermal efficiency of generator 𝑖 and GasPrice 𝑡 is the contemporaneous natural gas spot price. These instruments satisfy relevance (they are primary determinants of marginal generation costs) and exclusion (they affect demand only through their impact on prices, not through direct effects on AI workload scheduling or other consumption decisions). 
+
+Second Stage. We estimate the stacked DiD specification using predicted prices: FossilDemand 𝑖𝑡 =
+
+> 𝐾
+
+∑
+
+> 𝑘 =− 𝐾
+
+𝛽 𝐹 𝐷 𝑘 ⋅ 𝐷 𝑘 𝑖𝑡 + 𝜂̂ 𝑝 𝑖𝑡 + 𝛾 𝑖 + 𝛿 𝑡 + 𝐗 ′
+
+> 𝑖𝑡
+
+𝜃 + 𝜀 𝑖𝑡 (6) where 𝐷 𝑘 𝑖𝑡 indicates event-time relative to model releases linked to AI data centers in generator 𝑖 ’s service area. The coefficients {𝛽 𝐹 𝐷 𝑘 } capture the dynamic effect of AI activity on fossil fuel demand. Negative values of 𝑘 
+
+(pre-release) correspond to the training phase; positive values correspond to inference. The price coefficient 𝜂 controls for supply-driven price movements and provides a scaling factor for welfare calculations. 
+
+4.4. Estimating Price Effects 
+
+Beyond quantity effects, we estimate how AI-driven demand increases affect electricity prices. The key economic insight is that price impacts depend on supply flexibility. In other words, when generators can easily expand output, increases in demand (e.g. AI-driven demand) can be easily absorbed with minimal increases in price. When the demand suddenly spikes (i.e. a demand shock), the prices will increase sharply as well. This is characterized using supply elasticity 𝜀 𝑠 —the percentage change in quantity supplied per one percent price change—quantifies this responsiveness. Our estimation proceeds in two steps. First, we use our IV estimates to quantify how AI activity shifts demand. Simply put, the average change in total fossil demand from AI demand is the DiD coefficient times the treatment indicator: 
+
+Δ̂ FossilDemand 𝑖𝑡 =̂ 𝛽 ⋅ ΔAI 𝑖𝑡 (7) Second, we estimate a linear supply relationship using demand controls as instruments and supply shifters as controls. While power markets involve optimal dispatch, the fossil-fuel portion of PJM’s marginal cost curve is approximately linear over the operating range we study PJM Interconnection, L.L.C. (2025). Let 𝑝 𝑖 denote the market-clearing price in market 𝑖 , and let 𝑄 𝑠 denote the supplied quantity. We model supply locally as linear in price, 𝑄 𝑠 = 𝑎 + 𝑏 ⋅ 𝑝 𝑖 , where the slope parameter 𝑏 captures the responsiveness of supplied quantity to price changes (i.e., how flexibly supply can   
+
+> First Author et al.: Preprint submitted to Elsevier Page 8 of 32 Certificates without Electrons
+
+adjust to incentives). Rearranging, the implied price response to a demand shift Δ𝐴𝐼 𝑖𝑡 is given by Δ𝑝 =̂ 𝛽 ⋅ Δ𝐴𝐼 𝑖𝑡  
+
+> 𝑏
+
+.Expressed in percentage terms, the price impact depends on the flexibility of supply with respect to price: 
+
+%Δ 𝑝 = %Δ 𝑄 𝑑 
+
+𝜀 𝑠 , (8) where 𝜀 𝑠 denotes the percentage change in supplied quantity per percentage change in price. We estimate 𝜀 𝑠 via IV regression of quantity on price in log-log form, using demand-side instruments (weather-driven load variation and industrial production indices). We focus on the PJM operator at the zonal level for this analysis. We restrict to a single ISO (operator) because differing market structures make prices incomparable across ISOs, and choose PJM because it is the largest (65 million people, 13 states), includes key data center states (Virginia, Pennsylvania), and provides 20 diverse pricing zones. Because observed training locations are outside PJM, this analysis uses the broader model set only. 
+
+4.5. Validating Assumptions and Robustness 
+
+We implement several diagnostic and robustness tests to assess the credibility of our estimates. 
+
+4.5.1. Sample Selection 
+
+Our empirical strategy balances internal validity with external relevance. Our main sample comprises four models for which we observe exact training and inference dates as well as training location, and we employ propensity score matching (described in the appendix) to support the parallel trends assumption. We then report results for progressively larger samples of models and data centers, accepting weaker identification in exchange for broader coverage. This approach enables precise, well-identified estimates from our core sample while exploring heterogeneity and counterfactuals in extended samples, with appropriate caveats regarding the latter. 
+
+4.5.2. Pre-Trends and Parallel Trends Testing 
+
+Our primary test of the identifying assumption examines whether pre-release coefficients {𝛽 𝑘 ∶ 𝑘 < 0} are jointly indistinguishable from zero. We report: 
+
+• Point estimates and confidence intervals for each lead coefficient. 
+
+• An F-test of the joint null hypothesis 𝐻 0 ∶ 𝛽 −𝐾 = 𝛽 −𝐾 +1 = ⋯ = 𝛽 −1 = 0 .Significant pre-trends would undermine the causal interpretation of post-release estimates. 
+
+4.5.3. Placebo Tests with Randomized Treatment Assignment 
+
+To verify that our estimates reflect genuine treatment effects rather than spurious correlations or specification artifacts, we conduct placebo tests with randomly assigned treatment: 1. Random treatment timing: We hold the set of treated units fixed but randomly reassign release dates drawn from the empirical distribution of actual release dates. Under the null of no effect, placebo estimates should center on zero. 2. Random treatment assignment: We hold release timing fixed but randomly reassign treatment status across units. This tests whether results are driven by the specific geographic pattern of AI data center locations. 
+
+4.5.4. Sensitivity to Treatment Definition 
+
+Given uncertainty in linking models to specific training locations, we assess robustness to alternative treatment definitions in our less conservative analysis: 1. Intensive margin: Weight treatment by the number or capacity of AI data centers in the region, rather than using a binary indicator. 2. Dropping ambiguous cases: Exclude model releases where the company operates data centers in multiple balancing authorities, restricting to cases with cleaner geographic attribution. 3. Verified timing subset: Estimate separately on the subset of models with externally verified training windows.   
+
+> First Author et al.: Preprint submitted to Elsevier Page 9 of 32 Certificates without Electrons
+
+4. Geographic Resolution and Robustness. The generator-level data permit more granular treatment definitions than the utility-level power quality data. We exploit this flexibility by estimating specifications under alternative treatment definitions in terms of radius. 
+
+4.5.5. Heterogeneity by Model Characteristics 
+
+We examine whether treatment effects vary with observable model characteristics: 
+
+• Model scale (parameter count, reported compute). 
+
+• Company (to assess whether effects are driven by specific firms). 
+
+• Release year (to assess whether effects change over time). Heterogeneity analysis both informs mechanisms and serves as a specification check: if effects are concentrated among larger models or models from companies with substantial AI infrastructure, this lends credibility to the AI-driven interpretation. 
+
+4.6. Counterfactual Analysis 
+
+We conduct three primary sets of counterfactual exercises to investigate how alternative evolutionary paths for AI compute might affect grid-level outcomes. 
+
+Model Scaling. First, we examine the grid implications of continued growth in AI model size. Using the Epoch database to characterize trends in model parameters, we provide descriptive analysis of how increasing model scale translates into grid-level impacts. We then relate our estimated power demand coefficients to power quality coefficients, enabling analysis of how changes in training and inference energy efficiency propagate to power quality outcomes. 
+
+Geographic Redistribution. Second, we leverage the geographic locations of data centers in conjunction with our econometric estimates to conduct counterfactuals focused on spatial reallocation of AI compute. We consider two scenarios. In the first, we simulate a shift from cloud-based to edge-based inference—reallocating inference demand from concentrated hyperscaler facilities to smaller data centers distributed closer to population centers. We implement this by redistributing our estimated inference demand impacts across data centers not currently classified as AI-focused. In the second scenario, we simulate relocating training workloads from population-dense regions on the East Coast to energy-abundant regions in the center of the country. For both geographic counterfactuals, we provide sensitivity analyses in the appendix to account for potential increases in communication costs and efficiency losses. 
+
+Colocated on-site Power Generation. Finally, we exploit a new feature in the Aterio data, namely a flag on data centers with on-site power generation. We re-estimate both our main models separately for generators with and generators without onsite power generation. We then report the impacts to power demand and power quality of either removing all onsite generation or having onsite generation for all data centers. Together, these counterfactuals illuminate both how the grid might be affected by different trajectories for AI compute and which levers—geographic placement, workload composition, efficiency improvements—may be available to computer scientists and policymakers seeking to mitigate grid impacts. 
+
+## 5. Data 
+
+Table 1 summarizes the datasets we use to address each of our three research questions, distinguishing between variables of interest and the control variables described above. For variables of interest, we rely on Aterio , which provides comprehensive information on the location and history of data centers. The Aterio dataset documents when and where centers have been established, expanded, or retired, along with details on ownership and operational capacity (in MW). This allows us to identify data centers owned by specific hyperscalers and to quantify their scale over time. We then combine these data with external sources that provide the necessary controls. The data centers we use include ones that we could verifiably trace as having been the source of training of well-known large scale models such as GPT-3, PaLM, and Llama 2, among others. 
+
+5.1. Data and Empirical Specification 
+
+We analyze four primary outcomes. The Consumer Power Quality Index (CPQI) from Whisker Labs (2024) provides a composite measure of consumer-facing reliability events (surges, sags, brownouts, interruptions), summa-rizing frequency and severity of power deviations at the household level. Total Harmonic Distortion (THD) data   
+
+> First Author et al.: Preprint submitted to Elsevier Page 10 of 32
+
+Certificates without Electrons 
+
+Table 1 
+
+Data sources for each analysis question.                              
+
+> Source Content Use in Analysis # Instances Q1: Difference-in-Differences (Power Quality)
+> Aterio Data center locations, history, ownership, capacity (MW) Define treatment regions; link AI model releases 3862 data centers Whisker Labs CPQI (consumer reliability); THD (waveform distortion) Outcome variables for DiD regressions 2684 utility-months EIA Retail service territory maps Define treatment/control boundaries 72 utilities
+> Q2: Instrumental Variables (Fossil Demand)
+> EPA CAMPD Hourly generator demand; heat rates Fossil demand outcome; heat rate as instrument 22 million generator-hours S&P Capital IQ Natural gas prices Instrument and fuel-cost control 12 Million location-day prices Aterio Data center proximity to generators Treatment near releasing-company centers 3862 data centers Meteostat Temperature, precipitation Demand and renewable controls 22 million location-hours ISOs Zonal wholesale prices Market controls 54 zones
+> Q3: Counterfactual Analyses (Technical Evolution of AI)
+> Whisker Labs CPQI; THD Baseline power quality impacts for scaling projections Epoch Model parameters, FLOPs, release dates Scaling regressions; efficiency counterfactuals 75 models
+
+from the same source offer a technical measure of waveform distortion, quantifying voltage deviation from a clean 60-Hz sine wave; elevated THD indicates grid stress, reduces motor efficiency, and shortens equipment lifespan (Figure 6). Since THD data are more recent than CPQI, fewer model releases are available for THD analysis. We incorporate 
+
+generator demand from EPA’s CAMPD database, providing hourly plant-level demand spanning 2021–2023. Finally, we combine wholesale zonal price data from Independent System Operators (ISOs) to assess AI impacts on prices. Our power quality regressions use a parsimonious specification with time and geographic fixed effects. Generator demand regressions employ a richer specification: we instrument for endogeneity using generator heat rates and natural gas prices (S&P Capital IQ Global) in a two-stage least squares framework, and control for weather conditions (Meteostat) to capture demand and renewable variability. EIA retail service territory files reconcile generator-, zonal-, and retail-level observations. 
+
+5.2. Combining Data Sources 
+
+To integrate datasets, we harmonize spatial and temporal units across sources. Figure 11 demonstrates the integration at each step for our modeling purposes. Data center locations from Aterio are mapped to ISO zones, EIA territories, and counties, enabling linkage with Whisker Labs reliability indexes (CPQI and THD) and CAMPD generator demand. We are the first study to integrate Aterio’s new field indicating which data centers are utilized in processing AI workloads. CPQI has 2,683 observations (mean 0.52, s.d. 0.42), while THD is more dispersed (mean 1.81, s.d. 6.77). CAMPD generator demand averages 218 MW (s.d. 158), and wholesale prices average $51/MWh (s.d. 148). Weather data capture local conditions (mean temperature 17 °C, precipitation 0.12 mm), and time series are aligned at hourly or monthly resolution. External controls—natural gas prices, weather, and ISO market data—are merged by geography and time, yielding a unified panel suitable for difference-in-differences and IV regressions. Our demand model focuses on deregulated markets in the Eastern Interconnection and ERCOT, where data on zones and prices are readily available, while our power quality model draws on Whisker Labs data from 72 retail utilities nationwide (monthly, 2022–2025). The demand regressions use hourly data for several thousand generators (2021–2023). We concentrate on hyperscaler AI companies—including Meta, Microsoft, Amazon, and Google—with Anthropic linked to Google due to its cloud partnership. Appendix materials include maps, sample descriptions, and data tables. In order to determine which data centers should be considered AI data centers and should be included in our sample, we perform a linkage procedure described in appendix Subsection A.7. 
+
+First Author et al.: Preprint submitted to Elsevier Page 11 of 32 Certificates without Electrons 
+
+Table 2 
+
+Summary of Estimation Results Across Specifications Analysis Outcome Coefficient Coefficient (Effect) Interpretation 
+
+Panel A: Utility-Level Power Quality (Two-Way FE) 
+
+Strict DiD CPQI 0.3795*** Corresponds to moving from typical U.S. power quality to the bottom quartile; increases annual outages for the average customer from 1 to 
+
+∼1.5–2. Strict DiD THD ( >0.8) 0.0625*** Causes more outages and equipment failure. 
+
+Panel B: Generator-Level Demand (Stacked DiD) 
+
+IV 2SLS Pre-treatment avg +6.33*** 
+
+> 500 additional GWh; ∼47,000 household-years IV 2SLS Post-treatment avg +5.20*** 
+
+Panel C: PJM AI Price Analysis 
+
+ComEd Supply Elasticity 31.64 Higher supply elasticity in ComEd zone corresponds to larger AI-induced price impacts; AEP’s lower elasticity yields substantially smaller price effects ComEd AI Price Impact 25.39 AEP Supply Elasticity 8.13 AEP AI Price Impact 1.89 
+
+Panel D: Power Quality by On-Site Generation Status 
+
+With on-site CPQI −0 .122 *** On-site generation mitigates grid stress from AI load; utilities without on-site experience reliability deterioration while those with on-site see improvements Without on-site CPQI +0.228*** Difference CPQI −0 .350 ***        
+
+> Notes: *** 𝑝 < 0.001 , ** 𝑝 < 0.05 . Panel A: Utility and time fixed effects with cluster-robust standard errors; treatment defined as presence of AI-affiliated data center in utility service territory. Panel B: 35.6 million observations from 19 treatment events; standard errors clustered by unit-event; IV instruments: natural gas price ×zone-average heat rate. OLS = Ordinary Least Squares; IV 2SLS= Instrumental Variables Two Stage Least Squares; CPQI = Consumer Power Quality Index; THD = Total Harmonic Distortion.
+
+## 6. Results 
+
+We reports results using our stacked DiD estimator (subsection 4.1) which is designed to handle staggered AI model releases. For all power quality and fossil demand effects, we first construct cohort-specific datasets following Callaway and Sant’Anna (2021), for each of the treatment events corresponding to major AI model releases through 2023 (subsection A.5). Table 2 provides the full set of results from our main regressions including analysis of the impacts of on-site colocated generation for our counterfactuals. 
+
+6.1. Power Quality Effects: Utility-Level Strict DiD 
+
+We report the power quality effects of AI data centers in seventy one retail electric utility service territories estimated from power quality observations over 1136 utility-months. We use Consumer Power Quality Index (CPQI) and Total Harmonic Distortion (THD) as outcome variables in our stacked DiD models ( Equation 3). Panel A in Table 2 reports results from the utility-level strict DiD specification. We use strict here to distinguish that due to the sample size, we prefer the traditional DiD as our main specification rather than the stacked alternative. The estimated CPQI coefficient speaks to the reliability of the power supply to the consumers. The CPQI coefficient of 0.3795 indicates a power quality deterioration level that corresponds to moving from a typical U.S. power area toward the bottom quartile of power quality—roughly the difference between ∼ 1 outage/year and ∼ 1.5–2 outages/year for the average customer . Other reliability events such as brownouts and surges are predicted to increase by 1-2 per year. Importantly, power surges are a known ignition source for electrical fires, contributing to the approximately 51,000 annual residential electrical fires in the U.S., with electrical arcing accounting for 74% of ignition sources U.S. Fire Administration (2019). The post-treatment coefficient of 0.0625 for THD indicates that utility territories containing AI data centers experienced a 0.0625 percentage point increase in readings above the 0.8 distortion threshold following AI model 
+
+First Author et al.: Preprint submitted to Elsevier Page 12 of 32 Certificates without Electrons 
+
+releases. While a 0.0625 percentage point increase may appear small in isolation, it is still problematic as sustained exposure to power distortions compounds to over the multi-year lifespans of household appliances, accelerating degradation of refrigerators, air conditioners, and other motor-driven equipment National Electrical Manufacturers Association (2016); Laughner, Heckman, Manzur and Sloop (2024). 
+
+6.2. Fossil Fuel Demand Effects: Stacked DiD 
+
+Fossil fuel demand effects are estimated using demand data from a total of 35.6 million generator-hour obser-vations 1, which includes 900,956 treated observations from generators located within 20 miles of AI-affiliated data centers and the other 34.7 million from other generators as control observations. Average fossil fuel demand effects are shown in the IV 2SLS rows in Panel B of Table 2. 2 Figure 3 shows the coefficients spread two months before (training) and after (inference) model release. The training phase fossil fuel power demand corresponds to the 𝑡 = −2 pre-treatment coefficient of 6.33 MWh, which we find to also be statistically significant result. Note that this is the hourly demand at a single generator. When the aggregate impact is calculated, they represent over 500 additional GWh added nearby to a data center over the inference period in some cases. The additional power is roughly equivalent to that of 47,000 household-years in the United States . For inference, the 𝑡 = +2 coefficient shows a significant demand increase of 5.20 MWh, representing the demand shift at generators near data centers two months after AI model release, isolated from supply-side price variation through our instrumentation strategy. 
+
+6.3. Price Impacts 
+
+We estimate wholesale electricity price effects by combining our demand estimates with supply curve parameters. This approach, described in Section 4.4, recognizes that our IV strategy identifies demand shifts but does not directly estimate equilibrium price effects. 3 The price impact of AI-induced demand depends on the slope of the supply curve 4:inelastic supply, where quantity supplied responds weakly to price changes, implies large price effects, while elastic supply implies small effects. We use supply chain elasticities for PJM obtained from our supply-side instrumental variables regression (see Figure 12 in Appendix A.6 for a map). Figure 4 showing price increase estimates by zone. On average AI training leads to substantial increases in wholesale prices in PJM with the highest increase surpassing 25% in the American Electric Power (AEP) Zone .We also estimate the expected price rise for retail customers, using estimates from the literature as documented in Appendix Subsection A.8. While we are not able to provide definite evidence of the impacts on retail price pass through, it should be noted that retail electricity prices have increased overall at a rate surpassing inflation since 2020 Nicoletti et al. (2024a); Horsley (2025); Southwest Power Pool, Inc. Market Monitoring Unit (2025). Also, while increased investment in electric generation through power purchase agreements by tech firms may in the long run lead to falling retail prices, it appears that at present data center power usage is increasing wholesale prices by raising total demand, which requires dispatching higher-cost generators and thus increases the market clearing price—a price paid by all retail consumers. Using the most relevant examples for PJM of retail elasticity of between .53 and .56 De Feuillley and Fontaine (2023), the expected consumer price rise in AEP, a sub-zone in PJM, would be ∼ 13% . However, using recent long-run econometric estimates of full passthrough from MacKay and Mercadal (2024), the long-run expected rise for consumers may be closer to the full 25%. 
+
+> 1These data are from he Clean Air Markets Program (CAMPD) dataset and include hourly generation by all US utility-scale fossil generators Agency (2022)
+> 2Recall that we use two stage instrumental variables (IV) regression here, where the second stage isolates the AI model caused demand-side effects from supply shocks (i.e., generator heat rate and alternate fuel source prices) modeled in the first stage. Details on the specifics of the instrumental variables specification can be found in Appendix Subsection A.7.3 and results from the first stage regression are presented in Appendix.
+> 3Our instrumental variables approach isolates exogenous variation in electricity demand driven by AI model releases. However, observed market prices reflect the intersection of supply and demand in equilibrium. To translate our demand estimates into price effects, we must incorporate information about supply-side responses, which requires additional assumptions about the shape of the supply curve.
+> 4Recall, the supply curve describes the relationship between price and quantity supplied. Its slope reflects how much generators must be compensated to produce additional electricity—steeper slopes indicate that marginal generation costs rise quickly as output expands, typically because higher-cost units must be dispatched.
+
+First Author et al.: Preprint submitted to Elsevier Page 13 of 32 Certificates without Electrons 
+
+## 7. Validity and Robustness 
+
+We present two sets of analyses to address issues highlighted in Subsection 3.3: formal testing to provide evidence for the parallel trends assumption, and placebo tests address potential issues related to external confounds or lack of specific knowledge about training. Additional tests are found in Appendix A.10. 
+
+1) Formal Testing for Parallel Trends: For power demand specifically, the formal joint test of pre-treatment coefficients using a Wald test of joint significance yields a chi-squared statistic of 0.99 (df = 1) with p-value = 0.3196. 
+
+We cannot reject the null hypothesis of parallel pre-trends at conventional significance levels. This provides support for our assumption that treated and control generators followed similar demand trajectories prior to AI model releases i.e., our identification assumption is valid. Some of our samples demonstrate significant evidence against the the parallel trends test prior to propensity score matching (PSM) that we use for sample selection. However, across all matched samples for both power quality and power demand after PSM, we find no evidence of violations of the parallel trends assumption. This implies that the technique correctly handles the issue where it exists. 
+
+2) Placebo Tests We conduct two placebo exercises to demonstrate that the treatments are meaningful and not the result of random chance, we implement random date and random location placebo tests. Both yield a p-value of 1.00 for the coefficient in our fossil fuel demand, CPQI, and THD analyses, confirming that our results do not arise from spuriously chosen locations or dates. 
+
+## 8. Counterfactual Analyses 
+
+We present three main counterfactual exercises to inform stakeholders and policymakers about how alternative evolutionary paths for AI compute might affect grid outcomes. These combine our econometric estimates with data on model characteristics and infrastructure configurations to explore three dimensions: model scaling, geographic redistribution, and workload composition. 
+
+1) Model Scaling. We combine data on model size (parameter counts) with our econometric estimates from our least conservative specification to extrapolate grid impacts at different scales. 
+
+(a) Power Quality. Fitting a trend line to power quality impacts for Llama-3.1 (405B), PaLM (540B), and Llama 4 Behemoth (2T), we find that scaling from a 2 trillion parameter model to a 4 trillion parameter model would increase power quality impact from 0.321 to 0.434 —a deterioration of roughly 0.113 units, or just over 35% relative to the 2 trillion baseline. The relationship is exponential over log parameter counts, implying that larger models require proportionally greater parameter reductions to achieve the same percentage improvement in power quality. (b) Power Demand. Using an analogous extrapolation, we find that each 1% parameter increase leads to approximately 0.15% higher power demand within three months of model release. Scaling from 540 billion to one trillion parameters would increase total power demand by 10.5% . For DALL-E, halving parameters would reduce inference demand by approximately 300 GWh —equivalent to the annual consumption of 27,000–30,000 homes. 
+
+2) Training Compute. Training compute requirements also have measurable effects: a 1% increase in training FLOPs is associated with a 0.1% increase in power demand . For GPT-3.5, halving training compute would reduce energy use by enough to power 8,000–10,000 U.S. homes for a year. 
+
+3) Colocated On-site Generation. Data centers increasingly deploy colocated on-site generation to reduce grid dependence. Our inventory identifies 87 facilities with on-site capability and 12,401 without. We test whether on-site capacity moderates estimated effects by interacting treatment with on-site status in the utility-level strict DiD specification. Results indicate that on-site generation substantially mitigates measured grid impacts. The sign reversal for CPQI is notable: data centers with on-site generation are associated with improved power quality (negative coefficient), while those without are associated with deterioration (positive coefficient). This heterogeneity suggests that on-site generation absorbs demand spikes that would otherwise propagate to the grid , and that aggregate grid impacts may understate total AI energy consumption. Figure 5 extends this to policy-relevant scenarios. Remarkably, universal adoption of on-site power would shift impact of data centers from a net detriment to power quality to a net improvement. 
+
+4) Geographic Redistribution   
+
+> First Author et al.: Preprint submitted to Elsevier Page 14 of 32
+
+Certificates without Electrons 
+
+(a) Distributed Inference (Edge Computing). In our sample where we know AI data centers but not specific training and inference sites, we simulate a shift from cloud-based to edge-based inference, redistributing inference demand from concentrated hyperscaler facilities to smaller data centers located closer to population centers. Under this scenario, total demand added in a particular zone falls from a baseline of 162 MWh per hour over the entire treatment period to 4 MWh per hour. Figure 5 illustrates this effect of shifting the composition of inference. 
+
+(b) Concentration in Low-Population, High-Supply Regions. Alternatively, we consider relocating both training and inference to regions with abundant electricity supply and lower baseline load, such as areas in the central United States with substantial renewable or fossil capacity. We simulate this by shifting demand from the baseline case where training and inference are assumed distributed to a case where the only data center for training and inference is the largest data center owned by a hyperscaler. This leads to an extreme concentration of added demand with nearly 100 GWh added near data centers in training locations. Figure 5 shows this scenario. This analysis has the important caveat that shifting to one data center for all training activity is extreme, with many possible configurations between full decentralization and full centralization. Centralization may also yield other benefits, such as concentration near renewable generation and reduced energy consumption from lower communication costs. 
+
+## 9. Conclusion 
+
+Understanding how AI models impact U.S. power grids is critical for ensuring energy reliability and security. This work highlights the challenges in quantifying this impact using existing data sources. It introduces a rigorous econometric methodology to overcome the lack of fine-grained data about contributing factors. In particular, we use difference-in-differences regressions to provide econometric estimates of the amount of power being used by specific AI models as well as the power distortions being caused by AI and the impacts of AI on price. We find evidence that AI is making power quality significantly worse and increasing fossil fuel power demand. Using counterfactual analyses, we provide estimates of the potential impacts of increasing efficiency of AI on the power draw of data centers. We also show how changes in the geographic composition of AI, a potential shift to edge computing, and a shift in the ratio of training to inference conducted impact the power market. 
+
+## References 
+
+Abadie, A., 2005. Semiparametric difference-in-differences estimators. Review of Economic Studies 72, 1–19. doi: 10.1111/0034-6527.00321 .Agency, U.S.E.P., 2022. Power sector emissions data (campd): Clean air markets program data. https://campd.epa.gov/ . Office of Atmospheric Protection, Clean Air Markets Division. Accessed on Month Day, Year. Anthropic, 2023. Claude 2.1. URL: https://www.anthropic.com/news/claude-2-1 .Austin, P.C., 2011. An introduction to propensity score methods for reducing the effects of confounding in observational studies. Multivariate Behavioral Research 46, 399–424. doi: 10.1080/00273171.2011.568786 .Berthelot, A., Caron, E., Jay, M., Lefèvre, L., 2024. Estimating the environmental impact of generative-ai services using an lca-based methodology. Procedia CIRP 122, 707–712. Borusyak, K., Jaravel, X., Spiess, J., 2024. Revisiting event-study designs: robust and efficient estimation. Review of Economic Studies 91, 3253–3285. Brown, D.P., Tsai, C.H., Woo, C.K., Zarnikau, J., Zhu, S., 2020. Residential electricity pricing in Texas’s competitive retail market. Energy Economics 92, 104953. doi: 10.1016/j.eneco.2020.104953 . estimates 43–47% pass-through of wholesale price forecasts to retail quotes in ERCOT. Callaway, B., Sant’Anna, P.H., 2021. Difference-in-differences with multiple time periods. Journal of econometrics 225, 200–230. Card, D., Krueger, A.B., 1994. Minimum wages and employment: A case study of the fast-food industry in new jersey and pennsylvania. American Economic Review 84, 772–793. Cengiz, D., Dube, A., Lindner, A., Zipperer, B., 2019. The effect of minimum wages on low-wage jobs. The Quarterly Journal of Economics 134, 1405–1454. Chen, H., Zhang, Y., Caramanis, M.C., Coskun, A.K., 2019. Data center participation in demand response programs with quality-of-service guarantees, in: Proceedings of the 10th ACM International Conference on Future Energy Systems, ACM, New York, NY, USA. pp. 154–164. doi: 10.1145/3307772.3328309 .Chien, A.A., Lin, L., Nguyen, H., Rao, V., Sharma, T., Wijayawardana, R., 2023. Adapting datacenter capacity for greener datacenters and grid, in: Proceedings of the 14th ACM International Conference on Future Energy Systems, ACM, New York, NY, USA. doi: 10.1145/3575813. 3595197 .Crump, R.K., Hotz, V.J., Imbens, G.W., Mitnik, O.A., 2009. Dealing with limited overlap in estimation of average treatment effects. Biometrika 96, 187–199. doi: 10.1093/biomet/asn055 .De Feuillley, C., Fontaine, G., 2023. Pass-through in residential retail electricity competition: Evidence from Pennsylvania. Utilities Policy 85, 101678. doi: 10.1016/j.jup.2023.101678 . reports 52.5% (EDC) and 56.3% (EGS) pass-through rates for PJM Pennsylvania residential. 
+
+First Author et al.: Preprint submitted to Elsevier Page 15 of 32 Certificates without Electrons 
+
+Deryugina, T., MacKay, A., Reif, J., 2020. The Long-Run Dynamics of Electricity Demand: Evidence from Municipal Aggregation. Working Paper 23483. National Bureau of Economic Research. doi: 10.3386/w23483 . uses Illinois municipal aggregation; finds residential elasticity of −0 .09 
+
+(short-run) to −0 .35 (long-run). Deshpande, M., Li, Y., 2019. Who is screened out? application costs and the targeting of disability programs. American Economic Journal: Economic Policy 11, 213–248. EIA, 2024. How much electricity does an american home use? URL: https://www.eia.gov/tools/faqs/faq.php?id=97&t=3 . average U.S. residential electricity consumption is about 10,791 kWh/year, approximately 1.23 kW continuous load. EPRI, 2024. Powering Intelligence: Analyzing Artificial Intelligence and Data Center Energy Consumption. Report. Fowlie, M., Holland, S.P., Mansur, E.T., 2012. What do emissions markets deliver and to whom? evidence from southern california’s nox trading program. American Economic Review 102, 965–993. Goggin, M., Gramlich, R., 2025. Power Demand Forecasts Revised Up for Third Year Running, Led by Data Cen-ters. Technical Report. Grid Strategies LLC. URL: https://gridstrategiesllc.com/wp-content/uploads/ Grid-Strategies-National-Load-Growth-Report-2025.pdf .Goodman-Bacon, A., 2021. Difference-in-differences with variation in treatment timing. Journal of econometrics 225, 254–277. Google Cloud, 2023. Google Cloud opens its first ML Hub, focused on AI-optimized compute. https://cloud.google.com/blog/products/ ai-machine-learning/google-cloud-launches-new-ai-ml-hub . Accessed: 2025. Google Developers Blog, 2023. Announcing palm api and makersuite. URL: https://developers.googleblog.com/en/ announcing-palm-api-and-makersuite/ .Guidi, G., Dominici, F., Gilmour, J., Butler, K., Bell, E., Delaney, S., Bargagli-Stoffi, F.J., 2024. Environmental burden of united states data centers in the artificial intelligence era. arXiv preprint arXiv:2411.09786 . Hirano, K., Imbens, G.W., Ridder, G., 2003. Efficient estimation of average treatment effects using the estimated propensity score. Econometrica 71, 1161–1189. doi: 10.1111/1468-0262.00442 .Horsley, S., 2025. Is your electric bill going up? ai is partly to blame. NPR URL: https://www.npr.org/2025/11/06/nx-s1-5597971/ electricity-bills-utilities-ai . published November 6, 2025. IEA, 2024. Energy and AI World Energy Outlook Special Report. Report. Jacobs, M., 2025. Data centers are already increasing your energy bills. we have the receipts. Union of Concerned Scientists Blog. URL: 
+
+https://blog.ucsusa.org/mike-jacobs/data-centers-are-already-increasing-your-energy-bills/ .KCCI 8 News, 2023. AI technology behind ChatGPT was built in Iowa — with a lot of water. https://www.kcci.com/article/ ai-technology-behind-chatgpt-built-in-west-des-moines-iowa-microsoft/45081445 . Accessed: 2025. Kim, J., Shin, B., Chung, J., Rhu, M., 2025. The cost of dynamic reasoning: Demystifying ai agents and test-time scaling from an ai infrastructure perspective. URL: https://arxiv.org/abs/2506.04301 , arXiv:2506.04301 .Klingert, S., Niedermeier, F., Dupont, C., Giuliani, G., Schulze, T., de Meer, H., 2018. Mapping data centre business types with power management strategies to identify demand response candidates, in: Proceedings of the 9th International Conference on Future Energy Systems, ACM, New York, NY, USA. pp. 492–503. doi: 10.1145/3208903.3213521 .Laughner, T., Heckman, S., Manzur, A., Sloop, C., 2024. Analysis of total harmonic distortion on the u.s. electric grid. URL: https: //www.whiskerlabs.com/analysis-of-total-harmonic-distortion-on-the-us-electric-grid/ . accessed January 28, 2026. Lechowicz, A., Comden, J., Bernstein, A., 2025. Optimizing individualized incentives from grid measurements under limited knowledge of agent behavior, in: Proceedings of the 16th ACM International Conference on Future and Sustainable Energy Systems, Association for Computing Machinery, New York, NY, USA. pp. 544–563. URL: https://doi.org/10.1145/3679240.3734594 , doi: 10.1145/3679240.3734594 .Li, Z., Xie, C., Dou, Z., Guo, M., 2023. A GNN-based day ahead carbon intensity forecasting model for cross-border power grids, in: Proceedings of the 14th ACM International Conference on Future Energy Systems, ACM, New York, NY, USA. pp. 199–210. doi: 10.1145/3575813.3597346 .Lin, L., Wijayawardana, R., Rao, V., Nguyen, H., Gnibga, E.W., Chien, A.A., 2024a. Exploding AI power use: An opportunity to rethink grid planning and management, in: Proceedings of the 15th ACM International Conference on Future and Sustainable Energy Systems, ACM, New York, NY, USA. pp. 434–441. doi: 10.1145/3632775.3661959 .Lin, L., Wijayawardana, R., Rao, V., Nguyen, H., GNIBGA, E.W., Chien, A.A., 2024b. Exploding ai power use: an opportunity to rethink grid planning and management, in: Proceedings of the 15th ACM International Conference on Future and Sustainable Energy Systems, Association for Computing Machinery, New York, NY, USA. pp. 434–441. URL: https://doi.org/10.1145/3632775.3661959 , doi: 10.1145/3632775. 3661959 .Lindberg, J., Abdennadher, Y., Lesieutre, B.C., Roald, L.A., 2021. A guide to reducing carbon emissions through data center geographical load shifting, in: Proceedings of the 12th ACM International Conference on Future Energy Systems, ACM, New York, NY, USA. pp. 157–168. doi: 10.1145/3447555.3466582 .Liu, Z., Liu, I., Low, S., Wierman, A., 2014. Pricing data center demand response, in: Proceedings of the ACM SIGMETRICS/International Conference on Measurement and Modeling of Computer Systems, ACM, New York, NY, USA. pp. 111–123. doi: 10.1145/2637364.2592004 .Luby, I., Sergi, B., Azevedo, I., Davis, L., Bergman, A., 2025. Electricity Grid Impacts of Rising De-mand from Data Centers and Cryptocurrency Mining Operations. Technical Report. Carnegie Mellon Uni-versity, Scott Institute for Energy Innovation. URL: https://energy.cmu.edu/_files/documents/ electricity-grid-impacts-of-rising-demand-from-data-centers-and-cryptocurrency-mining-operations.pdf .MacKay, A., Mercadal, I., 2024. Deregulation, market power, and prices: Evidence from the electricity sector. American Economic Journal: Microeconomics Finds near one-for-one long-run pass-through of utility costs to retail rates; $14.2/MWh margin increase 2000–2016. Maji, D., Bashir, N., Irwin, D., Shenoy, P., Sitaraman, R.K., 2022a. DACF: Day-ahead carbon intensity forecasting of power grids using machine learning, in: Proceedings of the 13th ACM International Conference on Future Energy Systems, ACM, New York, NY, USA. pp. 188–192. doi: 10.1145/3538637.3538849 .
+
+First Author et al.: Preprint submitted to Elsevier Page 16 of 32 Certificates without Electrons 
+
+Maji, D., Bashir, N., Irwin, D., Shenoy, P., Sitaraman, R.K., 2024. Data centers carbon emissions at crossroads: An empirical study. ACM SIGEnergy Energy Informatics Review 4. doi: 10.1145/3757892.3757899 .Maji, D., Hanafy, W.A., Wu, L., Irwin, D., Shenoy, P., Sitaraman, R.K., 2025. Data centers carbon emissions at crossroads: An empirical study. SIGENERGY Energy Inform. Rev. 5, 48–55. URL: https://doi.org/10.1145/3757892.3757899 , doi: 10.1145/3757892.3757899 .Maji, D., Sitaraman, R.K., Shenoy, P., 2022b. Dacf: day-ahead carbon intensity forecasting of power grids using machine learning, in: Proceedings of the Thirteenth ACM International Conference on Future Energy Systems, Association for Computing Machinery, New York, NY, USA. pp. 188–192. URL: https://doi.org/10.1145/3538637.3538849 , doi: 10.1145/3538637.3538849 .Meta AI, 2023. Code llama: Open foundation models for code. URL: https://ai.meta.com/research/publications/ code-llama-open-foundation-models-for-code/ .Meta Newsroom, 2023. Llama 2. URL: https://about.fb.com/news/2023/07/llama-2/ .Morrison, J., Na, C., Fernandez, J., Dettmers, T., Strubell, E., Dodge, J., 2025. Holistically evaluating the environmental impact of creating language models, in: The Thirteenth International Conference on Learning Representations (ICLR) Spotlight. URL: https://arxiv.org/abs/2503. 05804 , arXiv:2503.05804 .Murino, T., Monaco, R., Nielsen, P.S., Liu, X., Esposito, G., Scognamiglio, C., 2023. Sustainable energy data centres: A holistic conceptual framework for design and operations. Energies 16, 5764. National Electrical Manufacturers Association, 2016. Ansi/nema mg-1-2016: Motors and generators. URL: https://www.nema.org/ docs/default-source/standards-document-library/mg-1-part-31-watermark.pdf . section IV Part 31 — Relative equivalent temperature rise: 10 °C difference shortens insulation life by 50%. Nicoletti, L., Malik, N., Tartar, A., 2024a. Ai needs so much power, it’s making yours worse. Bloomberg URL: https://www.bloomberg.com/ graphics/2024-ai-power-home-appliances/ . published December 27, 2024. An exclusive Bloomberg graphics story. Nicoletti, L., Malik, N., Tartar, A., 2024b. Ai power needs threaten billions in damages for us households. Bloomberg URL: https://www. bloomberg.com/graphics/2024-ai-power-home-appliances/ .NVIDIA, Microsoft, 2021. Megatron-Turing NLG: The largest and most powerful generative language model. NVIDIA Developer Blog. Trained on NVIDIA Selene supercomputer. OpenAI, 2021. Api no waitlist. URL: https://openai.com/index/api-no-waitlist/ .Pacific Northwest National Laboratory, 2022. Price Formation and Grid Operation Impacts from Variable Renewable Energy. Technical Report PNNL-33470. PNNL. URL: https://www.pnnl.gov/main/publications/external/technical_reports/PNNL-33470.pdf .Patel, P., Choukse, E., Zhang, C., Goiri, I., Warrier, B., Mahalingam, N., Bianchini, R., 2024. Characterizing power management opportunities for llms in the cloud, in: Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 3, pp. 207–222. Patterson, D., Gonzalez, J., Hoelzle, U., Le, Q., Liang, C., Munguia, L.M., Rothchild, D., So, D.R., Texier, M., Dean, J., 2022. The carbon footprint of machine learning training will plateau, then shrink. Computer 55, 18–28. Patterson, D., Gonzalez, J., Le, Q., Liang, C., Munguia, L.M., Rothchild, D., So, D., Texier, M., Dean, J., 2021. Carbon emissions and large neural network training. arXiv preprint arXiv:2104.10350 . PJM Interconnection, L.L.C., 2025. Pjm data miner 2: Energy market generation offers (supply stack). https://dataminer2.pjm.com/feed/ energy_market_offers . Public dataset providing generator offer curves and related market data for the PJM Energy Market. Accessed January 2026. Rosenbaum, P.R., Rubin, D.B., 1983. The central role of the propensity score in observational studies for causal effects. Biometrika 70, 41–55. doi: 10.1093/biomet/70.1.41 .Roth, J., Sant’Anna, P.H., Bilinski, A., Poe, J., 2023. What’s trending in difference-in-differences? a synthesis of the recent econometrics literature. Journal of Econometrics 235, 2218–2244. doi: 10.1016/j.jeconom.2023.03.008 .Sant’Anna, P.H.C., Zhao, J., 2020. Doubly robust difference-in-differences estimators. Journal of Econometrics 219, 101–122. doi: 10.1016/j. jeconom.2020.06.003 .Schwartz, R., Dodge, J., Smith, N.A., Etzioni, O., 2020. Green ai. Communications of the ACM 63, 54–63. Shankar, S., Reuther, A., 2022. Trends in energy estimates for computing in ai/machine learning accelerators, supercomputers, and compute-intensive applications, in: 2022 IEEE High Performance Extreme Computing Conference (HPEC), IEEE. pp. 1–8. Shehabi, A., Smith, S., Sartor, D., Brown, R., Herrlin, M., Koomey, J., Masanet, E., Horner, N., Azevedo, I., Lintner, W., 2024. 2024 United States Data Center Energy Usage Report. Technical Report. Lawrence Berkeley National Laboratory. URL: https://eta-publications.lbl. gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report_1.pdf .Southwest Power Pool, Inc. Market Monitoring Unit, 2025. 2024 Annual State of the Market Report. Technical Report 2024 Annual State of the Market Report. Southwest Power Pool, Inc. Published May 28, 2025. Strubell, E., Ganesh, A., McCallum, A., 2019. Energy and Policy Considerations for Deep Learning in NLP, in: Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics, Florence, Italy. pp. 3645–3650. Sun, H., Munro, E., Kalashnov, G., Du, S., Wager, S., 2021. Treatment allocation under uncertain costs. arXiv preprint arXiv:2103.11066 . Thangam, D., Muniraju, H., Ramesh, R., Narasimhaiah, R., Khan, N.M.A., Booshan, S., Booshan, B., Manickam, T., Ganesh, R.S., 2024. Impact of data centers on power consumption, climate change, and sustainability, in: Computational Intelligence for Green Cloud Computing and Digital Waste Management. IGI Global Scientific Publishing, pp. 60–83. U.S. Fire Administration, 2019. Residential Building Electrical Fires (2014-2016). Technical Report 8. Federal Emergency Management Agency. URL: https://www.usfa.fema.gov/downloads/pdf/statistics/v19i8.pdf .Whisker Labs, 2024. Analysis of Total Harmonic Distortion on the U.S. Electric Grid. Technical Report. Whisker Labs. URL: https: //www.whiskerlabs.com/analysis-of-total-harmonic-distortion-on-the-us-electric-grid/ . data collected from the Ting Sensor Network (Whisker Labs power quality dataset). 
+
+First Author et al.: Preprint submitted to Elsevier Page 17 of 32 Certificates without Electrons 
+
+Wu, C.J., Raghavendra, R., Gupta, U., Acun, B., Ardalani, N., Maeng, K., Chang, G., Aga, F., Huang, J., Bai, C., 2022. Sustainable ai: Environmental implications, challenges and opportunities. Proceedings of Machine Learning and Systems 4, 795–813. 
+
+First Author et al.: Preprint submitted to Elsevier Page 18 of 32 Certificates without Electrons 
+
+## A. Appendix 
+
+A.1. Total Harmonic Distortion 
+
+Figure 6: Total harmonic distortion representation. Figure 6 illustrates the distortions in the power frequencies. The green lie shows the clear voltage curve, which is cleanly sinusoidal, whereas with huge loads can produce harmonic distortions shown as the dotted yellow curve. This 
+
+dirtier voltage can adversely affect the operation and lifetime of household appliances and other products that use electricity. 
+
+A.2. Expanded Dataset Description 
+
+Below, maps can be found providing more detail on the data center dataset alongside tables on the datasets and the dataset sample selection criteria.   
+
+> First Author et al.: Preprint submitted to Elsevier Page 19 of 32
+
+Certificates without Electrons 
+
+Figure 3: Stacked DiD coefficients for power demand (IV specification). Event Time 0 corresponds to AI model publication date. The pre-treatment coefficient at 𝑡 = −2 demonstrates the training demand. Reference period is 𝑡 = −1 .
+
+Figure 4: The map shows estimated AI-related wholesale prices increases in the PJM Interconnection in treated zones. First Author et al.: Preprint submitted to Elsevier Page 20 of 32 Certificates without Electrons 
+
+Figure 5: Effects of Geographic Concentration and On-site Generation on AI Impacts on the grid. First Author et al.: Preprint submitted to Elsevier Page 21 of 32 Certificates without Electrons 
+
+Figure 7: Data centers by state. First Author et al.: Preprint submitted to Elsevier Page 22 of 32 Certificates without Electrons 
+
+Figure 8: Map of zones for demand model. 
+
+Figure 9: Map of Retail Electric Utilities for Whisker Labs Data. First Author et al.: Preprint submitted to Elsevier Page 23 of 32 Certificates without Electrons 
+
+Figure 10: Map of PJM by Zones. First Author et al.: Preprint submitted to Elsevier Page 24 of 32 Certificates without Electrons   
+
+> Table 3: Expanded description of data sources (for appendix).
+> Source  Content and Granularity  Use in Analysis Q1: Difference-in-Differences (Power Quality)
+> Aterio  Data center locations, establishment/expansion/retirement dates, ownership, and opera-tional capacity (MW). Data are available at the facility level and updated annually. Defines  treatment  regions;  links  AI model  releases  to  hyperscaler-owned centers. Whisker Labs  Consumer Power Quality Index (CPQI, composite measure of surges, sags, brownouts, interruptions) and Total Harmonic Distortion (THD, waveform distortion). Provided at county level, hourly frequency. Outcome variables for DiD regressions. Meteostat  Hourly temperature and precipitation, aggregated at the county level. Coverage includes all U.S. counties with weather stations. Controls for demand fluctuations and re-newable generation variability. ISOs  Geographic boundary shapefiles and wholesale price data at zonal level. Boundaries digitized from ISO-provided maps; prices available hourly. Market alignment and regional controls. EIA  Retail service territory shapefiles, at utility level, updated periodically.  Used to define treatment/control bound-aries and reconcile geographies.
+> Q2: Instrumental Variables (Fossil Demand)
+> EPA CAMPD  Hourly generator-level demand (MWh) and unit-specific heat rates (Btu/kWh). Coverage 2021–2023. Generator  demand  is  outcome;  heat rates serve as instruments for prices. S&P Capital IQ  Daily natural gas price series, Henry Hub benchmark. National coverage.  Instrument for price and fuel-cost con-trol. Aterio  Generator proximity to data centers owned by releasing companies, matched at 20-mile radius. Defines treatment generators in IV de-sign. Meteostat  Hourly temperature and precipitation, as above.  Controls  for  demand  and  renewable variability. ISOs  Wholesale price series, zonal level, hourly frequency.  Market-level controls.
+> Q3: Counterfactual Analyses (Scaling, Efficiency, & Tech Development)
+> Whisker Labs  CPQI and THD (as above). Used to establish baseline deterioration in power quality.  Benchmark outcomes for scaling projec-tions. Epoch  AI model metadata: release dates, FLOPs, parameter counts. Public dataset with model-level detail. Used for scaling regressions and effi-ciency counterfactuals. GPU Experiments  Energy use measured on NVIDIA A6000 GPUs. Experiments run with batch size 4, sequence length 1024, and 200 inferences. Each bar in results represents total energy; lighter portion indicates communication overhead. Data collected in-house on 8xA6000 cluster. Provides empirical GPU energy base-lines for counterfactual scaling exer-cises.
+> First Author et al.: Preprint submitted to Elsevier Page 25 of 32
+
+Certificates without Electrons 
+
+> Table 4: Dataset sample selection and summary statistics
+> Dataset  Content / Summary Statistics  Sample Selection
+> Aterio  Data center locations, ownership, and capacity; mapped to ISO zones, EIA service territories, and counties Hyperscaler data centers (Meta, Microsoft, Amazon, Google; Anthropic via Google) Whisker Labs  Reliability measures: CPQI ( 𝑁  = 2 ,683 , mean=0.52, s.d.=0.42); THD (mean=1.81, s.d.=6.77) 72 retail electric utilities, monthly data 2022–2025 CAMPD  Generator-level demand: mean 218 MW (s.d.=158); operating times  ≈ 1  Several thousand fossil generators, hourly data 2021–2023 ISOs  Wholesale electricity prices: mean  $51 /MWh (s.d.=148); zonal boundaries  Deregulated markets in Eastern Interconnection and ERCOT Weather (Meteostat)  Temperature (mean=17 °C, s.d.=11.4); precipitation (mean=0.12 mm, s.d.=0.91)  Matched by county/zone, hourly or daily resolution External Controls  Natural gas prices, ISO market data, geography/time harmonization  Used for both DiD and IV regressions
+> Notes: Time series are harmonized at hourly or monthly resolution depending on source. Unified panel supports both difference-in-differences (power quality) and instrumental variable (demand) regressions. Maps of sample regions provided in the appendix.
+
+First Author et al.: Preprint submitted to Elsevier Page 26 of 32 Certificates without Electrons 
+
+A.3. Dataset Creation Diagram A.4. Calculation of Comparisons 
+
+We calculate the household average energy usage based on data provided by EIA (2024). We simply divide our estimates by the provided numbers to get the number of households for our comparisons.                             
+
+> First Author et al.: Preprint submitted to Elsevier Page 27 of 32 Certificates without Electrons
+> Table 5
+> Documented Training Locations (All Confirmed) Model Location Source GPT-4 W. Des Moines, IA KCCI 8 News (2023) PaLM, LaMDA, MUM Mayes County, OK Google Cloud (2023) Megatron-Turing NLG Santa Clara, CA NVIDIA and Microsoft (2021)
+> Table 6
+> Verified Model Dates Model Type Date Source GPT-3 API 2021-11-18 OpenAI (2021) Claude 2.1 API 2023-11-21 Anthropic (2023) PaLM API API 2023-03-14 Google Developers Blog (2023) Llama 2 API 2023-07-18 Meta Newsroom (2023) Code Llama Train 2023-01–07 *Meta AI (2023)
+> *Date range (month precision)
+
+A.5. Specifically Verified Models 
+
+Below is a subset of our dataset for specifically verified models to provide an example of the data: 
+
+A.6. PJM price Elasticities A.7. Treatment Definition and Data Linkage 
+
+Our treatment relies on linking AI model releases to geographic regions through a chain of observable connections: models to companies, companies to data center locations, and data center locations to electricity service territories. We describe each link and its limitations. 
+
+A.7.1. Identifying AI Data Centers 
+
+We leverage a recently released variable from Aterio that directly classifies data centers by their primary use case, including a designation for AI-focused facilities. This classification improves upon prior approaches that treated all data centers homogeneously, as AI workloads—particularly large-scale model training—exhibit distinct load profiles characterized by sustained high utilization and substantial power draws that differ markedly from traditional cloud computing or storage operations. We link data centers to electricity service territories at two geographic resolutions: 
+
+• Utility service territory: For power quality analysis, we match AI data centers to retail electric utility boundaries. A utility is designated as treated if at least one AI data center operates within its service territory. 
+
+• Generator proximity: For fossil fuel demand analysis, we match data centers to generators by picking generators within a 20-mile radius of an in-sample data center. This finer resolution exploits the greater spatial granularity of EPA generator-level data. 
+
+A.7.2. Linking Models to Data Centers 
+
+We construct a crosswalk from AI model releases to data center locations through company ownership. For each major model release in our sample, we identify the developing company and link to all AI-classified data centers operated by or contracted to that company. 
+
+Identifying Assumption and Limitations. Our approach assumes that training and inference activity for a given model occurs at data centers associated with the releasing company. This assumption is imperfect for several reasons: 1. Training may occur at third-party cloud facilities not captured in our data center inventory. 2. Inference workloads may be distributed across facilities differently than training workloads.   
+
+> First Author et al.: Preprint submitted to Elsevier Page 28 of 32
+
+Certificates without Electrons 
+
+Table 7 
+
+Wholesale-to-Retail Price Pass-Through in Deregulated Markets                              
+
+> Study ISO PT Class
+> Panel A: Wholesale →Retail Pass-Through
+> De Feuillley and Fontaine (2023) PJM (PA) 0.53 Res. (EDC) De Feuillley and Fontaine (2023) PJM (PA) 0.56 Res. (EGS) Brown, Tsai, Woo, Zarnikau and Zhu (2020) ERCOT 0.43–0.47 Res. MacKay and Mercadal (2024) Multi ≈1.0 𝑏 All
+> Panel B: Demand Elasticity (Residential)
+> Deryugina, MacKay and Reif (2020) PJM (IL) −0 .09 SR (1 mo.) Deryugina et al. (2020) PJM (IL) −0 .27 MR (2 yr.) Deryugina et al. (2020) PJM (IL) −0 .35 LR (10 yr.)
+> Notes: PT = pass-through coefficient. EDC = Electric Distribution Company; EGS = Electric Generation Supplier. SR/MR/LR = short/medium/long-run.
+> 𝑏 Long-run; $9.59/MWh cost →$8.81/MWh retail.
+
+We interpret our estimates as capturing the average effect across a company’s AI data center footprint, which represents a lower bound on the localized effect at the actual training site if activity is concentrated, or an upper bound if we misattribute activity to facilities that were not involved. We probe robustness to this measurement error through several approaches described in Section 4.5. For a subset of models where public information permits more precise dating, we supplement our treatment timing with verified training and inference windows: 
+
+A.7.3. Instrumental Variables Specification 
+
+The learned DiD coefficients capture the relationship between AI model releases and generator output, but this relationship may be confounded by supply-side shocks. For example, if AI model releases coincide with changes in natural gas prices or generator availability that independently affect electricity production, our estimates would conflate demand-side and supply-side effects. To isolate the demand-side effects, we instrument for electricity prices using the interaction of generator-level heat rates and regional natural gas prices. This instrumentation strategy exploits cross-sectional variation in generators’ fuel efficiency: conditional on natural gas price movements, generators with higher heat rates (lower efficiency) face larger marginal cost shocks, allowing us to trace out the demand curve. 
+
+First-Stage and Structural Estimates. The first stage regresses electricity prices on the heat rate–gas price interaction. The structural equation then uses predicted prices to estimate price responsiveness. The estimated price elasticity from the structural equation is 0.135 (SE = 0.013, p < 0.0001), indicating economically meaningful and precisely estimated demand responsiveness. As a specification check, we estimate the first stage separately for each of 5 model-specific regressions; the mean price coefficient is −0 .331 (SD = 0.005, range: −0 .336 to −0 .323 ). The tight clustering of estimates across specifications suggests stable demand elasticity across AI model events and supports the validity of our instrumentation strategy. 
+
+A.8. Wholesale-to-retail Passthrough Estimates A.9. Propensity Score Matching 
+
+Here, we describe the propensity score matching (PSM) and inverse probability weighting (IPW) methodology used to enhance the robustness of our difference-in-differences (DiD) estimates. These methods address potential selection bias arising from non-random placement of AI data centers. Standard DiD estimation relies on the parallel trends assumption: absent treatment, treated and control units would have followed similar trajectories. However, AI data center locations are chosen strategically based on factors such as electricity prices, grid reliability, and climate conditions. If power plants near AI data centers systematically differ from control plants in observable characteristics correlated with electricity demand trends, the parallel trends assumption may be violated. Propensity score methods address this concern through three mechanisms: (i) balancing covariates to create comparison groups similar on observable characteristics; (ii) enforcing common support to ensure we only compare units that could plausibly receive either treatment status; and (iii) reducing model dependence by making estimates less sensitive to functional form assumptions (Rosenbaum and Rubin, 1983; Hirano, Imbens and Ridder, 2003). 
+
+First Author et al.: Preprint submitted to Elsevier Page 29 of 32 Certificates without Electrons 
+
+The propensity score is the conditional probability of receiving treatment given observed covariates: 
+
+𝑒 (𝐗 𝑖 ) = Pr( 𝑇 𝑖 = 1 ∣ 𝐗 𝑖 ) (9) where 𝑇 𝑖 is a treatment indicator equal to one for observations near an AI data center in the post-treatment period, and 
+
+𝐗 𝑖 is a vector of pre-treatment covariates. We estimate propensity scores using logistic regression: 
+
+log 
+
+( 𝑒 (𝐗 𝑖 )1 − 𝑒 (𝐗 𝑖 )
+
+)
+
+= 𝛽 0 + 𝜷 ′𝐗 𝑖 (10) The covariates included in the propensity score model are: pre-trend load growth, ambient temperature ( °F), dew point ( °F), precipitation (inches), plant heat rate (BTU/kWh), and natural gas price ($/MMBtu). Temperature and dew point capture weather-driven demand variation and cooling load requirements. Precipitation provides additional weather controls. Heat rate proxies for plant efficiency and technology type. Natural gas price captures fuel cost variation affecting dispatch decisions. We restrict the sample to observations with propensity scores in the common support region [0 .1, 0.9] :
+
+ = { 𝑖 ∶ 0 .1 ≤ 𝑒 (𝐗 𝑖 ) ≤ 0.9} (11) This trimming rule excludes observations with extreme propensity scores—units almost certain to be treated or untreated—for which comparable counterfactuals do not exist (Crump, Hotz, Imbens and Mitnik, 2009). Observations with 𝑒 (𝐗 𝑖 ) < 0.1 have no comparable treated units, while those with 𝑒 (𝐗 𝑖 ) > 0.9 have no comparable control units. The trimmed sample ensures that treatment effect estimates rely on regions of the covariate space where both treatment statuses are observed. IPW creates a pseudo-population where treatment assignment is independent of observed covariates by weighting observations inversely to their probability of receiving their actual treatment status (Hirano et al., 2003). We employ stabilized weights to reduce variance: 
+
+𝑤 stab  
+
+> 𝑖
+
+=
+
+⎧⎪⎨⎪⎩
+
+Pr( 𝑇 = 1) 
+
+𝑒 (𝐗 𝑖 ) if 𝑇 𝑖 = 1 1 − Pr( 𝑇 = 1) 1 − 𝑒 (𝐗 𝑖 ) if 𝑇 𝑖 = 0 
+
+(12) where Pr( 𝑇 = 1) is the unconditional (marginal) treatment probability in the sample. To prevent extreme weights from inducing instability, we cap weights at the interval [0 .01 , 100] . Within each treatment group, weights are then normalized to sum to the group size: ̃𝑤 𝑖 = 𝑤 capped  
+
+> 𝑖
+
+× 𝑛 𝑔 
+
+∑𝑗 ∈𝑔 𝑤 capped 
+
+> 𝑗
+
+(13) where 𝑔 ∈ { treated , control } and 𝑛 𝑔 is the number of observations in group 𝑔 .Our baseline DiD specification takes the form: 
+
+𝑌 𝑖𝑡 = 𝛼 + 𝛽 1Post 𝑡 + 𝛽 2Treat 𝑖 + 𝛿 (Post 𝑡 × Treat 𝑖 ) + 𝐗 ′
+
+> 𝑖𝑡
+
+𝜸 + 𝜀 𝑖𝑡 (14) where 𝑌 𝑖𝑡 is the outcome of interest (electricity demand), Post 𝑡 indicates the post-treatment period, Treat 𝑖 indicates treatment group membership, and 𝛿 is the treatment effect of interest. With IPW, we estimate a weighted least squares version: ̂
+
+𝜽 IPW = arg min 
+
+> 𝜽
+
+∑
+
+> 𝑖,𝑡
+
+̃𝑤 𝑖𝑡 
+
+(𝑌 𝑖𝑡 − 𝐙 ′
+
+> 𝑖𝑡
+
+𝜽 )2 (15) where 𝐙 𝑖𝑡 includes all regressors and ̃ 𝑤 𝑖𝑡 are the normalized IPW weights. Our primary specification combines IPW with instrumental variables to address both selection bias (via IPW) and price endogeneity (via IV). The instruments for electricity price are natural gas price and zone-average heat rate. The   
+
+> First Author et al.: Preprint submitted to Elsevier Page 30 of 32 Certificates without Electrons
+
+resulting IV-IPW-DiD estimator is implemented via weighted two-stage least squares, following the doubly robust approach of Sant’Anna and Zhao (2020). We assess covariate balance using the standardized mean difference (SMD): SMD 𝑘 =̄ 𝑋 𝑘, treated −̄ 𝑋 𝑘, control 
+
+√
+
+(𝑠 2 
+
+> 𝑘, treated
+
++ 𝑠 2
+
+> 𝑘, control
+
+)∕2 
+
+(16) where ̄ 𝑋 𝑘,𝑔 and 𝑠 2 
+
+> 𝑘,𝑔
+
+denote the sample mean and variance of covariate 𝑘 in group 𝑔 .Following standard practice, we consider |SMD | < 0.1 as indicating good balance, 0.1 ≤ |SMD | < 0.25 as moderate imbalance warranting caution, and |SMD | ≥ 0.25 as substantial imbalance (Austin, 2011). After weighting, we compute weighted SMDs using IPW weights to verify that the reweighting procedure successfully balances covariates across treatment groups. We implement several robustness checks to validate our PSM-IPW approach. First, we compare treatment effect estimates from standard (unweighted) DiD against IPW-DiD. Similar estimates across specifications suggest results are robust to selection on observables. Second, we test sensitivity to trimming thresholds by varying the propensity score bounds (e.g., [0 .05 , 0.95] ,
+
+[0 .15 , 0.85] , [0 .20 , 0.80] ). Stable estimates across thresholds indicate robustness to the choice of common support region. Third, we conduct a pre-trends test by estimating a specification that includes a placebo pre-treatment indicator. An insignificant coefficient on this term ( 𝑝 > 0.05 ) supports the parallel trends assumption. Fourth, we replicate the analysis using only confirmed AI training facility locations from verified sources, reducing potential measurement error in treatment assignment. Fifth, we compare covariate balance statistics before and after weighting. IPW should substantially reduce SMDs across all covariates. The IPW-DiD estimator provides a causal estimate of the average treatment effect under the following identifying assumptions: (i) conditional independence—treatment assignment is independent of potential outcomes conditional on 𝐗 ; (ii) parallel trends—absent treatment, treated and control units would follow similar outcome trajectories; (iii) common support—there exists positive probability of treatment for all covariate values; (iv) stable unit treatment value assumption (SUTVA)—no spillovers between units; and (v) correct propensity score specification—the logistic regression model is correctly specified (Abadie, 2005; Callaway and Sant’Anna, 2021). An important limitation is that propensity score methods only control for selection on observable characteristics. If unobserved factors influence both data center location decisions and electricity demand trends, our estimates may still be biased. We partially address this concern through instrumental variables estimation, but acknowledge that unobserved confounding cannot be definitively ruled out in observational settings. 
+
+A.10. Additional Robustness Checks 
+
+A.10.1. Robustness Checks 
+
+We test result robustness by varying treated population definitions, estimating specifications with alternative geographic boundaries to confirm consistency. This demonstrates findings reflect genuine causal impacts rather than arbitrary boundary choices. While we lack data on which models run at specific centers, our DiD methodology accounts for this by using publication dates as exogenous treatment, utilizing minimal geographic and temporal treatment windows. We plan robustness checks restricting treatment to larger data centers most likely involved in AI training. To verify treatment effects aren’t noise-related, we include appendix robustness checks with randomized treatment dates as additional evidence that effects relate to model releases. 
+
+A.10.2. Treatment Intensity 
+
+Rather than binary treatment indicators, we estimate a continuous treatment intensity specification using total electricity demand (MWh) as the treatment variable. The significant coefficient (p < 0.001; THD: +0 .00018 , p < 0.001) indicate dose-response relationships: larger electricity loads are associated with larger power quality changes. 
+
+A.10.3. Confirmed Locations and Verified Dates 
+
+We re-estimate our main specifications using stricter treatment definitions. The confirmed-location analysis restricts treatment to facilities with precisely geocoded training locations (mean effect: 74.19 MWh). The verified-date analysis   
+
+> First Author et al.: Preprint submitted to Elsevier Page 31 of 32 Certificates without Electrons
+
+uses API release timing rather than publication dates from the Epoch database (mean effect: 63.20 MWh). Both analyses corroborate our main findings with expected attenuation from the more conservative treatment definitions. 
+
+A.10.4. Callaway-Sant’Anna Estimator 
+
+As a robustness check and to provide transparent decomposition of treatment effect heterogeneity, we also implement the Callaway and Sant’Anna (2021) estimator. Like the stacked approach, CS avoids using already-treated units as controls; however, rather than achieving this through sample construction, it does so by estimating separate ATT(g,t) parameters for each cohort g and time period t, then aggregating these to form summary measures. This approach explicitly avoids problematic comparisons and provides a framework for testing parallel trends through examination of pre-treatment ATT(g,t) estimates. 
+
+A.10.5. Time-Series Anomaly Detection 
+
+As an internal consistency check, we apply time-series anomaly detection methods to the outcome variables in treated units. If AI model releases causally affect grid outcomes, we should observe detected anomalies clustering around treatment dates. Specifically: 1. For each treated unit, we fit a baseline time-series seasonal ARIMA model to the pre-treatment period. 2. We generate one-step-ahead forecasts and prediction intervals for the post-treatment period. 3. We flag observations where realized values fall outside the 20% prediction interval as anomalies. 4. We test whether anomaly frequency is elevated in the post-treatment window relative to the pre-treatment window and relative to control units. This approach provides model-free evidence of structural breaks coinciding with treatment timing. 
+
+A.11. Discussions 
+
+A.11.1. Limitations 
+
+While informative, this approach inherits the limitations of all Difference-in-Differences experimental designs. It relies on the parallel trends assumption, which may be violated if treated and control regions were already diverging or if generators anticipated model releases. 
+
+A.11.2. Why our Estimates are Higher than Previous Estimates 
+
+Our estimates tend to find larger impacts of AI than previous estimates from the computer science literature Strubell et al. (2019); Schwartz et al. (2020). We attribute this discrepancy to our choice to utilize empirical data on the realization of outcome variables following AI activity. Compared to traditional approaches like PUE, we assert that our approach is better able to consider the full costs of training and inference including both indirect and direct costs and may be more suited to precise and accurate estimation of AI energy usage.   
+
+> First Author et al.: Preprint submitted to Elsevier Page 32 of 32
+
+Certificates without Electrons 
+
+> Data Sources
+> Variable Construction
+> Estimation
+> Aterio
+> Whisker Labs
+> EPA CAMPD
+> S&P Capital IQ
+> ISOs
+> EIA
+> Meteostat
+> Epoch
+> Treatment Definition
+> Power Quality Outcomes
+> Fossil Demand Outcomes
+> Instruments & Controls
+> Service Territory Mapping
+> Scaling Regressions
+
+Q1: Difference-in-Differences 
+
+Q2: Instrumental Variables 
+
+Q3: Counterfactual Analyses 
+
+> 3,862 data centers 22M generator-hours 2,684 utility-months
+> Power Quality
+> Fossil Demand
+> AI Technical Evolution
+
+Figure 11: Data sources and analysis pipeline. Data sources flow through variable construction into three estimation strategies addressing power quality impacts (Q1), fossil fuel demand (Q2), and counterfactual scaling scenarios (Q3). 
+
+Figure 12: PJM Price Elasticity by Zone First Author et al.: Preprint submitted to Elsevier Page 33 of 32

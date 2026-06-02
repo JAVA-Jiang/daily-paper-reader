@@ -1,0 +1,332 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-02T22:14:06.257112+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2605.29522v1",
+      "source": "arxiv",
+      "title": "DeepSurvey: Enhancing Analytical Depth and Citation Reliability in Automated Survey Generation",
+      "abstract": "As scientific literature grows rapidly, automated survey generation has become a key capability for AI scientists and human researchers. However, existing systems suffer from limited analytical depth due to reliance on abstracts and isolated paper processing, and unreliable citations from imprecise retrieval and post-hoc grounding, producing superficial surveys and may mislead researchers. We present DeepSurvey, an agentic system that addresses both. To enhance depth, DeepSurvey extracts structured keynotes from full-text papers, models cross-paper relationships through clustering and comparative analysis, and integrates code-repository analysis to recover implementation-level details. To fortify reliability, it combines citation-graph expansion with hybrid filtering for topic-focussed retrieval, enforces evidence-constrained citation assignment, and deploys multi-granularity agentic refinement to validate citation-claim alignment. Experiments show that DeepSurvey achieves the highest content score (8.644/10) and citation quality (12.3% and 9.3% recall and precision gains over the strongest baseline), generalizes more robustly across domains (0.14 vs 0.22 to 0.69 CS-to-non-CS drop), and is preferred over human-written surveys by domain experts (83.3% overall quality, 100% content depth).",
+      "authors": [
+        "Ziyue Yang",
+        "Da Ma",
+        "Hanqi Li",
+        "Zijian Wang",
+        "Tiancheng Huang",
+        "Zijian Hu",
+        "Chenrun Wang",
+        "Yunzhe Zhang",
+        "Xiaobao Wu",
+        "Kai Yu",
+        "Lu Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-28T07:40:10+00:00",
+      "link": "https://arxiv.org/pdf/2605.29522v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "agentic system for survey generation with code repository analysis, likely open-source",
+      "llm_evidence_cn": "自动化综述生成的智能系统，集成代码仓库分析，可能开源",
+      "llm_evidence": "自动化综述生成的智能系统，集成代码仓库分析，可能开源",
+      "canonical_evidence": "自动化综述生成的智能系统，集成代码仓库分析，可能开源",
+      "llm_tldr_en": "DeepSurvey is an agentic system for automated survey generation, extracting structured keynotes from full-text and integrating code-repository analysis; likely open-source.",
+      "llm_tldr_cn": "该论文提出DeepSurvey，一个智能体系统，用于自动化综述生成。系统从全文论文提取结构化要点，通过聚类和比较分析建模论文间关系，并集成代码仓库分析以恢复实现细节。通常提供代码以支持可重复性。",
+      "llm_tldr": "该论文提出DeepSurvey，一个智能体系统，用于自动化综述生成。系统从全文论文提取结构化要点，通过聚类和比较分析建模论文间关系，并集成代码仓库分析以恢复实现细节。通常提供代码以支持可重复性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.00811v1",
+      "source": "arxiv",
+      "title": "Certificates without Electrons? Theory and Evidence on Impacts from AI-Driven Power Demand",
+      "abstract": "Data centers now account for 4.4% of United States electricity demand, yet the grid-level effectiveness of the renewable energy certificates (RECs) and power purchase agreements (PPAs) hyperscalers use to claim carbon neutrality remains unclear. We develop a game-theoretic model in which a data center operator chooses among RECs, PPAs, and behind-the-meter colocation while generators make entry decisions under endogenous financing costs. The model identifies a timing wedge -- the mismatch between consumption and credited renewable generation -- as a central mechanism through which AI demand degrades reliability, raises prices, and increases emissions even when RECs cover 100% of annual consumption. Colocation with storage addresses this wedge directly and induces the greatest renewable entry by eliminating generator revenue risk. We test these predictions by exploiting the staggered release of large language models as a natural experiment, using difference-in-differences on a novel dataset linking AI activity to local grid outcomes. AI demand significantly increases fossil generation, wholesale prices (up to 25% in treated PJM zones), and outage frequency (0.5--1 additional outages per year) near data centers, with impacts scaling in model size. Data centers with on-site generation exhibit a sign reversal in power-quality effects, consistent with the model's prediction that behind-the-meter capacity absorbs demand spikes. Counterfactual analyses show that edge inference, spatial reallocation, and colocated storage each substantially mitigate grid impacts, while REC-only strategies do not. Together, our results demonstrate that the externalities of AI to the grid are tightly coupled to procurement design and the spatial organization of data center infrastructure.",
+      "authors": [
+        "Dana Golden",
+        "Aruna Balasubramanian",
+        "Niranjan Balasubramanian"
+      ],
+      "primary_category": "econ.EM",
+      "categories": [
+        "econ.EM",
+        "cs.AI"
+      ],
+      "published": "2026-05-30T16:57:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.00811v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "game-theoretic model of data center power demand and renewable certificates",
+      "llm_evidence_cn": "建立博弈论模型分析数据中心电力需求及可再生能源证书效果",
+      "llm_evidence": "建立博弈论模型分析数据中心电力需求及可再生能源证书效果",
+      "canonical_evidence": "建立博弈论模型分析数据中心电力需求及可再生能源证书效果",
+      "llm_tldr_en": "This paper models how AI-driven data center power demand affects grid reliability and emissions, revealing that renewable certificates may be insufficient without storage colocation.",
+      "llm_tldr_cn": "论文针对AI数据中心电力需求激增问题，构建博弈论模型研究可再生能源证书与购电协议的实际效果。模型揭示时间错配机制导致即使证书覆盖100%消费，电网可靠性和排放仍可能恶化。结果表明，与储能共址是更有效的减排策略，为数据中心电力调度和电网规划提供了理论依据。",
+      "llm_tldr": "论文针对AI数据中心电力需求激增问题，构建博弈论模型研究可再生能源证书与购电协议的实际效果。模型揭示时间错配机制导致即使证书覆盖100%消费，电网可靠性和排放仍可能恶化。结果表明，与储能共址是更有效的减排策略，为数据中心电力调度和电网规划提供了理论依据。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.30029v1",
+      "source": "arxiv",
+      "title": "RAISE: RAG Design as an Architecture Search Problem",
+      "abstract": "Retrieval-augmented generation (RAG) systems expose numerous design choices spanning query rewriting, chunking, retrieval depth, reranking, and context compression. In practice, these choices are often configured through heuristics, hindering systematic evaluation and reproducibility across settings. We argue that this challenge is best formulated as RAG architecture search. To support controlled and reproducible study of this problem, we introduce the RAG Intelligence Search Engine (RAISE), a comprehensive framework and benchmark for RAG hyperparameter optimization, which evaluates optimization methods for RAG pipelines under standardized search spaces and budgets. RAISE implements 13 search algorithms and evaluates them across seven public text and multimodal datasets using three random seeds. Our experiments show that optimization performance is highly task-dependent: methods that perform strongly on one dataset may not generalize consistently across others, cautioning against interpreting aggregate rankings as evidence of universally superior strategies. RAISE provides a common experimental substrate for fair, reproducible, and systematic research on RAG hyperparameter optimization.",
+      "authors": [
+        "Zhen Chen",
+        "Yibing Liu",
+        "Weihao Xie",
+        "Yu Liang",
+        "Peilin Chen",
+        "Shiqi Wang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-28T14:52:43+00:00",
+      "link": "https://arxiv.org/pdf/2605.30029v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "comprehensive framework and benchmark for RAG, likely code",
+      "llm_evidence_cn": "RAG设计作为架构搜索问题，提供框架与基准，可能含代码",
+      "llm_evidence": "RAG设计作为架构搜索问题，提供框架与基准，可能含代码",
+      "canonical_evidence": "RAG设计作为架构搜索问题，提供框架与基准，可能含代码",
+      "llm_tldr_en": "RAISE formulates RAG design as an architecture search problem, provides a framework and benchmark with 13 search algorithms, likely open-source.",
+      "llm_tldr_cn": "该论文将检索增强生成（RAG）系统的设计选择问题形式化为架构搜索，提出了RAISE框架和基准，实现了13种搜索算法并在多个数据集上评估。研究支持可重复的系统优化，通常伴随代码开源。",
+      "llm_tldr": "该论文将检索增强生成（RAG）系统的设计选择问题形式化为架构搜索，提出了RAISE框架和基准，实现了13种搜索算法并在多个数据集上评估。研究支持可重复的系统优化，通常伴随代码开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.01162v1",
+      "source": "arxiv",
+      "title": "Deft Scheduling of Dynamic Cloud Workflows with Varying Deadlines via Mixture-of-Experts",
+      "abstract": "Workflow scheduling in cloud computing demands the intelligent allocation of dynamically arriving, graph-structured workflows with varying deadlines onto ever-changing virtual machine resources. However, existing deep reinforcement learning (DRL) schedulers remain limited by rigid, single-path inference architectures that struggle to handle diverse scheduling scenarios. We introduce \\textbf{DEFT} (\\textbf{D}eadline-p\\textbf{E}rceptive Mixture-o\\textbf{F}-Exper\\textbf{t}s), an innovative DRL policy architecture that leverages a specialized mixture of experts, each trained to manage different levels of deadline tightness. To our knowledge, DEFT is the first to introduce and validate a Mixture-of-Experts architecture for dynamic cloud workflow scheduling. By adaptively routing decisions through the most appropriate experts, DEFT is capable of meeting a broad spectrum of deadline requirements that no single expert can achieve. Central to DEFT is a \\textbf{graph-adaptive} gating mechanism that encodes workflow deadlines and DAGs, task states, and VM conditions, using cross-attention to guide expert activation in a fine-grained, deadline-sensitive manner. Experiments on dynamic cloud workflow benchmarks demonstrate that DEFT significantly reduces execution cost and deadline violations, outperforming multiple state-of-the-art DRL baselines.",
+      "authors": [
+        "Ya Shen",
+        "Gang Chen",
+        "Hui Ma",
+        "Mengjie Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-31T11:10:37+00:00",
+      "link": "https://arxiv.org/pdf/2606.01162v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "dynamic cloud workflow scheduling with mixture-of-experts",
+      "llm_evidence_cn": "动态云工作流调度，使用混合专家模型",
+      "llm_evidence": "动态云工作流调度，使用混合专家模型",
+      "canonical_evidence": "动态云工作流调度，使用混合专家模型",
+      "llm_tldr_en": "To overcome the rigid single-path inference of existing DRL schedulers, this paper introduces DEFT, a novel mixture-of-experts policy architecture for dynamic cloud workflow scheduling. Each expert is specialized for different deadline tightness, enabling adaptive scheduling. Experiments demonstrate significant improvements, marking the first validation of MoE in this domain.",
+      "llm_tldr_cn": "针对动态云工作流调度中现有深度强化学习方法单一推理架构适应性不足的问题，论文提出DEFT，将混合专家模型引入调度策略。DEFT包含多个专家，每个专家针对不同截止时间紧迫度进行训练。实验表明，DEFT在动态调度场景下优于基线方法，为云工作流调度提供了更灵活的解决方案。",
+      "llm_tldr": "针对动态云工作流调度中现有深度强化学习方法单一推理架构适应性不足的问题，论文提出DEFT，将混合专家模型引入调度策略。DEFT包含多个专家，每个专家针对不同截止时间紧迫度进行训练。实验表明，DEFT在动态调度场景下优于基线方法，为云工作流调度提供了更灵活的解决方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.01613v1",
+      "source": "arxiv",
+      "title": "TechGraphRAG: An Agentic Graph-Augmented RAG Framework for Technical Literature Reasoning",
+      "abstract": "This paper presents an agentic retrieval-augmented generation (RAG) framework for domain-specific technical reasoning support, instantiated over a curated corpus of approximately 2,100 academic papers in intelligent tires, vehicle dynamics, and vehicle control. Unlike conventional single-pass RAG systems, the proposed architecture employs a 13-step autonomous pipeline that classifies queries by intent, scores evidence sufficiency against a multi-dimensional rubric, performs agentic retry with drift-guarded query reformulation, searches external academic databases (Crossref, OpenAlex, Semantic Scholar) through iterative optimize--search--vet loops, traverses a Neo4j knowledge graph for relational context, verifies citation integrity, and applies post-generation quality checks with automatic regeneration. Key contributions include a 100-point evidence sufficiency scoring framework across five dimensions with relevance damping and hybrid rule-based/LLM review; a route-dependent external search architecture with iterative agentic loops; a knowledge graph constructed via LLM-based entity extraction and OpenAlex author validation with intra-corpus citation resolution; and a self-correcting generation loop with citation verification and quality assessment. The framework is presented as a practical, implemented case study illustrating how agentic, evidence-grounded RAG can support literature navigation and technical reasoning over large, domain-specific corpora.",
+      "authors": [
+        "Kanwar Bharat Singh"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-06-01T03:01:51+00:00",
+      "link": "https://arxiv.org/pdf/2606.01613v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "agentic graph-augmented RAG framework for technical literature, likely provides code",
+      "llm_evidence_cn": "技术文献推理的智能体图增强RAG框架，可能提供代码",
+      "llm_evidence": "技术文献推理的智能体图增强RAG框架，可能提供代码",
+      "canonical_evidence": "技术文献推理的智能体图增强RAG框架，可能提供代码",
+      "llm_tldr_en": "TechGraphRAG is an agentic graph-augmented RAG framework for technical literature reasoning, with a 13-step autonomous pipeline; likely open-source.",
+      "llm_tldr_cn": "该论文提出TechGraphRAG，一个用于领域技术推理的智能体图增强RAG框架。框架采用13步自主管道，包括查询分类、证据评分、外部数据库搜索和知识图谱遍历。通常伴随代码开源以促进可重复研究。",
+      "llm_tldr": "该论文提出TechGraphRAG，一个用于领域技术推理的智能体图增强RAG框架。框架采用13步自主管道，包括查询分类、证据评分、外部数据库搜索和知识图谱遍历。通常伴随代码开源以促进可重复研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.01434v1",
+      "source": "arxiv",
+      "title": "DrugClaw and DrugAudit: A Primary-Source-Grounded Agent and Authority-Aware Benchmark for Drug-Information Question Answering",
+      "abstract": "Drug-information question answering is a high-stakes setting where hallucinated facts can mislead clinical decision-making and the provenance of each cited fact matters as much as the fact itself. We present DrugClaw, a multi-agent retrieval-augmented system that queries a registry of drug and pharmacovigilance skills via a reflection-driven state-machine workflow and returns answers grounded in primary regulatory or peer-reviewed records. We also contribute DrugAudit, a 3,772-item authority-aware benchmark with an evaluation panel that scores upstream-of-gold source match, token-level semantic snippet overlap, and citation faithfulness under a dual-judge LLM-as-judge protocol with inter-judge kappa = 0.88 (almost-perfect). Across DrugAudit plus drug-related subsets of MedQA (751) and PubMedQA (512), DrugClaw is top-1 on every column of the headline table: composite Evidence Index under both judges, judge-mediated answer correctness, primary-source rate (0.918, +10.1 pp over next-best), faithfulness (0.887, +5.9 pp), MedQA (0.920), and PubMedQA (0.693).",
+      "authors": [
+        "Qing Wang",
+        "Bo Li",
+        "Jialu Liang",
+        "Daling Shi",
+        "Bob Zhang",
+        "Qianqian Song"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-31T20:11:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.01434v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "multi-agent system and benchmark for drug QA, likely open-source",
+      "llm_evidence_cn": "药物问答的多智能体系统和基准，可能开源代码",
+      "llm_evidence": "药物问答的多智能体系统和基准，可能开源代码",
+      "canonical_evidence": "药物问答的多智能体系统和基准，可能开源代码",
+      "llm_tldr_en": "DrugClaw is a multi-agent RAG system for drug QA, and DrugAudit is a benchmark; likely open-source for reproducibility.",
+      "llm_tldr_cn": "该论文提出DrugClaw多智能体检索增强系统，用于药物信息问答，并构建DrugAudit基准。系统基于主要监管或同行评审记录，强调来源可追溯。研究通常伴随代码开源以支持可重复性。",
+      "llm_tldr": "该论文提出DrugClaw多智能体检索增强系统，用于药物信息问答，并构建DrugAudit基准。系统基于主要监管或同行评审记录，强调来源可追溯。研究通常伴随代码开源以支持可重复性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.00941v1",
+      "source": "arxiv",
+      "title": "Power Grid Infrastructure for AI Data Centers",
+      "abstract": "This article addresses recent advances in artificial intelligence, which have set off an astounding race among technology frontiers to build large data centers. It provides insights into impacts of large data centers on the planning and operation of the power grid.",
+      "authors": [
+        "Amir Sajadi",
+        "Muhy Eddin Za'ter",
+        "Maria Vabson",
+        "Kyri Baker",
+        "Bri-Mathias Hodge"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-05-31T00:56:10+00:00",
+      "link": "https://arxiv.org/pdf/2606.00941v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "directly addresses power grid infrastructure for AI data centers",
+      "llm_evidence_cn": "直接涉及AI数据中心的电网基础设施",
+      "llm_evidence": "直接涉及AI数据中心的电网基础设施",
+      "canonical_evidence": "直接涉及AI数据中心的电网基础设施",
+      "llm_tldr_en": "This article examines the impact of large AI data centers on power grid planning and operation, highlighting infrastructure challenges.",
+      "llm_tldr_cn": "随着AI驱动的数据中心快速建设，电网规划与运行面临新挑战。本文概述了大型数据中心对电力基础设施的影响，包括容量需求、稳定性等问题，为相关研究提供了背景和方向。",
+      "llm_tldr": "随着AI驱动的数据中心快速建设，电网规划与运行面临新挑战。本文概述了大型数据中心对电力基础设施的影响，包括容量需求、稳定性等问题，为相关研究提供了背景和方向。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.01936v1",
+      "source": "arxiv",
+      "title": "What to Format and How: A Benchmark and Workflow Approach for Document Formatting",
+      "abstract": "Recent advances in large language models (LLMs) have opened up new possibilities for automated document formatting. However, real-world formatting often requires identifying targets based on document content. This content-aware setting remains challenging and underexplored, primarily due to the lack of dedicated evaluation datasets.To enable evaluation in realistic content-aware scenarios, we introduce DocFormBench, a benchmark that extends Text-to-Format evaluation to diverse formatting requirements, along with metrics for both accuracy and efficiency.To mitigate redundant document reading in existing methods during formatting, we propose DocFormFlow, a workflow formatting method that decouples target localization from modification execution into what to format and how. Extensive experiments across multiple LLMs and multimodal models show that DocFormFlow consistently improves formatting accuracy while reducing token consumption compared to representative baselines. Further analysis reveals that precise target localization is the primary factor influencing formatting performance. We hope DocFormBench and DocFormFlow will facilitate future research toward more intelligent and reliable document formatting.",
+      "authors": [
+        "Shihao Rao",
+        "Liang Li",
+        "Jiapeng Liu",
+        "Tong Lin",
+        "Bing Li",
+        "Xiyan Gao",
+        "Peng Fu",
+        "Jing Huang",
+        "Can Ma"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-06-01T09:02:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.01936v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "benchmark and workflow for document formatting, likely code",
+      "llm_evidence_cn": "文档格式化基准和工作流方法，可能提供代码",
+      "llm_evidence": "文档格式化基准和工作流方法，可能提供代码",
+      "canonical_evidence": "文档格式化基准和工作流方法，可能提供代码",
+      "llm_tldr_en": "DocFormBench benchmark and DocFormFlow workflow for content-aware document formatting, likely with open-source code.",
+      "llm_tldr_cn": "该论文针对内容感知的文档格式化问题，提出了DocFormBench基准和DocFormFlow工作流方法。基准扩展了文本到格式的评估，工作流将目标定位与修改执行解耦，提高效率。研究通常伴随代码开源。",
+      "llm_tldr": "该论文针对内容感知的文档格式化问题，提出了DocFormBench基准和DocFormFlow工作流方法。基准扩展了文本到格式的评估，工作流将目标定位与修改执行解耦，提高效率。研究通常伴随代码开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
