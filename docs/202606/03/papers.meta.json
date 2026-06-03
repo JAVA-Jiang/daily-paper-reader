@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-03",
+  "date": "2026-06-03",
+  "generated_at": "2026-06-03T22:31:08",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/03/2606.02006v1-an-agentic-approach-towards-replication-package-quality-evaluation",
+      "section": "deep",
+      "title_en": "An Agentic Approach Towards Replication Package Quality Evaluation",
+      "authors": "Maximilian Alexander Amougou Mbida, Florian Angermeir",
+      "date": "2026-06-01",
+      "pdf": "https://arxiv.org/pdf/2606.02006v1",
+      "score": "9.0",
+      "evidence": "可复现研究包质量评估，直接支持开源代码可复现要求",
+      "tldr": "经验软件工程中复制包质量的手工评估难以扩展。本文提出智能体方法，将开放科学指南转化为51条可验证标准，并实现多智能体原型自动检查。评估5个复制包，一致性91.4%，正确率75.4%，结构标准表现优异但定性研究困难。该方法可支持作者和审稿人自动化常规检查。",
+      "tags": "query:code-paper",
+      "abstract_en": "Reproducibility in empirical software engineering relies on complete, accessible, and reusable research artifacts, yet artifact evaluation remains largely manual and difficult to scale. This emerging results paper explores an agentic approach for assessing replication package quality by translating open-science guidelines into machine-verifiable criteria. We consolidate 380 requirements from 34 sources into 51 reproducibility criteria, of which 31 are operationalized for automated artifact-based evaluation. Based on these criteria, we implement a multi-agent prototype that automatically inspects replication packages and produces evidence-grounded improvement reports. A preliminary evaluation on five replication packages shows high inter-run consistency of 91.4\\% and 75.4\\% correctness, through micro-averaged agreement with a manual baseline. The agent performs best on structural criteria such as code, environment, and artifact availability, but struggles with qualitative or mixed-method studies. A pilot survey with seven software engineering researchers indicates well perceived usefulness and adoption potential, while revealing cognitive load in the human-in-the-loop planning step. Overall, these emerging results indicate that agentic research artifact evaluation has the potential to support authors and reviewers by automating selected routine checks.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/03/2606.00490v1-xor-bidding-and-knapsack-formulations-for-hpc-network-resource-allocation",
+      "section": "deep",
+      "title_en": "XOR Bidding and Knapsack Formulations for HPC Network Resource Allocation",
+      "authors": "Abrar Hossain, Kishwar Ahmed",
+      "date": "2026-05-30",
+      "pdf": "https://arxiv.org/pdf/2606.00490v1",
+      "score": "8.0",
+      "evidence": "基于拍卖的HPC网络带宽分配类似于数据中心任务调度",
+      "tldr": "高性能计算中心面临大数据流挑战，传统静态分配和队列方法造成瓶颈。本文提出两种基于拍卖的机制：Greedy Value Density Auction（计算高效）和VCG Knapsack Auction（理论保证），用户依据数据需求和科学价值投标，最大化社会总价值。模拟显示，高负载下平均和尾部延迟降低超80%，延迟变异系数降75-85%，负载波动峰值平均比降60-70%。价值驱动的自适应分配可有效减少拥塞、提升资源利用率，并基于科学重要性实现更公平的访问。",
+      "tags": "query:code-paper",
+      "abstract_en": "Modern High Performance Computing (HPC) centers face growing challenges in ingesting large and diverse data streams. These issues often create bottlenecks that limit bandwidth utilization and delay scientific progress. Traditional static allocation and simple queuing methods are often insufficient. This paper presents a dynamic, value-based approach to bandwidth allocation. We formalize the problem by incorporating both network and processing constraints. To address it, we introduce two auction-based mechanisms: the Greedy Value Density Auction, which is computationally efficient, and the Vickrey--Clarke--Groves (VCG) Knapsack Auction, which provides strong theoretical guarantees. Both mechanisms rely on user bids that specify data requirements and scientific value. The objective is to maximize the total value of successful transfers, commonly referred to as social welfare. Simulation results demonstrate that the proposed mechanisms significantly outperform First Come First Served (FCFS) baselines. Under high-load conditions, they reduce average and tail completion delays by more than 80%. Predictability also improves, with the coefficient of variation of delay decreasing by 75--85%. Network stability increases as well, with load volatility, measured by the peak-to-average ratio, decreasing by 60--70%. These results indicate that value-driven, adaptive bandwidth allocation can reduce congestion, improve resource utilization, and provide fairer access based on scientific importance.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/03/2606.03657v1-diagnosing-knowledge-gaps-in-llm-tool-use-an-agentic-benchmark-for-novel-api-acquisition",
+      "section": "quick",
+      "title_en": "Diagnosing Knowledge Gaps in LLM Tool Use: An Agentic Benchmark for Novel API Acquisition",
+      "authors": "Jinnuo Liu, Yue Peng, Jinhan Niu, Hongyi Wen",
+      "date": "2026-06-02",
+      "pdf": "https://arxiv.org/pdf/2606.03657v1",
+      "score": "6.0",
+      "evidence": "提供可执行编码任务的基准测试",
+      "tldr": "现有LLM代码生成基准在处理新颖API时静态且粗粒度，缺乏对知识缺口的细粒度诊断。本文提出NovelAPIBench动态基准，自动发现API、分解知识束（签名、机制、示例等）、生成可执行任务并归类失败。实验发现使用示例是最强独立信号，但添加源码可能因导入路径错误而有害；微调主要教模型使用知识束，而非替代检索。结果表明检索与微调互补：检索提供易变API内容，微调改善过程集成。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large language models for code generation often need to use APIs that are absent from their pretraining data. This requires more than recalling a function name: models must coordinate signatures, module paths, input-output contracts, semantics, and executable usage patterns. Existing novel-API benchmarks are typically static, rely on coarse pass/fail metrics, or use synthetic APIs that may not reflect real library evolution. We introduce NovelAPIBench, a fully automated dynamic benchmark that, for any base model and target library, discovers novel APIs, extracts decomposed knowledge bundles, generates executable coding tasks, and assigns failed samples to six diagnostic categories. Across about 1.9K tasks, four base models, and five domains, we compare knowledge injected through retrieval with knowledge internalized through parametric adaptation. We find that knowledge components are not interchangeable: usage examples are the strongest standalone signal, while the best two-component setting pairs signatures with either mechanisms or examples depending on the domain and backbone. Adding more context, especially source code, can hurt by increasing import-path errors. Parametric adaptation also does not replace retrieval once external knowledge is removed; rather, fine-tuning mainly teaches models how to use provided bundles, and this ability transfers to held-out libraries. These results suggest that retrieval and tuning play complementary roles: retrieval supplies volatile API content, while tuning improves procedural integration.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

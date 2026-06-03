@@ -6,46 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-02
-- 运行时间：2026-06-02 22:20:30 UTC
+- 最新运行日期：2026-06-03
+- 运行时间：2026-06-03 22:31:03 UTC
 - 运行状态：成功
-- 本次总论文数：8
-- 精读区：5
-- 速读区：3
+- 本次总论文数：3
+- 精读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日日报精选8篇论文，聚焦自动化综述生成、RAG架构设计及药物问答系统等方向。  
-最值得关注的是《DeepSurvey》与《RAISE》，分别以8.0分探讨综述可靠性提升和RAG设计自动化；速读中《DrugClaw and DrugAudit》也值得参考。  
-建议读者优先阅读精读文章，了解如何用搜索优化论文生成与RAG系统，后续可关注文档格式化工作流等实用工具。
-- 详情：[/202606/02/README](/202606/02/README)
+今天精读两篇高分论文（智能体复制包质量评估、HPC网络资源分配）并速读一篇LLM知识诊断基准。最值得关注的方向：智能体自动评估软件包质量，以及采用XOR竞价与背包模型优化高性能计算资源分配。建议优先研读精读两篇，理解智能体评估框架和HPC资源调度新方法。
+- 详情：[/202606/03/README](/202606/03/README)
 
 ### 精读区论文标签
-1. [DeepSurvey: Enhancing Analytical Depth and Citation Reliability in Automated Survey Generation](/202606/02/2605.29522v1-deepsurvey-enhancing-analytical-depth-and-citation-reliability-in-automated-survey-generation)  
+1. [An Agentic Approach Towards Replication Package Quality Evaluation](/202606/03/2606.02006v1-an-agentic-approach-towards-replication-package-quality-evaluation)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：可复现研究包质量评估，直接支持开源代码可复现要求
+2. [XOR Bidding and Knapsack Formulations for HPC Network Resource Allocation](/202606/03/2606.00490v1-xor-bidding-and-knapsack-formulations-for-hpc-network-resource-allocation)  
    标签：评分：8.0/10、query:code-paper
-   evidence：自动化综述生成的智能系统，集成代码仓库分析，可能开源
-2. [RAISE: RAG Design as an Architecture Search Problem](/202606/02/2605.30029v1-raise-rag-design-as-an-architecture-search-problem)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：RAG设计作为架构搜索问题，提供框架与基准，可能含代码
-3. [Certificates without Electrons? Theory and Evidence on Impacts from AI-Driven Power Demand](/202606/02/2606.00811v1-certificates-without-electrons-theory-and-evidence-on-impacts-from-ai-driven-power-demand)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：建立博弈论模型分析数据中心电力需求及可再生能源证书效果
-4. [Deft Scheduling of Dynamic Cloud Workflows with Varying Deadlines via Mixture-of-Experts](/202606/02/2606.01162v1-deft-scheduling-of-dynamic-cloud-workflows-with-varying-deadlines-via-mixture-of-experts)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：动态云工作流调度，使用混合专家模型
-5. [TechGraphRAG: An Agentic Graph-Augmented RAG Framework for Technical Literature Reasoning](/202606/02/2606.01613v1-techgraphrag-an-agentic-graph-augmented-rag-framework-for-technical-literature-reasoning)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：技术文献推理的智能体图增强RAG框架，可能提供代码
+   evidence：基于拍卖的HPC网络带宽分配类似于数据中心任务调度
 
 ### 速读区论文标签
-1. [DrugClaw and DrugAudit: A Primary-Source-Grounded Agent and Authority-Aware Benchmark for Drug-Information Question Answering](/202606/02/2606.01434v1-drugclaw-and-drugaudit-a-primary-source-grounded-agent-and-authority-aware-benchmark-for-drug-information-question-answering)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：药物问答的多智能体系统和基准，可能开源代码
-2. [What to Format and How: A Benchmark and Workflow Approach for Document Formatting](/202606/02/2606.01936v1-what-to-format-and-how-a-benchmark-and-workflow-approach-for-document-formatting)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：文档格式化基准和工作流方法，可能提供代码
-3. [Power Grid Infrastructure for AI Data Centers](/202606/02/2606.00941v1-power-grid-infrastructure-for-ai-data-centers)  
+1. [Diagnosing Knowledge Gaps in LLM Tool Use: An Agentic Benchmark for Novel API Acquisition](/202606/03/2606.03657v1-diagnosing-knowledge-gaps-in-llm-tool-use-an-agentic-benchmark-for-novel-api-acquisition)  
    标签：评分：6.0/10、query:code-paper
-   evidence：直接涉及AI数据中心的电网基础设施
+   evidence：提供可执行编码任务的基准测试
 
 
 <div class="dpr-home-promo-card">
