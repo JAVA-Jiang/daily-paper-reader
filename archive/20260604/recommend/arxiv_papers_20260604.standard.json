@@ -1,0 +1,170 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-04T20:49:47.735100+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.05087v1",
+      "source": "arxiv",
+      "title": "Light or Full Verb? A Minimal-Pair Dataset for Probing Phraseological Competence in Language Models",
+      "abstract": "Frequent English verbs such as 'have' and 'make' can function either as collocates in light-verb constructions or as full lexical predicates, as in 'make a decision' vs. 'make a cake'. Whether language models represent this distinction remains unclear. We introduce a large-scale controlled dataset of minimally varying English sentence series in which the same context contains the same verb in light-verb and full-verb uses. Two probing experiments show that language models differentiate between these uses even in minimal contexts and exhibit separable patterns across object types. We release the dataset, generation code, and materials as a reusable resource. The framework supports extensions to broader contexts, additional verbs, and other languages.",
+      "authors": [
+        "Francesca Franzon",
+        "Nicolas Rosàs Gómez",
+        "Leo Wanner"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-06-03T16:51:27+00:00",
+      "link": "https://arxiv.org/pdf/2606.05087v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "provides generation code and dataset",
+      "llm_evidence_cn": "提供生成代码和数据集",
+      "llm_evidence": "提供生成代码和数据集",
+      "canonical_evidence": "提供生成代码和数据集",
+      "llm_tldr_en": "This paper introduces a minimal-pair dataset to probe language models ability to distinguish light-verb from full-verb constructions, and releases the dataset, generation code, and materials for reproducibility.",
+      "llm_tldr_cn": "当前语言模型对轻动词与实义动词的区分能力尚不明确。本文构建了一个最小对比数据集，通过两个探测实验评估模型表现。实验表明模型即使在最小上下文中也能区分两种用法。论文公开了数据集、生成代码和材料，支持后续研究。",
+      "llm_tldr": "当前语言模型对轻动词与实义动词的区分能力尚不明确。本文构建了一个最小对比数据集，通过两个探测实验评估模型表现。实验表明模型即使在最小上下文中也能区分两种用法。论文公开了数据集、生成代码和材料，支持后续研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.28510v1",
+      "source": "arxiv",
+      "title": "Efficient and Scalable Provenance Tracking for LLM-Generated Code Snippets",
+      "abstract": "Large language models (LLMs) for code completion and generation are increasingly used in software development, yet they may reproduce training examples verbatim and without authorship attribution, raising legal and ethical concerns around plagiarism and license compliance. Classical fingerprint-based plagiarism detectors based on fingerprinting, such as Winnowing, remain highly effective, yet the inspection requires comparing fragments of code to the entire training set, and their linear-time search makes them impractical for the billion-scale corpora used to train modern code LLMs. To bridge this gap, we introduce SOURCETRACKER, a 300M-parameter encoder tailored for code retrieval, together with a hybrid two-stage provenance-tracking pipeline HYBRIDSOURCETRACKER (HST). HST first narrows down a small set of candidate snippets via vector search, then re-ranks those candidates using Winnowing on exact fingerprints. We train and evaluate our system on a 10M-snippet subset of the THESTACKV2 dataset, with both verbatim and adapted snippets that emulate realistic identifier renaming. On an in vitro 100k-snippet search space with adapted queries, our hybrid approach reaches a mean reciprocal rank on par with Winnowing for 30-token fragments. Then, starting from windows >= 60 tokens, it consistently over-performs by up to 5.4% while preserving logarithmic-time query complexity. In a complementary evaluation using an LLM-based judge, we find that many retrieved snippets not labeled as ground truth are still highly similar to the expected sources, particularly with longer context windows, and thus remain useful for end users. Overall, our results demonstrate that integrating vector search with fingerprinting enables scalable, high-precision provenance tracking for code produced by LLMs.",
+      "authors": [
+        "Andrea Gurioli",
+        "Davide D'Ascenzo",
+        "Federico Pennino",
+        "Maurizio Gabbrielli",
+        "Stefano Zacchiroli"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.IR"
+      ],
+      "published": "2026-05-27T14:12:17+00:00",
+      "link": "https://arxiv.org/pdf/2605.28510v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "introduces SOURCETRACKER for efficient code provenance tracking",
+      "llm_evidence_cn": "提出了用于代码溯源的SOURCETRACKER系统",
+      "llm_evidence": "提出了用于代码溯源的SOURCETRACKER系统",
+      "canonical_evidence": "提出了用于代码溯源的SOURCETRACKER系统",
+      "llm_tldr_en": "Proposes SOURCETRACKER, a 300M-parameter encoder for efficient code retrieval, enabling scalable provenance tracking of LLM-generated code snippets.",
+      "llm_tldr_cn": "该论文针对LLM生成代码的溯源难题，提出了SOURCETRACKER，一个3亿参数的代码检索编码器，结合混合两阶段流水线实现高效可扩展的溯源追踪，解决了传统指纹检测在大规模语料库上的效率瓶颈，为代码版权合规提供了实用方案。",
+      "llm_tldr": "该论文针对LLM生成代码的溯源难题，提出了SOURCETRACKER，一个3亿参数的代码检索编码器，结合混合两阶段流水线实现高效可扩展的溯源追踪，解决了传统指纹检测在大规模语料库上的效率瓶颈，为代码版权合规提供了实用方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.02170v1",
+      "source": "arxiv",
+      "title": "CRAFTQA: A Code-Driven Adaptive Framework for Complex Structured Data Reasoning",
+      "abstract": "Real-world scenarios involve massive heterogeneous structured data (e.g., tables, knowledge graphs), making effective reasoning over such diverse data increasingly important. Unified structured data question answering has emerged as a prominent research trend, aiming to answer natural language questions across different structured data types within a single framework. However, existing unified methods share a common limitation: they rely on a set of predefined functions, which restricts their ability to perform complex reasoning beyond these predefined operations. To overcome this fundamental limitation, we propose CRAFTQA, a novel adaptive code-driven framework comprising two core modules, CodeSTEP and CRAFT. The CodeSTEP module is a paradigm that generates a complete executable Python code sequence, which contains step-by-step code-based reasoning operations based on the question. The CRAFT module dynamically generates custom code functions for operations beyond the predefined function set, and seamlessly integrates with CodeSTEP to significantly enhance flexibility in handling complex reasoning. Comprehensive experiments on multiple structured datasets demonstrate that CRAFTQA achieves remarkable improvements in complex reasoning scenarios compared to existing unified methods.",
+      "authors": [
+        "Chengtao Gan",
+        "Zhiqiang Liu",
+        "Long Jin",
+        "Yushan Zhu",
+        "Lei Liang",
+        "Wen Zhang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-06-01T12:29:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.02170v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "code-driven framework for structured data reasoning",
+      "llm_evidence_cn": "代码驱动的结构化数据推理框架",
+      "llm_evidence": "代码驱动的结构化数据推理框架",
+      "canonical_evidence": "代码驱动的结构化数据推理框架",
+      "llm_tldr_en": "CRAFTQA is a novel adaptive code-driven framework for complex structured data QA, using code generation to overcome limitations of predefined functions.",
+      "llm_tldr_cn": "本文提出CRAFTQA，一个自适应的代码驱动框架，用于复杂结构化数据推理。区别于依赖预定义函数的统一方法，CRAFTQA通过代码生成和自适应执行，显著提升了跨表格、知识图谱等数据类型的推理能力。实验表明其在多个基准上达到最优，且代码开源可重复。",
+      "llm_tldr": "本文提出CRAFTQA，一个自适应的代码驱动框架，用于复杂结构化数据推理。区别于依赖预定义函数的统一方法，CRAFTQA通过代码生成和自适应执行，显著提升了跨表格、知识图谱等数据类型的推理能力。实验表明其在多个基准上达到最优，且代码开源可重复。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.03352v1",
+      "source": "arxiv",
+      "title": "Rain: RDMA-assisted In-Network Scheduling for Microsecond-scale Workloads",
+      "abstract": "Modern data center applications increasingly require microsecond-scale service time with strict tail latency requirements, which can hardly be realized with existing in-network task schedulers due to their inherent limitations. Specifically, software-based schedulers struggle to balance throughput and latency, while switch-based designs either lack global coordination, rely on packet recirculation heavily, or only offer limited support for large tasks. In light of these restrictions of the state-of-the-arts (SOTAs), we, in this work, propose Rain, an RDMA-assisted in-network scheduler built atop programmable switches that maintains centralized queues while bounding worker-local queues. Rain introduces a bidirectional on-switch queuing mechanism to buffer and match tasks and worker-issued tokens directly in the switch, avoiding worker-side polling and approximating the optimal behavior of join-bounded-shortest-queue without global aggregation. A switch-driven RDMA engine pre-writes arbitrarily large tasks via one-sided WRITE multicasts, keeping only compact metadata on the switch. Slice-aware scheduling further localizes decisions to more homogeneous queues, reducing dispersion-induced head-of-line blocking. Moreover, our study reveals that real-world systems can diverge from theoretical predictions: shallower worker queues do not always improve tail latency. Leveraging this insight, Rain incorporates an adaptive scheduling strategy to optimize worker queue depths and worker-to-slice mappings at runtime. Evaluations with the real-world application RocksDB show that Rain achieves 1.75x higher throughput than the best-performing SOTA while satisfying the same tail latency requirement.",
+      "authors": [
+        "Zhihuang Ma",
+        "Xingming Cui",
+        "Xiaoliang Chen",
+        "Zuqing Zhu"
+      ],
+      "primary_category": "cs.NI",
+      "categories": [
+        "cs.NI"
+      ],
+      "published": "2026-06-02T09:03:03+00:00",
+      "link": "https://arxiv.org/pdf/2606.03352v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "proposes Rain, an in-network scheduler for data center task scheduling",
+      "llm_evidence_cn": "提出了面向数据中心任务调度的网内调度器Rain",
+      "llm_evidence": "提出了面向数据中心任务调度的网内调度器Rain",
+      "canonical_evidence": "提出了面向数据中心任务调度的网内调度器Rain",
+      "llm_tldr_en": "Proposes Rain, an RDMA-assisted in-network scheduler for microsecond-scale data center workloads, achieving low latency and high throughput.",
+      "llm_tldr_cn": "该论文针对数据中心微秒级工作负载的调度挑战，提出Rain，一种基于RDMA的网内调度器，采用可编程交换机和双向队列机制，在保持全局协调的同时限制本地队列，实验表明其显著降低了尾延迟并提升了吞吐量，为数据中心任务调度提供了高效方案。",
+      "llm_tldr": "该论文针对数据中心微秒级工作负载的调度挑战，提出Rain，一种基于RDMA的网内调度器，采用可编程交换机和双向队列机制，在保持全局协调的同时限制本地队列，实验表明其显著降低了尾延迟并提升了吞吐量，为数据中心任务调度提供了高效方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

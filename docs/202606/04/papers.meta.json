@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-04",
+  "date": "2026-06-04",
+  "generated_at": "2026-06-04T20:52:18",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/04/2606.05087v1-light-or-full-verb-a-minimal-pair-dataset-for-probing-phraseological-competence-in-language-models",
+      "section": "deep",
+      "title_en": "Light or Full Verb? A Minimal-Pair Dataset for Probing Phraseological Competence in Language Models",
+      "authors": "Francesca Franzon, Nicolas Rosàs Gómez, Leo Wanner",
+      "date": "2026-06-03",
+      "pdf": "https://arxiv.org/pdf/2606.05087v1",
+      "score": "9.0",
+      "evidence": "提供生成代码和数据集",
+      "tldr": "英语高频动词如'have'和'make'既可用作轻动词搭配（如'make a decision'）也可用作完全谓语（如'make a cake'）。现有语言模型是否区分这一歧义尚不明确。本文构建了一个大规模最小对比数据集，在最小上下文变化中比较同一动词的轻动词与全动词用法。探测实验表明语言模型能区分二者，且在不同宾语类型上呈现可分离模式。该数据集及生成代码已开源，支持扩展研究。",
+      "tags": "query:code-paper",
+      "abstract_en": "Frequent English verbs such as 'have' and 'make' can function either as collocates in light-verb constructions or as full lexical predicates, as in 'make a decision' vs. 'make a cake'. Whether language models represent this distinction remains unclear. We introduce a large-scale controlled dataset of minimally varying English sentence series in which the same context contains the same verb in light-verb and full-verb uses. Two probing experiments show that language models differentiate between these uses even in minimal contexts and exhibit separable patterns across object types. We release the dataset, generation code, and materials as a reusable resource. The framework supports extensions to broader contexts, additional verbs, and other languages.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/04/2605.28510v1-efficient-and-scalable-provenance-tracking-for-llm-generated-code-snippets",
+      "section": "deep",
+      "title_en": "Efficient and Scalable Provenance Tracking for LLM-Generated Code Snippets",
+      "authors": "Andrea Gurioli, Davide D'Ascenzo, Federico Pennino, Maurizio Gabbrielli, Stefano Zacchiroli",
+      "date": "2026-05-27",
+      "pdf": "https://arxiv.org/pdf/2605.28510v1",
+      "score": "8.0",
+      "evidence": "提出了用于代码溯源的SOURCETRACKER系统",
+      "tldr": "代码LLM可能逐字复制训练样本，引发抄袭和许可问题。传统指纹检测因需线性扫描整个训练集，无法用于十亿级语料。本文提出SOURCETRACKER编码器和混合管道HST，先向量检索缩小候选，再用Winnowing重排序。在10M片段数据集上，对60令牌以上片段，MRR比纯Winnowing高5.4%，且保持对数时间复杂度。结果表明结合向量搜索与指纹可实现可扩展的高精度溯源。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large language models (LLMs) for code completion and generation are increasingly used in software development, yet they may reproduce training examples verbatim and without authorship attribution, raising legal and ethical concerns around plagiarism and license compliance. Classical fingerprint-based plagiarism detectors based on fingerprinting, such as Winnowing, remain highly effective, yet the inspection requires comparing fragments of code to the entire training set, and their linear-time search makes them impractical for the billion-scale corpora used to train modern code LLMs. To bridge this gap, we introduce SOURCETRACKER, a 300M-parameter encoder tailored for code retrieval, together with a hybrid two-stage provenance-tracking pipeline HYBRIDSOURCETRACKER (HST). HST first narrows down a small set of candidate snippets via vector search, then re-ranks those candidates using Winnowing on exact fingerprints. We train and evaluate our system on a 10M-snippet subset of the THESTACKV2 dataset, with both verbatim and adapted snippets that emulate realistic identifier renaming. On an in vitro 100k-snippet search space with adapted queries, our hybrid approach reaches a mean reciprocal rank on par with Winnowing for 30-token fragments. Then, starting from windows >= 60 tokens, it consistently over-performs by up to 5.4% while preserving logarithmic-time query complexity. In a complementary evaluation using an LLM-based judge, we find that many retrieved snippets not labeled as ground truth are still highly similar to the expected sources, particularly with longer context windows, and thus remain useful for end users. Overall, our results demonstrate that integrating vector search with fingerprinting enables scalable, high-precision provenance tracking for code produced by LLMs.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/04/2606.02170v1-craftqa-a-code-driven-adaptive-framework-for-complex-structured-data-reasoning",
+      "section": "deep",
+      "title_en": "CRAFTQA: A Code-Driven Adaptive Framework for Complex Structured Data Reasoning",
+      "authors": "Chengtao Gan, Zhiqiang Liu, Long Jin, Yushan Zhu, Lei Liang, Wen Zhang",
+      "date": "2026-06-01",
+      "pdf": "https://arxiv.org/pdf/2606.02170v1",
+      "score": "8.0",
+      "evidence": "代码驱动的结构化数据推理框架",
+      "tldr": "现实场景中异构结构化数据（如表格、知识图谱）的推理需求日益增长，统一结构化数据问答旨在用单一框架回答不同数据类型的问题。现有统一方法依赖预定义函数集，难以处理超出范围的复杂推理。为此，本文提出CRAFTQA，一种自适应代码驱动框架，包含CodeSTEP和CRAFT两个模块：CodeSTEP生成逐步的Python代码推理序列，CRAFT动态创建自定义代码函数以扩展操作。实验表明，CRAFTQA在复杂推理场景下相比现有统一方法取得了显著改进，提升了灵活性与泛化能力。",
+      "tags": "query:code-paper",
+      "abstract_en": "Real-world scenarios involve massive heterogeneous structured data (e.g., tables, knowledge graphs), making effective reasoning over such diverse data increasingly important. Unified structured data question answering has emerged as a prominent research trend, aiming to answer natural language questions across different structured data types within a single framework. However, existing unified methods share a common limitation: they rely on a set of predefined functions, which restricts their ability to perform complex reasoning beyond these predefined operations. To overcome this fundamental limitation, we propose CRAFTQA, a novel adaptive code-driven framework comprising two core modules, CodeSTEP and CRAFT. The CodeSTEP module is a paradigm that generates a complete executable Python code sequence, which contains step-by-step code-based reasoning operations based on the question. The CRAFT module dynamically generates custom code functions for operations beyond the predefined function set, and seamlessly integrates with CodeSTEP to significantly enhance flexibility in handling complex reasoning. Comprehensive experiments on multiple structured datasets demonstrate that CRAFTQA achieves remarkable improvements in complex reasoning scenarios compared to existing unified methods.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/04/2606.03352v1-rain-rdma-assisted-in-network-scheduling-for-microsecond-scale-workloads",
+      "section": "quick",
+      "title_en": "Rain: RDMA-assisted In-Network Scheduling for Microsecond-scale Workloads",
+      "authors": "Zhihuang Ma, Xingming Cui, Xiaoliang Chen, Zuqing Zhu",
+      "date": "2026-06-02",
+      "pdf": "https://arxiv.org/pdf/2606.03352v1",
+      "score": "7.0",
+      "evidence": "提出了面向数据中心任务调度的网内调度器Rain",
+      "tldr": "现代数据中心微秒级工作负载对尾部延迟要求严格，现有软件或交换机调度方案存在全局协调不足、依赖轮询等问题。Rain构建于可编程交换机，利用RDMA双向队列机制直接在交换机缓冲任务与worker令牌，避免轮询并近似最优调度。同时采用RDMA单边写预传大任务、切片感知调度减少队头阻塞，并自适应优化队列深度。在RocksDB上，Rain满足尾部延迟条件下吞吐量超越最优基线1.75倍，为微秒级任务调度提供了高效方案。",
+      "tags": "query:code-paper",
+      "abstract_en": "Modern data center applications increasingly require microsecond-scale service time with strict tail latency requirements, which can hardly be realized with existing in-network task schedulers due to their inherent limitations. Specifically, software-based schedulers struggle to balance throughput and latency, while switch-based designs either lack global coordination, rely on packet recirculation heavily, or only offer limited support for large tasks. In light of these restrictions of the state-of-the-arts (SOTAs), we, in this work, propose Rain, an RDMA-assisted in-network scheduler built atop programmable switches that maintains centralized queues while bounding worker-local queues. Rain introduces a bidirectional on-switch queuing mechanism to buffer and match tasks and worker-issued tokens directly in the switch, avoiding worker-side polling and approximating the optimal behavior of join-bounded-shortest-queue without global aggregation. A switch-driven RDMA engine pre-writes arbitrarily large tasks via one-sided WRITE multicasts, keeping only compact metadata on the switch. Slice-aware scheduling further localizes decisions to more homogeneous queues, reducing dispersion-induced head-of-line blocking. Moreover, our study reveals that real-world systems can diverge from theoretical predictions: shallower worker queues do not always improve tail latency. Leveraging this insight, Rain incorporates an adaptive scheduling strategy to optimize worker queue depths and worker-to-slice mappings at runtime. Evaluations with the real-world application RocksDB show that Rain achieves 1.75x higher throughput than the best-performing SOTA while satisfying the same tail latency requirement.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

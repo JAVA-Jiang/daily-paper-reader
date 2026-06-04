@@ -6,29 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-03
-- 运行时间：2026-06-03 22:31:03 UTC
+- 最新运行日期：2026-06-04
+- 运行时间：2026-06-04 20:52:08 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：2
+- 本次总论文数：4
+- 精读区：3
 - 速读区：1
 
 ### 今日简报（AI）
-今天精读两篇高分论文（智能体复制包质量评估、HPC网络资源分配）并速读一篇LLM知识诊断基准。最值得关注的方向：智能体自动评估软件包质量，以及采用XOR竞价与背包模型优化高性能计算资源分配。建议优先研读精读两篇，理解智能体评估框架和HPC资源调度新方法。
-- 详情：[/202606/03/README](/202606/03/README)
+今日共阅读4篇论文（精读3篇、速读1篇），重点聚焦语言模型短语能力与LLM代码溯源追踪。最值得关注的是《Light or Full Verb?》数据集（9.0分）揭示模型对动词语义切分的短板，以及《Efficient and Scalable Provenance Tracking》（8.0分）提升LLM生成代码的可信度。建议普通读者优先浏览这两篇，前者可助你理解当前大模型的语言直觉局限，后者则关乎AI代码的实际可用性。
+- 详情：[/202606/04/README](/202606/04/README)
 
 ### 精读区论文标签
-1. [An Agentic Approach Towards Replication Package Quality Evaluation](/202606/03/2606.02006v1-an-agentic-approach-towards-replication-package-quality-evaluation)  
+1. [Light or Full Verb? A Minimal-Pair Dataset for Probing Phraseological Competence in Language Models](/202606/04/2606.05087v1-light-or-full-verb-a-minimal-pair-dataset-for-probing-phraseological-competence-in-language-models)  
    标签：评分：9.0/10、query:code-paper
-   evidence：可复现研究包质量评估，直接支持开源代码可复现要求
-2. [XOR Bidding and Knapsack Formulations for HPC Network Resource Allocation](/202606/03/2606.00490v1-xor-bidding-and-knapsack-formulations-for-hpc-network-resource-allocation)  
+   evidence：提供生成代码和数据集
+2. [Efficient and Scalable Provenance Tracking for LLM-Generated Code Snippets](/202606/04/2605.28510v1-efficient-and-scalable-provenance-tracking-for-llm-generated-code-snippets)  
    标签：评分：8.0/10、query:code-paper
-   evidence：基于拍卖的HPC网络带宽分配类似于数据中心任务调度
+   evidence：提出了用于代码溯源的SOURCETRACKER系统
+3. [CRAFTQA: A Code-Driven Adaptive Framework for Complex Structured Data Reasoning](/202606/04/2606.02170v1-craftqa-a-code-driven-adaptive-framework-for-complex-structured-data-reasoning)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：代码驱动的结构化数据推理框架
 
 ### 速读区论文标签
-1. [Diagnosing Knowledge Gaps in LLM Tool Use: An Agentic Benchmark for Novel API Acquisition](/202606/03/2606.03657v1-diagnosing-knowledge-gaps-in-llm-tool-use-an-agentic-benchmark-for-novel-api-acquisition)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提供可执行编码任务的基准测试
+1. [Rain: RDMA-assisted In-Network Scheduling for Microsecond-scale Workloads](/202606/04/2606.03352v1-rain-rdma-assisted-in-network-scheduling-for-microsecond-scale-workloads)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提出了面向数据中心任务调度的网内调度器Rain
 
 
 <div class="dpr-home-promo-card">
