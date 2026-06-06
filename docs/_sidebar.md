@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-06 <!--dpr-date:20260606-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/06/2606.01407v1-hosting-capacity-assessment-and-enhancement-for-edge-data-centers-in-active-distribution-networks" data-sidebar-item="{&quot;title&quot;: &quot;Hosting Capacity Assessment and Enhancement for Edge Data Centers in Active Distribution Networks&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.01407v1-hosting-capacity-assessment-and-enhancement-for-edge-data-centers-in-active-distribution-networks&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;边缘数据中心在配电网中的接入容量评估，涉及电网和数据中心&quot;}">Hosting Capacity Assessment and Enhancement for Edge Data Centers in Active Distribution Networks</a>
   * 2026-06-04 <!--dpr-date:20260604-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/04/2606.05087v1-light-or-full-verb-a-minimal-pair-dataset-for-probing-phraseological-competence-in-language-models" data-sidebar-item="{&quot;title&quot;: &quot;Light or Full Verb? A Minimal-Pair Dataset for Probing Phraseological Competence in Language Models&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.05087v1-light-or-full-verb-a-minimal-pair-dataset-for-probing-phraseological-competence-in-language-models&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;提供生成代码和数据集&quot;}">Light or Full Verb? A Minimal-Pair Dataset for Probing Phraseological Competence in Language Models</a>

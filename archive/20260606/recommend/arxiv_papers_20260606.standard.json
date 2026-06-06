@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-06T21:07:43.029612+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.01407v1",
+      "source": "arxiv",
+      "title": "Hosting Capacity Assessment and Enhancement for Edge Data Centers in Active Distribution Networks",
+      "abstract": "With the increasing demand for edge computing and AI-driven workloads, integrating small and medium-sized edge data centers into distribution networks has become increasingly important. This paper investigates the hosting capacity of distribution networks for data center integration and identifies the key physical mechanisms that limit the maximum allowable data center load. The baseline analysis shows that data center hosting capacity varies significantly across candidate buses due to network topology and electrical distance. Three dominant limiting mechanisms are identified: current-constrained locations, voltage-constrained locations, and mixed-constrained locations where both current loading and voltage deviation jointly affect hosting capacity. To increase the hosting capacity, this study evaluates multiple flexible resources, including battery energy storage systems (BESS), dispatchable distributed generators (DDG), and static synchronous compensators (STATCOM). Numerical results demonstrate that these resources provide complementary benefits through active power support, sustained local generation, and reactive power compensation, effectively expanding data center hosting capacity in distribution systems.",
+      "authors": [
+        "Linhan Fang",
+        "Xingpeng Li"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-05-31T19:06:13+00:00",
+      "link": "https://arxiv.org/pdf/2606.01407v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Edge data center hosting capacity in distribution networks related to power grid",
+      "llm_evidence_cn": "边缘数据中心在配电网中的接入容量评估，涉及电网和数据中心",
+      "llm_evidence": "边缘数据中心在配电网中的接入容量评估，涉及电网和数据中心",
+      "canonical_evidence": "边缘数据中心在配电网中的接入容量评估，涉及电网和数据中心",
+      "llm_tldr_en": "This paper assesses hosting capacity for edge data centers in distribution networks, identifying three limiting mechanisms (current, voltage, mixed) and proposing enhancement strategies.",
+      "llm_tldr_cn": "随着边缘计算和AI工作负载的增长，中小型边缘数据中心接入配电网的需求日益增加。本文研究了配电网对数据中心的接纳能力，识别出电流限制、电压限制和混合限制三种主导机制，并发现不同候选节点的接纳容量因网络拓扑和电气距离而异。该研究为电网规划中数据中心布局提供了重要参考。",
+      "llm_tldr": "随着边缘计算和AI工作负载的增长，中小型边缘数据中心接入配电网的需求日益增加。本文研究了配电网对数据中心的接纳能力，识别出电流限制、电压限制和混合限制三种主导机制，并发现不同候选节点的接纳容量因网络拓扑和电气距离而异。该研究为电网规划中数据中心布局提供了重要参考。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
