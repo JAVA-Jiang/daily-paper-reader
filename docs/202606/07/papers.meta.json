@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-07",
+  "date": "2026-06-07",
+  "generated_at": "2026-06-07T21:10:47",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/07/2606.05249v1-swe-infrabench-evaluating-language-models-on-cloud-infrastructure-code",
+      "section": "deep",
+      "title_en": "SWE-InfraBench: Evaluating Language Models on Cloud Infrastructure Code",
+      "authors": "Natalia Tarasova, Enrique Balp-Straffon, Aleksei Iancheruk, Yevhenii Sielskyi, Nikita Kozodoi, Liam H. Byrne, Jack Butler, Dayuan Jiang, Marcin Czelej, Andrew Ang, Yash Shah, Roi Blanco, Sergei Ivanov",
+      "date": "2026-06-03",
+      "pdf": "https://arxiv.org/pdf/2606.05249v1",
+      "score": "8.0",
+      "evidence": "云基础设施代码基准测试，与数据中心和代码提供相关",
+      "tldr": "云计算基础设施即代码（IaC）对系统可靠性至关重要，但LLM在此领域的能力未被充分评估。SWE-InfraBench基于真实AWS CDK代码库，要求模型根据自然语言指令进行增量修改，并通过测试用例判断成功。评估显示，最佳模型Sonnet 3.7仅34%成功率，DeepSeek R1为24%，表明当前LLM存在显著局限。该基准填补了IaC增量编辑评估的空白，为提升模型云基础设施能力提供了关键参考。",
+      "tags": "query:code-paper",
+      "abstract_en": "Building infrastructure-as-code (IaC) in cloud computing is a critical task, underpinning the reliability, scalability, and security of modern software systems. Despite the remarkable progress of large language models (LLMs) in software engineering -- demonstrated across many dedicated benchmarks -- their capabilities in developing IaC remain underexplored. Unlike existing IaC benchmarks that predominantly center on declarative paradigms such as Terraform and involve generating entire codebases from scratch, our benchmark reflects the incremental code edits common in enterprise development with imperative tools like the AWS CDK. We present SWE-InfraBench, a diverse evaluation dataset sourced from dozens of real-world IaC codebases that challenge LLMs to perform realistic code modifications in AWS CDK repositories. Each example requires models to implement changes to existing codebases based on natural language instructions, with success determined by passing provided test cases. These tasks demand sophisticated reasoning about cloud resource dependencies and implementation patterns beyond conventional code generation challenges. Our evaluation results reveal significant limitations in current LLMs showing that even state-of-the-art systems struggle with many tasks -- the best model, Sonnet 3.7, succeeds in only 34\\% of cases, while specialized reasoning models like DeepSeek R1 achieve just 24% success. The SWE-InfraBench dataset is available at: https://www.kaggle.com/datasets/64e59070fd51c0278560b01eb5dc4f3c447d5268cdabe5a350d2969e4413fea5",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/07/2606.00953v1-when-parallelism-pays-off-cohesion-aware-task-partitioning-for-multi-agent-coding",
+      "section": "quick",
+      "title_en": "When Parallelism Pays Off: Cohesion-Aware Task Partitioning for Multi-Agent Coding",
+      "authors": "Xu Yang, Lunyiu Nie, Ethan Chandra, Stanislav Gannutin, Fangru Lin, Swarat Chaudhuri",
+      "date": "2026-05-31",
+      "pdf": "https://arxiv.org/pdf/2606.00953v1",
+      "score": "6.0",
+      "evidence": "多智能体编码任务划分，涉及代码生成且可能发布代码",
+      "tldr": "多智能体LLM系统通过并行化分解复杂编码任务，但智能体间通信开销常抵消效率收益。本文形式化为图划分问题，提出Co-Coder，以静态分析构建依赖图，利用社区检测进行凝聚力感知分区，并采用依赖感知调度器执行。在28个真实任务上，Co-Coder相比基线提升通过率14%，实现2.1倍墙钟加速，并降低API成本35%，验证了理论驱动的并行编码智能体高效性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Multi-agent Large Language Model (LLM) systems offer a way to decompose complex tasks, such as coding, through parallelization and context isolation. However, adding agents in practice introduces inter-agent communication overhead, which incurs extra cost and can sometimes offset the efficiency gains. We formalize multi-agent orchestration as a graph partitioning problem that captures the communication-to-computation trade-off: task decomposition can shorten critical-path computation, but cross-agent dependencies require costly context transfer. We instantiate this view in repository-level software engineering and present Cohesion-aware Coder (Co-Coder), which builds dependency graphs from static analysis, isolates structural hub files, partitions the graph via community detection, and executes the partition with a dependency-aware scheduler.   Across 28 real-world tasks on DevEval and CodeProjectEval, Co-Coder advances the Pareto-frontier over sequential and file-based parallel baselines as well as Claude Code with Agent Teams, lifting pass rate by up to 14.0%, achieving up to a 2.10x wall-clock speedup, and reducing API cost by up to 35%, with the largest gains on the most dependency-dense projects. Co-coder demonstrates how cohesion-aware orchestration can make parallel coding agents both theoretically grounded and practically efficient, suggesting a broader design principle for multi-agent systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/07/2606.06492v1-code2lora-hypernetwork-generated-adapters-for-code-language-models-under-software-evolution",
+      "section": "quick",
+      "title_en": "Code2LoRA: Hypernetwork-Generated Adapters for Code Language Models under Software Evolution",
+      "authors": "Liliana Hotsko, Yinxi Li, Yuntian Deng, Pengyu Nie",
+      "date": "2026-06-04",
+      "pdf": "https://arxiv.org/pdf/2606.06492v1",
+      "score": "6.0",
+      "evidence": "为代码模型生成仓库特定的LoRA适配器，可能提供源代码",
+      "tldr": "代码语言模型需要仓库级上下文，但现有长输入或逐仓库微调方法成本高且脆弱。本文提出Code2LoRA超网络框架，为每个仓库生成特定LoRA适配器，实现零推理token开销。静态模式下匹配逐仓库LoRA上限（66.2%），演化模式下比共享LoRA高5.2个点。该方法高效注入仓库知识并适应代码演化，显著降低部署成本。",
+      "tags": "query:code-paper",
+      "abstract_en": "Code language models need repository-level context to resolve imports, APIs, and project conventions. Existing methods inject this knowledge as long inputs (retrieved through RAG or dependency analysis) or through per-repository fine-tuning and LoRA -- costly at repository scale and brittle to evolving codebases. We introduce Code2LoRA, a hypernetwork framework that generates repository-specific LoRA adapters, effectively injecting repository knowledge with zero inference-time token overhead. Code2LoRA supports two usage scenarios: Code2LoRA-Static converts a single repository snapshot into an adapter, suitable for comprehension of stable codebases; while Code2LoRA-Evo maintains an adapter backed by a GRU hidden state updated per code diff, suitable for active development of evolving codebases. To evaluate Code2LoRA against parameter-efficient fine-tuning baselines, we build RepoPeftBench, a benchmark of 604 Python repositories with two tracks: a static track with 40K training and 12K test assertion-completion tasks, and an evolution track with 215K commit-derived training and 87K commit-derived test tasks. On the static track, Code2LoRA-Static achieves 63.8% cross-repo and 66.2% in-repo exact match, matching the per-repository LoRA upper bound; on the evolution track, Code2LoRA-Evo achieves 60.3% cross-repo exact match (+5.2 pp over a single shared LoRA). Code2LoRA's code can be found at https://anonymous.4open.science/r/code2lora-6857; the model checkpoints and RepoPeftBench datasets can be found at https://huggingface.co/code2lora.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

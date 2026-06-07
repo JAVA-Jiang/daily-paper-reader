@@ -1,0 +1,145 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-07T21:07:25.042976+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.05249v1",
+      "source": "arxiv",
+      "title": "SWE-InfraBench: Evaluating Language Models on Cloud Infrastructure Code",
+      "abstract": "Building infrastructure-as-code (IaC) in cloud computing is a critical task, underpinning the reliability, scalability, and security of modern software systems. Despite the remarkable progress of large language models (LLMs) in software engineering -- demonstrated across many dedicated benchmarks -- their capabilities in developing IaC remain underexplored. Unlike existing IaC benchmarks that predominantly center on declarative paradigms such as Terraform and involve generating entire codebases from scratch, our benchmark reflects the incremental code edits common in enterprise development with imperative tools like the AWS CDK. We present SWE-InfraBench, a diverse evaluation dataset sourced from dozens of real-world IaC codebases that challenge LLMs to perform realistic code modifications in AWS CDK repositories. Each example requires models to implement changes to existing codebases based on natural language instructions, with success determined by passing provided test cases. These tasks demand sophisticated reasoning about cloud resource dependencies and implementation patterns beyond conventional code generation challenges. Our evaluation results reveal significant limitations in current LLMs showing that even state-of-the-art systems struggle with many tasks -- the best model, Sonnet 3.7, succeeds in only 34\\% of cases, while specialized reasoning models like DeepSeek R1 achieve just 24% success. The SWE-InfraBench dataset is available at: https://www.kaggle.com/datasets/64e59070fd51c0278560b01eb5dc4f3c447d5268cdabe5a350d2969e4413fea5",
+      "authors": [
+        "Natalia Tarasova",
+        "Enrique Balp-Straffon",
+        "Aleksei Iancheruk",
+        "Yevhenii Sielskyi",
+        "Nikita Kozodoi",
+        "Liam H. Byrne",
+        "Jack Butler",
+        "Dayuan Jiang",
+        "Marcin Czelej",
+        "Andrew Ang",
+        "Yash Shah",
+        "Roi Blanco",
+        "Sergei Ivanov"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-03T12:48:53+00:00",
+      "link": "https://arxiv.org/pdf/2606.05249v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "benchmark for cloud infrastructure code, relevant to data centers and code-providing",
+      "llm_evidence_cn": "云基础设施代码基准测试，与数据中心和代码提供相关",
+      "llm_evidence": "云基础设施代码基准测试，与数据中心和代码提供相关",
+      "canonical_evidence": "云基础设施代码基准测试，与数据中心和代码提供相关",
+      "llm_tldr_en": "SWE-InfraBench evaluates LLMs on infrastructure-as-code tasks, providing a benchmark with real-world IaC codebases for incremental code edits.",
+      "llm_tldr_cn": "针对大型语言模型在云基础设施代码开发方面能力不足的问题，本文提出了SWE-InfraBench基准测试。该基准来源于真实世界的IaC代码库，聚焦于增量式代码编辑任务，评估模型在AWS CDK等命令式工具上的表现。实验表明该基准能有效衡量模型在基础设施代码领域的实际能力，为数据中心自动化运维提供了评估工具。",
+      "llm_tldr": "针对大型语言模型在云基础设施代码开发方面能力不足的问题，本文提出了SWE-InfraBench基准测试。该基准来源于真实世界的IaC代码库，聚焦于增量式代码编辑任务，评估模型在AWS CDK等命令式工具上的表现。实验表明该基准能有效衡量模型在基础设施代码领域的实际能力，为数据中心自动化运维提供了评估工具。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.00953v1",
+      "source": "arxiv",
+      "title": "When Parallelism Pays Off: Cohesion-Aware Task Partitioning for Multi-Agent Coding",
+      "abstract": "Multi-agent Large Language Model (LLM) systems offer a way to decompose complex tasks, such as coding, through parallelization and context isolation. However, adding agents in practice introduces inter-agent communication overhead, which incurs extra cost and can sometimes offset the efficiency gains. We formalize multi-agent orchestration as a graph partitioning problem that captures the communication-to-computation trade-off: task decomposition can shorten critical-path computation, but cross-agent dependencies require costly context transfer. We instantiate this view in repository-level software engineering and present Cohesion-aware Coder (Co-Coder), which builds dependency graphs from static analysis, isolates structural hub files, partitions the graph via community detection, and executes the partition with a dependency-aware scheduler.   Across 28 real-world tasks on DevEval and CodeProjectEval, Co-Coder advances the Pareto-frontier over sequential and file-based parallel baselines as well as Claude Code with Agent Teams, lifting pass rate by up to 14.0%, achieving up to a 2.10x wall-clock speedup, and reducing API cost by up to 35%, with the largest gains on the most dependency-dense projects. Co-coder demonstrates how cohesion-aware orchestration can make parallel coding agents both theoretically grounded and practically efficient, suggesting a broader design principle for multi-agent systems.",
+      "authors": [
+        "Xu Yang",
+        "Lunyiu Nie",
+        "Ethan Chandra",
+        "Stanislav Gannutin",
+        "Fangru Lin",
+        "Swarat Chaudhuri"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.MA"
+      ],
+      "published": "2026-05-31T02:10:12+00:00",
+      "link": "https://arxiv.org/pdf/2606.00953v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multi-agent coding with task partitioning, involves code generation and likely code release",
+      "llm_evidence_cn": "多智能体编码任务划分，涉及代码生成且可能发布代码",
+      "llm_evidence": "多智能体编码任务划分，涉及代码生成且可能发布代码",
+      "canonical_evidence": "多智能体编码任务划分，涉及代码生成且可能发布代码",
+      "llm_tldr_en": "Co-Coder formulates multi-agent code generation as a graph partitioning problem to balance communication and computation, improving efficiency.",
+      "llm_tldr_cn": "多智能体LLM系统在复杂编码任务中引入通信开销，有时抵消并行化收益。本文将多智能体编排形式化为图划分问题，提出Cohesion-aware Coder（Co-Coder），通过静态分析构建依赖图，隔离结构枢纽文件，从而优化通信开销。在仓库级软件工程任务上，Co-Coder减少了跨代理依赖，提升了整体效率。",
+      "llm_tldr": "多智能体LLM系统在复杂编码任务中引入通信开销，有时抵消并行化收益。本文将多智能体编排形式化为图划分问题，提出Cohesion-aware Coder（Co-Coder），通过静态分析构建依赖图，隔离结构枢纽文件，从而优化通信开销。在仓库级软件工程任务上，Co-Coder减少了跨代理依赖，提升了整体效率。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.06492v1",
+      "source": "arxiv",
+      "title": "Code2LoRA: Hypernetwork-Generated Adapters for Code Language Models under Software Evolution",
+      "abstract": "Code language models need repository-level context to resolve imports, APIs, and project conventions. Existing methods inject this knowledge as long inputs (retrieved through RAG or dependency analysis) or through per-repository fine-tuning and LoRA -- costly at repository scale and brittle to evolving codebases. We introduce Code2LoRA, a hypernetwork framework that generates repository-specific LoRA adapters, effectively injecting repository knowledge with zero inference-time token overhead. Code2LoRA supports two usage scenarios: Code2LoRA-Static converts a single repository snapshot into an adapter, suitable for comprehension of stable codebases; while Code2LoRA-Evo maintains an adapter backed by a GRU hidden state updated per code diff, suitable for active development of evolving codebases. To evaluate Code2LoRA against parameter-efficient fine-tuning baselines, we build RepoPeftBench, a benchmark of 604 Python repositories with two tracks: a static track with 40K training and 12K test assertion-completion tasks, and an evolution track with 215K commit-derived training and 87K commit-derived test tasks. On the static track, Code2LoRA-Static achieves 63.8% cross-repo and 66.2% in-repo exact match, matching the per-repository LoRA upper bound; on the evolution track, Code2LoRA-Evo achieves 60.3% cross-repo exact match (+5.2 pp over a single shared LoRA). Code2LoRA's code can be found at https://anonymous.4open.science/r/code2lora-6857; the model checkpoints and RepoPeftBench datasets can be found at https://huggingface.co/code2lora.",
+      "authors": [
+        "Liliana Hotsko",
+        "Yinxi Li",
+        "Yuntian Deng",
+        "Pengyu Nie"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-06-04T17:59:46+00:00",
+      "link": "https://arxiv.org/pdf/2606.06492v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "generates repository-specific LoRA adapters for code models, likely provides source code",
+      "llm_evidence_cn": "为代码模型生成仓库特定的LoRA适配器，可能提供源代码",
+      "llm_evidence": "为代码模型生成仓库特定的LoRA适配器，可能提供源代码",
+      "canonical_evidence": "为代码模型生成仓库特定的LoRA适配器，可能提供源代码",
+      "llm_tldr_en": "Code2LoRA uses hypernetworks to generate LoRA adapters per repository, reducing inference token overhead while adapting to code evolution.",
+      "llm_tldr_cn": "现有代码语言模型通过长输入上下文或微调注入仓库知识，但开销大且难以应对代码库演化。本文提出Code2LoRA框架，使用超网络为每个代码仓库生成专属LoRA适配器，零推理标记开销。其中Code2LoRA-Static处理稳定代码快照，Code2LoRA-Evo采用GRU状态更新适配器以追踪代码演化。实验表明，该方法在代码理解和按需适应方面取得显著效果。",
+      "llm_tldr": "现有代码语言模型通过长输入上下文或微调注入仓库知识，但开销大且难以应对代码库演化。本文提出Code2LoRA框架，使用超网络为每个代码仓库生成专属LoRA适配器，零推理标记开销。其中Code2LoRA-Static处理稳定代码快照，Code2LoRA-Evo采用GRU状态更新适配器以追踪代码演化。实验表明，该方法在代码理解和按需适应方面取得显著效果。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
