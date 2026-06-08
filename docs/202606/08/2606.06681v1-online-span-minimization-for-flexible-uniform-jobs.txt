@@ -1,0 +1,4202 @@
+Title: Online Span Minimization for Flexible Uniform Jobs
+
+URL Source: https://arxiv.org/pdf/2606.06681v1
+
+Published Time: Mon, 08 Jun 2026 00:10:04 GMT
+
+Number of Pages: 34
+
+Markdown Content:
+# Online Span Minimization for Flexible Uniform Jobs 
+
+## Mozhengfu Liu ∗1, Samir Khuller ∗2, and Xueyan Tang †31Northwestern University,Evanston, IL, USA, mozhengfuliu2027@u.northwestern.edu 
+
+> 2
+
+## Northwestern University, Evanston, IL, USA, samir.khuller@northwestern.edu 
+
+> 3
+
+## Nanyang Technological University, Singapore, asxytang@ntu.edu.sg 
+
+## June 8, 2026 
+
+Abstract 
+
+Motivated by the critical need for energy-efficient scheduling in cloud computing, this paper investigates Span Minimization, a fundamental variant of the well-studied BusyTime problem. In the general BusyTime problem, n jobs characterized by release times, deadlines, and processing times must be partitioned into bundles of capacity B, where the objective is to minimize the total active duration of the virtual machines. Span minimization addresses the specific case of unbounded capacity ( B = ∞), a problem that serves as a vital precursor for achieving high-performance approximation guarantees in more complex scheduling environments. While previous research established a deterministic 2-approximation for interval jobs and a 3-approximation for the general BusyTime problem, the online landscape of span minimization remains less explored. In this paper, we focus on the online version of span minimization. We demonstrate that randomization can be leveraged to break the known deterministic competitive barrier of 2. For uniform-length jobs, we derive a randomized competitive upper bound of 1ln 2 ≈ 1.443 and a lower bound of √3+1 2 ≈ 1.366. Furthermore, we show that by introducing the ability to restart jobs, we can achieve an optimal competitive ratio equal to the golden ratio ( ϕ ≈ 1.618). Our results provide new insights into the power of randomization and flexibility in online energy-aware scheduling. 
+
+# 1 Introduction 
+
+Motivated by the need to reduce energy utilization, we study the problem called “span minimization”, which is closely related to the well-known BusyTime problem [8, 13, 14]. In the most general form in the BusyTime problem, we are given access to virtual machines with batch capacity B and a collection of n jobs, each job j
+
+with a release time, deadline and processing time (denoted by rj , d j , p j respectively). The goal is to partition 
+
+n jobs into bundles S1, S 2, . . . , S k with the following property. Each bundle contains a collection of jobs that can be feasibly scheduled such that no more than B jobs are running simultaneously. The cost of this bundle is simply the duration for which the machine is on (from the earliest start time of any job in the bundle to the latest completion time of any job in the bundle). We can call this c(Si) = e(Si) − s(Si) where e(Si) is the ending time of the set of jobs Si and s(Si) is the start time of a set of jobs Si. The total cost is the sum of all bundles’ costs ( P 
+
+> i
+
+c(Si)). Note that we can create an unbounded number of bundles, since each is simply a rented virtual machine (VM) with some number of parallel processors. A lot of research has been done on this problem. Since the problem is NP-hard [22] even on the rather special case of interval (or rigid jobs) where dj = pj + rj , significant research was done on approximation algorithms for it. The earliest algorithms for the problem only focused on the special case of interval jobs [2, 15, 10], and the best known approximation is 2. The online setting of scheduling interval jobs is also a well studied topic. 
+
+> ∗Supported by an Adobe award and NSF 2216970 (IDEAL).
+> †Supported by Singapore MOE AcRF Tier 1 Award RG15/25.
+
+1
+
+> arXiv:2606.06681v1 [cs.DS] 4 Jun 2026
+
+The tight competitiveness of the non-clairvoyant and clairvoyant settings (whether a job’s length is known at its release) are μ + Θ(1) [16, 12, 19] and Θ( √log μ) [3, 4] respectively, where μ is the ratio of the maximum job length to the minimum job length. Subsequently, for the general case (flexible jobs), Khandekar et al [13] developed a 4 approximation, but this works in two steps. In the first step solve the problem of minimizing span , or assuming unbounded batch capacity ( B = ∞) to fix the starting times of the jobs. In other words, imagine that you have an infinite capacity machine - how would you schedule jobs respecting starting and ending times to minimize the cost of the schedule (the duration for which the machine is on). This is what we refer to as the “span” of the set of jobs (see Figure 1). We use this to place the jobs optimally by setting the start times, this reduces to the special case of BusyTime problem for Interval Jobs (since there is no flexibility any longer as to when the jobs start), and even this problem is NP-hard, but multiple algorithms are known that give a 2 approximation for it as mentioned earlier. r1r2r3r4d1d2d3d4time s(S1)e(S1)s(S2)e(S2)
+
+Figure 1: A suboptimal schedule of an instance of four uniform jobs. Moving job 2 earlier can reduce the overall cost. However, overall this approach yields a 4 approximation for the BusyTime problem as the optimum solution might increase by a factor of 2 when we reduce to an interval instance (as shown by Chang et al [8]). Chang et al [8] develop a 3 approximation via a different approach, although in the first step we still need to solve the problem of minimizing span for unbounded batch capacity. In the online setting of the BusyTime model, recently, Albers et al. [1] showed a 2 competitive online algorithm for uniform (identical length) jobs and a 9 competitive online algorithm with pmax lookahead for jobs with arbitrary lengths, where pmax is the maximum job length. The only known method for minimizing span is based on dynamic programming and is extremely inefficient (with space complexity Ω( n5) and time complexity Ω( n7))[13] and is based on earlier work by Baptiste [5] developed for uniform jobs using dynamic programming. This prohibitive running time, is the main bottleneck in all good approximation algorithms for BusyTime Scheduling. Although the algorithms guarantee solutions within a factor of 3 of the optimal cost, as mentioned earlier, the issue is that the algorithms are simply not practical due to the first phase. On the other hand, a very simple online (deterministic) algorithm to minimize the span (Algorithm Doubler) [14] gives a 5 approximation. The algorithm is very simple - it delays jobs as long as possible, and when a job has to be scheduled, we simply confirm running the machine for twice the length of the job; and all jobs that fit in this “active time” when the machine is on, are scheduled. In recent work, Liu et al [17] show that no deterministic online algorithm can get a bound better than 4. However, while one question remains, how to close the gap between 4 and 5 - we turn our attention to how randomization could help get past the deterministic lower bound on the competitive ratio. In practice, there are computing applications where jobs have strict deadlines and uniform processing lengths. Streaming data processing, for example, often requires processing fixed-size data blocks with strict deadlines to complete. Periodic financial reporting also involves running deadline-constrained jobs for similar data sizes. Understanding the special case when all the jobs are uniform-length is surprisingly nontrivial in the online setting. We first show that for this case, there is a tight bound of 2 on the competitive ratio - both the upper and lower bounds is exactly 2. For example Algorithm Doubler obtains a 2 approximation in this case and Albers et al [1] claim a lower bound of 2 for all deterministic online algorithms 1. We also show a lower bound 
+
+> 1As we show in the Appendix A.1, the proof of this claim is not correct.
+
+2of 2 on the competitive ratio of any deterministic online algorithm for uniform-length jobs [Calinescu, personal communication], however the proof is more involved. Then we show something interesting: the upper bound of 2 can be improved via a simple oblivious ran-domized algorithm called Batch γ . Instead of always stretching the window by doubling it, like in Algorithm Doubler, we pick a random value γ chosen carefully, and run each machine by stretching the active time by a factor of 1 + γ.One of the challenges in online scheduling of this type, is when we start the machine to run a job that has reached its latest-possible starting time, then jobs released later have a dilemma - should we start now, or delay (in case they have a later deadline) hoping to run for free with other jobs later on. We propose a restart model - here we start running a job, but if we learn about new jobs, it is possible to terminate the running job at no cost, but we can re-start it from scratch later on (so we lose all the progress we made). This is different from a model where pre-emption is for free and if half of a job has completed, only the remaining half needs to be completed. In our restart model , if a job is not completed, we have to run the entire job from scratch. In the restart model we can develop online algorithms with a (tight) competitive ratio of ϕ ≈ 1.618. Scheduling problems for uniform-length jobs have been widely studied. For example, just the (offline) feasibility of scheduling n uniform-length jobs on m identical machines is already a non-trivial problem [20, 21]. Moreover, a very clever and fast O(n log n) time algorithm for one machine was reported by Garey et al [11]. If a feasible schedule exists, the algorithm finds one. If no feasible schedule exists, the algorithm does not output any schedule. For batch scheduling as well, several problems for uniform-length jobs have [7] been studied with the goal of minimizing the “on” time for a single batching machine. An efficient algorithm called “Lazy Activation” is described for the case of scheduling uniform jobs with release times and deadlines. Recently, Davies et al [9] also considers the case of developing polynomial time algorithms for the tradeoff between energy utilization and average waiting time. 
+
+Definition 1.1. For each job j, let rj ≤ sj < d j denote its release time, starting deadline and deadline respectively. Since we study uniform jobs, by letting each job’s processing length be equal to some constant, say 1, a valid job j satisfies sj + 1 = dj .The definition of competitiveness is stated as below. 
+
+Definition 1.2 (Competitiveness [6]) . Suppose A is the class of all deterministic online scheduling algorithms. Suppose X is the class of all input job instances. For any algorithm a ∈ A and any input instance x ∈ X , let 
+
+a(x) denote the algorithm a’s cost with the input x. Let OPT( x) denote the offline optimal cost with input 
+
+x. Suppose A is a randomized online algorithm that is a random variable taking values in A. We say A is 
+
+c-competitive if EA [A(x)] ≤ c · OPT( x) for any input instance x ∈ X .Our main results of Span Minimization, summarized in Table 1 together with some state-of-art results of the BusyTime problem, are stated as below:                
+
+> uniform, unbounded arbitrary, unbounded uniform, bounded arbitrary, bounded offline optimal [13] 3-approximation [8] deterministic online 2-competitive [18, 14, 1] 5-competitive [14] 2-competitive [1] (clairvoyant) lower bound of 2 (Section 2.2) lower bound of 4 [17] Ω( √log μ) [4] randomized online 1.443-competitive (Section 3) lower bound of 1 .366 (Section 4) deterministic online 1.618-competitive (Section 5) with restarts lower bound of 1 .618 (Section 5)
+
+Table 1: algorithmic results of BusyTime problem in offline/online settings 
+
+• There is a lower bound of 2 for all deterministic online algorithms [Calinescu, personal communication]. In Appendix A.1, we discuss an attempt by Albers et al. [1] on the lower bound of 2 and show how it is flawed. 
+
+• We show a randomized online algorithm whose competitiveness is ee−1 ≈ 1.582 and then improve it to have competitiveness 1ln 2 ≈ 1.443. 3• We show that any randomized online algorithm that is able to restart jobs cannot achieve competitiveness lower than √3+1 2 ≈ 1.366. 
+
+• We show that the tight competitiveness for any deterministic online algorithm that is able to restart jobs is the golden ratio ϕ ≈ 1.618. 
+
+Outline of Paper: In Section 2, we show any deterministic online algorithm cannot have competitiveness strictly below 2. Then, in Section 3, we investigate how randomization against oblivious adversaries helps to reduce the competitiveness strictly below 2 in the online setting. Correspondingly, in Section 4, we propose a non-trivial oblivious adversary to shrink the gap of competitiveness. Motivated by the oblivious adversary in Section 4, we consider the deterministic online setting where algorithms can restart jobs during the online process in Section 5 where we show its tight competitiveness is the golden ratio. Please refer to the appendixes for missing proofs. 
+
+# 2 Adversary in deterministic online setting 
+
+In Section 2.1, as a warm-up we show that the competitiveness of any deterministic online algorithm is at least  
+
+> 32
+
+. Then, we improve the lower bound to be 2 in Section 2.2. 
+
+## 2.1 A simple adversary 
+
+Let K be a large integer. A rigid job ˆ j1 with rˆj1 = sˆj1 = 0 is released initially. For each h = 0 , 1, . . . , K , job jh
+
+with rjh = hK and sjh = 3 is released optionally. At last, a rigid job ˆ j2 with rˆj2 = sˆj2 = 3 may or may not be released. Now, we present the adversary as described in Algorithm 1. 
+
+Algorithm 1 Lower bound of 3/2  
+
+> 1:
+
+Release ˆ j1 and j0 at time 0; ▷ Assume the online process starts at time 0 
+
+> 2:
+
+Upon jh is started for some h ▷ Adversary waits until jh is started  
+
+> 3:
+
+t∗ ← when jh is started;  
+
+> 4:
+
+if t∗ ∈ [0 , 1) then  
+
+> 5:
+
+Release job j⌊t∗·K⌋+1 ; 
+
+> 6:
+
+else if t∗ ∈ [1 , 2] then  
+
+> 7:
+
+Release ˆ j2;First, we show that the adversary is defined in the online manner. It suffices to look at lines 2-7. Note that lines 2-7 happen at the same time t∗. It suffices to ensure that all the knowledge used by the adversary are at or before time t∗ and all the job releases are at or after time t∗. For the former, note that at time t∗, it is feasible to determine the value of t∗ and hence line 4 and 6 are feasible. For the latter, the release time of j⌊t∗·K⌋+1 is  
+
+> ⌊t∗·K⌋+1
+> K
+
+≥ t∗, and the release time of ˆ j2 is 3 = sjh ≥ t∗.It remains to compute the lower bound of competitiveness that Algorithm 1 gives. Take any online scheduling 
+
+a. Case 1: ˆ j2 is released. By algorithm definition, there exists some t∗ ∈ [1 , 2] when jh is started. Then, it follows that the cost of a is at least 3 that are during [0 , 1], [ t∗, t ∗ + 1] and [3 , 4]. For the optimal cost, each job 
+
+jh is started at its starting deadline to overlap with ˆ j2, and we have the cost of 2. The ratio is at least 32 . Case 2: ˆ j2 is not released. It follows that jh is never started during [1 , 2] for any h. Let jh∗ be the last jh released. Note that h∗ exists. By Algorithm definition (line 4-5), a starts some jh during 
+
+h h∗−1 
+
+> K
+
+, h∗
+
+> K
+
+
+
+. It follows that a
+
+is processing jobs during [0 , h∗−1 
+
+> K
+
++ 1]. By definition of h∗, a starts job jh∗ during (2 , 3]. It follows that the cost of a during [2 , 4] is at least 1. Summing up, the cost of a is at least h∗−1 
+
+> K
+
++ 2. For the optimal cost, each job jh is started at its release time. Then, the optimal cost is h∗ 
+
+> K
+
++ 1. The ratio is at least h∗−1   
+
+> K+2
+> h∗
+> K+1
+
+, where h∗
+
+4is determined by a. Note that h∗−1   
+
+> K+2
+> h∗
+> K+1
+
+≥ K−1  
+
+> K+2 2
+
+. Eventually, we see that the competitiveness of a is at least min 
+
+n 32 , K−1 
+
+> K+2 2
+
+o
+
+= K−1  
+
+> K+2 2
+
+. Since K is arbitrarily large, the competitiveness of a approaches 32 .
+
+## 2.2 Lower bound of 2
+
+Now, we show that any deterministic online algorithm has competitiveness at least 2. Let K be a large integer. Consider the adversary as the following Algorithm 2 with parameters K and R. Algorithm 2 has R iterations. Iteration i starts at ti for i = 1 , 2, . . . , R , and job jih with rjih = ti + hK and sjih = ti + 3 for h = 0 , 1, . . . , K is released by the adversary optionally. 
+
+Algorithm 2 Lower bound of 2  
+
+> 1:
+
+t1 ← 0; ▷ Assume the online process starts at time 0 
+
+> 2:
+
+Release rigid job ˆ j1 at time t1; 
+
+> 3:
+
+for i = 1 , 2, . . . , R do  
+
+> 4:
+
+Release job ji 
+
+> 0
+
+at ti; 
+
+> 5:
+
+Upon jih is started for some h ▷ Adversary waits until some jih is started  
+
+> 6:
+
+t∗ ← the current time;  
+
+> 7:
+
+if t∗ ∈ [ti, t i + 1) then  
+
+> 8:
+
+Release job ji
+
+> ⌊(t∗−ti)·K⌋+1
+
+; 
+
+> 9:
+
+else if t∗ ∈ [ti + 1 , t i + 2] then  
+
+> 10:
+
+ti+1 ← ti + 3;  
+
+> 11:
+
+Release rigid job ˆ ji+1 at time ti+1 ; 
+
+> 12:
+
+else  
+
+> 13:
+
+ti+1 ← t∗; 
+
+> 14:
+
+ˆji+1 ← jih;Consider the following running example when K = 4 and R = 5. See Figure 2 where black and gray rectangles represent the processing of ˆ ji and jih respectively. At time t1, jobs ˆ j1 and j10 are released. Job j10 is started at time t1 + 1 /K and hence j12 is released at time t1 + 2 /K . Job j12 is started at t1 + 1 .25 ∈ [t1 + 1 , t 1 + 2], and hence rigid job ˆ j2 is released at time t2 = t1 + 3. For iteration 2, job j20 is released at time t2. Job j20 is started at time t2 and hence job j21 is released at time t2 + 1 /K . Job j21 is started at time t2 + 1 /K and hence job j22 is released at time t2 + 2 /K . Job j22 is started at time t2 + 5 /2 > t 2 + 2, and hence j22 itself becomes ˆ j3
+
+and t3 = t2 + 5 /2. For iteration 3, job j30 is released at time t3. Job j30 is started at time t3 + 2 .75 > t 3 + 2, and hence j30 becomes ˆ j4 and t4 = t3 + 2 .75. For iteration 4, job j40 is released at time t4. Job j40 is started at time 
+
+t4 + 3 /K , and hence job j44 is released at time t4 + 1. Job j44 is started at time t4 + 2 .75 > t 4 + 2, and hence job j44 becomes ˆ j5 and t5 = t4 + 2 .75. For iteration 5, job j50 is released at time t5. Job j50 is started at time 
+
+t5 + 3 /K , and hence job j54 is released at time t5 + 1. Job j54 is started at t5 + 1 ∈ [t5 + 1 , t 5 + 2], and hence rigid job ˆ j6 is released at time t5 + 3 and t6 = t5 + 3. Now, we do the analysis. Take any online scheduling algorithm a. Let b denote an offline algorithm to be determined later whose cost serves as an upper bound of the optimal cost. Consider the partitioning 
+
+S1 := {i : ˆ ji+1 is rigid } and S2 := {i : ˆ ji+1 is not rigid }. Consider the cost of a during [ ti + 1 , t i+1 + 1] for each i. For each i in S1, by definition, a starts some jih at time t∗ ∈ [ti + 1 , t i + 2]. It follows that the cost of 
+
+a (during [ ti + 1 , t i+1 + 1]) is at least 2 that are during [ t∗, t ∗ + 1] and [ ti+1 , t i+1 + 1]. For the optimal cost, b
+
+starts all the jobs jih at ti+1 = ti + 3 = sjih . It follows that the cost of b (during [ ti + 1 , t i+1 + 1]) is 1. For each i ∈ S2, let h∗ 
+
+> i
+
+:= max jih released h. Take any i1 ≤ i2 such that i1 − 1, i 2 + 1 /∈ S2 and i ∈ S2 for each i1 ≤ i ≤ i2. Partition the index set {i1, i 1 + 1 , . . . , i 2} into E := {i1 + 2 k : k ∈ N, i 1 + 2 k ≤ i2} and 
+
+O := {i1 + 2 k + 1 : k ∈ N, i 1 + 2 k + 1 ≤ i2}. Consider the following two scheduling of jobs {jih : i1 ≤ i ≤
+
+i2, j ih released }.
+
+• b1 starts all jobs {jih : jih released } at time ti + h∗ 
+
+> i
+> K
+
+for each i ∈ E, and all jobs {jih : jih released } at time 
+
+ti+1 for each i ∈ O.5time ˆj1j10j12t1t2t3t4t5t6ˆj2j20j21j22 , ˆj3j40j30 , ˆj4j44 , ˆj5j50ˆj6ˆj1j10j12ˆj2j20j21j22 , ˆj3j40j30 , ˆj4j44 , ˆj5j50ˆj6j54j54ˆj1j10j12ˆj2j20j21j22 , ˆj3j30 , ˆj4j44 , ˆj5ˆj6j50j54j40ab1b2Figure 2: A running example of the lower bound of 2 when K = 4 and R = 5. b1 and b2 are two options for the optimal scheduling. 
+
+• b2 starts all jobs {jih : jih released } at time ti+1 for each i ∈ E, and all jobs {jih : jih released } at time 
+
+ti + h∗ 
+
+> i
+> K
+
+for each i ∈ O.Let b choose the scheduling which gives the lower cost between b1 and b2. Also see Figure 2 for how b1 and b2
+
+schedule the jobs in the running example. The ultimate goal is to show that the cost of b during [ ti1 + 1 , t i2+1 + 1] is roughly at most half of the cost of a during the same period. Here, we compute the cost of a. Observe that job jih∗
+
+> i
+
+is released only if 
+
+a starts some job ji
+
+> ˜hi
+
+during 
+
+h
+
+ti + h∗  
+
+> i−1
+> K
+
+, t i + h∗
+
+> i
+> K
+
+
+
+. Then, for each i = i1, i 1 + 1 , . . . , i 2, the cost of a during [ti + 1 , t i+1 + 1] is at least h∗  
+
+> i−1
+> K
+
++ 1 where h∗  
+
+> i−1
+> K
+
+is the cost during [ ti + 1 , t i + 1 + h∗  
+
+> i−1
+> K
+
+] and 1 is the cost during [ti+1 , t i+1 + 1]. Note that we have the two cost during [ ti + 1 , t i + 1 + h∗  
+
+> i−1
+> K
+
+] and during [ ti+1 , t i+1 + 1] disjoint because ti+1 ≥ ti + 2 ≥ ti + 1 + h∗  
+
+> i−1
+> K
+
+. Summing up all the i, the cost of a during [ ti1 + 1 , t i2+1 + 1] is at least 
+
+P 
+
+> i=i1,i 1+1 ,...,i 2
+
+( h∗  
+
+> i−1
+> K
+
++ 1). Now, we compute b’s cost during [ ti1 + 1 , t i2+1 + 1] if b chooses b1 for the scheduling of jobs {jih : i1 ≤ i ≤
+
+i2, j ih released }. Claim that b is not busy during [ ti + 1 + h∗ 
+
+> i
+> K
+
+, t i+2 ] for each i ∈ E. For any job released before 
+
+ji
+
+> 0
+
+, b starts it at or before time ti. For each job jih (including ˆ ji+1 ), b starts it at time ti + h∗ 
+
+> i
+> K
+
+. For any job of the rest, b starts it at or after time ti+2 where ˆ ji+2 is rigid when i = i2. Therefore, the claim is proved. One can check that 
+
+
+
+∪i∈E
+
+h
+
+ti + 1 , t i + 1 + h∗
+
+> i
+> K
+
+i 
+
+∪ (∪i∈O [ti+1 , t i+1 + 1]) ∪
+
+
+
+∪i∈E [ti + 1 + h∗ 
+
+> i
+> K
+
+, t i+2 ]
+
+
+
+is a partitioning of [ ti1 + 1 , t i2+2 ] if i2 ∈ E, while it is also a partitioning of [ ti1 + 1 , t i2+1 + 1] if i2 ∈ O. It follows from the claim that b’s cost during [ ti1 + 1 , t i2+1 + 1] is at most |O| + P 
+
+> i∈Eh∗
+> i
+> K
+
+where |O| is the costs during [ ti+1 , t i+1 + 1] for each i ∈ O and h∗ 
+
+> i
+> K
+
+is the cost during 
+
+h
+
+ti + 1 , t i + 1 + h∗
+
+> i
+> K
+
+i
+
+for each i ∈ E.Similarly, we compute b’s cost during [ ti1 + 1 , t i2+1 + 1] if b chooses b2 for the scheduling of jobs {jih : i1 ≤
+
+i ≤ i2, j ih released }. Claim 1: b is not busy during [ ti1 + 1 , t i1+1 ]. For any job released before ji1 
+
+> 0
+
+, b starts it at or before time ti1 . For each job ji1 
+
+> h
+
+(including ˆ ji+1 ), b starts it at time ti1+1 . For any job of the rest, b starts it at or after time ti1+1 . Therefore, claim 1 is proved. Claim 2: b is not busy during [ ti + 1 + h∗ 
+
+> i
+> K
+
+, t i+2 ] for each 
+
+i ∈ O. For any job released before ji
+
+> 0
+
+, b starts it at or before time ti. For each job jih (including ˆ ji+1 ), b starts it at time ti + h∗ 
+
+> i
+> K
+
+. For any job of the rest, b starts it at or after time ti+2 . Therefore, claim 2 is proved. One 6can check that [ ti1 + 1 , t i1+1 ] ∪
+
+
+
+∪i∈O
+
+h
+
+ti + 1 , t i + 1 + h∗
+
+> i
+> K
+
+i 
+
+∪ (∪i∈E [ti+1 , t i+1 + 1]) ∪
+
+
+
+∪i∈O [ti + 1 + h∗ 
+
+> i
+> K
+
+, t i+2 ]
+
+
+
+is a partitioning of [ ti1 + 1 , t i2+2 ] if i2 ∈ O, while it is also a partitioning of [ ti1 + 1 , t i2+1 + 1] if i2 ∈ E. It follows that the cost of b during [ ti1 + 1 , t i2+1 + 1] is |E| + P 
+
+> i∈Oh∗
+> i
+> K
+
+where |E| is the costs during [ ti+1 , t i+1 + 1] for each i ∈ E and h∗ 
+
+> i
+> K
+
+is the cost during 
+
+h
+
+ti + 1 , t i + h∗ 
+
+> i
+> K
+
++ 1 
+
+i
+
+for each i ∈ O.Since b chooses the scheduling with the lower cost, we have the cost of b during [ ti1 + 1 , t i2+1 + 1] at most the average of b1’s cost and b2’s cost. It follows that the cost of b during [ ti1 + 1 , t i2+1 + 1] is at most  
+
+> 12
+
+· (|O| + P 
+
+> i∈Eh∗
+> i
+> K
+
++ |E| + P 
+
+> i∈Oh∗
+> i
+> K
+
+) = 12 · (( i2 − i1 + 1) + P 
+
+> i=i1,i 1+1 ,...,i 2
+> h∗
+> i
+> K
+
+). Summing up all the segments like i1, . . . , i 2, we have the cost of b during ∪i∈S2 [ti + 1 , t i+1 + 1] at most 12 · (|S2| + P 
+
+> i∈S2
+> h∗
+> i
+> K
+
+). It follows that the cost of b is at most 1 + |S1| + 12 · (|S2| + P 
+
+> i∈S2
+> h∗
+> i
+> K
+
+) where 1 is the cost during [ t1, t 1 + 1], |S1| are the costs during ∪i∈S1 [ti + 1 , t i+1 + 1], and the remaining are the costs during ∪i∈S2 [ti + 1 , t i+1 + 1]. Eventually, the cost of a is at least 1 + 2 · | S1| + |S2| + P  
+
+> i∈S2
+> h∗
+> i−1
+> K
+
+where 1 is the cost during [ t1, t 1 + 1], 2 · | S1| are the costs during ∪i∈S1 [ti + 1 , t i+1 + 1], |S2| are the costs during ∪i∈S2 [ti+1 , t i+1 + 1], and h∗  
+
+> i−1
+> K
+
+is the cost during [ ti + 1 , t i + h∗  
+
+> i−1
+> K
+
++ 1] ⊂ [ti + 1 , t i+1 ] for each i ∈ S2.The competitiveness ratio of a is at least 1+2 ·| S1|+|S2|+P     
+
+> i∈S2
+> h∗
+> i−1
+> K
+> 1+ |S1|+12·(|S2|+P
+> i∈S2
+> h∗
+> iK)
+
+= 2 − 1+ |S2|    
+
+> K
+> 1+ |S1|+12·(|S2|+P
+> i∈S2
+> h∗
+> iK)
+
+≥ 2 − 1+ RK  
+
+> 12R
+
+,where we have R = |S1| + |S2|. Clearly, the term 1+ RK  
+
+> 12R
+
+goes to zero as R and K go to infinity. Therefore, the competitiveness of any online scheduling algorithm is at least 2, since K and R can be chosen arbitrarily large. 
+
+# 3 Randomized online algorithm against oblivious adversary 
+
+In this section, some preparation work for algorithm analysis are presented in Section 3.1. Section 3.2 uses a single Bernoulli variable (flip a coin) to break the barrier of 2 against any oblivious adversary. Then, section 3.3 minimizes the competitive ratio of the same algorithm by choosing an appropriate continuous distribution. Finally, Section 3.4 makes an improvement via a new algorithmic idea. 
+
+## 3.1 Preparations 
+
+Definition 3.1. For each real number γ ∈ [0 , ∞), define Batch γ to be the deterministic online algorithm such that 
+
+• upon job j is released, start job j now if job j can be scheduled fully within [ sf , s f + 1 + γ] for some flag job f , and delay it otherwise; 
+
+• upon some delayed job f hits its starting deadline sf , mark f as a flag job with respect to γ and start all the jobs that can be feasibly started (including f ) now; 
+
+Remark 3.1.1 . Batch 0 and Batch 1 have been investigated in different generalizations of our uniform job schedul-ing model [18, 14]. 
+
+Definition 3.2. For each real number γ ∈ [0 , ∞), let Fγ denote the set of flag jobs with respect to γ after running Batch γ on the whole input job instance. For each f ∈ F γ , We call the interval [ sf , s f + 1 + γ] the 
+
+γ-extension associated with the flag job f with respect to γ. For each flag job f ∈ F γ , let P γf denote all the non-flag jobs fitted within the γ-extension associated with it while running Batch γ .Take any input job instance x ∈ X . Take any optimal scheduling of ∪γ∈[0 ,∞)Fγ . Suppose Ii with i ∈ I is the i-th (from left to right) maximal busy intervals (called blocks from now on) in the optimal scheduling of 
+
+∪γ∈[0 ,∞)Fγ . Suppose Ii = [ I− 
+
+> i
+
+, I + 
+
+> i
+
+] for i ∈ I . Note that P 
+
+> i∈I
+
+I+ 
+
+> i
+
+− I− 
+
+> i
+
+is an lower bound of the optimal cost of scheduling all the jobs. Take any i ∈ I . Suppose Fγi is the set of flag jobs with respect to γ scheduled within Ii
+
+by the optimal scheduling of ∪γ∈[0 ,∞)Fγ . Suppose Cγi is the cost of processing ∪f ∈F γi {f } ∪ P γf while running Batch γ on the whole input job instance. Note that the total cost of Batch γ is bounded by P 
+
+> i∈I
+
+Cγi .7Lemma 3.1 . We have sf ≥ I− 
+
+> i
+
+for each f ∈ F γi .
+
+Proof. Note that the taken optimal scheduling starts job f at or after time I− 
+
+> i
+
+. It follows that f ’s starting deadline is also at or after time I− 
+
+> i
+
+.
+
+Lemma 3.2 . For each γ, |{ f ∈ F γi : sf ≥ I+ 
+
+> i
+
+− 1 − γ}| ≤ 1. 
+
+Proof. Prove by contradiction. Assume f1, f 2 ∈ { f ∈ F γi : sf ≥ I+ 
+
+> i
+
+−1−γ} and f1 hits its starting deadline before 
+
+f2 when running Batch γ . Since f2 is a flag job with respect to γ, rf2 > s f1 + γ must hold, otherwise f2 would be scheduled within the γ-extension associated with f1. Then, we have rf2 > s f1 + γ ≥ (I+ 
+
+> i
+
+− 1 − γ) + γ = I+ 
+
+> i
+
+− 1which contradicts to the fact that the optimal scheduling schedules f2 within Ii.
+
+Remark 3.1.2 . If I+ 
+
+> i
+
+− I− 
+
+> i
+
+≤ 1 + γ, then |F γi | ≤ 1 by Lemma 3.1 and 3.2. It follows that Cγi ≤ 1 + γ ≤
+
+(1 + γ) · (I+ 
+
+> i
+
+− I− 
+
+> i
+
+). If I+ 
+
+> i
+
+− I− 
+
+> i
+
+> 1 + γ, then if any γ-extension associated with a flag job in Fγi ends after I+ 
+
+> i
+
+,then the flag job is unique by Lemma 3.2. It follows that Cγi ≤ (I+ 
+
+> i
+
+−I− 
+
+> i
+
+)+1+ γ < 2·(I+ 
+
+> i
+
+−I− 
+
+> i
+
+). Therefore, we have for any input job instance x ∈ X , the algorithm’s cost Batch γ (x) = P 
+
+> i∈I
+
+Cγi ≤ P 
+
+> i∈I
+
+max {2, 1+ γ}· (I+ 
+
+> i
+
+−I− 
+
+> i
+
+) = max {2, 1 + γ} · OPT( x). It follows that Batch γ for each γ ∈ [0 , 1] is 2-competitive. One may think of a randomized online algorithm acting between Batch 0 and Batch 1 randomly. The following job instance (see Figure 3) says it just doesn’t work. Let R be a large integer. Consider releasing rigid job ji
+
+with rji = 3 · i, job j′ 
+
+> i
+
+with rj′ 
+
+> i
+
+= 3 · i + ϵ and sj′ 
+
+> i
+
+= 3 · i + 1, and job j′′  
+
+> i
+
+with rj′′  
+
+> i
+
+= 3 · i + 1 and sj′′  
+
+> i
+
+= 3 · i + 3, for i = 0 , 1, . . . , R , where ϵ > 0 is a small real number. Observe that either of Batch 0 or Batch 1 starts job j′′ 
+
+> i
+
+at time 3 · i + 1, for each i. Since the scheduling for distinct i’s are mutually disjoint, the algorithm’s cost is 2 · R + O(1). Observe that if j′ 
+
+> i
+
+is started at 3 · i + ϵ and j′′  
+
+> i
+
+is started at 3 · i + 3 for each i (i.e. Batch γ for any 
+
+γ ∈ [ϵ, 1)), then the cost of the scheduling is (1 + ϵ) · R + O(1). When R → ∞ and ϵ → 0, the ratio becomes close to 2. time 0j0j′
+
+> 0j′′
+> 06j2j′
+> 2j′′
+> 23j1j′
+> 1j′′
+> 19j3j′
+> 3j′′
+> 312
+
+Figure 3: An instance where Batch 0 and Batch 1 make no difference 
+
+## 3.2 Barely Randomization: flipping a coin 
+
+It turns out that γ using a value in (0 , 1) makes randomization work. Let Γ denote the random variable replacing the variable γ. In this subsection, we try a baby algorithm design where Γ takes only two values. The algorithm initially flips a coin before all jobs are released. If Head, Γ = 0, else Γ = 1 /2. The goal is to show that the baby algorithm Batch Γ has competitiveness strictly below 2. Let Li denote I+ 
+
+> i
+
+− I− 
+
+> i
+
+. Consider the following case-by-case analysis: 
+
+• Case 1: Li ≤ 3/2. Looking at Batch 0, Lemma 3.1 and 3.2 imply C0 
+
+> i
+
+≤ Li +1 ≤ 2·Li. Looking at Batch 1/2,Lemma 3.1 and 3.2 imply |F 1/2 
+
+> i
+
+| ≤ 1. Thus, C1/2 
+
+> i
+
+≤ 1 + 1 /2 ≤ 3/2 · Li.
+
+• Case 2: Li > 3/2. Looking at Batch 0, Lemma 3.1 and 3.2 imply C0 
+
+> i
+
+≤ Li + 1 ≤ 5/3 · Li. Looking at Batch 1/2, Lemma 3.1 and 3.2 imply C1/2 
+
+> i
+
+≤ Li + 3 /2 < 2 · Li.Let α ∈ (0 , 1) denote the probability of the coin facing Head (choosing Batch 0). Then, α·C0 
+
+> i
+
++(1 −α)·C1/2 
+
+> i
+
+≤
+
+c · L, where c = max α · 2 + (1 − α) · 32 , α · 53 + (1 − α) · 2 . Consequently, the expected algorithm cost is 8EΓ[Batch Γ(x)] = α · P 
+
+> i∈I
+
+C0 
+
+> i
+
++ (1 − α) · P 
+
+> i∈I
+
+C1/2 
+
+> i
+
+≤ c · OPT( J ). It remains to find the best c by tuning α.It turns out that the best c is 95 achieved when α = 35 .In fact, it turns out that 0 and 1 /2 is the best pair of values to be taken (see Appendix B.1). 
+
+## 3.3 Barely Randomization: any distribution 
+
+In this subsection, we try to determine the “best” distribution for Γ among any distribution such that Γ ≥ 0almost surely. If 1 + Γ ≥ Li, Lemma 3.1 and 3.2 imply |F Γ 
+
+> i
+
+| ≤ 1, and hence CΓ 
+
+> i
+
+≤ 1 + Γ = 1+Γ  
+
+> Li
+
+· Li. If 1 + Γ < L i,Lemma 3.1 and 3.2 imply CΓ 
+
+> i
+
+≤ Li + 1 + Γ = (1 + 1+Γ  
+
+> Li
+
+) · Li. Let cL denote the random variable 1+Γ  
+
+> L
+
+·
+
+1{1 + Γ ≥ L} +  1 + 1+Γ 
+
+> L
+
+ · 1{1 + Γ < L }, for each L ≥ 1. Observe that EΓ[Batch Γ(x)] = P 
+
+> i∈I
+
+EΓ[CΓ 
+
+> i
+
+] ≤P 
+
+> i∈I
+
+EΓ [(1 + Γ) · 1{1 + Γ ≥ Li} + ( Li + 1 + Γ) · 1{1 + Γ < L i}]= P 
+
+> i∈I
+
+EΓ[cLi ] · Li ≤ max L≥1 EΓ[cL] · OPT( x) where x is the input job instance. The goal is simply to minimize max L≥1 EΓ[cL] via choosing the “best” distribution for Γ. We have 
+
+EΓ [cL(Γ)] = P [1 + Γ < L ] + 1 
+
+> L
+
+· EΓ [1 + Γ]. Consider the density function fΓ(γ) := ( a 
+
+> (1+ γ)2
+
+if 0 ≤ γ ≤ 1
+
+> a−1
+
+0 otherwise , where parameter a > 1 is to be adjusted later. We have P[1 + Γ < L ] = 
+
+R L−10 
+
+> a
+> (1+ γ)2
+
+dγ =
+
+h
+
+− a
+
+> 1+ γ
+
+iL−10
+
+= a− aL for each L ∈
+
+h
+
+1, aa−1
+
+i
+
+. It follows that P[1+Γ < L ] ≤ a− aL for each L ≥ 1. We have E[1+Γ] = R 1  
+
+> a−1
+> 0a
+> 1+ γ
+
+dγ = a ln( aa−1 ). Then, EΓ [cL(Γ)] = P[1+Γ < L ]+ 1 
+
+> L
+
+·EΓ[1+Γ] ≤ a− aL + a ln( aa−1 ) 
+
+> L
+
+.The idea is to let the two factors of 1 
+
+> L
+
+cancel each other, i.e., aa−1 = e or equivalently a = ee−1 . Therefore, the competitiveness of Batch Γ is ee−1 ≈ 1.582 when Γ ∼ fΓ and a = ee−1 .Even though the chosen density function f looks satisfactory with respect to the objective function P[1+Γ <L] + 1 
+
+> L
+
+· EΓ[1 + Γ], we observe that the above analysis is not tight. Specifically, when 1 + Γ < L , the bound 
+
+CΓ 
+
+> i
+
+≤ L + 1 + Γ is not tight. For example, we show that the equality cannot be approached when L = 2 and Γ = 0 .7. Observe that F0.7 
+
+> i
+
+, i.e. the set of flag jobs with respect to Γ = 0 .7 scheduled within the same block of length L = 2, contains at most two flag jobs, otherwise three flag jobs with respect to Γ = 0 .7 would constitute an optimal block strictly longer than 2 .4 (see Figure 4). Thus, C0.7 
+
+> i
+
+is at most 2 · (1 + Γ) = 3 .4 and cannot approach L + 1 + Γ = 3 .7. 00.7 + time 1 + Γ = 1 .7flag job’s window flag job’s scheduled processing period flag job’s Γ-extension 1 + Γ = 1 .71 + Γ = 1 .71.4 + 2 2.4 + 2 
+
+Figure 4: three rigid flag jobs with respect to Γ = 0 .7 and ϵ > 0 is small The following lemma captures the gap in the above example. 
+
+Lemma 3.3 . If L ∈ (k · (1 + Γ) , 1 + ( k + 1) · Γ] for some integer k ≥ 1, then CΓ 
+
+> i
+
+≤ (k + 1) · (1 + Γ). 
+
+Proof. It suffices to show that FΓ 
+
+> i
+
+has at most k + 1 jobs. For the sake of contradiction, assume FΓ 
+
+> i
+
+has k + 2 jobs f Γ1 , f Γ2 , . . . , f Γ 
+
+> k+2
+
+from left to right. Observe that sf Γ 
+
+> i
+
+≥ rf Γ 
+
+> i
+
+> s f Γ 
+
+> i−1
+
++ Γ for each i = 2 , 3, . . . , k + 2. Thus, 
+
+rf Γ 
+
+> k+2
+
+> s f Γ1 + ( k + 1) · Γ. Observe that we have sf Γ1 ≥ I− 
+
+> i
+
+and rf Γ 
+
+> k+2
+
+≤ I+ 
+
+> i
+
+− 1, otherwise flag job f Γ1 or f Γ
+
+> k+2
+
+would not be able to fit into the chosen block of the optimal scheduling. It follows that I+ 
+
+> i
+
+− 1 > I − 
+
+> i
+
++ ( k + 1) · Γ, and hence, L > 1 + ( k + 1) · Γ that is the contradiction. 9For a pair of values of L and Γ, Lemma 3.3 suggests the following two bounds corresponding to two cases respectively: 
+
+• If L ∈ (1 + k · Γ, k · (1 + Γ)] for some integer k ≥ 2, CΓ 
+
+> i
+
+may approach L + 1 + Γ; 
+
+• If L ∈ (k · (1 + Γ) , 1 + ( k + 1) · Γ] for some integer k ≥ 1, CΓ 
+
+> i
+
+may approach ( k + 1) · (1 + Γ). However, the following example says the above bounds are still not tight. Consider the case that a block of optimal scheduling has length L = 4 .6 + ϵ, and Γ chooses 1 .5, where ϵ > 0 is small. Observe that 4 .6 + ϵ ∈
+
+(1 + 2 · 1.5, 2 · 2.5] implies L + 1 + Γ can be approached when Γ chooses 1 .5 (see Figure 5). However, considering the same block with a second Γ value of 1 .25. Observe that 4 .6 + ϵ ∈ (2 · 2.25 , 1 + 3 · 1.25] implies 3 · (1 + Γ) strictly lower than L + 1 + Γ can be approached when Γ chooses 1 .25. We observe that the proposed bounds corresponding to the two values of Γ, i.e. 1 .5 and 1 .25, cannot be approached simultaneously. It is not hard to see that the bound L + 1 + Γ when Γ = 1 .5 can only be approached when the first two flag jobs with respect to 1.5 have roughly the same deadline as f 1.51 and f 1.52 in Figure 5 respectively. Simultaneously, when Γ = 1 .25, the existence of f 1.51 and f 1.52 ensures that the first flag job with respect to 1 .25 is started no later than f 1.51
+
+and the second flag job with respect to 1 .25 is started no later than f 1.52 . It follows that the cost due to the 1.25-extension of the first two flag job with respect to 1 .25 is at most 4 .35. Since there are at most three flag job with respect to 1 .25, C1.25  
+
+> i
+
+is at most 6 .6 instead of 6 .75 = 3 · (1 + Γ) when C1.5 
+
+> i
+
+approaches 7 .1 = L + 1 + Γ. 04.62.14.6 + flag job’s window flag job’s scheduled processing period flag job’s Γ-extension time 1 + Γ = 2 .5f 1.511 + Γ = 2 .5f 1.521 + Γ = 2 .5f 1.533.6 + 
+
+Figure 5: three flag jobs with respect to Γ = 4 .8 and ϵ > 0 is small The above discussion suggests there exists a big difficulty in determining the tight competitiveness of Batch Γ.One may consider improving the competitiveness analysis of Batch Γ using the same density function f for Γ by using the above better bounds, but it seems to be a wrong way due to too many cases to be considered. Instead of working on improving the analysis of Batch Γ, we turn to improve the algorithm design. 
+
+## 3.4 Disjoint Batches DB γ
+
+It seems that the unpleasant feature of Batch γ is that the γ-extensions for the same γ may overlap with each other, so we try to modify Batch γ to force that all γ-extensions for the same γ must be disjoint. We propose the following class of deterministic online algorithms DB γ for each γ ≥ 0 as described in Algorithm 3, where each flag job’s γ-extension is defined differently from Definition 3.2. The following lemma suggests DB γ is an overall improvement over Batch γ . We keep using the same notations as those in the analysis of Batch γ .
+
+Lemma 3.4 . |F γi | ≤ 
+
+l Li
+
+> 1+ γ
+
+m
+
+, where Li = I+ 
+
+> i
+
+− I− 
+
+> i
+
+is the length of the i-th block in the taken optimal scheduling of all the flag jobs with respect to γ with γ ∈ [0 , ∞). 
+
+Proof. Assume Fγi has flag jobs f γ 
+
+> 1
+
+, f γ 
+
+> 2
+
+, . . . , f γ
+
+⌈ Li 
+
+> 1+ γ
+
+⌉+1 from left to right and we show a contradiction. Note that the γ-extension associated with f γh starts no earlier than sf γh for each h = 1 , 2, . . . , 
+
+l Li
+
+> 1+ γ
+
+m
+
++ 1. Since all the flag jobs in Fγi must be feasibly fit into the block [ I− 
+
+> i
+
+, I + 
+
+> i
+
+], we have sf γh ≥ I− 
+
+> i
+
+for each h = 1 , 2, . . . , 
+
+l Li
+
+> 1+ γ
+
+m
+
++1. Suppose 10 Algorithm 3 Disjoint Batches: DB γ 
+
+> 1:
+
+Upon job j is released  
+
+> 2:
+
+if starting j now makes j’s processing fully contained within some γ-extension then  
+
+> 3:
+
+start j now;  
+
+> 4:
+
+Upon a γ-extension starts  
+
+> 5:
+
+start all the remaining jobs now;  
+
+> 6:
+
+Upon time sf for some remaining job f 
+
+> 7:
+
+f is called a flag job;  
+
+> 8:
+
+if sf is within some γ-extension, say [ t, t + 1 + γ] then  
+
+> 9:
+
+let [ t + 1 + γ, t + 2 + 2 γ] be the γ-extension associated with the flag job f ; 
+
+> 10:
+
+else  
+
+> 11:
+
+let [ sf , s f + 1 + γ] be the γ-extension associated with the flag job f ;
+
+t′ is the end time of the γ-extension associated with f γ
+
+⌈ Li 
+
+> 1+ γ
+
+⌉. Since f γ
+
+⌈ Li 
+
+> 1+ γ
+
+⌉+1 is a flag job, we have rf γ
+
+⌈ Li 
+
+> 1+ γ
+
+⌉+1 
+
+>t′ − 1. Since f γ
+
+⌈ Li 
+
+> 1+ γ
+
+⌉+1 can be feasibly scheduled within the taken block [ I− 
+
+> i
+
+, I + 
+
+> i
+
+], we have rf γ
+
+⌈ Li 
+
+> 1+ γ
+
+⌉+1 
+
+≤ I+ 
+
+> i
+
+− 1. It follows that t′ < I + 
+
+> i
+
+. If follows that [ sf γ 
+
+> 1
+
+, t ′] is a proper subset of [ I− 
+
+> i
+
+, I + 
+
+> i
+
+]. Since all the γ-extensions are mutually disjoint, we have t′ − sf γ 
+
+> 1
+
+≥
+
+l Li
+
+> 1+ γ
+
+m
+
+· (1 + γ) ≥ Li. It follows that Li > t ′ − sf γ 
+
+> 1
+
+≥
+
+l Li
+
+> 1+ γ
+
+m
+
+· (1 + γ) ≥ Li
+
+(contradiction). Note that Cγi ≤ |F γi | · (1 + γ). It follows that if random variable Γ follows a density function fΓ, then Lemma 3.4 says CΓ 
+
+> i
+
+is at most 
+
+l Li
+
+> 1+Γ
+
+m
+
+· (1 + Γ). Consider the randomized online algorithm DB Γ that generates a random sample of Γ, denoted by γ, and then run DB γ for scheduling all the jobs from the input. Let 
+
+cL denote the random variable 
+
+l L
+
+> 1+Γ
+
+m
+
+· 1+Γ  
+
+> L
+
+, for each L ≥ 1. Observe that EΓ[DB Γ(x)] = P 
+
+> i∈I
+
+EΓ[CΓ 
+
+> i
+
+] ≤
+
+P 
+
+> i∈I
+
+EΓ
+
+hl Li
+
+> 1+Γ
+
+m
+
+· (1 + Γ) 
+
+i
+
+= P 
+
+> i∈I
+
+EΓ[cLi ] · Li ≤
+
+max L≥1 EΓ[cL] · OPT( x) where x is the input job instance. It remains to minimize max L≥1 EΓ[cL] via finding the best fΓ.
+
+Theorem 3.5. DB Γ with fΓ(γ) = 
+
+( 1ln 2 ·(1+ γ) if 0 ≤ γ ≤ 10 otherwise is 1ln 2 ≈ 1.44 competitive. 
+
+Proof. Consider 
+
+E
+
+ L
+
+1 + Γ 
+
+
+
+· 1 + Γ 
+
+L
+
+
+
+= E
+
+ X
+
+> k=1 ,2,..., ⌈L⌉
+
+1
+
+ Lk ≤ 1 + Γ < Lk − 1
+
+
+
+· k(1 + Γ) 
+
+L
+
+
+
+= E
+
+
+
+1
+
+ L
+
+⌈L⌉ ≤ 1 + Γ < L
+
+⌈L⌉ − 1
+
+
+
+· ⌈L⌉(1 + Γ) 
+
+L
+
+
+
++
+
+E
+
+
+
+1
+
+ L
+
+⌈L⌉ − 1 ≤ 1 + Γ < L
+
+⌈L⌉ − 2
+
+
+
+· (⌈L⌉ − 1)(1 + Γ) 
+
+L
+
+
+
++ · · · + E
+
+
+
+1 {L ≤ 1 + Γ < ∞} · 1 + Γ 
+
+L
+
+
+
+.
+
+Consider the following different cases. Case 1: L = 1. Clearly, E
+
+hl L
+
+> 1+Γ
+
+m
+
+· 1+Γ 
+
+> L
+
+i
+
+= E[1 + Γ] = 1ln 2 .11 Case 2: 1 < L ≤ 2. We have E
+
+h
+
+1  L 
+
+> 2
+
+≤ 1 + Γ < L · 2(1+Γ) 
+
+> L
+
+i
+
++ E 1 {L ≤ 1 + Γ < ∞} · 1+Γ 
+
+> L
+
+ = 2 
+
+> L
+
+· R L−10 (1 + 
+
+γ) 1ln 2 ·(1+ γ) dγ + 1 
+
+> L
+
+· R 1
+
+> L−1
+
+(1 + γ) 1ln 2 ·(1+ γ) dγ = 1ln 2 
+
+  2 
+
+> L
+
+(L − 1) + 1 
+
+> L
+
+(2 − L) = 1ln 2 .Case 3: 2 < L ≤ 3. We have E
+
+h
+
+1  L 
+
+> 3
+
+≤ 1 + Γ < L 
+
+> 2
+
+· 3(1+Γ) 
+
+> L
+
+i
+
++ E
+
+h
+
+1  L 
+
+> 2
+
+≤ 1 + Γ < L · 2(1+Γ) 
+
+> L
+
+i
+
+= 3 
+
+> L
+
+·
+
+R L  
+
+> 2−10
+
+(1 + γ) 1ln 2 ·(1+ γ) dγ + 2 
+
+> L
+
+· R 1 
+
+> L
+> 2−1
+
+(1 + γ) 1ln 2 ·(1+ γ) dγ = 1ln 2 ·   3 
+
+> L
+
+( L 
+
+> 2
+
+− 1) + 2 
+
+> L
+
+(2 − L 
+
+> 2
+
+) = 1ln 2 · ( 12 + 1 
+
+> L
+
+) < 1ln 2 ,where the last inequality is because 2 < L .Case 4: 3 < L ≤ 4. We have                                                                  
+
+> E
+> 
+> 1
+> L
+> 4≤1 + Γ < L
+> 3
+> 
+> ·4(1 + Γ)
+> L
+> 
+> +E
+> 
+> 1
+> L
+> 3≤1 + Γ < L
+> 2
+> 
+> ·3(1 + Γ)
+> L
+> 
+> +E
+> 
+> 1
+> L
+> 2≤1 + Γ < L
+> 
+> ·2(1 + Γ)
+> L
+> 
+> =4
+> L·
+> ZL
+> 3−10
+> (1 + γ)1ln 2 ·(1 + γ) dγ+ 3
+> L·
+> ZL
+> 2−1
+> L
+> 3−1
+> (1 + γ)1ln 2 ·(1 + γ) dγ+ 2
+> L·
+> Z1
+> L
+> 2−1
+> (1 + γ)1ln 2 ·(1 + γ) dγ
+> =1ln 2 ·
+> 4
+> L(L
+> 3−1) + 3
+> L(L
+> 2−L
+> 3 ) + 2
+> L(2 −L
+> 2 )
+> 
+> =1ln 2 ·56<1ln 2 .
+
+Case 5: L > 4. We have E
+
+hl L
+
+> 1+Γ
+
+m
+
+· 1+Γ 
+
+> L
+
+i
+
+≤ E
+
+h L 
+
+> 1+Γ
+
++ 1 
+
+
+
+· 1+Γ 
+
+> L
+
+i
+
+= 1 + E[1+Γ]  
+
+> L
+
+< 1 + E[1+Γ] 4 = 1 + 14·ln 2 < 1ln 2 .
+
+# 4 Oblivious adversary against randomized online algorithm 
+
+In this section, we still present a simple oblivious adversary first, which says the competitiveness of any ran-domized online algorithm is at least 87 . Then, we improve the adversary to achieve a better lower bound of  
+
+> 43
+
+via an uniform distribution. Finally, we observe that the uniform distribution can be modified for a better lower bound of 1+ √32 .The following lemma gives a way of constructing an oblivious adversary against any randomized online algorithm. 
+
+Lemma 4.1 (Yao’s principle [6]) . Following the notations used in Definition 1.2, let X be a random input instance on X ∗ ⊂ X , where X ∗ is a non-empty finite set and hence X is a discrete random variable with values in X ∗. Suppose A∗ ⊂ A is a finite set of deterministic online algorithms such that for each a ∈ A there exists 
+
+l(a) ∈ A ∗ such that l(a)( x) ≤ a(x), ∀x ∈ X ∗. Then, we have the competitiveness of any randomized online algorithm is at least min a∗∈A ∗ EX [a∗(X)]   
+
+> EX[OPT( X)]
+
+.
+
+## 4.1 A baby instance 
+
+As how the upper bounds are developed, we consider making a baby step first. According to Yao’s principle, we turn to find a randomized instance X such that there exists a set of “best” deterministic online algorithm 
+
+A∗ such that min a∗∈A ∗ EX [a∗(X)]   
+
+> EX[OPT( X)]
+
+is strictly greater than 1. Consider the following baby instance. There are three jobs defined: 
+
+• Job js is release at time 0 and rigid; 
+
+• Job jδm is released at time δ with starting deadline sjδm at time 2, where 0 < δ < 1 is to be adjusted later; 
+
+• Job je is released at time 2 and rigid; Consider the random job instance Xδ,α := 
+
+(
+
+{js, j δm} w.p. 1 − α
+
+{js, j δm, j e} w.p. α on X ∗ 
+
+> δ,α
+
+= {{ js, j δm}, {js, j δm, j e}} , where 
+
+δ, α ∈ (0 , 1) are to be adjusted later. Observe that the “best” deterministic online algorithm will start job jm either at r2 = δ or at 2. Think of the following argument. If some algorithm a starts job jm during ( δ, 1), then an alternative algorithm a∗ which starts job jm at δ has a strictly lower scheduling cost during [0 , 2], and hence a strictly lower scheduling cost overall. If some algorithm a starts job jm during [1 , 2), then an alternative algorithm a∗ which starts job jm at 12 2 has a strictly lower scheduling cost during [1 , 3], and hence a strictly lower scheduling cost overall. Therefore, for each algorithm a, a is mapped to either Batch 1 (job jm is started at δ) or Batch 0 (jm is started at 2). Then, compute EX [Batch 1(Xδ,α )] = (1 − α) · (1 + δ) + α · (2 + δ) = 1 + α + δ and EX [Batch 0(Xδ,α )] = (1 −α)·2+ α·2 = 2. To make the adversary strong, it is intuitive to let the two candidates for the best algorithm have the same expected cost, i.e., α + δ = 1, and we have A∗ = {Batch 0, Batch 1}. To attain the strongest adversary, it remains to attain the lowest possible expected optimal cost, since the expected algorithm’s cost is fixed to be 2. We have min δ,α :α+δ=1 EX [OPT( Xδ,α )] = min δ,α :α+δ=1 (1 −α)·(1+ δ)+ α·2 = min α 2−α(1 −α) = 74
+
+where the minimum is attained when α = 12 . Eventually, we obtain a lower bound of 87 for any randomized online algorithm due to X 12 , 12 by Lemma 4.1. 
+
+## 4.2 A generalized instance 
+
+Consider generalizing the baby instance for better lower bounds of the competitiveness. The first idea is to replace jm with a lot of jobs released during js’s processing. On top of it, the second idea is to have many rounds of the above by setting js as the beginning of the current round and je as the beginning of the next round. Consider the following definition. 
+
+Definition 4.1. Define the set of jobs σtK as below: 
+
+• job jts is release at time t and rigid; 
+
+• job jtk is released at time t + kK with starting deadline t + k + 1 for k = 1 , 2, . . . , K , where K is a large integer; For each r = 0 , 1, . . . , R , let Tr denote P 
+
+> r′=1 ,2,...,r
+
+∆r′ where ∆ 1, ∆2, . . . , ∆R are i.i.d. random variables that take values in {2, 3, . . . , K + 1 }. Consider the oblivious adversary XK,R := ∪r=0 ,1,...,R σTr 
+
+> K
+
+, where R and K
+
+are large integers. Clearly, the corresponding finite space X ∗ 
+
+> K,R
+
+is 
+
+n
+
+∪r=0 ,1,...,R σ  
+
+> P
+> r′=1 ,2,...,r δr′
+> K
+
+: δ1, δ 2, . . . , δ R ∈ { 2, 3, . . . , K + 1 }
+
+o
+
+.
+
+See Figure 6 for a job instance when K = 4. σ04σ∆1
+
+> 4
+
+σ∆1+∆ 2
+
+> 4
+
+σ∆1+∆ 2+∆ 3
+
+> 4
+
+∆1∆2∆3
+
+Figure 6: When K = 4, ∆ 1, ∆2, ∆3 take values of 3 , 4, 5 respectively Now, we start its analysis. As the analysis for the baby instance, we first determine the set of “best” algorithms. 
+
+Lemma 4.2 . For any deterministic online algorithm a, there exists a deterministic online algorithm a∗ with parameters Γ 0, Γ1, . . . , ΓR such that 
+
+• Γ0 is a constant in  1 
+
+> K
+
+, 2 
+
+> K
+
+, . . . , 1 ;
+
+• Γr that takes values in  1 
+
+> K
+
+, 2 
+
+> K
+
+, . . . , 1 is determined by ∆ 1, . . . , ∆r , for each r = 1 , 2, . . . , R ;
+
+• ΓR = 1 
+
+> K
+
+;13 • a∗ starts jobs jTr 
+
+> 1
+
+, j Tr 
+
+> 2
+
+, . . . , j Tr  
+
+> Γr·K−1
+
+at time rjTr  
+
+> Γr·K−1
+
+, for each r = 0 , 1, . . . , R ;
+
+• a∗ starts jobs jTr  
+
+> Γr·K
+
+, j Tr 
+
+> Γr·K+1
+
+, . . . , j Tr 
+
+> K
+
+at time min {Tr+1 , s jTr  
+
+> Γr·K
+
+}, for each r = 0 , 1, . . . , R ;
+
+• a∗(x) ≤ a(x) for each x ∈ X ∗
+
+> K,R
+
+;The following Lemma follows from Lemma 4.2. 
+
+Lemma 4.3 . There exists a finite set A∗ 
+
+> K,R
+
+such that each deterministic online algorithm a ∈ A is mapped to 
+
+a∗ for some a∗ ∈ A ∗
+
+> K,R
+
+.
+
+Lemma 4.4 . If P(∆ r = δr ) = 1 
+
+> K
+
+for each δr = 2 , 3, . . . , K + 1, then EXK,R [a∗(XK,R )] = 2 + R ·  2 − 1
+
+> K
+
+ for any 
+
+a∗ ∈ A ∗
+
+> K,R
+
+, and EXK,R [OPT( XK,R )] = 2 + R · 3K−12K .
+
+Theorem 4.5. The competitiveness of any randomized online algorithm is at least 43 .
+
+## 4.3 A better distribution 
+
+In the previous subsection, we choose the uniform distribution for ∆ r to make the expected algorithm cost constant for each a∗ ∈ A ∗
+
+> K,R
+
+. But actually a modified uniform distribution putting a significant mass at ∆ r = 2 gives a slightly better lower bound of the competitiveness. 
+
+Lemma 4.6 . If ∆ r =
+
+(
+
+2 w.p. 1+ K− ˜KK
+
+δr w.p. 1 
+
+> K
+
+∀δr = 3 , 4, . . . , ˜K + 1 , where ˜K ∈ { K, K −1, . . . , 2}, then EXK,R [a∗(XK,R )] ≥
+
+2 + R ·
+
+
+
+1 + ˜K−1
+
+> K
+
+
+
+for any a∗ ∈ A ∗
+
+> K,R
+
+, and EXK,R [OPT( XK,R )] = 2 + R ·
+
+
+
+1 + ˜K( ˜K−1) 2K2
+
+
+
+.
+
+Theorem 4.7. The competitiveness of any randomized online algorithm is at least 1+ √32 ≈ 1.366. 
+
+# 5 Algorithm with restarts 
+
+This section studies deterministic online algorithms that restarts jobs, whose definition will be provided shortly. We are interested in online algorithms with restarts not only because the ability of restarting jobs can improve the algorithm’s competitiveness, but also because the lower bound presented in Section 4.2 and 4.3 also applies for any randomized online algorithm that restarts jobs. The goal of this section is to obtain the tight competitiveness of the setting for all deterministic online algorithms that restart jobs. 
+
+## 5.1 Motivation 
+
+So far, it is not known whether the algorithm DB γ gives the best possible competitiveness. To close the gap between 1+ √32 and 1ln 2 , one gives a better lower bound of competitiveness for all algorithms, or, proposes an algorithm that has a lower competitiveness, or even efforts from both sides. Unfortunately, we did not manage to achieve any of the above. Then, we work around the existing lower bound of 1+ √32 by making the compromise that online algorithms are allowed to restart jobs. Precisely, we have the following definition. 
+
+Definition 5.1 (Restart a Job) . Let ar denote a deterministic online algorithm that can restart jobs. If ar is processing job j at time t such that t ∈ [rj , s j ], then ar can stop processing job j at time t and restart the whole 
+
+processing of job j at any time t′ ∈ [t, s j ]. We present a simple example (see Figure 7) to show how restarting jobs works. Consider an adversary releasing the following four jobs: ˆ j is rigid and released at time 0; j1 is released at time 1 /3 such that sj1 = 3; j2
+
+is released at time 2 /3 such that sj2 = 3; ˆ j′ is rigid and released at time 3. Consider Batch 1/2’s scheduling. By definition, j1 is started at its release time and j2 is started at its starting deadline. Then, consider Batch 1/2’s scheduling plus the ability of restarting jobs. By definition, Batch 1/2 starts job j1 at time 1 /3. At time 2 /3, 14 the online scheduler observes that j1 should be started at the same time as j2, since [ rj1 , s j1 ] ⊃ [rj2 , s j2 ] for minimizing the algorithm’s cost. In other words, the online scheduler realizes that j1 is redundant when and only when j2 is released. Due to the observation, the online scheduler stops j1’s processing at time 2 /3 and restart j1 at the same time as j2 at time 3. Restarting job j1 saves a cost of 1 /3 for Batch 1/2.ˆjˆj′j1j2time 0132313
+
+Figure 7: Restart job j1
+
+An easy observation is that XK,R as defined in Section 4.2 and 4.3 also works for algorithms that restart jobs. Precisely, in the following lemma, we show that for scheduling the randomized job instance XK,R , the ability of restarting jobs is useless. 
+
+Lemma 5.1 . Suppose ar is any deterministic online algorithm that can restart jobs. There exists a deterministic online algorithm a that never restarts any job such that a(x) ≤ ar (x) for each x ∈ X ∗
+
+> K,R
+
+.By Lemma 5.1 and 4.2, the lower bounds in Section 4.2 and 4.3 also applies to any randomized online algorithm that restarts jobs. Then, Theorem 4.7 is immediately improved as below. 
+
+Theorem 5.2. The competitiveness of any randomized online algorithm that restarts jobs is at least 1+ √32 ≈
+
+1.366. 
+
+## 5.2 Adversary against deterministic online algorithm that restarts jobs 
+
+Lemma 5.1 says the lower bound in Section 4.2 and 4.3 should give some insight into how online algorithms that restart jobs may fail to achieve the offline optimal cost. Indeed, we can simply adapt the same lower bound to the deterministic online setting. Let ϕ be a real number between 0 and 1 to be adjusted later. Take any deterministic online algorithm that restarts jobs, denoted by ar . By Lemma 5.1 and 4.2, there exists a∗ parametrized by Γ 0, Γ1, . . . , ΓR as described in Lemma 4.2 such that a∗(x) ≤ ar (x) for any x ∈ X K,R . Note that in the deterministic online setting, ∆ r+1 is a function of Γ 0, Γ1, . . . , Γr for each r = 0 , 1, . . . , R − 1. Consider the adversary such that ∆r+1 =
+
+(2 if Γ r > ϕ sjTr  
+
+> Γr·K+1
+
+− Tr = Γ r · K + 2 if Γ r ≤ ϕ for each r = 0 , 1, . . . , R − 1. 
+
+Lemma 5.3 . The competitiveness of a∗ is at least c · RR+2 − 1 
+
+> K
+
+, where c = min 
+
+n
+
+1 + ϕ, 2+ ϕ
+
+> 1+ ϕ
+
+o
+
+and K, R are large integers. 
+
+Theorem 5.4. The competitiveness of any deterministic online algorithm that restarts jobs is at least √5+1 2 .
+
+## 5.3 Best Batch BB γ
+
+In this subsection, we present a deterministic online algorithm that restarts jobs, whose competitiveness is √5+1 2 ≈ 1.618 matching the lower bound in Theorem 5.4. Without loss of generality, we use the following assumption for simplicity, because an online/offline scheduling algorithm is interesting only if it makes the same schedule for jobs that have the same window. 
+
+Assumption 5.1. For each pair of distinct jobs j1, j 2 in the input job instance x ∈ X , we have [rj1 , d j1 ]̸ =[rj2 , d j2 ].
+
+It is not hard to see how restarting jobs helps decrease the cost. Figure 7 is a simple example of doing it. To exploit it, consider the following typical situation. Upon some flag job f hits its starting deadline, job f is 15 processed during [ sf , d f ]. All the jobs that are available to be started are started at time sf for free. It remains to decide the scheduling of some job released after time sf . Typically, the set of jobs under consideration is J f := {j : rj ∈ (sf , d f ]}. Observe that if jobs j1, j 2 ∈ J f satisfy [ rj1 , d j1 ] ⊃ [rj2 , d j2 ], then an offline scheduling can always process job j1 during the same time as j2, which makes j1 redundant. In online settings, the redundancy of each job j ∈ J f cannot be determined at its release time rj , because at time rj1 , the online scheduler should not know whether such job j2 will be released (typically rj1 < r j2 ) in the future and hence should not know whether job j1 is redundant or not at time rj1 . When the scheduler can restart jobs, a good strategy is to start all the jobs in J f at their release times respectively, and then at time df the scheduler decides whether to stop job j at time df for each j ∈ J f . Precisely, we have the following typical options. Let ˜J f := j ∈ J f : ¬([ rj′ , d j′ ] ⊂ [rj , d j ]) , ∀j′ ∈ J f \ { j} denote the set of critical jobs excluding the redundant jobs. Then, ˜J f can be rewritten as {jf 
+
+> 1
+
+, j f 
+
+> 2
+
+, . . . , j fK } such that rjf
+
+> 1
+
+< r jf
+
+> 2
+
+< · · · < r jfK
+
+and djf
+
+> 1
+
+< d jf
+
+> 2
+
+< · · · < d jfK
+
+,where such a set of jobs is said to be agreeable . Each k = 1 , 2, . . . , K + 1 corresponds to one option for algorithm to stop jobs {j ∈ J f : rj > r jfk−1
+
+} at time df , where rjf
+
+> 0
+
+:= sf , and then the jobs that are stopped are delayed. Now, we describe more about the core ideas behind the algorithm design. Assume that all jobs are very flexible (with long windows), because in the case of scheduling jobs with short windows, any feasible scheduling may not be too far from the optimal, and a good scheduling should be easier to obtain intuitively. The first observation is that a good algorithm has to stop jobs {j ∈ J f : rj > s f + 0 .618 }. Otherwise, one may have the ratio of the local algorithm cost to the local optimal cost strictly greater than the golden ratio in the following situation. There may be a job f ′ released after df + 1 but with starting deadline before the starting deadline of any job in J f . In this case, all the jobs J f becomes redundant because [ rf ′ , d f ′ ] ⊂ [rj , d j ] for each j ∈ J f .Consequently, f ′ becomes the next flag job and the local optimal cost around flag job f is 1 that is due to flag job f alone. Therefore, the local competitiveness is equal to the local algorithm’s cost around flag job f which is determined by which jobs are to be stopped/delayed. To maintain a competitiveness of 1 .618, one does not want to schedule any job in {j ∈ J f : rj > s f + 0 .618 } together with f . It follows that the “best” k has to be chosen among k = 1 , 2, . . . , K f where Kf = min {k : rjfk
+
+> s f + 0 .618 }. Note that intuitively, the more general case is when rjfK
+
+> s f + 0 .618 where jfK is the last critical job among J f , so one may assume the existence of 
+
+Kf for the current discussion. Next, we motivate how to choose the “best” k. The consequence of stopping jobs {j ∈ J f : rj > r jfk−1
+
+} is that jobs f, j f 
+
+> 1
+
+, . . . , j fk−1 are scheduled within one block during [ sd, 1 + rjfk−1
+
+] and jobs jfk , . . . , j fK are delayed. A straightforward question is: why not fix the “best” k to be Kf ? Consider one extreme case when sjf
+
+> 1
+
+≈
+
+sjf
+
+> 2
+
+≈ · · · ≈ sjfKf
+
+. Intuitively, the optimal scheduling should process jf 
+
+> 1
+
+, j f 
+
+> 2
+
+, . . . , j fKf in the same block, because 
+
+jf 
+
+> 1
+
+, . . . , j fKf −1 can overlap almost fully with jfKf no matter where jfKf is scheduled. By the previous observation, since jfKf has to be delayed ( rjfKf
+
+> s f + 0 .618), all the jobs jf 
+
+> 1
+
+, j f 
+
+> 2
+
+, . . . , j fKf should be delayed. In this case, the “best” k is 1 and all the jobs are stopped at time df and delayed. Intuitively, there are cases when the “best” 
+
+k is not as low as 1. Consider another extreme case when sjf
+
+> 1
+
+≪ sjf
+
+> 2
+
+≪ · · · ≪ sjfKf
+
+. Note that jfKf is definitely delayed. We consider the case jfKf is processed during its rightmost position [ sjfKf
+
+, d jfKf
+
+]. Observe that any job to be processed strictly right to [ sjfKf
+
+, d jfKf
+
+] (e.g. the flag job next to jfKf ) must be released after sjfKf
+
+. We can show that in this case jf 
+
+> 1
+
+, . . . , j fKf −1 or even jfKf make a positive contribution to the local optimal cost around 
+
+f . Precisely, the local optimal cost around f should be at least rjfKf −1
+
++ 1 − sf significantly more than 1 because of the additional jobs jf 
+
+> 1
+
+, . . . , j fKf −1. In this case, the “best” k is Kf and only jobs released after rjfKf −1
+
+are stopped at time df and delayed. However, it still remains to think about how to prove the above idea works in the view of the worst case analysis. After staring at algorithm a∗ described in Lemma 4.2, we make another important observation that helps to obtain the eventual algorithm design. Note that for each round r, job ˆ jr is rigid and becomes a flag job. After a∗ decides the value of Γ r , the processing of ˆ jr gets a Γ r -extension, that is one block, and the remaining jobs released after time sˆjr + Γ r are started at the same time, that is the next block. In the adversary described in section 5.2, the first block may have any length between 1 and 2 depending on the choices of the scheduler 16 (where 1 .618 is a threshold), meanwhile, the second block either does not exist (when Γ r > 0.618) or has length of 1 (when Γ r ≤ 0.618). An important observation is that the two blocks described above are in distinct natures. It follows that our algorithm design should deal with the block accommodating f, j f 
+
+> 1
+
+, . . . , j fk−1 and the block accommodating jfk , . . . , j fK differently. In particular, after one determines the “best” value for k, when job jfk
+
+hits its starting deadline and hence is started at time sjfk
+
+, one needs to determine how to schedule the set of jobs released during ( sjfk
+
+, d jfk
+
+] in some manner different from the scheduling of f and J f .Let γ ∈ (0 , 1) be a parameter to be adjusted later. Consider the online scheduler that restarts jobs called Best Batch (BB γ ) as described in Algorithm 4. 
+
+Algorithm 4 Best Batch: BB γ 
+
+> 1:
+
+ˆf ← N U LL and s ˆf ← ∞ ; ▷ initialize the value of variable ˆf 
+
+> 2:
+
+p ← N U LL ; ▷ initialize the value of variable p 
+
+> 3:
+
+Upon a job j is released  
+
+> 4:
+
+if rj ∈ (sp, d p] then  
+
+> 5:
+
+Start j now (due to p);  
+
+> 6:
+
+else if rj ∈ (dp, r jpKp + 1] and p is tight then  
+
+> 7:
+
+Start j now (due to p);  
+
+> 8:
+
+else if rj ∈ (sjpkp , s jpkp + rjpKp − rjpkp−1 ] and jpkp is a secondary flag job then ▷ where rjp 
+
+> 0
+
+= sp 
+
+> 9:
+
+Start j now (due to jpkp );  
+
+> 10:
+
+else if sj ≤ s ˆf then  
+
+> 11:
+
+ˆf ← j; 
+
+> 12:
+
+Upon time s ˆf 
+
+> 13:
+
+ˆf is marked as a flag job;  
+
+> 14:
+
+if ˆf is not marked as secondary then  
+
+> 15:
+
+ˆf is marked as primary ; 
+
+> 16:
+
+p ← ˆf ; 
+
+> 17:
+
+Start all the available jobs now (due to ˆf ); ▷ including any job released at time s ˆf 
+
+> 18:
+
+ˆf ← N U LL and s ˆf ← ∞ ; 
+
+> 19:
+
+Upon time dp 
+
+> 20:
+
+J p ← the set of all the jobs released during ( sp, d p];  
+
+> 21:
+
+{jp 
+
+> 1
+
+, . . . , j pK } ← the set of critical jobs of J p such that rjp 
+
+> 1
+
+< · · · < r jpK ; ▷ Precisely, {jp 
+
+> 1
+
+, . . . , j pK } =
+
+{j ∈ J p : ¬([ rj′ , d j′ ] ⊂ [rj , d j ]) , ∀j′ ∈ J p \ { j}}  
+
+> 22:
+
+if rjpK > s p + γ then  
+
+> 23:
+
+Kp ← min {k = 1 , . . . , K : rjpk > s p + γ}; 
+
+> 24:
+
+for k = 1 , 2, . . . , K p do  
+
+> 25:
+
+Cpk ←
+
+((1 + rjpk−1 − sp) + ( djpKp − sjpk ) if 1 + rjpk−1 < s jpk ;
+
+djpKp − sp if 1 + rjpk−1 ≥ sjpk ; 
+
+> 26:
+
+if min k=1 ,2,...,K p Cpk = djpKp − sp then  
+
+> 27:
+
+Mark p as tight ; 
+
+> 28:
+
+else  
+
+> 29:
+
+kp ← arg min k=1 ,2,...,K p Cpk (break the ties arbitrarily);  
+
+> 30:
+
+jpkp is marked as secondary attached to p; 
+
+> 31:
+
+Stop jobs {j ∈ J p : rj > r jpkp−1 } (due to p); ▷ where rjp 
+
+> 0
+
+= sp 
+
+> 32:
+
+if sjpkp ≤ s ˆf then  
+
+> 33:
+
+ˆf ← jpkp ;Now, we do its analysis. It seems the algorithm is so delicate that proofs have to be done by induction and contradiction. 
+
+Lemma 5.5 . The value of variable ˆf at any time instant t is the job that has the earliest starting deadline 17 among all the jobs that are available to be started at time t.
+
+Lemma 5.6 . Algorithm BB γ is a well defined online scheduler in the following sense: (i) if job j becomes available to be started at time t, job j must be (re)-started during [ t, s j ]; (ii) if job j is stopped at time t, then t < s j ;Observe that all the jobs marked as primary are also marked as flag jobs (line 12-18). Observe that all the flag jobs are in the time order of being marked as a flag job. Let P denote the set of all primary flag jobs and rewrite P as p1, p 2, . . . , p |P| such that px is the x-th job marked as a primary flag job. It follows that 
+
+sp1 ≤ sp2 ≤ · · · ≤ sp|P| since each flag job is marked as a flag job at its starting deadline. We have the following set of observations about the scheduling made by BB γ .
+
+Lemma 5.7 . Take any x = 1 , 2, . . . , |P| . The following statements hold: (i) if line 22 does not hold for px, then dpx < r px+1 .(ii) if line 22 holds for px and px is tight (line 26), then 1 + rjpx Kpx < r px+1 .(iii) if line 22 holds for px, px is not tight (line 28), and the secondary job jpx 
+
+> kpx
+
+attached to px is not a flag job, then the flag job right next to px is px+1 , and dpx < r px+1 .(iv) if line 22 holds for px, px is not tight (line 28), and the secondary job jpx 
+
+> kpx
+
+attached to px is a flag job, then the flag job right next to px is its secondary job jpx 
+
+> kpx
+
+, jpx 
+
+> kpx
+
+is completed at its deadline djpx kpx , and 
+
+sjpx kpx + ( rjpx Kpx − rjpx kpx −1 ) < r px+1 .(v) no job is stopped during [ rpx , d px ). (vi) any job released before or at time spx is completed before or at time dpx .(vii) any job released at or after rpx , including px, p x+1 , . . . , p |P| and their secondary jobs (if exists), cannot be started due to any of the jobs p1, p 2, . . . , p x−1 or their secondary flag jobs (if exists). (viii) primary job px is never started until its starting deadline and then processed during [ spx , d px ]. 
+
+Lemma 5.8 .
+
+(i) If p is a primary tight job, then 1 + rjpKp > s jpKp .(ii) If jpkp is a secondary flag job attached to p, then sjpkp + ( rjpKp − rjpkp−1 ) > max {sjpKp , 1 + rjpKp }.
+
+Lemma 5.9 . Take any primary flag job px for x = 1 , 2, . . . , |P| .(i) If line 22 does not hold for px, then the algorithm’s cost during [ spx , s px+1 ] is at most 1 + γ.(ii) If line 22 holds for px and px is tight (line 26), then the algorithm’s cost during [ spx , s px+1 ] is at most 2 + ( rjpx Kpx − spx ). (iii) If line 22 holds for px, px is not tight (line 28), and the secondary job jpx 
+
+> kpx
+
+attached to px does not become a flag job, then the algorithm’s cost during [ spx , s px+1 ] is at most 1 + γ.(iv) If line 22 holds for px, px is not tight, and the secondary job jpx 
+
+> kpx
+
+attached to px becomes a flag job, then the algorithm’s cost during [ spx , s px+1 ] is at most 2 + rjpx Kpx − spx .The following definition points out which jobs are taken for constructing a lower bound of the optimal cost. 
+
+Definition 5.2. For each p ∈ P , let A(p) denote the set of critical jobs {jp 
+
+> 1
+
+, j p 
+
+> 2
+
+, . . . , j pKp } as described in line 20-23 if either the primary job p is tight (line 26), or, there is a secondary flag job jpkp attached to p. Let A(p)be empty otherwise. 18 Lemma 5.10 . There exists an optimal scheduling, denoted by O, of ∪x=1 ,2,..., |P| {px} ∪ A (px) such that O has exactly |P| blocks, ordered from left to right, and the the set of jobs accommodated within the x-th block is exactly {px} ∪ A (px) for x = 1 , 2, . . . , |P| .
+
+Theorem 5.11. When γ = √5−12 , the competitiveness of BB γ is √5+1 2 .
+
+Proof. Consider the following matching between the algorithm’s cost and the optimal cost: algorithm’s cost during [ spx , s px+1 ] corresponds to the cost of the x-th block in the optimal scheduling as described in Lemma 5.10. After a case by case check between Lemma 5.9 and 5.10, 1 + γ in the algorithm’s cost is matched to 1 in the optimal cost, and 2 + ( rjpx Kpx − spx ) in the algorithm’s cost is matched to 1 + ( rjpx Kpx − spx ) in the optimal cost. Note that rjpx Kpx − spx > γ . Since γ is chosen to be √5−12 , we have 2+( rjpx Kpx −spx )1+( rjpx Kpx −spx ) < 2+ γ 
+
+> 1+ γ
+
+= 1+ γ 
+
+> 1
+
+. The local ratio leads to the global ratio, i.e., the competitiveness of BB γ is 1 + γ = √5+1 2 .At last, we show BB γ is linearly fast given that jobs are sorted. 
+
+Lemma 5.12 . If J p is sorted and stored in a doubly linked list L such that rL(l1) ≤ rL(l2) for any 1 ≤ l1 < l 2 ≤|J p|, then it takes O(|J p|) time to output the critical jobs in line 21. 
+
+Theorem 5.13. If the input job instance of size n is sorted and stored in a doubly linked list L such that 
+
+rL(l1) ≤ rL(l2) for any 1 ≤ l1 < l 2 ≤ n, then BB γ is a √5+1 2 -approximation algorithm whose time complexity is 
+
+O(n) for the offline setting . 
+
+Acknowledgements: We are grateful to Sirie He and Gruia Calinescu for valuable discussions in the early stages of this work. 
+
+# References 
+
+[1] S. Albers and G. W. van der Heijden. Online busy time scheduling with flexible jobs. In COCOA, Tianjin, China, November 28-30 , 2025. [2] M. Alicherry and R. Bhatia. Line system design and a generalized coloring problem. In European Symposium on Algorithms , pages 19–30. Springer, 2003. [3] Y. Azar and D. Vainstein. Tight bounds for clairvoyant dynamic bin packing. In Proceedings of the 29th ACM Symposium on Parallelism in Algorithms and Architectures (SPAA) , pages 77–86, 2017. [4] Y. Azar and D. Vainstein. Tight bounds for clairvoyant dynamic bin packing. ACM Transactions on Parallel Computing (TOPC) , 6(3):1–21, 2019. [5] P. Baptiste. Scheduling unit tasks to minimize the number of idle periods: a polynomial time algorithm for offline dynamic power management. In SODA , volume 6, pages 364–367, 2006. [6] A. Borodin and R. El-Yaniv. Online Computation and Competitive Analysis , volume 53. Cambridge University Press Cambridge, 1998. [7] J. Chang, H. N. Gabow, and S. Khuller. A model for minimizing active processor time. Algorithmica ,70(3):368–405, 2014. [8] J. Chang, S. Khuller, and K. Mukherjee. LP rounding and combinatorial algorithms for minimizing active and busy time. In Proceedings of the 26th ACM symposium on Parallelism in algorithms and architectures ,pages 118–127, 2014. [9] S. Davies, S. Khuller, and S. Zhang. Balancing flow time and energy consumption. In Proceedings of the 34th ACM Symposium on Parallelism in Algorithms and Architectures , pages 369–380, 2022. 19 [10] M. Flammini, G. Monaco, L. Moscardelli, H. Shachnai, M. Shalom, T. Tamir, and S. Zaks. Minimizing total busy time in parallel scheduling with application to optical networks. Theoretical Computer Science ,411(40-42):3553–3562, 2010. [11] M. R. Garey, D. S. Johnson, B. B. Simons, and R. E. Tarjan. Scheduling unit-time tasks with arbitrary release times and deadlines. SIAM J. Comput. , 10(2):256–269, 1981. [12] S. Kamali and A. L´ opez-Ortiz. Efficient online strategies for renting servers in the cloud. In SOFSEM 2015: Theory and Practice of Computer Science , pages 277–288. Springer, 2015. [13] R. Khandekar, B. Schieber, H. Shachnai, and T. Tamir. Minimizing busy time in multiple machine real-time scheduling. In IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2010) . Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik, 2010. [14] F. Koehler and S. Khuller. Busy time scheduling on a bounded number of machines. In Workshop on Algorithms and Data Structures , pages 521–532. Springer, 2017. [15] V. Kumar and A. Rudra. Approximation algorithms for wavelength assignment. In FSTTCS 2005: Founda-tions of Software Technology and Theoretical Computer Science: 25th International Conference, Hyderabad, India, December 15-18, 2005. Proceedings 25 , pages 152–163. Springer, 2005. [16] Y. Li, X. Tang, and W. Cai. On dynamic bin packing for resource allocation in the cloud. In Proceedings of the 26th ACM Symposium on Parallelism in Algorithms and Architectures (SPAA) , pages 2–11, 2014. [17] M. Liu and X. Tang. Brief announcement: Scheduling jobs for minimum span: Improved bounds and learning-augmented algorithms. In Proceedings of the 36th ACM Symposium on Parallelism in Algorithms and Architectures , SPAA ’24, page 141–143, New York, NY, USA, 2024. Association for Computing Ma-chinery. [18] R. Ren and X. Tang. Online flexible job scheduling for minimum span. In Proceedings of the 29th ACM Symposium on Parallelism in Algorithms and Architectures , pages 55–66, 2017. [19] R. Ren, X. Tang, Y. Li, and W. Cai. Competitiveness of dynamic bin packing for online cloud server allocation. IEEE/ACM Transactions on Networking , 25(3):1324–1331, 2016. [20] B. Simons. A fast algorithm for multiprocessor scheduling. In 21st Annual Symposium on Foundations of Computer Science, Syracuse, New York, USA, 13-15 October 1980 , pages 50–53. IEEE Computer Society, 1980. [21] B. B. Simons and M. K. Warmuth. A fast algorithm for multiprocessor scheduling of unit-length jobs. 
+
+SIAM J. Comput. , 18(4):690–710, 1989. [22] P. Winkler and L. Zhang. Wavelength assignment and generalized interval graph coloring. In Proceedings of the fourteenth annual ACM-SIAM symposium on Discrete algorithms , pages 830–831, 2003. 20 A Lower bound of 2
+
+## A.1 A correction 
+
+We noticed that Albers et al. [1] attempted to give an lower bound of 2 for any deterministic online algorithm for uniform job scheduling. However, their attempt of the adversary design and the analysis, in spite of being simpler than ours, still appears to be flawed. Albers et al. ’s adversary can be summarized as below where k is a large number: 1. initialize i to be 1 as the index of the current round; 2. release rigid job f1 (corresponding to ˆ j1 in our adversary) with deadline at time 1 and t∗ ← rf1 ;3. release job j at time t∗ + ϵ with deadline at time 3 i (corresponding to jik in our adversary); 4. do nothing until job j is started, and t∗ ← when j is started; 5. if t∗ ∈ [rfi , d fi ), then release another job at time t∗ + ϵ with deadline at time 3 i (corresponding to 
+
+ji
+
+> ⌊(t∗−ti)·K⌋+1
+
+), j ← the new released job, and repeat 4-6; 6. if t∗ ≥ dfi , then mark job j as fi+1 , i ← i + 1, and repeat 3-6 unless i = k;Notice that the difference between the above adversary and ours is that even if t∗ ∈ [dfi , d fi+1 ] (in item 6), job j is still marked as fi+1 by the above adversary, while in our adversary a rigid job ˆ ji+1 is released at time 
+
+dˆji + 2 as in line 9 of Algorithm 2. We present the following algorithm a against the above adversary that has a competitiveness strictly below 2. Start f1 at its release time since it is rigid. Take any r = 0 , 1, . . . as the index of the r-th round. The below describes a round of scheduling jobs after f3r+1 and before f3( r+1)+1 including f3( r+1)+1 . Suppose f3r+1 is started at time t. Adversary releases job j at time t + ϵ with deadline at time 3(3 r + 1) by definition. Algorithm 
+
+a starts job j at its starting deadline dj − 1 = 3(3 r + 1) − 1. Then, the adversary marks j as f3r+2 . Then, the adversary releases j′ at time df3r+2 − 1 + ϵ with deadline at time 3(3 r + 2). Algorithm a starts job j′ at time 
+
+df3r+2 − ϵ. By definition, the adversary releases another job j′′ at time df3r+2 with deadline at time 3(3 r + 2). Algorithm a starts j′′ at its release time rj′′ = df3r+2 = 3(3 r + 1). Then, the adversary marks j′′ as f3r+3 .Then, the adversary releases job j′′′ at time rf3r+3 + ϵ = df3r+2 + ϵ with deadline at time 3(3 r + 3). Algorithm 
+
+a starts job j′′′ at its starting deadline dj′′′ − 1 = 3(3 r + 3) − 1, and hence the adversary marks j′′′ as f3( r+1)+1 .See Figure 8 for a’s scheduling in the first two rounds until f7.f1f2f3f4f5f6f7136912 15 18 time 
+
+Figure 8: a’s scheduling Since the adversary has k flag jobs, there are ⌈ k 
+
+> 3
+
+⌉ rounds. Take any r = 0 , 1, . . . , ⌈ k 
+
+> 3
+
+⌉− 1. The above scheduling of a ensures that algorithm’s cost during [3(3 r) − 1, 3(3 r + 2)] is at most 3 where the processing due to f3r+1 
+
+has cost of 1 and the processing of f3r+2 and f3r+3 has an extra cost of 2. Then, the algorithm’s cost is at most 3⌈ k 
+
+> 3
+
+⌉. Next, we show that the optimal cost is at least 2( ⌈ k 
+
+> 3
+
+⌉ − 1). Take jobs {f3r+2 , f 3r+3 : r = 0 , 1, . . . , ⌈ k 
+
+> 3
+
+⌉ − 2}.Note that df3r+2 ≤ rf3r+3 and df3r+3 = 3(3 r + 2) < 3(3 r + 3) − 1 + ϵ = rf3( r+1)+2 . It follows that all the jobs in {f3r+2 , f 3r+3 : r = 0 , 1, . . . , ⌈ k 
+
+> 3
+
+⌉ − 2} have mutually disjoint windows and hence the optimal cost is at least 2( ⌈ k 
+
+> 3
+
+⌉ − 1). Therefore, the competitiveness of algorithm a is at most 3⌈ k    
+
+> 3⌉
+> 2( ⌈k
+> 3⌉− 1)
+
+that drops below 2 when k ≥ 13. 21 Here, we point out where we think Albers et al. ’s analysis does not work. To achieve the lower bound of 2, the algorithm’s cost is represented as the total cost of components where a component is a maximal busy interval and all the maximal busy intervals are mutually disjoint. The components should be matched to the flag jobs one to one, otherwise one may not be able to reschedule the non-consecutive components into their adjacent components almost for free. After looking into the definitions of component and the adversary, the above statements cannot be achieved simultaneously. 
+
+# B Randomized online algorithm against oblivious adversary 
+
+## B.1 The best coin 
+
+Next, we show that {0, 1/2} is the best pair of values for γ. Suppose algorithm flips an unfair coin to choose between {γ1, γ 2} such that 0 ≤ γ1 < γ 2.
+
+• Case 1: L ≤ 1 + γ1. Looking at Batch γ1 , Lemma 3.1 and 3.2 imply |F γ1 
+
+> i
+
+| ≤ 1, and hence Cγ1 
+
+> i
+
+≤ 1 + γ1 ≤
+
+(1 + γ1) · L. Looking at Batch γ2 , we have the same result: Cγ2 
+
+> i
+
+≤ 1 + γ2 ≤ (1 + γ2) · L.
+
+• Case 2: 1 + γ1 < L ≤ 1 + γ2. Looking at Batch γ1 , Lemma 3.1 and 3.2 imply Cγ1 
+
+> i
+
+≤ L + 1 + γ1 < 2 · L.Looking at Batch γ2 , |F γ2 
+
+> i
+
+| ≤ 1. We have Cγ2 
+
+> i
+
+≤ 1 + γ2 < 1+ γ2 
+
+> 1+ γ1
+
+· L.
+
+• Case 3: L > 1 + γ2. Looking at Batch γ1 , Lemma 3.1 and 3.2 imply Cγ1 
+
+> i
+
+≤ L + 1 + γ1 < (1 + 1+ γ1 
+
+> 1+ γ2
+
+) · L.Looking at Batch γ2 , similarly, we have Cγ2 
+
+> i
+
+≤ L + 1 + γ2 < 2 · L.Let α ∈ (0 , 1) denote the probability of choosing Batch γ1 . Then, α · Cγ1 
+
+> i
+
++ (1 − α) · Cγ2 
+
+> i
+
+≤ c · L, where 
+
+c = max 
+
+
+
+α · (1 + γ1) + (1 − α) · (1 + γ2), α · 2 + (1 − α) · 1 + γ2
+
+1 + γ1
+
+, α ·
+
+
+
+1 + 1 + γ1
+
+1 + γ2
+
+
+
++ (1 − α) · 2
+
+
+
+.
+
+To obtain the best c, consider solving the following optimization problem: min c
+
+s.t. 0 ≤ α ≤ 10 ≤ γ1 ≤ γ2
+
+c ≥ α · (1 + γ1) + (1 − α) · (1 + γ1) · 1 + γ2
+
+1 + γ1
+
+c ≥ α · 2 + (1 − α) · 1 + γ2
+
+1 + γ1
+
+c ≥ α ·
+
+
+
+1 + 1 + γ1
+
+1 + γ2
+
+
+
++ (1 − α) · 2Observe that the minimum is still achieved when γ1 = 0. Then, let β be 1+ γ2 
+
+> 1+ γ1
+
+. Furthermore, the minimum is strictly below 2 due to the previous subsection, which is achieved only when β < 2. Then, it suffices to solve the following optimization problem: min c
+
+s.t. 0 ≤ α ≤ 11 < β < 2
+
+c ≥ α · 2 + (1 − α) · β = β + α · (2 − β)
+
+c ≥ α · (1 + 1
+
+β ) + (1 − α) · 2 = 2 + α · ( 1
+
+β − 1) For a fixed β, the minimum is 3−β 
+
+> 3−β−1
+> β
+
+, achieved when α = 2−β 
+
+> 3−β−1
+> β
+
+. Eventually, 3−β 
+
+> 3−β−1
+> β
+
+achieves its minimum 95
+
+when β = 32 .22 C Oblivious adversary against randomized online algorithm 
+
+## C.1 Proof of Yao’s principle 
+
+Proof of Lemma 4.1. For simplicity, let c∗ denote min a∗∈A ∗ EX [a∗(X)]   
+
+> EX[OPT( X)]
+
+. Take any randomized online algorithm A.By Definition 1.2, we show that if EA[A(x)] ≤ c·OPT( x) for any input instance x ∈ X , then c ≥ c∗. It suffices to show that there exists an input instance x ∈ X ∗ such that EA[A(x)] ≥ c∗ ·OPT( x). We show it by contradiction. Assume EA[A(x)] < c ∗ · OPT( x) for any x ∈ X ∗. Note that since X ∗ is finite, ˜ c := max x∈X ∗ EA[A(x)] OPT( x) exists and ˜c < c ∗. Let μ and ν be the probability measures taken by random variable X and A respectively. Since l is a map from A to A∗, random variable l(A) has the probability measure ν∗(a∗) = R 
+
+> l−1(a∗)
+
+dν(a) for each a∗ ∈ A ∗.Then, consider the following contradiction: ˜c · E
+
+> X
+
+[OPT( X)] = E
+
+> X
+
+[˜ c · OPT( X)] = 
+
+Z 
+
+> X∗
+
+˜c · OPT( x) d μ(x)
+
+≥
+
+Z 
+
+> X∗
+
+E
+
+> A
+
+[A(x)] d μ(x) = 
+
+Z 
+
+> X∗
+
+Z
+
+> A
+
+a(x) d ν(a) d μ(x) (1) 
+
+≥
+
+Z 
+
+> X∗
+
+Z
+
+> A
+
+l(a)( x) d ν(a) d μ(x) = 
+
+Z 
+
+> X∗
+
+Z
+
+> A∗
+
+a∗(x) d ν∗(a∗) d μ(x) (2) =
+
+Z
+
+> A∗
+
+Z 
+
+> X∗
+
+a∗(x) d μ(x) d ν∗(a∗) = 
+
+Z
+
+> A∗
+
+E
+
+> X
+
+[a∗(X)] d ν∗(a∗) (3) 
+
+≥
+
+Z
+
+> A∗
+
+c∗ · E
+
+> X
+
+[OPT( X)] d ν∗(a∗) = c∗ · E
+
+> X
+
+[OPT( X)] , (4) where the inequality in (1) is by the definition of ˜ c, the inequality in (2) is by the definition of l, the equality in (2) is a change of variable, the first equality in (3) is valid due to the finiteness of X ∗ and A∗, and the inequality in (4) is by the definition of c∗.
+
+## C.2 Proofs of the oblivious adversary 
+
+Proof of Lemma 4.2. Take any deterministic online algorithm a. In the following, we define another determin-istic online algorithm a∗ in Algorithm 5 while simulating a.
+
+Algorithm 5 a mapped to a∗ 
+
+> 1:
+
+Upon time Tr for some r = 0 , 1, . . . , R − 1 
+
+> 2:
+
+if a starts some job during [ Tr + 1 , T r + 2) then  
+
+> 3:
+
+a∗ starts all the jobs that can be feasibly started at time Tr + 2;  
+
+> 4:
+
+else if a starts some job during [ Tr , T r + 1) then  
+
+> 5:
+
+T ∗ ← the last time a starts some job during [ Tr , T r + 1);  
+
+> 6:
+
+a∗ starts all the jobs that can be feasibly started at time Tr + ⌊(T ∗−Tr )K⌋ 
+
+> K
+
+; 
+
+> 7:
+
+Upon some job that has not been scheduled by a∗ reaches its starting deadline  
+
+> 8:
+
+a∗ starts all the jobs that can be feasibly started now;  
+
+> 9:
+
+Upon time TR 
+
+> 10:
+
+a∗ starts jobs jTR 
+
+> 1
+
+, j TR 
+
+> 2
+
+, . . . , j TR 
+
+> K
+
+at time TR + 2; 
+
+First, we show that a∗ is a well-defined online algorithm. Line 1,9 are valid commands, because counting the number of rounds is an online behavior and a new round starts as soon as a rigid job is released. Take any 
+
+r. At time Tr , note that new information about the input set of jobs is revealed only at or after Tr + 2, because the next round of jobs σTr+1  
+
+> K
+
+can only be released at or after Tr + 2. Then, for line 2-6, at time Tr it is feasible to know how a schedules jobs during [ Tr , T r + 2). At last, line 7-8 ensures that every job is feasibly scheduled by algorithm a∗.23 Next, we show that a∗ has no higher cost than a in any sample path. First, we show that a∗ has no higher cost than a during [ TR, ∞). Note that the cost of a∗ during [ TR, ∞) is exactly 2 that are during [ TR, T R + 1] and [TR + 2 , T R + 3]. Indeed 2 is the minimum cost any algorithm can get during [ TR, ∞) because the processing of job jTR 
+
+> s
+
+and T TR 
+
+> K
+
+must be fully within [ TR, ∞) and the two jobs’ processing cannot have any overlapping. It suffices to show that during [ Tr , T r+1 ], a∗ has no higher cost than a for each r = 0 , 1, . . . , R − 1. Consider the case that there exists some job j started by a during [ Tr + 1 , T r + 2). Let Γ r be 1 
+
+> K
+
+in this case. Clearly, the cost of a∗ during [ Tr , T r+1 ] is either 1 or 2 corresponding to either Tr+1 = Tr + 2 or Tr+1 ≥ Tr + 3 respectively. The case of Tr+1 = Tr + 2 is trivial. In the case of Tr+1 ≥ Tr + 3, the cost of a during [ Tr , T r+1 ] is at least 2 because a is processing the whole job jTr 
+
+> s
+
+during [ Tr , T r + 1] and the whole job j during [ Tr + 1 , T r + 3]. Therefore, a∗ has no higher cost than a in the case that a starts some jobs during [ Tr + 1 , T r + 2). Next, consider the case that a does not start any job during [ Tr + 1 , T r + 2) and T ∗ doesn’t exist (line 5). Let Γ r be 1 
+
+> K
+
+in this case. Both a and a∗ starts all the jobs jTr 
+
+> 1
+
+, j Tr 
+
+> 2
+
+, . . . , j Tr 
+
+> K
+
+at time Tr + 2 = sjTr  
+
+> Γr·K
+
+, and hence, both algorithms have the same cost. The last case is that a does not start any job during [ Tr + 1 , T r + 2) and T ∗ exists (line 5). Let Γ r be    
+
+> ⌊(T∗−Tr)K⌋+1
+> K
+
+∈ { 2 
+
+> K
+
+, 3 
+
+> K
+
+, . . . , 1}, since 1 
+
+> K
+
+≤ T ∗ − Tr < 1. By assumption, a starts jobs jTr  
+
+> Γr·K
+
+, j Tr 
+
+> Γr·K+1
+
+, . . . , j Tr 
+
+> K
+
+at or after time Tr + 2. In the case of Tr+1 > s jTr  
+
+> Γr·K
+
+, by assumption a starts job jTr  
+
+> Γr·K
+
+during [ Tr + 2 , T r+1 − 1]. It follows that the cost of a during [ Tr , T r+1 ] is at least 2 + ( T ∗ − Tr ). In the case of Tr+1 ≤ sjTr  
+
+> Γr·K
+
+, clearly the cost of a during [ Tr , T r+1 ] is at least 1 + ( T ∗ − Tr ). On the other hand, by definition, a∗ starts jTr 
+
+> 1
+
+, j Tr 
+
+> 2
+
+, . . . , j Tr 
+
+> Γr·K−1
+
+at time Tr + Γ r − 1 
+
+> K
+
+and starts jTr  
+
+> Γr·K
+
+, j Tr 
+
+> Γr·K+1
+
+, . . . , j Tr 
+
+> K
+
+at time min {Tr+1 , s jTr  
+
+> Γr·K
+
+}. It follows that the cost of a∗
+
+during [ Tr , T r+1 ] is either 2 + Γ r − 1 
+
+> K
+
+or 1 + Γ r − 1 
+
+> K
+
+corresponding to either Tr+1 > s jTr  
+
+> Γr·K
+
+or Tr+1 ≤ sjTr  
+
+> Γr·K
+
+respectively. Since T ∗ − Tr ≥ Γr − 1 
+
+> K
+
+, we have shown that a∗ has no higher cost than a in any case. By definition, observe that Γ r is defined based on the information strictly before time Tr + 2. All the information strictly before time Tr +2 are exactly ∆ 1, ∆2, . . . , ∆r . Therefore, Γ r is a function of ∆ 1, ∆2, . . . , ∆r .Eventually, algorithm a∗ matches all the descriptions in the lemma. 
+
+Proof of Lemma 4.3. Let A′ denote the set of deterministic online algorithms each of which fits the description of a∗ in Lemma 4.2 for some Γ 0, Γ1, . . . , ΓR−1. Consider the equivalence relation ∼ among A′ such that a1 ∼ a2
+
+iff a1 and a2 make identical scheduling for each x ∈ X ∗
+
+> K,R
+
+. Let A∗ 
+
+> K,R
+
+denote the set of representatives of the equivalence classes of A′. It suffices to show that A∗ 
+
+> K,R
+
+is finite. Suppose Dr is the set {(δ1, δ 2, . . . , δ r ) : δr′ = 2 , 3, . . . , K + 1 , r ′ = 1 , 2, . . . , r } and C is the set { 1 
+
+> K
+
+, 2 
+
+> K
+
+, . . . , 1}.Note that there exists a one-one correspondence between A∗ 
+
+> K,R
+
+and {(Γ 0, Γ1, . . . , ΓR−1) : Γ r ∈ CDr }. It suffices to show that {(Γ 0, Γ1, . . . , ΓR−1) : Γ r ∈ CDr } is finite, which is clearly true. 
+
+Proof of Lemma 4.4. Consider the cost of algorithm a∗ with parameters Γ 0, . . . , ΓR scheduling XK,R in the following parts 
+
+• for each r = 1 , 2, . . . , R , the cost during [ Tr−1, T r ] is 1 + Γ r−1 − 1 
+
+> K
+
++ 1{∆r − 1 > Γr−1 · K}, where job 
+
+jTr−1 
+
+> Γr−1·K−1
+
+is started at its release time Tr−1 + Γ r−1 − 1 
+
+> K
+
+and the processing of job jTr−1 
+
+> Γr−1·K
+
+completes before or at time Tr only if Tr > T r−1 + Γ r−1 · K + 1 = sjTr−1Γr−1·K
+
+;
+
+• the cost during [ TR, ∞) is 2 that are during [ TR, T R + 1] and [ TR + 2 , T R + 3]; Then, we have the expected algorithm cost 
+
+E
+
+2 + X
+
+> r=1 ,2,...,R
+
+
+
+1 + Γ r−1 − 1
+
+K + 1{∆r − 1 > Γr−1 · K}
+
+
+
+= 2 + R ·
+
+
+
+1 − 1
+
+K
+
+
+
++ X
+
+> r=1 ,2,...,R
+
+E [Γ r−1 + 1{∆r − 1 > Γr−1 · K}] .
+
+Then, we have 
+
+E [Γ r−1 + 1{∆r − 1 > Γr−1 · K}]24 = X 
+
+> δ1,...,δ r=2 ,3,...,K +1
+
+(Γ r−1(δ1, . . . , δ r−1) + 1{δr − 1 > Γr−1(δ1, . . . , δ r−1) · K}) · 1
+
+Kr
+
+= X
+
+> δ1,...,δ r−1=2 ,3,...,K +1
+
+X 
+
+> δr=2 ,3,...,K +1
+
+(Γ r−1(δ1, . . . , δ r−1) + 1{δr − 1 > Γr−1(δ1, . . . , δ r−1) · K}) · 1
+
+Kr
+
+= X
+
+> δ1,...,δ r−1=2 ,3,...,K +1
+
+Γr−1(δ1, . . . , δ r−1) · 1
+
+Kr−1 + ( K − Γr−1(δ1, . . . , δ r−1) · K) · 1
+
+Kr
+
+= X
+
+> δ1,...,δ r−1=2 ,3,...,K +1
+
+1
+
+Kr−1 = 1 .
+
+After substitution, the expected algorithm cost is 2 + R ·  2 − 1
+
+> K
+
+.Consider the optimal scheduling of XK,R in the following parts: 
+
+• for each r = 1 , 2, . . . , R , the optimal cost during [ Tr−1, T r ] is 1 + ∆r −2 
+
+> K
+
+, where jobs jTr−1 
+
+> 1
+
+, j Tr−1 
+
+> 2
+
+, . . . , j Tr−1 
+
+> ∆r−2
+
+are started at time rjTr−1∆r −2
+
+= Tr−1 + ∆r −2 
+
+> K
+
+and job jTr−1 
+
+> ∆r−1
+
+, j Tr−1 
+
+> ∆r
+
+, . . . , j Tr−1 
+
+> K
+
+are started at time sjTr−1∆r −1
+
+= Tr ;
+
+• the optimal cost during [ TR, ∞) is 2, where jobs jTR 
+
+> 1
+
+, j TR 
+
+> 2
+
+, . . . , j TR 
+
+> K
+
+are started at time TR + 2; By the chosen distribution, we have the expected optimal cost E
+
+h
+
+2 + P 
+
+> r=1 ,2,...,R
+
+1 + ∆r −2
+
+> K
+
+i
+
+= 2 + R ·
+
+ 1 − 1
+
+> K
+
+ + R · E[∆ 1−1]  
+
+> K
+
+= 2 + R ·  1 − 1
+
+> K
+
+ + R · 1+2+ ··· +KK 
+
+> K
+
+= 2 + R · 3K−12K .
+
+Proof of Theorem 4.5. Since XK,R and A∗ 
+
+> K,R
+
+are both finite, by Lemma 4.2,4.1 and 4.4, the competitiveness of any randomized online algorithm is at least E[a∗(XK,R )]  
+
+> E[OPT( XK,R )]
+
+= 2+ R·(2− 1 
+
+> K
+
+) 
+
+> 2+ R·3K−12K
+
+. By letting K go to infinity, we have the competitiveness of any randomized online algorithm is at least 2+2 R   
+
+> 2+ 32R
+
+. By letting R go to infinity, we have the competitiveness of any randomized online algorithm is at least 43 .
+
+Proof of Lemma 4.6. Similar to the proof of Lemma 4.4, take any algorithm a∗ and consider 
+
+E [Γ r−1 + 1{∆r − 1 > Γr−1 · K}]= X 
+
+> δ1,...,δ r=2 ,3,...,K +1
+
+(Γ r−1(δ1, . . . , δ r−1) + 1{δr − 1 > Γr−1(δ1, . . . , δ r−1) · K}) · P(∆ 1 = δ1, . . . , ∆r = δr )= X
+
+> δ1,...,δ r−1=2 ,3,...,K +1
+
+X 
+
+> δr=2 ,3,...,K +1
+
+(Γ r−1(δ1, . . . , δ r−1) + 1{δr − 1 > Γr−1(δ1, . . . , δ r−1) · K}) · P(∆ 1 = δ1, . . . , ∆r = δr )= X
+
+> δ1,...,δ r−1=2 ,3,...,K +1
+
+P(∆ 1 = δ1, . . . , ∆r−1 = δr−1) ·
+
+X 
+
+> δr=2 ,3,...,K +1
+
+(Γ r−1(δ1, . . . , δ r−1) + 1{δr − 1 > Γr−1(δ1, . . . , δ r−1) · K}) · P(∆ r = δr )= X
+
+> δ1,...,δ r−1=2 ,3,...,K +1
+
+P(∆ 1 = δ1, . . . , ∆r−1 = δr−1) ·
+
+
+
+Γr−1(δ1, . . . , δ r−1) + ( ˜K − Γr−1(δ1, . . . , δ r−1) · K)+
+
+K
+
+
+
+≥ X
+
+> δ1,...,δ r−1=2 ,3,...,K +1
+
+P(∆ 1 = δ1, . . . , ∆r−1 = δr−1) · ˜KK = ˜KK .
+
+After substitution, the expected algorithm cost is 2+ R· 1 − 1
+
+> K
+
++P 
+
+> r=1 ,2,...,R
+
+E [Γ r−1 + 1{∆r − 1 > Γr−1 · K}] ≥
+
+2 + R ·
+
+
+
+1 + ˜K−1
+
+> K
+
+
+
+.For the optimal cost, we have E[∆ r −1] = 1+ K− ˜KK + 1 
+
+> K
+
+(2+3+ · · · + ˜K) = 1 
+
+> K
+
+(K − ˜K + ˜K(1+ ˜K)2 ) = 1+ ˜K( ˜K−1) 2K .After substitution, the expected optimal cost is E
+
+h
+
+2 + P 
+
+> r=1 ,2,...,R
+
+1 + ∆r −2
+
+> K
+
+i
+
+= 2+ R · 1 − 1
+
+> K
+
++R · 1+ ˜K( ˜K−1) 2K 
+
+> K
+
+=2 + R ·
+
+
+
+1 + ˜K( ˜K−1) 2K2
+
+
+
+.25 Proof of Theorem 4.7. Let p be any number between 0 and 1. Let ˜K be ⌊p · K⌋. Since XK,R and A∗ 
+
+> K,R
+
+are both finite, by Lemma 4.2, Lemma 4.1, and 4.6, the competitiveness of any randomized online algorithm is at least    
+
+> 2+ R·
+> 
+> 1+ ˜K−1
+> K
+> 
+> 2+ R·
+> 
+> 1+ ˜K( ˜K−1) 2K2
+> 
+
+. Note that the term 2+ R·   
+
+> 
+> 1+ ˜K−1
+> K
+> 
+> 2+ R·
+> 
+> 1+ ˜K( ˜K−1) 2K2
+> 
+
+= 2+ R·(1+ ⌊p·K⌋− 1 
+
+> K
+
+)
+
+> 2+ R·
+
+(1+ ⌊p·K⌋(⌊p·K⌋− 1) 2K2 ) goes to 2+ R·(1+ p)2+ R·(1+ p22 ) , by letting K
+
+go to infinity. Then, we have the competitiveness of any randomized online algorithm is at least 2+ R·(1+ p)2+ R·(1+ p22 ) .By letting R go to infinity, we have the competitiveness of any randomized online algorithm is at least 1+ p 
+
+> 1+ p22
+
+.Finally, 1+ p 
+
+> 1+ p22
+
+reaches its maximum 1+ √32 by letting p = √3 − 1. 
+
+# D Algorithm that restarts jobs 
+
+## D.1 Lower bounds 
+
+Proof of Lemma 5.1. Consider defining a in Algorithm 6 while simulating ar . We show that algorithm a is a well defined online algorithm, and then, a(x) ≤ ar (x) for each x ∈ X ∗
+
+> K,R
+
+.
+
+Algorithm 6 ar mapped to a 
+
+> 1:
+
+for r = 0 , 1, . . . , R do  
+
+> 2:
+
+Upon time Tr 
+
+> 3:
+
+a starts all the jobs that can be feasibly started now;  
+
+> 4:
+
+if ar is always processing jobs during [ Tr , T r + 2) then  
+
+> 5:
+
+a starts all the jobs jTr 
+
+> 1
+
+, . . . , j Tr 
+
+> K
+
+at time Tr + 2;  
+
+> 6:
+
+else  
+
+> 7:
+
+t ← the first moment during [ Tr + 1 , T r + 2) when ar becomes idle;  
+
+> 8:
+
+a starts all the jobs that can be feasibly started at time t − 1;  
+
+> 9:
+
+for k = 1 , 2, . . . , ∆r+1 − 1 do  
+
+> 10:
+
+Upon time Tr + k + 1  
+
+> 11:
+
+if ar finishes processing some job j during ( Tr + k + 1 , T r + k + 2] then  
+
+> 12:
+
+a starts all the jobs that can be feasibly started now; First, we show that a is online. Since ar is an online algorithm, all the scheduling decisions ar make at time t depends only on what happened at and before time t. Note that all the decisions ar make before time 
+
+Tr + 2 depends only on ∆ 1, ∆2, . . . , ∆r because Tr+1 ≥ Tr + 2 almost surely. Since ∆ 1, ∆2, . . . , ∆r have all been revealed at time Tr , it is feasible for a at time Tr to know how ar processes jobs during [ Tr , T r + 2) (line 4 and 6). Similarly, all the available information about the input job instance at time Tr + k + 1 equal to that at any time t ∈ (Tr + k + 1 , T r + k + 2) for k = 1 , 2, . . . , ∆r+1 − 1. Then, it is feasible for a at time Tr + k + 1 to know all the decisions ar make during [0 , T r + k + 2) and hence to know whether ar finishes processing a job during (Tr + k + 1 , T r + k + 2] (line 11). Next, we ensure that every job is feasibly scheduled by a. First, we show that if a schedules any job (line 3,5,8,12), then the job’s processing is fully within its window. Since all the jobs jTr 
+
+> 1
+
+, . . . , j Tr 
+
+> K
+
+are released before 
+
+Tr + 1 and have starting deadline at or after Tr + 2, line 5 is feasible. Line 3,8,12 are feasible, clearly. Second, we show a does not miss any job. At time Tr for each r, line 3 starts job jTr 
+
+> s
+
+at time Tr , so it suffices to consider jTr 
+
+> 1
+
+, . . . , j Tr 
+
+> K
+
+for each r. Furthermore, due to line 5, it suffices to consider the case that ar is not always processing jobs during [ Tr , T r + 2). Suppose t is the first moment during [ Tr + 1 , T r + 2) when ar becomes idle. Take any k = 1 , 2, . . . , K . Let t∗ + 1 denote when ar finish processing jTr 
+
+> k
+
+. By line 6-8, if a does not start job 
+
+jTr 
+
+> k
+
+at time t − 1, then jTr 
+
+> k
+
+must be released after t − 1, and hence ar cannot finish processing jTr 
+
+> k
+
+at or before time t. Since ar is not processing any job at time t, we have t∗ > t ≥ Tr + 1. Then, we have t∗ + 1 > T r + 2. If 
+
+t∗ + 1 ∈ (Tr + k + 1 , T r + k + 2] for some k = 1 , 2, . . . , ∆r+1 − 1, then we have djTr k
+
+≥ Tr + k + 2 because jobs’ deadline are all integral. Thus, it is feasible for a to start job j at time Tr + k + 1, and hence a starts job jTr
+
+> k
+
+at time Tr + k + 1 due to line 12. If t∗ + 1 > T r+1 + 1, then line 3 ensures that a must start job jTr 
+
+> k
+
+at or before time Tr+1 .26 It remains to show a(x) ≤ ar (x) for each x ∈ X ∗
+
+> K,R
+
+. Fix x ∈ X ∗
+
+> K,R
+
+. It suffices to show that the cost of a is no higher than the cost of ar during [ Tr , T r+1 ) for any r = 0 , 1, . . . , R where TR+1 = ∞. If ar is always processing jobs during [ Tr , T r + 2), then the cost of ar is at least 2 that are during [ Tr , T r + 2] and the cost of a is at most 2 that are during [ Tr , T r + 1] and [ Tr + 2 , T r + 3] due to line 5. If ar is not always processing jobs during [ Tr , T r + 2), suppose t is the first moment during [ Tr + 1 , T r + 2) when ar becomes idle. Both a and ar have the same cost of t − Tr during [ Tr , t ]. In this case, suppose jTr 
+
+> k
+
+is the first job completed by ar after time t + 1, and say the completion time of jTr 
+
+> k
+
+is t∗ + 1. By definition, a
+
+starts the remaining of jTr 
+
+> 1
+
+, . . . , j Tr 
+
+> K
+
+at time ⌈t∗⌉ as in line 12. Therefore, if there is a positive cost of a during [t, T r+1 ], then the cost is exactly 1 and ⌈t∗⌉ + 1 ≤ Tr+1 . Meanwhile, the cost of ar during [ t, T r+1 ] is at least 1 due to some job jTr 
+
+> k
+
+during [ t∗, t ∗ + 1]. 
+
+Proof of Lemma 5.3. Partition {0, 1, . . . , R −1} into S1 := {r : Γ r > ϕ } and S2 := {r : Γ r ≤ ϕ}. For each r ∈ S1,the cost of a∗ during [ Tr , T r+1 ] is 1 + Γ r − 1 
+
+> K
+
+that are during [ Tr , T r + Γ r − 1 
+
+> K
+
++ 1] ⊂ [Tr , T r + 2] = [ Tr , T r+1 ], since ∆ r+1 = 2 by definition. For each r ∈ S2, the cost of a∗ during [ Tr , T r+1 ] is 1 + Γ r − 1 
+
+> K
+
++ 1 that are during [ Tr , T r + Γ r − 1 
+
+> K
+
++ 1] and 
+
+h
+
+sjTr  
+
+> Γr·K
+
+, s jTr  
+
+> Γr·K
+
++ 1 
+
+i
+
+=
+
+h
+
+sjTr  
+
+> Γr·K
+
+, s jTr  
+
+> Γr·K+1
+
+i
+
+=
+
+h
+
+sjTr  
+
+> Γr·K
+
+, T r+1 
+
+i
+
+. The cost of a∗ during [TR, ∞) is 2 that are during [ TR, T R + 1] and [ TR + 2 , T R + 3] due to Lemma 4.2. Consider the following scheduling denoted by b. For each r ∈ S1 ∪ { R}, b starts jobs jTr 
+
+> 1
+
+, j Tr 
+
+> 2
+
+, . . . , j Tr
+
+> K
+
+at time sjTr 
+
+> 1
+
+= Tr + 2 = Tr+1 . For each r ∈ S2, b starts jobs jTr 
+
+> 1
+
+, j Tr 
+
+> 2
+
+, . . . , j Tr  
+
+> Γr·K
+
+at time rjTr  
+
+> Γr·K
+
+and jobs 
+
+jTr 
+
+> Γr·K+1
+
+, j Tr 
+
+> Γr·K+2
+
+, . . . , j Tr 
+
+> K
+
+at time sjTr  
+
+> Γr·K+1
+
+= Tr+1 . Clearly, for each r ∈ S1, the cost of b during [ Tr , T r+1 ] is 1 that are during [ Tr , T r + 1] by definition. For each r ∈ S2, the cost of b during [ Tr , T r+1 ] is 1 + Γ r that are during [ Tr , T r + Γ r + 1]. The cost of b during [ TR, ∞) is 2. Let c denote min 
+
+n
+
+1 + ϕ, 2+ ϕ
+
+> 1+ ϕ
+
+o
+
+. Note that for each r ∈ S2, we have 2+Γ r 
+
+> 1+Γ r
+
+≥ 2+ ϕ 
+
+> 1+ ϕ
+
+since Γ r ≤ ϕ. Then, we have the competitiveness of a∗ is at least 
+
+ P  
+
+> r∈S1
+
+1 + Γ r − 1
+
+> K
+
+ +  P  
+
+> r∈S2
+
+2 + Γ r − 1
+
+> K
+
+ + 2 
+
+|S1| +  P  
+
+> r∈S2
+
+1 + Γ r
+
+ + 2 
+
+≥
+
+ P  
+
+> r∈S1
+
+1 + Γ r
+
+ +  P  
+
+> r∈S2
+
+2 + Γ r
+
+
+
+|S1| +  P  
+
+> r∈S2
+
+1 + Γ r
+
+ + 2 − R/K 
+
+|S1| + |S2|
+
+=
+
+ P  
+
+> r∈S1
+
+1 + Γ r
+
+ +  P  
+
+> r∈S2
+
+2 + Γ r
+
+
+
+|S1| +  P  
+
+> r∈S2
+
+1 + Γ r
+
+ + 2 − 1
+
+K
+
+≥
+
+ P  
+
+> r∈S1
+
+c +  P  
+
+> r∈S2
+
+c · (1 + Γ r )
+
+|S1| +  P  
+
+> r∈S2
+
+1 + Γ r
+
+ · |S1| +  P  
+
+> r∈S2
+
+1 + Γ r
+
+
+
+|S1| +  P  
+
+> r∈S2
+
+1 + Γ r
+
+ + 2 − 1
+
+K
+
+≥ c · RR + 2 − 1
+
+K .
+
+Proof of Theorem 5.4. By Lemma 5.3, the competitiveness of ar is at least c · RR+2 − 1 
+
+> K
+
+. Since ar is taken as any deterministic online algorithm that restarts jobs, the competitiveness of any deterministic online algorithm that restarts jobs is at least c · RR+2 − 1 
+
+> K
+
+. Since R and K can be arbitrary large, we have the competitiveness of any deterministic online algorithm that restarts jobs is at least c, where c = min 
+
+n
+
+1 + ϕ, 2+ ϕ
+
+> 1+ ϕ
+
+o
+
+reaches maximum  
+
+> √5+1 2
+
+when 1 + ϕ = 2+ ϕ 
+
+> 1+ ϕ
+
+.
+
+## D.2 Analysis of Best Batch BB γ
+
+Proof of Lemma 5.5. We show it by induction. The set of available job may change in three cases: a new job j
+
+is released (line 3), the set of available jobs are started (line 17), and some jobs are stopped (line 31). It suffices to show that in each case above, the value of ˆf is updated correctly. 27 Case 1: upon j is released (line 3). It suffices to consider the case that j is not started as in line 5,7, 9, i.e., job j becomes available after being released. Assume that the value of ˆf upon j is released before line 11 is the job that has the earliest starting deadline among all the jobs that are available at time rj except job j. We show that the value of ˆ j upon j is released after line 11 is the job that has the earliest starting deadline among all the jobs that are available at time rj including job j. Since the new value of variable ˆf takes the job with the earlier starting deadline between j and its old value in line 11, we are done. Case 2: time dp for some primary job p. Assume that ˆf upon time dp before line 33 is the job that has the earliest starting deadline among all the jobs that are available at time dp except jobs {j ∈ J p : rj > r jpkp−1 }
+
+that are stopped in line 31. We show that ˆf upon time dp after line 33 is the job that has the earliest starting deadline among all the jobs that are available at time rj including jobs {j ∈ J p : rj > r jpkp−1 }. Note that jpkp
+
+has the earliest starting deadline among jobs {j ∈ J p : rj > r jpkp−1 }. This is because each job j in J p such that rj > r jpkp−1 satisfies either j ∈ { jpkp , j pkp+1 , . . . , j pK } or [ rj , d j ] ⊃ [rjpk , d jpk ] for some k = kp, k p + 1 , . . . , K . It follows that the new value of ˆf as the job with the smaller starting deadline between jpkp and its old value has the earliest starting deadline among all the jobs available at time dp including {j ∈ J p : rj > r jpkp−1 }.Case 3: time s ˆf . ˆf takes value N U LL at time s ˆf as in line 18 after line 17. Since line 17 starts all the available jobs at at time s ˆf , the set of available jobs becomes empty after line 17 at time s ˆf . Therefore, ˆf should not be any job at time s ˆf after line 18. 
+
+Proof of Lemma 5.6. Here, we show (i). Assume j is not started during [ t, s j ] for the sake of contradiction. Then, job j is available to be started during [ t, s j ]. Take any time instant t′ ∈ [t, s j ]. Let f denote the value of ˆf at time t′. By Lemma 5.5, we have f̸ = N U LL and sf ≤ sj . It follows that at time sf , job j is available to be started. By algorithm definition, line 17 says job j must be started at some time during sf ∈ [t, s j ](contradiction). For (ii), suppose job j is stopped at time dp due to primary job p. Note that job j must be in J p. Note that 
+
+Cpk ≤ djpKp − sp for each k = 1 , 2, . . . , K p by definition of Cpk (line 25). Furthermore, note that Cpk < d jpKp − sp iff 1+ rjpk−1 < s jpk where rjp 
+
+> 0
+
+= sp. Since line 31 happens only when p is not tight (line 28), we have Cpkp < d jpKp −sp,and then, we have 1 + rjpkp−1 < s jpkp . Note that dp ≤ 1 + rjpkp−1 < s jpkp . j is stopped due to p (line 31) only if rj > r jpkp−1 . It follows that j is either jpk for some k = kp, k p + 1 , . . . , K or [ rj , d j ] ⊃ [rjpk , d jpk ] for some 
+
+k = kp, k p + 1 , . . . , K as defined in line 21. In either of the cases, we have sj ≥ sjpkp > d p.
+
+Proof of Lemma 5.7. We prove all the statements by induction on the value of variable x. Take any y =1, 2, . . . , |P| . Assume all the statements hold for x = 1 , 2, . . . , y − 1, and we show all the statements hold for 
+
+x = y.Here, we show (viii). Let F denote the set of flag jobs among p1, j p1 
+
+> kp1
+
+, p 2, j p2 
+
+> kp2
+
+, . . . , p y−1, j py−1 
+
+> kpy−1
+
+, p y . By Induction Hypothesis (IH), the jobs in F are rewritten as p1,jp1 
+
+> kp1
+
+, p2,jp2 
+
+> kp2
+
+, . . . , py−1, jpy−1 
+
+> kpy−1
+
+, py in the time order of being marked as flag jobs where jp1 
+
+> kp1
+
+, j p2 
+
+> kp2
+
+, . . . , j py−1 
+
+> kpy−1
+
+may or may not exist or marked as a flag job. Note that a job is started only in line 17, 5, 7, 9 due to some flag job. By Induction Hypothesis (IH), one may check all the cases and see that job py is not started due to any flag job in F \ { py }. By algorithm’s definition, if py
+
+started due to some flag job f , then py is started due to some flag job f that is marked as a flag job before py .Since any flag job f / ∈ F is marked as a flag job later than py , we have py is available to be scheduled since its release and never started until time spy . In line 12, job py is available to be started at time spy , and hence started at time spy as in line 17. By Lemma 5.6 (ii), py is never stopped and hence completed at its deadline 
+
+dpy .Here, we show (v), i.e., no job is not stopped during [ rpy , d py ). Note that jobs are only stopped at time dp
+
+for some primary flag job p. By IH, we have rpy > d px for any x ≤ y − 1. On the other hand, we have dpy ≤ dpx
+
+for any x ≥ y + 1. Therefore, no job can be stopped during [ rpy , d py ). Here we show (vi). Since all the jobs are feasibly scheduled, it suffices to look at jobs whose starting deadlines are after time spy . Take any job j such that rj ≤ spy and sj > s py . Either job j is available to be started at time spy due to py or not, as in line 17. If yes, job j is started at time spy due to py by definition, and then completed at time dpy , because no job is stopped during [ spy , d py ). If no, then either job j has already been 28 completed before or at time spy , or, job j has been started before or at time spy and is processed at time spy .Since no job is stopped during [ spy , d py ), in any of the cases, job j must be completed before or at time dpy .We start to show (vii). Claim 1: rpx > s py for any x ≥ y + 1. At time spy , variable ˆf takes the value N U LL 
+
+in line 18. Since all the available jobs are started at time spy , after being N U LL , ˆf can only be some job released after spy either in line 33 or 11, because IH guarantees that ˆf cannot be updated to be any secondary job attached to px for any x ≤ y − 1. The claim follows, because ˆf has to be px at time spx for any x ≥ y + 1. Since any secondary job attached to px must be released after spx , any secondary job attached to px for some x ≥ y must be released after time spy . We have that all the jobs py , p y+1 , . . . , p |P| and their secondary jobs (if exists) are released at or after rpy .Take any job j such that rj ≥ rpy . Take any primary flag job px with x ≤ y − 1. If line 22 does not hold for px, then IH (i) says dpx < r px+1 , and hence, we have dpx < r px+1 ≤ rpy ≤ rj . By definition (line 17, 5), job j cannot be started due to px, since px is not tight. If line 22 holds for px and px is tight, then IH (ii) says 1 + rjpx Kpx < r px+1 ≤ rpy ≤ rj . By definition (line 17, 5, 7), job j cannot be started due to px.If line 22 holds for px and px is not tight, then IH (iii) says dpx < r px+1 ≤ rpy ≤ rj . By definition (line 17, 5), job j cannot be started due to px. Take any secondary flag job jpx 
+
+> kpx
+
+with x ≤ y − 1. By IH (iv), we have 
+
+sjpx kpx + ( rjpx Kpx − rjpx kpx −1 ) < r px+1 ≤ rpy ≤ rj . By definition (line 17, 9), job j cannot be started due to jpx 
+
+> kpx
+
+.Claim 2: rpy+1 /∈ (spy , d py ]. Assume that rpy+1 ∈ (spy , d py ] and we show a contradiction. Note that py+1 is a flag job, and hence, variable ˆf must be py+1 at time spy+1 . Since rpy+1 ∈ (spy , d py ], line 11 cannot happen to py+1 because py+1 is started as it is released in line 5. But since py+1 is primary, py+1 is never marked as secondary. It follows that line 33 cannot happen to py+1 either. Therefore, we have shown that rpy+1 ∈ (spy , d py ]cannot hold. It follows from Claim 1 and 2 that (i) holds for x = y.Here, we show (ii) holds for x = y. By Claim 1 and 2, it remains to show that rpy+1 ∈ (dpy , 1 + rjpy Kpy 
+
+] does not hold. Note that ˆf must be updated to be py+1 . Since rpy+1 ∈ (dpy , 1 + rjpy Kpy 
+
+], py+1 is started at its release time in line 7 and hence ˆf cannot be py+1 at py+1 ’s release as in line 11. Since py+1 is primary, py+1 is never marked as secondary, and hence, line 33 cannot happen to py+1 either. Therefore, rpy+1 > 1 + rjpy Kpy 
+
+must hold. Here, we show the first part of (iii) holds for x = y. By IH (vi), all the secondary flag jobs attached to px
+
+with x ≤ y − 1 are marked as flag jobs before py . The secondary flag jobs attached to px must be completed after px for each x ≥ y + 1. Thus, the flag job (marked as a flag job) right next to py can only be py+1 , since py
+
+does not have a secondary flag job. It follows from Claim 1 and 2 that the second part of (iii) holds for x = y.Here, we show the first part of (iv) holds for x = y. Note that the flag job right next to py , say f , is either 
+
+py+1 or jpy 
+
+> kpy
+
+. Claim 1 and 2 says rpy+1 > d py . It follows that no job can be stopped during [ spy+1 , d py+1 ), because dpx < s py+1 for each x ≤ y and dpx ≥ dpy+1 for each x ≥ y + 1. Assume the contrary that f is py+1 
+
+for the sake of contradiction. Then, job jpy 
+
+> kpy
+
+becomes available to be started at time dpy and is kept available until time spy+1 , because (vii) guarantees that jpy 
+
+> kpy
+
+and py+1 cannot be started due to any of p1, p 2, . . . , p y−1 or their secondary flag jobs, and py+1 is the flag job right next to py . It follows that sjpy kpy 
+
+≥ spy+1 , which implies variable ˆf cannot be jpy 
+
+> kpy
+
+since py+1 is released. It contradicts to the fact that jpy 
+
+> kpy
+
+is a flag job that says ˆf is 
+
+jpy 
+
+> kpy
+
+at time sjpy kpy 
+
+.Here, we show the second part of (iv) holds for x = y. By the first part, We have the flag job right next to 
+
+py is jpy 
+
+> kpy
+
+. By (vii), we have jpy 
+
+> kpy
+
+becomes available since time dpy and remains available until time sjpy kpy 
+
+. It follows that jpy 
+
+> kpy
+
+is started at time sjpy kpy 
+
+as in line 17. By Lemma 5.6, job jpy 
+
+> kpy
+
+is guaranteed to be completed at time djpy kpy 
+
+.Here, we show the third part of (iv) holds for x = y. By Claim 1 and 2, it suffices to show that rpy+1 /∈
+
+(dpy , s jpy kpy 
+
++ ( rjpy Kpy 
+
+− rjpy kpy −1
+
+)]. Assume rpy+1 ∈ (dpy , s jpy kpy 
+
++ ( rjpy Kpy 
+
+− rjpy kpy −1
+
+)] for the sake of contradiction. (vii) guarantees that py+1 can only be started due to py or some flag job after py . By definition, py+1 cannot be started due to py since rpy+1 > d py . Since jpy 
+
+> kpy
+
+is the flag job right next to py , we have py+1 is available to be started during [ rpy+1 , s jpy kpy 
+
+]. By definition (line 17), job py+1 is started at time sjpy kpy 
+
+. Since py+1 is a flag job, variable ˆf must be py+1 at time spy+1 . At time sjpy kpy 
+
+, ˆf is reset to be N U LL in line 18. It follows that ˆf is 29 updated to be py+1 during [ sjpy kpy 
+
+, s py+1 ]. Clearly, the updating cannot happen in line 33 because py+1 is primary and cannot be marked as secondary. It remain to consider the case of line 11 for the updating. Since the only effective updating is during [ sjpy kpy 
+
+, s py+1 ], it suffices to consider the case of rpy+1 ∈ [sjpy kpy 
+
+, s jpy kpy 
+
++( rjpy Kpy 
+
+−rjpy kpy −1
+
+)]. By algorithm’s definition, py+1 is started at its release time as in line 9 and hence cannot update the value of ˆf (contradiction). 
+
+Proof of Lemma 5.8. Suppose p is a primary tight job. We have Cpk = djpKp − sp for each k = 1 , 2, . . . , K p. It follows that CpKp = djpKp − sp. It follows that rjpKp−1 + 1 ≥ sjpKp . Then, we have 1 + rjpKp > 1 + rjpKp−1 ≥ sjpKp .Suppose jpkp is the secondary flag job attached to p. Since primary job p has a secondary job, p must not be tight. Then, we have Cpkp = min k=1 ,2,...,K p Cpk < d jpKp − sp. It follows that ( rjpkp−1 + 1 − sp) + ( djpKp − sjpkp ) = 
+
+Cpkp ≤ CpKp ≤ 2 + rjpKp−1 − sp. After rearranging the terms, we have sjpKp ≤ rjpKp−1 − rjpkp−1 + sjpkp . It follows that sjpKp < s jpkp + ( rjpKp − rjpkp−1 ) since rjpKp > r jpKp−1 .Here, we show that sjpkp + ( rjpKp − rjpkp−1 ) > 1 + rjpKp . Since p is not tight, we have Cpkp < d jpKp − sp, and hence, 1 + rjpkp−1 < s jpkp . It follows that sjpkp + ( rjpKp − rjpkp−1 ) > 1 + rjpKp .
+
+Proof of Lemma 5.9. For (i), It suffices to show that algorithm is not busy during ( dpx + γ, s px+1 ). Lemma 5.7 (vi) says that any job released before or at time spx must be completed before dx. Since line 22 does not hold for px, we have that all the jobs released during [ spx , d px ] (i.e. J px ) are released during [ spx , s px + γ]. Lemma 5.7 guarantees that no job is stopped during [ spx , d px+1 ) and dpx < r px+1 . It follows that each job j in J px is processed during [ rj , r j + 1]. Take any job j released after dpx . Lemma 5.7 (vii) says j is not started due to any job completed before px. Since px is not tight, j is not started due to px. Then, job j is not started until time spx+1 , since px+1 is the flag job right next to px. It follows that algorithm cannot process any job during (dpx + γ, s px+1 ). For (ii), it suffices to show that algorithm is not busy during (2 + rjpx Kpx , s px+1 ). Lemma 5.7 (vi) says that any job released before or at time spx must be completed before dx. Since px is tight, the algorithm’s definition and Lemma 5.7 (ii) guarantees that any job released during ( spx , 1 + rjpx Kpx ] is processed during [ rj , r j + 1]. Take any job j released after 1 + rjpx Kpx . Lemma 5.7 (vii) says j is not started due to any job completed before px.Also clearly, j is not started due to px. Then, job j is not started until time spx+1 , because px+1 is the flag job right next to px. It follows that algorithm cannot process any job during (2 + rjpx Kpx , s px+1 ). For (iii), note that 1 + rjpx kpx −1 − spx ≤ 1 + rjpx Kpx −1 − spx ≤ 1 + γ by the definition of Kpx . It suffices to show that algorithm is not busy during (1 + rjpx kpx −1 , s px+1 ). Lemma 5.7 (vi) says that any job released before 
+
+spx is completed before dpx . Lemma 5.7 guarantees that any job j released during [ spx , r jpx kpx −1 ] is started at rj
+
+and completed at rj + 1 without any interruption. Lemma 5.7 together with the fact that px is not tight also guarantees that any job j released during ( rjpx kpx −1 , d px ] is started at rj , then stopped at time dpx , and is not started until time spx+1 . Lemma 5.7 together with the fact that px is not tight also guarantees that any job 
+
+j released after time dpx is not started until time spx+1 . Therefore, we have shown that algorithm cannot be processing any job during (1 + rjpx kpx −1 , s px+1 ). For (iv), first we show that algorithm is not busy during (1+ rjpx kpx −1 , s jpx kpx ) and ( sjpx kpx +( rjpx Kpx −rjpx kpx −1 ), s px+1 ). Lemma 5.7 (vi) says that any job released before or at spx is completed before dpx . Lemma 5.7 together with the fact that px is not tight imply the following statements: (1) any job j released during ( spx , r jpx kpx −1 ] is started at rj and completed at rj + 1 without any interruption; (2) any job j released during ( rjpx kpx −1 , d px ] is started at rj , then stopped at time dpx , is not started until time sjpx kpx , and is processed during [ sjpx kpx , d jpx kpx ] without any interruption; (3) any job j released during ( dpx , s jpx kpx ] is not started until time sjpx kpx , and processed during [sjpx kpx , d jpx kpx ] without any interruption; (4) any job j released during ( sjpx kpx , s jpx kpx + ( rjpx Kpx − rjpx kpx −1 )] is started at its release time, and processed during [ rj , r j + 1] without any interruption. (5) any job j released during (sjpx kpx + ( rjpx Kpx − rjpx kpx −1 ), s px+1 ] is not started until time spx+1 . Therefore, we have shown that algorithm is not busy during (1 + rjpx kpx −1 , s jpx kpx ) and ( djpx kpx + ( rjpx Kpx − rjpx kpx −1 ), s px+1 ). At last for (iv), note that the cost during [ spx , 1 + rjpx kpx −1 ] and [ sjpx kpx , d jpx kpx + ( rjpx Kpx − rjpx kpx −1 )] is exactly 2 + rjpx Kpx − spx .30 Proof of Lemma 5.10. Take any optimal scheduling O. Let O0 be O. For b = 1 , 2, . . . , |P| , let Ob be a new scheduling that starts job pb at its starting deadline, starts jobs A(pb) (if non-empty) at their release times respectively, and has the same scheduling as Ob−1 for all the rest jobs. By Lemma 5.7 and 5.8, we have that 
+
+rjpx Kpx + 1 < r px+1 if A(px) is non-empty, for each x = 1 , 2, . . . , |P| − 1. By Lemma 5.7, we have dpx < r px+1 
+
+if A(px) is empty, for each x = 1 , 2, . . . , |P| − 1. It follows that for each x = 1 , 2, . . . , b − 1, the set of jobs accommodated within the x-th block of the scheduling Ob−1 is exactly {px} ∪ A (px). Clearly, O|P| is the desired optimal scheduling. It remains to show Ob has no higher cost than Ob−1 for each b = 1 , 2, . . . , |P| with the induction hypothesis that Ob−1 is optimal. Note that the jobs ∪x=1 ,2,...,b −1{px} ∪ A (px) are accommodated within the first b − 1 blocks of Ob−1 and the remaining jobs are either pb or released after spb . Starting job pb at spb does not increase the overall cost of Ob−1. Since Ob−1 is optimal, without loss of generality, assume that Ob−1 starts pb at its starting deadline 
+
+spb . Moreover, it is clear that the b-th block of Ob−1 must accommodate job pb.We show that the b-th block of Ob−1 cannot accommodate any job j in ∪x=b+1 ,b +2 ,..., |P| {px} ∪ A (px). Assume j ∈ ∪ x=b+1 ,b +2 ,..., |P| {px} ∪ A (px) is accommodated within the b-th block of Ob−1 and we show a contradiction. Observe that jobs ∪x=1 ,2,...,b −1{px} ∪ A (px) are scheduled within the previous b − 1 blocks and each job in ∪x=b+1 ,b +2 ,..., |P| {px} ∪ A (px) is either pb or released after spb . Then, the b-th block of Ob−1 must start at time spb and end at or after time rj + 1. Note that we have dpb < r pb+1 ≤ rj by Lemma 5.7. If 
+
+A(pb) is empty, then no job is being processed during [ dpb , r pb+1 ]̸ = ∅ (contradiction) because the any job from 
+
+∪x=b+1 ,b +2 ,..., |P| {px} ∪ A (px) is released at or after time rpb+1 . If A(pb) is non-empty, then no job is being processed during [1 + rjpbKpb
+
+, r pb+1 ]̸ = ∅ (contradiction) because it is feasible for jobs A(pb) to be started at their release times and any job from ∪x=b+1 ,b +2 ,..., |P| {px} ∪ A (px) is released at or after time rpb+1 , where we have 1 + rjpbKpb
+
+< r pb+1 ≤ rj by Lemma 5.7 and 5.8. Therefore, the b-th block can only accommodate jobs from 
+
+{pb} ∪ A (pb). If A(pb) is empty, the we are done, because Ob−1 and Ob have the same scheduling of all the jobs by their definition and the assumption. It suffices to consider the case that A(pb) is non-empty. Consider the special case that the set of jobs accommodated within the ( b + 1)-th block of Ob−1 is a subset of A(pb). In this case, we have the cost of Ob−1 equal to C1 + A + B + C2 where C1 is the total cost of the first b − 1 blocks, A is the cost of the b-th block, B is the cost of the ( b + 1)-th block, and C2 is the total cost of the remaining blocks. On the other hand, we have the cost of Ob at most C1 + A + ( rjpbKpb
+
+− spb ) + C2 where A + ( rjpbKpb
+
+− spb ) is an upper bound of the cost of the b-th block of Ob that processes {pb} ∪ A (pb). Since rjpbKpb
+
+− spb ≤ 1 ≤ B. We have shown that Ob has no higher cost than Ob−1 in the special case. It remains to consider the case that the ( b + 1)-th block of Ob−1 accommodates some job other than A(pb). By Definition, all the jobs ∪x=1 ,2,...,b −1{px} ∪ A (px) are accommodated within the first b − 1 blocks of Ob−1. It follows that the ( b + 1)-th block of Ob−1 must accommodate some job in ∪x=b+1 ,b +2 ,..., |P| {px} ∪ A (px). Since each job in ∪x=b+1 ,b +2 ,..., |P| {px} ∪ A (px) is either pb+1 or released after spb+1 , the ( b + 1)-th block of Ob−1 must accommodate job pb+1 . Precisely, it suffices to consider the case that the b-th block of Ob−1 accommodates job pb and a proper subset of A(pb)̸ = ∅ only, Ob−1 starts pb at time spb , and the ( b + 1)-th block of Ob−1
+
+accommodates job pb+1 . We show a contradiction and hence this case does not exist. Suppose the b-th block of Ob−1 accommodates job pb, j pb 
+
+> 1
+
+, . . . , j pb 
+
+> ˜k−1
+
+for some ˜k = 1 , 2, . . . , K pb such that jobs jpb 
+
+> ˜k
+
+is accommodated within the ( b + 1)-th block of Ob−1. Note that pb cannot be tight, otherwise it would be infeasible for job 
+
+jpb 
+
+> ˜k
+
+to be scheduled within the ( b + 1)-th block, because Cpb 
+
+> ˜k
+
+= djpbKpb
+
+− spb implies sjpb
+
+> ˜k
+
+≤ 1 + rjpb
+
+> ˜k−1
+
+. It follows from the definition of A(pb) that pb has a secondary flag job jpb 
+
+> kpb
+
+. It follows from Lemma 5.7 (iv) that 
+
+rpb+1 > s jpbkpb
+
++ ( rjpbKpb
+
+− rjpbkpb −1
+
+). It follows that the ( b + 1)-th block of Ob−1 starts at time sjpb
+
+> ˜k
+
+and ends at or after time rpb+1 + 1, where note that we have sjpb
+
+> ˜k
+
+≤ sjpbKpb
+
+< r pb+1 by Lemma 5.7 and 5.8. Observe that 
+
+Ob−1 and Ob have the same scheduling/cost outside [ spb , r pb+1 + 1], because Ob−1 and Ob only differ in the scheduling of A(pb), and we have spb < r jpb
+
+> 1
+
+and sjpbKpb
+
+< r pb+1 . It suffices to show that the cost of Ob−1 during [spb , r pb+1 + 1] is strictly greater than the cost of Ob during [ spb , r pb+1 + 1]. Observe that Ob−1 is processing jobs during [ spb , r jpb
+
+> ˜k−1
+
++1] and [ sjpb
+
+> ˜k
+
+, r pb+1 +1]. Observe that the cost of Ob−1
+
+during [ spb , r jpb
+
+> ˜k−1
+
++1] and [ sjpb
+
+> ˜k
+
+, r pb+1 +1] is equal to the cost of a scheduling, say S1, of jobs pb, j pb 
+
+> 1
+
+, . . . , j pb 
+
+> Kpb
+
+, p b+1 
+
+such that pb, j pb 
+
+> 1
+
+, . . . , j pb 
+
+> ˜k−1
+
+are scheduled within one block optimally (locally), jobs jpb 
+
+> ˜k
+
+, . . . , j pb 
+
+> Kpb
+
+, p b+1 are sched-31 uled within another block optimally (locally), where the second block accommodating jpb 
+
+> ˜k
+
+, . . . , j pb 
+
+> Kpb
+
+, p b+1 may have strictly higher cost than scheduling the same jobs jpb 
+
+> ˜k
+
+, . . . , j pb 
+
+> Kpb
+
+, p b+1 in two separate blocks. Precisely, in scheduling S1, pb is started at its starting deadline, jpb 
+
+> 1
+
+, . . . , j pb 
+
+> ˜k−1
+
+are started at their release time re-spectively, jpb 
+
+> ˜k
+
+, . . . , j pb 
+
+> Kpb
+
+are started at their starting deadline respectively, and pb+1 is started at its release time. Consider another scheduling S2 of jobs pb, j pb 
+
+> 1
+
+, . . . , j pb 
+
+> Kpb
+
+, p b+1 such that pb, j pb 
+
+> 1
+
+, . . . , j pb  
+
+> kpb−1
+
+are scheduled within one block optimally (locally), and jpb 
+
+> kpb
+
+, . . . , j pb 
+
+> Kpb
+
+, p b+1 are scheduled within another block optimally (lo-cally). Precisely, in scheduling S2, pb is started at its starting deadline, jobs jpb 
+
+> 1
+
+, . . . , j pb  
+
+> kpb−1
+
+are started at their release times, jobs jpb 
+
+> kpb
+
+, . . . , j pb 
+
+> Kpb
+
+are started at their starting deadlines, and pb+1 is started at its release time. By the definition of the secondary job jpb 
+
+> kpb
+
+, the cost of S1 during [ spb , d jpbKpb
+
+] is equal to Cpb 
+
+> ˜k
+
+that is at least Cpb 
+
+> kpb
+
+that is the cost of S2 during [ spb , d jpbKpb
+
+]. It follows that the cost of S1 during [ spb , 1 + rpb+1 ]is at least the cost of S2 during [ spb , 1 + rpb+1 ], since sjpbKpb
+
+< r pb+1 and both scheduling S1 and S2 are busy during [ djpbKpb
+
+, r pb+1 + 1]. Note that the cost of the scheduling S2 during [ spb , 1 + rpb+1 ] is greater than (1 + rjpbkpb −1
+
+− spb ) + (1 + rjpbKpb
+
+− rjpbkpb −1
+
+) = 2 + ( rjpbKpb
+
+− spb ) where 1 + rjpbkpb −1
+
+− spb is the cost of processing 
+
+pb, j pb 
+
+> 1
+
+, . . . , j pb 
+
+> kpb−1
+
+, and the cost of processing jpb 
+
+> kpb
+
+, . . . , j pb 
+
+> Kpb
+
+, p b+1 in the scheduling S2 is strictly greater than 1+ rjpbKpb
+
+−rjpbkpb −1
+
+since rpb+1 > s jpbkpb
+
++rjpbKpb
+
+−rjpbkpb −1
+
+. On the other hand, the cost of Ob during [ spb , r pb+1 +1] is at most 2+( rjpbKpb
+
+−spb ) where 1+( rjpbKpb
+
+−spb ) is the cost during [ spb , 1+ rjpbKpb
+
+] for processing jobs pb, j pb 
+
+> 1
+
+, . . . , j pb
+
+> Kpb
+
+and 1 is the cost during [ rpb+1 , r pb+1 + 1] in the scheduling Ob. Eventually, we have shown that the cost of Ob−1
+
+during [ spb , r pb+1 + 1] is strictly greater than the cost of Ob during [ spb , r pb+1 + 1] (contradiction). 
+
+Proof of Lemma 5.12. We present Algorithm 7 that outputs the critical jobs and takes O(|J p|) time. 
+
+Algorithm 7 Determine critical jobs 
+
+Input: J p is sorted and stored in a doubly linked list L such that l1 < l 2 iff rL(l1) ≤ rL(l2)
+
+Output: a doubly linked list L∗ such that rL∗(1) < r L∗(2) < · · · < r L∗(|L∗|) and L∗ contains exactly the set of jobs {j ∈ J p : ¬([ rj′ , d j′ ] ⊂ [rj , d j ]) , ∀j′ ∈ J p \ { j}} ; 
+
+> 1:
+
+j ← the first element of L; 
+
+> 2:
+
+while j is not the last element in L do  
+
+> 3:
+
+j ← the element next to j; 
+
+> 4:
+
+j′ ← the element preceding j; 
+
+> 5:
+
+while rj′ = rj ∨ sj ≤ sj′ do  
+
+> 6:
+
+if sj ≤ sj′ then  
+
+> 7:
+
+Delete element j′ from the linked list L; 
+
+> 8:
+
+if j is the first element of L then  
+
+> 9:
+
+Break;  
+
+> 10:
+
+else  
+
+> 11:
+
+j′ ← the element preceding j; 
+
+> 12:
+
+else ▷ This implies rj′ = rj and sj′ < s j 
+
+> 13:
+
+Delete element j from the linked list L; 
+
+> 14:
+
+j ← j′; ▷ now j and its preceding element (if any) do not satisfy the inner while condition  
+
+> 15:
+
+Break;  
+
+> 16:
+
+Return L;Before showing the correctness of Algorithm 7, consider proving two claims. Claim 1: all the deleted elements are redundant jobs. If a job j′ is deleted from the linked list in line 7, then there exists a job j such that j′
+
+precedes j and sj′ ≥ sj . It follows that [ rj′ , s j′ ] ⊃ [rj , s j ], which says j′ is redundant. If a job j is deleted from the linked list in line 13, then there exists a job j′ preceding j such that rj′ = rj and sj′ < s j . It follows that [rj , s j ] ⊃ [rj′ , s j′ ], which says j is redundant. Claim 2: the output linked list of jobs is agreeable, i.e., rL∗(1) < r L∗(2) < · · · < r L∗(|L∗|) and dL∗(1) <dL∗(2) < · · · < d L∗(|L∗|). We prove the claim by induction. Base case: at the end of the first round of the outer While loop, we show that all the elements in L before j including j are agreeable. Suppose j1, j 2 are the first 32 two jobs of J p. Consider the following cases. Case 1: rj1 = rj2 and dj1 < d j2 . Job j2 is deleted in line 13. The value of j at the end of the first round of the outer While loop is j1. Case 2: rj1 = rj2 and dj1 > d j2 . Job j1 is deleted in line 7. The value of j at the end of the first round of the outer While loop is j2. Case 3: rj1 < r j2
+
+and dj1 > d j2 . Job j1 is deleted in line 7. The value of j at the end of the first round of the outer While loop is j2. Case 4: rj1 < r j2 and dj1 < d j2 . Both job j1 and j2 are kept in the linked list. The value of j at the end of the first round of the outer While loop is j2.Inductive case: assume that at the end of the k-th round of the outer While loop, all the elements in L
+
+before j including j are agreeable (Induction Hypothesis), and we show that at the end of the ( k + 1)-th round of the outer While loop, all the elements in L before j including j are agreeable. Suppose j1, j 2, . . . , j h are all the elements in L before j including j at the end of the k-th round of the outer While loop such that 
+
+rj1 < r j2 < · · · < r jh and dj1 < d j2 < · · · < d jh . Suppose jh+1 is the element next to jh in L at the end of the 
+
+k-th round of the outer While loop. Consider the following cases. Case 1: rjh = rjh+1 and djh < d jh+1 . Job jh+1 
+
+is deleted in line 13. The value of j at the end of the ( k + 1)-th round of the outer While loop is jh. Therefore, the elements before j including j at the end of the ( k + 1)-th round of the outer While loop are equal to the elements before j including j at the end of the k-th round of the outer While loop. The agreeability follows. Case 2: djh ≥ djh+1 . Job jh is deleted in the first round of the inner While loop in line 7. Note that we have 
+
+rj1 < · · · < r jh−1 < r jh ≤ rjh+1 by Induction Hypothesis. It follows that the inner While loop keeps running and then jobs {jx : djx ≥ djh+1 , x = 1 , 2, . . . , h − 1} are deleted in line 7 because rjx < r jh+1 for each x ≤ h − 1. It follows that all the remaining elements in L before jh+1 are agreeable. Note that the value of j at the end of the ( k + 1)-th round of the outer While loop is jh+1 . Case 3: rjh < r jh+1 and djh < d jh+1 . In this case, no job is deleted. The value of j at the end of the ( k + 1)-th round of the outer While loop is jh+1 . We have the set of jobs j1, j 2, . . . , j h+1 is agreeable. We show that the output of Algorithm 7 is exactly the set of critical jobs of the input J p, i.e., 
+
+{j ∈ J p : ¬([ rj′ , d j′ ] ⊂ [rj , d j ]) , ∀j′ ∈ J p \ { j}} . By Claim 1, the set of critical jobs is contained within L∗. For the other direction, take any job j in L∗. If j is not critical, then there exists a critical job j′ ∈ J p such that [rj′ , d j′ ] ⊂ [rj , d j ]. It follows that j′ ∈ L∗. The existence of the pair of j and j′ contradicts to Claim 2. It remains to compute its time complexity. Claim 3: the inner While loop takes O(|J p|) time. Note that each time rj′ = rj ∨ sj ≤ sj′ in line 5 holds, some job is deleted from the linked list. Since there are at most 
+
+|J p| jobs in the linked list, the inner While loop is run at most |J p| times. For each round of the inner While loop, every line takes a constant time. Therefore, Claim 3 is proven. Claim 4: the outer While loop has |J p|
+
+rounds. For each round of the outer While loop, either j is updated to be the element next to j in line 1, or, j
+
+is updated to be the element next to j in line 1 and then the job stored in j is deleted (line 13) and j is updated back to its old value (line 14). In either of the cases, the number of elements after j in the linked list decreases by one. Claim 4 follows. Therefore, we have shown that Algorithm 7 takes O(|J p|) time. 
+
+Proof of Theorem 5.13. First, we make some observations. Note that there are |P| primary jobs and they are all distinct from each other. Note that Lemma 5.7 says that dpx < r px+1 for each x = 1 , 2, . . . , |P| − 1. Take any x = 1 , 2, . . . , |P| − 1. Take any j1 ∈ J px and j2 ∈ J px+1 . Then, we have rpx ≤ spx < r j1 ≤ dpx < r px+1 ≤
+
+spx+1 < r j2 . It follows that the sets J p1 , J p2 , . . . , J p|P| , P are mutually disjoint. Note that J px is an interval stored in the linked list L for each x, because J px is exactly the set of jobs released during a time interval (spx , d px ]. For any flag job f (stored in variable ˆf ), note that the jobs that are started at time sf due to f in line 17 will be completed without interruption. Claim that for any flag job f (stored in variable ˆf ), the set of jobs started at time sf due to f in line 17 is an interval stored in the linked list L. We show the claim by contradiction. Assume that j1, j 2, j 3 are three jobs such that rj1 ≤ rj2 ≤ rj3 , and j1, j 3 are started in line 17 due to the same flag job f , and j2 is not available to be started at time sf in line 17. Note that Lemma 5.7 guarantees that jobs that are started due to primary job 
+
+p and then stopped (e.g. jpkp , . . . , j pK ) are started due to the flag job right next to p in line 17 and will not be stopped again. It follows that j2 is started due to some flag job f ′ strictly before f and then completed without interruption. Since j1 is available to be started at time sf and rj1 ≤ rj2 , job j1 is also available to be started due to f ′ or some flag job before f ′. It follows that j1 is started due to f ′ or some flag job before f ′ and then completed without interruption. It contradicts to the assumption that j1 is started due to f .Now, we are ready to show how the algorithm achieves linear time complexity. Suppose L is the doubly 33 linked list that stores all the n jobs in order of non-descending release time in the input. Two pointers a and b
+
+are used. Pointer b always points at the job to be released next and moves from the first node to the last node of L one by one. Pointer a always points at the first job available to be started. Consider each time of line 17. Suppose pointer a and b point at jobs L(x) and L(y) with x < y respectively, where x < y because at line 17 at least one job ( ˆf ) is available to be started at time s ˆf . By the above claim, the interval [ x, y − 1] is exactly the set of jobs available to be started at time s ˆf . It follows that starting these jobs only requires O(y − x) time, including moving the two pointers to job L(y) and making the same schedule for each job within the interval. Since jobs that are started in line 17 are never stopped, any job cannot be started twice in line 17. It follows that line 12-18 take O(n) time. Consider line 3-11. Each time of line 3, pointer b moves to the next node. Note that values of ˆf , p, j pkp , j pkp−1, j pKp
+
+are stored separately and can be accessed in constant time. Note that the two pointers point at job j before starting job j in line 5, 7 and 9, and pointer a moves to the job next to j after starting job j in line 5,7 and 9. In the cases other than line 5,7 and 9, either updating value of ˆf or do nothing takes a constant time. Summing up, line 3-11 take O(n) time. Note that after running through line 12-18 of job j’s release, pointer b moves to the job next to j.At time dp, pointer a points at the first job released after time dp and pointer b points at the job preceding to the location of pointer a. It takes O(|J p|) time to obtain the jobs J p in a linked list because the jobs J p,as an interval, are adjacent to the location of the two pointers. Therefore, line 20 takes O(|J p|) time. Lemma 5.12 says line 21 takes O(|J p|) time. Obtaining the value of Kp in line 23 takes O(|J p|) time. The for loop for computing each Cpk in line 25 takes O(|J p|) time, because it takes constant time to obtain the values rjpk−1 , s jpk
+
+when the pointer is at job jpk , and the values of sp, d jpKp are stored separately and can be accessed in constant time. Computing min k=1 ,2,...,K p Cpk also takes O(|J p|) time, along which the value of kp can be obtained and job jpkp is marked as secondary. Stopping jobs within {j ∈ J p : rj > r jpkp−1 } in the linked list (line 31) takes 
+
+O(|J p|) time via moving pointer a leftwards to the first job among the jobs that are stopped. It takes O(1) time for ˆf to store jpkp . Therefore, we have shown that it takes O(|J p|) time for the round of time dp for line 19-33. Summing up for all p, line 19-33 take O(n) time, since J p1 , J p2 , . . . , J p|P| are mutually disjoint. It takes a constant time to access the values of s ˆf , d p, r j where pointer b points at job j. Thus, it takes a constant time to compare the values of s ˆf , d p, r j to decide which block of programs (line 12-18, line 3-11, or line 19-33) algorithm enters at each stage. At last, we show the total number of comparisions needed is O(n). It suffices to show for a fixed value of variable j, the tuple ( s ˆf , d p, r j ) is only updated for a constant number of times. Suppose pointer b points at L(x). It comes down to look at what happens during the time period (rL(x−1) , r L(x)). Since no new job is released during ( rL(x−1) , r L(x)), line 12-18 can only happen at most once during ( rL(x−1) , r L(x)). It follows that line 19-33 can only happen at most twice during ( rL(x−1) , r L(x)). It follows that the value of ˆf and p are updated for constant number of times. 34

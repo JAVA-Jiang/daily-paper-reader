@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-08",
+  "date": "2026-06-08",
+  "generated_at": "2026-06-08T21:20:09",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/08/2606.01109v1-digging-up-citations-fossil-a-dataset-and-workflow-for-reference-extraction-in-law-and-the-humanities",
+      "section": "deep",
+      "title_en": "Digging Up Citations: FOSSIL, a Dataset and Workflow for Reference Extraction in Law and the Humanities",
+      "authors": "Luca Foppiano, Christian Boulanger",
+      "date": "2026-05-31",
+      "pdf": "https://arxiv.org/pdf/2606.01109v1",
+      "score": "8.0",
+      "evidence": "提供了开源的引用抽取数据集和标注工具",
+      "tldr": "现有参考文献提取工具主要针对自然科学的结构化尾注，法律与人文学科却依赖脚注引用且混合评论和交叉引用，缺乏标准数据集。为此，本文创建FOSSIL数据集，含96篇学术文章的7600余条脚注引用，并配套PDF-TEI编辑器和7标注者工作流，以及Grobid专用化。端到端评估显示F1从0.36跃升至0.72，召回率大幅提升，但交叉引用和混合内容仍有提升空间。该工作提供了开源资源与基准。",
+      "tags": "query:code-paper",
+      "abstract_en": "Citation extraction tools are designed for the structured end-of-document bibliographies of the natural sciences, but law and humanities scholarship cites references primarily in footnotes, where bibliographic data is interleaved with commentary and cross-references and varies widely across languages and styles. To address the scarcity of suitable gold-standard resources, we present FOSSIL (Footnote-based Open-access SSH Scientific Instance Labels), an openly licensed multilingual dataset of 96 annotated scholarly articles containing over 7,600 footnote-embedded references, together with PDF-TEI Editor (a collaborative web annotation tool), a documented seven-annotator workflow, and a Grobid specialization for footnote-based citations. In end-to-end evaluation, the specialized pipeline nearly doubles extraction quality over default Grobid (micro-F1 from 0.36 to 0.72), driven largely by improved recall, while showing that substantial headroom remains for cross-references and mixed-content footnotes. This extended abstract presents work in progress; annotations of citations segmentation and parsing, and cross-reference resolution are ongoing.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/08/2606.06681v1-online-span-minimization-for-flexible-uniform-jobs",
+      "section": "quick",
+      "title_en": "Online Span Minimization for Flexible Uniform Jobs",
+      "authors": "Mozhengfu Liu, Samir Khuller, Xueyan Tang",
+      "date": "2026-06-04",
+      "pdf": "https://arxiv.org/pdf/2606.06681v1",
+      "score": "6.0",
+      "evidence": "涉及数据中心任务调度",
+      "tldr": "针对云计算的节能调度需求，本文研究在线跨度最小化问题，将均匀长度作业的容量视为无限。通过随机化方法，将确定性竞争比2降至1.443，并证明下界1.366。进一步引入作业重启能力，达到黄金比例1.618的最优竞争比，揭示了随机化和灵活性的优势。",
+      "tags": "query:code-paper",
+      "abstract_en": "Motivated by the critical need for energy-efficient scheduling in cloud computing, this paper investigates Span Minimization, a fundamental variant of the well-studied BusyTime problem. In the general BusyTime problem, $n$ jobs characterized by release times, deadlines, and processing times must be partitioned into bundles of capacity $B$, where the objective is to minimize the total active duration of the virtual machines. Span minimization addresses the specific case of unbounded capacity ($B = \\infty$), a problem that serves as a vital precursor for achieving high-performance approximation guarantees in more complex scheduling environments.   While previous research established a deterministic $2$-approximation for interval jobs and a $3$-approximation for the general BusyTime problem, the online landscape of span minimization remains less explored. In this paper, we focus on the online version of span minimization. We demonstrate that randomization can be leveraged to break the known deterministic competitive barrier of $2$. For uniform-length jobs, we derive a randomized competitive upper bound of $\\frac{1}{\\ln{2}}\\approx 1.443$ and a lower bound of $\\frac{\\sqrt{3}+1}{2}\\approx 1.366$. Furthermore, we show that by introducing the ability to restart jobs, we can achieve an optimal competitive ratio equal to the golden ratio ($φ\\approx 1.618$). Our results provide new insights into the power of randomization and flexibility in online energy-aware scheduling.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

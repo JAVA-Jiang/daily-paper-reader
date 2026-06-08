@@ -6,29 +6,28 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-07
-- 运行时间：2026-06-07 21:10:40 UTC
+- 最新运行日期：2026-06-08
+- 运行时间：2026-06-08 21:20:00 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：2
 - 精读区：1
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日精读并速读3篇论文，重点聚焦语言模型在云基础设施代码上的评估与方法创新。最值得关注的是《SWE-InfraBench》提出的基础设施代码基准测试（8.0/10分），以及《Code2LoRA》中针对软件演化的超网络生成适配器思路。建议优先阅读精读论文，后续可关注多智能体协作的并行任务划分（6.0分）与代码演化适配技术的实际应用。
-- 详情：[/202606/07/README](/202606/07/README)
+1) 今日精读法律与人文学科引用提取新方法FOSSIL（8分），速读在线作业调度问题（6分）。  
+2) 最值得关注：FOSSIL数据集和工作流可高效提取法律文本引用，对数字人文研究有实用价值。  
+3) 下一步建议：尝试将FOSSIL用于其他领域的引用分析，或研究调度算法的成本节省效果。
+- 详情：[/202606/08/README](/202606/08/README)
 
 ### 精读区论文标签
-1. [SWE-InfraBench: Evaluating Language Models on Cloud Infrastructure Code](/202606/07/2606.05249v1-swe-infrabench-evaluating-language-models-on-cloud-infrastructure-code)  
+1. [Digging Up Citations: FOSSIL, a Dataset and Workflow for Reference Extraction in Law and the Humanities](/202606/08/2606.01109v1-digging-up-citations-fossil-a-dataset-and-workflow-for-reference-extraction-in-law-and-the-humanities)  
    标签：评分：8.0/10、query:code-paper
-   evidence：云基础设施代码基准测试，与数据中心和代码提供相关
+   evidence：提供了开源的引用抽取数据集和标注工具
 
 ### 速读区论文标签
-1. [When Parallelism Pays Off: Cohesion-Aware Task Partitioning for Multi-Agent Coding](/202606/07/2606.00953v1-when-parallelism-pays-off-cohesion-aware-task-partitioning-for-multi-agent-coding)  
+1. [Online Span Minimization for Flexible Uniform Jobs](/202606/08/2606.06681v1-online-span-minimization-for-flexible-uniform-jobs)  
    标签：评分：6.0/10、query:code-paper
-   evidence：多智能体编码任务划分，涉及代码生成且可能发布代码
-2. [Code2LoRA: Hypernetwork-Generated Adapters for Code Language Models under Software Evolution](/202606/07/2606.06492v1-code2lora-hypernetwork-generated-adapters-for-code-language-models-under-software-evolution)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：为代码模型生成仓库特定的LoRA适配器，可能提供源代码
+   evidence：涉及数据中心任务调度
 
 
 <div class="dpr-home-promo-card">
