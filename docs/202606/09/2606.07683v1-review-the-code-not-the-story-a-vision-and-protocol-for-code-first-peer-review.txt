@@ -1,0 +1,292 @@
+Title: Review the Code, Not the Story: A Vision and Protocol for Code-First Peer Review
+
+URL Source: https://arxiv.org/pdf/2606.07683v1
+
+Published Time: Tue, 09 Jun 2026 00:06:11 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Review the Code, Not the Story: A Vision and Protocol for Code-First Peer Review 
+
+Jienan Chen National Key Laboratory of Science and Technology on Communications University of Electronic Science and Technology of China, Chengdu 611731, China 
+
+jesson.chen@outlook.com 
+
+June 3, 2026 
+
+Abstract 
+
+Peer review in computational fields remains centered on author-written manuscripts, even though the decisive evidence for many claims resides in executable code, data, configurations, and experiment pipelines. This manuscript-first workflow gives authors substantial control over narrative framing while leaving reviewers with limited time to inspect implementation details, reproduce results, or detect unsup-ported claims. This vision and protocol paper proposes code-first peer review : authors submit executable research artifacts and minimal claim manifests; a venue-controlled AI system builds the environment, executes experiments, audits code paths, maps claims to evidence, and generates a standardized Review Package for human reviewers. The goal is not to replace reviewers or to give authors an automatic writing assistant. Instead, AI serves as review infrastructure that shifts the target of peer review from polished narratives to executable evidence. We formalize a claim-evidence contract, define the Generated Review View and Review Package abstractions, give a worked example, outline a system architecture, and analyze evaluation and governance challenges including AI bias, prompt injection, model instability, auditability, and author appeal. 
+
+# 1 Introduction 
+
+Computational research in computer science and communication systems is increasingly artifact-dependent. A networking paper may rely on protocol implementations, traffic generators, channel models, simulation configurations, and packet traces. A systems paper may depend on a benchmark harness, hardware profile, compiler flags, and failure-handling logic. A machine learning paper may depend on training code, data preprocessing, random seeds, hyperparameter schedules, and baseline implementations. Yet peer review still largely treats the author-written manuscript as the primary object of evaluation. Code, data, and execution environments are often submitted as supplementary artifacts, if they are submitted at all. This workflow creates a structural asymmetry. Reviewers are asked to judge scientific claims through an author-controlled narrative, while the decisive evidence often resides in executable artifacts. Implementation choices, baseline tuning, random seed selection, preprocessing decisions, exception handling, failed runs, and hidden assumptions may be invisible in the manuscript. Even when code is available, reviewers rarely have enough time to reconstruct the environment, run all experiments, inspect all baseline implementations, and verify all reported claims. The result is not merely a reproducibility problem; it is a review-interface problem. Peer review is often forced to review the story before it can review the evidence. Prior work has already moved toward reproducible computational publishing. Jupyter notebooks integrate prose, code, and results, reducing the risk that code and prose diverge [ 5 ]. Executable research compendia package paper, source code, computational environment, data, and interface definitions [ 9]. ACM artifact 1
+
+> arXiv:2606.07683v1 [cs.SE] 5 Jun 2026
+
+badging recognizes artifacts that are available, evaluated, and tied to result validation [ 1 ]. More recently, AI agents have been explored for scientific writing, autonomous discovery, code generation from papers, and computational reproducibility [ 4 , 7, 11 –13 , 17 ]. These developments make a stronger institutional redesign plausible: rather than asking authors to submit polished papers and optional artifacts, venues can ask authors to submit executable artifacts first, then generate standardized review views from those artifacts. We propose code-first peer review . In this paradigm, authors submit source code, data or data-access scripts, environment specifications, experiment scripts, configuration files, baseline implementations, and a minimal claim manifest. A venue-controlled AI system ingests the submission, builds the environment, runs experiments, audits code paths, extracts results, maps claims to evidence, and generates a standardized Review Package. The package includes a manuscript-like Generated Review View, a reproducibility report, a claim-evidence matrix, a code audit report, a baseline fairness report, a limitation report, and a provenance log. Reviewers read and evaluate this package, but the final decision remains a human editorial and peer-review decision. The key distinction is control. We are not proposing that authors use AI to write better papers. We are proposing that venues control the generation of the review-facing manuscript view. Authors may correct misunderstandings by revising the artifact or the claim manifest, but they cannot directly polish or manipulate the generated narrative. Manuscript generation becomes an interface, not the goal. The venue asks: what does the executable evidence support? 
+
+This paper is intentionally a vision and protocol paper rather than a deployed-system report. Its contribu-tion is to make the review interface precise enough that future systems, venues, and benchmarks can test it. In particular, the paper makes four contributions. 1. We define code-first peer review as an artifact-first, venue-controlled alternative to manuscript-first review for computational and communication-systems research. 2. We formalize a claim-evidence contract that binds declared claims to scripts, configurations, metrics, baselines, logs, caveats, and reproducibility status. 3. We introduce the Generated Review View and Review Package abstractions and illustrate them with a worked example that shows how a claim is accepted, scoped, or rejected by evidence. 4. We propose a system architecture, evaluation agenda, and threat model covering faithfulness, reproducibil-ity, defect detection, reviewer workload, metadata bias, prompt injection, model-version stability, and author appeal. 
+
+# 2 Motivation: From Manuscript-First to Artifact-First Review 
+
+2.1 The manuscript-first bottleneck 
+
+The traditional submission workflow can be summarized as follows: authors perform experiments, write a manuscript, optionally release code, and reviewers evaluate the manuscript. This order matters. Because the manuscript is authored before review and is controlled by authors, the review process is exposed to narrative selection. A paper may emphasize favorable configurations, de-emphasize weak baselines, omit failed experiments, or describe implementation details at a level that is too abstract to verify. Strong writing can compensate for weak evidence; weak writing can obscure strong evidence. In fields where results depend on code, this is a poor alignment between evidence and evaluation. Artifact evaluation addresses part of this problem, but it is usually additional to paper review. ACM badging, for example, recognizes artifacts that are documented, consistent, complete, exercisable, and supported by evidence of verification and validation [ 1 ]. The limitation is scalability. A full artifact review 2requires environment reconstruction, execution, provenance capture, and often substantial manual debugging. Many conferences lack enough artifact reviewers, and artifact checks may occur after technical acceptance, not as the primary review object. 
+
+2.2 Why AI changes the review interface 
+
+AI agents are not yet reliable enough to replace reviewers. Published benchmark results support this caution. PaperBench evaluates agents on replicating 20 ICML 2024 Spotlight and Oral papers and reports that the best tested agent achieved a 21.0% average replication score [ 13 ]. CORE-Bench evaluates computational reproducibility agents across 270 tasks from 90 papers and reports that the best agent achieved 21% accuracy on the hardest task [ 12 ]. These results do not imply that AI can autonomously judge science. They imply that AI can be useful as infrastructure for evidence extraction, while human reviewers retain authority over scientific judgment. The opportunity is therefore not full automation of peer review. The opportunity is to change what reviewers see. Instead of reading an author-controlled narrative first and code second, reviewers can read a venue-generated evidence view that is grounded in executed artifacts. 
+
+2.3 Venue-controlled generation 
+
+A crucial design principle is that the generated review view should be controlled by the venue, not by the author. If authors can freely edit the generated manuscript, the system collapses back into manuscript-first review with AI-assisted writing. Under code-first peer review, authors can modify the underlying artifact, improve documentation, revise the claim manifest, or submit structured rebuttals. Any change triggers re-execution, regeneration, and audit logging. The author cannot directly rewrite the review-facing manuscript to hide limitations or alter emphasis without changing the underlying evidence. 
+
+# 3 Related Work 
+
+Executable and reproducible publishing. Jupyter notebooks and executable research compendia show that computational publications can integrate code, outputs, data, and prose [ 5 , 9]. These systems primarily improve reproducibility and readability for readers and authors. Code-first peer review differs by moving artifact execution and manuscript-like representation to the venue side before technical review. 
+
+Artifact evaluation. Artifact evaluation and badging policies formalize the availability, functionality, reusability, and validation of computational artifacts [ 1]. Code-first peer review can be seen as a venue-scale extension: artifact review is not a separate badge-oriented process, but the first stage of technical review. 
+
+AI-generated scientific writing and discovery. Harper explores automated article generation from Python code [ 4 ]. The AI Scientist and AI Scientist-v2 pursue end-to-end autonomous scientific discovery, including idea generation, code execution, paper writing, and simulated or real peer-review submission [ 7 , 17 ]. Our proposal differs in both agency and governance: human authors still conduct the research, but the venue controls the conversion of artifacts into review views. 
+
+Paper-to-code and replication benchmarks. Paper2Code and related work transform papers into code repositories, addressing the lack of implementation artifacts [ 11 ]. PaperBench and CORE-Bench evaluate the ability of agents to replicate or reproduce research [ 12 , 13 ]. Our direction is complementary: instead of reconstructing code from papers, venues require code first and generate review packages from it. 3LLM-as-a-judge and AI peer-review risks. LLM-as-a-judge systems face reliability, bias, robustness, and standardization challenges [ 3]. Empirical work has reported affiliation bias in LLM-mediated review decisions [ 15 , 16 ]. Hidden prompts in manuscripts have also been reported as a way to manipulate AI-assisted peer review [ 2 , 6 ]. These risks are central to our governance design: AI may help generate evidence, but it must itself be audited. 
+
+Scholarly infrastructure and open review. Code-first review is also related to broader efforts to redesign scholarly infrastructure. Open review, preregistration, reproducibility checklists, and artifact badges all try to reduce information asymmetry between authors, reviewers, and readers [ 8, 10 , 14 ]. Our proposal differs by making executable artifacts and claim-evidence links the first-class objects that determine the review-facing representation. Table 1: Representative related directions and how code-first peer review differs.              
+
+> Direction Primary object Difference from code-first peer review Executable notebooks /compendia Readable and executable research documents Improve author-reader reproducibility but generally preserve author control over narrative. Artifact evaluation Paper plus submitted artifact Adds artifact checks, often as a separate process; code-first review makes artifacts the primary review object. AI writing from code Code-to-manuscript generation Helps produce articles; code-first review treats generation as a venue-controlled review interface. Autonomous AI scientist AI-generated ideas, code, experiments, and papers Automates research production; code-first review keeps human research agency and changes peer-review infrastructure. Paper-to-code systems Papers converted into code repositories Reconstructs missing implementations; code-first review requires executable artifacts at submission time. LLM-as-a-judge Model-generated judgments and scores Code-first review uses AI for evidence extraction and audit, not as sole final authority.
+
+# 4 Problem Formulation 
+
+We model a computational submission as an executable package 
+
+S = ( C, D, E, X, B, M ), (1) where C is source code, D is data or data-access logic, E is an environment specification, X is a set of experiment scripts and configurations, B is a set of baseline implementations or baseline references, and M
+
+is a minimal claim manifest. The venue-controlled system transforms S into a review package 
+
+R = ( G, Q, V, A, F, L, P ), (2) where G is the Generated Review View, Q is a reproducibility report, V is a claim-evidence matrix, A is a code audit report, F is a baseline fairness report, L is a limitation report, and P is a provenance log. 44.1 Minimal claim manifest 
+
+Raw code is not enough. Code can reveal implementation and results, but it cannot fully specify the intended contribution or research question. Authors therefore submit a minimal structured manifest. The manifest is not a manuscript. It is a compact declaration of claims, evidence scripts, metrics, baselines, hardware requirements, and known limitations. Listing 1: Illustrative minimal claim manifest.                          
+
+> problem: "Low-latency scheduling for edge communication systems" main_claims: - id: C1 statement: "The proposed scheduler reduces p95 latency under bursty traffic." evidence_script: "experiments/run_latency.py" metric: "p95_latency" baselines: ["FIFO", "EDF", "RoundRobin"] expected_direction: "lower_is_better" - id: C2 statement: "The method maintains throughput under packet loss." evidence_script: "experiments/run_loss_sweep.py" metric: "throughput" baselines: ["TCP-baseline", "QUIC-baseline"] hardware: cpu: "16 cores recommended" gpu: "not required" network_emulator: "Mininet or ns-3" limitations: - "Evaluated on synthetic traffic traces." - "No real hardware deployment."
+
+The manifest gives the system enough intent to avoid hallucinating a contribution, while restricting authors from crafting a persuasive free-form narrative. 
+
+4.2 Generated Review View 
+
+A Generated Review View is a venue-controlled, AI-generated, manuscript-like representation of an exe-cutable artifact. It is designed for review, not for authorial persuasion. It contains an abstract-like summary, method summary, experiment summary, main results, claim-evidence references, limitations, and repro-ducibility status. Each nontrivial empirical statement should link to code, configuration, command, log, table, or output hash. 
+
+4.3 Design goals 
+
+A code-first review system should satisfy five design goals. 1. Faithfulness: generated review views must not introduce unsupported claims or hide material limitations. 2. Reproducibility: execution results must be tied to commands, environments, random seeds, hardware profiles, and output hashes. 5Table 2: Traditional manuscripts versus Generated Review Views. 
+
+Dimension Traditional manuscript Generated Review View Controller Author Venue submission system Editable by author Yes No direct editing; artifact or manifest revision only Primary basis Author narrative Executed code, results, manifest, logs Purpose Persuasion, communication, archival record Standardized review interface Evidence linkage Often implicit Explicit claim-to-code and claim-to-result links Main risk Selective reporting, narrative manipulation, prose-code mismatch AI misinterpretation, model bias, execution failure Auditability Limited Versioned logs, hashes, prompts, model versions, commands 
+
+3. Standardization: reviewers should see comparable evidence structures across submissions. 4. Governability: the system must be auditable for bias, prompt injection, and model-version drift. 5. Human authority: AI should assist evidence extraction and review preparation; humans retain final authority over novelty, significance, and decisions. 
+
+# 5 Worked Example: From Artifact to Review Package 
+
+To make the protocol concrete, consider a hypothetical networking submission that proposes an edge scheduler for bursty traffic. In a manuscript-first workflow, reviewers would first read a claim such as “our scheduler reduces tail latency while preserving throughput” and then decide whether to inspect the code. In code-first review, that sentence is not the primary object. The primary object is a claim-evidence contract that connects each claim to executable evidence and explicitly records the scope under which the claim holds. 
+
+5.1 Submitted artifact 
+
+The author submits a repository, a data directory, an environment file, and a manifest. A reduced version of the package is shown below. Listing 2: Reduced artifact package for the worked example. 
+
+submission/ Dockerfile requirements.txt manifest.yaml src/scheduler.py experiments/run_latency.py experiments/run_loss_sweep.py configs/bursty.yaml configs/loss_sweep.yaml data/synthetic_traces.csv baselines/fifo.py baselines/edf.py 
+
+6The manifest declares three claims. The first two are empirical claims with declared scripts and metrics. The third is a broader deployment claim that the authors would normally be tempted to include in a polished paper. Listing 3: Reduced claim manifest for the worked example. 
+
+claims: - id: C1 statement: "The scheduler reduces p95 latency under bursty traffic." evidence_script: "experiments/run_latency.py" metric: "p95_latency_ms" baselines: ["FIFO", "EDF"] expected_direction: "lower_is_better" - id: C2 statement: "The scheduler preserves throughput under packet loss." evidence_script: "experiments/run_loss_sweep.py" metric: "throughput_mbps" baselines: ["FIFO", "EDF"] expected_direction: "not_lower_than_baseline" - id: C3 statement: "The scheduler generalizes to real 5G deployments." evidence_script: null metric: null baselines: [] 
+
+5.2 Execution and claim status 
+
+The venue system builds the environment, runs the declared scripts, and records commands, seeds, output hashes, and failures. In this example, the latency script runs successfully for five seeds; the loss-sweep script runs for three seeds but one baseline fails at the highest loss rate; no real deployment traces or hardware scripts are present. Table 3: Worked example of claim-evidence mapping.               
+
+> ID Claim Executed evidence Caveat Status C1 Reduces p95 latency under bursty traffic.
+> run latency.py ; five seeds; bursty.yaml ;regenerated CSV and plot hashes. Synthetic traces only. Scoped C2 Preserves throughput under packet loss.
+> run loss sweep.py ;three seeds; loss rates 0–40%; FIFO and EDF baselines. EDF failed at 40% loss; fewer than five seeds. Partial C3 Generalizes to real 5G deploy-ments. No deployment script, field trace, hardware profile, or attestation found. Claim exceeds submitted evi-dence. Unsupported
+
+5.3 Generated review-view excerpt 
+
+The Generated Review View should not rewrite the authors’ broadest claim into a persuasive form. It should preserve the evidential boundary. A suitable generated excerpt would say: 7The artifact supports a scoped latency claim: under the provided synthetic bursty traces and five random seeds, the proposed scheduler reduces p95 latency relative to FIFO and EDF baselines. The throughput claim is only partially supported because one baseline run fails at the highest loss setting and the seed count is limited. The submitted artifact does not support a claim of generalization to real 5G deployments because no deployment traces, hardware experiment, or remote attestation evidence is included. This example illustrates the intended shift. The system is not deciding whether the scheduler is novel or important. It is converting an executable artifact into a conservative review interface that tells reviewers what the artifact supports, what it only partially supports, and what it does not support. 
+
+# 6 The Code-First Peer Review Protocol  
+
+> Author conducts research
+> Author writes polished manuscript
+> Reviewers read author narrative
+> Optional code or artifact check Decision Current
+> Author submits artifact + manifest
+> Venue AI builds and executes
+> Venue AI audits and maps claims
+> Generated review package
+> Human peer review + decision
+> Proposed
+
+Figure 1: The proposed protocol shifts peer review from author-controlled manuscript-first review to artifact-first review with venue-controlled generation of review packages. Figure 1 summarizes the shift. The protocol has eight stages. 
+
+Stage 1: Submission ingestion. The author uploads the executable package S. The system validates required files, license metadata, declared compute requirements, data access constraints, and manifest structure. 
+
+Stage 2: Environment reconstruction. The system builds a container or equivalent environment from Dockerfiles, Conda files, Nix flakes, requirements files, continuous-integration scripts, README instructions, and manifest declarations. Failures are recorded rather than silently fixed. The system may attempt bounded dependency repair, but every repair becomes part of the provenance log. 
+
+Stage 3: Static and dynamic code audit. The system constructs dependency graphs, identifies experiment entry points, traces metric computation, detects hardcoded outputs, compares baseline execution paths, and searches for data leakage or test-set tuning. Dynamic audit instruments execution to confirm which code paths generate reported results. 
+
+Stage 4: Experiment execution. The system runs declared experiments under controlled budgets. It records commands, software versions, hardware profile, random seeds, resource usage, logs, generated files, and output hashes. For expensive experiments, the system may require a reduced verification suite plus a sampled full-scale audit. 
+
+Stage 5: Result extraction. The system extracts metrics from logs, CSV files, databases, notebooks, plots, or structured outputs. It normalizes metrics and checks whether extracted results match the manifest’s expected directions. 8Stage 6: Claim-evidence mapping. Each claim is mapped to code files, functions, experiment scripts, con-figurations, metrics, baselines, output artifacts, and caveats. Unsupported claims are marked as unsupported rather than paraphrased away. 
+
+Stage 7: Venue-controlled review-view generation. The system generates G, the Generated Review View, from the verified evidence. The generated text should be conservative: it may summarize results and methods, but it must not infer novelty, significance, or generality beyond the artifact and manifest. 
+
+Stage 8: Human review, rebuttal, and revision. Reviewers evaluate the Review Package. Authors may respond through structured rebuttals or artifact revisions. Revisions trigger regeneration and audit logging. The final accept/reject decision remains with human reviewers and editors. 
+
+# 7 System Architecture 
+
+> Executable Submission Package
+> Repository Analyzer
+> Build and Execution Agent
+> Result Extractor
+> Code Audit Agent
+> Claim Verifier
+> Fairness and Security Monitor
+> Generated Review Package
+> Human Reviewer Interface
+> Venue-controlled AI review infrastructure
+
+Figure 2: A reference architecture for CodeFirstReview. The AI components are controlled by the venue and produce evidence for human review rather than final decisions. 
+
+7.1 Repository Analyzer 
+
+The Repository Analyzer identifies source files, experiment entry points, configuration hierarchies, de-pendency specifications, scripts, notebooks, tests, and generated artifacts. It builds an experiment graph linking claims to scripts, scripts to configurations, configurations to data, and outputs to metrics. For communication-systems research, it should recognize common artifacts such as ns-3 simulations, Mininet topologies, OMNeT++ configurations, packet traces, channel-model scripts, and traffic-generation tools. 
+
+7.2 Build and Execution Agent 
+
+The Build and Execution Agent reconstructs the environment and runs experiments. It should operate in a sandbox, enforce resource quotas, and preserve exact execution traces. It should distinguish between author-declared dependencies, inferred dependencies, and system-added repairs. This distinction matters: an artifact that runs only after substantial AI repair should not receive the same reproducibility status as one that runs directly. 
+
+7.3 Result Extraction Agent 
+
+The Result Extraction Agent parses logs, tables, plots, notebooks, and output files. It verifies whether tables or figures can be regenerated from raw outputs. If plots are image-only, it should request or infer the underlying data only with uncertainty flags. For deterministic experiments, exact output hashes may be required; for stochastic experiments, confidence intervals, seed sweeps, and tolerance bands are more appropriate. 97.4 Claim Verification Agent 
+
+The Claim Verification Agent produces a claim-evidence matrix. An example row is shown in Table 4. The matrix is central because it prevents the Generated Review View from becoming an unsupported narrative. Table 4: Example structure of a claim-evidence matrix.        
+
+> ID Claim Evidence Caveat Status C1 Scheduler reduces p95 latency un-der bursty traffic.
+> run latency.py ; config
+> bursty.yaml ; metric
+> p95 latency ; output hash; baseline logs. Synthetic traces only; no hardware deployment. Scoped C2 Throughput remains stable under packet loss.
+> run loss sweep.py ;loss rates 20–40%; throughput CSV; seed sweep. Fewer than five seeds; one baseline failed at 40% loss. Partial C3 Method generalizes to real-world 5G deployments. No deployment scripts or traces found. Claim exceeds artifact evidence. Unsupported
+
+7.5 Fairness and Security Monitor 
+
+The Fairness and Security Monitor checks for metadata sensitivity, prompt injection, suspicious instructions in comments or hidden text, model-version drift, and judge disagreement. It should blind author metadata by default. It should also treat repository text as untrusted input, because README files, comments, PDFs, notebooks, and metadata can contain instructions aimed at manipulating AI systems. 
+
+7.6 Reviewer Interface 
+
+Reviewers should not merely receive an AI-written paper. They should receive an interactive or static package that exposes evidence. A reviewer should be able to click from a sentence in the Generated Review View to the corresponding claim, code path, command, log, metric, and generated file. The interface should support filters such as “unsupported claims,” “failed experiments,” “baseline differences,” and “limitations inferred by the system.” 
+
+# 8 Motivating Data from Prior Work 
+
+Table 5 collects data points from published work that motivate the protocol. These are not results from our proposed system; they are secondary evidence showing that (i) AI reproducibility agents remain imperfect, (ii) artifact standards already exist, and (iii) AI-assisted review introduces fairness and security risks that must be governed. 10 Table 5: Public data points motivating code-first peer review.      
+
+> Source Reported data point Design implication PaperBench [13] Best tested agent achieved a 21.0% average replication score. AI can assist evidence extraction, but should not replace reviewers. CORE-Bench [12] Best agent achieved 21% accuracy on the hardest computational-reproducibility task. Environment reconstruction and execution remain difficult review tasks. JAMA affiliation-bias study [16] The study ran 232,500 LLM reviews and reported acceptance rates of 38.4% for top-tier affiliation, 37.5% for mid-tier, 36.7% for low-tier, and 40.0% without affiliation. Metadata blinding and counterfactual audits should be part of AI-mediated review. Hidden-prompt commentary [6] 18 arXiv manuscripts were reported to contain hidden prompts intended to manipulate AI-assisted review. Submission portals need prompt-injection screening and input sanitization. ACM artifact badging [1] Functional artifacts are expected to be documented, consistent, complete, and exercisable. Existing artifact standards can seed review-package checklists.
+
+# 9 Evaluation Methodology 
+
+A code-first review system should be evaluated as review infrastructure, not as a text generator. We propose six research questions. 
+
+RQ1: Faithfulness. Does the Generated Review View faithfully represent the submitted artifact? Metrics include hallucinated-claim rate, unsupported-generalization rate, missing-limitation rate, method-description completeness, citation relevance, and claim-evidence link correctness. 
+
+RQ2: Reproducibility. Can the system build the environment and run the core experiments? Metrics include build success rate, experiment success rate, result reproduction error, time-to-first-run, dependency repair count, and provenance completeness. 
+
+RQ3: Defect detection. Can the system detect material problems? Candidate defects include missing dependencies, hardcoded results, data leakage, unfair baseline budgets, cherry-picked random seeds, miscom-puted metrics, invalid statistical tests, and missing data files. Synthetic defect injection can provide ground truth. 
+
+RQ4: Reviewer workload and quality. Does the Review Package reduce reviewer time while improving evidence quality? A human study can compare reviewers assigned to traditional manuscripts versus reviewers assigned to generated packages. Outcomes include review time, number of evidence-backed criticisms, detection of unsupported claims, reviewer confidence, and agreement with artifact experts. 
+
+RQ5: Fairness and robustness. Does the system’s output change under irrelevant metadata or input ordering? Counterfactual audits should perturb author names, affiliations, countries, writing style, file order, README wording, and model version. A simple metadata sensitivity score can be defined as 
+
+∆meta = max 
+
+> mi,m j
+
+|s(S, m i) − s(S, m j )| , (3) 11 where s(S, m ) is a review score or risk score for the same artifact S under metadata condition m. For generated text, analogous distances can be computed over claim statuses, limitation lists, and review recom-mendations. 
+
+RQ6: Human judgment boundary. Which judgments should remain human? We expect code-first systems to help with buildability, result extraction, claim support, and auditability. We do not expect them to fully decide novelty, taste, long-term significance, real-world deployment value, or community priority. Table 6: Evaluation metrics for code-first peer review systems.         
+
+> Dimension Example metrics Required evidence Faithfulness Hallucinated-claim rate; unsupported-generalization rate; missing-limitation rate Human-labeled claim-evidence pairs Reproducibility Build success; run success; reproduction error; dependency repairs Logs, containers, hashes, hardware metadata Defect detection Precision/recall on injected bugs; false accusation rate Synthetic defects and expert labels Reviewer utility Time saved; evidence-backed criticisms; reviewer confidence Controlled reviewer study Fairness Metadata sensitivity; model-family disagreement; order sensitivity Counterfactual metadata and prompt variants Security Prompt-injection detection; sandbox escapes; suspicious hidden instructions Red-team submissions and static scans
+
+9.1 Dataset construction 
+
+A realistic benchmark can be built from accepted papers with public artifacts in machine learning, systems, networking, and communication venues. Each sample should contain the original paper, repository, data-access instructions, environment specification, and available artifact-review notes. For each sample, expert annotators construct a gold claim-evidence matrix and identify core experiments. Additional synthetic variants introduce controlled defects. For communication systems, useful defect classes include mismatched channel assumptions, unrealistic traffic distributions, baseline queues with different scheduling budgets, missing random seeds in simulations, and results that depend on undocumented hardware or network-emulator settings. 
+
+9.2 Baselines 
+
+Baselines should include: (i) traditional manuscript-only review, (ii) artifact evaluation without AI assistance, (iii) author-controlled AI writing assistance, and (iv) venue-controlled code-first packages. The comparison should not only measure accept/reject agreement. It should measure whether reviewers can identify what the code actually supports. 
+
+# 10 Governance and Threat Model 
+
+AI-mediated peer review creates new institutional risks. Table 7 summarizes key threats and controls. 12 Table 7: Threat model and safeguards.           
+
+> Threat Example Safeguard Narrative manipulation Author edits generated text to hide limitations Venue-controlled generation; no direct manuscript editing Artifact gaming Code detects review environment and changes behavior Sandboxed execution; randomized tests; static and dynamic audit Prompt injection README, PDF, comments, or hidden text instruct AI to give positive reviews Treat all submission text as untrusted; scan hidden text; isolate system prompts Metadata bias Scores change with author institution or name Metadata blinding; counterfactual fairness audits Model-version drift Different model versions produce different claim statuses Version logging; calibration suites; multi-model adjudication Compute inequality Expensive experiments cannot be fully rerun by venue Declared budgets; reduced verification suites; sampled full audits; hardware-normalized reporting False accusation AI incorrectly flags a bug or unsupported claim Evidence-first flags; human review; author appeal; expert audit Over-standardization Nontraditional contributions are penalized because they lack standard benchmarks Reviewer override; explicit scope labels; separate significance review
+
+10.1 Metadata blinding and counterfactual audits 
+
+The venue system should remove author names, affiliations, countries, acknowledgments, and self-identifying paths before AI review wherever possible. Because code repositories can leak identity through usernames, commit history, file paths, and dataset URLs, blinding must apply beyond PDF metadata. Counterfactual audits should then re-run selected evaluations with synthetic metadata to estimate sensitivity. 
+
+10.2 Prompt-injection defense 
+
+Prompt injection is not hypothetical in scholarly review contexts. Hidden prompts in manuscripts have been reported, including instructions designed to manipulate AI-assisted peer review [ 2 , 6]. A code-first system must assume that every submitted text fragment is adversarial input. The AI system should separate instructions from evidence, sanitize hidden text, strip invisible or tiny-font content from PDFs, scan comments and notebooks, and use tool-level policies that prevent submitted text from overriding venue prompts. 
+
+10.3 Human appeal and final authority 
+
+Authors need an appeal mechanism because AI systems can misread code, fail to build correct environments, or overstate defects. Appeals should be structured: the author points to the artifact, manifest, execution log, or configuration that corrects the system’s interpretation. If accepted, the correction triggers regeneration and a versioned audit log. Human reviewers and editors retain final authority over scientific significance and decision-making. 13 11 Discussion 
+
+11.1 What code can and cannot prove 
+
+Code can ground empirical claims. It can show how a metric was computed, which baseline was used, whether a result can be regenerated, and which assumptions are embedded in configurations. Code cannot fully determine scientific meaning. It cannot decide by itself whether a problem is important, whether a contribution changes the direction of a field, whether a simplified model is acceptable, or whether a negative result is valuable. Code-first review should therefore be framed as evidence-grounded peer review, not automated scientific judgment. 
+
+11.2 Applicability to communication systems 
+
+Communication and networking research is a strong target for code-first review because many claims are simulation- or benchmark-based. The protocol can expose channel models, packet-loss assumptions, traffic distributions, scheduler implementations, congestion-control baselines, topology files, emulator settings, and hardware constraints. It is especially useful for papers whose claimed improvements depend on many interacting implementation choices. At the same time, some communication-system experiments depend on hardware testbeds, licensed spectrum, proprietary traces, or private industrial deployments. For these submissions, the venue may require partial execution, remote attestation, confidential data enclaves, or independent third-party artifact execution. Code-first review should not require public disclosure of sensitive data; it should require auditable evidence under appropriate access controls. 
+
+11.3 Transition path 
+
+Venues need not adopt code-first review all at once. A practical transition has four levels. 1. Level 0: traditional manuscript review with optional artifact links. 2. Level 1: required artifact checklist and machine-readable claim manifest. 3. Level 2: venue-generated reproducibility report before reviewer assignment. 4. Level 3: venue-generated Review Package becomes the primary review interface. 5. Level 4: final publication includes both an author-facing article and an archived venue-generated evidence package. 
+
+11.4 Publication after acceptance 
+
+The artifact-first review view need not be the final published paper. After acceptance, authors and venues can decide how to publish: (i) the Generated Review View plus an author-edited communication article, (ii) a traditional article plus archived Review Package, or (iii) an executable article where claims remain linked to evidence. The key is that technical acceptance should be based on venue-controlled evidence views, not solely on author-controlled manuscripts. 14 12 Limitations 
+
+This paper is a vision and protocol proposal, not a completed deployed system. Several open questions remain. First, current agents have limited reproducibility performance, so early systems should focus on evidence extraction and reviewer assistance. Second, large experiments may be too expensive to rerun fully. Third, artifact-first requirements may disadvantage theoretical work, qualitative work, or research whose evidence is not primarily computational. Fourth, venue-controlled generation could introduce new biases if models are not transparent and calibrated. Fifth, authors may learn to game the infrastructure, requiring continuous red-teaming and policy updates. These limitations do not undermine code-first review; they define its engineering and governance agenda. 
+
+# 13 Conclusion 
+
+Computational peer review should review executable evidence before reviewing polished stories. We proposed code-first peer review, a venue-controlled protocol in which authors submit artifacts and minimal claim manifests, AI systems execute and audit those artifacts, and reviewers evaluate standardized evidence packages. Manuscript generation is not the goal; it is an interface. By shifting control from author-crafted narrative to venue-generated evidence views, code-first review can improve reproducibility, expose hidden implementation details, reduce reviewer burden, and make unsupported claims easier to detect. The same shift also creates new risks: AI bias, prompt injection, model drift, false accusations, and over-standardization. The appropriate response is not to avoid AI in review infrastructure, but to govern it: blind metadata, audit models, log provenance, preserve author appeal, and keep human reviewers responsible for scientific significance and final decisions. 
+
+# A Example Review Package Contents 
+
+A minimal Review Package could contain the following files. 
+
+> review_package/ generated_review_view.pdf reproducibility_report.json claim_evidence_matrix.csv code_audit_report.md baseline_fairness_report.md limitation_report.md provenance/ commands.log environment.lock hardware.json output_hashes.txt model_versions.json prompt_templates.txt author_rebuttal_form.md
+
+# B Example Reviewer Checklist 
+
+1. Which main claims are fully supported, partially supported, or unsupported by executed evidence? 2. Did the system reproduce the core tables and figures under declared resource budgets? 15 3. Are the baselines implemented fairly and run under comparable conditions? 4. Are the limitations material enough to weaken the contribution? 5. Does the work remain novel and significant after unsupported claims are removed? 6. Did the AI system produce any questionable interpretation that requires human correction? 
+
+# C Reproducibility Statement for This Draft 
+
+The CSV file data/motivation data.csv records the secondary data values used in Table 5. These values are for motivation only and are not original experimental results from CodeFirstReview. 
+
+# D AI Tool Use Statement 
+
+AI-assisted editing and LaTeX checking tools were used during preparation of this draft. The author reviewed the manuscript and remains responsible for its claims, citations, wording, and any errors. 
+
+# References 
+
+[1] Association for Computing Machinery. ACM artifact review and badging. Policy document, 2020. URL 
+
+https://www.acm.org/publications/policies/artifact-review-badging .Accessed 2026-06-02. [2] Elizabeth Gibney. Scientists hide messages in papers to game ai peer review. Nature ,2025. doi: 10.1038/d41586-025-02172-y. URL https://www.nature.com/articles/ d41586-025-02172-y .[3] Jiawei Gu, Xuhui Jiang, Zhichao Shi, Hexiang Tan, Xuehao Zhai, Chengjin Xu, Wei Li, Yinghan Shen, Shengjie Ma, Honghao Liu, Saizhuo Wang, Kun Zhang, Zhouchi Lin, Bowen Zhang, Lionel Ni, Wen Gao, Yuanzhuo Wang, and Jian Guo. A survey on llm-as-a-judge, 2024. URL https: //arxiv.org/abs/2411.15594 .[4] Jeremy R. Harper. The future of scientific publishing: Automated article generation, 2024. URL 
+
+https://arxiv.org/abs/2404.17586 .[5] Thomas Kluyver, Benjamin Ragan-Kelley, Fernando P ´erez, Brian Granger, Matthias Bussonnier, Jonathan Frederic, Kyle Kelley, Jessica Hamrick, Jason Grout, Sylvain Corlay, Paul Ivanov, Damian Avila, Safia Abdalla, Carol Willing, and Jupyter Development Team. Jupyter notebooks: A publishing format for reproducible computational workflows. In Positioning and Power in Academic Publishing: Players, Agents and Agendas , pages 87–90. IOS Press, 2016. doi: 10.3233/978-1-61499-649-1-87. URL https://eprints.soton.ac.uk/403913/ .[6] Zhicheng Lin. Hidden prompts in manuscripts exploit ai-assisted peer review, 2025. URL https: //arxiv.org/abs/2507.06185 .[7] Chris Lu, Cong Lu, Robert Tjarko Lange, Jakob Foerster, Jeff Clune, and David Ha. The ai scientist: Towards fully automated open-ended scientific discovery, 2024. URL https://arxiv.org/abs/ 2408.06292 .16 [8] Brian A. Nosek, Charles R. Ebersole, Alexander C. DeHaven, and David T. Mellor. The preregistration revolution. Proceedings of the National Academy of Sciences , 115(11):2600–2606, 2018. doi: 10.1073/ pnas.1708274114. URL https://www.pnas.org/doi/10.1073/pnas.1708274114 .[9] Daniel N ¨ust, Markus Konkol, Marc Schutzeichel, Edzer Pebesma, Christian Kray, Holger Przibytzin, and J ¨org Lorenz. Opening the publication process with executable research compendia. D-Lib Magazine , 23(1/2), 2017. doi: 10.1045/january2017-nuest. URL https://www.dlib.org/ dlib/january17/nuest/01nuest.html .[10] Tony Ross-Hellauer. What is open peer review? a systematic review. F1000Research , 6:588, 2017. doi: 10.12688/f1000research.11369.2. URL https://f1000research.com/articles/6-588/ v2 .[11] Minju Seo, Jinheon Baek, Seongyun Lee, and Sung Ju Hwang. Paper2code: Automating code generation from scientific papers in machine learning, 2025. URL https://arxiv.org/abs/2504.17192 .[12] Zachary S. Siegel, Sayash Kapoor, Nitya Nagdir, Benedikt Stroebl, and Arvind Narayanan. Core-bench: Fostering the credibility of published research through a computational reproducibility agent benchmark, 2024. URL https://arxiv.org/abs/2409.11363 .[13] Giulio Starace, Oliver Jaffe, Dane Sherburn, James Aung, Jun Shern Chan, Leon Maksin, Rachel Dias, Evan Mays, Benjamin Kinsella, Wyatt Thompson, Johannes Heidecke, Amelia Glaese, and Tejal Patwardhan. Paperbench: Evaluating ai’s ability to replicate ai research, 2025. URL https: //arxiv.org/abs/2504.01848 .[14] Victoria Stodden, Marcia McNutt, David H. Bailey, Ewa Deelman, Yolanda Gil, Brooks Hanson, Michael A. Heroux, John P. A. Ioannidis, and Michela Taufer. Enhancing reproducibility for com-putational methods. Science , 354(6317):1240–1241, 2016. doi: 10.1126/science.aah6168. URL 
+
+https://www.science.org/doi/10.1126/science.aah6168 .[15] Sai Suresh Macharla Vasu, Ivaxi Sheth, Hui-Po Wang, Ruta Binkyte, and Mario Fritz. Justice in judgment: Unveiling (hidden) bias in llm-assisted peer reviews, 2025. URL https://arxiv.org/ abs/2509.13400 .[16] Dario von Wedel, Rico A. Schmitt, Moritz Thiele, Raphael Leuner, Denys Shay, Simone Redaelli, and Maximilian S. Schaefer. Affiliation bias in peer review of abstracts by a large language model. 
+
+JAMA , 331(3):252–253, 2024. doi: 10.1001/jama.2023.24641. URL https://jamanetwork. com/journals/jama/fullarticle/2813511 .[17] Yutaro Yamada, Robert Tjarko Lange, Cong Lu, Shengran Hu, Chris Lu, Jakob Foerster, Jeff Clune, and David Ha. The ai scientist-v2: Workshop-level automated scientific discovery via agentic tree search, 2025. URL https://arxiv.org/abs/2504.08066 .17

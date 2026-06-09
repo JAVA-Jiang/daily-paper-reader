@@ -1,0 +1,291 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-09T21:46:10.897056+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 6,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.02926v2",
+      "source": "arxiv",
+      "title": "Diamonds Are Forever: Stabilization Semantics for Unrestricted Aggregation and Recursion in Logica",
+      "abstract": "Logica is an open-source logic programming language that compiles to SQL and runs on DuckDB, SQLite, PostgreSQL, and BigQuery. Unlike classic Datalog, it freely combines recursion and aggregation, concisely expressing algorithms from shortest paths to PageRank. This expressiveness raises semantic challenges: aggregates update by replacement rather than accumulation, evaluation depends on rule scheduling, and programs may converge to meaningful results without reaching a fixpoint, placing them outside traditional fixpoint semantics.   We address this with Defendant-Opponent (DO) semantics, a stabilization-based framework for nonmonotonic logic programs. Evaluation is modeled as a rewrite system over derivation states, and a ground atom is true if, from every reachable state, some continuation makes the atom persist in all further derivations. This admits two equivalent characterizations: game-theoretically, truth is what a Defendant can defend against any Opponent in a three-turn game; and modally, truth corresponds to []<>[]t in the derivation graph viewed as a Kripke structure, placing nonmonotonic reasoning within S4.   DO semantics coincides with least fixpoint semantics for positive Datalog and is compatible with both Well-Founded and Stable Model Semantics. For programs that converge without a fixpoint, ω-limit interpretations give rigorous meaning to iterative computations such as PageRank.",
+      "authors": [
+        "Evgeny Skvortsov",
+        "Yilin Xia",
+        "Ojaswa Garg",
+        "Shawn Bowers",
+        "Bertram Ludäscher"
+      ],
+      "primary_category": "cs.LO",
+      "categories": [
+        "cs.LO"
+      ],
+      "published": "2026-06-01T22:05:25+00:00",
+      "link": "https://arxiv.org/pdf/2606.02926v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source logic programming language with code",
+      "llm_evidence_cn": "开源逻辑编程语言，附带源代码",
+      "llm_evidence": "开源逻辑编程语言，附带源代码",
+      "canonical_evidence": "开源逻辑编程语言，附带源代码",
+      "llm_tldr_en": "Logica is an open-source logic programming language that compiles to SQL, supporting aggregation and recursion with novel stabilization semantics.",
+      "llm_tldr_cn": "针对经典Datalog在聚合与递归结合上的语义缺失，本文提出Logica，一种开源逻辑编程语言，其编译到SQL并支持灵活的聚合与递归。作者引入Defendant-Opponent (DO)语义框架，通过基于重写系统的状态稳定化来给出非单调程序的明确语义。实验表明Logica能简洁表达最短路径、PageRank等算法，并在多个SQL引擎上高效运行。该工作为逻辑编程语言的设计提供了新的稳定化理论基础。",
+      "llm_tldr": "针对经典Datalog在聚合与递归结合上的语义缺失，本文提出Logica，一种开源逻辑编程语言，其编译到SQL并支持灵活的聚合与递归。作者引入Defendant-Opponent (DO)语义框架，通过基于重写系统的状态稳定化来给出非单调程序的明确语义。实验表明Logica能简洁表达最短路径、PageRank等算法，并在多个SQL引擎上高效运行。该工作为逻辑编程语言的设计提供了新的稳定化理论基础。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.07094v1",
+      "source": "arxiv",
+      "title": "MetaConfigurator: AI-Assisted RDF Authoring from JSON Data",
+      "abstract": "Scientific workflows increasingly generate structured JSON data that is easy to exchange but difficult to interpret consistently across systems due to lacking semantic interoperability. While JSON Schema ensures structural validation, it provides no native support for Linked Data semantics.   This paper presents an RDF Authoring View extending the open-source JSON Schema editor MetaConfigurator, enabling researchers to transform existing JSON, YAML, or CSV data into RDF using AI-assisted RML mappings, refine triples, execute SPARQL queries, visualize knowledge graphs, and export RDF serializations within a single integrated web interface. This workflow is supported by ontology-aware IRI auto-completion, bidirectional synchronization between JSON-LD text views and RDF triple tables, and AI-assisted SPARQL query generation from natural language hints.   We demonstrate the workflow using laboratory data from metal-organic framework (MOF) synthesis experiments. Protocol data describing reagents, procedure steps, and quantities is converted from JSON to ontology-based JSON-LD via RML mappings. We then refine the semantic representation, query relationships between experimental conditions and outcomes, and explore the resulting knowledge graph interactively. This integrated environment bridges conventional structured data management with Semantic Web technologies while preserving experimental context and lowering technical barriers through AI assistance.",
+      "authors": [
+        "Felix Neubauer",
+        "Mahdi Jafarkhani",
+        "Kenichi Endo",
+        "Jürgen Pleiss",
+        "Benjamin Uekermann"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-06-05T09:42:01+00:00",
+      "link": "https://arxiv.org/pdf/2606.07094v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source JSON Schema editor extended for RDF authoring",
+      "llm_evidence_cn": "开源JSON Schema编辑器扩展，支持RDF创作",
+      "llm_evidence": "开源JSON Schema编辑器扩展，支持RDF创作",
+      "canonical_evidence": "开源JSON Schema编辑器扩展，支持RDF创作",
+      "llm_tldr_en": "MetaConfigurator extends the open-source JSON Schema editor to enable AI-assisted RDF authoring from JSON/YAML/CSV, with RML mappings and SPARQL queries.",
+      "llm_tldr_cn": "科学工作流产生大量JSON数据但缺乏语义互操作性，本文扩展开源JSON Schema编辑器MetaConfigurator，提供RDF创作视图。用户可通过AI辅助的RML映射将JSON/YAML/CSV转换为RDF，并进行三元组精炼、SPARQL查询和知识图谱可视化。编辑器支持本体感知的IRI自动补全和双向JSON-LD同步。该工具降低了将非语义数据转换为关联数据的门槛。",
+      "llm_tldr": "科学工作流产生大量JSON数据但缺乏语义互操作性，本文扩展开源JSON Schema编辑器MetaConfigurator，提供RDF创作视图。用户可通过AI辅助的RML映射将JSON/YAML/CSV转换为RDF，并进行三元组精炼、SPARQL查询和知识图谱可视化。编辑器支持本体感知的IRI自动补全和双向JSON-LD同步。该工具降低了将非语义数据转换为关联数据的门槛。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.07683v1",
+      "source": "arxiv",
+      "title": "Review the Code, Not the Story: A Vision and Protocol for Code-First Peer Review",
+      "abstract": "Peer review in computational fields remains centered on author-written manuscripts, even though the decisive evidence for many claims resides in executable code, data, configurations, and experiment pipelines. This manuscript-first workflow gives authors substantial control over narrative framing while leaving reviewers with limited time to inspect implementation details, reproduce results, or detect unsupported claims. This vision and protocol paper proposes code-first peer review: authors submit executable research artifacts and minimal claim manifests; a venue-controlled AI system builds the environment, executes experiments, audits code paths, maps claims to evidence, and generates a standardized Review Package for human reviewers. The goal is not to replace reviewers or to give authors an automatic writing assistant. Instead, AI serves as review infrastructure that shifts the target of peer review from polished narratives to executable evidence. We formalize a claim-evidence contract, define the Generated Review View and Review Package abstractions, give a worked example, outline a system architecture, and analyze evaluation and governance challenges including AI bias, prompt injection, model instability, auditability, and author appeal.",
+      "authors": [
+        "Jienan Chen"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "eess.SP"
+      ],
+      "published": "2026-06-05T01:26:07+00:00",
+      "link": "https://arxiv.org/pdf/2606.07683v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Proposes code-first peer review with executable artifacts",
+      "llm_evidence_cn": "提出代码优先的同行评审，要求提交可执行代码",
+      "llm_evidence": "提出代码优先的同行评审，要求提交可执行代码",
+      "canonical_evidence": "提出代码优先的同行评审，要求提交可执行代码",
+      "llm_tldr_en": "Proposes code-first peer review where authors submit executable artifacts; AI builds environment and audits code paths, enabling reproducible research with open source code.",
+      "llm_tldr_cn": "当前计算领域的同行评审仍以手稿为中心，忽视了代码、数据等可执行研究产物。本文提出代码优先评审协议：作者提交可执行代码和声明清单，由AI系统构建环境、执行实验、审计代码路径，并生成标准化评审包供人类评审。该方法直接促进可重复研究和开源代码共享，是论文带代码理念的具体实现。",
+      "llm_tldr": "当前计算领域的同行评审仍以手稿为中心，忽视了代码、数据等可执行研究产物。本文提出代码优先评审协议：作者提交可执行代码和声明清单，由AI系统构建环境、执行实验、审计代码路径，并生成标准化评审包供人类评审。该方法直接促进可重复研究和开源代码共享，是论文带代码理念的具体实现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.09600v1",
+      "source": "arxiv",
+      "title": "Formal Foundations and Proof-Carrying Certificates for q-ary Covering Codes in Lean 4",
+      "abstract": "Covering codes in finite Hamming spaces ask for small sets of words whose Hamming balls cover the whole space. This paper presents a Lean 4 formalization of the elementary theory of q-ary covering codes, centered on certificate predicates for upper bounds, lower bounds, and exact covering numbers $K_q(n,r)$. The formalization proves the q-ary Hamming-ball volume formula, the sphere-covering lower bound, elementary exact cases, product and relation rules, and selected small exact certificates. It also demonstrates an end-to-end workflow for checking explicit upper bounds transcribed from van Laarhoven et al. (1989). The accompanying database is proof-carrying: stored bounds have traces that replay to Lean proofs of the corresponding upper- or lower-bound predicates. The contribution is not new record bounds or a reproduction of known tables, but a reusable, auditable foundation for machine-checked covering-code certificates.",
+      "authors": [
+        "Andreas Florath"
+      ],
+      "primary_category": "cs.IT",
+      "categories": [
+        "cs.IT"
+      ],
+      "published": "2026-06-08T15:09:56+00:00",
+      "link": "https://arxiv.org/pdf/2606.09600v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Provides formal proof-carrying code in Lean 4",
+      "llm_evidence_cn": "在Lean 4中提供了形式化证明代码和证书",
+      "llm_evidence": "在Lean 4中提供了形式化证明代码和证书",
+      "canonical_evidence": "在Lean 4中提供了形式化证明代码和证书",
+      "llm_tldr_en": "This paper presents a Lean 4 formalization of q-ary covering codes with proof-carrying certificates, enabling machine-checked verification of bounds and exact covering numbers, accompanied by a reproducible code database.",
+      "llm_tldr_cn": "覆盖码在有限汉明空间中寻找最小覆盖集。本文在Lean 4中形式化了q元覆盖码的基本理论，包括证书谓词用于验证上界、下界和精确覆盖数。形式化过程证明了汉明球体积公式和球覆盖下界等关键结果，并构建了一个可重现的证明数据库，使得存储的界可以回放为Lean证明，为编码理论的可复现研究提供了形式化代码基础。",
+      "llm_tldr": "覆盖码在有限汉明空间中寻找最小覆盖集。本文在Lean 4中形式化了q元覆盖码的基本理论，包括证书谓词用于验证上界、下界和精确覆盖数。形式化过程证明了汉明球体积公式和球覆盖下界等关键结果，并构建了一个可重现的证明数据库，使得存储的界可以回放为Lean证明，为编码理论的可复现研究提供了形式化代码基础。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.05836v1",
+      "source": "arxiv",
+      "title": "ProSPy: A Profiling-Driven SQL-Python Agentic Framework for Enterprise Text-to-SQL",
+      "abstract": "Large language models have substantially advanced Text-to-SQL systems, yet applying them to enterprise-scale databases remains challenging. Real-world databases often contain large and heterogeneous schemas, incomplete metadata, dialect-specific SQL syntax, and complex analytical questions that are difficult to solve with a single SQL query. To address these challenges, we propose ProSPy, a Profiling-driven SQL--Python agentic framework for enterprise-scale Text-to-SQL. ProSPy structures the reasoning process into four stages: it first extracts fine-grained data evidence through automatic profiling, progressively prunes large schemas into task-relevant contexts, fetches intermediate views through a dialect-agnostic SQL interface, and finally performs flexible downstream analysis with Python. This design combines the efficiency of SQL over large databases with the flexibility of Python-based analysis, while reducing reliance on unreliable metadata and improving robustness across SQL dialects. Experiments on Spider 2.0-Lite and Spider 2.0-Snow show that ProSPy consistently outperforms strong baselines with both open-source and proprietary models, achieving execution accuracies of 60.15% and 60.51% with Claude-4.5-Opus, without majority voting. Further analysis shows that ProSPy is robust to SQL dialect variations and achieves a favorable trade-off between schema recall and precision.",
+      "authors": [
+        "Zhaorui Yang",
+        "Huawei Zheng",
+        "Sen Yang",
+        "Yuhui Zhang",
+        "Haoxuan Li",
+        "Zhizhen Yu",
+        "Xuan Yi",
+        "Chen Hou",
+        "Defeng Xie",
+        "Chao Hu",
+        "Minfeng Zhu",
+        "Dazhen Deng",
+        "Haozhe Feng",
+        "Danqing Huang",
+        "Yingcai Wu",
+        "Peng Chen",
+        "Wei Chen"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-06-04T08:13:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.05836v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Text-to-SQL framework, likely provides source code",
+      "llm_evidence_cn": "文本到SQL框架，很可能提供源代码",
+      "llm_evidence": "文本到SQL框架，很可能提供源代码",
+      "canonical_evidence": "文本到SQL框架，很可能提供源代码",
+      "llm_tldr_en": "ProSPy is a profiling-driven SQL-Python agentic framework for enterprise-scale Text-to-SQL, structuring reasoning into four stages.",
+      "llm_tldr_cn": "企业级文本到SQL面临大规模异构模式、不完整元数据和复杂分析问题等挑战。本文提出ProSPy框架，通过自动分析提取细粒度数据证据、渐进式模式剪枝、方言无关SQL接口和Python推理四个阶段，有效解决了企业级场景下的文本到SQL问题。实验表明ProSPy在大型企业数据库上取得了最优性能。该工作为实际部署提供了实用方案。",
+      "llm_tldr": "企业级文本到SQL面临大规模异构模式、不完整元数据和复杂分析问题等挑战。本文提出ProSPy框架，通过自动分析提取细粒度数据证据、渐进式模式剪枝、方言无关SQL接口和Python推理四个阶段，有效解决了企业级场景下的文本到SQL问题。实验表明ProSPy在大型企业数据库上取得了最优性能。该工作为实际部署提供了实用方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.08135v1",
+      "source": "arxiv",
+      "title": "TICoder: A Repository-Level Code Generation Framework with Test-Driven Planning and Implementation-Aware Reuse",
+      "abstract": "Repository-level code generation with Large Language Models (LLMs) remains challenging, primarily due to complex dependencies and limited context windows. Recent approaches adopt retrieval-augmented generation (RAG) and the planning mechanism to reuse potential callee functions in the repository. However, these approaches often suffer from two limitations: lack of test-driven behavioral guidance during planning and overlooking the implementation logic embedded in repository code during reuse. As a result, generated plans may not align with expected behaviors, and retrieved functions may not be effectively reused. In this paper, we propose TICoder, a novel repository-level code generation framework that improves both planning and reuse. TICoder introduces a test-driven iterative planning mechanism that leverages test cases as behavioral specifications to refine implementation steps. Furthermore, TICoder employs an implementation-aware code reuse strategy, which retrieves potential callee functions using a dual-view similarity that captures both functional and implementation aspects. We then identify relevant usage patterns through a dual-stage selection strategy, combining structure-based clustering and perplexity-based filtering. We conduct extensive experiments on widely used repository-level code generation benchmarks with various LLMs. Experimental results demonstrate that TICoder outperforms state-of-the-art (SOTA) methods, achieving an average improvement of 11.52%.",
+      "authors": [
+        "Siyu Nan",
+        "Yaling Luo",
+        "Jian Wang",
+        "Neng Zhang",
+        "Bing Li"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-06T12:23:30+00:00",
+      "link": "https://arxiv.org/pdf/2606.08135v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Repository-level code generation framework, likely provides source code",
+      "llm_evidence_cn": "仓库级代码生成框架，很可能提供源代码",
+      "llm_evidence": "仓库级代码生成框架，很可能提供源代码",
+      "canonical_evidence": "仓库级代码生成框架，很可能提供源代码",
+      "llm_tldr_en": "TICoder is a repository-level code generation framework that uses test-driven planning and implementation-aware reuse to overcome limitations of existing RAG-based approaches.",
+      "llm_tldr_cn": "针对仓库级代码生成中复杂依赖和有限上下文窗口的挑战，现有方法缺乏测试驱动的行为指导和实现逻辑复用。本文提出TICoder框架，通过测试驱动的规划和实现感知的复用机制，提升了代码生成的准确性和可用性。实验结果表明TICoder在多个基准上显著优于基线方法。该工作为大型语言模型在仓库级代码生成中的应用提供了新思路。",
+      "llm_tldr": "针对仓库级代码生成中复杂依赖和有限上下文窗口的挑战，现有方法缺乏测试驱动的行为指导和实现逻辑复用。本文提出TICoder框架，通过测试驱动的规划和实现感知的复用机制，提升了代码生成的准确性和可用性。实验结果表明TICoder在多个基准上显著优于基线方法。该工作为大型语言模型在仓库级代码生成中的应用提供了新思路。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.04397v2",
+      "source": "arxiv",
+      "title": "Context-as-AI-Service: Surfacing Cross-File Dependency Chains for LLM-Generated Developer Documentation",
+      "abstract": "LLM agents increasingly write and maintain developer documentation, but usefulness and accuracy often rely on dependency chains that are not obvious to follow. Even with more files in context, the agent must still decide which cross-file dependencies to trace. We present Context-as-AI-Service (CAIS), a retrieval layer that LLM agents query to find evidence across the codebase as they review or generate documentation. CAIS indexes source code, API references, and upstream documentation, then enables agents to query the index through tool calls that combine keyword and semantic search. We evaluate CAIS in two case studies using Claude Sonnet 4.6 on a production SDK: improving API reference comments in a core source file and validating an LLM-generated tutorial. In both studies, the baseline already had ordinary repository tools such as file reads, keyword search, and symbol navigation. CAIS adds a retrieval layer on top, so the comparison isolates added retrieval rather than basic repository access. In the API-reference review, the CAIS-augmented agent produced the same 5 missing-documentation fixes as the baseline and surfaced 4 findings the baseline missed: 2 cross-file factual errors and 2 underspecified API comments. In the tutorial validation, it surfaced 1 executable bug, 1 API-usage improvement, and 2 missing prerequisites that the baseline pipeline did not catch. These findings required tracing non-obvious dependency chains across utility files, framework internals, usage examples, tests, and component-creation logic. Over five runs per condition, adding CAIS reduced wall-clock time by 22% to 34% across the two tasks and lowered input-token usage.",
+      "authors": [
+        "Ameya Gawde",
+        "Vyzantinos Repantis",
+        "Harshvardhan Singh",
+        "Lucy Moys"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.IR"
+      ],
+      "published": "2026-06-03T03:26:56+00:00",
+      "link": "https://arxiv.org/pdf/2606.04397v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Retrieval layer for codebase, may provide source code",
+      "llm_evidence_cn": "针对代码库的检索层，可能提供源代码",
+      "llm_evidence": "针对代码库的检索层，可能提供源代码",
+      "canonical_evidence": "针对代码库的检索层，可能提供源代码",
+      "llm_tldr_en": "CAIS is a retrieval layer for LLM agents to find cross-file dependency chains when generating developer documentation.",
+      "llm_tldr_cn": "LLM代理在生成开发者文档时难以追踪跨文件依赖链。本文提出Context-as-AI-Service(CAIS)，一个检索层，通过索引源代码、API参考和上游文档，使代理能通过工具调用来查询依赖信息。在工业SDK上的案例研究显示，CAIS有效改进了API注释质量。该工作为LLM在软件工程中的应用提供了基础设施。",
+      "llm_tldr": "LLM代理在生成开发者文档时难以追踪跨文件依赖链。本文提出Context-as-AI-Service(CAIS)，一个检索层，通过索引源代码、API参考和上游文档，使代理能通过工具调用来查询依赖信息。在工业SDK上的案例研究显示，CAIS有效改进了API注释质量。该工作为LLM在软件工程中的应用提供了基础设施。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

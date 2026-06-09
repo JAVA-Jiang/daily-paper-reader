@@ -1,0 +1,671 @@
+Title: Diamonds Are Forever: Stabilization Semantics for Unrestricted Aggregation and Recursion in Logica
+
+URL Source: https://arxiv.org/pdf/2606.02926v2
+
+Published Time: Thu, 04 Jun 2026 00:32:11 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+> TPLP : Page 1–16. ©The Author(s), 2026. Published by Cambridge University Press 2026 doi:10.1017/xxxxx
+
+1
+
+# Diamonds Are Forever: Stabilization Semantics for Unrestricted Aggregation and Recursion in Logica 
+
+EVGENY SKVORTSOV 
+
+Google LLC, USA 
+
+YILIN XIA 
+
+University of Illinois, Urbana-Champaign, USA 
+
+OJASWA GARG 
+
+Google LLC, USA 
+
+SHAWN BOWERS 
+
+Gonzaga University, USA 
+
+BERTRAM LUD ¨ASCHER 
+
+University of Illinois, Urbana-Champaign, USA submitted xx xx 2026; revised xx xx 2026; accepted xx xx 2026 
+
+Abstract 
+
+Logica is an open-source logic programming language that compiles to SQL and runs on plat-forms including DuckDB, SQLite, PostgreSQL, and BigQuery. Unlike classic Datalog, Logica permits the free combination of recursion and aggregation, enabling concise formulations of algo-rithms from shortest paths to PageRank. This expressiveness introduces fundamental semantic challenges: aggregate predicates are updated by replacement rather than accumulation, evalu-ation is sensitive to rule scheduling, and programs may converge to meaningful results without ever reaching a fixpoint, placing them outside the scope of traditional fixpoint semantics. We address these challenges with Defendant-Opponent (DO) semantics , a stabilization-based framework for nonmonotonic logic programs. Program evaluation is modeled as a rewrite system over derivation states. A ground atom is true if, from every reachable state, there exists a contin-uation after which the atom persists in all further derivations. This notion admits two equivalent characterizations: (1) game-theoretically, truth is what a Defendant can defend against any Op-ponent in a three-turn derivation game; and (2) modally, a formula t is a theorem precisely when the condition □□□ t holds in the derivation graph viewed as a Kripke structure. We show that DO semantics coincides with classic least fixpoint semantics for positive Datalog programs and is compatible with both the Well-Founded Semantics (the two never disagree on definite answers) and the Stable Model Semantics (every stable model is a DO interpretation). For programs that converge without reaching a fixpoint, we introduce ω-limit interpretations, giving rigorous meaning to iterative computations such as PageRank. DO semantics thus offers a coherent framework that complements existing logic programming semantics while supporting recursive aggregation. 
+
+Keywords: Logica, Datalog, Nonmonotonic Reasoning, Aggregation, Modal Logic 
+
+1 Introduction 
+
+Logic programming has long served as a cornerstone of declarative computing. Datalog became particularly influential due to its elegant formal semantics grounded in monotonic least fixpoint computations (van Emden and Kowalski 1976; Ceri et al. 1990), enabling concise recursive queries such as transitive closure. 
+
+> arXiv:2606.02926v2 [cs.LO] 3 Jun 2026
+
+2 Skvortsov et al. 
+
+Extending Datalog with negation led to fundamental semantic challenges. Well-Founded Semantics (WFS) (Van Gelder et al. 1991; Van Gelder 1993) uses three-valued logic and an alternating fixpoint construction to handle nonmonotonic negation. Sta-ble Model Semantics (SMS) (Gelfond and Lifschitz 1988) takes an alternative approach through self-supporting fixpoints, enabling multiple stable interpretations and forming the basis of Answer Set Programming (Gelfond 2008; Gebser et al. 2019). Integrating aggregation into recursive logic programming brought further chal-lenges (Mumick et al. 1990; Ross and Sagiv 1997). Work on stratified aggregates (Kemp and Stuckey 1991), recursive aggregation (Zaniolo et al. 2017), unified founded seman-tics (Liu and Stoller 2022), and recursive aggregates in ASP (Faber et al. 2004) has made significant progress, but has primarily focused on programs that reach fixpoints. The distinctive challenge lies with programs that converge without reaching a fixpoint .PageRank (Brin and Page 1998) is a canonical example: iteration quickly approaches the eigenvector distribution, yet formally no fixpoint is attained. Such programs fall outside the scope of fixpoint-based semantics. 
+
+Logica and the Semantic Gap. Logica (Skvortsov et al. 2024b;a), an open-source logic programming language developed at Google, compiles to standard SQL and runs on platforms including DuckDB, SQLite, PostgreSQL, and BigQuery (Skvortsov 2023). Unlike classic Datalog, Logica allows unrestricted combinations of recursion and aggre-gation, addressing practical needs in modern data analytics. This exposes a semantic gap: programs like PageRank are expressible and useful, yet lack formal meaning under traditional fixpoint semantics. 
+
+DO Semantics. We introduce Defendant-Opponent (DO) semantics , a framework that generalizes classical logic programming semantics to address these limitations. Inspired by Hilbert-style formal systems but extended for nonmonotonic programs, DO seman-tics defines truth through an adversarial interaction between a Defendant (asserting statements) and an Opponent (challenging assertions), giving meaning to programs with arbitrary recursion, aggregation, numerical computation, and non-stratified negation. DO semantics also has a modal logic characterization. In monotonic systems, a formula 
+
+t is a theorem if it is derivable from axioms A, i.e., A ⊩□ t. In nonmonotonic systems where derived facts can be retracted, mere derivability is insufficient. We show that DO-truth corresponds to the modal formula A ⊩ □ □□ t: from any state, it is always possible 
+
+(□□) to reach a state where t holds, and once reached, t necessarily persists (□) under further derivation. This places nonmonotonic reasoning within S4 modal logic, where the seven distinct modalities provide a complete taxonomy of formula stability. DO semantics bears a family resemblance to dialogue games for intuitionistic and clas-sical logic (Lorenzen 1961), where truth emerges from a winning strategy in a two-player debate. However, the frameworks differ fundamentally. In Lorenzen games, players argue about the structure of a single formula through attack and defense moves on connec-tives. In DO semantics, the players jointly construct a derivation as a trajectory through the space of derivation states. The Opponent challenges not internal formula structure, but the robustness of derivability: can the Defendant reach a state containing the target atom that remains stable under any further moves? This shift from formula-structure to derivation-trajectory games is what allows DO semantics to handle nonmonotonic reasoning. 
+
+Contributions. The main contributions of this paper are: Diamonds Are Forever 31. A stabilization-based semantic framework (DO semantics) for nonmonotonic logic programs with unrestricted recursion and aggregation, with equivalent game-theoretic and modal ( □□□) characterizations. 2. Backward compatibility: DO semantics coincides with classical least fixpoint semantics for positive Datalog (Corollary 1). 3. Compatibility with WFS (Theorem 5) and SMS (Theorem 6): the three semantics never disagree on definite answers, and every stable model is a DO interpretation. 4. ω-limit interpretations that give rigorous meaning to convergent programs such as PageRank (Theorems 3 and 4). 
+
+Outline. Section 2 introduces Logica through examples. Section 3 develops DO seman-tics, from monotonic formal systems to nonmonotonic rewriting rules, the Thesis Defense game, and modal logic. Section 4 introduces static, dramatic, and ω-limit interpretations. Section 5 establishes compatibility with WFS and SMS. 
+
+2 Logica 
+
+This section introduces the fragment of Logica relevant to this paper. Many features (named arguments, meta-programming, database integration) are practical conveniences that do not require the semantic treatment we develop here. A complete formal syntax of this fragment, together with a glossary of the key terms used throughout, is provided in the online supplementary material. In Logica, predicates begin with capital letters, variables begin with lowercase letters, and rules end with semicolons. 
+
+> Sibling(a,b) :- Parent(x,a), Parent(x,b), a!=b ; Ancestor(a,b) :- Parent(a,b); Ancestor(a,b) :- Ancestor(a,x), Ancestor(x,b);
+
+Logica supports functional notation: P (x) = y is syntactic sugar for the relation P (x, y )where the last column is viewed as the output. 
+
+> Square(x) = x * x; Hypotenuse(a,b) = Sqrt(Square(a) + Square(b));
+
+The central extension relevant to this paper is aggregation, which comes in two forms. 
+
+Aggregating expressions appear within rule bodies (similar to ASP syntax Gelfond (2008); Gebser et al. (2019)): 
+
+> HighDegree(x) :- E(x,y), Count{z :- E(x,z)} > 5;
+
+Predicate-level aggregation resembles SQL’s GROUP BY and aggregates over all derivations of a predicate’s value. In this paper, we focus on Logica’s predicate-level function value aggregation: 
+
+Definition 1. A rule with predicate-level function value aggregation has the form 
+
+P (t1, . . . , t n) ⊙ = e :- Body (t1, . . . , t n, t n+1 , . . . , t m, e )where ⊙ is an aggregation operator that maps finite multisets to a single value; for each tuple ( t1, . . . , t n), ⊙ aggregates the values of e over all instantiations satisfying Body .In practice, efficient aggregation requires certain algebraic properties (namely, an Abelian semigroup operator), but this is irrelevant for the semantic treatment; we use Sum , Min ,and Max as running examples. 4 Skvortsov et al. 
+
+As a simple example, the shortest distances between all pairs of vertices in a graph can be computed in Logica as follows: 
+
+> D(a,b) Min= E(a,b); D(a,b) Min= D(a,x) + D(x,b);
+
+For each pair ( a, b ), the two rules define a multiset of candidate distances: the direct edge weight E(a, b ) if it exists, together with sums D(a, x ) + D(x, b ) over all intermediate vertices x. The Min= operator returns the minimum of this multiset, which is assigned as the value of D. As we see in Section 3.4, the computation of the distance amounts to iterated application of these rules. PageRank (Brin and Page 1998) provides a more challenging example: 
+
+> PageRank(x) += ResetProb() / N() :- Page(x); PageRank(y) += (1.0 - ResetProb()) * PageRank(x) / Degree(x) :- Link(x,y);
+
+Iteration converges to the eigenvector distribution, yet formally never reaches a fixpoint: each step refines the approximation without stabilizing. Traditional fixpoint semantics cannot assign meaning to this program, which is precisely the gap that DO semantics fills. Logica can also express numerical computations. The following approximates π using the Leibniz formula: 
+
+> L() = 1 :- L = nil; L() = L() + 1; Pi() = 4 * Sum{(-1) ^ k / (2 * k + 1) :- k in Range(L())};
+
+The in operator iterates over a collection. The following computes sine and cosine via Euler’s method for differential equations. 
+
+> Infinitesimal() = 1 / L(); C(0) = 1; S(0) = 0; S(t + dt) = S(t) + C(t) * dt :- dt = Infinitesimal(); C(t + dt) = C(t) - S(t) * dt :- dt = Infinitesimal();
+
+DO semantics makes this precise through ω-limit interpretations (Section 4). Finally, negation in Logica is encoded via aggregation: not P (⃗x) becomes 
+
+Count {1 :- P (⃗x)} = 0 , which holds precisely when P (⃗x) has no derivation in the current state. This reduces negation to aggregation, requiring no additional semantic machinery. 
+
+3 Defendant-Opponent (DO) Semantics 
+
+We define DO semantics by generalizing Hilbert-style formal systems to nonmonotonic logic. We begin by recalling the standard monotonic case. 
+
+3.1 Monotonic Formal Systems 
+
+Definition 2. A formal system is a triple ( H, A, R ), where H is a set of well-formed formulas , A ⊆ H is a set of axioms, and R is a set of inference rules. Each rule r ∈ R is applied to a tuple ( t1, . . . , t n) of well-formed formulas and returns a well-formed formula 
+
+r(t1, . . . , t n) that follows from the rule, i.e., r : Hn → H.In logic programming, H corresponds to the Herbrand base, i.e., the set of all potentially derivable ground atoms. Diamonds Are Forever 5
+
+Definition 3. For a formal system ( H, A, R ), a sequence T0, . . . , T m of sets of well-formed formulas Ti ⊆ H is called a derivation if: (1) T0 = A; and (2) for each i there exists some rule r ∈ R of arity n and some ⃗ t = ( t1, . . . , t n) with all tj ∈ Ti such that 
+
+Ti+1 = Ti ∪ { r(⃗t)}.Monotonic derivations are inflationary (Vianu 2021): each step only adds formulas, so the sets Ti form a growing chain converging toward a least fixpoint. 
+
+Definition 4. The set of theorems T of a formal system ( H, A, R ) is the set of all formulas that occur in some derivation: 
+
+T = [
+
+> T0,...,T m
+> is a derivation
+> m
+
+[
+
+> i=0
+
+Ti.
+
+It is well known that for finite systems, this set of theorems coincides with the least fix-point of the immediate consequence operator (van Emden and Kowalski 1976; Abiteboul et al. 1995), providing the classic semantics for Datalog. 
+
+3.2 Nonmonotonic Formal Systems 
+
+In many practical situations, derived formulas must be retracted . For example, when computing shortest paths, we may derive distance k between two vertices, then find a shorter path of length k′ < k and want to replace the old value. Various approaches model such retractions, e.g., via deletion rules (Vianu 2021). Here, we consider a noninflationary approach where rules rewrite the entire state at each step (similar to noninflationary while queries (Abiteboul et al. 1995)). 
+
+Definition 5. A nonmonotonic formal system is a triple ( H, A, W ), where H is a set of well-formed formulas, A ⊆ H is a set of axioms, and W is a set of rewrite rules. Each rewrite rule w ∈ W maps sets of formulas to sets of formulas: w : 2 H → 2H .
+
+Definition 6. For a nonmonotonic formal system ( H, A, W ), a sequence T0, . . . , T m with 
+
+Ti ⊆ H is called a derivation if T0 = A and Ti+1 = w(Ti) for some w ∈ W .It is not immediately clear what the theorems of such a system should be, since derived formulas may be introduced and subsequently retracted as computation proceeds. We define truth based on the eventual behavior of derivations. 
+
+3.3 Thesis and Truth 
+
+Rather than limiting attention to programs with fixpoints, we consider a semantics based on a thesis : a claim about the eventual behavior of derivations. 
+
+Definition 7. Given a nonmonotonic formal system ( H, A, W ), a thesis is a set M ⊆ 2H
+
+of sets of formulas such that a set of formulas T ⊆ H is consistent with M if T ∈ M ,and otherwise is inconsistent with M .Intuitively, a thesis M represents a claim such as “a deep enough derivation will arrive at a state in M ”. To make this precise, we introduce the following graph-theoretic notions. 
+
+Definition 8. Given a nonmonotonic formal system ( H, A, W ), a set T ⊆ H is a state of derivation if there exists a derivation of T , i.e., T0, . . . , T m−1, T .6 Skvortsov et al. 
+
+Derivation states form a derivation graph. 
+
+Definition 9. The graph of derivation G(H, A, W ) is a directed graph whose vertices are states of derivation and whose edges are pairs ( T, T ′) such that T ′ = w(T ) for some 
+
+w ∈ W .A state T ′ is reachable from T if T = T ′ or there is a finite sequence of edges in G from 
+
+T to T ′; that is, reachability is the reflexive–transitive closure of the edge relation. Truth is defined over this graph. 
+
+Definition 10. A thesis M holds (equivalently: M is true , M is a truth ) in a nonmono-tonic formal system ( H, A, W ) with derivation graph G if for any derivation state Ti
+
+there exists a derivation state Tj ∈ M such that: (1) Tj is reachable from Ti; and (2) for every derivation state Tk reachable from Tj , Tk ∈ M .Thus M holds if no matter where you are in the derivation, you can steer toward a state in M , and once there, any further derivation stays within M . Truth permits stabilization :derivation can always be continued to achieve and maintain consistency with the true thesis. 
+
+Definition 11. A formula t ∈ H is a theorem in ( H, A, W ) if the thesis {T ⊆ H | t ∈ T }
+
+holds. A formula t is an anti-theorem if the thesis {T ⊆ H | t / ∈ T } holds. A formula that is either a theorem or an anti-theorem is called definite .Note that a formula may be neither a theorem nor an anti-theorem, i.e., its status may be genuinely undetermined. It also follows that no formula can be both a theorem and an anti-theorem: if both held, then by Lemma 1 the empty thesis {T | t ∈ T } ∩ { T | t / ∈
+
+T } = ∅ would be a truth, which is impossible since no derivation state lies in ∅.
+
+3.4 Logica as a Nonmonotonic Formal System 
+
+We now define how a Logica program gives rise to a nonmonotonic formal system. 
+
+Definition 12. Given a Logica program P over a database (EDB) D, the corresponding 
+
+nonmonotonic formal system (H, A, W ) is defined as follows: 
+
+• H, the Herbrand base, is the set of all ground atoms of the form P (v1, . . . , v n) for each predicate P in P and all possible values. For functional predicates, we assume the last argument vn is the value argument. 
+
+• A = D, the extensional database. 
+
+• W = {wP | P is an intensional predicate in P} , where each wP is a rewriting rule that recomputes all values of predicate P based on the current state. Formally, 
+
+wP (T ) = ( T \ { P (⃗v) ∈ T }) ∪ eval P (T ), where eval P (T ) evaluates all rules defining 
+
+P against T (snapshot semantics): body literals are looked up in T as-is, without re-computing other predicates. All non-P atoms, including EDB facts, are unchanged. A key observation is that W contains one rewriting rule per predicate , not per syntactic rule. Consider again the program to compute shortest path distances D.
+
+> D(a,b) Min= E(a,b); D(a,b) Min= D(a,x) + D(x,b);
+
+The two clauses in this case constitute a single rewriting rule wD that computes the minimum over all derivable values, both direct edges and composite paths. This design Diamonds Are Forever 7reflects a fundamental feature of aggregation: when wD is applied, it replaces the entire 
+
+predicate D with newly computed values. If the current state contains D("a","b") = 42 
+
+from an earlier derivation, but a shorter path of length 37 is now derivable, the new state will contain D("a","b") = 37 , where the old value is replaced , not accumulated. This is precisely what makes the system nonmonotonic. Each edge in the derivation graph (Def. 9) corresponds to applying one rewrite rule 
+
+wP ∈ W . At each step, we choose which predicate to recompute, introducing nondeter-minism. For single-predicate programs like shortest paths, only one rule applies. For pro-grams with multiple interdependent predicates, different choices lead to different deriva-tion graph trajectories. 
+
+3.5 The Thesis Defense Game 
+
+Truth admits a game-theoretic characterization that gives DO semantics its name. 
+
+Definition 13. The Thesis Defense game for a nonmonotonic formal system ( H, A, W )and thesis M is a two-player game between a Defendant and an Opponent . The game constructs a derivation in three turns that begins with the Opponent: 
+
+• Turn 1 (Opponent): Starting from T0 = A, the Opponent extends the derivation to some state Tm1 .
+
+• Turn 2 (Defendant): The Defendant continues from Tm1 to some state Tm2 .
+
+• Turn 3 (Opponent): The Opponent continues from Tm2 to a final state Tm3 .In a single turn a player may apply any finite number of rewrite rules, i.e., move to any state reachable from the current one; the available move sets may be infinite. The Defendant wins if Tm3 ∈ M ; the Opponent wins otherwise. 
+
+Theorem 1. For a nonmonotonic formal system ( H, A, W ) and thesis M , the following are equivalent: 1. Thesis M holds in ( H, A, W ). 2. The Defendant has a winning strategy. 3. The Opponent has no winning strategy. Equivalence of (2) and (3) holds by determinacy (the number of turns is fixed at three and there are no draws; the move sets may be infinite). Equivalence with (1) captures the essence of DO semantics: truth is what you can defend . The O-D-O turn order is essential: reversing it or reducing to two turns would break the closure of truths under intersection. 
+
+Lemma 1. If M1 and M2 are truths, then M1 ∩ M2 is also a truth. 
+
+Proof (Sketch) 
+
+Since M1 is true, the Defendant has a strategy to reach a state Tj ∈ M1 that is stable within M1. From Tj , since M2 is also true, the Defendant can further reach a state 
+
+Tk ∈ M2 that is stable within M2. Because Tk is reachable from Tj and Tj is stable within M1, we have Tk ∈ M1 as well. Thus Tk ∈ M1 ∩ M2, and any state reachable from 
+
+Tk remains in both M1 and M2.8 Skvortsov et al. 
+
+3.6 Truth as Modality 
+
+DO truth has a natural modal logic interpretation. The derivation graph is a Kripke frame, with derivation states as worlds and reachability as the accessibility relation. 
+
+Definition 14. Let ( H, A, W ) be a nonmonotonic formal system. A modal statement is defined inductively: 
+
+• For any formula h ∈ H statements h and ¬h are modal statements. 
+
+• If t is a modal statement, then □ t (read: “necessarily t”) is a modal statement. 
+
+• If t is a modal statement, then 
+
+> □
+
+t (read: “possibly t”) is a modal statement. 
+
+Definition 15. Whether a modal statement t holds at a state of derivation T , written 
+
+T ⊩ t, is defined inductively, where any state T is by definition considered reachable from itself: 
+
+• T ⊩ h (for h ∈ H) if and only if h ∈ T .
+
+• T ⊩ ¬h (for h ∈ H) if and only if h̸ ∈ T .
+
+• T ⊩ □ t if and only if t holds at all states reachable from T .
+
+• T ⊩□ t if and only if t holds at some state reachable from T .We can now express DO-truth using a single modal-logic formula. 
+
+Observation 1. In a nonmonotonic formal system ( H, A, W ), a formula t ∈ H is a theorem iff A ⊩ □ □□ t.Unpacking: from A, necessarily (regardless of the Opponent’s first move), it is possible 
+
+(the Defendant finds a way) to reach a state where t necessarily holds (persists under any further moves). The three alternations correspond to the three turns of the Thesis Defense game. The central 
+
+> □
+
+is the diamond that guarantees forever: it ensures a path exists to a region where t is permanently stable. In the framework of Alpern and Schneider (1985), this stabilization condition decomposes into liveness (a stable region is reachable) and safety ( t persists once reached). For monotonic systems, A ⊩□ t suffices: once derived, a formula persists, so 
+
+> □
+
+t implies □□□ t.
+
+Definition 16. A nonmonotonic formal system ( H, A, W ) is monotonic if every rewrite rule is inflationary, i.e., T ⊆ w(T ) for all w ∈ W and all states T (equivalently, no atom is ever retracted). The monotonic formal systems considered earlier are the special case 
+
+wr (T ) = T ∪ { r(⃗ t)}.
+
+Observation 2. In a monotonic formal system ( H, A, W ), for any t ∈ H, A ⊩□ t iff 
+
+A ⊩ □ □□ t.In positive Datalog, derivation is monotonic: derived facts can only grow. The least fixpoint consists of atoms satisfying A ⊩□ t, which are exactly those satisfying A ⊩□□□ t.
+
+Corollary 1. For positive Datalog programs (without negation or nonmonotonic aggre-gation), DO semantics coincides with classical least-fixpoint semantics: a ground atom is a DO theorem iff it belongs to the least fixpoint. The DO accessibility relation is reflexive and transitive, implying the modal logic S4. It is well known that in S4, arbitrary sequences of □ and 
+
+> □
+
+collapse to just seven distinct modalities (Chellas 1980), as shown on the left in Figure 1. Figure 1 (right) interprets Diamonds Are Forever 9these modalities: t is derivable (
+
+> □
+
+t) if reachable from the axioms; provable (
+
+> □
+
+□ t) if some reachable state contains t permanently; and always derivable (□□ t) if from any state, a state with t can be reached. DO-theoremhood ( □□□) is strictly stronger than each (but weaker than □ t).     
+
+> □t
+> □□□t
+> □□t□□tt
+> □□□t
+> □t
+> non removable axiom
+> theorem
+> provable always derivable axiom
+> not anti-theorem
+> derivable
+
+Fig. 1: The seven distinct S4 modalities (left, strongest □ t at bottom) with their DO-semantics interpretations (right). Here □ is “necessarily” and          
+
+> □ is “possibly” in the standard modal reading; the right side shows what each modality means for derivations. Arrows point upward in the direction of implication: a lower (stronger) modality entails a higher (weaker) one, e.g.,
+> □□□t(theorem) implies □□ t(always derivable). Note: “axiom” means tholds at the current state; “non removable axiom” ( □t) means tholds at every reachable state.
+
+4 Interpretations in DO Semantics 
+
+Having defined which theses hold, we turn to interpretation. In classic logic programming, an interpretation is a model consistent with all theorems. For nonmonotonic systems, we distinguish static and dramatic interpretations. 
+
+4.1 Static Interpretations 
+
+Definition 17. Let ( H, A, W ) be a nonmonotonic formal system and let T be the set of all truths, that is all theses that hold in it. If a state of derivation T belongs to the intersection of all truths T ∈ T  
+
+> M∈T
+
+M , then T is called a static interpretation of the system. A static interpretation is a state of derivation consistent with every truth: a stable resting point respecting all defensible claims. For finite systems, such interpretations always exist. 
+
+Theorem 2. Let ( H, A, W ) be a nonmonotonic formal system with a finite derivation graph. Then static interpretations are precisely the nodes of the derivation graph that belong to the terminal (sink) strongly connected components. The finiteness assumption is essential: it ensures that every path in the derivation graph eventually reaches a terminal SCC. The proof follows from the observation that 10 Skvortsov et al. A: a.                                                   
+
+> wb:b⟵a.
+> wc:c⟵b.
+> wd:d⟵b.
+> {a} wcwd
+> {a,b} wb
+> wb
+> {a,b,c} wc
+> {a,b,d} wd
+> wbwc
+> {a,b,c,d} wd
+> wbwd
+> wc
+> wbwcwdA: a.
+> wb:b⟵a, not c.
+> wc:c⟵a, not b.
+> wd:d⟵b. d⟵c.
+> we:e⟵b, not e.
+> {a} wdwe
+> {a,b} wb
+> {a,c} wc
+> wbwc
+> {a,b,d} wd
+> {a,b,e} we
+> wbwcwe
+> {a,c,d} wd
+> wbwcwd
+> {a,b,d,e} we
+> we
+> wbwc
+> wd
+> wbwcwdwe
+> we
+> wbwcwd
+
+Fig. 2: Two logic programs and their derivation graphs. Monotonic program (left): derivation flows upward to the unique fixpoint {a, b, c, d }. Nonmonotonic program (right): we causes oscil-lation (red edges) between {a, b, d } and {a, b, d, e }; {a, c, d } is a separate fixpoint. Green nodes are axioms; blue nodes are static interpretations (sink SCC nodes). Edge labels identify rewrite rules; gray self-loops indicate rules that leave the state unchanged. 
+
+static interpretations are precisely the states T for which the Opponent has a strategy to end the game on T .These terminal SCCs are the analogue of attractors in Boolean-network theory; the related notion of a trap space , a region closed under the dynamics, captures the same persistence-under-derivation that DO expresses through the final □ of □□□. Trinh et al. (2025) establish this Boolean-network view of Datalog with negation (subset-minimal stable trap spaces correspond to regular models), while Trinh et al. (2026) develop a trap-space semantics for normal logic programs. 
+
+Definition 18. A state of derivation T ⊆ H is a fixpoint if w(T ) = T for all rules 
+
+w ∈ W .
+
+Observation 3. Any fixpoint is a static interpretation. While fixpoints are effectively sink states, static interpretations may not be fixpoints (but they are consistent with all truths). See Figure 2 for examples of static interpretations. 
+
+4.2 Dramatic Interpretations 
+
+Static interpretations suffice when the system settles into a stable state. For programs like PageRank, where iteration converges toward a value without reaching it, we need a dynamic counterpart. 
+
+Definition 19. A dramatic interpretation 1 of (H, A, W ) is an infinite sequence 
+
+T1, T 2, . . . of derivation states such that for any thesis M that holds, there is an n
+
+where Tk ∈ M for all k > n .A dramatic interpretation eventually enters and stays within every true thesis. Note that consecutive states Tk, T k+1 need not be connected by a rewrite rule: a dramatic interpretation is any sequence of derivation states with this eventual-consistency property, not necessarily a path in the graph.  
+
+> 1
+
+“Dramatic” comes from the Ancient Greek word δρ ´αω referring to action, where a dramatic interpre-tation unfolds through action via the process of derivation itself. Diamonds Are Forever 11 
+
+Observation 4. If a dramatic interpretation T1, T 2, . . . eventually stabilizes (i.e., Tk =
+
+Tn for all k > n ), then Tn is a static interpretation. Conversely, if T is a static interpre-tation, then the constant sequence T, T, T, . . . is a dramatic interpretation. Thus static interpretations are “finished” dramatic interpretations. 
+
+4.3 ω-Limit Interpretations 
+
+For real-valued computation (PageRank, differential equations), we want derivations to converge topologically. This requires equipping the state space with a topology. The non-deterministic scheduling in DO semantics is related to asynchronous iteration (Bertsekas and Tsitsiklis 1989), where convergence must hold regardless of update order. 
+
+Definition 20. Let ( H, A, W ) be a nonmonotonic formal system and let S ⊆ 2H be a set containing all states of derivation, equipped with a topology T. A set T ∈ S is an 
+
+ω-limit interpretation if every open set containing T is a true thesis. For Logica programs with real-valued computation, we define a concrete topology. 
+
+Definition 21. Given a Herbrand base H with arguments typed as strings, integers, or reals, we define a subset S ⊆ 2H and a Hausdorff topology as follows. Let r be an injection from predicate symbols, strings, and integers into N, extended to reals by the identity. Since argument positions do not mix types, r is injective across all values in any given position. For a ground atom P (v1, . . . , v n), let ρ(P (v1, . . . , v n)) = (r(P ), r (v1), . . . , r (vn), 0, . . . , 0) ∈ Rk, padded to dimension k (the maximum predicate arity plus one). The space S consists of all compact subsets of Rk, equipped with the Hausdorff distance: 
+
+dH (T1, T 2) = max 
+
+
+
+sup 
+
+> x∈T1
+
+inf 
+
+> y∈T2
+
+d(ρ(x), ρ (y)) , sup 
+
+> y∈T2
+
+inf 
+
+> x∈T1
+
+d(ρ(x), ρ (y)) 
+
+
+
+where d is the Euclidean distance. The Hausdorff topology on S is the topology induced by this metric. Note that per Definition 21 the Herbrand base has arguments from R and is thus of the cardinality of the continuum, while numbers used in the definition of a logic program have only finitely many decimal digits. Thus, for instance, transcendental numbers (ones that are not roots of any polynomial with rational coefficients) never occur in states of derivation, because they cannot be computed in a finite number of steps. However, transcendental numbers can occur in the ω-limit, as we see in the program converging to 
+
+π in Section 2. All ω-limit interpretations in this paper use the Hausdorff topology. States of deriva-tion are finite, hence compact, hence elements of S. Since predicate symbols map to distinct natural numbers, facts from different predicates remain at distance ≥ 1, so each predicate’s convergence can be analyzed independently. 
+
+Observation 5. If an ω-limit interpretation exists, then it is unique and every dramatic interpretation converges to it. (This follows from the Hausdorff separation property.) 
+
+Theorem 3. The PageRank program from Section 2 has an ω-limit interpretation, which assigns to each page its true PageRank value, i.e., the eigenvector of the link matrix. 12 Skvortsov et al. Proof 
+
+Applying wP ageRank corresponds to multiplying the current PageRank vector by the transition matrix M = (1 −d) 1 
+
+> n
+
+1+d·L, where d is the damping factor and L the column-normalized link matrix (assuming no dangling nodes, or with the standard dangling-mass correction, so that L is column-stochastic). Since M is stochastic with all positive entries, the Perron-Frobenius theorem (Meyer 2000) gives a unique eigenvector v∗ with eigenvalue 1, and the power method converges to v∗ from any starting distribution. For any open neighborhood U of v∗, the Defendant can apply wP ageRank sufficiently many times to enter U , and all subsequent iterations remain within U (they only get closer to v∗). Thus every neighborhood of v∗ is a true thesis, making v∗ an ω-limit interpretation. By a similar argument, the π-approximation program has an ω-limit interpretation with Pi () = π (the Leibniz series converges, so the Defendant can increase L until the partial sum is within any ε of π). 
+
+Theorem 4. The differential equation program for sine and cosine, restricted to t ≤ 2π,has an ω-limit interpretation where S and C equal the sine and cosine functions on [0 , 2π]. 
+
+Proof 
+
+The program implements Euler’s method for S′ = C, C′ = −S with S(0) = 0, C(0) = 1, whose unique solution is S = sin, C = cos. Each rewriting rule is idempotent when its dependencies are unchanged, so no progress is lost by repeated application. Let U be any open neighborhood of (sin , cos) on [0 , 2π]. Euler’s method converges uniformly on compact sets (Atkinson et al. 2009): for any ε > 0, there exists L0 such that step size 1 /L 0 stays within ε of the true solution. The Defendant first applies wL until L = L0 (choosing ε so the ε-neighborhood lies inside U ), then alternates wS and wC to compute the full solution on {0, 1/L 0, 2/L 0, . . . },reaching a state within U .On the Opponent’s final turn: applying wS or wC is idempotent (dependencies un-changed); applying wL increments L to L′ > L 0, which only improves accuracy, so the state remains within U . Thus every open neighborhood of (sin , cos) is a true thesis. 
+
+4.4 Irreducible Truth 
+
+In general, static interpretations do not capture the full structure of truth in a nonmono-tonic formal system. As discussed, a meaningful program (for example PageRank) may have no static interpretation. But even when a static interpretation exists, a distinct dramatic interpretation may exist alongside. The program below illustrates this: 
+
+> Left() :- not Right(); Right() :- not Left(); X() = 1 :- not X(), Right(); X() = -1 :- not X(), Left(); X() = X() + 1 :- X() > 0; X() = X() :- X() < 0;
+
+If Left holds, then X stabilizes at −1, yielding a static interpretation {Left , X(−1) }.If Right holds, then X grows without bound (1 , 2, 3, . . . ) and no fixpoint is reached. Since derivation states in the Right branch cannot reach {Left , X(−1) }, the set of static interpretations is not reachable from every state and thus is not a truth. Diamonds Are Forever 13 { } w X                                 
+
+> {L}
+> wL
+> {R}
+> wR
+> {L, X( −1)} wL,wR,wX
+> wX
+> wL,wRwL,wR
+> {R, X(1)}
+> wX
+> wL,wR
+> {R, X(2)}
+> wX
+> wL,wR
+> {R, X(3)}
+> wX
+> wL,wR
+> ···
+> wX
+
+Fig. 3: Derivation graph for the Left/Right program (L and R abbreviate Left and Right). Green: axiom; blue: sole static interpretation (fixpoint). The left branch stabilizes; the right diverges ( X grows without bound). Since the blue node is unreachable from the right branch, no irreducible truth exists. Dashed gray: self-loops. 
+
+For finite systems, however, static interpretations do characterize all truths. We for-malize this via the notion of irreducible truth. 
+
+Definition 22. Let ( H, A, W ) be a nonmonotonic formal system. If the set of all static interpretations is itself a truth, then it is called the irreducible truth of the system. 
+
+Observation 6. If the irreducible truth exists, then a thesis holds if and only if it contains the irreducible truth, i.e., every static interpretation belongs to the thesis. 
+
+Proof 
+
+Any thesis that contains a truth is itself a truth: if from every state one can reach and stay in M , then one can also reach and stay in any superset of M . Thus any thesis containing the irreducible truth holds. Conversely, if a thesis holds, it must contain every static interpretation: a static interpretation belongs to every truth, hence to every thesis that holds. Therefore it contains the irreducible truth. By definition, whenever the irreducible truth exists, any static interpretation is an element of the irreducible truth. The following observation shows that dramatic inter-pretations are also characterized by the irreducible truth. 
+
+Observation 7. If the irreducible truth exists, then dramatic interpretations are pre-cisely sequences of derivation states T1, . . . , T k, . . . for which there exists n such that for any k > n we have Tk being an element of the irreducible truth. 
+
+Proof 
+
+Consider a dramatic interpretation T1, . . . , T k, . . . . Since the irreducible truth is a truth, by definition of a dramatic interpretation there exists n such that states Tn+1 , . . . be-14 Skvortsov et al. {a} wc        
+
+> {a,b} wbwb
+> {a,b,c} wc
+> {a,c} wc
+> wbwb
+> wc{}{q(a)}
+> q(a) {p(b)}
+> p(b) p(a),q(a) {p(b),q(a)}
+> p(b) {p(a)}
+> p(a) p(a),q(a) {p(a),p(b)}
+> p(b) {q(b)} q(b) q(b),p(b) {q(a),q(b)}
+> q(a) q(b),p(b)
+> q(a)
+> q(b) q(b),p(a),p(b),q(a) q(b),p(a),p(b),q(a) {p(a),q(b)} q(b)
+> p(a) q(b),p(a),p(b),q(a)
+> p(a) q(b),p(a),p(b),q(a)
+
+Fig. 4: Left: derivation graph for the program with rules wb: {b ← a, ¬ b} and wc: {c ← b; c ← c}.Right: Ground nonmonotonic system with rules wp(a): {p(a) ← ¬ q(a)}; wp(b): {p(b) ← ¬ q(b)};
+
+wq(a): {q(a) ← ¬ p(a)}; and wq(b): {q(b) ← ¬ p(b)}. In both figures, green nodes represent axioms ({a} and ∅, respectively); blue nodes are static interpretations; dashed gray loops are rule ap-plications that leave the state unchanged; red edges mark oscillation (caused by wb on the left). 
+
+long to the irreducible truth. The converse also holds because a tail of elements of the irreducible truth is consistent with every truth. 
+
+Observation 8. If the derivation graph is finite, then the irreducible truth exists and equals the set of nodes in the terminal (sink) strongly connected components. 
+
+Proof 
+
+In a finite derivation graph, every path eventually reaches a terminal SCC. Thus from any state, there exists a path to a node in a terminal SCC. Once in a terminal SCC, all further states remain within terminal SCCs, since there are no outgoing edges to non-terminal nodes. Therefore the set of terminal SCC nodes is a truth. By Theorem 2, this set is exactly the set of static interpretations, so it is the irreducible truth. 
+
+5 Connections to Classical Nonmonotonic Semantics 
+
+We now examine how DO semantics relates to Well-Founded Semantics (WFS) and Stable Model Semantics (SMS). The relationship is one of compatibility rather than equivalence: DO semantics partially aligns with WFS and SMS, but differs on programs that fall outside their intended scope. This asymmetry is by design. WFS and SMS are defined for programs that reach fixpoints, while DO semantics also assigns meaning to programs that converge without reaching one, such as PageRank, numerical approximation of π,and differential equations solved via Euler’s method (Section 4.3). The program and its derivation graph shown on the left in Figure 4 illustrate a key distinction of DO semantics. The rule b ← a, ¬ b is self-defeating: applying wb alternately introduces and removes b. However, when b is present, c ← b fires, and once derived, 
+
+c persists via c ← c. WFS declares only a definite and leaves b and c undefined. SMS finds no stable model at all, since b’s self-defeating nature prevents any self-consistent fixpoint. DO semantics, by contrast, identifies {a, c } and {a, b, c } as static interpretations and recognizes c as a theorem: from any state, derivation has a chance to reach the sink SCC where c is present in every state. This willingness to let rules fire and retain what stabilizes is precisely what allows DO semantics to give meaning to convergent computations like PageRank. Diamonds Are Forever 15 Logica’s semantics (Definition 12) uses per-predicate rewrite rules, while established logic programming semantics are defined on ground programs. To connect the two, we define the ground nonmonotonic system of a logic program. 
+
+Definition 23. Given a normal logic program P , the ground nonmonotonic system of P
+
+is the nonmonotonic formal system ( H, A, W gr ) where H is the Herbrand base of P , A is the set of facts of P , and Wgr contains one rewrite rule wP (⃗v) per ground atom P (⃗v) ∈ H.Rule wP (⃗v) ensures that P (⃗v) belongs to the resulting state iff some rule with head P (⃗v)has its body satisfied in the current state, leaving all other atoms unchanged. The ground nonmonotonic system is not a separate semantics: it instantiates the same nonmonotonic formal system with finer-grained, per-ground-atom rewrite rules, serving as a bridge to the ground structure assumed by WFS and SMS. On the right of Figure 4 we show the derivation graph of a ground nonmonotonic system for a program with two predicates p and q. The ground system has four static interpretations (blue nodes), including mixed states such as {p(a), q (b)} that are unreach-able under per-predicate rewrite rules. 
+
+5.1 Well-Founded Semantics 
+
+WFS (Van Gelder et al. 1991) assigns each ground atom to true , false , or undefined 
+
+via an alternating fixpoint construction (Van Gelder 1993). The key observation is that the result of this construction can be reproduced as a derivation strategy within DO semantics, reaching a state TWFS containing exactly the WFS-true atoms. From TWFS ,no further rule application can derive WFS-false atoms. In modal terms, TWFS satisfies 
+
+> □
+
+□ t for every WFS-true atom t and 
+
+> □
+
+□ ¬f for every WFS-false atom f .
+
+Example (Win-Move). Consider the win-move game (Van Gelder 1993): 
+
+> Win(x) :- Move(x,y), not Lose(y); Lose(x) :- Position(x), not Win(x);
+
+Under Logica’s DO semantics, derivation alternates between recomputing Win and Lose 
+
+(each recomputation is idempotent). Since the derivation graph is finite, every infinite derivation enters a terminal SCC. Atoms (e.g., Win (x)) present in every state of every terminal SCC correspond to WFS-true atoms; atoms in none correspond to WFS-false; atoms that oscillate correspond to WFS-undefined. 
+
+Theorem 5. Let P be a logic program and ( H, A, W gr ) its ground nonmonotonic system. Let t be a ground atom. 
+
+• If t is true under WFS, then t is not an anti-theorem in ( H, A, W gr ). 
+
+• If t is false under WFS, then t is not a theorem in ( H, A, W gr ). 
+
+Proof (Sketch) 
+
+The alternating-fixpoint construction produces the WFS-true atoms as an increasing sequence K1 ⊆ K2 ⊆ · · · : an atom enters Ki+1 only when it is derivable using, positively, atoms already established true, and, negatively, only atoms already established false 
+
+(atoms that can never become WFS-true). The Opponent’s strategy is to fire the rewrite rule wP (⃗v) for each WFS-true atom P (⃗v) in this order of first appearance (ties within a stage in any order). Negative conditions invoked at each stage refer only to already-falsified atoms, so the Opponent never relies on the absence of an atom that is in fact WFS-true. This reaches a state TWFS containing exactly the WFS-true atoms. From 16 Skvortsov et al. 
+
+TWFS no rule application can introduce a WFS-false atom (its body would require a WFS-true atom to be absent or a WFS-false atom to be present, neither of which holds), and every WFS-true atom is self-supporting; hence every reachable state retains all WFS-true atoms and excludes all WFS-false atoms. Therefore no WFS-true atom is an anti-theorem and no WFS-false atom is a theorem. Theorem 5 does not claim WFS-true atoms are DO theorems. The relationship is compatibility: the two never contradict, but each may be definite where the other is not. 
+
+5.2 Stable Model Semantics 
+
+SMS (Gelfond and Lifschitz 1988) defines a stable model M as the least model of the reduct P M and forms the basis of Answer Set Programming (Gelfond 2008). 
+
+Theorem 6. Let P be a logic program and ( H, A, W gr ) its ground nonmonotonic system. Every stable model of P is a static interpretation of ( H, A, W gr ). 
+
+Proof (Sketch) 
+
+Let M be a stable model of P . We show that M is a fixpoint of ( H, A, W gr ). For any ground atom P (⃗v), the rewrite rule w P (⃗v) evaluates all rules with head P (⃗v) against M ,with not Q(⃗x) true iff Q(⃗x) /∈ M . This is exactly the evaluation under the reduct P M .If P (⃗v) ∈ M , then since M = lfp (T P M ), some rule body is satisfied, so wP (⃗v) retains 
+
+P (⃗v). If P (⃗v) /∈ M , then no rule body is satisfied, so w P (⃗v) does not introduce P (⃗v). In both cases wP (⃗v) (M ) = M , so M is a fixpoint and therefore a static interpretation by Observation 3. The converse does not hold, i.e., DO admits interpretations that are not stable models. For programs having stable models, DO agrees; but DO also assigns meaning to programs where stable models are absent or where convergent iteration matters (as in PageRank). 
+
+6 Conclusion 
+
+We introduced Defendant-Opponent (DO) semantics, a stabilization-based framework for nonmonotonic logic programs with unrestricted recursion and aggregation. DO-truth admits three equivalent characterizations: graph-theoretic (stabilization in the derivation graph), game-theoretic (the Thesis Defense game), and modal (the □□□ condition in S4). DO semantics coincides with least fixpoint semantics for positive Datalog, is com-patible with WFS and SMS, and extends to programs that converge without reaching a fixpoint. Through ω-limit interpretations, it bridges discrete symbolic reasoning with continuous mathematics, giving formal meaning to programs that compute real-valued limits. 
+
+References     
+
+> S. Abiteboul, R. Hull, and V. Vianu. Foundations of Databases . Addison-Wesley, 1995. B. Alpern and F. B. Schneider. Defining liveness. Inf. Process. Lett. , 21(4):181–185, 1985. K. Atkinson, W. Han, and D. E. Stewart. Numerical Solution of Ordinary Differential Equations .Wiley, 2009. D. P. Bertsekas and J. N. Tsitsiklis. Parallel and Distributed Computation: Numerical Methods .Prentice Hall, 1989.
+
+Diamonds Are Forever 17 
+
+S. Brin and L. Page. The anatomy of a large-scale hypertextual Web search engine. Computer Networks , 30(1):107–117, 1998. S. Ceri, G. Gottlob, and L. Tanca. Logic Programming and Databases . Surveys in Computer Science. Springer, 1990. B. F. Chellas. Modal Logic: An Introduction . Cambridge University Press, 1980. W. Faber, N. Leone, and G. Pfeifer. Recursive Aggregates in Disjunctive Logic Programs: Se-mantics and Complexity. In JELIA , pages 200–212, 2004. M. Gebser, R. Kaminski, B. Kaufmann, and T. Schaub. Multi-shot ASP solving with clingo. 
+
+TPLP , 19(1):27–82, 2019. M. Gelfond. Answer Sets. In Handbook of Knowledge Representation , volume 3, pages 285–316. Elsevier, 2008. M. Gelfond and V. Lifschitz. The stable model semantics for logic programming. In ICLP/SLP ,pages 1070–1080, 1988. David B. Kemp and Peter J. Stuckey. Semantics of logic programs with aggregates. In Pro-ceedings of the 1991 International Symposium on Logic Programming (ISLP) , pages 387–401. MIT Press, 1991. Y. A. Liu and S. D. Stoller. Recursive rules with aggregation: a simple unified semantics. J. Logic Comput. , 32(8):1659–1693, December 2022. P. Lorenzen. Ein dialogisches Konstruktivit¨ atskriterium. In Infinitistic Methods , pages 193–200. Pergamon Press, 1961. C. D. Meyer. Matrix Analysis and Applied Linear Algebra . SIAM, 2000. I. S. Mumick, H. Pirahesh, and R. Ramakrishnan. The magic of duplicates and aggregates. In 
+
+VLDB , pages 264–277, 1990. K. A. Ross and Y. Sagiv. Monotonic Aggregation in Deductive Databases. J. Comput. Syst. Sci. , 54(1):79–97, 1997. E. Skvortsov. Full support of PostgreSQL engine comes to Logica. Google Open Source Blog, September 2023. E. S. Skvortsov, Y. Xia, S. Bowers, and B. Lud¨ ascher. The Logica System: Elevating SQL Databases to Declarative Data Science Engines. In Datalog-2.0 , volume 3801 of CEUR Work-shop Proceedings , pages 69–73, 2024a. E. S. Skvortsov, Y. Xia, and B. Lud¨ ascher. Logica: Declarative Data Science for Mere Mortals. In EDBT , pages 842–845, 2024b. Van-Giang Trinh, Belaid Benhamou, Sylvain Soliman, and Fran¸ cois Fages. On the Boolean Network Theory of Datalog ¬. arXiv preprint arXiv:2504.15417, 2025. Van-Giang Trinh, Sylvain Soliman, Fran¸ cois Fages, and Belaid Benhamou. On the Trap Space Semantics of Normal Logic Programs. In Proceedings of the 41st International Conference on Logic Programming (ICLP 2025) , volume 439 of Electronic Proceedings in Theoretical Computer Science , pages 294–319. Open Publishing Association, 2026. M. H. van Emden and R. A. Kowalski. The semantics of predicate logic as a programming language. J. ACM , 23(4):733–742, 1976. A. Van Gelder. The alternating fixpoint of logic programs with negation. J. Comput. Syst. Sci. ,47(1):185–221, 1993. A. Van Gelder, K. A. Ross, and J. S. Schlipf. The well-founded semantics for general logic programs. J. ACM , 38(3):620–650, 1991. Victor Vianu. Datalog Unchained. In ACM PODS , pages 57–69, June 2021. C. Zaniolo, M. Yang, A. Das, A. Shkapsky, T. Condie, and M. Interlandi. Fixpoint semantics and optimization of recursive Datalog programs with aggregates. TPLP , 17(5-6):1048–1065, September 2017. 18 Skvortsov et al. 
+
+## Supplementary Material 
+
+for “Diamonds Are Forever: Stabilization Semantics for Unrestricted Aggregation and Recursion in Logica” 
+
+All numbered cross-references (e.g., Definition 23, Theorem 5) refer to the main paper. 
+
+Appendix A Formal Syntax of Logica Programs 
+
+The following definitions describe the formal syntax of the fragment of Logica used in this paper. This is a strict subset of the full Logica language, which includes additional features (named arguments, meta-programming, imports) for practical convenience. The fragment defined here is sufficient to express all programs discussed in this paper. 
+
+Definition S1 (Numbers). A number is an integer or a real number. An integer is a finite sequence of decimal digits, optionally preceded by a minus sign. A real number is an integer followed by a decimal point and a finite sequence of decimal digits. 
+
+Definition S2 (Strings). A string is a finite sequence of characters enclosed in double quotes. 
+
+Definition S3 (Literals). A literal is one of the following: 1. a number, 2. a string, 3. the symbol nil ,4. a predicate name (an identifier beginning with a capital letter), 5. a list [ e1, . . . , e n] where each ei is an expression. 
+
+Definition S4 (Expressions). An expression is one of the following: 1. a literal, 2. a variable (an identifier beginning with a lowercase letter), 3. an arithmetic expression e1 op e2 where e1 and e2 are expressions and op ∈{+, −, ∗, /, ^},4. a predicate call P (e1, . . . , e n) where P is a predicate name and each ei is an ex-pression, 5. an aggregating expression (Definition S5). A small set of built-in predicates —for example Range , Sqrt , N, Degree , and ResetProb —is assumed primitive and may appear wherever a predicate call is allowed; for instance, 
+
+Range(n) evaluates to the list [0 , . . . , n − 1]. 
+
+Definition S5 (Aggregating Expressions). An aggregating expression has the form 
+
+Agg {e : - φ} where: 1. Agg is an aggregation operator (e.g., Sum , Count , Min , Max , List ), 2. e is an expression, 3. φ is a proposition. 
+
+Definition S6 (Propositions). A proposition is one of the following: Diamonds Are Forever 19 1. a predicate call P (e1, . . . , e n), 2. a comparison e1 op e2 where e1 and e2 are expressions and op ∈ { =,̸ =, <, >, ≤, ≥} ,where = serves as both equality test and unification (as in Prolog), 3. a membership test e ∈ E where e is an expression and E is an expression evaluating to a list, 4. a negation not φ where φ is a proposition, 2
+
+5. a conjunction φ1 ∧ φ2 where φ1 and φ2 are propositions. 
+
+Definition S7 (Rules). A rule has one of the following forms: 1. Relational: P (e1, . . . , e n) : - φ
+
+2. Functional: P (e1, . . . , e n) = e : - φ
+
+3. Aggregated functional: P (e1, . . . , e n)⊙ = e : - φ
+
+where: 
+
+• P is a predicate name, 
+
+• e1, . . . , e n and e are expressions, 
+
+• φ is a proposition (which may be omitted, denoting true ), 
+
+• ⊙ is an aggregation operator. 
+
+Definition S8 (Logica Program). A Logica program is a finite set of rules. All rules defining a predicate P must share the same signature : the same number of arguments, either all with or all without a functional value, and if aggregated, all with the same aggregation operator ⊙. Disjunction is expressed implicitly: multiple rules with the same predicate in the head represent alternative derivations.   
+
+> 2In the actual Logica syntax, negation is written as ~.
+
+20 Skvortsov et al. 
+
+Appendix B Glossary of Key Terms Formal system (H, A, R ): a set of formulas H, axioms A, and inference rules R (Defi-nition 2). 
+
+Nonmonotonic formal system (H, A, W ): a set of formulas H, axioms A, and rewrite rules W that may retract derived formulas (Definition 5). 
+
+Derivation: a sequence of states starting from axioms A, where each step applies a rewrite rule (Definition 6); equivalently, a path in the derivation graph. (Dramatic interpretations, by contrast, need not be edge-connected; see their entry below.) 
+
+State of derivation: any set of formulas reachable by some derivation (Definition 8). 
+
+Derivation graph: directed graph whose nodes are states of derivation and edges cor-respond to rewrite rule applications (Definition 9). 
+
+Thesis: a set M of states representing a claim about derivation behavior (Definition 7). 
+
+Truth: a thesis M is a truth (i.e., holds) if from any state one can reach a state in M
+
+from which all further states remain in M (Definition 10). 
+
+Theorem: a formula t such that the thesis {T | t ∈ T } holds; equivalently, A ⊩ □♢□ t
+
+(Definition 11, Observation 1). 
+
+Anti-theorem: a formula t such that the thesis {T | t / ∈ T } holds; equivalently, A ⊩□□□ ¬t. Its negation, “not an anti-theorem,” corresponds to the dual modality 
+
+> □
+
+□□ t (Definition 11). 
+
+Definite: a formula that is either a theorem or an anti-theorem (Definition 11). 
+
+Static interpretation: a state of derivation consistent with every truth; in finite sys-tems, precisely the nodes in terminal SCCs of the derivation graph (Definition 17, Theorem 2). 
+
+Fixpoint: a state unchanged by all rewrite rules; every fixpoint is a static interpretation (Definition 18, Observation 3). 
+
+Dramatic interpretation: an infinite sequence of states such that for each true thesis 
+
+M , there exists a step after which all states in the sequence belong to M (Defini-tion 19). 
+
+ω-limit interpretation: a topological limit: a state whose every open neighborhood is a true thesis (Definition 20). 
+
+Thesis Defense game: a three-turn game (Opponent–Defendant–Opponent); a thesis holds iff the Defendant has a winning strategy (Definition 13, Theorem 1). 
+
+Ground nonmonotonic system (H, A, W gr ): instantiation with one rewrite rule per ground atom, used for connection to WFS and SMS (Definition 23).
