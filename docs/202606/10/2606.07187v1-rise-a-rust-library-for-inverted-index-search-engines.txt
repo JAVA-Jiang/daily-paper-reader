@@ -1,0 +1,195 @@
+Title: RISE: A Rust Library for Inverted Index Search Engines
+
+URL Source: https://arxiv.org/pdf/2606.07187v1
+
+Published Time: Mon, 08 Jun 2026 00:57:15 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# RISE: A Rust Library for Inverted Index Search Engines 
+
+# Angelo Savino 
+
+University of Pisa Pisa, Italy a.savino6@studenti.unipi.it 
+
+# Rossano Venturini 
+
+University of Pisa Pisa, Italy rossano.venturini@unipi.it 
+
+## Abstract 
+
+Inverted indexes are a crucial data structure for efficient informa-tion retrieval in large text corpora. They enable fast full-text search by mapping each term to the documents in which it appears, on top of which efficient algorithms quickly retrieve the documents relevant to a user query. We present RISE, a novel inverted index library implemented in Rust, designed to deliver high performance and efficiency for information retrieval tasks. RISE leverages Rust’s safety and performance to provide a robust solution for building and querying inverted indexes, while offering accessible extensi-bility through its expressive trait system. While developing RISE, we revisited the inverted-index literature, thereby reproducing nu-merous prior works using this new test bench. We evaluated RISE against existing libraries, demonstrating competitive query perfor-mance across various datasets and workloads, with speedups of up to 2× over the current state of the art. Our results indicate that RISE is a promising tool for researchers and practitioners in the field of information retrieval. 
+
+## 1 Introduction 
+
+The Inverted Index is a foundational data structure in information retrieval systems [ 16 , 18 , 23 ]. Given a collection of documents, the inverted index maps each unique term to the list of documents in which it appears, enabling efficient query processing by rapidly identifying relevant documents based on their content. Even in modern large-scale contexts, where vector-based retrieval methods are widely used, the inverted index remains a crucial component of hybrid retrieval pipelines as a first-stage candidate generator [23]. Top-𝑘 retrieval ranks the matching documents by a scoring function, most commonly BM25 [ 20 ], and returns the 𝑘 highest-scoring ones; in modern pipelines these candidates are then re-ranked with more precise learning-to-rank neural models [23]. More specifically, inverted indexes also underpin recent approxi-mate nearest-neighbor algorithms for learned sparse retrieval, such as IOQP [ 11 ] and Seismic [ 3], the latter being the fastest solution known to date. Research on inverted indexes centers on two tightly coupled problems: 1) compressing posting lists, so that indexes fit in the memory hierarchy and decode fast, and 2) processing queries effi-ciently over the compressed data. Below we briefly review the rich literature behind this classic data structure. 
+
+Posting list compression. Posting lists are typically gap-en-coded and then compressed [ 18 ]. We consider four representa-tive schemes that span the compression/decoding-speed spectrum: Stream VByte [ 8], a SIMD-friendly byte-aligned variant of variable-byte coding [ 22 ]; Binary Interpolative Coding [ 15 ], which excels on highly clustered lists at the cost of slower decoding; Elias-Fano [ 6 , 7 ], which supports constant-time random access and efficient nextGEQ 
+
+directly on the compressed sequence; and Partitioned Elias-Fano (PEF) [ 17 ], which exploits local clustering by splitting each list into chunks chosen by an 𝜖 -optimal dynamic-programming partition. 
+
+Query processing algorithms. Posting lists can be traversed document-at-a-time (DAAT), term-at-a-time (TAAT), or score-at-a-time (SAAT) [ 23 ]. In this paper we focus on the more popular DAAT algorithms, which process all the posting lists involved in the query simultaneously. Top-𝑘 retrieval can be sped up via WAND [ 2] and MaxScore [ 25 ], which prune the traversal by maintaining per-list score upper bounds and skipping documents that cannot enter the top-𝑘 . Block-Max indexes [ 5] tighten these bounds by storing a maximum score for each block of the posting list, giving rise to the Block-Max WAND and Block-Max MaxScore variants. The original proposal uses fixed-size blocks [ 5]; Mallia et al. [13 ] later refined the approach with variable-size blocks chosen to minimize the size of the resulting auxiliary structure. A number of open-source projects continue to push the efficiency of inverted-index implementations in production settings. Among the most widely adopted are Lucene [ 1], a Java-based search library widely used in industry; Tantivy [ 19 ], a Rust-based search engine library designed for production use; Vespa [ 26 ], a C++ platform for large-scale search and serving. In this work, we present RISE, a new efficient inverted index library written in Rust. Our contributions are as follows: 
+
+• A modern, easy-to-use open-source library for in-verted index research. We release RISE as a self-contained Rust library covering the full retrieval stack: index construc-tion, posting-list compression with state-of-the-art encod-ings — Elias-Fano [ 6, 7], PEF [ 17 ], Binary Interpolative Cod-ing [ 15 ], and Stream VByte [ 8] — and query processing for Ranked AND/OR, and Top-𝑘 retrieval via WAND [ 2], MaxS-core [ 25 ], and the Block-Max variants of both [ 5 ], including variable-size blocks [ 13 ]. The library’s trait-based design decouples storage from query logic, making it straightfor-ward to extend, while the absence of external non-Rust dependencies ensures easy adoption via Cargo. 
+
+• Competitive query-time performance. We evaluate RISE against DS2I and PISA, two state-of-the-art C++ libraries, on two large web collections. RISE matches or surpasses both competitors on query processing while achieving com-parable compression ratios, with speedups of up to 2× com-pared to PISA. 
+
+• Reproduction of key results from the literature. In de-veloping RISE we re-implemented and validated the main compression and query-processing algorithms from the inverted-index literature [ 16 , 18 , 23 ]. Specifically, we repro-duce the compression and query-time results of Partitioned Elias-Fano indexes [ 17 ], Block-Max WAND with fixed-size blocks [ 5], Block-Max WAND with variable-size blocks [ 13 ], 
+
+> arXiv:2606.07187v1 [cs.IR] 5 Jun 2026 Angelo Savino and Rossano Venturini
+
+and the query-length performance analysis of Mackenzie 
+
+et al. [10]. 
+
+Resource availability. RISE is publicly available on GitHub 1 under the permissive MIT license. The repository includes comprehensive documentation of all implemented data structures and algorithms, code examples covering the main use cases, and clear instructions for building, running experiments, and extending the library with other compression algorithms and query processing strategies. 
+
+Novelty. While mature C++ libraries such as DS2I and PISA exist, no equivalent native Rust library covering the full inverted-index stack was previously available. RISE fills this gap, offering a safe, idiomatic alternative that does not sacrifice performance. 
+
+Utility. The library is designed to be accessible to researchers with a basic knowledge of Rust and information retrieval: its trait system makes it straightforward to plug in new compressors or query operators without modifying existing code. 
+
+Impact. Inverted indexes underpin virtually every text search system, and their study remains an active research area driven by the growing adoption of hybrid sparse-dense retrieval pipelines, as evidenced by recent tutorials on this topic [ 10 ]. We expect RISE to serve as a reproducible test bench for future work on compression algorithms and query processing strategies, and we plan to maintain and extend it as the field evolves. 
+
+## 2 Library Design 
+
+The Rust programming language has been steadily gaining popular-ity in recent years due to its combination of safety and performance. Its expressive type system lets us encapsulate behavior through traits, enabling generic code that can be easily extended in the same fashion as many higher-level languages. Performance is not sacri-ficed: the Rust compiler performs monomorphization and inlining to the same extent as C++ templates. Our main objective in devel-oping RISE was to match the query-time performance of the best existing C++ libraries while retaining this trait-based extensibility. In RISE, storage and query logic are decoupled: the index ex-poses the data, while query operators implement retrieval strategies independently of the underlying representation. This separation lets researchers focus on a specific aspect of the retrieval pipeline without touching the rest. The main components, each defined as a trait, are the following: 
+
+• InvertedIndex : a trait representing the inverted index data structure, providing access to posting lists through its asso-ciated PostingListIter .
+
+• PostingListIter : a stateful iterator over the posting list of a term; each element is a (docid, frequency) pair. 
+
+• QueryOperator : a query algorithm that can be executed on any InvertedIndex .
+
+• DocScorer : a scoring function used to rank documents by relevance to a query. Figure 1 shows a high-level overview of the main traits and their interactions in RISE. Any combination of InvertedIndex ,
+
+DocScorer , and QueryOperator can be freely composed: for exam-ple, a new scoring function requires only implementing DocScorer ,
+
+> 1https://github.com/AngeloSav/rise-rs
+
+and it immediately works with every existing index and query operator. 
+
+Figure 1: A high-level overview of the main traits and their interactions in RISE. 
+
+As a further example of this genericity, we generalized the PEF 
+
+𝜖 -optimal partitioning algorithm so that the optimization algorithm can be applied to any compressor by defining an associated type 
+
+CostWindow that specifies the cost function. 
+
+## 3 Experimental Evaluation 
+
+We tested RISE on a variety of datasets and query workloads to evaluate its performance against existing libraries. The tests have been performed on a machine with an Intel Core Ultra 7 265K 20-core CPU, 8 of which are performance cores with a base frequency of 3.9 GHz. The system is equipped with 128 GB of RAM and is running Ubuntu 25.04 (kernel ver. 6.14.0-37-generic). 
+
+Table 1: General information about the datasets used for experimentation 
+
+CW09 CCNews 
+
+Documents 50 131 015 43 530 315 Terms 92 094 694 43 844 574 Postings 15 857 983 641 20 150 335 440 The indexes are fully loaded into memory before each experi-ment, and queries are run in single-threaded mode. We compared RISE against two C++ baselines: DS2I [ 17 ], by Ottaviano and Ven-turini, and PISA [ 14 ], a fork of DS2I that refactors and extends its functionality. 
+
+Datasets. We tested RISE on two standard datasets: CW09 and 
+
+CCNews . CW09 is the ClueWeb 2009 TREC Category B test col-lection, consisting of about 50 million English Web pages crawled between January and February 2009. CCNews is a dataset of news freely available from CommonCrawl 2. Table 1 provides general information about the two datasets. 
+
+Compression and Query Processing. Many compression tech-niques with different space-time tradeoffs have been proposed for inverted indexes [ 18 ]. In RISE, we reimplemented several of them 
+
+> 2https://commoncrawl.org/blog/news-dataset-available RISE : A Rust Library for Inverted Index Search Engines
+
+Table 2: Index sizes (in bits per integer) of the different compressors implemented in RISE on the two datasets, together with the average query time (in milliseconds) of the different query processing strategies. 
+
+static variable BPI R-AND R-OR WAND MaxScore BMW BMMS BMW BMMS dataset index 
+
+CW09 svb 11.7 7.1 72.9 9.7 6.8 3.8 4.6 3.2 3.9 
+
+ef 5.0 9.8 117.3 12.4 10.7 4.4 6.6 3.8 4.9 
+
+upef 4.0 12.3 128.8 15.2 11.0 4.8 6.3 4.0 5.2 
+
+pef 3.7 10.7 123.5 13.3 10.9 4.4 6.1 3.7 4.9 
+
+pefcomp 3.6 11.5 126.9 14.3 11.4 4.6 6.3 3.8 5.1 
+
+bic 3.5 35.5 239.5 45.0 18.8 16.1 12.0 10.1 10.4 
+
+CCNews svb 11.2 6.8 61.8 10.1 7.2 3.7 6.7 2.9 5.4 
+
+ef 4.3 9.8 98.0 13.0 11.1 3.9 7.7 3.4 6.7 
+
+upef 2.9 11.4 109.5 15.4 11.5 4.4 7.9 3.6 7.0 
+
+pef 2.6 10.0 105.9 13.7 11.5 3.8 8.0 3.2 6.9 
+
+pefcomp 2.5 11.7 110.7 14.8 14.4 4.0 8.1 3.3 6.8 
+
+bic 2.5 32.8 205.0 45.8 19.6 15.1 13.7 9.7 12.4 
+
+Table 3: Index sizes (in GiB) of different compressors on the two datasets, with dataset sorted by URLs and with recursive graph bisection. 
+
+CW09 CCNews 
+
+index Random URL RGB Random URL RGB 
+
+svb 44.68 43.29 43.00 54.09 53.85 52.80 
+
+upef 19.10 16.63 14.96 20.31 19.74 13.50 
+
+pef 18.44 15.24 13.74 19.45 18.86 12.02 
+
+bic 19.18 14.24 12.98 20.26 18.72 11.65 from scratch to keep the library self-contained: Elias-Fano [ 6 , 7](ef ), Partitioned Elias-Fano [ 17 ] in its uniform ( upef ) and vari-able ( pef ) partitioning variants, Binary Interpolative coding [ 15 ](bic ), and StreamVByte [ 8] ( svb ). The original Partitioned Elias-Fano [ 17 ] uses three encoding methods: Elias-Fano, characteristic vector, and all-ones sequence. We also implemented a new variant called pefcomp with a fourth option, which handles almost-full sequences by storing their complement. As we will see, this brings the compression of pefcomp on par with Binary Interpolative Cod-ing, the most space-efficient compressor in our comparison, while retaining the time efficiency of Partitioned Elias-Fano. We first evaluated the efficiency of the compressors on our datasets under three document orderings: a random permutation, the original URL ordering, and the assignment produced by recur-sive graph bisection [ 4, 12 ]. URL ordering is known to be a good heuristic when such identifiers are available [ 21 ], particularly on Web crawls. As shown in Table 3, random ordering is uniformly the worst across all gap-based compressors, while recursive graph bi-section always produces the smallest indexes. The gain of RGB over URL ordering depends strongly on the dataset: on CW09 , where URLs already cluster related documents, RGB shrinks the pef in-dex by about 10% (from 15 .24 to 13 .74 GiB); on CCNews , where URLs carry much less structural signal, the same reordering shrinks the pef index by roughly 36% (from 18 .86 to 12 .02 GiB), with sim-ilar gains for upef and bic . svb benefits only marginally, as its byte-aligned encoding is largely insensitive to gap distributions. The improvement comes with no measurable loss in query perfor-mance, and for this reason all subsequent experiments use indexes reordered with recursive graph bisection. On top of these compressors, RISE implements the main query processing strategies in use today: ranked AND (R-AND), ranked OR (R-OR), WAND, and MaxScore, together with their block-max variants Block-Max WAND (BMW) and Block-Max MaxScore (BMMS), in both static and variable-block partitioning. We create the block-max indexes using the approaches described by Ding and Suel [5] for static partitioning, and by Mallia et al. [13 ] for variable par-titioning. Since our aim is to evaluate the cost of the algorithms themselves, we store the block-max indexes in their uncompressed form, as it provides the fastest access times. In RISE we implement a different version of BMMS compared to PISA, adapted from Apache Lucene’s block-based scoring strategy. We use a double windowing approach: in the outer window, the block maxima drive the MaxScore essential/non-essential split; in an inner window of fixed size, we score all documents without consulting the top-𝑘 heap, and update it only at the end of the window. This amortizes the cost of updating the heap across many documents, making queries more efficient when the documents to evaluate are dense (e.g. long or common-term queries). We tuned the block size for the static partitioning approach and the parameter 𝜆 for the variable partitioning approach, which represents the fixed cost associated with creating a new block. The best performance is achieved with a static block size of 128 or 
+
+𝜆 = 12 for variable-block partitioning, consistent with the defaults used by PISA and DS2I. We adopt these values in all the remaining experiments. Table 2 reports the index size in bits per integer (BPI) and the average query time (in ms) for every compressor/algorithm com-bination in RISE. svb is the fastest but uses more than double the BPI of the PEF family. pefcomp closes the space gap with bic —Angelo Savino and Rossano Venturini 
+
+Table 4: Query performance across the three libraries on the two datasets, restricted to three representative compressors (svb , pef , bic ). For DS2I, we use its varint-G8IU encoding when comparing against the StreamVByte indexes of the other libraries. The query times are measured in millisec-onds. 
+
+variable R-OR WAND MaxScore BMW BMMS index lib 
+
+> CW09
+
+svb RISE 72.9 9.7 6.8 3.2 3.9 PISA 110.9 9.5 5.9 3.7 8.5 DS2I 64.2 9.1 5.2 3.6 -
+
+pef RISE 123.5 13.3 10.9 3.7 4.9 PISA 160.4 12.8 10.4 4.0 10.8 DS2I 114.8 12.3 8.9 3.7 -
+
+bic RISE 239.5 45.0 18.8 10.1 10.4 PISA 312.8 52.0 19.6 12.4 19.5 DS2I 236.6 46.6 17.2 10.1 -
+
+> CCNews
+
+svb RISE 61.8 10.1 7.2 2.9 5.4 PISA 94.2 11.2 7.0 3.4 9.7 DS2I 51.5 9.8 5.6 3.3 -
+
+pef RISE 105.9 13.7 11.5 3.2 6.9 PISA 132.5 14.3 12.3 3.5 12.6 DS2I 92.3 13.2 9.8 3.4 -
+
+bic RISE 205.0 45.8 19.6 9.7 12.4 PISA 251.9 49.6 21.0 10.9 21.7 DS2I 189.9 45.1 18.1 9.5 -the smallest but slowest by a wide margin — while retaining the query times of the rest of the PEF family, a direct effect of its fourth encoding method for almost-full sequences. Across query strate-gies, variable-block partitioning is consistently faster than static partitioning for both BMW and BMMS, and variable-partition BMW achieves the overall best query time on both datasets. 
+
+Impact of query length. We evaluate the impact of query length on the performance of the different query algorithms. We use the 
+
+CCNews dataset and we construct indexes using StreamVByte, as it is the one that offers the best performance in terms of query time. We then divide our query workload into different batches, where batch 𝑖 contains all the queries with exactly 𝑖 terms. The performance of all algorithms degrades as the number of terms increases, but the slopes differ sharply. Block-max algorithms dom-inate on short queries, where their upper-bound skipping is most effective: at 2 terms, BMW takes about 1.5 ms against roughly 6
+
+ms for MaxScore, and BMW is always faster than standard WAND. MaxScore is by far the flattest curve, growing only from about 4.5
+
+ms at 1 term to 17 .5 ms at 9+ terms. It overtakes the block-max algorithms past 5−6 terms; in the longest bucket, MaxScore reaches roughly 17 .5 ms against 32 ms for BMW. Block-max algorithms are thus preferred when queries are short and keyword-matching is the primary goal, while for longer queries or query expansion MaxScore’s lower overhead makes it the better choice. These results are in line with the ones reported by Mackenzie et al. [10 ], and we consider them to be reproduced by our experiments. 
+
+Cross-library comparison. We now compare the query perfor-mance of RISE against DS2I and PISA on the same indexes, re-stricting the comparison to three representative compressors: svb 
+
+(fastest), pef (best space-time tradeoff in the PEF family), and bic 
+
+(most space-efficient). We adopt a fixed block size of 128 and 𝜆 = 12 
+
+across all libraries; DS2I does not implement BMMS, so those entries are missing in Table 4. For the standard union algorithms (Ranked OR, WAND, MaxS-core), DS2I remains the best performer, especially when the number of documents is large. This is the case especially in Ranked OR, where no document skipping is performed. PISA is the slowest library, likely because its heavier use of C++ abstractions makes inlining harder for the compiler. By contrast, RISE’s use of traits and immutable references yields better-compiled code, resulting in query-time performance much closer to DS2I than to PISA, despite using higher-level language features. For block-max algorithms, RISE is reliably faster than both PISA and DS2I on BMW, in both static and variable partitioning. Fur-thermore, the BMMS implementation in RISE is much faster than the one in PISA, with a speedup of up to 2× in the variable-block version of the algorithm. Overall, RISE matches or improves on the state of the art on the algorithms that matter the most in practice, while keeping the engineering benefits of a high-level, memory-safe implementation. 
+
+## 4 Conclusion 
+
+We introduced RISE, a modern inverted index library written in Rust, designed to provide a high-performance native implementa-tion for efficient keyword retrieval. We have shown that RISE offers query performance that is often faster than state-of-the-art libraries, while providing a safe and modular codebase. We believe that RISE can be a valuable tool for researchers and practitioners in the field of information retrieval. Possible further work includes the imple-mentation of other compression techniques, such as PForDelta [ 27 ]and QMX [ 24 ], and Roaring bitmaps [ 9], block-based scoring, re-cently adopted in many commercial search engines, and specialized support for learned sparse retrieval datasets. We plan to keep ex-tending and maintaining RISE in the future, to ensure its continued relevance and performance. 
+
+## References         
+
+> [1] Apache Software Foundation. 2026. Apache Lucene. https://github.com/apache/ lucene. Accessed: May 2026. [2] Andrei Z. Broder, David Carmel, Michael Herscovici, Aya Soffer, and Jason Zien. 2003. Efficient query evaluation using a two-level retrieval process. In
+> Proceedings of the Twelfth International Conference on Information and Knowledge Management (CIKM) . 426–434. doi:10.1145/956863.956944 [3] Sebastian Bruch, Franco Maria Nardini, Cosimo Rulli, and Rossano Venturini. 2024. Efficient Inverted Indexes for Approximate Retrieval over Learned Sparse Representations. In Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR) . 152–162. doi:10. 1145/3626772.3657769 [4] Laxman Dhulipala, Igor Kabiljo, Brian Karrer, Giuseppe Ottaviano, Sergey Pupyrev, and Alon Shalita. 2016. Compressing Graphs and Indexes with Re-cursive Graph Bisection. In Proceedings of the 22nd ACM SIGKDD Interna-tional Conference on Knowledge Discovery and Data Mining (KDD) . 1535–1544. doi:10.1145/2939672.2939862 [5] Shuai Ding and Torsten Suel. 2011. Faster top-k document retrieval using block-max indexes. In Proceedings of the 34th International ACM SIGIR Conference on
+
+RISE : A Rust Library for Inverted Index Search Engines 
+
+Research and Development in Information Retrieval (SIGIR) . 993–1002. doi:10. 1145/2009916.2010048 [6] Peter Elias. 1974. Efficient Storage and Retrieval by Content and Address of Static Files. J. ACM 21, 2 (April 1974), 246–260. doi:10.1145/321812.321820 [7] Robert M. Fano. 1971. On the Number of Bits Required to Implement an Associative Memory . https://books.google.it/books?id=07DeGwAACAAJ [8] Daniel Lemire, Nathan Kurz, and Christoph Rupp. 2018. Stream VByte: Faster Byte-Oriented Integer Compression. Inform. Process. Lett. 130 (Feb. 2018), 1–6. doi:10.1016/j.ipl.2017.09.011 [9] Daniel Lemire, Gregory Ssi-Yan-Kai, and Owen Kaser. 2016. Consistently faster and smaller compressed bitmaps with Roaring. Software: Practice and Experience 
+
+46, 11 (2016), 1547–1569. doi:10.1002/spe.2402 [10] Joel Mackenzie, Sean MacAvaney, Antonio Mallia, and Michał Siedlaczek. 2026. Practical, Efficient, In-Memory Inverted Indexes. In Advances in Information Retrieval . 3–10. doi:10.1007/978-3-032-21321-1_1 [11] Joel Mackenzie, Matthias Petri, and Luke Gallagher. 2022. IOQP: A simple Impact-Ordered Query Processor written in Rust. In Proceedings of the International Conference on Design of Experimental Search and Information REtrieval Systems (DESIRES) . 22–34. [12] Joel Mackenzie, Matthias Petri, and Alistair Moffat. 2021. Faster Index Reordering with Bipartite Graph Partitioning. In Proceedings of the 44th International ACM SIGIR Conference on Research and Development in Information Retrieval . 1910– 1914. [13] Antonio Mallia, Giuseppe Ottaviano, Elia Porciani, Nicola Tonellotto, and Rossano Venturini. 2017. Faster BlockMax WAND with Variable-sized Blocks. In 
+
+Proceedings of the 40th International ACM SIGIR Conference on Research and Devel-opment in Information Retrieval (SIGIR) . 625–634. doi:10.1145/3077136.3080780 [14] Antonio Mallia, Michal Siedlaczek, Joel Mackenzie, and Torsten Suel. 2019. PISA: Performant Indexes and Search for Academia. In Proceedings of the Open-Source IR Replicability Challenge co-located with 42nd International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR) . 50–56. http://ceur-ws.org/Vol-2409/docker08.pdf [15] Alistair Moffat and Lang Stuiver. 2000. Binary Interpolative Coding for Effective Index Compression. Information Retrieval 3, 1 (July 2000), 25–47. doi:10.1023/A: 1013002601898 [16] Alistair Moffat and Justin Zobel. 2006. Inverted Files for Text Search Engines. 
+
+Comput. Surveys 38, 2 (2006). doi:10.1145/1132956.1132959 [17] Giuseppe Ottaviano and Rossano Venturini. 2014. Partitioned Elias-Fano indexes. In Proceedings of the 37th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR) . 273–282. doi:10.1145/2600428. 2609615 [18] Giulio Ermanno Pibiri and Rossano Venturini. 2020. Techniques for Inverted Index Compression. Comput. Surveys 53, 6 (Dec. 2020), 125:1–125:36. doi:10. 1145/3415148 [19] Quickwit OSS. 2026. Tantivy: A full-text search engine library written in Rust. https://github.com/quickwit-oss/tantivy. Accessed: May 2026. [20] Stephen Robertson, Steve Walker, Susan Jones, Micheline Hancock-Beaulieu, and Mike Gatford. 1994. Okapi at TREC-3. [21] Fabrizio Silvestri. 2007. Sorting Out the Document Identifier Assignment Problem. In Advances in Information Retrieval . 101–112. doi:10.1007/978-3-540-71496-5_12 [22] Alexander A. Stepanov, Anil R. Gangolli, Daniel E. Rose, Ryan J. Ernst, and Paramjit S. Oberoi. 2011. SIMD-based decoding of posting lists. In Proceedings of the 20th ACM International Conference on Information and Knowledge Management (CIKM) . 317–326. doi:10.1145/2063576.2063627 [23] Nicola Tonellotto, Craig Macdonald, and Iadh Ounis. 2018. Efficient Query Processing for Scalable Web Search. Foundations and Trends in Information Retrieval 12, 4–5 (Dec. 2018), 319–500. doi:10.1561/1500000057 [24] Andrew Trotman. 2014. Compression, SIMD, and Postings Lists. In Proceed-ings of the 19th Australasian Document Computing Symposium (Melbourne, VIC, Australia) (ADCS) . 50–57. doi:10.1145/2682862.2682870 [25] Howard Turtle and James Flood. 1995. Query evaluation: Strategies and opti-mizations. Information Processing & Management 31, 6 (Nov. 1995), 831–850. doi:10.1016/0306-4573(95)00020-H [26] Vespa AI. 2026. Vespa. https://github.com/vespa-engine/vespa. Accessed: May 2026. [27] Marcin Zukowski, Sándor Heman, Niels Nes, and Peter Boncz. 2006. Super-Scalar RAM-CPU Cache Compression. In Proceedings of the 22nd International Conference on Data Engineering (ICDE) . 59–59. doi:10.1109/ICDE.2006.150

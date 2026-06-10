@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-10",
+  "date": "2026-06-10",
+  "generated_at": "2026-06-10T22:17:34",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/10/2606.07187v1-rise-a-rust-library-for-inverted-index-search-engines",
+      "section": "deep",
+      "title_en": "RISE: A Rust Library for Inverted Index Search Engines",
+      "authors": "Angelo Savino, Rossano Venturini",
+      "date": "2026-06-05",
+      "pdf": "https://arxiv.org/pdf/2606.07187v1",
+      "score": "8.0",
+      "evidence": "提供一个倒排索引的Rust库并附带源代码",
+      "tldr": "倒排索引是信息检索的核心数据结构，但现有库在性能和安全性上存在不足。RISE库基于Rust语言实现，利用其内存安全和高性能特性，通过trait系统提供可扩展性，并复现了文献中的多种算法。在多个数据集和负载下，RISE的查询性能比现有最先进库快2倍。RISE为信息检索领域的研究者和从业者提供了一个高效、安全、可扩展的工具。",
+      "tags": "query:code-paper",
+      "abstract_en": "Inverted indexes are a crucial data structure for efficient information retrieval in large text corpora. They enable fast full-text search by mapping each term to the documents in which it appears, on top of which efficient algorithms quickly retrieve the documents relevant to a user query. We present RISE, a novel inverted index library implemented in Rust, designed to deliver high performance and efficiency for information retrieval tasks. RISE leverages Rust's safety and performance to provide a robust solution for building and querying inverted indexes, while offering accessible extensibility through its expressive trait system. While developing RISE, we revisited the inverted-index literature, thereby reproducing numerous prior works using this new test bench. We evaluated RISE against existing libraries, demonstrating competitive query performance across various datasets and workloads, with speedups of up to 2x over the current state of the art. Our results indicate that RISE is a promising tool for researchers and practitioners in the field of information retrieval.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/10/2606.05249v1-swe-infrabench-evaluating-language-models-on-cloud-infrastructure-code",
+      "section": "quick",
+      "title_en": "SWE-InfraBench: Evaluating Language Models on Cloud Infrastructure Code",
+      "authors": "Natalia Tarasova, Enrique Balp-Straffon, Aleksei Iancheruk, Yevhenii Sielskyi, Nikita Kozodoi, Liam H. Byrne, Jack Butler, Dayuan Jiang, Marcin Czelej, Andrew Ang, Yash Shah, Roi Blanco, Sergei Ivanov",
+      "date": "2026-06-03",
+      "pdf": "https://arxiv.org/pdf/2606.05249v1",
+      "score": "6.0",
+      "evidence": "提供云基础设施代码基准测试，与数据中心和任务调度相关",
+      "tldr": "现有大语言模型在基础设施即代码（IaC）方面的能力评估不足，尤其是缺乏对增量编码编辑的基准。SWE-InfraBench针对这一问题，从真实AWS CDK代码库中构建任务，要求模型根据自然语言指令修改现有代码并通过测试用例。评估显示最先进模型Sonnet 3.7仅34%成功率，推理模型DeepSeek R1为24%。该基准揭示了LLM在云基础设施代码编辑上的严重局限，为未来改进提供了方向。",
+      "tags": "query:code-paper",
+      "abstract_en": "Building infrastructure-as-code (IaC) in cloud computing is a critical task, underpinning the reliability, scalability, and security of modern software systems. Despite the remarkable progress of large language models (LLMs) in software engineering -- demonstrated across many dedicated benchmarks -- their capabilities in developing IaC remain underexplored. Unlike existing IaC benchmarks that predominantly center on declarative paradigms such as Terraform and involve generating entire codebases from scratch, our benchmark reflects the incremental code edits common in enterprise development with imperative tools like the AWS CDK. We present SWE-InfraBench, a diverse evaluation dataset sourced from dozens of real-world IaC codebases that challenge LLMs to perform realistic code modifications in AWS CDK repositories. Each example requires models to implement changes to existing codebases based on natural language instructions, with success determined by passing provided test cases. These tasks demand sophisticated reasoning about cloud resource dependencies and implementation patterns beyond conventional code generation challenges. Our evaluation results reveal significant limitations in current LLMs showing that even state-of-the-art systems struggle with many tasks -- the best model, Sonnet 3.7, succeeds in only 34\\% of cases, while specialized reasoning models like DeepSeek R1 achieve just 24% success. The SWE-InfraBench dataset is available at: https://www.kaggle.com/datasets/64e59070fd51c0278560b01eb5dc4f3c447d5268cdabe5a350d2969e4413fea5",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/10/2606.10728v1-denovoswe-scaling-long-horizon-environments-for-generating-entire-repositories-from-scratch",
+      "section": "quick",
+      "title_en": "DeNovoSWE: Scaling Long-Horizon Environments for Generating Entire Repositories from Scratch",
+      "authors": "Jiale Zhao, Guoxin Chen, Fanzhe Meng, Wayne Xin Zhao, Ruihua Song, Ji-Rong Wen, Kai Jia",
+      "date": "2026-06-09",
+      "pdf": "https://arxiv.org/pdf/2606.10728v1",
+      "score": "6.0",
+      "evidence": "提供了用于完整仓库生成的大规模数据集，暗示包含源代码",
+      "tldr": "大型语言模型代码智能体需要从零生成完整代码仓库，但缺乏大规模可验证训练数据。本文提出DeNovoSWE数据集，包含4818个高质量实例，通过沙盒自动化工作流和分治修复策略构建，并采用难度感知轨迹过滤。微调Qwen3-30B-A3B后，在BeyondSWE-Doc2Repo基准上从5.8%提升至47.2%，显著提升长周期软件工程性能。",
+      "tags": "query:code-paper",
+      "abstract_en": "As the capabilities of LLM-based code agents continue to advance, their expected role is expanding beyond localized bug fixing in existing codebases toward architecting and implementing complete software repositories from high-level specifications. However, training agents for such long-horizon software engineering tasks remains difficult due to the scarcity of large-scale, verifiable whole-repository generation data. In this paper, we introduce \\textbf{DeNovoSWE}, a large-scale dataset for whole-repository generation. DeNovoSWE comprises 4,818 high-quality instances, where each instance requires generating a complete repository from documentation. Our dataset is automatically constructed through a carefully designed sandboxed agentic workflow, enabling scalable curation without human annotation. DeNovoSWE is constructed with \"divide and conquer\" and critic-repair philosophy. To balance data quality and diversity, we further introduce a difficulty-aware trajectory filtering strategy. Fine-tuning Qwen3-30B-A3B on DeNovoSWE substantially improves long-horizon SWE performance, raising its score on the challenging BeyondSWE-Doc2Repo benchmark from 5.8% to 47.2%.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

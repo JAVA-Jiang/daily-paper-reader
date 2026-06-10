@@ -1,0 +1,141 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-10T22:15:25.099764+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.07187v1",
+      "source": "arxiv",
+      "title": "RISE: A Rust Library for Inverted Index Search Engines",
+      "abstract": "Inverted indexes are a crucial data structure for efficient information retrieval in large text corpora. They enable fast full-text search by mapping each term to the documents in which it appears, on top of which efficient algorithms quickly retrieve the documents relevant to a user query. We present RISE, a novel inverted index library implemented in Rust, designed to deliver high performance and efficiency for information retrieval tasks. RISE leverages Rust's safety and performance to provide a robust solution for building and querying inverted indexes, while offering accessible extensibility through its expressive trait system. While developing RISE, we revisited the inverted-index literature, thereby reproducing numerous prior works using this new test bench. We evaluated RISE against existing libraries, demonstrating competitive query performance across various datasets and workloads, with speedups of up to 2x over the current state of the art. Our results indicate that RISE is a promising tool for researchers and practitioners in the field of information retrieval.",
+      "authors": [
+        "Angelo Savino",
+        "Rossano Venturini"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-06-05T11:56:14+00:00",
+      "link": "https://arxiv.org/pdf/2606.07187v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides a Rust library for inverted indexes with source code",
+      "llm_evidence_cn": "提供一个倒排索引的Rust库并附带源代码",
+      "llm_evidence": "提供一个倒排索引的Rust库并附带源代码",
+      "canonical_evidence": "提供一个倒排索引的Rust库并附带源代码",
+      "llm_tldr_en": "RISE is a high-performance Rust library for building and querying inverted indexes, enabling reproducibility of prior works through its extensible trait system.",
+      "llm_tldr_cn": "倒排索引是信息检索的核心数据结构，但现有实现缺乏高效可扩展的库。本文提出RISE，一个用Rust实现的高性能倒排索引库，利用Rust的安全性和性能提供健壮的索引构建与查询功能。库通过trait系统支持灵活扩展，并复现了大量先前工作。",
+      "llm_tldr": "倒排索引是信息检索的核心数据结构，但现有实现缺乏高效可扩展的库。本文提出RISE，一个用Rust实现的高性能倒排索引库，利用Rust的安全性和性能提供健壮的索引构建与查询功能。库通过trait系统支持灵活扩展，并复现了大量先前工作。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.05249v1",
+      "source": "arxiv",
+      "title": "SWE-InfraBench: Evaluating Language Models on Cloud Infrastructure Code",
+      "abstract": "Building infrastructure-as-code (IaC) in cloud computing is a critical task, underpinning the reliability, scalability, and security of modern software systems. Despite the remarkable progress of large language models (LLMs) in software engineering -- demonstrated across many dedicated benchmarks -- their capabilities in developing IaC remain underexplored. Unlike existing IaC benchmarks that predominantly center on declarative paradigms such as Terraform and involve generating entire codebases from scratch, our benchmark reflects the incremental code edits common in enterprise development with imperative tools like the AWS CDK. We present SWE-InfraBench, a diverse evaluation dataset sourced from dozens of real-world IaC codebases that challenge LLMs to perform realistic code modifications in AWS CDK repositories. Each example requires models to implement changes to existing codebases based on natural language instructions, with success determined by passing provided test cases. These tasks demand sophisticated reasoning about cloud resource dependencies and implementation patterns beyond conventional code generation challenges. Our evaluation results reveal significant limitations in current LLMs showing that even state-of-the-art systems struggle with many tasks -- the best model, Sonnet 3.7, succeeds in only 34\\% of cases, while specialized reasoning models like DeepSeek R1 achieve just 24% success. The SWE-InfraBench dataset is available at: https://www.kaggle.com/datasets/64e59070fd51c0278560b01eb5dc4f3c447d5268cdabe5a350d2969e4413fea5",
+      "authors": [
+        "Natalia Tarasova",
+        "Enrique Balp-Straffon",
+        "Aleksei Iancheruk",
+        "Yevhenii Sielskyi",
+        "Nikita Kozodoi",
+        "Liam H. Byrne",
+        "Jack Butler",
+        "Dayuan Jiang",
+        "Marcin Czelej",
+        "Andrew Ang",
+        "Yash Shah",
+        "Roi Blanco",
+        "Sergei Ivanov"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-03T12:48:53+00:00",
+      "link": "https://arxiv.org/pdf/2606.05249v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Provides code benchmark for cloud infrastructure; relevant to data centers and task scheduling via IaC",
+      "llm_evidence_cn": "提供云基础设施代码基准测试，与数据中心和任务调度相关",
+      "llm_evidence": "提供云基础设施代码基准测试，与数据中心和任务调度相关",
+      "canonical_evidence": "提供云基础设施代码基准测试，与数据中心和任务调度相关",
+      "llm_tldr_en": "SWE-InfraBench evaluates LLMs on real-world cloud infrastructure code (IaC) with incremental edits, providing a benchmark and likely open-source code that can aid in scheduling and data center automation.",
+      "llm_tldr_cn": "现有基础设施即代码基准多关注Terraform等声明式范式，缺乏对企业常用增量编辑场景的评估。本文提出SWE-InfraBench，从数十个真实IaC代码库中构建评估数据集，涵盖AWS CDK等命令式工具，挑战LLM在云基础设施代码开发中的能力。实验表明当前LLM在该任务上存在显著不足。该基准及所附代码为数据中心自动化中的任务调度研究提供了可复用的评估工具。",
+      "llm_tldr": "现有基础设施即代码基准多关注Terraform等声明式范式，缺乏对企业常用增量编辑场景的评估。本文提出SWE-InfraBench，从数十个真实IaC代码库中构建评估数据集，涵盖AWS CDK等命令式工具，挑战LLM在云基础设施代码开发中的能力。实验表明当前LLM在该任务上存在显著不足。该基准及所附代码为数据中心自动化中的任务调度研究提供了可复用的评估工具。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.10728v1",
+      "source": "arxiv",
+      "title": "DeNovoSWE: Scaling Long-Horizon Environments for Generating Entire Repositories from Scratch",
+      "abstract": "As the capabilities of LLM-based code agents continue to advance, their expected role is expanding beyond localized bug fixing in existing codebases toward architecting and implementing complete software repositories from high-level specifications. However, training agents for such long-horizon software engineering tasks remains difficult due to the scarcity of large-scale, verifiable whole-repository generation data. In this paper, we introduce \\textbf{DeNovoSWE}, a large-scale dataset for whole-repository generation. DeNovoSWE comprises 4,818 high-quality instances, where each instance requires generating a complete repository from documentation. Our dataset is automatically constructed through a carefully designed sandboxed agentic workflow, enabling scalable curation without human annotation. DeNovoSWE is constructed with \"divide and conquer\" and critic-repair philosophy. To balance data quality and diversity, we further introduce a difficulty-aware trajectory filtering strategy. Fine-tuning Qwen3-30B-A3B on DeNovoSWE substantially improves long-horizon SWE performance, raising its score on the challenging BeyondSWE-Doc2Repo benchmark from 5.8% to 47.2%.",
+      "authors": [
+        "Jiale Zhao",
+        "Guoxin Chen",
+        "Fanzhe Meng",
+        "Wayne Xin Zhao",
+        "Ruihua Song",
+        "Ji-Rong Wen",
+        "Kai Jia"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-09T11:37:15+00:00",
+      "link": "https://arxiv.org/pdf/2606.10728v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Provides a large-scale dataset for whole-repository generation, implying source code is included",
+      "llm_evidence_cn": "提供了用于完整仓库生成的大规模数据集，暗示包含源代码",
+      "llm_evidence": "提供了用于完整仓库生成的大规模数据集，暗示包含源代码",
+      "canonical_evidence": "提供了用于完整仓库生成的大规模数据集，暗示包含源代码",
+      "llm_tldr_en": "DeNovoSWE introduces a dataset of 4,818 instances for generating entire software repositories from documentation, enabling training of long-horizon code agents.",
+      "llm_tldr_cn": "现有基于LLM的代码智能体在处理长跨度软件工程任务时缺乏足够的训练数据。本文提出DeNovoSWE，一个包含4,818个高质量实例的大规模数据集，每个实例要求从文档生成完整的代码仓库。通过精心设计的沙盒环境自动构建，该数据集为训练能够进行仓库级代码生成的智能体提供了基础，推动了代码生成领域的发展。",
+      "llm_tldr": "现有基于LLM的代码智能体在处理长跨度软件工程任务时缺乏足够的训练数据。本文提出DeNovoSWE，一个包含4,818个高质量实例的大规模数据集，每个实例要求从文档生成完整的代码仓库。通过精心设计的沙盒环境自动构建，该数据集为训练能够进行仓库级代码生成的智能体提供了基础，推动了代码生成领域的发展。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
