@@ -1,0 +1,378 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-11T21:01:31.100814+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2606.11440v1",
+      "source": "arxiv",
+      "title": "INFRAMIND: Infrastructure-Aware Multi-Agent Orchestration",
+      "abstract": "Existing multi-agent LLM orchestration methods, ranging from brute-force ensembles to learned routers, select models and topologies based on task and model features. However, these methods do not consider the runtime state of the serving infrastructure. On shared GPU clusters under concurrent load, this infrastructure blindness causes systematic resource underutilization: preferred models accumulate deep request queues while equally capable alternatives sit idle. In multi-agent pipelines, where each query triggers multiple sequential model calls, these delays then compound across every downstream step. Closing this gap is challenging because the relevant infrastructure signals (queue depths, KV-cache pressure, latencies) are dynamic and noisy, and they must drive three different decisions: planning, per-step routing, and scheduling. We introduce INFRAMIND, a framework that makes the entire multi-agent stack infrastructure-aware. An infra-aware planner conditions topology and role selection on real-time system load and remaining budget, biasing toward simpler graphs under congestion and richer ones at low load. An infra-aware executor then observes per-model queue depths, cache utilization, and response latencies at each agent step to decide which model to call and how deeply to reason; a budget-aware scheduler further reorders each model's queue so that urgent requests are served first. Cast as a hierarchical constrained MDP and solved end-to-end via reinforcement learning, the system learns to balance quality against latency automatically. Across five benchmarks, INFRAMIND delivers up to +7.6 pp accuracy over the prior baseline at low load with up to 7x lower latency, and sustains up to 99.9% SLO compliance under high load where every baseline drops below 50%.",
+      "authors": [
+        "Ahasan Kabir",
+        "Jiaqi Xue",
+        "Mengxin Zheng",
+        "Qian Lou"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-09T20:50:12+00:00",
+      "link": "https://arxiv.org/pdf/2606.11440v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "infrastructure-aware multi-agent orchestration for GPU clusters, directly addresses task scheduling in data centers",
+      "llm_evidence_cn": "面向GPU集群的基础设施感知多智能体编排，直接解决数据中心任务调度问题",
+      "llm_evidence": "面向GPU集群的基础设施感知多智能体编排，直接解决数据中心任务调度问题",
+      "canonical_evidence": "面向GPU集群的基础设施感知多智能体编排，直接解决数据中心任务调度问题",
+      "llm_tldr_en": "INFRAMIND proposes a multi-agent LLM orchestration method that considers runtime infrastructure state (queue depths, KV-cache pressure) to improve resource utilization under concurrent load.",
+      "llm_tldr_cn": "现有多智能体编排方法忽视运行时基础设施状态，导致GPU集群资源利用率低下。INFRAMIND提出了一种基础设施感知的编排方法，动态考虑队列深度、KV缓存压力等信号，在共享集群上自适应选择模型和拓扑。实验表明，该方法能显著减少请求队列累积并提高整体吞吐量，为数据中心任务调度提供了新思路。",
+      "llm_tldr": "现有多智能体编排方法忽视运行时基础设施状态，导致GPU集群资源利用率低下。INFRAMIND提出了一种基础设施感知的编排方法，动态考虑队列深度、KV缓存压力等信号，在共享集群上自适应选择模型和拓扑。实验表明，该方法能显著减少请求队列累积并提高整体吞吐量，为数据中心任务调度提供了新思路。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.12343v1",
+      "source": "arxiv",
+      "title": "Fair Comparison of Scheduling Algorithms on Heterogeneous Edge Clusters: A Continuous Adaptive Benchmark",
+      "abstract": "Modern Artificial Intelligence (AI) workloads deployed across the heterogeneous tiers of an edge--cloud continuum must satisfy multi-dimensional Service Level Objectives (SLOs) over latency, throughput, and output quality. For each incoming task, the scheduler picks both a target node and a processing mode (e.g., full or reduced inference precision). We call this class of problems \\emph{Continuous Multi-Mode Scheduling} (CMMS). Comparing CMMS algorithms fairly is difficult because prior studies typically evaluate each controller in its own stack, under a single workload, and without reporting per-decision overhead. To close these gaps, we present an open source benchmark platform that features (i) a unified controller interface, (ii) a closed-loop workload driver covering multiple workload patterns, and (iii) dual-metric SLO scoring that reports raw SLO (overall compliance) and steady-state SLO (compliance during stable operation) separately. Running six controllers across five cluster configurations and two load regimes (424 episodes), we find that controller rankings are strongly configuration-dependent: a deep reinforcement-learning winner under light workloads loses to a rule-based heuristic by nearly 29 percentage points once load intensifies, at roughly 500$\\times$ the per-decision operational overhead. We further show that separating raw from steady-state SLOs exposes switching costs that a single aggregate score would otherwise conflate.",
+      "authors": [
+        "Zihang Wang",
+        "Boris Sedlak",
+        "Juan Luis Herrera",
+        "Schahram Dustdar"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-06-10T17:16:14+00:00",
+      "link": "https://arxiv.org/pdf/2606.12343v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source benchmark for scheduling on heterogeneous edge clusters and data centers",
+      "llm_evidence_cn": "面向异构边缘集群和数据中心调度的开源基准",
+      "llm_evidence": "面向异构边缘集群和数据中心调度的开源基准",
+      "canonical_evidence": "面向异构边缘集群和数据中心调度的开源基准",
+      "llm_tldr_en": "Fair Comparison of Scheduling Algorithms provides an open-source benchmark for Continuous Multi-Mode Scheduling on edge-cloud data centers.",
+      "llm_tldr_cn": "该论文为异构边缘云数据中心的连续多模式调度问题提供了开源基准平台。平台统一控制器接口和性能度量，支持公平比较调度算法。由于明确开源且主题直接匹配任务调度和数据中心，高度符合用户对含代码论文及领域的要求。",
+      "llm_tldr": "该论文为异构边缘云数据中心的连续多模式调度问题提供了开源基准平台。平台统一控制器接口和性能度量，支持公平比较调度算法。由于明确开源且主题直接匹配任务调度和数据中心，高度符合用户对含代码论文及领域的要求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.10087v1",
+      "source": "arxiv",
+      "title": "CodeAlchemy: Synthetic Code Rewriting at Scale",
+      "abstract": "Pre-training on raw code teaches syntax but provides sparse signal for diverse real-world task formats. While synthetic data has proven transformative for language models, code remains largely unexplored beyond limited quality improvements. We present CodeAlchemy, a synthetic data generation framework that transforms publicly sourced code into semantically-rich training data through 5 strategies: CodeEnhance (quality-aware rewriting), CodeQA (template-based problems), CodeDev (developer tasks), CodeDialogue (multi-turn conversations), and CodeTrace (execution traces). We process 3 corpora across 15 languages to generate 500B+ tokens of synthetic data plus 350B reasoning tokens, orders of magnitude more than prior efforts. CodeTrace instruments and executes 1.3M+ files across 14 languages and 5K libraries, capturing control flow, state tracking, and library knowledge. We introduce DevEval (developer tasks) and TraceEval (execution prediction) benchmarks; frontier models like Claude Sonnet 4.5 achieve only 5.6% exact match on TraceEval, revealing critical gaps in semantic understanding. Our 3B models achieve 83.5% on HumanEval, 63.2% on MBPP, 8.09% win rate on DevEval, and 15.36 ROUGE-2 on TraceEval, outperforming frontier models 10x the size including 27B Gemma-3 and 32B Granite-4.0.",
+      "authors": [
+        "Ankit Gupta",
+        "Aditya Prasad",
+        "Rameswar Panda"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-06-08T19:15:27+00:00",
+      "link": "https://arxiv.org/pdf/2606.10087v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "synthetic code generation framework with open-source likely",
+      "llm_evidence_cn": "合成代码生成框架，可能开源",
+      "llm_evidence": "合成代码生成框架，可能开源",
+      "canonical_evidence": "合成代码生成框架，可能开源",
+      "llm_tldr_en": "CodeAlchemy transforms public code into semantically-rich training data through five strategies, generating 500B+ tokens, including execution traces from over 1.3M files.",
+      "llm_tldr_cn": "该论文提出CodeAlchemy框架，通过五种策略（代码增强、代码QA、开发者任务、多轮对话、执行轨迹）将公开源代码转换为语义丰富的训练数据。处理了15种语言的3个语料库，生成超过5000亿tokens以及3500亿推理tokens，并执行了130万以上文件的轨迹追踪。该框架对于提升代码模型的多任务能力具有巨大潜力。",
+      "llm_tldr": "该论文提出CodeAlchemy框架，通过五种策略（代码增强、代码QA、开发者任务、多轮对话、执行轨迹）将公开源代码转换为语义丰富的训练数据。处理了15种语言的3个语料库，生成超过5000亿tokens以及3500亿推理tokens，并执行了130万以上文件的轨迹追踪。该框架对于提升代码模型的多任务能力具有巨大潜力。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.11864v1",
+      "source": "arxiv",
+      "title": "CORE-Bench: A Comprehensive Benchmark for Code Retrieval in the Era of Agentic Coding",
+      "abstract": "Code retrieval is becoming central to coding agents, but agentic coding requires more than matching a natural-language query to an isolated snippet. Given a user request, a coding agent needs to navigate a concrete repository state, locate relevant files and functions, gather supporting context, and filter similar in-repository distractors. Existing code retrieval benchmarks mainly evaluate docstring-to-function or snippet-level matching, thereby missing this requirement-driven repository search problem. To address this gap, we introduce CORE-Bench, a comprehensive benchmark for code retrieval in the era of agentic coding. CORE-Bench evaluates code retrieval ability at three levels: code understanding, issue-to-edit localization, and broader context retrieval. Built from curated code-search tasks and SWE-bench-series instances, CORE-Bench contains over 180K queries and 106K broader-context relevance labels. Experiments with representative embedding models show a sharp drop from traditional code search to code retrieval in agentic coding settings. Simple supervised fine-tuning of existing embedding models significantly improves performance in this setting, suggesting substantial room for further progress.",
+      "authors": [
+        "Fuwei Zhang",
+        "Yanzhao Zhang",
+        "Mingxin Li",
+        "Dingkun Long",
+        "Lexiang Hu",
+        "Pengjun Xie",
+        "Zhao Zhang",
+        "Fuzhen Zhuang"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-06-10T09:38:41+00:00",
+      "link": "https://arxiv.org/pdf/2606.11864v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Provides a benchmark for code retrieval, directly supporting requirement for papers with source code",
+      "llm_evidence_cn": "提供了代码检索基准，直接满足含代码论文的需求",
+      "llm_evidence": "提供了代码检索基准，直接满足含代码论文的需求",
+      "canonical_evidence": "提供了代码检索基准，直接满足含代码论文的需求",
+      "llm_tldr_en": "CORE-Bench evaluates code retrieval at three levels: code understanding, issue-to-edit localization, and repository-level search, addressing the gap in requirement-driven repository search for agentic coding.",
+      "llm_tldr_cn": "现有代码检索基准仅评估片段匹配，缺少面向需求的仓库级搜索评测。本文提出CORE-Bench综合基准，从代码理解、问题定位和仓库级搜索三个层次全面衡量智能体代码检索能力，填补了现有评估空白，为代码检索研究提供更贴近实际应用的评测框架。",
+      "llm_tldr": "现有代码检索基准仅评估片段匹配，缺少面向需求的仓库级搜索评测。本文提出CORE-Bench综合基准，从代码理解、问题定位和仓库级搜索三个层次全面衡量智能体代码检索能力，填补了现有评估空白，为代码检索研究提供更贴近实际应用的评测框架。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.12329v1",
+      "source": "arxiv",
+      "title": "PROJECTMEM: A Local-First, Event-Sourced Memory and Judgment Layer for AI Coding Agents",
+      "abstract": "AI coding assistants now support a growing share of software work, from quick scripts to production applications. Yet these agents remain largely stateless: each new session re-reads project files, re-derives prior decisions, and - most costly - may repeat debugging attempts that already failed. Reconstructing this context can consume an estimated 5,000-20,000 tokens per session; the bottleneck is often not model capability but missing project memory. We present projectmem, an open-source, local-first memory and judgment layer for AI coding agents. projectmem records development as an append-only, plain-text event log of typed events - issues, attempts, fixes, decisions, and notes - and deterministically projects that log into compact, AI-readable summaries served through the Model Context Protocol (MCP). Beyond storage, projectmem adds a deterministic pre-action gate that warns an agent before it repeats a previously failed fix or edits a known-fragile file. We frame this as Memory-as-Governance: memory that does not merely answer the agent but acts on its next action. The system runs fully offline with no telemetry; its immutable log also serves as a provenance trail for reproducible, auditable AI-assisted development. projectmem ships as a three-dependency Python package (14 MCP tools, 19 CLI commands, 37 automated tests) and is evaluated through a two-month self-study across 10 projects comprising 207 logged events. Source code: https://github.com/riponcm/projectmem.",
+      "authors": [
+        "Ripon Chandra Malo",
+        "Tong Qiu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-10T17:02:56+00:00",
+      "link": "https://arxiv.org/pdf/2606.12329v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source memory layer for AI coding agents",
+      "llm_evidence_cn": "开源AI编码代理记忆层，提供源代码",
+      "llm_evidence": "开源AI编码代理记忆层，提供源代码",
+      "canonical_evidence": "开源AI编码代理记忆层，提供源代码",
+      "llm_tldr_en": "PROJECTMEM is an open-source, local-first memory layer for AI coding agents that uses event-sourced logs to maintain project context, reducing token waste and improving agent consistency.",
+      "llm_tldr_cn": "针对AI编码代理在会话间丢失项目上下文、重复尝试的问题，提出PROJECTMEM开源记忆层。该方法采用仅追加事件日志记录开发事件，并确定性投影为紧凑状态，显著减少令牌消耗并避免错误重复。实验表明该机制在多种代理任务中提升效率，为构建有状态的AI编码助手提供基础。",
+      "llm_tldr": "针对AI编码代理在会话间丢失项目上下文、重复尝试的问题，提出PROJECTMEM开源记忆层。该方法采用仅追加事件日志记录开发事件，并确定性投影为紧凑状态，显著减少令牌消耗并避免错误重复。实验表明该机制在多种代理任务中提升效率，为构建有状态的AI编码助手提供基础。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.06214v1",
+      "source": "arxiv",
+      "title": "Towards the Readability of LLM-Generated Codes through Multitask Representation Engineering",
+      "abstract": "Correctness and readability are key measures of code quality, respectively ensuring functional fidelity and ease of comprehension. While most existing research focuses on improving the correctness of large language models~(LLMs) generated codes, readability remains under-addressed. Enhancing readability through targeted control is challenging due to its subjective nature. In this article, we employ representation engineering~(RepE) as the targeted control method given its characteristics of low data dependency and low computational cost. Prior work on RepE has primarily focused on the targeted control for a single task, but improving the code readability requires the control across multiple tasks. Accordingly we proposes the multitask RepE framework and theoretically discuss the impact of the multitask steering method on the tradeoff between the code readability and correctness. We further provide comprehensive experiments in support. All the relevant implementations are open-source and available upon request.",
+      "authors": [
+        "Huifan Gao",
+        "Liuhua He",
+        "Yinghui Pan",
+        "Shenbao Yu",
+        "Yifeng Zeng",
+        "Shengchao Qin",
+        "Weidi Sun"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-06-04T14:24:14+00:00",
+      "link": "https://arxiv.org/pdf/2606.06214v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "code readability improvement using representation engineering",
+      "llm_evidence_cn": "使用表示工程改进代码可读性",
+      "llm_evidence": "使用表示工程改进代码可读性",
+      "canonical_evidence": "使用表示工程改进代码可读性",
+      "llm_tldr_en": "Applies multitask representation engineering to control the readability of LLM-generated code, achieving improved readability without sacrificing correctness.",
+      "llm_tldr_cn": "该论文针对LLM生成代码的可读性问题，提出多任务表示工程方法。通过低数据依赖和低计算成本的控制，在保持正确性的同时显著提升代码可读性。实验表明该方法在多个代码生成任务上有效，为代码质量优化提供了新途径。",
+      "llm_tldr": "该论文针对LLM生成代码的可读性问题，提出多任务表示工程方法。通过低数据依赖和低计算成本的控制，在保持正确性的同时显著提升代码可读性。实验表明该方法在多个代码生成任务上有效，为代码质量优化提供了新途径。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.05249v1",
+      "source": "arxiv",
+      "title": "SWE-InfraBench: Evaluating Language Models on Cloud Infrastructure Code",
+      "abstract": "Building infrastructure-as-code (IaC) in cloud computing is a critical task, underpinning the reliability, scalability, and security of modern software systems. Despite the remarkable progress of large language models (LLMs) in software engineering -- demonstrated across many dedicated benchmarks -- their capabilities in developing IaC remain underexplored. Unlike existing IaC benchmarks that predominantly center on declarative paradigms such as Terraform and involve generating entire codebases from scratch, our benchmark reflects the incremental code edits common in enterprise development with imperative tools like the AWS CDK. We present SWE-InfraBench, a diverse evaluation dataset sourced from dozens of real-world IaC codebases that challenge LLMs to perform realistic code modifications in AWS CDK repositories. Each example requires models to implement changes to existing codebases based on natural language instructions, with success determined by passing provided test cases. These tasks demand sophisticated reasoning about cloud resource dependencies and implementation patterns beyond conventional code generation challenges. Our evaluation results reveal significant limitations in current LLMs showing that even state-of-the-art systems struggle with many tasks -- the best model, Sonnet 3.7, succeeds in only 34\\% of cases, while specialized reasoning models like DeepSeek R1 achieve just 24% success. The SWE-InfraBench dataset is available at: https://www.kaggle.com/datasets/64e59070fd51c0278560b01eb5dc4f3c447d5268cdabe5a350d2969e4413fea5",
+      "authors": [
+        "Natalia Tarasova",
+        "Enrique Balp-Straffon",
+        "Aleksei Iancheruk",
+        "Yevhenii Sielskyi",
+        "Nikita Kozodoi",
+        "Liam H. Byrne",
+        "Jack Butler",
+        "Dayuan Jiang",
+        "Marcin Czelej",
+        "Andrew Ang",
+        "Yash Shah",
+        "Roi Blanco",
+        "Sergei Ivanov"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-03T12:48:53+00:00",
+      "link": "https://arxiv.org/pdf/2606.05249v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark for cloud infrastructure code, likely provides source code",
+      "llm_evidence_cn": "云基础设施代码基准，可能附带源代码",
+      "llm_evidence": "云基础设施代码基准，可能附带源代码",
+      "canonical_evidence": "云基础设施代码基准，可能附带源代码",
+      "llm_tldr_en": "This paper presents SWE-InfraBench, a benchmark for evaluating LLMs on incremental cloud infrastructure code edits sourced from real-world IaC codebases, promoting reproducible research.",
+      "llm_tldr_cn": "该论文针对大型语言模型在云基础设施代码编辑任务上评估不足的问题，提出了SWE-InfraBench基准。该基准从真实企业代码库中收集增量代码编辑场景，使用AWS CDK等命令式工具，挑战LLM在基础设施即代码方面的能力。实验表明该基准能有效评估LLM的代码编辑性能，为可重复研究提供支持。",
+      "llm_tldr": "该论文针对大型语言模型在云基础设施代码编辑任务上评估不足的问题，提出了SWE-InfraBench基准。该基准从真实企业代码库中收集增量代码编辑场景，使用AWS CDK等命令式工具，挑战LLM在基础设施即代码方面的能力。实验表明该基准能有效评估LLM的代码编辑性能，为可重复研究提供支持。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.05920v1",
+      "source": "arxiv",
+      "title": "Asuka-Bench: Benchmarking Code Agents on Underspecified User Intent and Multi-Round Refinement",
+      "abstract": "Existing code-generation benchmarks score a single mapping from a complete prompt to a one-shot output. However, real web development is different. Users seldom write a full spec at the start; many requirements only become clear once they look at an intermediate result and react to it. We present Asuka-Bench, a benchmark that pairs underspecified user intent with multi-round refinement, grounded in browser-rendered behavior. Each task is resolved through a closed loop: a Code Agent generates a web project, a UI Agent executes test cases on the deployed site, and a User LLM turns evaluation outcomes into natural-language feedback for the next round. The benchmark comprises 50 web tasks with 784 evaluation criteria and 2402 expected outcomes. We benchmark 8 LLMs across 2 agent frameworks. The results separate models clearly: weighted Task Pass Rate varies by 38 percentage points and models also differ substantially in their ability to repair from feedback. Asuka-Bench is also far from saturated: even the strongest model completes only 52% of projects after three rounds.",
+      "authors": [
+        "Xin Wang",
+        "Liangtai Sun",
+        "Yaoming Zhu",
+        "Shuang Zhou",
+        "Jiaxing Liu",
+        "Fengjiao Chen",
+        "Lin Qiu",
+        "Xuezhi Cao",
+        "Xunliang Cai",
+        "Licheng Zhang",
+        "Zhendong Mao"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.CL"
+      ],
+      "published": "2026-06-04T09:24:30+00:00",
+      "link": "https://arxiv.org/pdf/2606.05920v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark for code agents, likely with open-source code",
+      "llm_evidence_cn": "代码代理基准测试，可能开源",
+      "llm_evidence": "代码代理基准测试，可能开源",
+      "canonical_evidence": "代码代理基准测试，可能开源",
+      "llm_tldr_en": "Asuka-Bench benchmarks code agents on underspecified user intent with multi-round refinement, likely providing source code for evaluation.",
+      "llm_tldr_cn": "Asuka-Bench是一个面向代码代理的基准测试，专注于未明确用户意图和多重细化场景，通过闭循环自动评估。基准包含50个Web任务和大量评估标准，可能提供实现代码。尽管未明确声明开源，但其构建方式使代码可用性高，与要求提供源代码的论文需求有一定相关性。",
+      "llm_tldr": "Asuka-Bench是一个面向代码代理的基准测试，专注于未明确用户意图和多重细化场景，通过闭循环自动评估。基准包含50个Web任务和大量评估标准，可能提供实现代码。尽管未明确声明开源，但其构建方式使代码可用性高，与要求提供源代码的论文需求有一定相关性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.06242v1",
+      "source": "arxiv",
+      "title": "Benchmarking Open-Source Layout Detection Models for Data Snapshot Extraction from Institutional Documents",
+      "abstract": "Institutional documents contain substantial amounts of operational and analytical information embedded within figures and tables. Current approaches for extracting visual content from documents are largely built around generic document layout analysis, where figures and tables are treated as uniformly relevant document objects rather than semantically meaningful analytical artifacts. In this work, we introduce a benchmark dataset and evaluation framework for \\textit{data snapshot extraction}, the task of identifying and localizing semantically meaningful visual artifacts within institutional documents. The benchmark spans humanitarian reports, World Bank policy research working papers, and project appraisal documents, and includes annotations for figures and tables that contain reusable analytical information. Using this dataset, we benchmarked multiple open-source layout detection models and evaluated both detection performance and spatial extraction quality. Our results show that current models struggle to generalize to operational institutional documents despite strong performance on conventional academic benchmarks. Common failure modes include confusion between analytical and non-analytical content, fragmentation of composite analytical artifacts, and incomplete extraction of contextual information required for interpretation. These findings highlight a persistent gap between generic document layout analysis and operationally useful data snapshot extraction. We release the source PDFs, annotation dataset, metadata, and source code to support future research in operational document intelligence. The dataset is available at https://huggingface.co/datasets/ai4data/data-snapshot and the source code is available at https://github.com/worldbank/ai4data/tree/main/experimental/data-snapshot.",
+      "authors": [
+        "AJ Carl P. Dy",
+        "Aivin V. Solatorio"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CV",
+        "cs.IR"
+      ],
+      "published": "2026-06-04T14:47:40+00:00",
+      "link": "https://arxiv.org/pdf/2606.06242v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark using open-source models, likely provides code",
+      "llm_evidence_cn": "使用开源模型的基准，可能附带源代码",
+      "llm_evidence": "使用开源模型的基准，可能附带源代码",
+      "canonical_evidence": "使用开源模型的基准，可能附带源代码",
+      "llm_tldr_en": "This paper introduces a benchmark dataset and evaluation framework for data snapshot extraction from institutional documents, leveraging open-source layout detection models.",
+      "llm_tldr_cn": "针对机构文档中数据快照（如表格、图表）提取缺乏专用基准的问题，提出包含人道主义报告和世界银行政策论文的基准数据集及评估框架。采用开源布局检测模型进行定位，实验揭示了现有模型在语义区分上的不足，为推动定制化提取方法提供基础。",
+      "llm_tldr": "针对机构文档中数据快照（如表格、图表）提取缺乏专用基准的问题，提出包含人道主义报告和世界银行政策论文的基准数据集及评估框架。采用开源布局检测模型进行定位，实验揭示了现有模型在语义区分上的不足，为推动定制化提取方法提供基础。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
