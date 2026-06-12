@@ -1,0 +1,222 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-12T21:52:33.683905+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.05574v1",
+      "source": "arxiv",
+      "title": "SmellBench: Towards Fine-Grained Evaluation of Code Agents on Refactoring Tasks",
+      "abstract": "Code Agents have achieved remarkable advances in recent years, exhibiting strong capabilities across a wide range of software engineering tasks. However, their misuse often produces bloated and disorganized code that impairing readability, extensibility, and robustness. Despite this risk, existing benchmarks largely evaluate functional correctness rather than long-term maintainability of code agents. In this paper, we propose SmellBench, an extensible code refactoring benchmark that proactively injects code smells into clean code snippets from real-world repositories. This design enables the generation of controlled, high-quality, and diverse refactoring cases with human-written ground truth. Specifically, it contains 294 cases spanning 7 popular smell types, 3 difficulty levels, 2 instruction settings across 7 real-world repositories. We further design 3 evaluation aspects covering functional correctness, localization ability, and refactoring quality assessment. Experiments with 2 popular agents and 6 large langauge models (LLMs) show that the best combination - Qwen Code + Claude Sonnet 4.5 - achieved only a 50.34 score of smell elimination. Further analysis reveals that this gap arises from a focus on local code smells and a lack of cross-file understanding, which hinders comprehensive smell elimination.",
+      "authors": [
+        "Fake Lin",
+        "Binbin Hu",
+        "Xi Zhu",
+        "Ziwei Zhao",
+        "Zhi Zheng",
+        "Ziqi Liu",
+        "Zhiqiang Zhang",
+        "Jun Zhou",
+        "Tong Xu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-04T01:49:07+00:00",
+      "link": "https://arxiv.org/pdf/2606.05574v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "benchmark for code refactoring with ground truth, reproducible",
+      "llm_evidence_cn": "代码重构基准，包含真实ground truth，可复现",
+      "llm_evidence": "代码重构基准，包含真实ground truth，可复现",
+      "canonical_evidence": "代码重构基准，包含真实ground truth，可复现",
+      "llm_tldr_en": "SmellBench is a benchmark that injects code smells into clean code for evaluating code agents on refactoring tasks, with 294 cases and human-written ground truth.",
+      "llm_tldr_cn": "现有代码代理评估聚焦功能正确性，忽略长期可维护性。本文提出SmellBench，通过在真实仓库代码中主动注入代码异味，生成受控的重构任务。包含7个流行语言、294个案例，并提供人工编写的正确基线。该基准可细粒度评估代码代理的重构能力，促进生成可维护代码。",
+      "llm_tldr": "现有代码代理评估聚焦功能正确性，忽略长期可维护性。本文提出SmellBench，通过在真实仓库代码中主动注入代码异味，生成受控的重构任务。包含7个流行语言、294个案例，并提供人工编写的正确基线。该基准可细粒度评估代码代理的重构能力，促进生成可维护代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.07297v1",
+      "source": "arxiv",
+      "title": "SWE-Explore: Benchmarking How Coding Agents Explore Repositories",
+      "abstract": "Repository-level coding benchmarks such as SWE-bench have driven a rapid surge in the capabilities of coding agents. Yet they usually treat coding tasks as a holistic, binary prediction problem (e.g., resolved or unresolved), neglecting fine-grained agent capabilities such as repository understanding, context retrieval, code localization, and bug diagnosis. In this paper, we introduce SWE-Explore, a benchmark that isolates the evaluation of repository exploration, a critical capability of coding agents. Given a repository and an issue, SWE-Explore asks an explorer to return a ranked list of relevant code regions under a fixed line budget. SWE-Explore covers 848 issues across 10 programming languages and 203 open-source repositories. For each instance, we derive line-level ground truth from independent agent trajectories that successfully solved the same issue, distilling the specific code regions their solution paths actually consulted. We evaluate exploration along coverage, ranking, and context-efficiency dimensions, showing that these metrics strongly track downstream repair behavior. Across a broad set of retrieval methods, general coding agents, and specialized localizers, we find that agentic explorers form a clear tier above classical retrieval. While file-level localization is already strong for modern methods, line-level coverage and efficient ranking remain the key axes differentiating state-of-the-art explorers.",
+      "authors": [
+        "Shaoqiu Zhang",
+        "Yuhang Wang",
+        "Jialiang Liang",
+        "Yuling Shi",
+        "Wenhao Zeng",
+        "Maoquan Wang",
+        "Shilin He",
+        "Ningyuan Xu",
+        "Siyu Ye",
+        "Kai Cai",
+        "Xiaodong Gu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.CL"
+      ],
+      "published": "2026-06-05T14:08:27+00:00",
+      "link": "https://arxiv.org/pdf/2606.07297v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark for coding agent repository exploration, likely open-source",
+      "llm_evidence_cn": "代码智能体仓库探索基准，可能开源",
+      "llm_evidence": "代码智能体仓库探索基准，可能开源",
+      "canonical_evidence": "代码智能体仓库探索基准，可能开源",
+      "llm_tldr_en": "SWE-Explore isolates evaluation of repository exploration for coding agents, covering 848 issues across 203 repos, with a ranked list of relevant code regions.",
+      "llm_tldr_cn": "现有代码智能体基准只衡量整体解决能力，忽视仓库探索细粒度能力。本文提出SWE-Explore，要求探索者在固定行预算下返回相关代码区域排序列表。覆盖10种语言203个仓库848个问题。贡献在于为代码智能体仓库探索提供标准化评估。",
+      "llm_tldr": "现有代码智能体基准只衡量整体解决能力，忽视仓库探索细粒度能力。本文提出SWE-Explore，要求探索者在固定行预算下返回相关代码区域排序列表。覆盖10种语言203个仓库848个问题。贡献在于为代码智能体仓库探索提供标准化评估。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.08840v1",
+      "source": "arxiv",
+      "title": "Beyond Pass Rate: A Multilingual, Execution-Grounded Evaluation of Open Code LLMs",
+      "abstract": "Code generation models are typically compared using compact execution benchmarks and aggregate pass rates, but such summaries obscure how performance varies across programming languages, problem families, and failure modes. We present a large-scale, execution-grounded evaluation of 9 openly accessible LLMs specialized for coding on 2,707 free LeetCode problems across 12 programming languages. Our corpus contains 325,343 problem-model-language jobs, each linked to prompt metadata, extracted code, LeetCode execution outcomes, and static-analysis signals. The results show that current open models remain far from the human acceptance reference: the best model, Yi-Coder-9B-Chat, reaches 23.64% mean correctness, compared with a 57.2% human acceptance baseline. Rankings are also slice-dependent: Qwen2.5-Coder-14B-Instruct is strongest on hard problems and distinct-problem coverage, while Gemma-2-27B-IT achieves the highest all-language lint pass rate. Failure analysis shows that compile errors account for 63.25% of non-accepted best submissions, indicating that many failures occur before semantic correctness can be tested. Static quality further diverges from functional correctness. Together, these findings show that multilingual, artifact-preserving evaluation reveals tradeoffs hidden by single-language or single-metric leaderboards.",
+      "authors": [
+        "Sayed Erfan Arefin"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-06-07T21:10:30+00:00",
+      "link": "https://arxiv.org/pdf/2606.08840v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "execution-grounded evaluation of open code LLMs with released corpus",
+      "llm_evidence_cn": "基于执行的开放代码大模型评估，发布了评测语料",
+      "llm_evidence": "基于执行的开放代码大模型评估，发布了评测语料",
+      "canonical_evidence": "基于执行的开放代码大模型评估，发布了评测语料",
+      "llm_tldr_en": "Beyond Pass Rate presents a large-scale, execution-grounded evaluation of open code LLMs on 2,707 LeetCode problems across 12 languages, revealing significant gaps.",
+      "llm_tldr_cn": "当前代码生成模型评估常忽略语言和问题类型差异。本文构建了涵盖9个开源模型、12种编程语言、超过32万次执行的大规模评测集。结果显示最佳模型Yi-Coder-9B-Chat仅达23.64%正确率，远低于人类57.2%的接受率。该工作为公平评估代码LLM提供了标准化基准和开放数据。",
+      "llm_tldr": "当前代码生成模型评估常忽略语言和问题类型差异。本文构建了涵盖9个开源模型、12种编程语言、超过32万次执行的大规模评测集。结果显示最佳模型Yi-Coder-9B-Chat仅达23.64%正确率，远低于人类57.2%的接受率。该工作为公平评估代码LLM提供了标准化基准和开放数据。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.09800v1",
+      "source": "arxiv",
+      "title": "FASE: Fast Adaptive Semantic Entropy for Code Quality",
+      "abstract": "Multi-agent code generation offers a promising paradigm for autonomous software development by simulating the human software engineering lifecycle. However, system reliability remains hindered by LLM hallucinations and error propagation across interacting agents. While semantic entropy provides a principled way to quantify uncertainty without ground-truth answers, current methods often rely on costly LLM-driven equivalence checks. In this work, we introduce Fast Adaptive Semantic Entropy (FASE), a novel metric that approximates functional correctness based on the minimum spanning tree of structural and semantic dissimilarity graphs. Evaluations on HumanEval and BigCodeBench demonstrate that FASE outperforms state-of-the-art semantic entropy by LLM entailment, achieving a 25% average improvement in Spearman correlation and a 19% increase in ROCAUC score against Pass@1 from ground-truth test cases when using the Qwen3-Embedding-8B model. Furthermore, by eliminating costly LLM-driven equivalence evaluation, FASE incurs negligible computational overhead, requiring only approximately 0.3% of the runtime cost of traditional semantic entropy approaches. These results position FASE as a practical, cost-effective solution for optimizing uncertainty quantification in real-world multi-agent workflows.",
+      "authors": [
+        "Shizhe Lin",
+        "Ladan Tahvildari"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-06-08T17:53:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.09800v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "fast adaptive semantic entropy metric for code quality, likely open-source",
+      "llm_evidence_cn": "面向代码质量的快速自适应语义熵指标，可能开源",
+      "llm_evidence": "面向代码质量的快速自适应语义熵指标，可能开源",
+      "canonical_evidence": "面向代码质量的快速自适应语义熵指标，可能开源",
+      "llm_tldr_en": "FASE introduces a novel metric for code quality estimation using minimum spanning tree of dissimilarity graphs, outperforming LLM-based entropy on HumanEval and BigCodeBench.",
+      "llm_tldr_cn": "多智能体代码生成中，现有不确定性量化方法依赖高成本的LLM等价性检查。本文提出FASE，基于结构相似图的最小生成树近似功能正确性。在HumanEval和BigCodeBench上超越现有语义熵方法。贡献在于为代码质量提供高效、准确的新度量。",
+      "llm_tldr": "多智能体代码生成中，现有不确定性量化方法依赖高成本的LLM等价性检查。本文提出FASE，基于结构相似图的最小生成树近似功能正确性。在HumanEval和BigCodeBench上超越现有语义熵方法。贡献在于为代码质量提供高效、准确的新度量。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.11700v1",
+      "source": "arxiv",
+      "title": "CompRank: Efficient LLM Reranking via Token-Level Compression and Decoding-Free Scoring",
+      "abstract": "Large language model (LLM) rerankers have become an important component of modern retrieval and retrieval-augmented generation pipelines, but their high computational cost limits their applicability to long candidate lists. In this paper, we propose \\textbf{CompRank}, a token-efficient reranking framework that reduces redundant computation by aligning reranker design with the sparsity of ranking signals. CompRank decouples document representations from candidate order and query context, enabling reusable document-side states; applies segment-wise token compression to reduce query--document interaction cost; and introduces a CopyNet-style objective that directly aligns attention-based document scoring with training supervision. Experiments on seven BEIR datasets show that CompRank achieves strong reranking performance while retaining only 10.2\\% of document tokens, reaching an average NDCG@10 of 39.2 compared with 39.7 under full-token attention. Further scaling experiments on TREC-COVID show that CompRank remains stable when evaluated on candidate lists of up to 500 documents after training on 30-document lists, while achieving $4.9\\times$--$9.5\\times$ end-to-end speedup over generation-based listwise reranking and approximately $1.3\\times$ speedup over the full-token CompRank variant. These results suggest that token-level compression and decoding-free attention scoring provide an effective path toward scalable LLM-based reranking.",
+      "authors": [
+        "Xuan Lu",
+        "Haohang Huang",
+        "Yingqi Fan",
+        "Junlong Tong",
+        "Yuxuan Zhang",
+        "Ping Nie",
+        "Rui Meng",
+        "Xiaoyu Shen"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-06-10T06:23:46+00:00",
+      "link": "https://arxiv.org/pdf/2606.11700v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "likely provides source code for LLM reranking framework",
+      "llm_evidence_cn": "可能提供LLM重排序框架的源代码",
+      "llm_evidence": "可能提供LLM重排序框架的源代码",
+      "canonical_evidence": "可能提供LLM重排序框架的源代码",
+      "llm_tldr_en": "CompRank introduces a token-efficient reranking framework with segment-wise compression and decoding-free scoring to reduce computational cost for LLM rerankers.",
+      "llm_tldr_cn": "针对大型语言模型重排序器计算成本高的问题，本文提出CompRank框架，通过令牌级压缩和解码无关的评分机制减少冗余计算。该方法解耦文档表示、应用分段压缩并引入CopyNet式目标函数。实验表明，CompRank在保持高精度的同时显著降低了计算开销，为高效检索增强生成提供了实用方案。",
+      "llm_tldr": "针对大型语言模型重排序器计算成本高的问题，本文提出CompRank框架，通过令牌级压缩和解码无关的评分机制减少冗余计算。该方法解耦文档表示、应用分段压缩并引入CopyNet式目标函数。实验表明，CompRank在保持高精度的同时显著降低了计算开销，为高效检索增强生成提供了实用方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

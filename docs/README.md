@@ -6,49 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-11
-- 运行时间：2026-06-11 21:08:44 UTC
+- 最新运行日期：2026-06-12
+- 运行时间：2026-06-12 21:55:28 UTC
 - 运行状态：成功
-- 本次总论文数：9
-- 精读区：5
-- 速读区：4
+- 本次总论文数：5
+- 精读区：0
+- 速读区：5
 
 ### 今日简报（AI）
-今日精选9篇论文，聚焦基础设施感知的多智能体编排与异构边缘集群调度公平性两大核心方向。  
-最值得精读的是《INFRAMIND》提出的多智能体编排方案和《Fair Comparison》提供的持续自适应基准测试方法。  
-建议优先研读这两篇高分论文，深入理解边缘计算任务调度与资源优化的最新进展。
-- 详情：[/202606/11/README](/202606/11/README)
+1) 今日聚焦代码智能体评估，速读3篇论文，涵盖重构细粒度评测、多语言执行评估与仓库探索基准。  
+2) 最值得关注《SmellBench》对重构任务的细致打分（7.0分）与《Beyond Pass Rate》提出的多语言执行化评估（7.0分），均突破传统通过率局限。  
+3) 建议优先研读这两篇7分论文，了解如何更精准评估代码智能体的实际能力。
+- 详情：[/202606/12/README](/202606/12/README)
 
 ### 精读区论文标签
-1. [INFRAMIND: Infrastructure-Aware Multi-Agent Orchestration](/202606/11/2606.11440v1-inframind-infrastructure-aware-multi-agent-orchestration)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：面向GPU集群的基础设施感知多智能体编排，直接解决数据中心任务调度问题
-2. [Fair Comparison of Scheduling Algorithms on Heterogeneous Edge Clusters: A Continuous Adaptive Benchmark](/202606/11/2606.12343v1-fair-comparison-of-scheduling-algorithms-on-heterogeneous-edge-clusters-a-continuous-adaptive-benchmark)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：面向异构边缘集群和数据中心调度的开源基准
-3. [CodeAlchemy: Synthetic Code Rewriting at Scale](/202606/11/2606.10087v1-codealchemy-synthetic-code-rewriting-at-scale)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：合成代码生成框架，可能开源
-4. [CORE-Bench: A Comprehensive Benchmark for Code Retrieval in the Era of Agentic Coding](/202606/11/2606.11864v1-core-bench-a-comprehensive-benchmark-for-code-retrieval-in-the-era-of-agentic-coding)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：提供了代码检索基准，直接满足含代码论文的需求
-5. [PROJECTMEM: A Local-First, Event-Sourced Memory and Judgment Layer for AI Coding Agents](/202606/11/2606.12329v1-projectmem-a-local-first-event-sourced-memory-and-judgment-layer-for-ai-coding-agents)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：开源AI编码代理记忆层，提供源代码
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Towards the Readability of LLM-Generated Codes through Multitask Representation Engineering](/202606/11/2606.06214v1-towards-the-readability-of-llm-generated-codes-through-multitask-representation-engineering)  
+1. [SmellBench: Towards Fine-Grained Evaluation of Code Agents on Refactoring Tasks](/202606/12/2606.05574v1-smellbench-towards-fine-grained-evaluation-of-code-agents-on-refactoring-tasks)  
    标签：评分：7.0/10、query:code-paper
-   evidence：使用表示工程改进代码可读性
-2. [SWE-InfraBench: Evaluating Language Models on Cloud Infrastructure Code](/202606/11/2606.05249v1-swe-infrabench-evaluating-language-models-on-cloud-infrastructure-code)  
+   evidence：代码重构基准，包含真实ground truth，可复现
+2. [Beyond Pass Rate: A Multilingual, Execution-Grounded Evaluation of Open Code LLMs](/202606/12/2606.08840v1-beyond-pass-rate-a-multilingual-execution-grounded-evaluation-of-open-code-llms)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：基于执行的开放代码大模型评估，发布了评测语料
+3. [SWE-Explore: Benchmarking How Coding Agents Explore Repositories](/202606/12/2606.07297v1-swe-explore-benchmarking-how-coding-agents-explore-repositories)  
    标签：评分：6.0/10、query:code-paper
-   evidence：云基础设施代码基准，可能附带源代码
-3. [Asuka-Bench: Benchmarking Code Agents on Underspecified User Intent and Multi-Round Refinement](/202606/11/2606.05920v1-asuka-bench-benchmarking-code-agents-on-underspecified-user-intent-and-multi-round-refinement)  
+   evidence：代码智能体仓库探索基准，可能开源
+4. [FASE: Fast Adaptive Semantic Entropy for Code Quality](/202606/12/2606.09800v1-fase-fast-adaptive-semantic-entropy-for-code-quality)  
    标签：评分：6.0/10、query:code-paper
-   evidence：代码代理基准测试，可能开源
-4. [Benchmarking Open-Source Layout Detection Models for Data Snapshot Extraction from Institutional Documents](/202606/11/2606.06242v1-benchmarking-open-source-layout-detection-models-for-data-snapshot-extraction-from-institutional-documents)  
+   evidence：面向代码质量的快速自适应语义熵指标，可能开源
+5. [CompRank: Efficient LLM Reranking via Token-Level Compression and Decoding-Free Scoring](/202606/12/2606.11700v1-comprank-efficient-llm-reranking-via-token-level-compression-and-decoding-free-scoring)  
    标签：评分：6.0/10、query:code-paper
-   evidence：使用开源模型的基准，可能附带源代码
+   evidence：可能提供LLM重排序框架的源代码
 
 
 <div class="dpr-home-promo-card">
