@@ -1,0 +1,101 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-13T21:14:21.872811+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.06752v1",
+      "source": "arxiv",
+      "title": "Pomona: Continuous Code Quality Improvement via Small, Automated Changes at Bloomberg",
+      "abstract": "In this short experience paper, we present Pomona, a lightweight agentic tool that utilises agent skills for continuous automated code quality improvement. Inspired by the philosophy of Kaizen(TM), Pomona automates a cycle of discovery and incremental repair: a Scanning skill identifies improvement tasks (e.g., linting violations, technical debt markers, and test gaps) and prioritises them in a structured backlog, while a Repair skill generates tiny pull requests (PRs) targeting ~10 lines of diff. This human-in-the-loop design enables frequent, low-risk improvements while maintaining engineer trust and productivity and reducing technical debt. We evaluated Pomona through a one-month deployment in a team and a questionnaire distributed to 10 senior engineers. Our preliminary results are promising: 15 of 17 generated PRs were successfully merged with a median time-to-close of under 2 hours. Furthermore, 8/10 of surveyed engineers expressed a desire to adopt Pomona, praising small diff sizes and Pomona's focus on improving code quality. We conclude by discussing actionable insights for researchers and practitioners on strategies for effective agentic deployment in industry.",
+      "authors": [
+        "David Williams",
+        "Angelos Evripiotis",
+        "Serkan Kirbas",
+        "Harry Morgan",
+        "Sergey Magidovich",
+        "Peter Wainwright",
+        "Federica Sarro"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-04T22:31:48+00:00",
+      "link": "https://arxiv.org/pdf/2606.06752v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "provides automated code quality tool with open source likely",
+      "llm_evidence_cn": "提供自动化代码质量改进工具，代码可获取",
+      "llm_evidence": "提供自动化代码质量改进工具，代码可获取",
+      "canonical_evidence": "提供自动化代码质量改进工具，代码可获取",
+      "llm_tldr_en": "Pomona is an agentic tool that scans and repairs code quality issues via small PRs, deployed at Bloomberg to reduce technical debt.",
+      "llm_tldr_cn": "本文介绍Pomona，一种轻量级智能体工具，通过自动扫描和修复技术债务、lint违规等问题，生成约10行差异的微型拉取请求。在彭博一个团队部署一个月后，显著降低了代码债务并提高了工程师信任度。该工具体现了持续改进（Kaizen）理念在代码质量中的应用。",
+      "llm_tldr": "本文介绍Pomona，一种轻量级智能体工具，通过自动扫描和修复技术债务、lint违规等问题，生成约10行差异的微型拉取请求。在彭博一个团队部署一个月后，显著降低了代码债务并提高了工程师信任度。该工具体现了持续改进（Kaizen）理念在代码质量中的应用。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.09239v1",
+      "source": "arxiv",
+      "title": "Orange Lab: Lowering Barriers to Data Mining through Embedded Interactive Workflows",
+      "abstract": "While visual programming of data analysis workflows has become an important vehicle for the democratization of data science, such systems remain largely confined to standalone applications and offer limited support for transitioning their visual analytics solutions into interactive web environments. As a result, data analysis pipelines are difficult to share, embed, and adapt into user-facing analytical tools. We present Orange Lab, a web-based collaborative environment for visual data analytics. At its core, Orange Lab enables users to visually construct machine learning workflows from modular components, where interactions in any component propagate seamlessly through the workflow, turning static pipelines into dynamic, reactive systems that support exploration and data-driven storytelling. Our key contribution is component exposition, a paradigm that allows authors to embed selected workflow components, or parts of their interfaces, into arbitrary web contexts, creating synchronized, interactive interfaces while hiding underlying workflow complexity. This enables the development of tailored analytical views and narrative-driven experiences that integrate data analysis directly into online materials. We demonstrate the approach through deployments in data literacy education, where embedded components guide students in hands-on exploration of machine learning concepts without requiring knowledge of the underlying system, showing that Orange Lab effectively lowers barriers to entry and supports the democratization of data science.",
+      "authors": [
+        "Matej Bevec",
+        "Aleš Erjavec",
+        "Vesna Tanko",
+        "Lena Trnovec",
+        "Lan Žagar",
+        "Ana Farič",
+        "Janez Demšar",
+        "Blaž Zupan"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.HC"
+      ],
+      "published": "2026-06-08T09:14:55+00:00",
+      "link": "https://arxiv.org/pdf/2606.09239v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides web-based visual analytics tool with code",
+      "llm_evidence_cn": "提供基于Web的可视化分析工具，代码可获取",
+      "llm_evidence": "提供基于Web的可视化分析工具，代码可获取",
+      "canonical_evidence": "提供基于Web的可视化分析工具，代码可获取",
+      "llm_tldr_en": "Orange Lab is a web-based collaborative environment for visual data mining, enabling reactive workflows and easy sharing.",
+      "llm_tldr_cn": "本文提出Orange Lab，一个基于Web的协作式数据挖掘平台，用户可以通过拖拽组件构建机器学习流水线，并与他人共享交互式分析应用。该平台克服了独立桌面应用的限制，使得数据科学工作流可嵌入任何网页，促进了可重复性和协作。",
+      "llm_tldr": "本文提出Orange Lab，一个基于Web的协作式数据挖掘平台，用户可以通过拖拽组件构建机器学习流水线，并与他人共享交互式分析应用。该平台克服了独立桌面应用的限制，使得数据科学工作流可嵌入任何网页，促进了可重复性和协作。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

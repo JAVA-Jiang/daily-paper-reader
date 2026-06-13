@@ -6,38 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-12
-- 运行时间：2026-06-12 21:55:28 UTC
+- 最新运行日期：2026-06-13
+- 运行时间：2026-06-13 21:14:59 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：2
 - 精读区：0
-- 速读区：5
+- 速读区：2
 
 ### 今日简报（AI）
-1) 今日聚焦代码智能体评估，速读3篇论文，涵盖重构细粒度评测、多语言执行评估与仓库探索基准。  
-2) 最值得关注《SmellBench》对重构任务的细致打分（7.0分）与《Beyond Pass Rate》提出的多语言执行化评估（7.0分），均突破传统通过率局限。  
-3) 建议优先研读这两篇7分论文，了解如何更精准评估代码智能体的实际能力。
-- 详情：[/202606/12/README](/202606/12/README)
+今日速读两篇论文，分别聚焦代码质量自动改进与数据挖掘交互工具。  
+最值得关注的是Bloomberg的Pomona系统，通过小型自动化变更持续提升代码质量（评分7.0/10）。  
+建议关注代码质量自动化工具，尤其适用于大型代码库的持续维护场景。
+- 详情：[/202606/13/README](/202606/13/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [SmellBench: Towards Fine-Grained Evaluation of Code Agents on Refactoring Tasks](/202606/12/2606.05574v1-smellbench-towards-fine-grained-evaluation-of-code-agents-on-refactoring-tasks)  
+1. [Pomona: Continuous Code Quality Improvement via Small, Automated Changes at Bloomberg](/202606/13/2606.06752v1-pomona-continuous-code-quality-improvement-via-small-automated-changes-at-bloomberg)  
    标签：评分：7.0/10、query:code-paper
-   evidence：代码重构基准，包含真实ground truth，可复现
-2. [Beyond Pass Rate: A Multilingual, Execution-Grounded Evaluation of Open Code LLMs](/202606/12/2606.08840v1-beyond-pass-rate-a-multilingual-execution-grounded-evaluation-of-open-code-llms)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：基于执行的开放代码大模型评估，发布了评测语料
-3. [SWE-Explore: Benchmarking How Coding Agents Explore Repositories](/202606/12/2606.07297v1-swe-explore-benchmarking-how-coding-agents-explore-repositories)  
+   evidence：提供自动化代码质量改进工具，代码可获取
+2. [Orange Lab: Lowering Barriers to Data Mining through Embedded Interactive Workflows](/202606/13/2606.09239v1-orange-lab-lowering-barriers-to-data-mining-through-embedded-interactive-workflows)  
    标签：评分：6.0/10、query:code-paper
-   evidence：代码智能体仓库探索基准，可能开源
-4. [FASE: Fast Adaptive Semantic Entropy for Code Quality](/202606/12/2606.09800v1-fase-fast-adaptive-semantic-entropy-for-code-quality)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：面向代码质量的快速自适应语义熵指标，可能开源
-5. [CompRank: Efficient LLM Reranking via Token-Level Compression and Decoding-Free Scoring](/202606/12/2606.11700v1-comprank-efficient-llm-reranking-via-token-level-compression-and-decoding-free-scoring)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：可能提供LLM重排序框架的源代码
+   evidence：提供基于Web的可视化分析工具，代码可获取
 
 
 <div class="dpr-home-promo-card">

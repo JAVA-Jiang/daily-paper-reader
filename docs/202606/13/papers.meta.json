@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-13",
+  "date": "2026-06-13",
+  "generated_at": "2026-06-13T21:15:04",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/13/2606.06752v1-pomona-continuous-code-quality-improvement-via-small-automated-changes-at-bloomberg",
+      "section": "quick",
+      "title_en": "Pomona: Continuous Code Quality Improvement via Small, Automated Changes at Bloomberg",
+      "authors": "David Williams, Angelos Evripiotis, Serkan Kirbas, Harry Morgan, Sergey Magidovich, Peter Wainwright, Federica Sarro",
+      "date": "2026-06-04",
+      "pdf": "https://arxiv.org/pdf/2606.06752v1",
+      "score": "7.0",
+      "evidence": "提供自动化代码质量改进工具，代码可获取",
+      "tldr": "代码质量持续改进面临人工维护成本高、大变更风险大的挑战。Pomona基于Kaizen理念，通过扫描和修复技能自动发现代码问题并生成约10行diff的小型PR。在Bloomberg的团队一个月部署中，17个PR有15个被合并，中位关闭时间不到2小时。10位高级工程师中8位愿意采用，表明小步、低风险的自动化改进能有效减少技术债务并提升信任。",
+      "tags": "query:code-paper",
+      "abstract_en": "In this short experience paper, we present Pomona, a lightweight agentic tool that utilises agent skills for continuous automated code quality improvement. Inspired by the philosophy of Kaizen(TM), Pomona automates a cycle of discovery and incremental repair: a Scanning skill identifies improvement tasks (e.g., linting violations, technical debt markers, and test gaps) and prioritises them in a structured backlog, while a Repair skill generates tiny pull requests (PRs) targeting ~10 lines of diff. This human-in-the-loop design enables frequent, low-risk improvements while maintaining engineer trust and productivity and reducing technical debt. We evaluated Pomona through a one-month deployment in a team and a questionnaire distributed to 10 senior engineers. Our preliminary results are promising: 15 of 17 generated PRs were successfully merged with a median time-to-close of under 2 hours. Furthermore, 8/10 of surveyed engineers expressed a desire to adopt Pomona, praising small diff sizes and Pomona's focus on improving code quality. We conclude by discussing actionable insights for researchers and practitioners on strategies for effective agentic deployment in industry.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/13/2606.09239v1-orange-lab-lowering-barriers-to-data-mining-through-embedded-interactive-workflows",
+      "section": "quick",
+      "title_en": "Orange Lab: Lowering Barriers to Data Mining through Embedded Interactive Workflows",
+      "authors": "Matej Bevec, Aleš Erjavec, Vesna Tanko, Lena Trnovec, Lan Žagar, Ana Farič, Janez Demšar, Blaž Zupan",
+      "date": "2026-06-08",
+      "pdf": "https://arxiv.org/pdf/2606.09239v1",
+      "score": "6.0",
+      "evidence": "提供基于Web的可视化分析工具，代码可获取",
+      "tldr": "视觉编程数据工作流工具难以嵌入网页。Orange Lab作为网页协作环境，允许用户视觉构建机器学习工作流，组件交互无缝传播，形成动态响应系统。其核心贡献是组件暴露范式，让作者将工作流组件嵌入任意网页，创建同步交互界面。在数据素养教育中部署，有效降低数据科学入门门槛，促进民主化。",
+      "tags": "query:code-paper",
+      "abstract_en": "While visual programming of data analysis workflows has become an important vehicle for the democratization of data science, such systems remain largely confined to standalone applications and offer limited support for transitioning their visual analytics solutions into interactive web environments. As a result, data analysis pipelines are difficult to share, embed, and adapt into user-facing analytical tools. We present Orange Lab, a web-based collaborative environment for visual data analytics. At its core, Orange Lab enables users to visually construct machine learning workflows from modular components, where interactions in any component propagate seamlessly through the workflow, turning static pipelines into dynamic, reactive systems that support exploration and data-driven storytelling. Our key contribution is component exposition, a paradigm that allows authors to embed selected workflow components, or parts of their interfaces, into arbitrary web contexts, creating synchronized, interactive interfaces while hiding underlying workflow complexity. This enables the development of tailored analytical views and narrative-driven experiences that integrate data analysis directly into online materials. We demonstrate the approach through deployments in data literacy education, where embedded components guide students in hands-on exploration of machine learning concepts without requiring knowledge of the underlying system, showing that Orange Lab effectively lowers barriers to entry and supports the democratization of data science.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
