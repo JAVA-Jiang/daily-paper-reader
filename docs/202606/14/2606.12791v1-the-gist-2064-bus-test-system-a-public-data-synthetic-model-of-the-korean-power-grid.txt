@@ -1,0 +1,460 @@
+Title: The GIST 2064-Bus Test System: A Public-Data Synthetic Model of the Korean Power Grid
+
+URL Source: https://arxiv.org/pdf/2606.12791v1
+
+Published Time: Fri, 12 Jun 2026 00:21:51 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+> PREPRINT 1
+
+# The GIST 2064-Bus Test System: A Public-Data Synthetic Model of the Korean Power Grid 
+
+Yun-Su Kim 
+
+Abstract —No model of the Korean transmission system at native resolution is publicly available, which makes reproducible research on one of the world’s most distinctive grids difficult— an islanded interconnection with extreme separation between generation and the Seoul Metropolitan Area load center, low renewable penetration, and heavy reliance on extra-high-voltage (EHV) transmission. Working strictly from public data, and for research purposes only, we present the GIST 2064-bus test system ,a geographically grounded synthetic model of the Korean grid. Unlike fully synthetic cases, whose lines match no real corridor, and aggregated public Korean models, it derives its 345 and 154 kV layout from the OpenStreetMap/OpenInfraMap power layer by a multi-source shortest-path reassembly of overhead-line geometry, gap-fills unreachable substations with a geographic minimum-spanning-tree backbone, and calibrates the aggregate circuit length to published national statistics (108/107/97% at 765/345/154 kV). The model spans 2064 buses, 512 generation and renewable sources (144 GW), 3044 AC line circuits plus high-voltage direct-current (HVDC) equivalents, 3073 transformers, and reactive resources (shunts and 11 FACTS devices), seri-alized to a PSS/E-compatible CSV schema. A general-purpose 
+
+pandapower Newton–Raphson solver—with generator reactive limit enforcement, a secant-gain remote voltage-control loop, tap-changer and switched-shunt fixed-point control, and zero-impedance regularization—solves an 85 GW high demand snap-shot to a single connected, converged operating point (mean volt-age 0.996 pu, 2.3 % losses, no undervoltage buses), structurally consistent with the independent public KPG-193 model. The dataset, maps, and tooling are released as a citable platform for power flow, planning, and decarbonization studies. 
+
+Index Terms —Synthetic power grid, Korean power system, public-data model, OpenStreetMap, transmission modeling. 
+
+I. I NTRODUCTION 
+
+Realistic, publicly available grid models are the foundation of reproducible research in power systems. For most national systems, however, the operational network model is held by the system operator as confidential critical energy infrastructure information (CEII) and is not publicly distributed. The Re-public of Korea is an acute example: no full-resolution model of the national transmission network is publicly available to researchers, so methods are hard to test on a realistic Korean case and published results on the Korean grid are difficult to reproduce or compare. This motivates a model assembled, for research purposes, entirely from publicly available data. This scarcity is unfortunate because the Korean grid is structurally unusual and therefore valuable as a test case. It is an isolated interconnection with no synchronous AC ties 
+
+Y.-S. Kim is with the Department of Electrical Engineering and Com-puter Science and the Research Institute for Solar and Sustainable Energies, Gwangju Institute of Science and Technology (GIST), Gwangju, Republic of Korea. 
+
+to neighboring countries; it exhibits a pronounced spatial mis-match between bulk generation (nuclear and coal clustered on the southern and eastern coasts) and demand (concentrated in the northwest in the Seoul Metropolitan Area—Seoul, Incheon, and Gyeonggi); renewable penetration remains comparatively low; and the bulk system leans heavily on a 765/345 kV extra-high-voltage (EHV) backbone with a dense 154 kV sub-transmission mesh. These features—long-distance bulk trans-fer into a single dominant load pocket, reactive-support-limited voltage profiles, and islands fed by high-voltage direct current (HVDC)—are exactly the conditions under which planning and stability methods are stressed. 
+
+a) The synthetic-grid landscape: The community has responded to CEII restrictions with synthetic grids that are statistically and functionally similar to real systems while containing no confidential data. The most influential line of work, the ACTIVSg family of cases on the geographic foot-print of Texas and the Eastern Interconnection [1]–[5], designs an entirely fictitious transmission network whose statistical characteristics (degree distributions, line-length distributions, loading patterns) match validation criteria derived from real grids, but whose lines correspond to no actual corridor. A com-plementary thread builds combined transmission–distribution synthetic systems at very large scale [6]. For Korea specifically, the KPG-193 test system [7] is a synthetic model developed from public data for decarbonization studies; to remain com-putationally tractable and representative it applies clustering to obtain a 193-bus reduced model (with 407 transmission lines) in MATPOWER format, validated through unit commitment and AC optimal power flow. 
+
+b) A different point in the design space: The GIST 2064-bus test system (named for the Gwangju Institute of Science and Technology) occupies a region between these approaches. Like ACTIVSg and KPG-193 it uses only public information and contains no confidential data. Unlike the fully synthetic ACTIVSg cases—whose lines correspond to no actual corridor—it does not invent the transmission graph: it recovers the actual substation-to-substation circuits, routes, lengths, and circuit multiplicities by tracing the crowd-sourced OpenStreetMap (OSM)/OpenInfraMap power layer, preserv-ing real geographic coordinates throughout. KPG-193 likewise draws its lines from OSM, so it too is grounded in real geog-raphy; the difference is one of resolution. KPG-193 clusters the network to 193 buses for market and expansion studies, which yields an aggregated backbone rather than a native substation-level grid—in particular, a 193-bus reduction cannot resolve the dense 154 kV sub-transmission layer. The GIST system instead keeps the topology un-clustered : it resolves individual EHV substations, the full 154 kV sub-transmission  
+
+> arXiv:2606.12791v1 [eess.SY] 11 Jun 2026 PREPRINT 2
+
+and 22.9 kV distribution layers, generator step-up structure, and per-bank transformers, yielding an order of magnitude more buses (2064 vs. 193). The result is a high-resolution, geographically explicit, publicly documented model suitable for AC power flow, contingency, and reactive-planning studies of the Korean system. 
+
+c) Contributions: This paper makes the following contri-butions. 1) A reproducible, public-data-only methodology for building a national-scale grid model that derives its EHV topology from the OSM power layer via a multi-source shortest-path reassembly of fragmented overhead-line geometry, with feeder-based circuit-count estimation, calibrated against published circuit-length statistics (Sec. IV). 2) A complete component model—buses, generation with step-up transformers and remote voltage control, regionally allocated load, two- and three-winding transformers with on-load tap changers (OLTC) and N −1 firm banks, tar-geted reactive compensation, and flexible AC transmission systems (FACTS)—serialized to a CSV schema compatible with PSS/E conventions (Sec. V). 3) A general-purpose Newton–Raphson power flow solver with reactive limit enforcement, a remote-voltage-control outer loop with a secant-estimated gain, OLTC/switched-shunt fixed-point control, and zero-impedance regulariza-tion (Sec. VI). 4) An evaluated 85 GW high demand operating point, a set of consistency checks against public benchmarks (published circuit length, the public KPG-193 model, regional sup-ply/demand balance), and an honest account of structural limitations (Secs. VII–IX). A central methodological principle throughout is that no confidential or proprietary network data is used at any stage: every component count and multiplicity is fixed solely by pub-lic facility inventories and conventional transmission-design rules. Counts are deliberately not fitted to a target: the model is not steered toward matching the size of any non-public model; quantities emerge from the public inventory and from physics. II. R ELATED WORK 
+
+a) Statistically representative synthetic grids: Birchfield 
+
+et al. [1] established structural characteristics —substation count, transmission line-length distributions, transformer ra-tios, and graph connectivity—as validation criteria for syn-thetic networks, and Gegner et al. [2] gave a methodology for laying out geographically realistic synthetic power flow models. Realism metrics were further formalized in [3], and reactive-power planning to obtain solvable large synthetic cases was addressed in [4]. These cases (e.g., ACTIVSg2000, ACTIVSg10k) are deliberately disconnected from any real corridor. Our work shares their goal of a CEII-free, pub-licly distributable model and their use of public statistics as calibration targets, but differs in deliberately preserving real geography and real EHV connectivity rather than generating a fictitious graph. 
+
+b) Korean synthetic models: KPG-193 [7] is, to our knowledge, the most directly related prior public Korean model. It likewise extracts lines from OSM via the Overpass API and assigns parameters from manufacturer catalogs, but it clusters the system to 193 buses for tractability in mar-ket/decarbonization optimization and adopts the MATPOWER format. The GIST 2064-bus system is complementary: it targets AC power flow and planning fidelity at native resolution (EHV substations, a distribution layer, and generator step-up structure), follows PSS/E-style data conventions, and is exercised by AC power flow convergence rather than (or in addition to) market simulation. Because it resolves an explicit 154/22.9 kV distribution interface, the GIST model is also a natural transmission-side anchor for combined transmission– distribution coupling studies [6]. The two models can be used together—e.g., KPG-193 for fast economic studies and the GIST model for detailed network analysis—and we cross-check the solved operating point against KPG-193 in Sec. VII. 
+
+c) Tooling: We build on pandapower [8], an open Python library for modeling and steady-state analysis, and adopt conventions consistent with MATPOWER [9]. We nor-malize to the data conventions of PSS/E (Power System Simulator for Engineering; the industry-standard power flow package from Siemens PTI, Power Technologies International), documented in its program operation manual [10], and the underlying power flow theory follows standard references [11], [12]. III. D ESIGN PRINCIPLES AND DATA SOURCES 
+
+A. Principles 
+
+The model follows three rules that make it reproducible and keep it free of confidential information. 1) Public data only. Every element derives from publicly available sources (Sec. III-B). No proprietary or operator-internal network model is used at any stage. 2) Bottom-up component counts. The numbers of buses, lines, transformers, and circuits follow from public facil-ity inventories and conventional transmission-design rules (e.g., N −1 firm transformer banks and typical double-circuit corridors); they are not tuned to reproduce the size of any non-public model. 3) Aggregate calibration only. Where public statistics exist (e.g., total transmission circuit-km by voltage level from the Electric Power Statistics Information System, EPSIS), we use them as system-wide calibration targets, never to fit any individual circuit. The result is a synthetic model whose layout is grounded in real, public geography wherever OSM coverage allows, and is filled in by documented heuristics elsewhere; Sec. IX states explicitly which parts are measured and which are estimated. 
+
+B. Public data sources 
+
+The model is assembled from the following public sources:  
+
+> •
+
+OpenStreetMap / OpenInfraMap [13] via the Over-pass API — geolocated substations and transmission-line geometry ( power=line|cable , voltage tags) for the 765/345/154 kV network.  
+
+> •
+
+EPSIS , operated by the Korea Power Exchange (KPX) [14] — aggregate transmission circuit length, substation and PREPRINT 3
+
+transformer statistics, generation by fuel, and regional fig-ures used as calibration targets . 
+
+> •
+
+Korea Energy Agency (KEA) renewable statistics [15] — province-level solar and wind distribution.  
+
+> •
+
+Regional electricity-demand statistics [16] —province/region consumption shares for load allocation.  
+
+> •
+
+Korea Electric Power Corporation (KEPCO) public statistics [17] and manufacturer disclosures (Hyosung, ABB, LS) — generator unit ratings, HVDC and FACTS commissioning.  
+
+> •
+
+Public one-line diagram of the Jeju power system [18] — used visually to cross-validate the Jeju ring network and HVDC landing points (the mainland 345 kV corridors are taken from the OSM/OpenInfraMap layer above).  
+
+> •
+
+KPG-193 [7] — per-kilometer line parameters (R/X/B) for standard Korean conductors, since OSM does not carry electrical parameters. IV. N ETWORK TOPOLOGY CONSTRUCTION 
+
+The transmission graph—which substations connect to which, along what route, and at how many circuits—is the most consequential part of the model for power flow and the hardest to obtain from public data. Throughout, a corridor 
+
+denotes the physical substation-to-substation route (the trans-mission right-of-way), whereas a circuit is one three-phase line carried on that route; a single corridor may carry several circuits (a double-circuit corridor carries two). We build the graph in three stages, the last of which is adopted. 
+
+A. Geographic primitives 
+
+All inter-node distances use the Haversine great-circle for-mula [19]: for two points i and j with latitudes ϕi, ϕ j and longitudes λi, λ j , writing ∆ϕ = ϕj − ϕi and ∆λ = λj − λi,the great-circle distance is 
+
+dij = 2 RE arcsin 
+
+r
+
+sin 2 ∆ϕ
+
+2 + cos ϕi cos ϕj sin 2 ∆λ
+
+2 , (1) where RE = 6371 km is the Earth’s mean radius. Physical line length is obtained from this route distance times a rout-ing/detour factor of 1.15 . Each coordinate i is assigned to its nearest city c(i) = arg min j∈C dij over the city set C—the one-nearest-neighbor rule [20]—and thereby inherits that city’s province and one of six operating regions (Seoul Metropolitan Area, Gyeongsang, Chungcheong, Jeolla, Gangwon, Jeju). 
+
+B. Stage 1 – nearest-neighbor mesh (deprecated) 
+
+An initial coordinate-nearest mesh over-produced corridors (345 kV at 174 % and 154 kV at 132 % of published route length) and created many implausible >50 km edges, motivat-ing a more principled construction. 
+
+C. Stage 2 – geographic minimum-spanning-tree backbone (fallback) 
+
+A minimum spanning tree (MST) of a connected, edge-weighted graph is the subset of edges that connects every vertex with the smallest possible total edge weight while containing no cycles. Taking substations as vertices and the Haversine distance dij as edge weight, the MST is 
+
+T ⋆ = arg min  
+
+> T∈T
+
+X
+
+> (i,j )∈T
+
+dij , (2) where T is the set of spanning trees of the complete sub-station graph: the shortest-total-length network that still links every substation—a reasonable first approximation to a length-minimizing transmission backbone when measured routes are unavailable. We compute it with Prim’s algorithm [21], which grows a tree from a root vertex by repeatedly adding the lowest-weight edge that reaches an as-yet-unconnected vertex until all are included; a multi-source minimum spanning forest 
+
+generalizes this to several roots, producing one tree per root. In this construction the 345 kV backbone is a single tree (its minimum spanning tree), whereas the 154 kV layer is a spanning forest—one tree rooted at each 345/154 kV injection point. Short distance-gated loop edges are then added for 
+
+N −1 redundancy, and circuit counts are assigned by corridor length (short corridors double-circuit, long corridors single-circuit). This backbone was reconciled with a list of real 345 kV trunk corridors visually transcribed from the public OpenInfraMap rendering of the OSM power layer [13] (21 corridors added; 16 non-existent links pruned). Because an MST is purely radial and minimizes total length rather than reproducing actual routing or meshing, this MST +corridor construction is retained only as a code fallback and is not 
+
+the default. 
+
+D. Stage 3 – real OSM line topology (adopted) 
+
+OpenInfraMap renders the OSM power layer, in which the Korean transmission system is broadly mapped. We query the live Overpass API for 765/345/154 kV lines and com-pare the measured geometry length against published circuit length: coverage is 100 %, 96 %, and 79 % at 765/345/154 kV respectively. The lines are then reassembled into substation-to-substation circuits. 
+
+a) Multi-source shortest-path reassembly: In OSM, each overhead line is fragmented into many short way segments (split at towers), so a corridor is not a single object. We seed every substation’s region with the line nodes inside a tight radius of its centroid and grow the regions by multi-source shortest path (Dijkstra’s algorithm [22] run from all seeds simultaneously), assigning each line node v to the substation 
+
+a(v) = arg min s∈S dist( s, v ), where S is the seed set and 
+
+dist( s, v ) the shortest-path length along the line graph—a geodesic Voronoi partition of the line graph. Where two substation regions meet, we recover a direct circuit between them whose length is the tower-following shortest path. Large urban substations whose feeders end outside the tight radius would otherwise be dropped; a snapping recovery step assigns the nearest line node as a seed to any substation left without a region, without letting it capture nodes belonging to another substation’s region. 
+
+b) Feeder-based circuit counting: Circuit multiplicity per corridor is estimated from the circuit tag of the first 
+
+segment leaving the substation (the feeder). A naive maximum-along-path estimate inflates length because a high-circuit line PREPRINT 4
+
+crossing the middle of a long corridor propagates its tag along the whole path (345 kV at 114 %); the feeder-based estimate is robust (106 %). 
+
+c) Adopted topology and cross-validation: At 345 kV we obtain 117 real OSM circuits and gap-fill only the 19 substations OSM does not reach with the geographic MST. The recovered corridors were cross-checked against the visually transcribed corridor list from Stage 2: the automated OSM trace confirmed 8 corridors, validated 7 pruned (non-existent) links, and revealed one link the manual prune had removed in error, after which OSM was adopted as the primary source. At 154 kV we obtain 689 real OSM circuits and gap-fill 130 unreached substations; geographic plausibility was confirmed on mountainous and island spans (e.g., Bonghwa–Uljin 62 km; Sinan island chains). The 765 kV network (8 substations) is small and already accurate from public corridors, so it is retained. Three island switching stations carry no distribution load and are modeled as zero-load. 
+
+d) Circuit-length definition and calibration: EPSIS pub-lishes transmission length as circuit-km (C-km), i.e., route length times the number of three-phase circuits, not route-km. (A decisive check: the real 765 kV system has only 
+
+∼580 km of public route but EPSIS reports 1024 km, a ratio of ∼1.8 consistent with circuit counting.) Calibrating the adopted topology to this definition yields circuit-length ratios of 765/345/154 kV = 108 /107 /97% and an AC total of 
+
+≈100 % (Fig. 5a). Because the real OSM lines are less densely looped than the synthetic mesh, both the line count and the system losses fall relative to Stage 2. 
+
+E. Jeju island network and HVDC 
+
+Because the geographic MST excludes Jeju (which is fed only by HVDC), Jeju’s 154 kV substations were initially isolated. Following a public Jeju one-line diagram [18] (used visually only), we add the coastal ring network (converter stations, Sin-Jeju, Dong-Jeju, and the southern and western nodes) and eight named wind farms, after which all Jeju buses are served at 0.995 pu to 1.004 pu. The three Jeju– mainland HVDC links are landed at the actual mainland converter sites (Haenam, Jindo, and Wando, the last commis-sioned in late 2024); because the CSV schema has no DC element, firm HVDC transfer is represented by an equivalent AC link calibrated to carry the scheduled firm power and excluded from the AC circuit-length accounting (HVDC length 
+
+≈321 km, i.e., ≈98 % of the published figure). Planned but not-yet-commissioned HVDC and 765 kV reinforcements are deliberately excluded. Figure 1 shows the adopted geographic topology. V. C OMPONENT MODELING 
+
+A. Buses and identifier scheme 
+
+Buses arise on five paths: voltage-level buses per substation; EHV tertiary (23 kV) windings; a 154/22.9 kV distribution layer; generator switchyards; and generator machine-terminal buses. Synthetic bus numbers are assigned in voltage-banded ranges (765: 10,000; 345: 20,000; 154: 40,000; 23: 60,000; 22.9: 70,000; machine: 80,000; switchyard: 90,000). Table I125 126 127 128 129 130   
+
+> Longitude (°E)
+> 33
+> 34
+> 35
+> 36
+> 37
+> 38
+> Latitude (°N)
+> Seoul Metropolitan
+> Area Gangwon
+> Chungcheong
+> Jeolla
+> Gyeongsang
+> Jeju
+> 765 kV
+> 345 kV
+> 154 kV
+> HVDC (eq.)
+> Fig. 1. Geographic topology of the GIST 2064-bus test system. Province boundaries from [23]; interactive version online [24].
+
+summarizes the resulting scale; the bus voltage classes are broken down in Table II.  
+
+> TABLE I SCALE OF THE GIST 2064-BUS TEST SYSTEM .
+
+Element Count Buses (PQ 1840 / PV 223 / REF 1) 2064 Generation & renewable sources 512 dispatchable units (nuclear/coal/gas/hydro) 224 distributed solar (photovoltaic) sites 160 distributed wind sites 128 Loads 802 AC line circuits 3044 HVDC equivalent ties 4Two-winding transformers 2792 Three-winding transformers 281 Shunt elements (switched 339 / fixed 8) 347 FACTS devices 11 Installed generation capacity 144.3 GW Operating regions 6 
+
+> Bus types: PQ (load), PV (voltage-controlled), REF (reference/slack). PREPRINT 5
+> TABLE II BUSES BY VOLTAGE CLASS .
+
+Class Buses Class Buses 765 kV 14 22.9 kV (distr.) 694 345 kV 167 18 kV (machine) 148 154 kV 849 23 kV (tertiary) 116 other gen. ( ≤22 kV) 76 
+
+B. Generation and dispatch 
+
+The generation comprises 224 dispatchable units at approx-imately one hundred power plants (with publicly reported unit ratings), plus 288 distributed renewable sites. Each conven-tional unit is placed on a machine-terminal PV bus behind a generator step-up (GSU) transformer of 13 % impedance and controls its high-voltage switchyard by remote voltage control (Sec. VI-D); the slack is a large coastal unit. Solar (29 GW) and wind (2.1 GW) capacity is distributed to 154 kV buses by KEA province-level shares (288 zones) and treated as must-run sources fixed at their snapshot capacity factors (solar 0.45 ,wind 0.15 for a summer afternoon). Dispatch is set by merit order to meet load plus asmall margin: renewables must-run first, then nuclear at capacity factor 0.98 , then coal at a reduced factor of 
+
+0.65 (reflecting environmental dispatch, seasonal particulate-matter management, and retirement of aging units), then flexible liquefied natural gas (LNG), hydro, and pumped storage proportionally. Aligning installed capacity and dis-patched energy to EPSIS-2024 required adding 15 publicly documented LNG combined-cycle/combined-heat-and-power (CHP) sites ( ≈8 GW), which makes LNG the largest installed fuel (42.4 GW). The resulting shares (Fig. 2) are, by installed capacity, gas 29 /coal 27 /renewable 22 /nuclear 18 %, and by dis-patched energy, nuclear 28 ≈coal 28 ≈gas 25 /renewable 15 %. The two are normalized independently (each sums to 100 %): a technology’s energy share exceeds its capacity share when its capacity factor is above average, so baseload nuclear supplies 28 % of the energy from only 18 % of the capacity, whereas low-capacity-factor renewables supply 15 % of the energy from 22 % of the capacity. Both are consistent with the published Korean mix. Nuclear Coal LNG Renewable Hydro/PS/Other   
+
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> Share (%)
+> 18
+> 27
+> 29
+> 22
+> 4
+> 28 28
+> 25
+> 15
+> 4
+> Installed capacity
+> Dispatched energy
+> Fig. 2. Generation mix: installed capacity versus dispatched energy.
+
+C. Load and its regional allocation 
+
+Regional demand totals are distributed to buses using de-terministic random weights that are then renormalized so that each region’s sum exactly preserves its published consumption share. Distribution-level (154 kV) substations receive a single aggregated load on their 22.9 kV bus; 345 kV substations receive load on their 154 kV bus; the load power factor is 
+
+0.95 . The total served load is 85.0 GW. The defining structural feature of the Korean system is visible in this allocation (Fig. 3): the Seoul Metropolitan Area consumes 34 GW but hosts only ≈15.8 GW of generation, so it imports ≈18 GW over the EHV backbone, while Gyeongsang and Chungcheong are large net exporters. Seoul Metro. Gyeongsang Chungcheong Jeolla Gangwon Jeju  
+
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> 35
+> Power (GW)
+> Generation
+> Load
+> Fig. 3. Regional generation versus load at the high demand snapshot.
+
+D. Transformers 
+
+Three transformer populations are modeled: generator GSUs (two-winding); 154/22.9 kV distribution main transformers sized by an N −1 firm capacity criterion (a bank outage leaves the remainder able to carry the full load); and 765/345/23 and 345/154/23 kV autotransformers (three-winding). For power flow, each three-winding unit is decomposed into its star-equivalent; on-load tap changers on step-down transformers regulate their controlled bus to ≈1.0 pu (Sec. VI-E). Sizing the 345/154 kV banks at 600 MVA and the 154/23 kV firm banks accordingly brings per-substation bank counts into agreement with EPSIS implications. 
+
+E. Shunt compensation and FACTS 
+
+Reactive resources comprise 765 kV fixed line reactors (sized by computed line charging), targeted 345 kV switched capacitors placed only at the weak-voltage buses identified by the power flow solution, and distribution power-factor capacitors placed only at large load substations (smaller sub-stations absorb their power-factor correction into a near-unity load power factor, keeping reactive physics neutral without an explicit shunt). Because per-device reactive set points (Mvar) are not available in public data, set points are chosen freely to match the operating snapshot, while locations and counts are taken from publicly documented installations. The model includes 11 FACTS devices (Table III), each publicly documented as in operation: six 345 kV static synchronous compensators (STATCOMs), one 154 kV unified power flow PREPRINT 6
+
+controller (UPFC), two 154 kV STATCOMs, and two Jeju synchronous condensers. FACTS are modeled in power flow as voltage-controlling generators with zero real power and symmetric reactive limits.                           
+
+> TABLE III FACTS DEVICES (ALL PUBLICLY DOCUMENTED AS IN OPERATION ). Device Type kV Rating (Mvar) Migeum, Sin-Buyeong STATCOM 345 100, 150 Sin-Yeongju, Sin-Chungju STATCOM 345 400, 400 Donghae STATCOM 345 150 Godeok MMC STATCOM 345 400 Gangjin UPFC 154 80 Sin-Jeju, Halla STATCOM 154 50, 50 Buk-Jeju, Jeju Syn. condenser 154 55, 50
+> MMC: modular multilevel converter.
+
+VI. P OWER FLOW FORMULATION AND SOLVER 
+
+The model is solved with a general-purpose loader built on 
+
+pandapower [8], which converts the CSV schema into an internal network and runs the power flow described below. 
+
+A. Per-unit system and network equations 
+
+All quantities are normalized to a 100 MVA base. The nodal relation is I = YV , with off-diagonal Yik = −yik 
+
+(series admittance between i and k) and diagonal Yii =P 
+
+> k
+
+yik + P ysh  
+
+> i
+
+(series plus shunt/charging/excitation terms). The injected complex power at bus i is Si = Vi
+
+P
+
+> k
+
+(Yik Vk)∗,giving the real power flow equations 
+
+Pi = Vi
+
+X
+
+> k
+
+Vk (Gik cos θik + Bik sin θik ), (3) 
+
+Qi = Vi
+
+X
+
+> k
+
+Vk (Gik sin θik − Bik cos θik ), (4) with θik = θi − θk.
+
+B. Newton–Raphson solution 
+
+With state x = [ θ, V]⊤ and mismatches ∆P, ∆Q, each Newton–Raphson iteration [25] solves the sparse linear system 
+
+"
+
+∆P
+
+∆Q
+
+#
+
+=
+
+"
+
+H NM L
+
+# " 
+
+∆θ
+
+∆V/V
+
+#
+
+, (5) and updates x. PV rows/columns ( ∆Q, ∆V ) and the slack rows/columns are removed, leaving 2Npq + Npv unknowns. Convergence is declared on the infinity norm of the power mismatch ( ≤10 −5 pu); the method exhibits second-order con-vergence (typically 3–6 iterations), with DC and flat-start fallbacks. 
+
+C. Reactive limit enforcement 
+
+A PV generator whose computed Q violates [Qmin , Q max ] is switched to PQ at the violated bound and its voltage freed (and restored to PV if its voltage recovers). This models automatic voltage regulator (AVR)/excitation saturation realistically and is essential to obtaining a credible high demand operating point. 
+
+D. Remote voltage-control outer loop 
+
+In PSS/E a generator may regulate a remote bus (the 
+
+reg_bus field)—for example, a unit on an 18 kV machine terminal holding the high-voltage switchyard beyond its GSU. Since the pandapower generator regulates only its own bus, we wrap the Newton–Raphson solve in an outer loop that adjusts each generator’s local voltage set point u so the controlled bus reaches its target. Because the sensitivity of the controlled-bus voltage to u is unknown (it depends on system strength and GSU impedance), the gain is set from a secant (finite-difference) estimate of the inverse sensitivity ∆u/ ∆Vctrl .At outer iteration ν,
+
+e ← Vset − Vctrl , (6) 
+
+g ← clip(∆ u/ ∆Vctrl , 0.3, 5) , (7) 
+
+u ← clip( u + g e, 0.85 , 1.20) , (8) followed by a warm-started re-solve; the set point clip stands in for the excitation limit. A generator is “settled” when its controlled bus reaches target or it saturates against the set point limit; the loop terminates when all remote generators settle. Modeling the GSU step-down without remote control would artificially depress the high-voltage side, so this loop is decisive for accuracy in machine-terminal +GSU models such as ours. 
+
+E. OLTC and switched-shunt fixed-point control 
+
+Tap changers and switched shunts are, by default, frozen at their snapshot values (to reproduce a given operating point). An optional active mode automatically identifies con-trollable devices from each transformer’s controlled-bus and winding voltages—step-down two-winding units regulating a low-voltage (distribution) bus, and EHV autotransformers regulating a 154 kV bus—and wraps the solve in a fixed-point iteration. For a regulated bus with target V ∗ and tap step δ (= 1% ), the tap position is updated by ∆tap =clip  round(( V − V ∗)/δ ), −1, +1  per iteration, with a dead-band to suppress ±1-step hunting, while switched capaci-tors/reactors are toggled on a hysteresis band; each update is followed by a warm-started re-solve. Robustness for thousands of coupled OLTCs is obtained by rolling back a diverging iteration to the last converged state and by terminating at the minimum-error state once the maximum regulated-bus error plateaus. The two modes answer different questions— “reproduce this snapshot” versus “where do OLTCs settle”—so the active mode is off by default. 
+
+F. Zero-impedance branch regularization 
+
+Bus-coupler/section breakers appear as (near-)zero-impedance branches. Without the node-merge that PSS/E applies internally, such branches make the admittance matrix nearly singular and Newton–Raphson diverges. A small lower bound ( zmin =10 −4 pu) is imposed on such series impedances, restoring conditioning with negligible effect on the solution. PREPRINT 7
+
+G. Element models 
+
+Lines use the π model: the series impedance R + jX plus a single charging susceptance bpu that the solver splits as bpu /2
+
+at each end (converted to an equivalent capacitance). The optional end-shunt fields ( g/b from/to) are additive lumped shunts, set to zero here so that charging is represented once. Two-winding transformers carry an off-nominal com-plex turns ratio (no phase shift here); three-winding units pass winding-pair short-circuit impedances to pandapower ,which forms the star equivalent internally (including a pos-sibly negative middle leg for autotransformers), with the nominal-voltage scaling pre-compensated. Loads support the full ZIP (constant-impedance/constant-current/constant-power) form but are constant-power here. Shunts are constant admit-tance; FACTS are zero-P voltage-controlling generators. VII. T HE HIGH DEMAND OPERATING POINT 
+
+We evaluate a summer-afternoon high demand snapshot of 85 GW served load. The solution is a single connected network (no islands) and converges with reactive limits enforced—a state that earlier model versions reached only by relaxing reactive limits, and that became attainable once the LNG capacity correction moved more generation near the Seoul Metropolitan Area load and additional local 345 kV reactive support was added. Table IV summarizes the operating point and Fig. 4 maps the solved voltages.   
+
+> TABLE IV HIGH DEMAND OPERATING POINT (85 GW SNAPSHOT ).
+
+Quantity Value Total generation 87.0 GW Total load 85.0 GW Active-power losses 1.96 GW (2.3 %) Mean bus voltage 0.996 pu Min / max bus voltage 0.953 pu / 1.008 pu Buses below 0.95 pu 0Overvoltage buses 0Connected components 1Reactive limit enforcement converged Dangling bus references 0
+
+a) Voltage and flows: The voltage profile (Fig. 4) is well within limits: the mean is 0.996 pu, no bus falls below 0.95 pu, and there is no overvoltage. The Seoul Metropolitan Area holds nominal voltage despite its large import, while the lowest voltages appear on radial southwestern fringe buses (e.g., the Sejong/Asan/Sin-Gangjin areas), exactly where targeted 345 kV switched capacitors are placed rather than through topological inflation. Line loadings average 18 %, with a small number (15 circuits) above 100 % in this single aggregated snapshot; these reflect the concentration of bulk flow on a less-meshed real backbone with aggregated loads (Sec. IX). 
+
+b) Cross-check against KPG-193: The independent pub-lic KPG-193 model [7], built at far coarser resolution, reports the same structural behavior our snapshot exhibits: coastal-concentrated generation, a metropolitan load pocket drawing 125 126 127 128 129 130  
+
+> Longitude (°E)
+> 33
+> 34
+> 35
+> 36
+> 37
+> 38
+> Latitude (°N)
+> Seoul Metropolitan
+> Area Gangwon
+> Chungcheong
+> Jeolla
+> Gyeongsang
+> Jeju
+> 0.95
+> 0.96
+> 0.97
+> 0.98
+> 0.99
+> 1.00
+> 1.01
+> Bus voltage (p.u.)
+> Fig. 4. Solved bus-voltage profile at the high demand snapshot (marker color, p.u.).
+
+approximately 40 % of national demand, and the resulting long-distance northward bulk transfer on the 345/765 kV and HVDC corridors. Our solved operating point is consistent with this picture; because the two models differ greatly in resolution and neither is tuned to the other, we claim structural agreement rather than a bus-for-bus match. VIII. M ODEL VALIDATION AND CONSISTENCY 
+
+Because no public full-resolution Korean case exists to compare against bus-for-bus, we validate the model against 
+
+public aggregate benchmarks and through internal physical consistency. Three checks are reported. 
+
+a) Transmission length vs EPSIS: The most direct quan-titative anchor is total transmission circuit length by voltage level, which EPSIS publishes [14]. The assembled network reaches 108%, 107%, and 97% of the published 765, 345, and 154 kV circuit-km (2024 figures) respectively (Fig. 5a), and ≈100% in aggregate. Since the 345 and 154 kV layout is taken from real OSM geometry and only the unreachable substations are gap-filled, this agreement is a check on the 
+
+amount of transmission rather than a fitted result. 
+
+b) Voltage profile and convergence: The AC power flow converges to a single connected operating point with generator reactive limits enforced, and the solved voltages form a tight, well-behaved distribution: the mean is 0.996 pu, every bus lies above the 0.95 pu planning limit, and there is no overvoltage (Fig. 5b). Convergence under enforced reactive limits—rather than only with limits relaxed—is itself evidence that the reactive resources and dispatch are physically self-consistent under heavy load. PREPRINT 8765 345 154        
+
+> Voltage level (kV)
+> 0
+> 25
+> 50
+> 75
+> 100
+> 125
+> Model / EPSIS
+> circuit-km (%)
+> 108% 107%
+> 97%
+> 0.94 0.96 0.98 1.00 1.02
+> Solved bus voltage (p.u.)
+> 0
+> 100
+> 200
+> 300
+> 400
+> Number of buses
+> (a) (b)
+> Fig. 5. Public-benchmark validation. (a) Assembled circuit length versus published EPSIS, by voltage level. (b) Solved bus-voltage distribution at the high demand snapshot.
+
+c) Cross-check against KPG-193: The only other public Korean synthetic model, KPG-193 [7], is built at far coarser resolution (193 buses) and is exercised by AC optimal power flow rather than a fixed power flow snapshot, so a bus-for-bus voltage comparison is not meaningful. Qualitatively, however, both models show the same behavior: coastal-concentrated generation, a metropolitan area drawing approximately 40 % of national demand, long-distance northward bulk transfer on the 345/765 kV and HVDC corridors, and voltage stress concentrated on the weakly-meshed periphery—which is the consistency we can legitimately claim across resolutions. The underlying solver is the standard pandapower Newton– Raphson formulation [8], whose correctness is established independently in the literature; here we add the control loops of Sec. VI on top of it. IX. L IMITATIONS 
+
+We state the model’s limitations explicitly. They fall into two groups: quantities that could not be obtained from public data and were therefore estimated, and modeling simplifica-tions inherent to a single aggregated snapshot. 
+
+Quantities estimated because they are not in public data. 
+
+1) Shunt and FACTS reactive compensation. The loca-tions, counts, and per-device set points of shunt voltage-compensation devices (switched capacitors/reactors) cannot be determined from public data. They are placed by engi-neering heuristics at electrically weak buses and sized to the operating snapshot; only the aggregate reactive capacity is reconciled against EPSIS. Individual device placements and ratings are therefore approximate. 2) On-load tap-changer settings. OLTC tap positions and regulated voltage set points are likewise unavailable pub-licly. Taps are frozen at plausible snapshot values by default (Sec. VI-E); the optional active mode settles them by a control heuristic rather than from recorded operator settings. 3) Partly estimated topology. While the 345 and 154 kV layout is taken from real OSM geometry where coverage exists (96 %/79 % of substations reached), the remaining unreachable substations (19 at 345 kV, 130 at 154 kV) are connected by the geographic MST heuristic of Sec. IV, so those corridors are estimated rather than observed. Per-circuit counts are feeder-tag estimates (aggregate circuit-km matches EPSIS, but individual circuits are approximate). 4) Electrical parameters and identifiers. Line R/X/B use standard per-kilometer values for Korean conductors [7] rather than measured per-circuit impedances. Substation coordinates are crowd-sourced ( ± hundreds of metres), and bus numbers and names are synthetic. 
+
+Modeling simplifications. 
+
+5) Losses and loadings. Losses ( ≈2.3 %) are somewhat high and a few circuits exceed 100 % in the single snapshot, reflecting gap-filled segments and aggregated loads that concentrate bulk flow on a less-meshed backbone; full per-circuit corridors and bus splits would relieve this. 6) Single operating point. The model represents one summer-afternoon high demand snapshot with constant-power loads; it is not a time series, and enforcing generator reactive limits at this high demand level remains near the boundary of what a single power flow (versus a coordinated reactive optimal power flow, OPF) can achieve. 7) Mixed data vintages. The public inputs are taken from the most recent editions available at construction and do 
+
+not share a single reference year: the EPSIS circuit-length and generation-by-fuel statistics used for calibration are 2024 figures, the OpenStreetMap geometry was retrieved in 2026, and the regional demand and renewable-deployment shares come from their respective latest public releases. The 85 GW operating level is a representative high demand value, not a specific historical peak (the actual system peak is now higher). The model is therefore best read as a representative composite of the recent Korean system rather than a reconstruction of its state at any single instant. X. C ONCLUSION 
+
+We have presented the GIST 2064-bus test system, a geo-graphically explicit synthetic model of the Korean power grid built entirely from public data and exercised by AC power flow. Its distinguishing feature is that the 345 and 154 kV transmis-sion graph is derived from the real OpenStreetMap power layer PREPRINT 9
+
+by a multi-source shortest-path reassembly and feeder-based circuit counting, with only unreachable substations gap-filled by a geographic MST, and is calibrated to published circuit-length statistics. A general-purpose Newton–Raphson solver with reactive limit enforcement, a remote voltage-control outer loop, OLTC fixed-point control, and zero-impedance regular-ization solves the 85 GW high demand snapshot to a single converged operating point whose voltage profile is within operating limits and consistent with the independent public KPG-193 model. Distributed as a CSV dataset that follows PSS/E conventions, with reproducible build tooling, the model is intended as a citable platform, assembled entirely from pub-lic data, for power flow, contingency, reactive-planning, and decarbonization studies of one of the world’s most structurally distinctive grids. Future work includes reactive optimization under enforced limits, automatic N −1 contingency screening, and bus-specific OLTC voltage bands with coordinated tap control. DATA AVAILABILITY 
+
+The dataset ( bus , gen , line , load , shunt , trafo2w ,
+
+trafo3w , facts CSV files), together with the topol-ogy and power flow maps and the build and power flow scripts, is available from the GIST Power System Lab-oratory at https://psl.gist.ac.kr/prog/bbsArticle/BBSMSTR_ 000000012527/list.do [26]. An interactive, browser-based ren-dering of the network topology is also available online [24]. All of it is derived solely from publicly available sources; no confidential or operator-internal data is included. The schema is summarized in the Appendix (Table V). ACKNOWLEDGMENT 
+
+This work relies on the publicly available Open-StreetMap/OpenInfraMap data and the public statistics of KPX/EPSIS and the Korea Energy Agency, whose maintainers we gratefully acknowledge. APPENDIX 
+
+Table V lists the columns of each CSV input file; the data conventions are noted below the table. REFERENCES [1] A. B. Birchfield, T. Xu, K. M. Gegner, K. S. Shetye, and T. J. Overbye, “Grid structural characteristics as validation criteria for synthetic net-works,” IEEE Trans. Power Syst. , vol. 32, no. 4, pp. 3258–3265, 2017. [2] K. M. Gegner, A. B. Birchfield, T. Xu, K. S. Shetye, and T. J. Overbye, “A methodology for the creation of geographically realistic synthetic power flow models,” in Proc. IEEE Power Energy Conf. Illinois (PECI) ,2016, pp. 1–6. [3] A. B. Birchfield, E. Schweitzer, H. Athari, T. Xu, T. J. Overbye, A. Scaglione, and Z. Wang, “A metric-based validation process to assess the realism of synthetic power grids,” Energies , vol. 10, no. 8, p. 1233, 2017. [4] A. B. Birchfield, T. Xu, and T. J. Overbye, “Power flow convergence and reactive power planning in the creation of large synthetic grids,” 
+
+IEEE Trans. Power Syst. , vol. 33, no. 6, pp. 6667–6674, 2018. [5] T. Xu, A. B. Birchfield, K. M. Gegner, K. S. Shetye, and T. J. Overbye, “Application of large-scale synthetic power system models for energy economic studies,” in Proc. 50th Hawaii Int. Conf. Syst. Sci. (HICSS) ,2017. [6] C. Mateo et al. , “Building and validating a large-scale combined transmission and distribution synthetic electricity system of Texas,” Int. J. Electr. Power Energy Syst. , vol. 159, Art. no. 110037, 2024. [7] G. Song and J. Kim, “KPG 193: A synthetic Korean power grid test system for decarbonization studies,” arXiv:2411.14756 , 2024. [8] L. Thurner et al. , “pandapower—An open-source Python tool for con-venient modeling, analysis, and optimization of electric power systems,” 
+
+IEEE Trans. Power Syst. , vol. 33, no. 6, pp. 6510–6521, 2018. [9] R. D. Zimmerman, C. E. Murillo-Sánchez, and R. J. Thomas, “MAT-POWER: Steady-state operations, planning, and analysis tools for power systems research and education,” IEEE Trans. Power Syst. , vol. 26, no. 1, pp. 12–19, 2011. [10] Siemens PTI, PSS/E Program Operation Manual, v33 , 2013. [11] J. J. Grainger and W. D. Stevenson, Power System Analysis . New York: McGraw-Hill, 1994. [12] P. Kundur, Power System Stability and Control . New York: McGraw-Hill, 1994. [13] OpenStreetMap contributors, “Planet dump,” https://www.openstreetmap. org; power layer via OpenInfraMap, https://openinframap.org, accessed 2026. [14] Korea Power Exchange (KPX), “Electric Power Statistics Information System (EPSIS),” https://epsis.kpx.or.kr, accessed 2026. [15] Korea Energy Agency (KEA), “New and Renewable Energy statistics / regional deployment data,” https://www.energy.or.kr, accessed 2026. [16] Korea Energy Economics Institute, “Korea Energy Statistical Informa-tion System (KESIS): regional electricity consumption,” https://www. kesis.net, accessed 2026. [17] Korea Electric Power Corporation (KEPCO), “Statistics of Electric Power in Korea,” annual report, https://home.kepco.co.kr, accessed 2026. [18] T. Lee and Y. Lee, “Expansion of renewable energy in Jeju and directions for stable power-system operation (in Korean),” Energy Focus , Korea Energy Economics Institute (KEEI), Winter 2020, pp. 48–63, Fig. 5 (Jeju power-system one-line diagram). [19] R. W. Sinnott, “Virtues of the haversine,” Sky and Telescope , vol. 68, no. 2, p. 159, 1984. [20] T. Cover and P. Hart, “Nearest neighbor pattern classification,” IEEE Trans. Inf. Theory , vol. 13, no. 1, pp. 21–27, 1967. [21] R. C. Prim, “Shortest connection networks and some generalizations,” 
+
+Bell Syst. Tech. J. , vol. 36, no. 6, pp. 1389–1401, 1957. [22] E. W. Dijkstra, “A note on two problems in connexion with graphs,” 
+
+Numer. Math. , vol. 1, pp. 269–271, 1959. [23] Statistics Korea (KOSTAT), administrative-district boundary data, dis-tributed via the southkorea-maps dataset, https://github.com/southkorea/ southkorea-maps, accessed 2026. [24] Y.-S. Kim, “The GIST 2064-bus test system: interactive grid map,” https://yskimpsl.github.io/GIST-2064-bus-test-system/grid_map_ reconstructed.html, accessed 2026. [25] W. F. Tinney and C. E. Hart, “Power flow solution by Newton’s method,” 
+
+IEEE Trans. Power App. Syst. , vol. PAS-86, no. 11, pp. 1449–1460, Nov. 1967. [26] Y.-S. Kim, “The GIST 2064-bus Korean power-grid test system (dataset),” GIST Power System Laboratory, https://psl.gist.ac.kr/prog/ bbsArticle/BBSMSTR_000000012527/list.do, accessed 2026. PREPRINT 10 
+
+TABLE V COLUMNS OF EACH CSV INPUT FILE .
+
+File Columns 
+
+bus.csv bus, name, region, base_kv, volt_class, type, area, area_name, zone, vm_pu, va_deg, vmax_pu, vmin_pu, lat, lon gen.csv bus, id, name, p_mw, q_mvar, vset_pu, q_max_mvar, q_min_mvar, p_max_mw, p_min_mw, mbase_mva, reg_bus, is_slack load.csv bus, id, name, p_mw, q_mvar, const_i_*, const_z_*, area, zone shunt.csv bus, id, name, kind, p_mw, q_mvar line.csv from_bus, to_bus, id, name, r_pu, x_pu, b_pu, g/b_from/to_pu, rate_a/b/c_mva, length_km trafo2w.csv hv_bus, lv_bus, r_pu, x_pu, b_pu, ratio, shift_deg, vn_hv/lv_kv, sn_mva, rate_*_mva, cont_bus trafo3w.csv hv/mv/lv_bus, r/x_(hv_mv,mv_lv,lv_hv)_pu, ratio_hv/mv/lv, vn_hv/mv/lv_kv, rate_*_mva, cont_bus facts.csv name, bus, bus_name, mode, vset_pu, shmax_mvar, pdes_mw, qdes_mvar
