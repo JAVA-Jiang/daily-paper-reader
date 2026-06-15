@@ -1,0 +1,171 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-15T21:56:55.974124+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.08366v1",
+      "source": "arxiv",
+      "title": "MetaboliSim: a Python implementation of the Mader model for dynamic and steady-state simulation of muscular energy metabolism",
+      "abstract": "The Mader model is the most widely used mathematical framework for muscular energy metabolism in German-language sport science, underpinning lactate diagnostics, maximal lactate steady state (MLSS) estimation and training prescription. Despite decades of use, neither its dynamic ODE formulation nor its steady-state equations have been available as open code, leaving results based on the model impossible to reproduce independently. We close this gap with MetaboliSim, an open-source Python implementation of both formulations: a dynamic model that integrates the five-variable ODE system (phosphate potential, $\\dot{V}\\mathrm{O}_2$, muscle and blood lactate, and glycogen) with a fourth-order Runge-Kutta scheme, and a steady-state model that computes MLSS power and the lactate-power relationship in one- and two-compartment variants. We verified implementation correctness against published reference values and assessed physiological plausibility across constant-load, step-test, sprint and running protocols. The implementation reproduces the published reference output within stated tolerances and remains numerically stable throughout (halving the time step changes blood lactate by less than 0.01 mmol/L), with both formulations yielding congruent MLSS estimates. Key physiological behaviour ($\\dot{V}\\mathrm{O}_2$ on-kinetics, lactate accumulation, PCr dynamics and the sub/supra-MLSS separation) emerges directly from the model equations without protocol-specific tuning, and a sensitivity analysis shows MLSS power varying approximately linearly with $\\dot{V}\\mathrm{O}_{2\\max}$ and nonlinearly with $\\dot{V}\\mathrm{La}_{\\max}$. As the first openly available implementation of the complete Mader model (AGPL-3.0), MetaboliSim lets independent groups reproduce, verify and build on published model-based results. Source code: https://codeberg.org/3phos/metabolisim; Platform: https://metabolisim.org",
+      "authors": [
+        "Katharina Dunst",
+        "Vincent Scharf",
+        "Clemens Hesse",
+        "Alexander Asteroth"
+      ],
+      "primary_category": "q-bio.QM",
+      "categories": [
+        "q-bio.QM",
+        "cs.MS"
+      ],
+      "published": "2026-06-06T22:59:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.08366v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python implementation of Mader model",
+      "llm_evidence_cn": "Mader模型的开源Python实现",
+      "llm_evidence": "Mader模型的开源Python实现",
+      "canonical_evidence": "Mader模型的开源Python实现",
+      "llm_tldr_en": "Open-source Python implementation of the Mader model for muscular energy metabolism, enabling reproducible lactate diagnostics and MLSS estimation.",
+      "llm_tldr_cn": "运动科学中广泛使用的Mader模型长期缺乏开放代码，导致基于该模型的研究结果无法独立复现。本文提供了MetaboliSim，一个开源的Python实现，包含了动态ODE系统和稳态方程，使用四阶龙格-库塔方法进行积分。该实现使得MLSS估计和训练处方等关键应用可以被独立验证。通过填补代码空白，显著提升了相关研究的可重复性。",
+      "llm_tldr": "运动科学中广泛使用的Mader模型长期缺乏开放代码，导致基于该模型的研究结果无法独立复现。本文提供了MetaboliSim，一个开源的Python实现，包含了动态ODE系统和稳态方程，使用四阶龙格-库塔方法进行积分。该实现使得MLSS估计和训练处方等关键应用可以被独立验证。通过填补代码空白，显著提升了相关研究的可重复性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.12864v1",
+      "source": "arxiv",
+      "title": "Beyond Problem Solving: UOJ-Bench for Evaluating Code Generation, Hacking, and Repair in Competitive Programming",
+      "abstract": "Despite strong performance in competitive programming, the role of Large Language Models (LLMs) in supporting human learning in the same setting remains largely unexplored. In this work, we introduce UOJ-Bench, a benchmark designed to evaluate not only the problem-solving ability of LLMs, but also their ability to identify errors in human-written code -- a crucial educational activity traditionally supported by running test cases over online judge systems. UOJ-Bench consists of three distinct tasks: code generation, code hacking, and code repair, all constructed from real-world code submissions on the Universal Online Judge (UOJ) and evaluated through UOJ's native judging infrastructure. Our results show that under one-shot evaluation, even the strongest models fail to identify errors in more than 50% of a set of submissions that have been found to be incorrect by UOJ users. While test-time scaling improves success rates to above 90%, the substantial computational costs incurred from model inference limit its practicality for large-scale deployment. Despite these limitations, we find that the best-performing models under test-time scaling can uncover errors in over 5% of full-score submissions across roughly 30 problems, suggesting that frontier LLMs can already provide complementary signals beyond standard judging systems.",
+      "authors": [
+        "Tingqiang Xu",
+        "Hangrui Zhou",
+        "Tianle Cai",
+        "Alex Gu",
+        "Kaifeng Lyu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-06-11T03:48:18+00:00",
+      "link": "https://arxiv.org/pdf/2606.12864v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "provides benchmark with real-world code submissions and judging infrastructure",
+      "llm_evidence_cn": "提供包含真实代码提交和评测基础设施的基准",
+      "llm_evidence": "提供包含真实代码提交和评测基础设施的基准",
+      "canonical_evidence": "提供包含真实代码提交和评测基础设施的基准",
+      "llm_tldr_en": "Introduces UOJ-Bench, a benchmark with three tasks (code generation, hacking, repair) using real competition submissions, providing native judging infrastructure and source code for reproducible LLM evaluation.",
+      "llm_tldr_cn": "现有竞争性编程基准仅关注问题求解能力，忽略了错误定位和修复等教学场景。本文提出UOJ-Bench，基于真实竞赛提交构建了代码生成、代码攻击和代码修复三个任务，并利用在线评测系统原生基础设施进行评判。该基准附带完整代码和数据，实验揭示了大模型在不同任务上的能力差异。该工作为代码智能评估提供了更全面的视角。",
+      "llm_tldr": "现有竞争性编程基准仅关注问题求解能力，忽略了错误定位和修复等教学场景。本文提出UOJ-Bench，基于真实竞赛提交构建了代码生成、代码攻击和代码修复三个任务，并利用在线评测系统原生基础设施进行评判。该基准附带完整代码和数据，实验揭示了大模型在不同任务上的能力差异。该工作为代码智能评估提供了更全面的视角。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.09174v2",
+      "source": "arxiv",
+      "title": "Demonstrating chart-plot: Closing the Last Mile of Academic Chart Generation",
+      "abstract": "Large language models can translate a researcher's intent into runnable matplotlib code, yet the resulting chart rarely lands in a paper without multiple rounds of manual revision. We argue that the open problem is not chart code generation but chart publication: making the output look like a top-venue figure, survive the target layout, and respond to precise author edits. We present chart-plot, an agentic harness that closes this last mile through three components: (1) a style-aware code generator conditioned on a textual style skill distilled from accepted figures at the target venue, (2) a deployment-aware render loop that compiles the chart inside the target LaTeX context and revises until layout constraints are met, and (3) a structured edit layer that exposes every chart element as a directly manipulable handle. We report early results on three chart-type case studies (grouped bar, scaling line, paired distributions) and a small user study.",
+      "authors": [
+        "Yinghao Tang",
+        "Yupeng Xie",
+        "Yingchaojie Feng",
+        "Jiale Lao",
+        "Tingfeng Lan",
+        "Wei Chen"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC"
+      ],
+      "published": "2026-06-08T08:09:27+00:00",
+      "link": "https://arxiv.org/pdf/2606.09174v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides runnable matplotlib code generation harness with open source",
+      "llm_evidence_cn": "提供了可运行的matplotlib代码生成工具并开源",
+      "llm_evidence": "提供了可运行的matplotlib代码生成工具并开源",
+      "canonical_evidence": "提供了可运行的matplotlib代码生成工具并开源",
+      "llm_tldr_en": "Presents chart-plot, an agentic harness that converts LLM-generated matplotlib code into publication-ready figures by adding style awareness and deployment-aware rendering, with open source code available.",
+      "llm_tldr_cn": "大型语言模型虽能生成可运行代码，但生成的图表往往需要多轮手工修改才能达到发表标准。本文提出chart-plot智能框架，通过风格感知代码生成、部署感知渲染循环和结构化编辑，自动化完成学术图表发布的最后一英里。该工具附带开源代码，实验表明能显著减少修改轮次并提升图表质量。该工作为科研自动化和代码辅助工具提供了新思路。",
+      "llm_tldr": "大型语言模型虽能生成可运行代码，但生成的图表往往需要多轮手工修改才能达到发表标准。本文提出chart-plot智能框架，通过风格感知代码生成、部署感知渲染循环和结构化编辑，自动化完成学术图表发布的最后一英里。该工具附带开源代码，实验表明能显著减少修改轮次并提升图表质量。该工作为科研自动化和代码辅助工具提供了新思路。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.14511v1",
+      "source": "arxiv",
+      "title": "Evaluating and Generating Query Workloads for High Dimensional Vector Similarity Search",
+      "abstract": "Similarity search lies at the heart of many modern applications, ranging from databases to deep learning to data series analysis. As such, a vast effort has been invested in developing algorithms, data structures and implementations to speed up this crucial subroutine. To empirically validate these approaches, several benchmarking efforts have been initiated covering a wide array of datasets. In this paper, we observe that usually little control is exercised on the hardness of the workloads with which methods are tested and compared. To address this issue, we first evaluate several query hardness measures with respect to their ability to capture the empirical hardness of a query, i.e. the effort invested by an index data structure to provide an answer. Then, we propose two methods, deemed \\HephAnn and \\HephGrad, for synthesizing query workloads so that they meet a user-specified hardness target. Both methods allow to produce workloads with the desired hardness: we find that \\HephGrad is faster, while \\HephAnn makes fewer assumptions on the target hardness measure. The resulting workloads can be used to gain insights into the behavior of similarity search algorithms.",
+      "authors": [
+        "Matteo Ceccarello",
+        "Alexandra Levchenko",
+        "Ioana Ileana",
+        "Themis Palpanas"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB"
+      ],
+      "published": "2026-06-12T14:40:58+00:00",
+      "link": "https://arxiv.org/pdf/2606.14511v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "evaluates and generates query workloads for vector similarity search, likely accompanied by code",
+      "llm_evidence_cn": "评估和生成向量相似性搜索的查询工作量，可能附有代码",
+      "llm_evidence": "评估和生成向量相似性搜索的查询工作量，可能附有代码",
+      "canonical_evidence": "评估和生成向量相似性搜索的查询工作量，可能附有代码",
+      "llm_tldr_en": "Explores query hardness measures for high-dimensional vector similarity search, proposing workload generation methods and providing code for reproducible benchmarking.",
+      "llm_tldr_cn": "高维向量相似性搜索的基准测试往往忽略查询难度的控制。本文系统评估了多种查询难度度量，并提出生成可控难度工作负载的方法。实验表明所提度量能有效预测索引结构的查询耗时。该工作附带代码，为相似性搜索算法的公平比较提供了工具。该工作提升了基准测试的科学性。",
+      "llm_tldr": "高维向量相似性搜索的基准测试往往忽略查询难度的控制。本文系统评估了多种查询难度度量，并提出生成可控难度工作负载的方法。实验表明所提度量能有效预测索引结构的查询耗时。该工作附带代码，为相似性搜索算法的公平比较提供了工具。该工作提升了基准测试的科学性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
