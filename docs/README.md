@@ -6,34 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-15
-- 运行时间：2026-06-15 21:59:47 UTC
+- 最新运行日期：2026-06-16
+- 运行时间：2026-06-16 21:52:22 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：3
+- 本次总论文数：2
+- 精读区：1
 - 速读区：1
 
 ### 今日简报（AI）
-1) 今日日报精读2篇9分论文：肌肉能量代谢模拟工具MetaboliSim与编程竞赛基准UOJ-Bench，速读1篇高维向量搜索查询工作负载评估。
-2) 最值得关注的方向：Mader模型的动态稳态模拟实现，以及代码生成、破解与修复的自动化评估框架。
-3) 建议优先阅读两篇精读，分别对生物代谢建模和编程任务测试有直接参考价值。
-- 详情：[/202606/15/README](/202606/15/README)
+今天精读1篇高分文章《GridFire》并速读1篇安全评估文章《SkillVetBench》。最值得关注的是恒星结构和演化的开源核网络GridFire，以及LLM Agent的多维安全风险评估新基准SkillVetBench。建议优先精读GridFire掌握核天体物理模拟工具，再结合SkillVetBench了解Agent安全评估方法。
+- 详情：[/202606/16/README](/202606/16/README)
 
 ### 精读区论文标签
-1. [MetaboliSim: a Python implementation of the Mader model for dynamic and steady-state simulation of muscular energy metabolism](/202606/15/2606.08366v1-metabolisim-a-python-implementation-of-the-mader-model-for-dynamic-and-steady-state-simulation-of-muscular-energy-metabolism)  
+1. [GridFire: A new, open source, nuclear network for stellar structure and evolution](/202606/16/2606.15354v1-gridfire-a-new-open-source-nuclear-network-for-stellar-structure-and-evolution)  
    标签：评分：9.0/10、query:code-paper
-   evidence：Mader模型的开源Python实现
-2. [Beyond Problem Solving: UOJ-Bench for Evaluating Code Generation, Hacking, and Repair in Competitive Programming](/202606/15/2606.12864v1-beyond-problem-solving-uoj-bench-for-evaluating-code-generation-hacking-and-repair-in-competitive-programming)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：提供包含真实代码提交和评测基础设施的基准
-3. [Demonstrating chart-plot: Closing the Last Mile of Academic Chart Generation](/202606/15/2606.09174v2-demonstrating-chart-plot-closing-the-last-mile-of-academic-chart-generation)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：提供了可运行的matplotlib代码生成工具并开源
+   evidence：提供开源代码
 
 ### 速读区论文标签
-1. [Evaluating and Generating Query Workloads for High Dimensional Vector Similarity Search](/202606/15/2606.14511v1-evaluating-and-generating-query-workloads-for-high-dimensional-vector-similarity-search)  
+1. [SkillVetBench: LLM-as-Judge for Multi-Dimensional Security Risk Evaluation in Open-Source LLM Agent Skills](/202606/16/2606.15899v1-skillvetbench-llm-as-judge-for-multi-dimensional-security-risk-evaluation-in-open-source-llm-agent-skills)  
    标签：评分：6.0/10、query:code-paper
-   evidence：评估和生成向量相似性搜索的查询工作量，可能附有代码
+   evidence：Hugging Face上的开源LLM代理技能安全基准
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,1405 @@
+Title: GridFire: A new, open source, nuclear network for stellar structure and evolution
+
+URL Source: https://arxiv.org/pdf/2606.15354v1
+
+Published Time: Tue, 16 Jun 2026 00:53:57 GMT
+
+Number of Pages: 65
+
+Markdown Content:
+# GridFire : A new, open source, nuclear network for stellar structure and evolution 
+
+Emily M. Boudreaux a, , Aaron Dotter a
+
+> aDepartment of Physics and Astronomy, 6127 Wilder Laboratory, Dartmouth College 03755, Hanover, USA
+
+Abstract 
+
+We present a novel nuclear network implementation, GridFire , which has been developed with a focus on efficiency, ease of use, and automatic physical extension. In this first paper we provide a detailed overview of GridFire’s 
+
+numerics, performance characteristics, and a comparison to pre-existing nu-clear network implementations pynucastro and MESA’s net module. We find that generally GridFire performs similarly to and requires significantly less user input and setup than these current generation nuclear network codes. Further, GridFire has been developed with a flexible “view” based physics engine that allowing researchers to implement domain specific physics with-out modifying the underlying source code. GridFire has been released under an open-source license, GPL v3.0, and will eventually be incorporated into the forthcoming 4D-STAR stellar structure evolution code. 
+
+1. Introduction 
+
+Stellar structure and evolutionary (SSE) models underpin a large section of our current astrophysical model. Traditionally, these models operate in two phases: one, structure equations, and two, microphysics solutions. So-lutions to the structure equations serve to constrain the profiles of thermo-dynamic variables throughout the domain. However, these solutions rely on input microphysics. Some of this microphysics, most notably radiative and conductive opacities, is generally pretabulated, while other parts, such as the rate of energy generation and chemical evolution due to nuclear burning, tend    
+
+> Email addresses: Emily.Boudreaux@dartmouth.edu (Emily M. Boudreaux),
+> Aaron.Dotter@dartmouth.edu (Aaron Dotter)
+> arXiv:2606.15354v1 [astro-ph.IM] 13 Jun 2026
+
+to be calculated, at least partially, on-the-fly. Efficient and robust nuclear networks are therefore essential in order to evolve the chemical abundance of species, track the energy input into the model, and track energy lost to free-streaming neutrinos (Halprin, 1985; Paxton et al., 2011, 2019; Bowman et al., 2023; Farag et al., 2024). These networks can take on two primary forms: one, static (e.g. the approx networks in MESA and pynucastro , Timmes, 1999; Paxton et al., 2011; Smith Clark et al., 2022), and two, dynamic. In a static network a fixed set of equations describing the relation between abundance, temperature, and density are solved over some time step. Static networks have the advantage of often being both more performant and easier to im-plement. However, this network paradigm may struggle to evolve through significant model phase changes (Timmes, 1999; Mocak et al., 2009, 2010). Further, as their structure cannot alter in response to model state, static net-works may be unable to leverage optimizations which are only valid during certain stages of model evolution (i.e. as temperature evolves from energy input into the system, e.g. Mocak et al., 2009; Jiang et al., 2021). Dynamic nuclear networks seek to address these shortcomings while maintaining as much performance as possible. Dynamic nuclear networks, as a category, implement some strategy to adapt their topology during model evolution. This results in networks which can detect both cycles and low flow edges. Once these detections are made dynamic networks may apply optimizations such as equilibrium approxima-tions for cycles and pruning of low flow edges. Further, these structural choices need not be fixed over the life of a model; rather, model state can be probed to inform choices about when network structure should be updated. This more freeform handling of nuclear burning 1 does tend to increase the per-time step cost; however, at the advantage of a potentially much more well conditioned system, and a system which can more easily adapt to dramatic phase changes during model evolution. 
+
+GridFire is a new dynamic nuclear network implementation with the specific design goal of modeling main sequence nuclear burning with min-imum user input. A key design goal is to maintain both a physically ro-bust tool while keeping the barrier to entry as low as possible. The archi-tecture of GridFire can roughly be broken down into two segments: en-
+
+> 1We use the term burning colloquially to refer to nuclear fusion processes throughout this article.
+
+2gines, responsible for local microphysics, and solvers, responsible for step-ping engines through time. Engines and solvers are discussed in more detail in sections 5 and 6 respectively; however, in brief engines are automati-cally constructed directional hypergraphs representing some network topol-ogy. Further, GridFire defines the concept of an “Engine View” (views) which can modify the exposed state of an engine (§5.2). Currently we in-clude a view which can automatically detect quasi-static equilibrium clusters (§5.2.1). Solvers on the other hand accept an engine as a black-box and may implement single- or multi-zone evolution prescriptions based on the physics exposed by an engine. GridFire is packaged with a single zone solver as well as a simplistic multi-zone solver. The bundled engines, views, and solvers allow GridFire to reliably explore the entire main-sequence burning regime robustly and efficiently from only a limited subset of seed species. 
+
+GridFire is intentionally designed to be easy to use and require minimal user input (a prototypical example of GridFire usage may be seen in Figure 1). Specifically, GridFire does not require users define which reactions path-ways are turned on or off nor does it require users to define which species are being tracked. Rather, these topological questions are generally determined by GridFire at runtime — though in cases where a specific set of reactions are desired that information may be provided explicitly through the use of 
+
+GridFire’s views system. Further, GridFire has been designed from the ground up with extensibility in mind. New engines, views, and solvers can be easily implemented in either C++ or Python without modification to the underlying code base. The engine view architecture in particular enables modification of physics without requiring an overly detailed knowledge of 
+
+GridFire’s structure or C++. Support for reverse reaction rates via de-tailed balance calculations, while currently experimental, is included. In this paper we will provide a brief overview of how nuclear network programs op-erate, detail GridFire’s design, its ability to robustly model main sequence burning, and demonstrate a simplistic big bang nucleosynthesis model built with GridFire .
+
+2. Nuclear Networks 
+
+Computing an updated abundance profile, specific energy generation, and specific neutrino losses for a fusing plasma requires knowledge of the ther-modynamic conditions, initial composition, possible reaction pathways, and reaction rates. Once these are known the process is, theoretically, quite sim-3Construction Results 
+
+Define Composition Set initial conditions (T, ρ)
+
+Build NetIn (s) 
+
+Select Policy 
+
+Call policy.construct() 
+
+Engine Context 
+
+Select Solver Select Solver Context 
+
+Set Solver Options 
+
+Call solver.evaluate(ctx, netIn(s)) 
+
+Results 
+
+Figure 1: Prototypical Example of GridFire usage from a user perspective. 
+
+4ple; one needs to solves the ordinary differential equation given in Equation 1 as an initial value problem where fi(Y, ρ, T ) is some function describing the net molar reaction flow for a species, i, at the current conditions and N
+
+is the total number of species. 
+
+dY i
+
+dt = fi(Y, ρ, T ) ∀ i = 1 ...N dϵ nuc 
+
+dt = ˙ ϵnuc (Y, ρ, T )
+
+(1) There are however a number of complicating factors which make this less trivial than it may seem at face value. For one, knowledge of the molar reaction flow for all potentially relevant reactions is impractical to compute from first principles. Rather, reactant count- and density-normalized reac-tion rates are generally pulled from pre-tabulated data files. Further, the characteristic stiffness of these equations, for any physically interesting net-work, is pathologically large. This latter issue makes all explicit solvers, and in fact many implicit solvers struggle. Stable solutions to these equations therefore require implicit solvers which are well tuned to extremely stiff sys-tems, such as backwards difference formula (BDF) family solvers (see §6 for more details on the solvers GridFire implements) Assuming then that a solver has access to reaction rates for every reaction of interest Equation 1 can be expanded into Equation 2, where ci,j is the stoichiometric coefficient for species i in reaction j, r is the total number of reactions tracked, NA is Avogadro’s constant, and Rj is the molar reaction flow for reaction some reaction j.
+
+dY i
+
+dt =
+
+> r
+
+X
+
+> j
+
+ci,j Rj (Y, ρ, T ) ∀ i = 1 ...N dϵ nuc 
+
+dt = −NAc2
+
+> N
+
+X
+
+> i
+
+dY i
+
+dt mi
+
+(2) While nuclear burning can be modeled as a fixed set of coupled equations, in order to build a dynamic nuclear burning code it is advantageous to con-ceptualize the topology of the network. For some set of reactions and species a nuclear network is a directional hypergraph (Figure 2) where species form nodes, species sets form hypernodes, and reactions form edges. Focusing on the topology of the network allows nuclear burning code to perform opti-mizations such as low molar reaction flow culling, wherein reactions (edges) 5are weighted by their molar reaction flows and, based on some threshold, reactions whose flow does not exceed this threshold can be removed from the network along with any species only connected to the greater network through those reactions. Further, given some at least somewhat extensive underlying database of reactions, standard graph traversal algorithms may be used to construct a network topology from some seed composition auto-matically. Finally, once constructed, the equations needed to time evolve the composition and energy generation of a fusing plasma may be constructed directly from the topology. Time-stepping a network requires a well optimized implicit method to handle the inherent stiffness of nuclear burning. Further complicating this picture is a choice that nuclear burning code must make regarding thermo-dynamic stability. While burning, energy is produced which — physically — will feed back into the plasma, potentially heating it and affecting its density. In non-degenerate matter this will result in an increasing burning rate over time. In order to model this effect a prescription for an equation of state (EOS) is required. Generally nuclear networks take two approaches to this problem, fully thermodynamically coupled, and operator splitting. Thermo-dynamically coupled networks maintain a self-consistent state by ensuring that temperature and density at every time step properly include the heat-ing effects of burning (e.g. SkyNet, Lippuner and Roberts, 2017); this comes at the cost of potentially much more expensive time steps due to both EOS evaluations and additional variable couplings. Conversely, operator splitting relies on the assumption that there is some bath large enough to absorb all generated energy over the course of a timestep such that the tempera-ture and density of the burning media remain fixed (e.g. WinNet, Reichert et al., 2023). Both techniques are common in astrophysical code bases though non-thermodynamically coupled networks / those intended to be used in an operator splitting fashion are often unable to properly evolve through highly dynamic events such as the helium flash or neutron star mergers. 
+
+3. GridFire’s Architecture 
+
+GridFire’s design makes heavy use of the so called “strategy pattern”. A detailed explanation of this pattern was originally provided in Gamma et al. (1993); however, in brief this design prioritizes encapsulated interchange-able components enabling these components to be easily swapped in and out. Table 1 summarizes the major components which GridFire implements 61 2 3 4 5 612345678910 11 12 Proton Number (Z) MassNumber(A)                                  
+
+> 1H2H3He 3H4He 7Be 12 C12345678910 11 12345678910 11 12 13 14 15 16 17 18 19 20 21 22 23 Proton Number (Z) MassNumber(A)
+> 1H2H3He 3H4He 6Li 7Li 7Be 8B11 C12 C13 N16 O20 Ne 23 Na
+
+Figure 2: Two simple network topologies automatically generated by GridFire . Black arrows indicate reactant connections whereas red arrows indicate products (i.e. for the reaction p + p → d + e+ there would be a self-loop black arrow from H-1 to itself and a red arrow to H-2. For clarity neutron-mediated reactions have been omitted. (left). Single-layer network constructed from a seed composition of 1H, 3He, and 4He, (right). Two-layer network constructed from a seed composition of 1H, 3He, and 4He. Note how with only a single layer deeper of construction the topology becomes dramatically more complex. 
+
+7while Figure B.23 demonstrates the prototypical control flow for a single-zone solver. A major benefit of the strategy pattern is that, at any stage in this flow, researchers are able to substitute components more suited to their spe-cific question. For example, we include MultiscalePartitioningEngineView 
+
+(for more details on this see §5.2.1), this view implements a modification of the Hix and Thielemann (1999) quasi static equilibrium prescriptions — taking groups of species which are heavily exchanging nucleons and placing them into equilibrium — If this behavior is not desirable for some domain that view may simply be removed from the engine stack. Further details on 
+
+GridFire’s software architecture as well as usage examples may be found in its documentation 2. A prototypical example of the steps GridFire takes during an evaluation of a network over some time and at a fixed temperature and density is given below. 1. Collect reactions from the JINA REACLIB database (Cyburt et al., 2010) 2. Starting from some seed composition, perform a breadth first search outward to some, user-specified, maximum depth. Collect all reactions and species. 3. Use the collected reaction set to construct a GraphEngine 
+
+4. This GraphEngine evaluates all partial derivatives of the entire col-lected reaction set using auto-differentiation 5. The sparsity pattern of this Jacobian matrix is computed 6. Views above GraphEngine then perform tasks. These will be outlined in latter sections. 7. The entire engine stack is passed to a backwards difference formula (BDF) solver ( CVODE ) which periodically evaluates rates and partial derivatives. 
+
+4. Reaction Rates 
+
+GridFire is primarily focused on main sequence burning, where strong nuclear reactions are the dominate source of both abundance evolution and energy generation. Weak nuclear reactions are however still relevant and open both radioactive decay pathways along with mediating neutrino cooling. 
+
+> 2https://4d-star.github.io/GridFire/html/index.html
+
+8Name Namespace Purpose 
+
+DynamicEngine gridfire::engine Abstract engine type; all dynamic en-gines can generate the right-hand side of the nuclear burning equation, the spe-cific energy generation rate, and a Jaco-bian. 
+
+DynamicEngineView gridfire::engine Abstract type for all engine views; these are used to modify the exposed physics of some underlying engine or stack of en-gines and views. 
+
+SingleZoneSolver gridfire::solver Abstract solver type for any single-zone network. 
+
+MultiZoneSolver gridfire::solver Abstract solver type for any multi-zone network. 
+
+PartitionFunction gridfire::partition Abstract type for any partition function, used for detailed balance calculations. 
+
+ScreeningModel gridfire::screening Abstract type used to implement plasma screening prescriptions. 
+
+NetworkPolicy gridfire::policy Abstract type used to enforce partic-ular minimum requirements (i.e., this network must include the proton-proton chain). 
+
+ReactionChain gridfire::policy Abstract type used to represent some re-action chain which can be used with a 
+
+NetworkPolicy to enforce the presence of that chain. 
+
+Trigger gridfire::trigger Abstract type used to detect arbitrary state changes and trigger behavior (such as repartitioning) based on them. 
+
+NetworkFileParser gridfire::io Abstract parser type to load any user-defined network files (such as MESA -format .net files). Table 1: Major components implemented by GridFire . Note that this is not an exhaustive list but represent only the most important subset of abstract types. 
+
+The GridFire “reaction” module manages both strong and weak reactions through an abstract Reaction interface. Each reaction must be able to report its type (either strong or weak), its molar reaction rate, and any relevant partial derivatives with respect to thermodynamic state variables. GridFire 
+
+then collects these rates to build both the right hand side of Equation 2 and the system Jacobian. This collection is managed by the engine interface (§5). 94.1. Strong Rates 
+
+GridFire uses the JINA REACLIB database (Cyburt et al., 2010) to eval-uate temperature-dependent strong nuclear reaction rates on the fly. These are presented in the form of the coefficients, ai, of a seven parameter analytic equation of the form (Equation 1 in Cyburt et al. (2010)): 
+
+λ = exp 
+
+"
+
+a0 +
+
+> 5
+
+X
+
+> i=1
+
+aiT 2i−53 
+
+> 9
+
++ a6 ln T9
+
+#
+
+(3) Where λ is the molar reaction rate in units of [s −1cm 3( N −1) mol 1−N ] for a reaction with N reactants. Further T9 is the temperature in units of 1×10 9 K. We retrieve all reactions from the “default” library in the REACLIB snapshot library 3. We then filtered this database such that we only maintain reactions where the atomic number, Z, of all reactant species Z ≤ 26 — that is to say we remove any reaction including a reactant species with a proton number larger than that of iron. This choice is in line with GridFire’s target do-main of main sequence burning. The design of GridFire is such that this choice may be easily relaxed in future versions simply by re-quering REA-CLIB rates and not filtering on Z. Further, the python library pynucastro 
+
+(Smith Clark et al., 2022) provides tools for querying up-to-data REACLIB rare data. Therefore, we have included a utility in the GridFire repository’s utils/reaclib subdirectory which allows for new rates to be written program-matically using pynucastro Moreover, for each rate GridFire is also aware of the analytic derivative without those being provided explicitly. This is achieved through the use of auto-differentiation (§5.1.1). 
+
+4.2. Weak Rates 
+
+Mediated by the weak nuclear force, weak nuclear reactions comprise a key set of reactions during stellar burning stages. Weak reactions are the primary source of neutrinos, which in solar-like stars result in an approxi-mate 2% cooling effect (Bahcall, 2002), and which are a primary means of energy escape during high energy phases of stellar evolution such as core-collapse supernovae (Haxton et al., 2013; Maltoni and Yu. Smirnov, 2016). 
+
+GridFire includes two separate schemes for handling weak reactions. By de-fault GridFire uses the REACLIB tabulated weak rates which are presented    
+
+> 3https://reaclib.jinaweb.org/library.php?action=viewsnapshots, accessed on June 17th, 2025, last modification on June 24th, 2021
+
+10 Type Loss 
+
+β+ 0.5 
+
+β− 0.5 Electron Capture 1.0 Positron Capture 1.0   
+
+> Table 2: Heuristic which GridFire uses to define fractional energy lost from the mass-deficit to free-streaming neutrinos for REACLIB weak reactions.
+
+in the same form as strong reactions. Further, we include a comprehensive set of weak rates from the Weak Rate Library (Ravlić et al., 2025, WRL,). REACLIB weak rates are advantageous compared WRL rates as they may be built from the same system we use for strong rates. Further and more importantly, as the rate comes from the evaluation of an analytic form, derivatives are trivial to compute using automatic differentiation. Despite these advantages, REACLIB weak rates do not include detailed accounting of neutrino losses. Therefore, modeling those losses when using REACLIB weak rates requires an approximate heuristic. Table 2 summarizes this heuristic. We find that when using this prescription GridFire predicts an approxi-mately 1.6% cooling effect in the solar core over 10Gyr (Figure 3). This is an underestimation by 0.4% compared to more accurate neutrino loss modeling (Bahcall, 2002); however, in the context of main sequence modeling such a discrepancy is acceptable. In addition to REACLIB weak rates, GridFire also includes experimen-tal support for Weak Rate Library (WRL) rates. Generally these include a more robust accounting of neutrino energy losses. However, while these are bundled with GridFire they are still considered experimental and are not robustly tested. Further, as WRL rates are presented in the form of tables, including them in the differentiation scheme requires the use of a finite differ-ence approximation. This imposes both a precision and runtime cost when using WRL rates. Because of this, REACLIB rates are enabled by default, with WRL rates disabled. If a user would like to make use of WRL rates they may pass the flag WRL_WEAK_RATES to the GraphEngine constructor. This flag will result in all REACLIB weak rates being excluded and all WRL weak rates being included in the network topology. We expect that a future release of GridFire , once performance issues have been addressed, will change the default weak rate source from REACLIB to WRL; further, this change may resolve the 0.4% underestimation of the neutrino cooling effect. 11 1.0 1.5 2.0 2.5 3.0 3.5 4.0  
+
+> Temperature [K] ×10 7
+> 10 1
+> 10 2
+> 10 3
+> 10 4
+> Density [g cm 3]
+> 0.00 0.04 0.08 0.12 0.16 0.20 0.24 0.28 Fractional Neutrino Cooling
+
+(a) Ratio of total energy lost to free-streaming neu-trinos on total nuclear energy generation after 10 years (3.1536 ×10 8 s) of network evolution. The peak in fractional generation at ≈ T = 2 .2 × 10 7K
+
+corresponds to the CNO cycle not yet having reached equilibrium after only 10 years. 10 −2 10 1 10 4 10 7 10 10 10 13 10 16 10 19                
+
+> Model Age [s]
+> 10 −13
+> 10 −11
+> 10 −9
+> 10 −7
+> 10 −5
+> 10 −3
+> 10 −1
+> ν
+> nuc
+> T=1 .57 ×10 7K, ρ= 160 g cm −3
+> T=8 ×10 6K, ρ= 400 g cm −3
+> T=4 ×10 6K, ρ= 1000 g cm −3
+
+(b) Ratio of total energy lost to free-streaming neu-trinos on total nuclear energy generation for three rough approximations of core conditions in (from top to bottom) G-, K-, and M-dwarfs. The red + indicates the current day position of the Sun in this parameter space taken from Bahcall (2002). 
+
+Figure 3: The neutrino cooling behavior for when GridFire is using REACLIB weak reactions along with the neutrino energy loss heuristic given in Table 2 
+
+4.3. Reverse Rates 
+
+At temperatures above ≈ 10 9 K nuclear reaction products begin to un-dergo photodisintegration to a statistically significant degree (e.g. Thiele-mann et al., 1998; Utsunomiya et al., 2006; Rauscher, 2018). A proper han-dling of this requires constraints on the reverse reaction rates, that is the rate of photodisintegration. These can be either tabulated or computed using the principal of detailed balance (Klein, 1955; Burbidge et al., 1957; Driller et al., 1979; Misch, 2017). Reverse reactions in GridFire use detailed balance ap-proach; however, these are still considered experimental and as such no work in this article includes reverse rates. The net molar reaction flow is then the difference between the forward and reverse flow. Detailed balance calculations require careful handling of energy level pop-ulation statistics, GridFire uses the Rauscher-Thielmann (RT, Rauscher and Thielemann, 2000) partition function. As this is a pre-tabulated, as opposed to analytic, partition function, auto-differentiation is not trivially possible. Rather, we implement an atomic operator which estimates the derivatives of the partition function using a standard finite difference scheme. One effect of this is that, when using reverse reactions, GridFire’s performance suffers due to the need to constantly recalculate approximate derivatives. As the target domain for GridFire is main sequence burning we therefore choose to 12 keep reverse reactions disabled by default. A future paper in this series will expand the capabilities and testing of GridFire’s reverse reactions and use those to explore higher energy regimes where photodisintegration becomes relevant. 
+
+5. Engines 
+
+GridFire strictly separates physics from numerical solvers. Engines (in the engine module) perform all physical calculations. Primarily this looks like computing the right hand side of Equation 1 along with the Jacobian — describing the coupling of both species abundance rates of change to the abundance of other species as well as the rate of specific energy generation to the abundance of all network species (Equation 4) — of the network. Generally, any object which can provide these quantities may serve as a valid 
+
+GridFire engine. Section 6 details how these engines are stepped through time using implicit integrators. 
+
+J =
+
+   
+
+> ∂˙Y0
+> ∂Y 0
+> ∂˙Y0
+> ∂Y 1
+
+· · · ∂ ˙Y0   
+
+> dY N
+> ∂˙Y1
+> ∂Y 0
+> ∂˙Y1
+> ∂Y 1
+
+· · · ∂ ˙Y1
+
+> dY N
+
+... ... . . . ...   
+
+> ∂˙YN
+> ∂Y 0
+> ∂˙YN
+> ∂Y 1
+
+· · · ∂ ˙YN   
+
+> dY N
+> ∂˙ϵnuc
+> ∂Y 0
+> ∂˙ϵnuc
+> ∂Y 1
+
+· · · ∂ ˙ϵnuc 
+
+> dY N
+
+
+
+(4) There are two primary categories of engines in GridFire , DynamicEngines 
+
+and DynamicEngineViews . Note that the set of all DynamicEngineViews is a strict subset of the set of all DynamicEngines . The separation between these categories is that DynamicEngines are responsible for all of their own physics calculations, they must be fully self contained; DynamicEngineViews 
+
+on the other hand, may sit atop DynamicEngines to form an “engine stack”. Engines stacks provide a clean way to adjust network structure and add new physics without the need for a user to maintain a complete picture of 
+
+GridFire’s structure in their head. The bottom of every engine stack must be a DynamicEngine , above that may be stacked an arbitrary number of views. When a caller requests some bit of physics, say the Jacobian matrix, they will do so against the top-most view in the stack (Figure 4). This view will call the view below it, and that view calls the view below it, and so on all 13 the way down to the base engine. Those results then bubble back up to the user. At each layer the view may choose to modify the results it has received from lower layers in some way before passing them back up the stack. Asimple example might be that a user wants to model a fluid with unlimited hydrogen, a view might be introduced which zeros out the time-derivative of the hydrogen molar abundance thus preventing that species from time evolv-ing. A more complex and realistic use cases involve applying quasi-static equilibrium prescriptions may be found in Section 5.2. The engine system has been heavily documented and we expect that both the GridFire core developers and community will develop additional engine views as GridFire 
+
+matures. 
+
+5.1. GraphEngine 
+
+The core dynamic engine of GridFire is the GraphEngine . This class is where GridFire constructs and stores its network topology. GraphEngine 
+
+implements routines to evaluate Equation 1 and build the Jacobian matrix (Equation 4) from REACLIB, weak rate library, and reverse reactions. Re-gardless of the reaction type (details on selection and determination of type may be found in the GridFire documentation) GraphEngine will always cal-culate the net molar reaction flow for a reaction, Rr. For some reaction r
+
+with reaction rate λr(T, ρ, Y), plasma screening factor eHr , symmetry factor 
+
+ξr (Equation 5), abundance product Yr (Equation 6), mass density ρ, and number of reactants Nr the forward molar reaction flow is given by Equation 7. The symmetry factor corrects for double counting of reactions that con-tain more than one reactant of the same species, while the abundance factor adjusts for the relative molar abundance of reactants. Once the net-molar reaction flow is known, the stoichiometric coefficients for reaction r are used to compute ˙Y per Equation 2. 
+
+ξr ≡ 1
+
+QNr 
+
+> i
+
+ni! (5) 
+
+Yr ≡
+
+> Nr
+
+Y
+
+> i
+
+Y ni 
+
+> i
+
+(6) 
+
+Rr(T, ρ, Y) = eHr (Y)λr(T, ρ, Y)ξrYrρNr −1 (7) Note that ξr is only a function of the current reaction not the current state of the network. Further, the plasma screening correction factor is only 14 a function of the current abundance and not of the thermodynamic state of the network. GraphEngine can exploit the structure of Equation 7 to aggres-sively cache intermediate values, resulting in an approximately fifty times run-time decrease when compared to not caching. Verification testing has shown identical results to within machine precision for 64-bit floating point values when comparing GraphEngine with and without precomputation. Due to the massive speedup and demonstrated accuracy of the precomputation route, precomputation is enabled by default; however, it may be disabled by users. For details on how to disable precomputation please reference the 
+
+GridFire documentation. 
+
+5.1.1. Automatic Differentiation 
+
+Both the stability and convergence rate of implicit solvers depend strongly on the accuracy of the Jacobian matrix used to infer the next step. Given that REACLIB rates are parameterized as a differentiable function (Equation 3) we might compute and program these into GridFire by hand. However, do-ing so would introduce a significant chance of author error; further, we would be limited to whatever subset of network topologies had been hand-derived. More adaptable approaches include symbolic-differentiation, numerical ap-proximations, and automatic-differentiation (AD). GridFire’s adopts AD as — unlike numerical methods such as finite difference — it is theoretically exact (Laue, 2019; Dawood and Megahed, 2023) while being much more performant when compared to symbolic-differentiation (Laue, 2019). AD achieves its theoretically exact results by recording the set of simple arith-metic steps which a computer performs and then repeatedly applying the chain rule to derive an analytic derivative for that set of steps. Specifically GridFire uses the C++ library CppAD to perform AD (Bell, 2025). CppAD is a well-tested, tape-based, and compiler-agnostic AD library providing both forward and reverse mode differentiation. Derivative calcula-tions are performed for all functions which affect the output composition and specific energy generation; primarily, these are the calculation of molar reac-tion flow per reaction and mass deficit per reaction. The process of recording the set of arithmetic steps is known as “taping” and is quite computation-ally expensive (taping must be completed for all terms in Equation 7 which depend on Y). Fortunately, taping produces a general structure rather than any specific value, this means that we tape the network topology rather than the current thermodynamic or composition state. GraphEngine handles all of GridFire’s taping and records one tape at startup and potentially a new 15 User                  
+
+> Engine View A
+> Engine View B
+> Engine View C
+> Base Engine
+> Asks for dY i
+> dt
+> Asks for dY i
+> dt
+> Asks for dY i
+> dt
+> Asks for dY i
+> dt
+> Report dY i
+> dt
+> Species inot relevant to this node, act transpar-ently
+> Species iin equilibrium due to this node, zero out
+> dY i
+> dt before replying
+> Calculate and return dY i
+> dt
+> User
+> MultiscalePartitioningEngineView
+> FileDefinedEngineView
+> GraphEngine
+> Asks for dY 2H
+> dt
+> Set dY 2H
+> dt = 0 , compute abundance algebraically
+> Validate that 2H is in the active species set explicitly asked for by a user
+> Evaluate dY 2H
+> dt using REA-CLIB rates.
+
+Figure 4: Example engine stacks (left) prototypical stack (right) specific example of a potential H-burning stack. Read each figure from left to right, the caller starts by asking for some quantity the engine knows about, for example the time-derivative of some species’ molar abundance. First that request is passed all the way down to the base engine (left side arrows). Next, as that result bubbles back up to the caller, each view decides if it should modify the result in some way, views may choose to do nothing in certain cases and simply pass that quantity up to the next view or caller. 
+
+tape every time the project function is called, if and only if the network topology changes. Note however that due to GridFire’s view-based archi-tecture (§5.2) the underlying GraphEngine topology will very rarely change; rather, higher views can adjust how the topology is reported in a way that does not interfere with the true topology. Thus in most instances a tape is only recorded once at engine startup. 
+
+5.2. EngineViews 
+
+Instead of relying on wholly separate engines to adjust physics, GridFire 
+
+adopts another standard software design pattern, the so called “decorator” pattern (also laid out in detail in Gamma et al., 1993) where “views” sit atop either a base engine or one another (with a base engine always existing at the bottom of the stack, Figure 4). Each view must then implement all in-terface methods from the base engine but may choose to either transparently pass arguments down and results up or adjust those arguments and results arbitrarily. This architecture allows for individual views to be responsible for specific physics adjustments or simplifications and for many views to stack on top such that all of their effects are combined. GridFire includes a num-ber of views and users may implement custom or domain-specific views by following examples in the GridFire documentation. 16 5.2.1. Quasi-Static Equilibrium: MultiscalePartitioningEngineView 
+
+Truran et al. (1966) introduces the concept of quasi-static equilibrium (QSE), where groups of species exchange nucleons between themselves at a much higher rate than nucleons are leaked from the group. Hix and Thiele-mann (1996, 1999) show that the molar abundances of species in these groups, when solved algebraically rather than by solving coupled differential equa-tions, presents an accurate approximation of the nuclear statistical equilib-rium conditions found during silicon burning and core-collapse supernova. Further, once their equilibrium abundances are known the time derivatives of these abundances are zero and the species may be removed from the larger network topology. Hix and Thielemann demonstrated that this approxima-tion is extremely effective at loosening the network equations during silicon burning without a significant error budget cost. Therefore the QSE approxi-mation may be effective at accelerating burning for high-energy astrophysical situations. GridFire extends this prescription to lower-mass species and im-plements a robust system for automatically detecting equilibrium groups. One approach to including equilibrium species / groups which has proven successful is to generate effective reaction pathways (this approach is used by the approx nets in MESA ). Take deuterium which in the sun, after production, almost immediately reacts with free protons to form the much more stable 
+
+> 3
+
+He, therefore the two reactions p + p → d + e+ and p + d →3 He + γ may be reduced to the effective reaction p + p + p →3 He + e+ + γ where the dynamic ranges of evolutionary timescales between species is dramatically reduced. This is an explicit statement of equilibrium. The abundance of the intermediate product — deuterium — is such that the rates of both reactions are the same. Rather than hardcoding specific equilibrium cases, we use the Hix and Thielemann prescriptions for QSE groups to automatically detect which species and reactions are in equilibrium, this allows for trivial extension of the network to new species without needed to manually calibrate equilibrium states. These prescriptions are implemented in the MultiscalePartition ingEngineView . When used the MultiscalePartitioningEngineView will detect which species are in equilibrium, set their derivatives to 0, and solve their abundances algebraically. The first stage in solving for QSE abundances is to partition the network into a slow, dynamic, set of species and multiple fast strongly connected groups. The dynamic set comprises the species whose abundances will remain 17 as free parameters whereas fast species will be solved algebraically. The partitioning algorithm 4 runs in 8 stages (A rough cartoon of the projection process is presented in Figure B.24) 1. Network Priming: Run a short, 1×10 −15 s at T= 10 7 K and ρ = 10 2 gcm −3 ignition to populate non-zero abundances for any product species. This is essential for numerically stabilizing the network and avoiding singularities. We have done extensive testing and such a short and low temperature ignition event does not affect the abundance of non-zero abundance species above the level of machine precision. 2. Timescale Based Partitioning: Identify groups of species whose timescales are separated by more than two orders of magnitude. The pool which is slowest forms the basis of the dynamic set. Species in all other pools are candidate fast species. 3. Connectivity Analysis: For each timescale pool identify connected subsets of species within the pool using a breadth-first search. 4. Seed Identification: For each connected pool, identify which dynamic species feed and siphon mass from the equilibrium group. 5. Validation I: Validate that the identified group exchanges nucleons in-ternally at least 5x more strongly than it exchanges nucleons with non-group members. The heuristic of 5x has been chosen to recover equi-librium groups during main sequence burning. Researchers should vali-date this heuristic for their regimes of interest. Reference the GridFire 
+
+documentation for instructions on how to adjust this value. 6. Pruning: Prune any reactions whose log abundance normalized molar reaction flow (the ratio of the molar flow to the average molar abun-dance of all species in the group, i.e. log 10 (RN/ PNi Yi) where R is the molar flow of some reaction and N is the number of species in the group) is less than -30. 7. Validation II: Validate that the pruned group still exchanges nucleons internally at least 5x more strongly than it exchanges nucleons with non-group members. 8. Merging: Merge any groups which are strongly coupled to each other At the end of partitioning GridFire is left with a set of species which are not in quasi-static equilibrium and a set of groups of species which are    
+
+> 4N.B. Partitioning takes place every time the project method is called.
+
+18 in equilibrium. Once partitioning is complete the abundances for species in each group can be solved simultaneously. Recall that the definition of a species in equilibrium is that the time derivative of its abundance is equal to 0, therefore we must solve Equation 8. 
+
+dYalg 
+
+dt = 0 (8) The time derivative of molar abundance is the difference in production, 
+
+P and destruction, D, rates at a given composition, Y = [ Yalg , Yseed ], tem-perature, and density. Therefore, for each species, i in the algebraic set of a QSE group we can reformulate Equation 8 as Equation 9. 
+
+Pi(Y) − Di(Y) = 0 (9) Because reaction rates, for a reaction with k reactants, are proportional to Qki Yi this is a non-linear equation. We make use of KINSOL (Gardner et al., 2022; Hindmarsh et al., 2005), an advanced non-linear solver, to find some solution Yalg satisfying Equation 9, Yseed abundances are taken as the current abundance at the start of the time step. KINSOL uses a globalized Newton method such that at each iteration, k, there is some residual vector, 
+
+F, Jacobian matrix, J, and update vector, δY (Equation 10). 
+
+F ≡
+
+dY
+
+dt 
+
+(k)
+
+Jij ≡ ∂ (dY i/dt )
+
+∂Y j
+
+Y(k+1) ≡ Y(k) + δY(k)
+
+(10) At each iteration Equation 11 is solved using LU factorization, providing the update vector for Yalg . This is repeated until the absolute error drops below some error. By default GridFire sets this as one part in 10 8. Users may wish to confirm that these tolerances are acceptable for their regime. Instructions for adjusting both absolute and relative tolerances may be found in the GridFire documentation 
+
+J(k)δY(k) = −F(Y(k)) (11) 
+
+KINSOL is highly optimized for limited Jacobian evaluation and solver restarting without additional Jacobian evaluations. The result of this is that 19 generally, after initially stabilizing into equilibrium, MultiscalePartitio ningEngineView converges to an abundance solution within two or three iterations. Further, the expensive task of reconstructing the Jacobian is limited. We have implemented a separate but numerically equivalent solver using the C++ library Eigen (Guennebaud et al., 2014) and find that KINSOL 
+
+is roughly 100x more performant for this use case. Using MultiscalePartitioningEngineView we can make predictions about the equilibrium abundance of deuterium in the solar-core without evolving a full network. Specifically, we find the QSE prediction for deu-terium at some time step and compare this to the proton abundance at that time step. We find that MultiscalePartitioningEngineView pre-dicts a D/H ratio that is within 10 −5 dex of the value found when integrat-ing the full network (Figure 5) and within 0.04 dex of the value predicted by mesa_495.net (see Section 8.1.2 for more details on how we compare 
+
+GridFire to MESA ). In general we find no species with non-trivial abun-dances that differ by more than 0.005 dex between an engine stack with 
+
+MultiscalePartitioningEngineView and one without (Figure 6). Greater deviations are observed in species with very low abundances; for example, without using MultiscalePartitioningEngineView GridFire predicts a Li molar abundance of 3×10 −14 mol g −1 after 10 Gyr of evolution, whereas when using MultiscalePartitioningEngineView GridFire predicts a Lithium molar abundance of 3 × 10 −15 mol g −1. Such deviations are only seen in trace species. Further, when using MultiscalePartitioningEngineView there is a maximum of a 0.004 dex offset in specific energy and -0.002 dex in specific neutrino energy loss. While these appear as periodic offsets, not scaling with simulation time, it is important to remember that GridFire is being run in a thermodynamically static environment. Future use as part of a thermody-namically coupled system will require careful confirmation that these errors do not become secular. Testing thermodynamic conditions similar to the cores of M, K, F, G, A, and B stars demonstrates that the QSE approximation introduces a maxi-mum relative error of one part in 10 3 in species molar abundance 5. Gener-ally, unless equilibrium approximations are particularly useful for the specific                     
+
+> 5Ascript may be found in the validation directory of the gridfire repository which allows for more detailed exploration of these statistics (validation/ErrorBudget/error_budget.py )
+
+20 10 8 10 10 10 12 10 14 10 16 10 18 
+
+> Time [s]
+
+10 −13 
+
+10 −11 
+
+10 −9
+
+10 −7
+
+10 −5
+
+> |∆ log 10 | [dex]
+
+Figure 5: Logarithmic difference between D/H from an engine stack with just GraphEngine 
+
+and a stack with MultiscalePartitioningEngineView . These networks were both evolved at solar-core like conditions of T= 1.5 × 10 7 K, ρ = 150 g cm −3 and a GS98 starting composition. The comparison was made by first interpolating both runs onto the same time grid followed by a standard evaluation of the logarithmic difference. 
+
+21 H n He Li Be B C N O F Ne Na Mg Al Si 
+
+Element 
+
+> −0.002
+> −0.001 0.000 0.001 0.002 0.003 0.004 0.005
+> Offset [dex]
+
+Figure 6: Logarithmic difference between elemental abundances after 10 Gyr of evolution from an engine stack with just GraphEngine and a stack with 
+
+MultiscalePartitioningEngineView . Note that GridFire does not impose a hard floor on species abundances; therefore, certain species have physically negligible trace abun-dances. It is trivial for these species abundances to vary by an order of magnitude due to floating-point round off noise which may spuriously be read on this figure as a ≥1 dex difference. We have therefore clipped this data to only include elements whose net abun-dance is greater than or equal to 10 −13 mol g −1 in either stack. 
+
+regime (e.g. Si burning as Hix and Thielemann demonstrate) we recommend users rely on a simpler GraphEngine topology. As GridFire is extended to cover higher energy regimes we anticipate that MultiscalePartitioningEngineView 
+
+will be central to maintaining effective time stepping 
+
+5.2.2. Other Engine Views 
+
+In addition to the views detailed above GridFire also includes a few utility views. These are DefinedEngineView , FileDefinedEngineView , and 
+
+PrimingEngineView . Each of these views is focused on enforcing that GridFire 
+
+only use some limited subset of reactions. DefinedEngineView allows a caller to specify the exact reaction set of interest and will only allow network evo-lution along those pathways, FileDefinedEngineView is the same except reading that list from a file. Finally, PrimingEngineView enforces the set of reactions containing one “priming” species such that every reaction in that set must contain (as either a product or reactant) that species. These views are most useful when comparing to other nuclear networks or for numerical stabilization during early stages of network evolution. 22 6. Solvers 
+
+The system of equations describing time evolution of species abundance due to nuclear burning is extremely stiff. Generally the stiffness of some sys-tem is given by the ratio of the maximum to minimum real component of the absolute value of the Eigenvalues for that system’s Jacobian matrix (Equa-tion 12). Due to the vast scale differences in the characteristic timescales for species abundance evolution which dominate the spectral characteristics of the jacobian matrix, all astrophysically interesting burning systems are pathologically stiff and therefore require implicit solving schemes. 
+
+S = max i|Re (λi)|
+
+min i|Re (λi)| (12) 
+
+GridFire implements two solvers, PointSolver and GridSolver . Both solvers makes use of the CVODE library from the SUNDIALS suite (Cohen et al., 1996). Specifically, we use the backwards difference formula (BDF) family of solutions within CVODE . BDF family solvers are implicit methods which are known to handle stiff systems extremely effectively (e.g. Skelboe and Christensen, 1981; Skelboe, 1989). 
+
+6.1. PointSolver 
+
+The primary solver GridFire bundles is the PointSolver , a single-zone, thermodynamically static integration scheme. GridFire uses CVODE ’s inbuilt BDF solver along with a dense linear solver for linearized Newton steps. Each time step involves calculating the right hand side (RHS) of the abundance and energy evolution equations, potentially computing the current Jacobian matrix (depending on if CVODE calls for a recalculation of the Jacobian), a check of a “trigger” and, if the trigger activates, re-projecting network state. 
+
+6.1.1. Right Hand Side 
+
+The design of GridFire calls for solvers to offload as much work as pos-sible to engines. Therefore, when calculating the RHS PointSolver is ef-fectively just calling the solvers required calculateRHSandEnergy (hereafter 
+
+g(x)) member function. Note that this separation of concerns makes it triv-ially easy to implement new solvers with new capabilities while reusing the same engine. For N species g(x) has the form g(x) = [ dY 0 
+
+> dt
+
+, ..., dY N 
+
+> dt
+
+, dϵ nuc  
+
+> dt
+
+].This vector is copied to the CVODE derivatives buffer. Details on how engines compute g(x) may be found in Section 5. 23 6.1.2. Jacobian 
+
+Similar to g(x) calculation, Jacobian ( J) calculation is entirely offloaded from the solver to the engine with the solver acting as little more than a wrapper. The only additional step of note which the solver is responsible for orchestrating is regularization of J. This is performed in two stages. First, adjust any entries in J which are less that 1×10 −30 to that floor value. Next, check if there are any ∞ or NaN entries in the J, if not no regularization is performed, if so then stage two of regularization begins. Recall that J has the structure from Equation 4. In this stage the current molar abundances of both the row and column species for each ∞ and NaN entry are compared to a minimum threshold value of 10 −100 . Any currently ∞ or NaN entries where both abundances fall below this value are set to 0. If either species has a current molar abundance above this cutoff then that non-finite entry remains in the Jacobian. This will lead to an exception which is desirable behavior as a non-finite entry in the Jacobian matrix indicates that GridFire 
+
+has strayed into a non-physical regime and any further integration would be spurious. 
+
+6.1.3. Trigger & Re-Projection 
+
+Given GridFire’s aggressive network topology optimizations (see Sec-tion 5.2), which are fundamentally dependent on the current local state, it is sometimes necessary to re-adjust network topology. Due to the current topology being stored in a separate “workspace” chunk of memory we call this process projection. Projection is however computationally expensive. It may involve re-traversing the entire network graph, re-coloring the sparse Ja-cobian matrix, and generally discarding most cached work and recomputing. It is neither practical nor necessary to project every time step. Throughout much of their lives, abundances and energy generation evolve like smooth and continuous functions and consequently the same topology may be used over large swaths of a network’s evolutionary life. However, this is not gen-erally true over the entire life of a network. Major state changes, such as the exhaustion of a key fuel, abundance of a new fuel increasing to the point that a certain reaction begins to contribute significantly to network evolution, or thermodynamic feedback often necessitate reevaluation of network topology. One key question which a solver must therefore address is “how does one decide when to trigger a re-projection event”. 
+
+PointSolver addresses this through the use of GridFire’s trigger sys-tem. Triggers are arbitrarily composable blocks of code which are provided 24 the entire time step context for a particular time step. GridFire’s trigger 
+
+modules provide standard logical combinators (e.g. AND, OR, NOT) useful when multiple trigger conditions are required. PointSolver then implements four additional conditional triggers. 1. ConvergenceFailureTrigger : Throws when the number of conver-gence failures exceeds either a relative or absolute threshold. 2. TimestepCollapseTrigger : Throws when the time step size falls be-low some relative threshold of the mean time-step over a prior window. 3. OffDiagonalTrigger : Throws when any off diagonal element of the Jacobian matrix exceeds some threshold. 4. BoundaryFluxTrigger : Throws when net molar reaction flow to the inactive reaction set exceeds either a relative or absolute threshold. These triggers are combined using logical or combinators such that if either the number of convergence failures begins to grow, the time step begins to shrink, the conditioning of the Jacobian becomes notably worse, or mass begins to leak into the inactive set the solver will trigger a re-projection. Testing has indicated that this system is remarkably effective at recov-ering during instances where the conditions provided to the CVODE are such that the solver is unable to take steps of a practically useful size. In solar-core like conditions when using an engine stack comprising a GraphEngine and 
+
+MultiscalePartitioningEngineView we observe that a single repartition-ing event is needed. Other regimes and engine stacks may require a different number of re-partitioning events. One concern with any topological change is that discontinuities may be introduced into tracked state variables. These discontinuities in fact are prob-lematic if we simply use reactive triggers (such as TimestepCollapseTrigger )as they will sometimes throw after the network has entered some non physical regime. For example, with just reactive triggers and an engine stack compris-ing a GraphEngine and MultiscalePartitioningEngineView GridFire’s 
+
+cumulative energy generation tends to not be smooth through re-projections. These first-derivative discontinuities are explained by a slow build of mass in the engine stack’s inactive set which is then — upon re-projection when reactions that consume these species are enabled — rapidly burned. The 
+
+BoundaryFluxTrigger resolves this by preemptively re-projecting as soon as mass starts leaking into the engine stacks inactive set. When using this trigger GridFire’s cumulative species abundance is a mostly smooth and 25 10 −6         
+
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> Y [mol/g]
+> H-1 He-3 He-4 C-12 N-14 O-16 Mg-24
+> 10 410 610 810 10 10 12 10 14 10 16 10 18
+> Time [s]
+> −2.0
+> −1.5
+> −1.0
+> −0.50.00.5
+> dY dt  [mol/g/s]
+> ×10 −17
+> 10 1
+> 10 2 [erg/g/s]
+> 
+> 0.0000 0.0002 0.0004 0.0006 d dt  [erg/g/s 2]
+
+Figure 7: (upper) Plot showing species abundance evolution (solid lines) and specific energy (dashed line) vs time for a solar-core-like environment (T= 1.5 × 10 7K and ρ = 160 
+
+g cm −8, GS98 solar composition). (bottom) Time derivatives of all quantities. The vertical dashed line represented a repartitioning event. Note that after the initial few time steps of stabilization the species abundances have smooth and continuous first derivatives. The energy generation does experience a discontinuity in its time derivative at repartitioning before settling back to the pre-repartitioning level. The impact of this discontinuity is that the cumulative specific energy generated after 10 Gyr deviates from the expected value by one part in 10 4. See Section 6.1.3 for more details on how we quantify this impact. 
+
+26 continuous function. There are occasionally small discontinuities in the spe-cific energy generation (Figure 7); however, these do not impact the overall energy generation by an amount greater than the typical error budget for the QSE view (§5.2.1). We quantify the impact these discontinuities have by first identifying the time index where repartitioning happens and deleting that point from our dataset. We use a linear interpolation to this “cleaned” data. Next, we make a second copy of our original — uncleaned — data, and sample the spline at the time value where the discontinuity was. This results in two parallel datasets: one, a readout of the simulation data, and two: a readout of the simulation data but without the discontinuity present. We then integrate both of these datasets to find the relative difference in the cumulative error due to the repartitioning. We find that repartitioning introduces a relative error of 1 × 10 −4. Further testing was conducted across M, K, F, and B -like core conditions where we find results of the same mag-nitude (the maximum introduced relative error being 3 × 10 −4). Finally, it should be noted that this smoothness is primarily realized through the use of BoundaryFluxTrigger . We have lightly tuned the relative and absolute tolerances of this trigger to work well for main sequence burning. However, end-users may wish to confirm the default tolerances are acceptable for their regime and, if not, explore other tolerances. Details for how to make such adjustments may be found in the GridFire documentation. 
+
+6.2. GridSolver 
+
+Generally nuclear networks in the context of SSE are required to evolve not one region but many, each with potentially separate thermodynamic and chemical states. For an SSE code using the operator splitting scheme — where nuclear burning is handled as a separate stage than structure calcu-lations — a first approach to address this might be to simply iterate over all zones of sufficient temperature to ignite fusion, calling PointSolver for some time step for each. SSE code may generally take time steps of the order of 10 14 s (Morel, 1997; Kovetz et al., 2009). GridFire can, on a current generation high-end consumer laptop, evolve an automatically optimized net-work with 136 species and 579 reactions over such a timescale in roughly 20 ms. For an SSE code with say 1000 burning zones 6 there is am immediate challenge. Namely that naive, serial, iteration would result in a 20 second            
+
+> 6DSEP uses ≈100 burning zones, wherase MESA uses ≈1000 .Note however, that the comparison with MESA is complicated by the fact that MESA solves its nuclear networks si-
+
+27 cost, per time step, just for burning. This is a significantly larger amount of time spent on burning than most SSE codes currently dedicate and would dramatically reduce their efficiency. There are a few approaches which could be taken to address this challenge and speed up multi-zone execution such as optimizing the single-zone solver more, exploiting the embarrassingly parallel nature of this problem, or ad-justing the solver into some higher-order space to solve the entire multi-zone network simultaneously. Significant effort has been made to increase the ef-ficiency of PointSolver and all engine modules to a practical degree while maintaining GridFire’s goals of being easy to use and easy to develop for. In fact, the 20 ms / 100 Myr time step quoted above is the fastest GridFire can achieve given its current architecture and on current generation hardware. Therefore, we adjust the solver. 
+
+GridSolver exploits the parallel nature of independent burning. Specif-ically, while for N burning regions N local solutions to the abundance and energy generation equations are needed, those solutions do not depend on one another. Therefore, multi-threading may be used to compute some num-ber of zones simultaneously. We find that GridFire’s parallel scaling is limited by memory-bandwidth, such that we can achieve a roughly 70% / thread increase in runtime efficiency. For example, running on a computer with 16 physical cores we realize a factor of 11 runtime decrease compared to a naive serial execution. Given the proliferation of multi-core computers this multithreaded approach provides a reasonable way for GridFire to de-crease its effective runtime per burning zone. GridSolver then acts as a thin wrapper around PointSolver and the infrastructure required to orchestrate parallel evaluations. Future solvers may choose to implement other paralyza-tion approaches, such as offloading heavy matrix operations onto Graphical Processing Units. 
+
+6.3. Extension to Other Solvers 
+
+Due to the manner in which GridFire separates local, point-wise physics from solvers, extending GridFire to more complex or higher-order solver architectures is trivial. For example GridFire’s engines may be reused — without change — by some new solver which couples the thermodynamics of   
+
+> multaneously with its structure code, whereases DSEP does not; instead, taking an operator splitting approach.
+
+28 the system to the energy generated by fusion. Alternatively, GridFire may be used in conjunction with a spatial-diffusion framework to model spatially dependent chemical evolution due to fusion. While these systems do not yet exist in GridFire , its architecture makes it very easy to build them. As an example we have implemented just such a prototype demonstrating how 
+
+GridFire may be used in conjunction with a spatial diffusion framework, 
+
+FiPy (Guyer et al., 2009), to solve multiple zones of burning with chemical diffusion. Note that this demonstration is still run in an thermodynamically static scheme where energy generation does not feed back into the system temperature and density. Further, this example should be taken as a code example of how researchers may incorporate GridFire into their own tools rather than a rigorously tested scientific tool. This example file may be found in the main GridFire repository under the examples directory. 
+
+7. Additional Physics 
+
+7.1. Plasma Screening 
+
+The bath of free electrons present in any fusing media, due to its ion-ization, serves to effectively reduce the Coulomb barrier therefore increasing fusional cross-sections (Salpeter, 1954; Ecker and Kröll, 1963; Stewart and Pyatt, 1966). A number of so-called “plasma screening” corrections exist for various regimes of Coulomb coupling parameter, Γ ≡ (Ze )2  
+
+> ak BT
+
+where a is the average inter-particle spacing, Z is the ion-charge, T is the temperature, and 
+
+e is the elementary charge. Currently GridFire implements a weak-plasma screening model, following the Salpeter (1954) prescription, which is suffi-cient for GridFire’s current target domain of main-sequence burning where 
+
+Γ ≪ 1.
+
+ζ ≡ 0.188 
+
+vuut ρT 37
+
+> N
+
+X
+
+> i
+
+(Z2 
+
+> i
+
++ Zi) Yi (13) 
+
+GridFire computes separate plasma screening factors for each reaction tracked by the network. The process entails first computing a global, composition-dependent, term ζ (Equation 13 for N reactant species), and then for each reaction computing the screening term eH . H takes a separate form de-pending on the number of bodies involved in the reaction. Of astrophysical relevance are single-body reactions, two-body reactions, and the triple-alpha process. The forms of H for these three cases are: 29 • Single-body: H = 0 
+
+• Two-body: H = ζZ 1Z2
+
+• Triple-α: H = 3 ζZ 2
+
+> α
+
+Once computed, the screening factor, eH , is then a multiplicative term applied to adjust the molar reaction flow. Because this directly affects the mapping of an independent variable to a dependent variable, we must be able to track the effect of this multiplication on the derivative of species abundances. Therefore, GridFire implements plasma screening as a auto-differentiable module, allowing for analytic derivatives of screening factors to be automatically computed at runtime. Currently GridFire only implements weak screening and bare screening (no screening). Other regimes — intermediate and strong screening — are not as directly relevant for main sequence burning. However, GridFire is architected in such a way as to facilitate the future incorporation of additional screening prescriptions. We expect that future releases will include both intermediate and strong plasma screening. 
+
+7.2. Partition Functions 
+
+GridFire includes a partition function module, currently only used for detailed balance calculations, which allows callers to construct piecewise par-tition functions. We include both the tabulated Rauscher & Theilmann parti-tion function (RT, Rauscher and Thielemann, 2000), supporting species with proton numbers Z ≥ 8, and a ground state partition function (Equation 14). Using the composability functions of the partition module GridFire is able to fall back to the ground-state partition function for species where Z < 8.
+
+Z = 2 S + 1 (14) 
+
+8. Validation 
+
+We take a two-phase approach to validation of GridFire . First we vali-date network kinetics for stellar-like environments over long timeframes. We compare these results to established nuclear networks to ensure consistently and physical robustness and to demonstrate GridFire’s ability to be use-ful for stellar-burning stages. These comparisions are made against both 30 pynucastro and MESA’s net module through BBQ’s hydrostatic mode. Sec-ond, we compare GridFire’s results for a simple big-bang nucleosynthesis calculation to literature values, demonstrating that GridFire can operate in higher energy regions. Note that while we show that GridFire can evolve a simple BBN model, it does not include photodisintegration and should therefore be taken as a proof of concept rather than a production ready BBN model. 
+
+8.1. Stellar Burning 8.1.1. pynucastro 
+
+GridFire results are validated against pynucastro (Smith Clark et al., 2022) over a variety of compositions and thermodynamic conditions. pynucastro 
+
+is a well tested, Python-based nuclear network implementation. In order to ensure equivalent networks, we first generate the network topology using 
+
+GridFire , we then inspect the topology and input it into pynucastro . Note that we read the network topology from the base, GraphEngine , rather than from any higher view. This ensures that pynucastro is constructed from the entire network rather than some reduced approximate form. Results from these tests are presented in Figures 8, 9, 10, 11, 12, and 13 7. In summary we find GridFire performs well, on par with pynucastro in both energy generation and chemical evolution. It should be noted that while GridFire 
+
+and pynucastro both use REACLIB rates, the exact rate source may not be the same between these two codes as REACLIB regularly updates and in-corporates new rate sources and measurements. Therefore, we do not expect identical results between the two networks. 
+
+8.1.2. MESA net 
+
+In addition to pynucastro, we further validate GridFire against MESA’s net module (Paxton et al., 2011, 2019). These comparisons are made us-ing the BBQ code (Farmer, 2023; Jermyn et al., 2023) run in hydrostatic mode. This allows for abundance and energy comparisons to be made with-out MESA’s thermodynamic evolution adjusting plasma temperature and density. The inlist used to run these comparisons may be found in the     
+
+> 7The script to run these validation tests may be found in the GridFire repository under validation/ManuscriptFigures/pynucastro/GridFireValidationSuite.py In-structions for use are included in the readme file in the validation directory.
+
+31 10 −8
+
+10 −6
+
+10 −4
+
+10 −2
+
+10 0
+
+> Abundance [mol/g]
+> 1H
+> 3He
+> 4He
+> 12 C
+> 14 N
+> 16 O
+
+10 −8 10 −5 10 −2 10 1 10 4 10 7 10 10 10 13 10 16 
+
+Time [s] 
+
+10 −14 
+
+10 −11 
+
+10 −8
+
+10 −5
+
+10 −2
+
+> |∆ log 10 | [dex]
+
+Figure 8: (upper) Molar abundances for a model evolved over 10 Gyr with a metal-depleted ( [Z/Z ⊙] = −1) rescaling of the GS98 solar composition and with T= 1.5 × 10 7
+
+K and ρ = 160 g cm −3. GridFire results are plotted as solid lines, pynucastro results are plotted as dashed lines. (lower) absolute value of the logarithmic difference between 
+
+GridFire molar abundances and pynucastro molar abundances. This comparison was made by linearly interpolating both results onto the same time grid. 
+
+32 10 −8
+
+10 −6
+
+10 −4
+
+10 −2
+
+10 0
+
+> Abundance [mol/g]
+> 1H
+> 3He
+> 4He
+> 12 C
+> 14 N
+> 16 O
+
+10 −8 10 −5 10 −2 10 1 10 4 10 7 10 10 10 13 10 16 
+
+Time [s] 
+
+10 −14 
+
+10 −11 
+
+10 −8
+
+10 −5
+
+10 −2
+
+> |∆ log 10 | [dex]
+
+Figure 9: (upper) Molar abundances for a model evolved over 10 Gyr with a GS98 solar composition and with T= 1.5 × 10 7 K and ρ = 160 g cm −3. GridFire results are plotted as solid lines, pynucastro results are plotted as dashed lines. (lower) absolute value of the logarithmic difference between GridFire molar abundances and pynucastro molar abundances. This comparison was made by linearly interpolating both results onto the same time grid. 
+
+33 10 −8
+
+10 −6
+
+10 −4
+
+10 −2
+
+> Abundance [mol/g]
+> 1H
+> 3He
+> 4He
+> 12 C
+> 14 N
+> 16 O
+
+10 −8 10 −5 10 −2 10 1 10 4 10 7 10 10 10 13 10 16 
+
+Time [s] 
+
+10 −14 
+
+10 −11 
+
+10 −8
+
+10 −5
+
+10 −2
+
+> |∆ log 10 | [dex]
+
+Figure 10: (upper) Molar abundances for a model evolved over 10 Gyr with a metal-enhanced ( [Z/Z ⊙] = +1 ) rescaling of the GS98 solar composition and with T= 1.5 × 10 7
+
+K and ρ = 160 g cm −3. GridFire results are plotted as solid lines, pynucastro results are plotted as dashed lines. (lower) absolute value of the logarithmic difference between 
+
+GridFire molar abundances and pynucastro molar abundances. This comparison was made by linearly interpolating both results onto the same time grid. 
+
+34 10 −8
+
+10 −6
+
+10 −4
+
+10 −2
+
+10 0
+
+> Abundance [mol/g]  1H
+> 3He
+> 4He
+> 12 C
+> 14 N
+> 16 O
+
+10 −7 10 −4 10 −1 10 2 10 5 10 8 10 11 10 14 
+
+Time [s] 
+
+10 −15 
+
+10 −12 
+
+10 −9
+
+10 −6
+
+10 −3
+
+10 0
+
+> |∆ log 10 | [dex]
+
+Figure 11: (upper) Molar abundances for a model evolved over 10 Gyr with a GS98 solar composition and with T= 4 × 10 7 K and ρ = 1 g cm −3. GridFire results are plotted as solid lines, pynucastro results are plotted as dashed lines. (lower) absolute value of the logarithmic difference between GridFire molar abundances and pynucastro molar abundances. This comparison was made by linearly interpolating both results onto the same time grid. 
+
+35 10 −8
+
+10 −6
+
+10 −4
+
+10 −2
+
+10 0
+
+> Abundance [mol/g]
+> 1H
+> 3He
+> 4He
+> 12 C
+> 14 N
+> 16 O
+
+10 −6 10 −2 10 2 10 6 10 10 10 14 10 18 
+
+Time [s] 
+
+10 −14 
+
+10 −11 
+
+10 −8
+
+10 −5
+
+10 −2
+
+> |∆ log 10 | [dex]
+
+Figure 12: (upper) Molar abundances for a model evolved over 300 Gyr with a GS98 solar composition and with T= 4 × 10 6 K and ρ = 1000 g cm −3. GridFire results are plotted as solid lines, pynucastro results are plotted as dashed lines. (lower) absolute value of the logarithmic difference between GridFire molar abundances and pynucastro molar abundances. This comparison was made by linearly interpolating both results onto the same time grid. 
+
+36 10 6 10 8 10 10 10 12 10 14 
+
+## Time [s] 
+
+10 5
+
+10 7
+
+10 9
+
+10 11 
+
+10 13 
+
+10 15 
+
+10 17 
+
+> E(< t ) [erg/g]
+
+T = 2 .5e7 K , ρ = 15g cm −3
+
+T = 1 .5e7 K , ρ = 160g cm −3
+
+T = 6 .0e6 K , ρ = 750g cm −3
+
+T = 4 .0e6 K , ρ = 1000g cm −3
+
+## GridFire pynucastro Figure 13: Cumulative specific energy generation comparison for a number conditions representative of stellar cores. From top-to-bottom the conditions roughly approximate the core of a B, G, K, M star. The initial composition is the same for all models, the GS98 solar-composition. 
+
+37 10 −5      
+
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> Mass Fraction
+> H-1 He-4 C-12 N-14 O-16
+> 10 010 310 610 910 12 10 15 10 18
+
+Time [s] 
+
+> 10 −14
+> 10 −11
+> 10 −8
+> 10 −5
+> 10 −2
+> |∆ ln  | [dex]
+
+Figure 14: (upper) Comparison of Elemental Mass Fractions between MESA’s net module and GridFire . Note that all species are plotted in consistent colors. MESA results are plotted as dashed lines while GridFire results are plotted as solid lines. (lower) In the same color scheme as above logarithmic differences between each species elemental abundances. The differences between MESA and GridFire may be attributed to different underlying rate tables. These comparisons were made with the mesa_495.net file, with an initial GS98 composition, at T9 = 0 .015 and ρ = 160 g cm −3.
+
+GridFire repository validation directory. All abundance and energy com-parisons were run against mesa_495.net . Generally, we find good agreement between GridFire’s abundance and energy results at 10Gyr and solar-core like conditions to those of MESA’s net module (Figures 14 & 15, comparisons are made by interpolating results onto the same time grid). The notable ex-ception is in 12 C abundance where GridFire predicts a systematically lower abundance, by 0.3 dex, after the CNO cycle comes to equilibrium compared to what MESA’s net predicts. This difference can be attributed to GridFire using only rates from REA-CLIB while MESA makes uses of a more curated rate set. In the case of 12 C,Formicola et al. (2004); Imbriani et al. (2005) show that measurements of 38 10 1
+
+> 10 5
+> 10 9
+> 10 13
+> 10 17
+> E(< t ) [erg/g]
+
+gridfire bbq : mesa 495.net      
+
+> 10 010 310 610 910 12 10 15
+
+Time [s] 
+
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> |∆ log 10  | [dex]
+
+〈∆ log 10 〉t = 0 .019 dex Figure 15: (upper) Cumulative Specific Energy Generation between MESA’s net module and GridFire . (lower) logarithmic difference in cumulative energy generation. The dashed shows the mean logarithmic difference over simulation time between MESA and GridFire .Conditions for this test are the same as described in the caption of Figure 14. 
+
+39 14 N (p, γ )15 O may be up to 2x slower at low energies when compared to theoretical measurements. Figure 15 in Imbriani et al. demonstrates that below T6 ≈ 100 the true reaction rate of 14 N (p, γ )15 O may be 0.5x that of the NACRE compilation. We can demonstrate that this discrepency explains the majority of the 0.3 dex offset seen between GridFire’s results and MESA’s 
+
+results by considering an equilibrium condition for the CNO-I cycle. In equi-librium the rate of 12 C destruction must equal the rate of 14 N destruction (Equation 15) 
+
+N (12 C)N (H)λ12 = N (14 N )N (H)λ14 (15) Where N (AX) is the number density of species AX, and λ is the reaction rate. Introducing a factor of the atomic mass of species allows for us to solve for the equilibrium abundances. 
+
+X(12 C) = 12 14 X(14 N )
+
+λ14 
+
+λ12 
+
+
+
+(16) 
+
+log 10 (X(12 C)) ∝ log 10 
+
+ X(14 N ) + log 10 
+
+λ14 
+
+λ12 
+
+
+
+(17) (18) The estimated logarithmic difference in carbon-12 mass fraction between two networks, A and B, with independent rates is then given by Equation 20. 
+
+∆ log 10 (X(12 C)) AB = log 10 (X(12 C)) A − log 10 (X(12 C)) B (19) 
+
+∆ log 10 (X(12 C)) = log 10 
+
+λ14 ,A 
+
+λ12 ,A 
+
+
+
+− log 10 
+
+λ14 ,B 
+
+λ12 ,B 
+
+
+
+(20) The rates/test/src/test_rates.f90 tool provided by MESA evaluated at T9=0.015 shows that MESA’s net uses λ12 ,MESA = 2 .89 ×10 −16 and λ14 ,MESA =1.16 × 10 −18 . Similarly, we can use the calculate_rate method on each of these reactions in GridFire to find λ12 ,GridFire = 3 .59 ×10 −16 and λ14 ,GridFire =6.92 × 10 −19 . Plugging these into Equation 20 yields a -0.32 dex difference, nearly exactly what we observe; further, we can confirm that GridFire uses 40 NACRE rates by probing the label attribute on each of these reactions. Gen-erally then this discrepancy may be attributed to differences in the underlying rate table rather than a structural issue with GridFire . In the future we may update GridFire to include additional rate sets. 
+
+8.2. Big Bang Nucleosynthesis 
+
+In the first minutes after the big bang the conditions were such that free protons and neutrons underwent significant fusion resulting in the primordial big bang nucleosynthethis (BBN) composition which can be observed in high red-shift quasars (Steigman, 2009; Pettini and Cooke, 2012), extragalactic HII regions (Olive et al., 1997; Cyburt et al., 2005), and metal-poor halo stars (Fields et al., 2005). A full handling of this requires a proper accounting for photodisintegration as cosmological models predict that temperatures were well above the roughly 1 GK cutoff where photodisintegration is relevant. However, the initial ≈ 0.1 – 180 seconds of the universe’s life were dominated by neutron-proton reactions which set some neutron-proton ratio. If we adopt a neutron-proton ratio from after the deuterium bottleneck (Turner et al., 2021) and let GridFire evolve from there we may validate GridFire’s BBN predictions. Letting the baryon density Ωbh2 = 0 .022 (Planck Collaboration et al., 2016) we adopt a proton-neutron ratio of Xp/X n = 7 .17 (Yeh et al., 2023). We start GridFire with a composition only composed of neutron and protons and allow GridFire to use its built-in topology generation and optimization schemes to expand this as necessary. Further, since GridFire is currently thermodynamically static over any given integration scheme we make use of an operator-splitting approach to time evolve the temperature of the universe. Following a simple Friedmann cosmology — where the scale factor in a radiation dominated universe goes like a ∝ t1/2 and the temperature goes like T ∝ a−1 and with the number of flavors of light neutrinos, Nν = 3 — we let the temperature and density follow the relations given in Equation 21. Further, we adopt a geometric time stepping approach where the time step requested by our BBN program is given as ∆t = t + αt where α is some configurable constant (generally we find that known transient features are resolved well with α = 0 .01 ). BBN is expected to have reached completion by roughly the neutron lifetime in the early universe, τn ≈ 886 s (Frekers and Biermann, 2025), after the big bang; consequently, we evolve to 1200s to ensure that GridFire has enough integration time to stabilize any equi-librium species and to ensure that we do not observe any spurious behavior 41 Species Initial Mass Fraction Final Mass Fraction Xi/X p
+
+> 1
+
+H 0.88 7.6147 ×10 −1 1
+
+> 2
+
+H 0 2.8482 ×10 −5 3.7404 ×10 −53He 0 2.2286 ×10 −5 2.9268 ×10 −54He 0 2.3848 ×10 −1 3.1319 ×10 −17Li 0 1.1379 ×10 −10 1.4944 × 10 −10 7Be 0 3.2127 ×10 −9 4.2191 × 10 −9   
+
+> Table 3: Big Bang Nucleosynthesis (BBN) abundances as predicted by GridFire after 1200s following the temperature and density profile described by Equation 21.
+
+after BBN is expected to have completed. 
+
+T9(t) = 10 
+
+√tρ(t) = 4 × 10 −5 · T 39 (t)
+
+(21) We find the GridFire is able to reproduce both BBN abundance values and transient structure — such as the temporary peak in 7Li abundance (e.g. Olive et al., 2000; Mishra and Basu, 2011; Jang et al., 2021)— in abundance evolution of trace species to within approximately thirteen percent of high precision results from Cooke et al. (2018) (Table 3, Figures 16 & 17). The discrepancy here is likely due to our simplistic BBN model. We find that 
+
+> 7
+
+Li and 7Be abundances match expectations, with a peak in 7Li abundance at 185 seconds, followed by 7Be approaching an equilibrium abundance of 
+
+≈ 10 −9 (Figure 18). 
+
+9. Performance 
+
+In order to not cause a significant slow down in runtime for current SSE programs, GridFire must be capable of evolving a single time step’s nuclear burning calculations over a wall-time, tgf , such that tgf ≪ ts where ts is the wall time to solve the structure equations. Further, GridFire must not increase overall memory usage such that running GridFire and some SSE program simultaneously would be impractical on common modern hardware. Here we will use a one solar mass model evolved with the Dartmouth Stellar Evolution Program ( DSEP , Dotter et al., 2008) as a point of comparison. Our testing indicates that for these conditions DSEP takes an average of five 42 0 5 10 15 20 25 Z10 −100 
+
+10 −81 
+
+10 −62 
+
+10 −43 
+
+10 −24 
+
+10 −5           
+
+> Molar Abundance [mol g −1] nHHe Li Be BCNOFNe Na Mg Al Si PSCl Ar KCa Sc Ti VCr MnFe Co
+
+GridFire pynucastro Figure 16: Elemental Abundances GridFire predicts after 1200s of evolution follow-ing the temperature and density profile described by Equation 21. Similar to results presented in Section 8.1 we make the pynucastro comparison by copying the GridFire 
+
+topology and running pynucastro through the same operator split scheme. The script used to generate this data may be found in the GridFire repository under valida-tion/ManuscriptFigures/BBN. 2345678 Temperature [10 8 K] 
+
+200 400 600 800 1000 1200 Time [s] 10 −5
+
+10 −4
+
+10 −3
+
+10 −2
+
+> D/H
+> Berezhiani et al. 2013 Coc et al. 2015 Cooke et al. 2018
+
+Figure 17: GridFire deuterium on hydrogen mass fraction ratio from t=180s to t=1200s after the big bang. Comparisons are drawn against Berezhiani et al. (2013); Coc et al. (2015); Cooke et al. (2018). GridFire agrees to within 13% of Cooke et al.; differences are attributable to our simplistic BBN model. 
+
+43 2345678 Temperature [10 8 K] 
+
+200 400 600 800 1000 1200 
+
+Time [s] 
+
+10 −14 
+
+10 −13 
+
+10 −12 
+
+10 −11 
+
+10 −10 
+
+10 −9     
+
+> Mass Fraction
+> 678
+> 200 300 10 −10
+> 10 −9
+> 7Li
+> 7Be Figure 18: GridFire’s predicted mass fraction evolution of 7Li and 7Be.
+
+seconds of wall time per 100 Myr time step 8. Therefore, we adopt a target for GridFire performance such that GridFire should be able to evolve 100 burning zones ( DSEP uses 100 burning zones) in less than one second of wall time. Readers should note that performance numbers are strongly dependent on hardware and exact performance characteristics will vary depending on hardware. 
+
+9.1. Compute Time 
+
+GridFire’s wall time per evaluation (which is the relevant quantity when considering an operator splitting scheme) is dependent on the simulation length for the evaluation. That is to say that evaluating an engine stack over 10 years will take less time than evaluating that same stack over 10 Gyr. However, the effect is not linear as CVODE is extremely effective at ramping step sizes up as a network stabilizes such that, for solar-like stars, the time step size scales roughly like the current simulation time (Figure 19). Note that this generally means that the majority of wall time is spent evaluating the early stages of network evolution.    
+
+> 8This has been measured when evolving with free-eos enabled, 1000 shells, and with numerical tolerances set to one part in 10 8
+
+44 10 −7 10 −4 10 −1 10 2 10 5 10 8 10 11 10 14 
+
+## Time [s] 
+
+10 −7
+
+10 −4
+
+10 −1
+
+10 2
+
+10 5
+
+10 8
+
+10 11 
+
+10 14 
+
+> Time Step Size [s]
+
+dt = e−1.65 ±0.062 × t0.99 ±0.003 
+
+dt ≈ 0.2tFigure 19: Time step scaling for a GridFire run with numerical tolerances set at one part in 10 8 for a network run at solar-core like conditions. 
+
+45 Further, at higher temperatures and densities an increasing fraction of reactions may contribute to network kinetics. This results in an increased spread in the real components of the network Jabobian’s eigenvalues which in turn forces CVODE to take smaller timesteps; consequently, the wall time needed for GridFire to evaluate the same simulation time generally increases with temperature and density (Figure 21). This is not a strictly monotonic relation due to various reaction pathways entering and exiting relevance, species being partitioning in or out of the fast set, and the general complexity of this system of equations complicates the shape of the parameter space. We benchmark PointSolver ’s performance vs GridSolver ’s performance (Figure 20). We find that, as expected, GridSolver significantly reduces overall runtime. We see that on test hardware — a 2024 model M4 Max MacBook Pro — the median wall time GridSolver takes to evolve a net-work for N zones is 10% (arithmetic mean of 12%) that of PointSolver , this corresponds to a factor of 10 speedup. The discrepancy from the full theo-retical factor of 16 speedup is attributable to a number of convergent factors. First, not all cores on the test hardware have equivalent performance, second, 
+
+GridFire is potentially saturating the test hardware’s memory bandwidth. Given those limitations a factor of 10 speedup is likely the maximum we can expect to realize through naive parallelism. In addition to the number of zones other factors that influence runtime include network size and temperature. Testing indicates that GridFire’s 
+
+wall time performance scales similarly with network size when compared to 
+
+MESA’s net module but with a constant multiplicative offset such that for the same network size GridFire is generally two order of magnitude faster than MESA’s net module (Figure 21). On the other hand, GridFire is gen-erally much slower than pynucastro . These discrepancies are not surprising given the architectural differences between these three solvers. In the case of MESA’s net module we time this by calling the fortran system_clock 
+
+subroutine before and after the call to MESA’s net_1_zone_burn in BBQ’s 
+
+lib_hydrostatic.f90 . Further, we exclude the first call to net_1_zone_burn 
+
+from the timing calculation to avoid polluting timing data with file I/O as 
+
+MESA loads rate data from its cache. Finally, in order to make the compari-son as meaningful as possible we disable eos calls inside of net_1_zone_burn 
+
+as GridFire does not make any similar calls. Diff files which readers may use to replicate these runs can be found in the GridFire repositories valida-tion/diff directory. Generally MESA is conservative in regards to using a stale jacobian as it is optimized for a highly-coupled environment. Therefore, it 46 0 20 40 60 80 100 
+
+Num Zones 
+
+10 −1
+
+10 0
+
+> Wall Time [s]
+
+PointSolver GridSolver Figure 20: Mean wall time scaling for PointSolver and GridSolver for a solar-core-like network over 1Gyr. Each data point is the mean of 1000 runs for that number of zones. That is to say that the wall time reported for a zone number of 20 is the mean of 1000 runs of the solver for that number of zones. This test was run on a 2024 M4 Max MacBook Pro with 16 physical cores, 12 high performance cores and 4 efficiency cores. Results will depend strongly on hardware. The jump in GridSolver ’s wall time at ≈ 16 zones corresponds to the point at which all cores on the test system have been allocated. 
+
+47 0 100 200 300 400 500 600 
+
+Number of species 
+
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> Wall Time [s]
+> basic.net pp extras.net mesa 45.net mesa 125.net mesa 235.net mesa 495.net
+> T=5.00E+06 K T=1.00E+07 K T=1.50E+07 K T=2.00E+07 K T=2.50E+07 K MESA net pynucastro
+
+Figure 21: Wall time for a 10Gyr evaluation of GridFire with an initial GS98 solar composition and run at ρ = 160 g cm −3. Each colored data point corresponds to a particular depth of network construction (i.e. the number of stages of graph traversal) at a particular temperature. Each black diamond represents the timing information for a MESA net run while each grey narrow diamond corresponds to a pynucastro run. It should be noted that the first set of datapoints for GridFire (a construction depth of 1) do not include the full proton-proton chain. Therefore the first usable network size for main sequence stellar structure is the second set of datapoints, a construction depth of 2. The majority of tests in this paper use a construction depth of 3. 
+
+is not surprising that MESA takes longer per step for similar network sizes than GridFire does. On the other hand, pynucastro statically generates its networks and makes heavy use of just-in-time (JIT) compilation. Therefore, each timestep with pynucastro collapses to a non-branching set of matrix operations; wheres, GridFire contains non-trivial inter-timestep logic. It should be noted that when timing pynucastro runs we evaluate the network twice and report the time for the second evaluation. Due to the time required to run JIT compilation the first network evaluation may take on the order of 10s of seconds and is not representative of SSE use cases where a network will be evaluated many times. 
+
+9.2. Memory Footprint 
+
+GridFire makes heavy use of data embedded directly into the binary. This strategy was chosen in order to prevent common issues with locating data files on user computers, especially when building external linkages (see Appendix A.2). The major downsides to this approach are increased bi-nary size (a GridFire compiled library generally sits around 25MB, though this varies from compiler-to-compiler and system-to-system) and potentially increased memory usage. Further, nuclear networks generally have the po-48 tential to be memory intensive. Since we must track the relations between each network species the size of various system matrices, such as the Jaco-bian matrix, scales like the square of the number of species in the network. Finally, GridFire’s use of auto-differentiation requires in-memory storage of the computational graph mapping each independent to each dependent vari-able. For all of these reasons we do not expect GridFire to be a memory-light library. Memory profiling shows the expected quadratic memory use scaling with number of network species in engine memory usage along with a much flatter memory usage profile for the solver (Figure 22). This usage profile is in line with the expected architecture of programs using GridFire . That is to say that we expect programs to hold a single engine and many solvers, therefore it is important that the majority of memory use be on the engine side so that it is not replicated to across solvers. The tests presented in this paper have exclusively used a network construction depth of 3, which corre-sponds 136 species, 579 reactions, and an engine memory usage of 30 MB. As said this is not a memory-light program; however, that is fundamental to this class of problems. As a comparison tools such BBQ using MESA’s net module consume roughly 1.5 GB of memory when using mesa_125.net .While this is not a rigorous comparison, as MESA performances many addi-tional allocations to support its much wider science goals, it does highlight that memory usage is often high for nuclear networks. 
+
+10. Conclusions 
+
+In this article we have presented GridFire , a novel dynamic nuclear net-work built to support extensibility and with a focus on ease of use. GridFire 
+
+can automatically construct network topologies from a limited seed compo-sition and has robust support for automatic network optimization and sim-plification. Further, GridFire’s engine view-based architecture allows re-searchers to implement domain specific features without a detailed knowledge of GridFire’s underlying code. In addition to engines, GridFire bundles two different solvers which can be used to integrate either single zone, or in-dependent multi-zone networks over gigayear timescales. We have validated 
+
+GridFire’s results against well-tested nuclear networks: pynucastro and 
+
+MESA’s net module, and find that GridFire predicts kinetics which are in good agreement with both networks given the differences in underlying rate tables. Finally, we have demonstrated a simple BBN model which, despite its simplicity, reproduces BBN predictions well. 49 0 100 200 300 400 500 600 
+
+Number of Species 
+
+> 10 −2
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> Approximate Memory Usage [MB]
+
+Engine Memory Solver Memory Figure 22: Approximate memory usage of GridFire over a variety of construction depths. Note that this is approximate as it is non trivial to measure exact memory usage in C++. This measurement was taken by overloading the new and delete operators such that they record all allocation events and the number of bytes requested. 
+
+Future versions of GridFire will both expand its current capabilities — including adding additional screening prescriptions, robustly testing and ex-panding into higher energy regimes where photodisintegration is relevant, and relaxing the thermodynamically static approximation — and both facil-itate and test efforts to incorporate GridFire into existing stellar structure and evolution programs. Presently GridFire will be most straightforward to incorporate into code bases which adopt an operator splitting scheme to solve the structure equations and microphysics. However, given GridFire’s 
+
+flexible architecture we anticipate that it will also be possible to make use of 
+
+GridFire physics engines within fully coupled structure solvers. 
+
+Acknowledgement 
+
+GridFire is developed as a part of the 4D-STAR collaboration (https://4D-STAR.org). 4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR). Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council. We would like to thank the reviewer for their careful reading and 50 critique of this work. Further, we would like to thank Keighley Rockcliffe, Rayna Rampalli, and Fen Halstead for useful discussion related to this work. This work has made use of the NASA Astrophysical Database System (ADS). 
+
+Appendix A. Usage 
+
+Appendix A.1. Policy System 
+
+GridFire’s design calls for maximum flexibility and automation, Specif-ically it was a major design goal that a priori knowledge of neither network topology nor relevant species would be required from the user. Generally, 
+
+GridFire achieves this goal. However, there is a danger with such automa-tion. Specifically, that users might evolve some network assuming it repre-sents some physical system while in reality the inputs they provided were not sufficient to constrain that system. For example, consider the case of an engine built from a seed composition comprising only 1H and 4He. In order to maintain efficiency GridFire’s primary engine, GraphEngine , allows the user to specify network build depth (the maximum number of layers that the breadth first search will descend during initial network construction). This allows the user to explicitly exclude extremely deep species which are only produced after multiple burning stages and can dramatically increase net-work performance (primarily by reducing the size of the Jacobian). Starting from a seed composition of just two species while using a network build depth of say three, can easily lead to certain relevant reactions being excluded. For example, in the above case the CNO cycle would not be closed and thus the network could not accurately model any systems where CNO was a relevant reaction pathway. 
+
+GridFire addresses this challenge through its policy system. Policies are in-code directives defining some set of minimum required physics. These ob-jects act as the primary expected channel for users to construct engines as they provide runtime validation of network topology. The MainSequenceNetworkPolicy 
+
+for example enforces that all branches of the proton-proton chain and all branches of the CNO cycle must be present for a network to be considered valid. If a user were to try to construct a MainSequenceNetworkPolicy 
+
+with a seed composition and network build depth that resulted in some sub-set of either the proton-proton chain or CNO cycles not being present then 
+
+GridFire will immediately throw an exception and alert the user exactly which component of the policy has been violated. We currently only bundle 51 MainSequenceNetworkPolicy with GridFire ; however, as with the rest of 
+
+GridFire , the policy system has been designed to be easily extended. 
+
+Appendix A.2. Extension 
+
+GridFire has been, from the ground up, designed to be user extensible from either C++ or Python. All objects in GridFire are implemented as derived classes from pure virtual, interface, classes. For example, a user may derive the DynamicEngineViewWrapper pure virtual class from GridFire in order to implement new physics. As a contrived example consider the case where this new physics is as simple as saying that the Jacobian column for 12 C is all 0. Implementing this would be as simple as overriding the 
+
+generateJacobianMatrix methods such that they call the base engine and then zero out the 12 C column prior to returning the Jacobian to the caller. A more realistic example might build off of the spectral solver discussed in §6.3. Wheres the example spectral solver implicitly took an operator-splitting approach to SSE (in so far as that solver has no ability to couple structural calculations with network evolution), a solver may be implemented which is coupled. Alternatively, an equation of state may be incorporated into some new solver to relax the thermodynamically static assumption GridFire 
+
+currently makes. So long as these expansions implement the same minimum interface as GridFire defines in its abstract base classes they can be used with all other GridFire methods. Finally, while extension through C++ code will demonstrate by far the most performance, every abstract base class has had a so called “trampoline class” implemented in the Python bindings. This allows for Python classes to override abstract C++ classes and be passed in place of C++ objects from Python code. This does have the disadvantage of a substantial performance overhead (Python is notoriously slow); however, for cases where most of the heavy computational work can still be offloaded to C++, this provides an avenue for non C++ developers to make substantial modifications to 
+
+GridFire such that it might fit their specific needs. 
+
+Appendix A.3. External Use 
+
+GridFire is entirely written in C++ and as such inherits the famously high performance of that language. However, C++ is not a widely used language in astronomy, certainly not outside of computational astronomy software development. Other languages, Python foremost among them and 52 — to a lesser extent — Fortran, dominate software development for astro-physics. While GridFire may be useful for the 4D-STAR collaboration as a purely C++ based software stack, we aim to make this library broadly useful to the community. As such significant effort has been put into developing bridges to other languages. Currently we have demonstrated full GridFire 
+
+capabilities in Python — including use and extension and limited GridFire 
+
+abilities — use but not extension — in C, Fortran, and Javascript. We antic-ipate that GridFire will be primarily used as a Python module. All external language bindings can be found in the primary GridFire repository. 
+
+Appendix A.3.1. Python Interface 
+
+Python is a widely language in astronomy and astrophysics today. As such Python is the only language, other than C++, which will receive full 
+
+GridFire bindings. That is to say that every single class, function, enum, exception, and variable available in the GridFire C++ API is made available in the Python API. This is done using pybind11 (W. Jakob, J. Rhinelander, D. Moldovan and others, 2017). Python is generally expected to be the lan-guage which users interact with GridFire through. In addition to bindings, precompiled Python wheels have been built for a number of systems and reg-istered on the Python package index (pypi) such that familiar command pip install gridfire will work for any macos ( ≥ 15.0) or Linux system (more recent than Ubuntu 18.04) without requiring time- and resource-consuming compilation. 
+
+Appendix A.3.2. C API 
+
+For historical reasons C++ does not provide a stable application bi-nary interface (ABI); rather, different implementations of C++ standards-compliant compilers and standard template libraries implement their own ABIs. This poses a problem when interfacing to other languages. In order to resolve this we bind a subset of the GridFire API to a stable C API. Note that this subset is sufficient for use but does not allow the caller to hook into GridFire’s extension capabilities (such as defining new EngineView s). Overall, the C API presents seven functions (Table A.4) which encapsulate all setup, work, and tear down functionality of GridFire .Any C code including the gridfire/extern/gridfire_extern.h header and linking against the gridfire_mod shared library will be able to access these functions. In addition to bringing C support, the presence of a C API allows GridFire to be called reliably from any languages with C interoper-53 Method Name Purpose 
+
+gf_init Initialize the context pointer ( ctx ) which stores all GridFire state information. 
+
+gf_get_last_error_message Access a human-readable representation of the last error GridFire threw. 
+
+gf_register_species Tell GridFire which species the user will be providing molar abundance values for. 
+
+gf_construct_engine_from_policy Build the policy and engine stack. 
+
+gf_construct_solver_from_engine Build a single- or multi-zone solver from the constructed engine stack. 
+
+gf_evolve Integrate a given abundance through time with the constructed solver. 
+
+gf_free Clean up all resources used by GridFire to ensure no memory leaks.  
+
+> Table A.4: Major components implemented by GridFire . Note that these are not exhaus-tive but do represent the most important subset of abstract types.
+
+ability such as Zig 9 or Rust 10 through a foreign function interface. Example of C API usage may be found in GridFire’s documentation. 
+
+Appendix A.3.3. Fortran Interface 
+
+Many high performance astrophysics code bases are written in Fortran (e.g MESA , Paxton et al., 2011) and as such it is useful to expose a GridFire 
+
+interface which can be used from Fortran. We leverage the C API described in Appendix A.3.2 and Fortran 2003’s iso_c_bindings to bind a GridFire 
+
+type in Fortran. As this is effectively a wrapper around the C API usage will look very similar. Examples may be found in the GridFire documentation. 
+
+Appendix A.3.4. Javascript and Web Assembly 
+
+GridFire can compile to a web assembly target (WASM) which opens the door for web-native execution of nuclear-burning simulations. This is likely not of direct interest for research applications. However, students using simulation tools often face challenges with software installation. We have used the compiler toolchain Emscripten to build a set of Javascript bindings equivalent the the C API described in Table A.4 which allow for GridFire to 
+
+> 9https://ziglang.org/
+> 10 https://rust-lang.org/
+
+54 be incorporated into a website easily 11 . By packaging GridFire into a static web-site we open the door to classroom exploration and use without any expectation of students installing anything more uncommon than a modern web browser. 
+
+Appendix B. GridFire Control Flow 
+
+Generally astrophysical simulation software is complex. Here we provide a set of simplified flow charts meant to clarify the structure of how GridFire 
+
+works. 
+
+Appendix B.1. Prototypical Internal Control Flow 
+
+Figure B.23 provides a prototypical examples of how GridFire runs. This figure is focused on developing an understanding of GridFire’s internal workings rather than the process of using GridFire .
+
+Appendix B.2. Engine View Projection Control Flow 
+
+Here we present diagrams of the control flow for each engine view’s project() method (Figure B.24). 
+
+Appendix C. License 
+
+GridFire is licensed under the GNU General Public License v3.0. Acopy of this license is bundled with the GridFire source code; you may also retrieve a copy from https://www.gnu.org/licenses/gpl-3.0.en.html 
+
+References 
+
+Bahcall, J.N., 2002. The luminosity constraint on solar neutrino fluxes. Physical Review C 65, 025801. doi: 10.1103/PhysRevC.65.025801 ,
+
+arXiv:hep-ph/0108148 .Bell, B., 2025. Cppad user guide. URL: https://cppad.readthedocs.io/ latest/user\_guide.html .            
+
+> 11 An example of what aGridFire website might look like is presented at https://gridfire.algebrist.com
+
+55 Engine Stack Recursion 
+
+User Start 
+
+Define NetworkPolicy (Pass Seed Composition) 
+
+Call policy.construct() 
+
+Policy Internal Logic :Validate & Build Engine Stack Returns: 
+
+EngineView (Top) 
+
+Instantiate Solver (Single/Multi Zone) 
+
+Build NetIn (T, ρ, time, comp) 
+
+Call solver.evaluate(NetIn) 
+
+Build Trigger & Init Resources 
+
+Call project() Sync Engine Stack 
+
+Start Time-Step 
+
+Evaluate dY i 
+
+> dt
+
+, ϵnuc , ϵν , & J
+
+Check Trigger 
+
+Max Time / Error? 
+
+Marshal Output ( NetOut )
+
+Return to User 
+
+Top: AEV 
+
+Mid: MSPEV 
+
+Base: GraphEngine Base Update: Ensure Species Exist Init ScratchPad 
+
+Partitioning (QSE): Update Comp Update ScratchPad 
+
+Pruning: Cull pathways Finalize Topology 
+
+Returns Engine Ref 
+
+> Solver calls Update of top most view
+> Update returns scratch & composition
+
+Trigger Fired 
+
+No Change 
+
+Continue 
+
+Finished 
+
+Start/End State 
+
+Process/Action 
+
+Decision Point 
+
+Input/Output 
+
+Engine Element 
+
+Key Sync Point 
+
+Acronyms 
+
+AEV: AdaptiveEngineView 
+
+MSPEV: MultiscalePartitioningEngineView 
+
+QSE: Quasi-Steady State Equilibrium 
+
+Figure B.23: Sketch of a prototypical GridFire run for a single zone solver. 
+
+56 QSE Group Refinement 
+
+Start : project() 
+
+Base Engine Projection 
+
+Prime Engine & Clear State 
+
+Partition by Timescale 
+
+Identify Slowest Pool 
+
+Set Core Dynamic Species 
+
+Pool Connectivity Analysis 
+
+Construct Candidate Groups 
+
+Flux Validated? 
+
+Prune via Log-Flux 
+
+Re-Validated? 
+
+Merge Coupled Groups 
+
+Finalize Species Sets 
+
+Create QSE Solvers 
+
+Solve QSE Abundances 
+
+Clear Composition Cache 
+
+Return : Composition 
+
+> Call partitionNetwork()
+> YES
+> Discard Group
+> YES
+> Discard Group
+> Step 0
+> Step 1
+> Step 2
+> Step 3
+> Step 4
+> Step 5
+> Step 6
+> Step 7
+> Step 8
+
+Figure B.24: Control flow for MultiscalePartitioningEngineView projection. 
+
+57 Berezhiani, Z., Dolgov, A., Tkachev, I., 2013. BBN with light dark matter. Journal of Cosmology and Astroparticle Physics 2013, 010. doi: 10.1088/ 1475-7516/2013/02/010 , arXiv:1211.4937 .Bowman, D.M., van Saders, J., Vink, J.S., 2023. The structure and evolution of stars: Introductory remarks. Galaxies 11. URL: https://www.mdpi. com/2075-4434/11/5/94 , doi: 10.3390/galaxies11050094 .Burbidge, E.M., Burbidge, G.R., Fowler, W.A., Hoyle, F., 1957. Synthesis of the Elements in Stars. Reviews of Modern Physics 29, 547–650. doi: 10. 1103/RevModPhys.29.547 .Coc, A., Petitjean, P., Uzan, J.P., Vangioni, E., Descouvemont, P., Illiadis, C., Longland, R., 2015. New reaction rates for improved primordial d/h calculation and the cosmic evolution of deuterium. arXiv preprint arXiv:1511.03843 . Cohen, S.D., Hindmarsh, A.C., Dubois, P.F., 1996. CVODE, A Stiff/Nonstiff ODE Solver in C. Computers in Physics 10, 138–143. doi: 10.1063/1. 4822377 .Cooke, R.J., Pettini, M., Steidel, C.C., 2018. One percent determination of the primordial deuterium abundance. The Astrophysical Journal 855, 102. Cyburt, R.H., Amthor, A.M., Ferguson, R., Meisel, Z., Smith, K., Warren, S., Heger, A., Hoffman, R.D., Rauscher, T., Sakharuk, A., Schatz, H., Thielemann, F.K., Wiescher, M., 2010. The JINA REACLIB Database: Its Recent Updates and Impact on Type-I X-ray Bursts. Astrophysical Journal, Supplement 189, 240–252. doi: 10.1088/0067-0049/189/1/240 .Cyburt, R.H., Fields, B.D., Olive, K.A., Skillman, E., 2005. New BBN limits on physics beyond the standard model from 4He. Astroparti-cle Physics 23, 313–323. doi: 10.1016/j.astropartphys.2005.01.005 ,
+
+arXiv:astro-ph/0408033 .Dawood, H., Megahed, N., 2023. Automatic differentiation of uncertainties: an interval computational differentiation for first and higher derivatives with implementation. PeerJ Computer Science 9, e1301. 58 Dotter, A., Chaboyer, B., Jevremović, D., Kostov, V., Baron, E., Fer-guson, J.W., 2008. The Dartmouth Stellar Evolution Database. As-trophysical Journal, Supplement 178, 89–101. doi: 10.1086/589654 ,
+
+arXiv:0804.4473 .Driller, H., Blanke, E., Genz, H., Richter, A., Schrieder, G., Pearson, J., 1979. Test of detailed balance at isolated resonances in the reac-tions 27al+p<->24mg+ α and time reversibility. Nuclear Physics A 317, 300–312. URL: https://www.sciencedirect.com/science/article/ pii/0375947479904846 , doi: https://doi.org/10.1016/0375-9474(79) 90484-6 .Ecker, G., Kröll, W., 1963. Lowering of the Ionization Energy for a Plasma in Thermodynamic Equilibrium. Physics of Fluids 6, 62–69. doi: 10.1063/ 1.1724509 .Farag, E., Timmes, F.X., Chidester, M.T., Anandagoda, S., Hartmann, D.H., 2024. Stellar Neutrino Emission across the Mass-Metallicity Plane. The Astrophysical Journal Supplement Series 270, 5. doi: 10.3847/1538-4365/ ad0787 , arXiv:2310.13142 .Farmer, R., 2023. rjfarmer/bbq: r23.01.01. URL: https://doi.org/10. 5281/zenodo.7585202 , doi: 10.5281/zenodo.7585202 .Fields, B.D., Olive, K.A., Vangioni-Flam, E., 2005. Implications of a New Temperature Scale for Halo Dwarfs on LiBeB and Chemical Evo-lution. The Astrophysical Journal 623, 1083–1091. doi: 10.1086/429085 ,
+
+arXiv:astro-ph/0411728 .Formicola, A., Imbriani, G., Costantini, H., Angulo, C., Bemmerer, D., Bonetti, R., Broggini, C., Corvisiero, P., Cruz, J., Descouvemont, P., et al., 2004. Astrophysical s-factor of 14n (p, γ) 15o. Physics Letters B 591, 61– 68. Frekers, D., Biermann, P., 2025. Nucleosynthesis in the Early Universe. Springer Berlin Heidelberg, Berlin, Heidelberg. pp. 85–98. doi: 10.1007/ 978-3-662-70729-6 .Gamma, E., Helm, R., Johnson, R., Vlissides, J., 1993. Design patterns: Abstraction and reuse of object-oriented design, in: European conference on object-oriented programming, Springer. pp. 406–431. 59 Gardner, D.J., Reynolds, D.R., Woodward, C.S., Balos, C.J., 2022. En-abling new flexibility in the SUNDIALS suite of nonlinear and differen-tial/algebraic equation solvers. ACM Transactions on Mathematical Soft-ware (TOMS) doi: 10.1145/3539801 .Guennebaud, G., Jacob, B., et al., 2014. Eigen: A c++ linear algebra library. URL http://eigen. tuxfamily. org, Accessed 22. Guyer, J.E., Wheeler, D., Warren, J.A., 2009. FiPy: Partial differential equations with Python. Computing in Science & Engineering 11, 6–15. URL: http://www.ctcms.nist.gov/fipy , doi: 10.1109/MCSE.2009.52 .Halprin, A., 1985. Stellar energy loss through scalar-neutrino production. Physical Review D 32, 3081. Haxton, W.C., Hamish Robertson, R.G., Serenelli, A.M., 2013. Solar Neutrinos: Status and Prospects. Annual Review of Astronomy and Astrophysics 51, 21–61. doi: 10.1146/annurev-astro-081811-125539 ,
+
+arXiv:1208.5723 .Hindmarsh, A.C., Brown, P.N., Grant, K.E., Lee, S.L., Serban, R., Shu-maker, D.E., Woodward, C.S., 2005. SUNDIALS: Suite of nonlinear and differential/algebraic equation solvers. ACM Transactions on Mathemati-cal Software (TOMS) 31, 363–396. doi: 10.1145/1089014.1089020 .Hix, W.R., Thielemann, F.K., 1996. Silicon Burning. I. Neutronization and the Physics of Quasi-Equilibrium. The Astrophysical Journal 460, 869. doi: 10.1086/177016 , arXiv:astro-ph/9511088 .Hix, W.R., Thielemann, F.K., 1999. Silicon Burning. II. Quasi-Equilibrium and Explosive Burning. Astrophysical Journal 511, 862–875. doi: 10.1086/ 306692 , arXiv:astro-ph/9808203 .Imbriani, G., Costantini, H., Formicola, A., Vomiero, A., Angulo, C., Bem-merer, D., Bonetti, R., Broggini, C., Confortola, F., Corvisiero, P., et al., 2005. S-factor of 14n (p, γ) 15o at astrophysical energies. The European Physical Journal A-Hadrons and Nuclei 25, 455–466. Jang, D., Kwon, Y., Kwak, K., Cheoun, M.K., 2021. Big Bang nucleosynthe-sis in a weakly non-ideal plasma. Astronomy and Astrophysics 650, A121. doi: 10.1051/0004-6361/202038478 .60 Jermyn, A.S., Bauer, E.B., Schwab, J., Farmer, R., Ball, W.H., Bellinger, E.P., Dotter, A., Joyce, M., Marchant, P., Mombarg, J.S.G., Wolf, W.M., Sunny Wong, T.L., Cinquegrana, G.C., Farrell, E., Smolec, R., Thoul, A., Cantiello, M., Herwig, F., Toloza, O., Bildsten, L., Townsend, R.H.D., Timmes, F.X., 2023. Modules for Experiments in Stellar Astrophysics (MESA): Time-dependent Convection, Energy Conservation, Automatic Differentiation, and Infrastructure. The Astrophysical Journal Supplement Series 265, 15. doi: 10.3847/1538-4365/acae8d , arXiv:2208.03651 .Jiang, C., Szymanski, B.K., Lian, J., Havlin, S., Gao, J., 2021. Nuclear reaction network unveils novel reaction patterns based on stellar energies. New Journal of Physics 23, 083035. Klein, M.J., 1955. Principle of detailed balance. Physical Review 97, 1446. Kovetz, A., Yaron, O., Prialnik, D., 2009. A new, efficient stellar evolution code for calculating complete evolutionary tracks. Monthly Notices of the Royal Astronomical Society 395, 1857–1874. Laue, S., 2019. On the equivalence of automatic and symbolic differentiation. arXiv preprint arXiv:1904.02990 . Lippuner, J., Roberts, L.F., 2017. SkyNet: Modular nuclear reaction net-work library. Astrophysics Source Code Library, record ascl:1710.005. 
+
+arXiv:1710.005 .Maltoni, M., Yu. Smirnov, A., 2016. Solar neutrinos and neutrino physics. The European Physical Journal A 52, 87. Misch, G.W., 2017. Nuclear Weak Rates and Detailed Balance in Stellar Conditions. The Astrophysical Journal 844, 20. doi: 10.3847/1538-4357/ aa789c , arXiv:1612.09402 .Mishra, A., Basu, D.N., 2011. Nuclear reaction rates and the primordial nu-cleosynthesis. arXiv e-prints , arXiv:1106.2972doi: 10.48550/arXiv.1106. 2972 , arXiv:1106.2972 .Mocak, M., Campbell, S.W., Mueller, E., Kifonidis, K., 2010. The core he-lium flash revisited-iii. from population i to population iii stars. Astronomy & Astrophysics 520, A114. 61 Mocak, M., Müller, E., Weiss, A., Kifonidis, K., 2009. The core helium flash revisited-ii. two and three-dimensional hydrodynamic simulations. Astron-omy & Astrophysics 501, 659–677. Morel, P., 1997. Cesam: A code for stellar evolution calculations. Astronomy and Astrophysics Supplement Series 124, 597–614. Olive, K.A., Steigman, G., Skillman, E.D., 1997. The Primordial Abundance of 4He: An Update. The Astrophysical Journal 483, 788–797. doi: 10. 1086/304281 , arXiv:astro-ph/9611166 .Olive, K.A., Steigman, G., Walker, T.P., 2000. Primordial nucleosyn-thesis: theory and observations. Physics Reports 333-334, 389– 407. URL: https://www.sciencedirect.com/science/article/pii/ S0370157300000314 , doi: https://doi.org/10.1016/S0370-1573(00) 00031-4 .Paxton, B., Bildsten, L., Dotter, A., Herwig, F., Lesaffre, P., Timmes, F., 2011. Modules for Experiments in Stellar Astrophysics (MESA). Astro-physical Journal, Supplement 192, 3. doi: 10.1088/0067-0049/192/1/3 ,
+
+arXiv:1009.1622 .Paxton, B., Smolec, R., Schwab, J., Gautschy, A., Bildsten, L., Cantiello, M., Dotter, A., Farmer, R., Goldberg, J.A., Jermyn, A.S., Kanbur, S.M., Marchant, P., Thoul, A., Townsend, R.H.D., Wolf, W.M., Zhang, M., Timmes, F.X., 2019. Modules for Experiments in Stellar Astrophysics (MESA): Pulsating Variable Stars, Rotation, Convective Boundaries, and Energy Conservation. The Astrophysical Journal Supplement Series 243, 10. doi: 10.3847/1538-4365/ab2241 , arXiv:1903.01426 .Pettini, M., Cooke, R., 2012. A new, precise measurement of the primor-dial abundance of deuterium. Monthly Notices of the Royal Astronomical Society 425, 2477–2486. Planck Collaboration, Ade, P.A.R., Aghanim, N., Arnaud, M., Ashdown, M., Aumont, J., Baccigalupi, C., Banday, A.J., Barreiro, R.B., Bartlett, J.G., Bartolo, N., Battaner, E., Battye, R., Benabed, K., Benoît, A., Benoit-Lévy, A., Bernard, J.P., Bersanelli, M., Bielewicz, P., Bock, J.J., Bonaldi, A., Bonavera, L., Bond, J.R., Borrill, J., Bouchet, F.R., Boulanger, F., Bucher, M., Burigana, C., Butler, R.C., Calabrese, E., Cardoso, J.F., 62 Catalano, A., Challinor, A., Chamballu, A., Chary, R.R., Chiang, H.C., Chluba, J., Christensen, P.R., Church, S., Clements, D.L., Colombi, S., Colombo, L.P.L., Combet, C., Coulais, A., Crill, B.P., Curto, A., Cuttaia, F., Danese, L., Davies, R.D., Davis, R.J., de Bernardis, P., de Rosa, A., de Zotti, G., Delabrouille, J., Désert, F.X., Di Valentino, E., Dickinson, C., Diego, J.M., Dolag, K., Dole, H., Donzelli, S., Doré, O., Douspis, M., Ducout, A., Dunkley, J., Dupac, X., Efstathiou, G., Elsner, F., Enßlin, T.A., Eriksen, H.K., Farhang, M., Fergusson, J., Finelli, F., Forni, O., Frailis, M., Fraisse, A.A., Franceschi, E., Frejsel, A., Galeotta, S., Galli, S., Ganga, K., Gauthier, C., Gerbino, M., Ghosh, T., Giard, M., Giraud-Héraud, Y., Giusarma, E., Gjerløw, E., González-Nuevo, J., Górski, K.M., Gratton, S., Gregorio, A., Gruppuso, A., Gudmundsson, J.E., Hamann, J., Hansen, F.K., Hanson, D., Harrison, D.L., Helou, G., Henrot-Versillé, S., Hernández-Monteagudo, C., Herranz, D., Hildebrandt, S.R., Hivon, E., Hobson, M., Holmes, W.A., Hornstrup, A., Hovest, W., Huang, Z., Huffenberger, K.M., Hurier, G., Jaffe, A.H., Jaffe, T.R., Jones, W.C., Ju-vela, M., Keihänen, E., Keskitalo, R., Kisner, T.S., Kneissl, R., Knoche, J., Knox, L., Kunz, M., Kurki-Suonio, H., Lagache, G., Lähteenmäki, A., Lamarre, J.M., Lasenby, A., Lattanzi, M., Lawrence, C.R., Leahy, J.P., Leonardi, R., Lesgourgues, J., Levrier, F., Lewis, A., Liguori, M., Lilje, P.B., Linden-Vørnle, M., López-Caniego, M., Lubin, P.M., Macías-Pérez, J.F., Maggio, G., Maino, D., Mandolesi, N., Mangilli, A., Marchini, A., Maris, M., Martin, P.G., Martinelli, M., Martínez-González, E., Masi, S., Matarrese, S., McGehee, P., Meinhold, P.R., Melchiorri, A., Melin, J.B., Mendes, L., Mennella, A., Migliaccio, M., Millea, M., Mitra, S., Miville-Deschênes, M.A., Moneti, A., Montier, L., Morgante, G., Mort-lock, D., Moss, A., Munshi, D., Murphy, J.A., Naselsky, P., Nati, F., Na-toli, P., Netterfield, C.B., Nørgaard-Nielsen, H.U., Noviello, F., Novikov, D., Novikov, I., Oxborrow, C.A., Paci, F., Pagano, L., Pajot, F., Pala-dini, R., Paoletti, D., Partridge, B., Pasian, F., Patanchon, G., Pearson, T.J., Perdereau, O., Perotto, L., Perrotta, F., Pettorino, V., Piacentini, F., Piat, M., Pierpaoli, E., Pietrobon, D., Plaszczynski, S., Pointecouteau, E., Polenta, G., Popa, L., Pratt, G.W., Prézeau, G., 2016. Planck 2015 results. XIII. Cosmological parameters. Astronomy and Astrophysics 594, A13. doi: 10.1051/0004-6361/201525830 , arXiv:1502.01589 .Rauscher, T., 2018. Photonuclear reactions in astrophysics. Nuclear Physics News 28, 12–15. 63 Rauscher, T., Thielemann, F.K., 2000. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables 75, 1–351. doi: 10.1006/adnd.2000.0834 , arXiv:astro-ph/0004059 .Ravlić, A., Giraud, S., Paar, N., Zegers, R.G.T., 2025. Self-consistent mi-croscopic calculations for electron captures on nuclei in core-collapse su-pernovae. Physical Review C 112, L032801. doi: 10.1103/5r9z-ygmx ,
+
+arXiv:2412.00650 .Reichert, M., Winteler, C., Korobkin, O., Arcones, A., Bliss, J., Eichler, M., Frischknecht, U., Fröhlich, C., Hirschi, R., Jacobi, M., Kuske, J., Martínez-Pinedo, G., Martin, D., Mocelj, D., Rauscher, T., Thielemann, F.K., 2023. The Nuclear Reaction Network WinNet. The Astrophysi-cal Journal Supplement Series 268, 66. doi: 10.3847/1538-4365/acf033 ,
+
+arXiv:2305.07048 .Salpeter, E.E., 1954. Electrons Screening and Thermonuclear Reactions. Australian Journal of Physics 7, 373. doi: 10.1071/PH540373 .Skelboe, S., 1989. Stability properties of backward differentiation multirate formulas. Applied Numerical Mathematics 5, 151–160. Skelboe, S., Christensen, B., 1981. Backward differentiation formulas with extended regions of absolute stability. BIT Numerical Mathematics 21, 221–231. Smith Clark, A., Johnson, E.T., Chen, Z., Eiden, K., Willcox, D.E., Boyd, B., Cao, L., DeGrendele, C.J., Zingale, M., 2022. pynucastro: A Python Library for Nuclear Astrophysics. arXiv e-prints , arXiv:2210.09965doi: 10. 48550/arXiv.2210.09965 , arXiv:2210.09965 .Steigman, G., 2009. Tracking the Post-Bbn Evolution of Deuterium, in: van Steenberg, M.E., Sonneborn, G., Moos, H.W., Blair, W.P. (Eds.), Future Directions in Ultraviolet Spectroscopy: A Conference Inspired by the Ac-complishments of the Far Ultraviolet Spectroscopic Explorer Mission, AIP. pp. 94–101. doi: 10.1063/1.3154093 , arXiv:0901.4333 .Stewart, J.C., Pyatt, Jr., K.D., 1966. Lowering of Ionization Potentials in Plasmas. The Astrophysical Journal 144, 1203. doi: 10.1086/148714 .64 Thielemann, F.K., Rauscher, T., Freiburghaus, C., Nomoto, K., Hashimoto, M., Pfeiffer, B., Kratz, K.L., 1998. Nucleosynthesis basics and applica-tions to supernovae., in: Hirsch, J.G., Page, D. (Eds.), Neutrino Physics and Astrophysics, pp. 27–78. doi: 10.48550/arXiv.astro-ph/9802077 ,
+
+arXiv:astro-ph/9802077 .Timmes, F.X., 1999. Integration of Nuclear Reaction Networks for Stellar Hydrodynamics. The Astrophysical Journal Supplement Series 124, 241– 263. doi: 10.1086/313257 .Truran, J., Cameron, A., Gilbert, A., 1966. The approach to nuclear statis-tical equilibrium. Canadian Journal of Physics 44, 563–592. Turner, M.S., Foundation, T.K., et al., 2021. Understanding bbn: the physics and its history. arXiv preprint arXiv:2111.14254 . Utsunomiya, H., Mohr, P., Zilges, A., Rayet, M., 2006. Direct deter-mination of photodisintegration cross sections and the p-process. Nu-clear Physics A 777, 459–478. doi: 10.1016/j.nuclphysa.2004.06.025 ,
+
+arXiv:nucl-ex/0502011 .W. Jakob, J. Rhinelander, D. Moldovan and others, 2017. pybind11 – Seam-less operability between C++11 and Python. Yeh, T.H., Olive, K.A., Fields, B.D., 2023. The neutron mean life and big bang nucleosynthesis. Universe 9. URL: https://www.mdpi.com/ 2218-1997/9/4/183 , doi: 10.3390/universe9040183 .65
