@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-17",
+  "date": "2026-06-17",
+  "generated_at": "2026-06-17T21:26:59",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/17/2606.10728v2-denovoswe-scaling-long-horizon-environments-for-generating-entire-repositories-from-scratch",
+      "section": "quick",
+      "title_en": "DeNovoSWE: Scaling Long-Horizon Environments for Generating Entire Repositories from Scratch",
+      "authors": "Jiale Zhao, Guoxin Chen, Fanzhe Meng, Wayne Xin Zhao, Ruihua Song, Ji-Rong Wen, Kai Jia",
+      "date": "2026-06-09",
+      "pdf": "https://arxiv.org/pdf/2606.10728v2",
+      "score": "7.0",
+      "evidence": "提供仓库生成数据集的开源代码",
+      "tldr": "大规模仓库生成训练数据稀缺，DeNovoSWE数据集提供4818个从文档生成完整仓库的高质量实例。采用自动化沙盒工作流，结合分治策略与批评修复机制构建，并引入难度感知轨迹过滤以平衡质量与多样性。微调Qwen3-30B-A3B后，在BeyondSWE-Doc2Repo基准上性能从5.8%大幅提升至47.2%。该数据集有效解决了长程软件工程任务数据缺失问题，显著增强了代码代理的仓库生成能力。",
+      "tags": "query:code-paper",
+      "abstract_en": "As the capabilities of LLM-based code agents continue to advance, their expected role is expanding beyond localized bug fixing in existing codebases toward architecting and implementing complete software repositories from high-level specifications. However, training agents for such long-horizon software engineering tasks remains difficult due to the scarcity of large-scale, verifiable whole-repository generation data. In this paper, we introduce \\textbf{DeNovoSWE}, a large-scale dataset for whole-repository generation. DeNovoSWE comprises 4,818 high-quality instances, where each instance requires generating a complete repository from documentation. Our dataset is automatically constructed through a carefully designed sandboxed agentic workflow, enabling scalable curation without human annotation. DeNovoSWE is constructed with \"divide and conquer\" and critic-repair philosophy. To balance data quality and diversity, we further introduce a difficulty-aware trajectory filtering strategy. Fine-tuning Qwen3-30B-A3B on DeNovoSWE substantially improves long-horizon SWE performance, raising its score on the challenging BeyondSWE-Doc2Repo benchmark from 5.8% to 47.2%.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/17/2606.16827v1-no-resource-no-benchmarks-no-problem-evaluating-and-improving-llms-for-code-generation-in-no-resource-languages",
+      "section": "quick",
+      "title_en": "No Resource, No Benchmarks, No Problem? Evaluating and Improving LLMs for Code Generation in No-Resource Languages",
+      "authors": "Alessandro Giagnorio, Alberto Martin-Lopez, Gabriele Bavota",
+      "date": "2026-06-15",
+      "pdf": "https://arxiv.org/pdf/2606.16827v1",
+      "score": "7.0",
+      "evidence": "评估并改进无资源语言的LLM代码生成，可能提供代码",
+      "tldr": "大语言模型在代码生成任务中主要针对高资源语言，而缺乏训练数据的无资源语言（如工业专有语言）研究不足。本文构建了三个无资源语言基准，实验了提示、预训练和微调等方法，发现继续预训练提升最大但会损害指令跟随能力。提出从基座模型开始，在目标语言上继续预训练，再通过权重差转移从指令模型注入指令跟随能力，显著提升无资源语言代码生成，使公司能低成本部署专用指令模型。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large Language Models (LLMs) have significantly advanced the automation of software engineering tasks. One prominent example is code generation, where an LLM produces code in a specified programming language based on a natural language description. Most research in this area has focused on high-resource languages, such as Python or Java, which benefit from abundant training data. A smaller body of work has explored low-resource languages, which are underrepresented in training corpora. In contrast, no-resource languages for which LLMs have seen virtually no training data remain largely unstudied. These languages often emerge in industry, where organizations develop proprietary or domain-specific languages unsupported by commercial tools like GitHub Copilot. This results in the need for companies to deploy their own in-house code recommenders. To investigate possible solutions in this context, we build and release three code generation benchmarks for no-resource languages, based on two recently proposed programming languages for which very little training data is available. Using these benchmarks, we experiment several solutions to teach LLMs about no-resource languages, including prompt-based techniques as well as pre-training and fine-tuning exploiting the little data available. While further pre-training gives the largest performance gains for no-resource languages, applying it directly to instruction-tuned models harms their ability to follow instructions. To address this, we start from a base model, further pre-training it on the target language, and then inject instruction-following capabilities via weight diff transfer from an instruction model. Such an approach significantly improves code generation capabilities in no-resource settings, allowing companies to cheaply deploy a specialized instruct model without dealing with the computational cost of instruction fine-tuning.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/17/2606.18237v1-reprorepo-scaling-reproducibility-audits-with-github-repository-issues",
+      "section": "quick",
+      "title_en": "ReproRepo: Scaling Reproducibility Audits with GitHub Repository Issues",
+      "authors": "Shanda Li, Qiuhong Anna Wei, Jingwu Tang, Valerie Chen, Nihar B Shah, Tim Dettmers, Yiming Yang, Ameet Talwalkar",
+      "date": "2026-06-16",
+      "pdf": "https://arxiv.org/pdf/2606.18237v1",
+      "score": "7.0",
+      "evidence": "使用GitHub仓库问题进行可重现性审计",
+      "tldr": "现有复现基准依赖人工，难以规模化。本文提出ReproRepo框架，利用GitHub Issues作为自然监督信号，评估LLM代理对真实复现问题的识别能力。在1149篇机器学习论文上，最优代理Codex与GPT-5.5能识别约90%论文中的至少一个语义相关复现障碍。该工作提供了可复用的规模化复现审计评估框架。",
+      "tags": "query:code-paper",
+      "abstract_en": "Reproducing research results from papers and released code is central to scientific progress. Existing works have introduced benchmarks to evaluate whether LLM agents can assist with reproducibility, but they are difficult to scale due to their reliance on substantial manual effort for data curation and evaluation. We introduce ReproRepo, a scalable framework for reproducibility evaluation that leverages human-raised GitHub issues as naturally occurring supervision on realistic reproduction blockers. We instantiate ReproRepo on 1,149 recent machine learning papers from major conferences and evaluate four frontier model-agent configurations. Our results show that LLM agents, even without executing code, can identify many real-world reproducibility problems from paper-repository pairs: the best agent in our study, namely Codex with GPT-5.5, surfaces at least one semantically related human-reported blocker for ~90% of papers in the study. Further analysis shows that agents are particularly effective for surfacing visible failures and identifying the right semantic region, but may still be insufficient in exact localization. ReproRepo can serve as a reusable, scalable framework for future evaluations of LLM agents on real-world reproducibility auditing. Our code is released at https://github.com/LithiumDA/ReproRepo.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

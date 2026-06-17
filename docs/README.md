@@ -6,26 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-16
-- 运行时间：2026-06-16 21:52:22 UTC
+- 最新运行日期：2026-06-17
+- 运行时间：2026-06-17 21:26:53 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 本次总论文数：3
+- 精读区：0
+- 速读区：3
 
 ### 今日简报（AI）
-今天精读1篇高分文章《GridFire》并速读1篇安全评估文章《SkillVetBench》。最值得关注的是恒星结构和演化的开源核网络GridFire，以及LLM Agent的多维安全风险评估新基准SkillVetBench。建议优先精读GridFire掌握核天体物理模拟工具，再结合SkillVetBench了解Agent安全评估方法。
-- 详情：[/202606/16/README](/202606/16/README)
+今日速读3篇论文，聚焦从头生成完整代码库、低资源语言代码生成及GitHub问题可重复性审计。
+
+最值得关注的两篇：DeNovoSWE尝试规模化从零生成完整软件仓库的长期环境；ReproRepo利用GitHub问题自动审计代码可复现性。
+
+建议开发者关注低资源语言代码生成的评估方法，以及如何借助自动化审计工具提升研究可复现性。
+- 详情：[/202606/17/README](/202606/17/README)
 
 ### 精读区论文标签
-1. [GridFire: A new, open source, nuclear network for stellar structure and evolution](/202606/16/2606.15354v1-gridfire-a-new-open-source-nuclear-network-for-stellar-structure-and-evolution)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：提供开源代码
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [SkillVetBench: LLM-as-Judge for Multi-Dimensional Security Risk Evaluation in Open-Source LLM Agent Skills](/202606/16/2606.15899v1-skillvetbench-llm-as-judge-for-multi-dimensional-security-risk-evaluation-in-open-source-llm-agent-skills)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：Hugging Face上的开源LLM代理技能安全基准
+1. [DeNovoSWE: Scaling Long-Horizon Environments for Generating Entire Repositories from Scratch](/202606/17/2606.10728v2-denovoswe-scaling-long-horizon-environments-for-generating-entire-repositories-from-scratch)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提供仓库生成数据集的开源代码
+2. [No Resource, No Benchmarks, No Problem? Evaluating and Improving LLMs for Code Generation in No-Resource Languages](/202606/17/2606.16827v1-no-resource-no-benchmarks-no-problem-evaluating-and-improving-llms-for-code-generation-in-no-resource-languages)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：评估并改进无资源语言的LLM代码生成，可能提供代码
+3. [ReproRepo: Scaling Reproducibility Audits with GitHub Repository Issues](/202606/17/2606.18237v1-reprorepo-scaling-reproducibility-audits-with-github-repository-issues)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：使用GitHub仓库问题进行可重现性审计
 
 
 <div class="dpr-home-promo-card">
