@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-18",
+  "date": "2026-06-18",
+  "generated_at": "2026-06-18T21:52:42",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/18/2606.14924v1-pandas-for-reproducible-data-analysis-from-spreadsheets-to-research-grade-python-workflows",
+      "section": "deep",
+      "title_en": "Pandas for Reproducible Data Analysis: From Spreadsheets to Research-Grade Python Workflows",
+      "authors": "Sidney Shapiro, Daniel Pearson, Emiliano Sebastian Gonzalez Venegas",
+      "date": "2026-06-12",
+      "pdf": "https://arxiv.org/pdf/2606.14924v1",
+      "score": "8.0",
+      "evidence": "专注于使用开源pandas库进行可重现数据分析；直接支持含代码的可重现研究",
+      "tldr": "电子表格分析在业务中常见但难以审计和重现。本文提出将Python pandas库作为从电子表格到可重复分析工作流的转换桥梁，保留表格概念的同时让假设显式化。论文贡献了Excel到pandas的映射、九类工作流分类、七个端到端示例、失败模式目录以及可复用代码配方。该方法使表格分析可重复、可审计且可防御，同时允许Excel作为利益相关者的输入输出界面。",
+      "tags": "query:code-paper",
+      "abstract_en": "Spreadsheet-heavy analytical work remains common in business analytics, operations reporting, and applied research, yet workbooks that grow through formulas, manual edits, and copy-paste refresh are difficult to audit, reproduce, and govern at scale. When tabular work requires repeatability, validation, version control, automated refresh, or integration with statistics and machine learning, analysts need a transformation layer that preserves familiar table concepts while making assumptions explicit. This paper treats the Python pandas library as that layer: a practical bridge between spreadsheet practice and research-grade workflows, not a wholesale replacement for Excel. The paper contributes an Excel-to-pandas migration mapping, a taxonomy of nine workflow categories, seven end-to-end examples drawn from business analytics and applied research, a failure-mode catalog, and reusable code recipes for governed tabular work. pandas is most useful when tabular analysis must be repeatable, auditable, and defensible, while Excel can remain a familiar input and output interface for stakeholders who need workbooks.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/18/2606.15050v1-solyx-ai-grid-hardware-telemetry-aware-routing-across-geographically-distributed-gpu-clusters",
+      "section": "deep",
+      "title_en": "Solyx AI Grid: Hardware-Telemetry-Aware Routing Across Geographically Distributed GPU Clusters",
+      "authors": "Aleks Bernhard, Nithin Katla",
+      "date": "2026-06-13",
+      "pdf": "https://arxiv.org/pdf/2606.15050v1",
+      "score": "8.0",
+      "evidence": "数据中心推理路由调度",
+      "tldr": "跨地域GPU集群的LLM推理面临单集群假设失效的挑战。Solyx AI Grid整合GPU硬件遥测、应用层指标和WAN路径信号，通过10信号加权压力评分器进行请求级路由。实验表明，相比轮询，吞吐量提升1.56-1.75倍，能力不匹配泄漏从32%降至0.43%，故障重路由时间缩短至1247ms。硬件遥测可提前11.2秒预警SLO违规，实现主动流量管理，是首个结合多维度信号的实际多站点LLM推理路由研究。",
+      "tags": "query:code-paper",
+      "abstract_en": "As GPU capacity fragments across geographically distributed sites, single-cluster LLM inference routing assumptions break down in measurable ways. We present Solyx AI Grid, a cross-site inference routing control plane that integrates GPU hardware telemetry (DCGM), vLLM application metrics, and real-time WAN signals (RTT, jitter) into per-request placement decisions via a 10-signal weighted pressure scorer. Across two empirical campaigns--six H100/H200 SXM GPUs and nine RTX PRO 6000 Blackwell SE GPUs spanning three US datacenters, eight workload classes, and a 216-cell SLO matrix--Solyx AI Grid delivers 1.56--1.75x throughput at tier-2 SLO over round-robin across all eight classes, cuts capability-mismatch leakage to 0.43% (versus 32% for standard routers), and reroutes around failures at a p99 of 1,247 ms versus 4,226 ms. We further find that GPU hardware telemetry leads application-layer SLO breach by 11.2 seconds on average, enabling proactive traffic drain before user-facing latency impact. To our knowledge, this is the first public empirical study of live physical multi-site LLM inference routing combining hardware telemetry, application metrics, and active WAN path signals.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/18/2606.18320v1-topvenues-a-reproducible-corpus-and-tooling-substrate-for-cybersecurity-literature-reviews",
+      "section": "quick",
+      "title_en": "TopVenues: A Reproducible Corpus and Tooling Substrate for Cybersecurity Literature Reviews",
+      "authors": "Sidnei Barbieri, Ágney Lopes Roth Ferraz, Lourenço Alves Pereira Júnior",
+      "date": "2026-06-16",
+      "pdf": "https://arxiv.org/pdf/2606.18320v1",
+      "score": "7.0",
+      "evidence": "开源的网络安全文献语料库构建系统，提供代码",
+      "tldr": "网络安全文献综述需要可复现的论文集合作为筛选分母，但现有来源因API变化而不透明。TopVenues系统以DBLP为骨架，结合开放API构建版本化SQLite语料库，覆盖2017-2026年11个会议9925篇论文，摘要和BibTeX覆盖率分别达99.86%和99.99%。该系统使语料构建可执行、可审查、可引用，并支持重复性测量，例如发现29.2%的顶会论文提前以arXiv预印本出现。",
+      "tags": "query:code-paper",
+      "abstract_en": "Cybersecurity literature reviews require a reproducible denominator: the set of papers that a protocol includes before screening and synthesis begin. Today, that denominator is often reconstructed from publisher portals, bibliographic indices, and scholarly application programming interfaces (APIs) whose coverage, formats, and query semantics change over time. This paper presents TopVenues, an open-source system that materializes corpus construction as a versioned research artifact. TopVenues declares a venue and year scope, uses DBLP Computer Science Bibliography (DBLP) as the metadata spine, enriches records with abstracts and BibTeX entries via open scholarly APIs and publisher-specific extractors, and stores the results in a monotonic SQLite snapshot, accessible via a command-line interface (CLI), a web interface, and export paths for review workflows. The May 2026 snapshot contains 9,925 papers from 11 cybersecurity sources over 2017 to 2026, with 99.86% abstract coverage and 99.99% BibTeX coverage; keyword search over the full corpus completes in under 31 ms, and a 250-test suite validates the data-integrity invariants. The fixed denominator also enables repeatable measurement: 29.2% of 2024 to 2025 papers from the four top-ranked security conferences in our scope appear as arXiv preprints, with a median of five months before publication, and a prior-author-track-record filter yields a 16.5x precision gain at 90% recall for triaging preprints that later appear in the same venue set. TopVenues links corpus construction to auditable cybersecurity measurement by making the corpus itself executable, inspectable, and citable. The artifact is available at https://github.com/sidneibarbieri/topVenues.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/18/2606.15510v1-athdgc-an-open-diachronic-greek-treebank-with-indo-european-parallels",
+      "section": "quick",
+      "title_en": "AthDGC: An Open Diachronic Greek Treebank with Indo-European Parallels",
+      "authors": "Nikolaos Lavidas, Kiki Nikiforidou, Dag Haug, Leonid Kulikov, Vassiliki Geka, Vassileios Symeonidis, Theodoros Michalareas, Sofia Chionidi, Anastasia Tsiropina, Eleni Plakoutsi, Evangelos Argyropoulos",
+      "date": "2026-06-13",
+      "pdf": "https://arxiv.org/pdf/2606.15510v1",
+      "score": "6.0",
+      "evidence": "提供开源的历时希腊树库工作流，包含代码和数据",
+      "tldr": "当前缺乏一个覆盖多个历史时期的希腊语依存树库，且缺乏与拉丁语、哥特语等古典语言的对齐资源。为此，提出了AthDGC，一个开放的历时希腊语树库，包含从古风到现代希腊语的8个时期，使用PROIEL XML 2.0模式，并通过Stanford Stanza工作流进行依存标注。利用LaBSE句子嵌入和AwesomeAlign进行新约多语言对齐。v0.4提供了样本和开源工具，v0.5版本在全量语料上完成审计后发布。该数据集是首个公开许可的历时希腊语依存树库，支持历时语言学和跨语言比较研究。",
+      "tags": "query:code-paper",
+      "abstract_en": "AthDGC (\"Athens-PROIEL\") is an open, end-to-end workflow and dataset. It is, to the best of our knowledge, the first openly licensed dependency-parsed treebank of Greek that spans eight diachronic periods, namely Archaic, Classical, Koine, Late Antique, Byzantine, Late Byzantine, Early Modern, and Modern Greek, under a single PROIEL XML 2.0 schema, with verse-level cross-alignment of the New Testament to Latin (Vulgate), Gothic (Wulfila), Old Church Slavonic (Marianus), and Classical Armenian. AthDGC builds on the PROIEL Treebank Family (Haug and Johndal 2008; Eckhoff et al. 2018), which established the schema and the Koine-Greek reference set for the project. Annotation uses the Stanford Stanza PROIEL-trained workflow; sentence-level alignment uses LaBSE, a multilingual sentence-embedding model; word-level alignment uses multilingual-BERT attention through the AwesomeAlign procedure. The v0.4 release provides curated samples and the open-source toolkit; the full annotated corpus partitions remain under v0.5 audit on the Greek national HPC. Quantitative scale, per-witness verse counts, and per-period annotated-row counts are reported in the v0.5 release notes, after the audit pass completes. Concept DOI: 10.5281/zenodo.20439182.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

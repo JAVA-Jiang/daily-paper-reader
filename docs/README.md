@@ -6,34 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-17
-- 运行时间：2026-06-17 21:26:53 UTC
+- 最新运行日期：2026-06-18
+- 运行时间：2026-06-18 21:52:31 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：0
-- 速读区：3
+- 本次总论文数：4
+- 精读区：2
+- 速读区：2
 
 ### 今日简报（AI）
-今日速读3篇论文，聚焦从头生成完整代码库、低资源语言代码生成及GitHub问题可重复性审计。
-
-最值得关注的两篇：DeNovoSWE尝试规模化从零生成完整软件仓库的长期环境；ReproRepo利用GitHub问题自动审计代码可复现性。
-
-建议开发者关注低资源语言代码生成的评估方法，以及如何借助自动化审计工具提升研究可复现性。
-- 详情：[/202606/17/README](/202606/17/README)
+今日推荐4篇论文，精读聚焦可复现数据分析与分布式GPU集群路由，速读涉及网络安全文献综述与古代希腊语树库。最值得关注Pandas论文提升研究可重复性的Python工作流，以及Solyx AI Grid的跨地理GPU集群感知路由方案。建议优先精读这两篇，借鉴Pandas规范代码习惯，并了解AI网格硬件遥测路由趋势。
+- 详情：[/202606/18/README](/202606/18/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Pandas for Reproducible Data Analysis: From Spreadsheets to Research-Grade Python Workflows](/202606/18/2606.14924v1-pandas-for-reproducible-data-analysis-from-spreadsheets-to-research-grade-python-workflows)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：专注于使用开源pandas库进行可重现数据分析；直接支持含代码的可重现研究
+2. [Solyx AI Grid: Hardware-Telemetry-Aware Routing Across Geographically Distributed GPU Clusters](/202606/18/2606.15050v1-solyx-ai-grid-hardware-telemetry-aware-routing-across-geographically-distributed-gpu-clusters)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：数据中心推理路由调度
 
 ### 速读区论文标签
-1. [DeNovoSWE: Scaling Long-Horizon Environments for Generating Entire Repositories from Scratch](/202606/17/2606.10728v2-denovoswe-scaling-long-horizon-environments-for-generating-entire-repositories-from-scratch)  
+1. [TopVenues: A Reproducible Corpus and Tooling Substrate for Cybersecurity Literature Reviews](/202606/18/2606.18320v1-topvenues-a-reproducible-corpus-and-tooling-substrate-for-cybersecurity-literature-reviews)  
    标签：评分：7.0/10、query:code-paper
-   evidence：提供仓库生成数据集的开源代码
-2. [No Resource, No Benchmarks, No Problem? Evaluating and Improving LLMs for Code Generation in No-Resource Languages](/202606/17/2606.16827v1-no-resource-no-benchmarks-no-problem-evaluating-and-improving-llms-for-code-generation-in-no-resource-languages)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：评估并改进无资源语言的LLM代码生成，可能提供代码
-3. [ReproRepo: Scaling Reproducibility Audits with GitHub Repository Issues](/202606/17/2606.18237v1-reprorepo-scaling-reproducibility-audits-with-github-repository-issues)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：使用GitHub仓库问题进行可重现性审计
+   evidence：开源的网络安全文献语料库构建系统，提供代码
+2. [AthDGC: An Open Diachronic Greek Treebank with Indo-European Parallels](/202606/18/2606.15510v1-athdgc-an-open-diachronic-greek-treebank-with-indo-european-parallels)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：提供开源的历时希腊树库工作流，包含代码和数据
 
 
 <div class="dpr-home-promo-card">
