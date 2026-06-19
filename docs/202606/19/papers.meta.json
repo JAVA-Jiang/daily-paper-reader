@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-19",
+  "date": "2026-06-19",
+  "generated_at": "2026-06-19T20:52:55",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/19/2606.20550v1-easy-reads-a-python-program-for-making-scientific-papers-on-arxiv-more-reader-friendly-and-accessible",
+      "section": "deep",
+      "title_en": "Easy Reads: A Python program for making Scientific Papers on arXiv more Reader Friendly and Accessible",
+      "authors": "Vishal Verma",
+      "date": "2026-06-18",
+      "pdf": "https://arxiv.org/pdf/2606.20550v1",
+      "score": "9.0",
+      "evidence": "提供了一个开源Python程序用于增强论文可读性",
+      "tldr": "科学论文常因小字体、双栏排版和紧凑图表而难以阅读，arXiv作为重要预印本平台也存在此问题。Easy Reads是一个开源Python程序，能自动从arXiv获取论文并处理源TeX文件，允许用户自定义字体大小和列数。该工具生成更易读的版本，显著提升可访问性，减轻读者负担，具有实用价值。",
+      "tags": "query:code-paper",
+      "abstract_en": "Scientific papers are frequently dense and characterized by features such as small fonts and line spacing, double columns of text, and tightly arranged figures. While these features make papers more compact, they can hinder readability, make them less accessible, and can strain the reader. arXiv is a premier open-access repository for scientific papers across different fields and is used extensively by researchers, including those in the physics and astrophysics communities.   Easy Reads is an automated, end-to-end, open-source Python program that helps address the stated challenge by making papers from arXiv more reader-friendly and accessible. Easy Reads can automatically fetch a paper from arXiv via its URL and work with the source TeX file to allow custom formatting of the paper features, primarily the font size, and the number of columns used. The main goal of Easy Reads is to facilitate ease of reading of scientific papers.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/19/2606.20517v1-multi-lcb-extending-livecodebench-to-multiple-programming-languages",
+      "section": "deep",
+      "title_en": "Multi-LCB: Extending LiveCodeBench to Multiple Programming Languages",
+      "authors": "Maria Ivanova, Pavel Zadorozhny, Rodion Levichev, Ivan Petrov, Adamenko Pavel, Ivan Lopatin, Alexey Kutalev, Dmitrii Babaev",
+      "date": "2026-06-18",
+      "pdf": "https://arxiv.org/pdf/2606.20517v1",
+      "score": "8.0",
+      "evidence": "跨多编程语言的代码生成基准，可能开源",
+      "tldr": "LiveCodeBench仅涵盖Python，无法评估大模型在其他语言上的代码生成能力。本文提出Multi-LCB，将LCB的Python题目转化为12种编程语言，保留原始污染控制和评估流程。在24个指令与推理模型上测试发现，多数模型存在Python过拟合现象及语言特异性污染，多语言性能差异显著。Multi-LCB作为多语言代码评估新基准，弥补了LCB的不足，揭示了当前大模型的多语言编程短板。",
+      "tags": "query:code-paper",
+      "abstract_en": "LiveCodeBench (LCB) has recently become a widely adopted benchmark for evaluating large language models (LLMs) on code-generation tasks. By curating competitive programming problems, constantly adding fresh problems to the set, and filtering them by release dates, LCB provides contamination-aware evaluation and offers a holistic view of coding capability. However, LCB remains restricted to Python, leaving open the question of whether LLMs can generalize across the diverse programming languages required in real-world software engineering.   We introduce Multi-LCB, a benchmark for evaluating LLMs across twelve programming languages, including Python. Multi-LCB transforms Python tasks from the LCB dataset into equivalent tasks in other languages while preserving LCB's contamination controls and evaluation protocol. Because it is fully compatible with the original LCB format, Multi-LCB will automatically track future LCB updates, enabling systematic assessment of cross-language code generation competence and requiring models to sustain performance well beyond Python.   We evaluated 24 LLMs for instruction and reasoning on Multi-LCB, uncovering evidence of Python overfitting, language-specific contamination, and substantial disparities in multilingual performance. Our results establish Multi-LCB as a rigorous new benchmark for multi-programming-language code evaluation, directly addressing LCB's primary limitation and exposing critical gaps in current LLM capabilities.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/19/2606.15300v1-coda-bench-can-code-agents-handle-data-intensive-tasks",
+      "section": "quick",
+      "title_en": "CODA-BENCH: Can Code Agents Handle Data-Intensive Tasks?",
+      "authors": "Yuxin Zhang, Ju Fan, Meihao Fan, Shaolei Zhang, Xiaoyong Du",
+      "date": "2026-06-13",
+      "pdf": "https://arxiv.org/pdf/2606.15300v1",
+      "score": "7.0",
+      "evidence": "代码代理基准测试，可能提供源代码",
+      "tldr": "现有基准分别评估代码或数据能力，缺乏真实开发场景的联合评估。提出CODA-BENCH，基于Kaggle生态构建数据密集型Linux沙箱，包含1009个跨社区任务，每个任务环境平均980个文件。最先进智能体成功率仅61.1%，表明在数据发现与代码执行整合方面存在巨大差距。该基准为评估智能体数据密集型任务综合能力提供首个标准，并指出未来研究方向。",
+      "tags": "query:code-paper",
+      "abstract_en": "Advanced agents are increasingly demonstrating the potential to operate as autonomous engineers, creating a growing demand for evaluation benchmarks that capture the complexity of real-world development. Such environments typically involve both complex code and large-scale data (i.e., file system). However, existing benchmarks usually evaluate code-centric or data-centric capabilities in isolation, leaving a clear gap with real development scenarios. In this paper, we bridge this gap by introducing CODA-BENCH, the first benchmark to jointly evaluate code and data intelligence in a data-intensive environment. We construct a data-intensive Linux sandbox based on the Kaggle ecosystem (containing hundreds of datasets), where agents must actively explore complex file hierarchies to identify relevant resources and generate code for data-driven analytical tasks. CODA-BENCH comprises 1,009 tasks spanning 31 communities, with each task environment containing an average of 980 files, simulating realistic data scale and noise. Evaluations of advanced agents reveal that even top-performing systems struggle to effectively integrate data discovery with code execution, achieving a success rate of only 61.1%. These results highlight a substantial gap in current agentic capabilities for data-intensive tasks and point to promising directions for future research.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/19/2606.18481v1-designing-l5-a-permacomputing-approach-to-creative-coding",
+      "section": "quick",
+      "title_en": "Designing L5: A Permacomputing Approach to Creative Coding",
+      "authors": "Lee Tusman, Kit Kuksenok",
+      "date": "2026-06-16",
+      "pdf": "https://arxiv.org/pdf/2606.18481v1",
+      "score": "7.0",
+      "evidence": "提出L5开源创意编码库",
+      "tldr": "创意编程库Processing/p5为艺术家和学习者提供易用工具，但缺乏可持续性考量。L5作为基于Lua和LOVE框架的新成员，引入Permacomputing原则，通过五个案例研究平衡可用性与资源消耗。结果表明可持续工具需透明协调竞争价值，为社区提供设计指导。",
+      "tags": "query:code-paper",
+      "abstract_en": "Creative coding libraries provide high-level tools that make computational and algorithmic art accessible to artists and learners. Processing/p5 is one such family of libraries, known for its beginner-friendly approach and wide reach across artistic and technical communities. L5 is a new member of this family, implemented in Lua using the LOVE framework. It applies permacomputing principles, a movement addressing sustainability in computing inspired by permaculture, bringing these values to a community of practice not historically centered on them. This paper explores L5's design decisions and tensions between sustainability and usability through five case studies: 1. balancing perceived simplicity versus exposing the seams, 2. designing for lower resource consumption, 3. ensuring long-term stability, 4. constraining functionality, and 5. designing documentation for resource-constrained access. Rather than optimizing for a single metric, sustainable creative tools require navigating competing values transparently.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
