@@ -1,0 +1,2056 @@
+Title: Dynamic Core Allocation for Malleable Jobs with Unknown Speed-up Parameters
+
+URL Source: https://arxiv.org/pdf/2606.19789v1
+
+Published Time: Fri, 19 Jun 2026 00:30:57 GMT
+
+Number of Pages: 26
+
+Markdown Content:
+# Dynamic Core Allocation for Malleable Jobs with Unknown Speed-up Parameters 
+
+S. A. Bodas, J. L. Dorsman, M. Mandjes, L. Ravner June 19, 2026 
+
+Abstract 
+
+We study dynamic resource allocation in a multicore computing system with a fixed number of processing cores and a stream of malleable jobs. Each job may adjust its level of parallelism during execution, allowing adaptive redistribution of resources across concurrently active jobs. Jobs belong to one of two observable classes, each characterized by a distinct speed-up function with unknown parameters. The objective is to learn a core-allocation policy that minimizes the long-run mean number of jobs in the system, equivalently the mean response time in steady state. To address this uncertainty, we develop an iterative learning-and-control framework. The system alternates between estimating the unknown speed-up parameters from observed job completions and solving the associated Markov decision process (MDP) to update the allocation policy. Within each job class, cores are shared equally among active jobs; the fraction of capacity assigned to each class is obtained from the MDP formulation of [7], evaluated at the current parameter estimates. We construct a maximum likelihood estimator based on state-dependent inter-departure times and prove its strong consistency under a fixed allocation policy. We further propose two learning algorithms that combine this estimation step with dynamic programming-based policy updates, and illustrate their through numerical experiments. 
+
+Keywords. Dynamic core allocation ◦ Malleable jobs ◦ Unknown speed-up parameters ◦ Maximum likelihood estimation ◦ Markov decision processes ◦ Queueing SAB and JLD are with Korteweg-de Vries Institute for Mathematics, University of Amsterdam, Amsterdam, The Netherlands. MM is with the Mathematical Institute, Leiden University, The Netherlands; MM is also affiliated with (a) Korteweg-de Vries Institute for Mathematics, University of Amsterdam, Amsterdam, The Netherlands, (b) E urandom , Eindhoven University of Technology, Eindhoven, The Netherlands, and (c) Amsterdam Business School, Faculty of Economics and Busi-ness, University of Amsterdam, Amsterdam, The Netherlands. LR is with Department of Statistics, University of Haifa, Israel. SAB’s, JLD’s and MM’s research has been funded by the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement no. 945045 , and by the NWO Gravitation project Networks under grant agreement no. 024.002.003. LR’s research was supported by the Israel Science Foundation (ISF), grant no. 1361/23. 
+
+1
+
+> arXiv:2606.19789v1 [math.OC] 18 Jun 2026
+
+# 1 Introduction 
+
+This paper is concerned with the core-allocation problem , which arises in multi-core computing systems where jobs can be processed in parallel by multiple cores or servers. Since jobs are often parallelizable, assigning additional cores to a job can reduce its completion time. In practice, however, parallelization is rarely perfect: the reduction in response time is typically less than proportional to the number of allocated cores. In other words, the speed-up obtained from parallel processing exhibits diminishing returns as more cores are assigned. This phenomenon was already recognized by Amdahl in 1967 [1] and gives rise to a fundamental trade-off. On the one hand, allocating more cores to a job accelerates its completion; on the other hand, the resulting gains become progressively smaller, leading to less efficient use of computational resources. To study this trade-off, the degree of parallelizability of a job is commonly described through a speed-up function , which specifies the processing speed achieved as a function of the number of allocated cores. The core allocation problem has been studied extensively due to its broad range of applications. Be-yond traditional computing platforms, such as personal devices equipped with multi-core processors, it also arises in modern large-scale systems including data centers, supercomputers, and database in-frastructures. Consequently, the problem has attracted considerable attention across several research communities and has been investigated under a variety of modelling assumptions and performance ob-jectives. For a comprehensive overview of these communities and their contributions, we refer the reader to [9, Chapter 3]. Without attempting to provide an exhaustive survey, we review below the strands of literature most relevant to the present study. A major stream of this literature considers systems with moldable jobs. In such systems, a job may be assigned any number of cores upon arrival, but this allocation remains fixed throughout its execution. This assumption is well suited to many traditional computing environments and has been investigated both empirically [16, 17, 26] and analytically [7]. In this paper, however, we consider the more challenging setting of malleable jobs, for which the number of allocated cores may change dynamically during a job’s lifetime. While this additional flexibility creates greater opportunities for performance optimization, it also significantly complicates the allocation problem. Under the assumptions of identical cores, exponentially distributed service requirements, and a common speed-up function for all jobs, [7] showed that the EQUI policy (cf. [20]), which continuously divides the available cores equally among all jobs, minimizes the mean response time. Once any of these assumptions are relaxed, identifying the optimal allocation policy becomes consider-ably more difficult. For example, when service requirements are not exponentially distributed, [8] studies the optimal allocation problem only in a finite-horizon setting in which all jobs are present initially and no further arrivals occur. Similarly, in systems with multiple job classes exhibiting different speed-up functions, [7] formulates the problem as a Markov decision process and identifies a class of near-optimal policies. To the best of our knowledge, exact analytical characterizations of optimal policies are oth-erwise available only in certain asymptotic regimes [10, 30] or under highly restrictive assumptions on the speed-up functions. A common feature of all these studies is that the relevant model parameters are assumed to be known a priori. In contrast, the present paper departs from this assumption, as we explain below through the example of a key recent application area for malleable-job scheduling in large-scale machine learning training. The growing popularity of AI and large language models has generated substantial demand for GPU computing power (see, e.g., [43]). The amount of computing power needed is typically so large that users do not maintain their own GPU cluster, but instead make use of cloud-based GPU computing 2services such as those offered by Amazon [42], Google [45] and Microsoft [44], which operate large GPU clusters to make this operation economically viable. As pointed out in [29], the core-allocation problem effectively arises in this setting, as it is up to the user to decide how many GPUs to ‘rent’ at any given point in time. Indeed, these GPUs serve machine learning training jobs in a parallelized fashion, yet subject to diminishing returns. In this setting, it is unnatural to assume that the speed-up function of a job is fixed over time. As argued in [30], the speed-up gained by a job as a result of being parallelized over a set number of cores may vary as the training progresses. Furthermore, the speed-up is also dynamic because of external effects. For example, cloud providers continuously upgrade their GPU infrastructure, which alters compute throughput, memory bandwidth, and interconnect latency in ways that directly change how efficiently a job scales across GPUs [32, 21]. This effect may moreover differ across job classes, as distinct workload types may scale differently on new hardware. Crucially, the user has no direct visibility into these external factors. Therefore, the often-made modelling assumption that speed-up functions are known up-front and constant over time is not realistic. The parameters of the speed-up function will need to be learned based on the system’s behavior, which presents a gap in the current literature. In this paper, we address this gap by extending the malleable-job model of [7] with a learning mechanism that estimates the speed-up parameters governing job parallelization. The resulting framework alternates between operational and learning phases. During each operational phase, cores are allocated according to an equi -type policy within each job class, while the fraction of cores assigned to each class is determined by solving the MDP formulation of [7] using the current parameter estimates. Subsequently, a learning step updates these estimates based on the observed system dynamics. The learning component is based on maximum likelihood estimation using observations of the departure process. Exploiting the Markovian structure of the arrival and service processes, we derive a closed-form expression for the distribution of state-dependent inter-departure times, which in turn yields an explicit likelihood function for the observed departures. Our approach relates to a growing body of literature on statistical inference in queueing systems, where unknown model parameters are estimated from operational data; see the survey [5]. This literature encompasses classical estimation methods for arrival and service processes under complete or partial observations [28, 36], Bayesian inference for Markovian queueing models [4], and techniques designed for settings with incomplete or aggregated data, where service times or internal system states are not directly observable [6, 39]. More recent work has focused on estimating arrival-rate and patience-time parameters in queues with abandonment [11, 27], as well as service-time parameters in systems with impatient customers [35]. Despite this rich body of work, the estimation of parallelization characteristics in multicore systems with malleable jobs has received comparatively little attention. In particular, existing studies on core-allocation policies typically assume that the speed-up function is known a priori, whereas in practice its parameters are often uncertain and must be inferred from data. This observation motivates the learning-based framework developed in this paper. The main contributions of this paper can be summarized as follows. First, we extend the classical malleable-job core-allocation model by allowing the parameters of the speed-up function to be unknown and learned from operational data. Second, we develop two learning algorithms that integrate maximum-likelihood-based parameter estimation with the dynamic implementation of the optimal core-allocation policy. The algorithms differ in the amount of data incorporated at each estimation step. For a fixed allocation policy, we establish strong consistency of the resulting parameter estimates. Third, through an extensive numerical study, we evaluate the practical performance of the proposed methods and demonstrate that accurate parameter estimates and near-optimal system performance can be achieved 3after relatively short observation periods. While motivated by recent advances in AI and machine learning, the framework developed in this paper applies more broadly to a variety of resource-allocation settings. To streamline the presentation, we use the term ‘cores’ throughout the paper to denote the allocatable processing resources, whether these correspond to CPU cores, servers, or GPUs. Likewise, we use the term ‘system’ to refer generically to the underlying processing environment, such as a multicore processor, data center, or GPU cluster. The remainder of this paper is organized as follows. In Section 2, we introduce the model and formulate the core-allocation problem. Section 3 presents the parameter-estimation methodology and establishes its convergence properties. In Section 4, we describe how the estimated parameters are incorporated into the optimal allocation policy. Section 5 reports numerical experiments that illustrate the performance of the proposed algorithms and their convergence behavior. Finally, Section 6 concludes and outlines several directions for future research. 
+
+# 2 Model description, objective, and learning algorithm 
+
+In this section we discuss the model under study, introduce our objective function, and specify our learning algorithm. 
+
+2.1 Model description 
+
+We consider a data center consisting of c > 1 identical cores. Jobs arrive according to a Poisson process with known rate λ, and their inherent sizes are independent and exponentially distributed with known rate μ > 0. The inherent size of a job, denoted by the generic random variable X, represents the amount of service required when the job is processed by a single core operating at unit speed. Jobs are assumed to be parallelizable , meaning that their processing capacity can be distributed across multiple cores. We assume that each core provides service at unit rate. Consequently, although a job requires an amount of work X, its response time may be substantially smaller than X when it is processed simultaneously by multiple cores. This reduction is captured through a speed-up effect resulting from parallel execution. To model this effect, let z ∈ [0 , c ] denote the amount of processing capacity allocated to a job. The resulting service rate is given by a speed-up function s(z; p), where p ∈ (0 , 1) is an unknown parameter characterizing the degree of parallelizability of the job. We assume that (a) s(z; p) = z for 0 ≤ z ≤ 1; and (b) s(·; p) is nondecreasing and concave on (1 , c ]. These assumptions are consistent with standard models of diminishing returns in parallel computing and multicore scheduling; see, e.g., [7, 25]. The linear behavior on the interval [0 , 1] has a natural interpretation. When z = 0, a job receives no service, whereas z = 1 corresponds to processing on a single core at its nominal rate. For 0 < z < 1, the job receives only a fraction z of a core’s capacity. Since the job is effectively processed by less than one core, no parallelization occurs and therefore no speed-up effects arise. In this regime, it is therefore natural to assume that the service rate scales proportionally with the allocated capacity, yielding s(z; p) = z.This formulation is particularly natural in the malleable-job setting considered in this paper, where capacity is continuously redistributed according to EQUI-type allocation policies [7]. Under such policies, 4jobs receive fractions of the total service capacity rather than fixed sets of discrete cores, making the continuous-capacity interpretation both convenient and consistent with the underlying scheduling model. It is assumed that there are two classes of jobs, each of which captures different speed-up characteristics. That is, each job is assumed to belong to one of two classes, labeled 1 and 2, with associated parameters p1
+
+and p2. In particular, upon arrival, a job turns out to be of class-1 with probability α ∈ (0 , 1); otherwise it is of class-2. While the framework extends naturally to more than two classes (see Sections 3 and 4), we restrict attention to two for clarity. Accordingly, for job class-i for i ∈ { 1, 2}, the speed-up function is given by 
+
+si(· ; ·) : [0 , c ] × [0 , 1] → R+,
+
+where the first argument denotes the number of allocated cores and the second specifies the speed-up parameter. In particular, this means that the family of speed-up functions need not be the same across the job classes. As a result, si(z; pi) represents the multiplicative increase in service rate when a class-i job with speed-up parameter pi is allocated z cores. Throughout, we assume that p1 and p2
+
+are unknown, while job classes are observable upon arrival. In the rest of the paper, s(·; ·) will denote a generic speed-up function, and si(·; ·) will denote a speed-up function corresponding to a job of class-i.Here are two examples of potential speed-up functions. 
+
+Example 2.1 . A classical model of limited parallelizability is given by Amdahl’s law , see e.g. [1, 25]. Each job has a fraction p ∈ [0 , 1] of work that can be parallelized, while the remaining fraction 1 − p must be executed sequentially. The resulting speed-up when allocating z cores is 
+
+s(z; p) = 
+
+
+
+(1 − p) + pz
+
+−1
+
+, z ≥ 1,z, z < 1.
+
+Under this model, the achievable speed-up is bounded above by 1 /(1 − p), even as z → ∞ , reflecting the inherent sequential bottleneck. 
+
+Example 2.2 . A parametric family of speed-up functions that captures diminishing returns is 
+
+s(z; p) = 
+
+
+
+max {z, 1}p, z ≥ 1,z, z ≤ 1.
+
+Figure 1 presents the plots corresponding to Examples 2.1 and 2.2.          
+
+> (a) s(z;p) versus zfor Example 2.1 (b) s(z;p) versus zfor Example 2.2
+
+Figure 1: Plots of example speed-up functions 5Remark 2.1 . Note that in Example 2.1 as well as in Example 2.2, p = 0 corresponds to the case in which jobs are not parallelizable, since s(z; 0) = 1 implies that there is no gain from assigning more than one core to a job. In contrast, p = 1 yields s(z; 1) = z for z > 1, corresponding to a linear speed-up in the number of allocated cores. In practice, p is expected to lie strictly between these extremes, reflecting positive but diminishing marginal gains from additional cores. ♠
+
+For a detailed discussion on speed-up functions, we refer the reader to [7]. Next we state an assumption that we impose on the speed-up functions, the reason for which is discussed in Remark 2.3 below. 
+
+Assumption 2.2. For every fixed z ∈ [0 , c ], the function si(z; ·) : [0 , 1] 7 → R+ is a Lipschitz function, i.e., for all p′, p ′′ ∈ [0 , 1] and i ∈ { 1, 2} there exists κ > 0 such that si(z; p′′ ) − si(z; p′) ≤ κ p′′ − p′ .
+
+Remark 2.3 (On Assumption 2.2) . Lipschitz continuity of the speed-up function in the parameter p
+
+is a mild regularity condition satisfied by standard parametric models. For example, both Amdahl-type speed-up functions and power-law models of the form s(z; p) = max {z, 1}p are Lipschitz in p on compact domains of z (see below). More generally, this assumption ensures that small changes in p induce controlled variations in the effective service rate, reflecting the smooth variation of job characteristics in practice. It is also instrumental in the proof of Theorem 3.1, that states that our proposed estimators for the speed-up parameters are consistent. Importantly, the assumption does not restrict qualitative behavior, but merely rules out pathological cases in which arbitrarily small perturbations in p lead to large changes in processing rates. ♠
+
+We verify Assumption 2.2 for Examples 2.1 and 2.2. Notice first that in both examples, when z ≤ 1, we have si(z; p′) = si(z; p′′ ) = z for all p′, p ′′ ∈ [0 , 1], so si(z; p′′ ) − si(z; p′) = 0, trivially satisfying the condition. Therefore, let us assume z > 1 which is the more interesting case. In both cases, the speed-up function s(z; ·) : [0 , 1] → [1 , ∞) is continuous on [0 , 1] and differentiable on (0 , 1). By the mean value theorem, it suffices to show that there exists κ > 0 such that ∇ps(z; p) ≤ κ
+
+for all p ∈ (0 , 1), uniformly in z. This constant κ then satisfies Assumption 2.2. In particular, Example 2 .1 : ∇ps(z; p) = 1 − 1
+
+> z
+
+ 1 − p 1 − 1
+
+> z
+
+ 2 ≤ 1 − 1
+
+> z
+
+ 1 −  1 − 1
+
+> z
+
+ 2 = 1 − 1
+
+> z
+
+  1
+
+> z
+
+2 = z2 − z ≤ c2 − c =: κ. 
+
+Example 2 .2 : ∇ps(z; p) = zp log z ≤ z log z ≤ c log c =: κ. 
+
+2.2 Objective 
+
+In this paper, a core allocation policy is a function 
+
+π : Z × Z → [0 , 1] ,
+
+which maps the state  n(1) , n (2) , where n(i) denotes the number of class-i jobs in the system, to the fraction π n(1) , n (2)  of cores allocated to class-1 jobs. The remaining fraction 1 − π n(1) , n (2)  of cores are assigned to class-2 jobs. Within each class, cores are divided equally among the active jobs: for 
+
+n(1) , n (2) > 0, each class-1 job receives c π  n(1) , n (2) /n (1) cores, and each class-2 job receives c 1 −
+
+π n(1) , n (2)  /n (2) cores. Policies of this form belong to the category equi (equal sharing) policies. It is shown in [7] that equi is optimal for minimizing the mean number of jobs in the system when all jobs share a common speed-up curve and have exponentially distributed service requirements, as is the case in our model. 6In this paper, our objective is to learn a policy π∗ that minimizes the mean response time of jobs in the system. By Little’s law, this is equivalent to minimizing the mean number of jobs in steady state. Let Π denote the category of policies that prevents starvation of either job class, and ensures that the system is a regenerative process. For a policy π ∈ Π, let N (1)  
+
+> π
+
+and N (2)  
+
+> π
+
+denote the stationary numbers of class-1 and class-2 jobs in the system. The optimal policy is then defined as 
+
+π∗ := arg min  
+
+> π∈Π
+
+Eπ
+
+h
+
+N (1)  
+
+> π
+
++ N (2) 
+
+> π
+
+i
+
+.
+
+2.3 Learning algorithm 
+
+In this subsection, we provide a high-level overview of the algorithm developed in this paper for learning 
+
+π∗. For k ≥ 1, it identifies the policy πk that is run between times eTk−1 and eTk (here, eT0 := 0), for a duration Tk := eTk − eTk−1. The sequence  eTk k≥1 is a sequence of random variables whose construction is described in Section 5. In the algorithm below nsteps denotes the number of times we adapt the policy. 
+
+Algorithm 1 High-level solution outline  
+
+> 1:
+
+Given: λ, μ, c, s 1(·; ·), s 2(·; ·), sequence  eTk k≥1, π1 ∈ Π;  
+
+> 2:
+
+for k = 1 , 2, . . . , n steps do  
+
+> 3:
+
+Run the system under policy πk during  eTk−1, eTk
+
+; 
+
+> 4:
+
+Store all arrival and departure times in Zk; 
+
+> 5:
+
+Using a MLE procedure on Zk, obtain estimators  bp1,k +1 , bp2,k +1 
+
+ for ( p1, p 2);  
+
+> 6:
+
+Solve Bellman optimality equation using  bp1,k +1 , bp2,k +1 
+
+ to obtain policy πk+1 ; 
+
+> 7:
+
+end for  
+
+> 8:
+
+Output: πnsteps +1 ;For any fixed parameter values, the optimal core allocation policy can be obtained by solving the Bellman optimality equation associated with the corresponding Markov decision process (MDP), obtained by modelling the system in discrete time. This is detailed in Section 4. Hence, the central challenge of this paper is to accurately estimate the unknown parameters ( p1, p 2), since these estimates directly determine the computed optimal policy. Algorithm 1 implements this idea in an iterative learning-and-optimization loop. The system is run over successive time intervals under the current policy πk, and the resulting sample path data is used to update parameter estimates via a maximum likelihood estimation (MLE) procedure (see Section 3). These updated estimates  bp1,k +1 , bp2,k +1 
+
+ are then used to recompute the optimal policy by solving the corresponding Bellman equation, yielding bπk+1 . By an appropriate choice of the update times 
+
+ eTk k≥1 which is discussed in Section 5, the estimators are progressively refined and converge to the true parameters ( p1, p 2), leading to increasingly accurate policy updates. Section 5 presents the full learning procedure in detail along with numerical experiments demonstrate that the approach works in practice. 
+
+# 3 Estimation procedure 
+
+In this section, we provide a full description of the estimation procedure for the speed-up parameters 
+
+p1 and p2. The method is based on a maximum likelihood approach applied to the inter-departure times of jobs. The key observation we rely on is that the departure process of jobs, of both classes, is a 7state-dependent Poisson process, with a rate determined by the current system state and the allocation policy. For i ∈ { 1, 2}, consider the departure process of class-i jobs. Fix two consecutive departure epochs of class-i jobs and consider the interval between them. By construction, no class-i departures occur in this interval, but arrivals of both job classes and departures of the other job class may occur. The system state is fully described by  n(1) , n (2) , c (1) , where n(i) is the number of class-i jobs and c(i) the total number of cores allocated to them (We do not need to describe c(2) because it follows automatically; it is precisely c − c(1) ). Conditional on this state, the instantaneous departure rate of class-i jobs is 
+
+δ(i) =
+
+
+
+n(i)μ s i
+
+ φ(i); pi
+
+, n(i) > 0,
+
+0, n(i) = 0 ,
+
+(3.1) where φ(i) := c(i)/n (i) corresponds to the number of cores allocated to each of the n(i) jobs. Equation (3.1) can be understood as follows: 
+
+• when n(i) = 0, there can be no class-i departures, and the departure rate is 0. Otherwise, 
+
+• when φ(i) ≥ 1, each of the n(i) jobs gets a speed-up si
+
+ φ(i); pi
+
+. Equation (3.1) then follows because the departure rate is the rate of a minimum of n(i) independent Exp 
+
+
+
+μ s i
+
+ φ(i); pi
+
+
+
+random variables. 
+
+• when φ(i) < 1, there should be no speed-up. Since all servers work at max speed, the departure rate is c(i)μ. Equation (3.1) in this case also simplifies to n(i) μ φ (i) = c(i)μ.We assume the allocation policy is known and deterministic, so that after each event of type (arrival or departure of either class), the updated allocation c(i) is uniquely determined by the new system state. Consequently, the pair  n(i), c (i), and hence the departure rate, is known at all times. It follows that the inter-departure interval can be decomposed into subintervals on which  n(i), c (i) is constant, hence the departure rate remains constant on each subinterval. Therefore, for a given sequence of departure and arrival events, the likelihood of a class-1 job inter-departure time is given by a product of probabilities that no event occurred during the relevant subinterval and the instantaneous exponential density at the actual departure time. This form resembles an inhomogeneous Poisson process with piecewise constant rates. In the remainder of the section, we mathematically formalize the above intuitive description and construct the maximum likelihood estimation procedure to estimate p1, p 2, using the state-dependent departure rates. We then state and prove a theorem which assures strong consistency of the maximum likelihood estimators. 
+
+Remark 3.1 . Note that while the estimation procedures of both parameters ( p1, p 2) are dependent as they rely on the same data, they can be seen as parallel processes with an identical construction. In particular, the following consistency analysis applies to each estimator separately. In fact, this procedure can be extended to any number of job classes by considering the departure process of every class individually. 
+
+♠
+
+Once again, let i ∈ { 1, 2} denote the job class. Define eD(i)0 := 0, and let 
+
+n eD(i)
+
+> j
+
+o 
+
+> j≥1
+
+be the departure epochs of class-i jobs, with inter-departure times 
+
+D(i) 
+
+> j
+
+:= eD(i) 
+
+> j
+
+− eD(i)
+
+> j−1
+
+, j ≥ 1.
+
+8Every such inter-departure interval can be split into subintervals corresponding to ‘rate changing events’ .Specifically, for j ≥ 1, let n
+
+E(i)
+
+> j,k
+
+oN (i)
+
+> j
+> k=1
+
+denote the event times (arrivals of any job class or departures of the non-i job class), where N (i) 
+
+> j
+
+is the total number of events occurring in 
+
+ eD(i)
+
+> j−1
+
+, eD(i)
+
+> j
+
+
+
+. Then, 
+
+h eD(i)
+
+> j−1
+
+, eD(i)
+
+> j
+
+
+
+=
+
+h eD(i)
+
+> j−1
+
+, E (i)
+
+> j, 1
+
+| {z }
+
+> Interval 1
+
+∪
+
+h
+
+E(i)
+
+> j, 1
+
+, E (i)
+
+> j, 2
+
+| {z }
+
+> Interval 2
+
+∪ . . . ∪
+
+
+
+E(i) 
+
+> j, N(i)
+> j
+
+, eD(i)
+
+> j
+
+| {z }   
+
+> Interval N(i)
+> j+1
+
+.
+
+Further for k ∈ 1, · · · , N (i) 
+
+> j
+
++ 1 , let 
+
+
+
+n(i)
+
+> j,k
+
+, c (i)
+
+> j,k
+
+
+
+be the number of class-i jobs and allocated cores in the 
+
+ N (i) 
+
+> j
+
++ 1  intervals listed above. Understand that this pair remains fixed within each of these intervals. Figures 2 and 3 assist the reader in visualizing these notations. 0
+
+eD(1) 1 eD(1) 2 eD(1) 3 eD(1) 4 eD(1) 5
+
+eD(2) 1 eD(2) 2 eD(2) 3 eD(2) 4
+
+Figure 2: Departure epochs of class-1 (blue) and class-2 (red) jobs on a single timeline. 
+
+eD(i) 
+
+> j−1
+
+eD(i)
+
+> j
+
+E(i) 
+
+> j, 1
+
+E(i) 
+
+> j, 2
+
+E(i) 
+
+> j, N(i)
+> j
+
+
+
+n(i)
+
+> j, 1
+
+, c (i)
+
+> j, 1
+
+ 
+
+n(i)
+
+> j, 2
+
+, c (i)
+
+> j, 2
+
+
+
+· · · 
+
+
+
+n(i)  
+
+> j, N(i)
+> j+1
+
+, c (i)  
+
+> j, N(i)
+> j+1
+
+
+
+Figure 3: Inter-departure time of class-i jobs decomposed into sub-intervals with constant state. Following Equation (3.1), the departure rate δ(i) 
+
+> j,k
+
+of class-i jobs during interval k = 1 , . . . , N (i) 
+
+> j
+
++ 1 is 
+
+δ(i) 
+
+> j,k
+
+=
+
+
+
+n(i) 
+
+> j,k
+
+μ s i
+
+
+
+φ(i)
+
+> j,k
+
+; pi
+
+
+
+, n(i) 
+
+> j,k
+
+> 0,
+
+0, n(i) 
+
+> j,k
+
+= 0 .
+
+where the per-job allocation ratio, which is the number of cores allocated per job, during interval 
+
+k = 1 , . . . , N (i) 
+
+> j
+
++ 1 is defined for the case n(i) 
+
+> j,k
+
+> 0 as 
+
+φ(i) 
+
+> j,k
+
+:= c(i)
+
+> j,k
+
+n(i)
+
+> j,k
+
+.
+
+Let ξk denote the likelihood of no class-i departure during the interval k = 1 , . . . , N (i) 
+
+> j
+
+. Then, 
+
+ξk =
+
+
+
+exp 
+
+
+
+−δ(i)
+
+> j,k
+
+
+
+E(i) 
+
+> j, 1
+
+− eD(i)
+
+> j−1
+
+
+
+, k = 1 ,
+
+exp 
+
+
+
+−δ(i)
+
+> j,k
+
+
+
+E(i) 
+
+> j,k
+
+− E(i)
+
+> j,k −1
+
+
+
+, k = 2 , . . . N (i) 
+
+> j
+
+.
+
+9Similarly, the likelihood of no class-i departure during 
+
+
+
+E(i) 
+
+> j, N(i)
+> j
+
+, E (i) 
+
+> j, N(i)
+> j
+
++ t
+
+
+
+is given by 
+
+ξN (i) 
+
+> j+1
+
+(t) = exp 
+
+
+
+−δ(i)  
+
+> j, N(i)
+> j+1
+
+t
+
+
+
+, t ≤ eD(i) 
+
+> j
+
+− E(i) 
+
+> j, N(i)
+> j
+
+.
+
+Let χ store the complete sample path evolution of the system, and for convenience, let χ t1, t 2
+
+ be the subset of χ observed in the interval  t1, t 2
+
+. Consequently, the conditional likelihood of the class-i
+
+departure process given the observed event sequence χ
+
+ eD(i)
+
+> j−1
+
+, eD(i)
+
+> j
+
+i
+
+is 
+
+L
+
+
+
+pi; χ
+
+ eD(i)
+
+> j−1
+
+, eD(i)
+
+> j
+
+i  
+
+=
+
+ 
+
+> N(i)
+> j
+
+Y
+
+> k=1
+
+ξk
+
+ δ(i)   
+
+> j, N(i)
+> j+1
+
+ξN (i) 
+
+> j+1
+
+. (3.2) This expression is obtained by multiplying 1. exponential survival ξk for k ∈
+
+n
+
+1, 2, · · · , N (i)
+
+> j
+
+o
+
+, over all N (i) 
+
+> j
+
+preceding sub-intervals, and 2. the instantaneous hazard at the departure epoch. Now, suppose our observed system data comprises Mi departures of class-i. Then, the likelihood L pi; χ
+
+of the parameter pi conditioned on χ and the corresponding log-likelihood ℓ pi; χ are 
+
+L pi; χ =
+
+> Mi
+
+Y
+
+> j=1
+
+L
+
+
+
+pi; χ
+
+ eD(i)
+
+> j−1
+
+, eD(i)
+
+> j
+
+i  
+
+, (3.3) 
+
+ℓ pi; χ = log 
+
+
+
+L pi; χ
+
+=
+
+> Mi
+
+X
+
+> j=1
+
+log 
+
+
+
+L
+
+
+
+pi; χ
+
+ eD(i)
+
+> j−1
+
+, eD(i)
+
+> j
+
+i  
+
+, (3.4) In particular, 
+
+ℓ pi; χ = Mi log( μ) + 
+
+> Mi
+
+X
+
+> j=1
+
+log n(i)  
+
+> j, N(i)
+> j+1
+
+!
+
++
+
+> Mi
+
+X
+
+> j=1
+
+log 
+
+
+
+si
+
+
+
+φ(i)  
+
+> j, N(i)
+> j+1
+
+; pi
+
+ 
+
+− μ
+
+> Mi
+
+X
+
+> j=1
+
+"
+
+n(i) 
+
+> j, 1
+
+si
+
+
+
+φ(i)
+
+> j, 1
+
+; pi
+
+  
+
+E(i) 
+
+> j, 1
+
+− eD(i)
+
+> j−1
+
+
+
++ · · · 
+
++ n(i)   
+
+> j, N(i)
+> j+1
+
+si
+
+
+
+φ(i)  
+
+> j, N(i)
+> j+1
+
+; pi
+
+  eD(i) 
+
+> j
+
+− E(i) 
+
+> j, N(i)
+> j
+
+#
+
+. (3.5) The MLE of pi, denoted by bpi, is then given by 
+
+bpi = arg max 
+
+> pi∈[0 ,1]
+
+ℓ pi; χ (3.6) 
+
+Remark 3.2 . Even though the goal of this section is to jointly estimate ( p1, p 2), (3.6) suggests that we can do so by solving two separate optimization problems, one for each p1 and p2. However, this does not imply that the estimators bp1 and bp2 are independent. ♠
+
+Remark 3.3 . The estimation procedure will work for any policy π ∈ Π. The accuracy of the estimation procedure increases in Mi (the number of observed regeneration cycles in the data), which relates to the specific chosen core allocation policy. ♠
+
+10 Assumption 3.4. The system is allowed to hold at most nmax number of jobs of each class. That is, any arrival of job class-i (for i = 1 , 2) is blocked when there are already nmax number of class-i jobs in the system. This assumption is made purely to satisfy the requirements of Theorem 3.1 below for strong consistency of the speed-up estimates to their true values. In particular, it appears in the proof of Lemma 3.6 which is a crucial result in the proof of Theorem 3.1 in Section 3.1. Assumption 3.4 has the role of being able to prove finiteness of expectation of a certain random variable which is a necessity for Lemma 3.6. However, this assumption is not essential for the methodology designed in this paper to be implemented from a practical point of view. 
+
+Theorem 3.1. Let 0 < α < 1. Consider an observation of the sample-path of the system under policy 
+
+π ∈ Π with total n jobs. If Assumptions 2.2 and 3.4 are satisfied, then as n → ∞ , we have M1, M 2 → ∞ ,and bp1 a.s. 
+
+→ p1, bp2 a.s. 
+
+→ p2.Remark 3.5 . 0 < α < 1 prevents the degenerate case where the incoming stream of jobs belongs only to one class. ♠
+
+3.1 Proof of Theorem 3.1 
+
+In this subsection, we provide the complete proof of Theorem 3.1. First, we explain a high-level structure of the proof. We start by introducing regeneration cycles in the context of the system under study. Then, we introduce complex new objects which may seem non-intuitive but will be crucial to the proof of Theorem 3.1. Then, Lemma 3.6, and correspondingly Corollary 3.7 establishes two results which serve as the hypothesis for Theorem 3.1. Finally, we use a known result from [2] to establish the result. A key ingredient in the proof is the use of regeneration cycles , which allow the system’s sample path to be decomposed into independent segments. Exploiting this regenerative structure, we extract i.i.d. objects from otherwise dependent queueing data. The availability of such an i.i.d. substructure enables us to invoke existing results to establish strong consistency. We refer the reader to [11] for a detailed exposition of this approach; the analysis presented below is of a similar nature. Let us first define a regeneration cycle in the context of the system under study. Consider a system that starts empty at time 0. Then, regeneration time is the first time when there is a departure of a job of either class leading to a fully empty system. Now, we turn our attention to the creation of i.i.d. objects from dependent queueing data, as explained below. As introduced in Section 2, consider any fixed policy π : {0, 1, · · · , n max } × { 0, 1, · · · , n max } 7 → 
+
+[0 , 1]. Then, under policy π, the system is a regenerative process. Suppose that the system sample path dataset consists of Nr number of regeneration cycles, where Nr is a random variable (The first and the last may be partial cycles). Then, we claim that we can decompose the log-likelihood ℓ(p, χ) into a sum of i.i.d. random variables as written below. 
+
+ℓ(p; χ) = 
+
+> Nr
+
+X
+
+> k=1
+
+q Zk; p.
+
+Here, for each regeneration cycle k,
+
+Zk = Ck,
+
+n eD(i)
+
+> j
+
+o eCk 
+
+> j=eCk−1+1
+
+,
+
+(n
+
+n(i)
+
+> j,k
+
+oN (i) 
+
+> j+1
+> k=1
+
+) eCk 
+
+> j=eCk−1+1
+
+,
+
+(n
+
+c(i)
+
+> j,k
+
+oN (i)
+
+> j
+> k=1
+
+) eCk 
+
+> j=eCk−1+1
+
+,
+
+11 (n
+
+E(i)
+
+> j,k
+
+oN (i)
+
+> j
+> k=1
+
+) eCk 
+
+> j=eCk−1+1
+
+!
+
+∈ Z := 
+
+> ∞
+
+[
+
+> i=1
+> ∞
+
+[
+
+> j=1
+
+
+
+N × Ri 
+
+> +
+
+× Nj×i × Nj×i × Rj×i
+
+> +
+
+
+
+. (3.7) which collects all system information from regeneration cycle k. This includes, for instance, the number of class-i job arrivals during cycle k, their departure times, the sequence of event times together with the corresponding system states (i.e., the number of jobs present), as well as all core allocations between consecutive event times. Furthermore, let q : Z ×[0 , 1] → R be the function defined in (3.8), and assume that the sequence q(Zk; p) Nr −1 
+
+> k=2
+
+consists of i.i.d. random variables. Recall that cycles 1 and Nr may be partial regeneration cycles. For notational simplicity, we consider Equation (3.5) without the class index i, so that the total number of departures is M . Let Ck denote the number of departures (of class-i
+
+jobs, with the index suppressed) during the k-th regeneration cycle, and define 
+
+eCk := C1 + · · · + Ck.
+
+Clearly, Ck also equals the number of arrivals during the k-th regeneration cycle, and hence eCk is the total number of customers that have entered the system over the first k regeneration cycles. For 
+
+k ∈ { 2, . . . , N r − 1}, we define 
+
+q Zk; p = Ck log( μ) + 
+
+> eCk
+
+X 
+
+> j=eCk−1+1
+
+log 
+
+
+
+n(i)  
+
+> j, N(i)
+> j+1
+
+
+
++ 
+
+> eCk−1
+
+X 
+
+> j=eCk−1
+
+log 
+
+
+
+si
+
+
+
+φ(i)  
+
+> j, N(i)
+> j+1
+
+; p
+
+ 
+
+− μ 
+
+> eCk−1
+
+X 
+
+> j=eCk−1
+
+"
+
+n(i) 
+
+> j, 1
+
+si
+
+
+
+φ(i)
+
+> j, 1
+
+; p
+
+  
+
+E(i) 
+
+> j, 1
+
+− eD(i)
+
+> j−1
+
+
+
++ · · · 
+
++ n(i)   
+
+> j, N(i)
+> j+1
+
+si
+
+
+
+φ(i)  
+
+> j, N(i)
+> j+1
+
+; p
+
+  eD(i) 
+
+> j
+
+− E(i) 
+
+> j, N(i)
+> j
+
+#
+
+. (3.8) The definition of q(Zk; p) above has four summands on the right-hand side. We now verify that each of these summands depends only on data from regeneration cycle k, which is crucial for establishing the i.i.d. structure across cycles. 1. Summand 1. This follows directly, since Ck is the number of departures occurring in the k-th regeneration cycle. 2. Summand 2. Recall that 
+
+n(i)  
+
+> j, N(i)
+> j+1
+
+is the number of class-i jobs in the interval 
+
+
+
+E(i) 
+
+> j, N(i)
+> j
+
+, eD(i)
+
+> j
+
+i
+
+,
+
+which is a subinterval of 
+
+ eD(i)
+
+> j−1
+
+, eD(i)
+
+> j
+
+i
+
+. Hence, for j = eCk−1 +1 , . . . , eCk −1, this interval lies entirely within the k-th regeneration cycle. For j = eCk−1, observe that 
+
+E(i) 
+
+> j, N(i)
+> j
+
+is the last event before eD(i)
+
+> j+1
+
+. Since at least one event — namely the arrival of job j + 1 — occurs 12 in the k-th regeneration cycle, this interval also lies within the k-th regeneration cycle. 3. Summand 3. This follows by the same argument as in Summand 2, since it depends on the same quantities. 4. Summand 4. For 
+
+j = eCk−1 + 1 , . . . , eCk − 1,
+
+all quantities in the fourth summand are clearly associated with the k-th regeneration cycle. For j = eCk−1, note that if any E(i) 
+
+> j, ·
+
+lies in the ( k − 1)-th regeneration cycle, then the corresponding 
+
+n(i) 
+
+> j, ·
+
+= 0 ,
+
+and hence such terms do not contribute. Now we have introduced all the necessary objects to prove Theorem 3.1. Lemma 3.6, and in particular Equations (3.12) and (3.13) in Corollary 3.7 below, have the purpose of verifying necessary hypothesis for using known results to prove strong consistency. 
+
+Lemma 3.6. There exists a measurable function B(·) : Z 7 → R such that, for all j,
+
+q Zj , p ′ − q Zj , p  ≤ B Zj
+
+ p − p′ ,
+
+where E B Zj
+
+ < ∞.Proof. The starting point is the identity 
+
+q Zk; p − q Zk; p′ =
+
+> eCk
+
+X 
+
+> j=eCk−1+1
+
+log 
+
+
+
+si
+
+
+
+φ(i)  
+
+> j, N(i)
+> j+1
+
+; p
+
+ 
+
+− log 
+
+
+
+si
+
+
+
+φ(i)  
+
+> j, N(i)
+> j+1
+
+; p′
+
+ | {z }
+
+> (I)
+
++ μ
+
+> eCk
+
+X 
+
+> j=eCk−1+1
+
+"
+
+n(i) 
+
+> j, 1
+
+si
+
+
+
+φ(i)
+
+> j, 1
+
+; p
+
+
+
+− si
+
+
+
+φ(i)
+
+> j, 1
+
+; p′| {z }
+
+> (II)
+
+
+
+E(i) 
+
+> j, 1
+
+− eD(i)
+
+> j−1
+
+
+
++ · · · 
+
++ n(i)  
+
+> j, N(i)
+> j+1
+
+eD(i) 
+
+> j
+
+− E(i)  
+
+> j, N(i)
+> j+1
+
+
+
+si
+
+
+
+φ(i)  
+
+> j, N(i)
+> j+1
+
+; p
+
+
+
+− si
+
+
+
+φ(i)  
+
+> j, N(i)
+> j+1
+
+; p′
+
+| {z }
+
+> (III)
+
+#
+
+. (3.9) Observe that the terms (II) and (III) can be dealt with in a straightforward manner: they are majorized by κ p − p′ due to Assumption 2.2, with κ the Lipschitz constant as defined in that assumption. In addition, for term (I) we have, again by Assumption 2.2, 
+
+log  si(z; p) − log  si(z; p′) =
+
+Z si(z;p′)
+
+> si(z;p)
+
+dxx ≤ si(z; p′) − si(z; p) × sup 
+
+> x∈[si(z;p),s i(z;p′)]
+
+1
+
+x
+
+≤ si(z; p′) − si(z; p) ≤ κ p − p′ .
+
+As a result, q Zk; p − q Zk; p′ ≤ p − p′ B Zk
+
+, with 
+
+B Zk
+
+ := κ Ck + μ
+
+> eCk
+
+X 
+
+> j=eCk−1+1
+
+"
+
+n(i)
+
+> j, 1
+
+
+
+E(i) 
+
+> j, 1
+
+− eD(i)
+
+> j−1
+
+
+
++ · · · + n(i)  
+
+> j, N(i)
+> j+1
+
+eD(i) 
+
+> j
+
+− E(i) 
+
+> j, N(i)
+> j
+
+#! 
+
+. (3.10) 13 Now, recalling that n(i) 
+
+> j, 1
+
+≤a.s. nmax , n (i) 
+
+> j, 2
+
+≤a.s. nmax , · · · , we obtain 
+
+E B(Zk) ≤ κ E Ck
+
+ + κ μ E
+
+
+
+> eCk
+
+X 
+
+> j=eCk−1+1
+
+nmax 
+
+ eD(i) 
+
+> j
+
+− eD(i)
+
+> j−1
+
+
+
+= κ E Ck
+
+ + κ μ n max E
+
+h eD(i)
+
+> eCk
+
+− eD(i)
+
+> eCk−1+1
+
+i
+
+≤ κ E Ck
+
+ + κ μ n max E Rk
+
+. (3.11) where Rk is the length of regeneration cycle k. The system is stable, so that E[Ck] < ∞ and E[Rk] < ∞.As a consequence, E[B(Zk)] < ∞, thus completing our proof. 
+
+Corollary 3.7 (Corollary of Lemma 3.6) . The following two equations hold: sup  
+
+> Nr∈N
+
+1
+
+NrNrX
+
+> k=1
+
+E B Zk
+
+ < ∞, (3.12) 1
+
+NrNrX
+
+> k=1
+
+
+
+B Zk
+
+ − E B Zk
+
+  a.s. 
+
+−→ 0, as Nr → ∞ . (3.13) 
+
+Proof. The random variables B Zk
+
+ for j = 1 , 2, · · · , N r are i.i.d., and by Lemma 3.6, E B(Z1) < ∞,so that (3.12) follows trivially. For (3.13), we rely on the (conventional version of the) strong law of large numbers. We now prove Theorem 3.1. The argument builds on ideas from [11, Theorem 3.1], adapted to our setting. 
+
+Proof of Theorem 3.1. First observe that as n → ∞ , we have that n/N r a.s. 
+
+−→ E C1
+
+ < ∞ so that 
+
+Nr → ∞ is equivalent to n → ∞ . As a direct consequence of [2, Theorem 3(b)], in combination with Lemma 3.6 and Equations (3.12) and (3.13), we conclude that sup 
+
+> p∈[0 ,1]
+
+1
+
+NrNrX
+
+> j=1
+
+q Zj , p  − E q Z1, p  a.s 
+
+−→ 0, (3.14) which is equivalent to, as n → ∞ ,sup 
+
+> p∈[0 ,1]
+
+1
+
+n ℓn
+
+ p; χ · nNr
+
+− E q Z1, p  a.s. 
+
+−→ 0.
+
+The remainder of the proof is similar to that of [27, Theorem 1]. Recalling that n/N r a.s. 
+
+−→ E[C1] as 
+
+n → ∞ , we have that sup 
+
+> p∈[0 ,1]
+
+1
+
+n ℓn
+
+ p; χ − ℓ(p) a.s. 
+
+−→ 0,
+
+where ℓ(p) = E[q Z1, p ]/ E[C1] is a non-random function which is maximized at the true parameter p1.The density of the interdeparture times for a fixed job class given in (3.2), and thereby the log-likelihood (3.4), is uniquely determined by the speed-up function si(z; p), which in turn is uniquely determined by the speed-up parameter p. In particular, this means that there do not exist distinct p′, p ′′ ∈ [0 , 1] such 14 that si(·; p′) = si(·; p′′ ) almost everywhere. We therefore conclude that the model is identifiable in the Kullback-Leibler sense, i.e., 
+
+ℓ(p) − ℓ(pi) < 0, ∀ p̸ = pi.
+
+Hence we can conclude that, bpi a.s. 
+
+−→ pi.
+
+# 4 Solving for the optimal policy 
+
+The previous section provided a detailed explanation of the departure process, focusing on maximum likelihood estimation of p1, p 2. We presented and proved a result that guarantees the strong consistency of these estimators to their true values under a fixed policy, as the size of the observed departure process dataset grows. In the current section, we shift our focus to evaluating the optimal core allocation policy for a given belief about p1, p 2. This analysis is independent of the estimation procedure. To determine the optimal core allocation policy, we solve Bellman’s optimality equation, which requires modelling the system as a Markov decision process (MDP). Due to the Markovian nature of the arrival and service-time distributions, the memoryless property ensures that the pair  n(1) , n (2) , where n(i) is the number of class-i jobs in the system is sufficient to fully describe the system at any given time. This formulation closely follows the MDP model outlined in [7]. In particular, the state space S is given by S = (n(1) , n (2) ) 0 ≤ n(1) , n (2) ≤ nmax . Here, it is worth recalling that nmax as defined in Assumption 3.4 is the maximum permissible number of jobs of each class in the system. The action space of the MDP is given by A = [0 , 1], and dictates the fraction of the c cores allocated to class-1 jobs. The remaining fraction 1 − a is then allocated to class-2 jobs. The action a dictates the departure rate of both job classes, as explained in Equation (3.1). The instantaneous cost is ψ n(1) , n (2)  = n(1) + n(2) , corresponding to the total number of jobs in the system. 
+
+4.1 Transition rates 
+
+Under a stationary policy π, the system evolves as a CTMC with generator Qπ. The non-zero transition rates are 
+
+Qπ
+
+ n(1) + 1 , n (2)   n(1) , n (2) 
+
+= λα 1
+
+n
+
+n(1) < n max 
+
+o
+
+. (4.1) 
+
+Qπ
+
+ n(1) , n (2) + 1   n(1) , n (2) 
+
+= λ(1 − α) 1
+
+n
+
+n(2) < n max 
+
+o
+
+. (4.2) 
+
+Qπ
+
+ n(1) − 1, n (2)   n(1) , n (2) 
+
+= n(1) μ s 1
+
+c π (n(1) , n (2) )
+
+n(1) ; p1
+
+!
+
+1
+
+n
+
+n(1) > 0
+
+o
+
+(4.3) 
+
+Qπ
+
+ n(1) , n (2) − 1  n(1) , n (2) 
+
+= n(2) μ s 2
+
+c 1 − π(n(1) , n (2) )
+
+n(2) ; p2
+
+!
+
+1
+
+n
+
+n(2) > 0
+
+o
+
+(4.4) Equations (4.1), (4.2) follow because class-1 jobs arrive at rate λα whenever n(1) < n max and class-2 jobs arrive at rate λ(1 − α) whenever n(2) < n max . Equations (4.3), (4.4) on the other hand follow from (3.1). All remaining transition rates are zero. 15 4.2 Uniformization 
+
+We now perform uniformization, which is a standard technique (cf. [34]) to make continuous-time Markov processes amenable for an analysis through their discrete-time counterparts. Let 
+
+ν = max  n(1) ,n (2) 
+
+∈S
+
+
+
+Qπ
+
+ n(1) + 1 , n (2)   n(1) , n (2) 
+
++ Qπ
+
+ n(1) , n (2) + 1   n(1) , n (2) 
+
++ Qπ
+
+ n(1) − 1, n (2)   n(1) , n (2) 
+
++ Qπ
+
+ n(1) , n (2) − 1  n(1) , n (2)  
+
+.
+
+Then ν is clearly a tight upper bound on the total outgoing transition rate for any state in S. The transition probabilities of the uniformized MDP are 
+
+Pπ
+
+ ˜n(1) , ˜n(2)    n(1) , n (2) 
+
+= 1
+
+ν Qπ
+
+ ˜n(1) , ˜n(2)    n(1) , n (2) 
+
+and 
+
+Pπ
+
+ n(1) , n (2)   n(1) , n (2) 
+
+= 1 − Pπ
+
+ n(1) + 1 , n (2)   n(1) , n (2) 
+
+− Pπ
+
+ n(1) , n (2) + 1   n(1) , n (2) 
+
+− Pπ
+
+ n(1) − 1, n (2)   n(1) , n (2) 
+
+− Pπ
+
+ n(1) , n (2) − 1  n(1) , n (2) 
+
+. (4.5) Let 
+
+smax = arg max  n(1) ,n (2) 
+
+∈S
+
+
+
+Qπ
+
+ n(1) + 1 , n (2)   n(1) , n (2) 
+
++ Qπ
+
+ n(1) , n (2) + 1   n(1) , n (2) 
+
++ Qπ
+
+ n(1) − 1, n (2)   n(1) , n (2) 
+
++ Qπ
+
+ n(1) , n (2) − 1  n(1) , n (2)  
+
+.
+
+Then, clearly, Pπ
+
+ smax smax 
+
+ = 0. By construction, the continuous-time Markov chain with state space S and transition rates Qπ(·|· )now has the same stationary distribution as the discrete-time Markov chain with state space S and transition probabilities Pπ(·|· ). As a result, the optimal policy for the continuous-time MDP determined by S, A, ψ(·, ·) and the policy-specific transition rates given in Equations (4.1)–(4.4) is identical to the optimal policy for the discrete-time MDP given by S, A, ψ(·, ·) and policy-specific one-step transition probabilities Pπ(·|· ). Since the latter is easier to compute, we now proceed with finding the latter. We do so by studying the associated Bellman equation. 
+
+4.3 Bellman equation 
+
+Let J∗ denote the average cost under the optimal policy. We adopt the average-cost formulation of the MDP, which is natural in our context, as the system operates continuously over an infinite horizon, with the objective of minimizing the long-run average number of jobs in the system. A discounted formulation could also be considered, in which case the estimation procedure from the previous section would remain applicable. 16 The optimal value function V ∗(n(1) , n (2) ) satisfies the Bellman equation: 
+
+V ∗ n(1) , n (2)  =
+
+
+
+ψ n(1) , n (2)  − J∗
+
++ X ˜n(1) ,˜n(2) 
+
+ Pπ∗
+
+ ˜n(1) , ˜n(2)   n(1) , n (2) 
+
+V ∗ ˜n(1) , ˜n(2) 
+
+Alternatively, this can be expressed as 
+
+J∗ + V ∗ n(1) , n (2)  = A∗ n(1) , n (2)  + H∗ n(1) , n (2) 
+
+where, using Equations (4.1)–(4.5), we define 
+
+A∗ n(1) , n (2)  =ψ n(1) , n (2)  + λα 1n(1) < n max 
+
+
+
+V ∗ n(1) + 1 , n (2)  − V ∗ n(1) , n (2) 
+
++ λ 1 − α1n(2) < n max 
+
+
+
+V ∗ n(1) , n (2) + 1  − V ∗ n(1) , n (2) 
+
+. (4.6) and 
+
+H∗ n(1) , n (2)  =V ∗ n(1) , n (2)  + inf  
+
+> a∈A
+
+n(1) μ s 1
+
+ ca n(1) ; p1
+
+
+
+V ∗ n(1) − 1, n (2)  − V ∗ n(1) , n (2) 
+
++ n(2) μ s 2
+
+ c(1 − a)
+
+n(2) ; p2
+
+
+
+V ∗ n(1) , n (2) − 1 − V ∗ n(1) , n (2) !
+
+. (4.7) In the sequel, we find the solution of the Bellman equation by employing the method of value iteration. To this end, let {Vn(.)}n≥0 be a sequence of functions which we use to iteratively approximate V ∗(.). Among the standard solution methods for finite-state MDPs, such as policy iteration and linear programming formulations, we employ value iteration due to its simplicity of implementation and computational efficiency for the problem sizes considered here. The procedure is described in Algorithm 2 below. 
+
+Algorithm 2 Value iteration to solve for optimal core allocation policy  
+
+> 1:
+
+Given estimators for ( p1, p 2), λ, μ, c, n max  
+
+> 2:
+
+Initialize: V0
+
+ n(1) , n (2)  = 0 all ( n(1) , n (2) ) ∈ S ; 
+
+> 3:
+
+Set k ← 0;  
+
+> 4:
+
+repeat  
+
+> 5:
+
+Set Vk+1 (0 , 0) = 0;  
+
+> 6:
+
+for each  n(1) , n (2)  ∈ S \ { (0 , 0) } do  
+
+> 7:
+
+Evaluate Ak
+
+ n(1) , n (2)  using Equation (4.6);  
+
+> 8:
+
+Evaluate Hk
+
+ n(1) , n (2)  using Equation (4.7);  
+
+> 9:
+
+Vk+1 
+
+ n(1) , n (2)  ← Ak
+
+ n(1) , n (2)  + Hk
+
+ n(1) , n (2) ; 
+
+> 10:
+
+end for  
+
+> 11:
+
+k ← k + 1;  
+
+> 12:
+
+until |Vk − Vk−1|∞ < ϵ ;
+
+# 5 Learning Algorithm and Numerical Experiments 
+
+In Section 3, we established that, under a fixed core-allocation policy, the maximum likelihood estimators of the speed-up parameters converge almost surely to their true values as the amount of observed departure data increases. In Section 4, we showed how an approximately optimal core-allocation policy 17 can be computed from a given pair of parameter estimates ( p1, p 2). In this section, we combine these estimation and optimization components into two learning algorithms, namely Algorithms 1a and 1b. Both algorithms follow the same iterative principle: the system is operated under the current core-allocation policy to generate data, the resulting observations are used to update the parameter estimates, and the updated estimates are subsequently used to compute an improved policy. Algorithm 1a is presented in Section 5.1, while Algorithm 1b is presented in Section 5.2. 
+
+Remark 5.1 . Algorithms 1a and 1b differ only in the data used to compute the parameter estimates at each update step. While Algorithm 1a uses only the departure data collected during the most recent observation period, Algorithm 1b uses all departure data accumulated since time 0. The strong-consistency result established in Section 3 assumes a fixed core-allocation policy and therefore does not directly apply to Algorithm 1b, since the policy is updated over time. Nevertheless, our numerical experiments indicate that the parameter estimates produced by both algorithms converge in practice. Because Algorithm 1b exploits all available observations, it typically achieves more accurate parameter estimates and faster convergence than Algorithm 1a. However, this advantage comes at the cost of reduced adaptability. If the underlying speed-up parameters change over time, as may occur in practice due to evolving workloads or hardware characteristics, then older observations become less informative. In such settings, the use of historical data may bias the estimates toward outdated parameter values. By relying only on recent observations, Algorithm 1a is potentially better suited to tracking time-varying speed-up parameters. ♠
+
+Table 1 discusses 4 experiments. Through these, we demonstrate the efficacy of Algorithms 1a and 1b in Sections 5.1 and 5.2. Example 1 Example 2 Example 3 Example 4 Algorithm 1a 1a 1b 1b 
+
+c 30 10 20 30 
+
+λ 4 2 2 4
+
+μ 2.5 1.5 1 2.5 
+
+α 0.35 0.6 0.65 0.35 
+
+p1 0.3 0.4 0.4 0.3 
+
+p2 0.8 0.85 0.7 0.8 
+
+Nk 100 k0.75 200 k0.75 100 100 
+
+nsteps 400 400 100 100 Table 1: Four examples and their parameter settings. Let us discuss the various rows. The first row tells us whether Algorithm 1a or Algorithm 1b is used to test this example on. The parameters c, λ, μ, α, p 1, p 2 carry the same meaning as defined in Section 2. In all examples, the speed-up follows Amdahl’s law, i.e., Example 2.1. The number of departures observed in the k-th iteration of the algorithm for estimating ( p1, p 2) is denoted by Nk. Finally, nsteps 
+
+tells us the number of iterations we run this algorithm for. 
+
+5.1 Learning Algorithm 1a 
+
+In Section 2.3, we announced that we would explain the construction of the sequence  eTk k≥1. We do so below. 18 Let g : N → R+ be a strictly increasing function, and let {Nk}k≥1, a deterministic sequence, representing the number of observed departures in each of the epochs chosen such that Nk 
+
+> N1
+
+= Θ( g(k)). For example, one could choose g(k) = √k, and Nk = N1
+
+√k. Then, the window  eTk k≥1 is empirically chosen such that there are exactly Nk departures in   eTk−1, eTk
+
+. In particular, we choose eTk to be the time of the eNk-th departure, where eNk := P 
+
+> 1≤j≤k
+
+Nj . During iteration k, the system is operated on the time interval  eTk−1, eTk
+
+ under a fixed core allocation policy πk. Using the sample path data collected in this interval, we compute maximum likelihood estimators  bp1,k , bp2,k 
+
+ for the speed-up parameters using the estimation procedure described in Section 3. These parameter estimates are then used in the dynamic programming procedure of Section 4 to compute an updated core allocation policy πk+1 . The resulting policy is used during the next epoch, generating new data for subsequent estimation. Increasing epoch lengths ensure that the parameter estimates become progressively more accurate, while allowing the policy to adapt as additional information about the system becomes available. The complete learning procedure is summarized in Algorithm 1a. 
+
+Algorithm 1a Learning algorithm  
+
+> 1:
+
+Given: λ, μ, c, s (·; p), g (·);  
+
+> 2:
+
+From g(·), construct sequence Nk k≥1; 
+
+> 3:
+
+Given: Initialize policy π1; 
+
+> 4:
+
+for k = 1 , 2, . . . , K do  
+
+> 5:
+
+Run the system under policy πk during  eTk−1, eTk
+
+ consisting of Nk departures;  
+
+> 6:
+
+Collect system sample path data in that interval;  
+
+> 7:
+
+Compute the MLE  bp1,k , bp2,k 
+
+; 
+
+> 8:
+
+Compute πk+1 using procedure of Section 4 with parameters  bp1,k , bp2,k 
+
+; 
+
+> 9:
+
+end for  
+
+> 10:
+
+Output: πK+1 ;Figures 4 and 5 illustrate the performance of Algorithm 1a for Examples 1 and 2, respectively, as summarized in Table 1. In both cases, we observe that the estimators bp2,k converge to p2 significantly faster than the estimators bp1,k converge to p1. This phenomenon persists even when α > 0.5, that is, even in regimes where class-1 jobs constitute the majority of the observed data, as in Example 3. The underlying reason for this behavior appears to be a quasi-identifiability issue. As further illustrated in Figure 1a and Example (2.2), lower values of p are associated with only modest gains in speed-up, whereas higher values of p lead to substantially more pronounced improvements. Consequently, class-2 jobs exhibit a much stronger response to changes in core allocation, while class-1 jobs show comparatively muted sensitivity. This asymmetry in responsiveness makes the estimation of p1 inherently more challenging than that of p2.We now investigate the performance of Algorithm 1a in a non-stationary setting, in which the par-allelizability characteristics of an entire job class evolve over time. To capture this phenomenon, we consider an experiment in which the speed-up parameter of one job class changes at deterministic but unknown time epochs during the simulation horizon. The learning algorithm is not informed of these changes and must therefore adapt solely on the basis of newly observed inter-departure times. The aim of this experiment is to assess whether the estimation procedure is able to track the evolving degree of parallelizability, and whether the resulting allocation policy adjusts accordingly. Figure 6 illustrates the successful dynamic convergence of Algorithm 1a in this setting. The corresponding schedule of param-eter changes is detailed in Table 2, which specifies both the timing and magnitude of the shifts in the 19 (a) Plots of estimators bp1,k and bp2,k constructed after every iteration of the algorithm. 
+
+> (b) Heat maps of the policies at the start (left) and end (right).
+
+Figure 4: Visualizations for Example 1 speed-up parameters. Table 2: Parameter change schedule and corresponding simulation window information. Change point ( ×10 5) (p1, p 2) Iteration % through window 
+
+t = 0 (0 .6, 0.85) 1 0% 
+
+t = 6 (0 .50 , 0.85) 198 87 .2% 
+
+t = 12 (0 .50 , 0.75) 295 44 .2% 
+
+t = 18 (0 .55 , 0.75) 372 46 .0% 
+
+t = 24 (0 .55 , 0.90) 439 2.1% The first column specifies the time points at which the speed-up parameters change; in this experiment, these change points are chosen to be equidistant over the simulation horizon. The second column lists the corresponding values of the speed-up parameters after each change. For instance, the parameters are (0 .6, 0.85) on the interval  0, 6 × 10 5, and (0 .5, 0.85) on  6 × 10 5, 12 × 10 5. The third column indicates the iteration number at which each parameter switch occurs. Finally, the fourth column reports the fraction of the corresponding time window that has elapsed at the moment of the change. The remaining system parameters are given by λ = 2, μ = 1 .5, c = 10, α = 0 .7, and Nk = 200 k0.75 .
+
+5.2 Learning Algorithm 1b 
+
+Recall that Theorem 3.1 establishes strong consistency of the maximum likelihood estimates as size of the data increases, under the assumption that the core allocation policy is fixed. In practice, we 20 (a) Plots of estimators bp1,k and bp2,k constructed after every iteration of the algorithm. 
+
+(b) Heatmaps of the policies at the start (left) and end (right). 
+
+Figure 5: Visualizations for Example 2 find that this assumption is quite restrictive, and strong consistency is observed also when the policy changes during the data generation process. Leveraging this observation, in this section, we describe an alternative to Algorithm 1b, which leads to faster convergence when the speed-up parameter does not change with time. 
+
+Algorithm 1b Alternative learning algorithm  
+
+> 1:
+
+Given: λ, μ, c, s (·; p);  
+
+> 2:
+
+Given: Choice of N , the number of departures in each epoch;  
+
+> 3:
+
+Initialize policy π1; 
+
+> 4:
+
+for k = 1 , 2, . . . , n steps do  
+
+> 5:
+
+Run the system under policy πk during 
+
+h eTk−1, eTk
+
+
+
+consisting of N departures;  
+
+> 6:
+
+Collect system sample path data in the entire interval 
+
+h
+
+0, eTk
+
+
+
+in the vector Zk; 
+
+> 7:
+
+Compute the MLE  bp1,k , bp2,k 
+
+; 
+
+> 8:
+
+Compute πk+1 using procedure of Section 4 with parameters  bp1,k , bp2,k 
+
+; 
+
+> 9:
+
+end for  
+
+> 10:
+
+Output: πnsteps +1 ;In this variant of the algorithm, we fix a choice N of the number of departures that will be observed in every epoch, i.e., for all k, the sequence  eTk k≥1 is such that there are precisely N departures in 
+
+ eTk−1, eTk
+
+. Finally, the sample path data in the interval 0, eTk
+
+ consisting of N k departures is collected in the vector Zk and is used to obtain estimators  bp1,k +1 , bp2,k +1 
+
+. Similar to Algorithm 1, we then solve 21 Figure 6: A demonstration of the algorithm tracking a changing speed-up parameter. the Bellman optimality equation corresponding to these estimators to obtain policy bπk+1 .We now demonstrate the efficacy of Algorithm 1b through Examples 3 and 4, as visualized in Figures 7 and 8, respectively. As remarked in Section 5.1, once again because of quasi-identifiability issues, the convergence of estimators bp2,k to p2 is faster than that of estimators bp1,k to p1.    
+
+> (a) Plots of estimators bp1,k and bp2,k constructed after every iteration of the algorithm.
+> (b) Heatmaps of the policies at the start (left) and end (right).
+
+Figure 7: Visualizations for Example 3 
+
+# 6 Conclusion 
+
+In this paper, spurred in part by emerging applications such as the training of machine learning models, we studied the problem of dynamic resource allocation in a computing system with malleable jobs whose 22 (a) Plots of estimators bp1,k and bp2,k constructed after every iteration of the algorithm. 
+
+> (b) Heatmaps of the policies at the start (left) and end (right).
+
+Figure 8: Visualizations for Example 4 speed-up characteristics are not fully known a priori and may vary over time. Jobs belong to one of two observable classes, each characterized by an unknown degree of parallelizability. The objective is to learn a core-allocation policy that minimizes the long-run average sojourn time. To address this problem, we developed an iterative learning-and-control framework that combines a sta-tistical estimation step with an optimization step. At the core of our approach is a maximum likelihood estimation procedure based on observed inter-departure times, which enables online inference of the un-known speed-up parameters. These parameter estimates are then incorporated into a Markov decision process formulation to obtain updated resource-allocation policies. This yields a natural feedback loop between estimation and control: allocation decisions influence the observed data, while the resulting data are used to refine future decisions. We establish strong consistency of the proposed estimator, thereby providing theoretical support for the learning mechanism underlying the adaptive control scheme. The framework developed in this paper extends naturally to systems with more than two job classes. While the estimation methodology remains essentially unchanged, the dimensionality of the control problem increases significantly, leading to substantial computational challenges in solving the associated Bellman optimality equations. This highlights an important tradeoff between model expressiveness and computational tractability in large-scale resource-allocation problems. Finally, we outline several directions for future research. First, it would be of interest to study settings in which the speed-up characteristics evolve over time, reflecting non-stationary workloads or changing application behavior in modern cloud environments. Second, the current framework assumes exponential job sizes and Markovian dynamics; extending the analysis to more general service-time distributions is an important theoretical challenge. Finally, developing scalable approximation and reinforcement-learning-based methods for high-dimensional systems with many job classes remains a promising direction for future work. 23 References 
+
+[1] Amdahl, G. Validity of the single processor approach to achieving large scale computing capabilities. In 
+
+Proceedings of the April 18–20, 1967 Spring Joint Computer Conference , 1967. [2] Andrews, D. Generic uniform convergence. Econometric Theory 8(2) (1992), 241–257. [3] Antunes, N., G. Jacinto, A. Pacheco, and C. Wichelhaus. Estimation of the traffic intensity in a piecewise-stationary M t/G t/1 queue with probing. ACM SIGMETRICS Performance Evaluation Review 44(2) (2016), 3–5. [4] Armero, C. and M. Bayarri. Bayesian prediction in M/M/1 queues. Queueing Systems 15(1–4) (1994), 401– 417. [5] Asanjarani, A., Y. Nazarathy, and P. Taylor. A survey of parameter and state estimation in queues. Queueing Systems 97(1) (2021), 39–80. [6] Basawa, I., U. Bhat, and J. Zhou. Parameter estimation using partial information with applications to queueing and related models. Statistics & Probability Letters 78(12) (2008), 1375–1383. [7] Berg, B., J. Dorsman, and M. Harchol-Balter. Towards optimality in parallel scheduling. Proceedings of the ACM on Measurement and Analysis of Computing Systems 1(2) (2017), 1–30. [8] Berg, B., R. Vesilo, and M. Harchol-Balter. heSRPT: Parallel scheduling to minimize mean slowdown. Per-formance Evaluation 146 (2020), 102147. [9] Berg, B. A Principled Approach to Parallel Job Scheduling . PhD thesis, Carnegie Mellon University, 2022. [10] Berg, B., B. Moseley, W. Wang, and M. Harchol-Balter. Asymptotically optimal scheduling of multiple parallelizable job classes. arXiv preprint arXiv:2404.00346 , 2024. [11] Bodas, S., M. Mandjes, and L. Ravner. Statistical inference for a service system with non-stationary arrivals and unobserved balking. arXiv preprint arXiv:2311.16884 , 2023. [12] Cao, Y., H. Sun, D. Qian, and W. Wu. Scalable hierarchical scheduling for malleable parallel jobs on multiprocessor-based systems. arXiv preprint arXiv:1412.4213 , 2014. [13] Cera, M., Y. Georgiou, O. Richard, N. Maillard, and P. Navaux. Supporting malleability in parallel architec-tures with dynamic CPUSETs mapping and dynamic MPI. In Proceedings of the International Conference on Distributed Computing and Networking , Springer, 2010. [14] Chauhan, N., N. Kaur, K. Saini, S. Verma, A. Alabdulatif, R. Khurma, M. Garcia-Arenas, and P. Castillo. A systematic literature review on task allocation and performance management techniques in cloud data centers. arXiv preprint arXiv:2402.13135 , 2024. [15] Chen, H., O. Kella, and G. Weiss. Fluid approximations for a processor-sharing queue. Queueing Systems 
+
+27(1–2) (1997), 99–125. [16] Cirne, W. and F. Berman. A model for moldable supercomputer jobs. In Proceedings of the 15th International Parallel and Distributed Processing Symposium (IPDPS) , 2001. [17] Cirne, W. and F. Berman. Using moldability to improve the performance of supercomputer jobs. Journal of Parallel and Distributed Computing 62(10) (2002), 1571–1601. [18] Lian, J., X. Zhang, Y. Shao, Z. Pu, Q. Xiang, Y. Li, and B. Cui. ContTune: Continuous tuning by conservative Bayesian optimization for distributed stream data processing systems. arXiv preprint arXiv:2309.12239 , 2023. [19] Delimitrou, C. and C. Kozyrakis. Quasar: Resource-efficient and QoS-aware cluster management. ACM SIGPLAN Notices 49(4) (2014), 127–144. [20] Edmonds, J. Scheduling in the dark. Theoretical Computer Science 235(1) (2000), 109–141. 
+
+24 [21] Fernandez, J., L. Wehrstedt, L. Shamis, M. Elhoushi, K. Saladi, Y. Bisk, E. Strubell, and J. Kahn. Hardware scaling trends and diminishing returns in large-scale distributed training. arXiv preprint arXiv:2411.13055 ,2024. [22] Gonzalez, N., T. Carvalho, and C. Miers. Cloud resource management: Towards efficient execution of large-scale scientific applications and workflows on complex infrastructures. Journal of Cloud Computing 6(1) (2017), 13. [23] Gupta, A., B. Acun, O. Sarood, and L. Kal´ e. Towards realizing the potential of malleable jobs. In Proceedings of the 21st International Conference on High Performance Computing (HiPC) , 2014. [24] Harchol-Balter, M. Open problems in queueing theory inspired by datacenter computing. Queueing Systems 
+
+97(1) (2021), 3–37. [25] Hill, M. and M. Marty. Amdahl’s law in the multicore era. Computer 41 (2008), 33–38. [26] Huang, K., T. Huang, Y. Tung, and P. Shih. Effective processor allocation for moldable jobs with application speedup model. In Advances in Intelligent Systems and Applications – Volume 2 , Smart Innovation, Systems and Technologies, vol. 21. Springer, 2013, 563–572. [27] Inoue, Y., L. Ravner, and M. Mandjes. Estimating customer impatience in a service system with unobserved balking. Stochastic Systems 13(2) (2023), 181–210. [28] Larson, R. The queue inference engine: Deducing queue statistics from transactional data. Management Science 36(5) (1990), 586–601. [29] Li, Z., B. Berg, A. Mukhopadhyay, and M. Harchol-Balter. How to rent GPUs on a budget. In Proceedings of the 20th European Performance Engineering Workshop (EPEW) , Lecture Notes in Computer Science, vol. 15454. Springer, Cham, 2024. [30] Li, Z., M. Harchol-Balter, and B. Berg. Mean field optimal core allocation across malleable jobs. arXiv preprint arXiv:2602.01411 , 2026. [31] Li, Z., C. Zhu, A. Mukhopadhyay, M. Harchol-Balter, and B. Berg. BOA Constrictor: Squeezing performance out of GPUs in the cloud via budget-optimal allocation. arXiv preprint arXiv:2602.01404 , 2026. [32] Lym, S., D. Lee, M. O’Connor, N. Chatterjee, and M. Erez. DeLTA: GPU performance model for deep learning applications with in-depth memory system traffic analysis. In Proceedings of the IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS) , IEEE, 2019, 293–303. [33] McCool, M., J. Reinders, and A. Robison. Structured Parallel Programming: Patterns for Efficient Compu-tation . Morgan Kaufmann, 2015. [34] Puterman, M. Markov Decision Processes: Discrete Stochastic Dynamic Programming . John Wiley & Sons, 1994. [35] Podorojnyi, D. and L. Ravner. Estimation of service value parameters for a queue with unobserved balking. 
+
+Queueing Systems 110(2) (2026), Article 27. [36] Ross, J., T. Taimre, and P. Pollett. Estimation for queues from queue length data. Queueing Systems 55(2) (2007), 131–138. [37] Shi, J. and J. Lu. Performance models of data parallel DAG workflows for large-scale data analytics. Dis-tributed and Parallel Databases 41(3) (2023), 299–329. [38] Whitt, W. Fluid models for multiserver queues with abandonments. Operations Research 54(1) (2006), 37–54. [39] Whitt, W. Fitting birth-and-death queueing models to data. Statistics & Probability Letters 82(5) (2012), 998–1004. [40] Zhang, J., J. Dai, and B. Zwart. Law of large number limits of limited processor-sharing queues. Mathematics of Operations Research 34(4) (2009), 937–970. 
+
+25 [41] Zhao, S., X. Dai, and I. Bate. DAG scheduling and analysis on multi-core systems by modelling parallelism and dependency. IEEE Transactions on Parallel and Distributed Systems 33(12) (2022), 4019–4038. [42] Data Center Dynamics (2023). Nvidia H100 GPUs now available on AWS . https://www. datacenterdynamics.com/en/news/nvidia-h100-gpus-now-available-on-aws-as-amazons-cloud-scales-to-20 
+
+Accessed: June 1, 2026. [43] McKinsey. The cost of compute: A $7 trillion race to scale data centers . https:// www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/ the-cost-of-compute-a-7-trillion-dollar-race-to-scale-data-centers/ . Accessed: January 11, 2026. [44] Microsoft. Inside the world’s most powerful AI datacenter . https://blogs.microsoft.com/blog/2025/09/ 18/inside-the-worlds-most-powerful-ai-datacenter/ . Accessed January 11, 2026. [45] SiliconAngle. Google Cloud turbocharges its AI hypercomputer stack with next-gen TPUs and bigger GPU clusters. October 30, 2024. Available at: https://siliconangle.com/2024/10/30/ google-cloud-turbocharges-ai-hypercomputer-stack-next-gen-tpus-bigger-gpu-clusters/ .Accessed: June 1, 2026. 
+
+26

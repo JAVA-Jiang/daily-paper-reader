@@ -1,0 +1,253 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-20T21:23:49.007771+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2606.17581v1",
+      "source": "arxiv",
+      "title": "Visored: A Controlled-Natural-Language Prover for LLM-Generated Mathematics",
+      "abstract": "We present a dependent-type-based prover designed around the way LLMs (and humans) tend to write mathematics, complementing existing systems such as Lean and Rocq. Its core design choices are a surface that imitates mathematical natural language and a rule-driven automation layer that closes the routine steps a textbook would omit, so that an accepted proof can be re-emitted as a checked Lean file. Early experiments suggest that, even without any prover-specific training data, LLMs can learn to use it effectively on the miniF2F benchmark. Lean output excerpts: https://github.com/xiyuzhai-husky-lang/visored/",
+      "authors": [
+        "Xiyu Zhai",
+        "Xinyi Chen",
+        "Yiping Wang",
+        "Runlong Zhou",
+        "Liao Zhang",
+        "Simon S. Du"
+      ],
+      "primary_category": "cs.PL",
+      "categories": [
+        "cs.PL",
+        "cs.AI"
+      ],
+      "published": "2026-06-16T06:43:08+00:00",
+      "link": "https://arxiv.org/pdf/2606.17581v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides source code on GitHub",
+      "llm_evidence_cn": "在GitHub上提供了源代码",
+      "llm_evidence": "在GitHub上提供了源代码",
+      "canonical_evidence": "在GitHub上提供了源代码",
+      "llm_tldr_en": "Visored is a dependent-type prover for LLM-generated math that mimics natural language and automates routine steps, with a GitHub repository providing code.",
+      "llm_tldr_cn": "Visored是一个基于依赖类型的数学证明器，专为大语言模型编写数学的方式设计。它模仿数学自然语言表面，并通过规则驱动的自动化层自动完成教科书省略的常规步骤。早期实验表明，即使没有特定训练数据，LLM也能在miniF2F基准上有效使用。该工作的源代码已在GitHub上公开，支持可重现研究。",
+      "llm_tldr": "Visored是一个基于依赖类型的数学证明器，专为大语言模型编写数学的方式设计。它模仿数学自然语言表面，并通过规则驱动的自动化层自动完成教科书省略的常规步骤。早期实验表明，即使没有特定训练数据，LLM也能在miniF2F基准上有效使用。该工作的源代码已在GitHub上公开，支持可重现研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Search thesis which has code with it.",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.19616v1",
+      "source": "arxiv",
+      "title": "Before the Pull Request: Mining Multi-Agent Coordination",
+      "abstract": "Autonomous coding agents now open millions of pull requests, yet large-scale studies find their PRs are produced faster but accepted less often - a coordination and trust gap that pull-request-level telemetry cannot explain. We argue the missing signal lives before the PR, in how concurrent agents claim, divide, and collide over shared work. We study this process through grite, our open-source coordination substrate that needs no central server and stores its records inside git itself, so its append-only, signed event log captures the coordination process directly. We show that (i) this shared substrate reduces duplicate and conflicting work at bounded overhead - the share of work that merely re-does a teammate's task falls from 78% to 0% while useful throughput more than triples; (ii) every agent's copy of the log converges to the same state with no write silently dropped, where a file-based tracker loses concurrent writes; and (iii) the log is a mineable artefact from which concrete failure modes - conflicting edits, lock starvation, redundant rediscovery, race-to-close - are automatically recoverable with provenance, several invisible in pull-request history. We release the dataset, harness, and mining toolkit.",
+      "authors": [
+        "Dipankar Sarkar"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-06-17T21:47:53+00:00",
+      "link": "https://arxiv.org/pdf/2606.19616v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source coordination substrate grite",
+      "llm_evidence_cn": "开源协调工具grite",
+      "llm_evidence": "开源协调工具grite",
+      "canonical_evidence": "开源协调工具grite",
+      "llm_tldr_en": "This paper analyzes multi-agent coordination before pull requests, introducing grite, an open-source system that logs coordination in git, reducing duplicate work.",
+      "llm_tldr_cn": "该论文研究了多智能体在拉取请求前的协调问题，提出了开源协调工具grite，它无需中央服务器，将协调日志直接存储在git中，实验表明能将重复工作从78%降至0%，大幅提升协作效率。",
+      "llm_tldr": "该论文研究了多智能体在拉取请求前的协调问题，提出了开源协调工具grite，它无需中央服务器，将协调日志直接存储在git中，实验表明能将重复工作从78%降至0%，大幅提升协作效率。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.16974v1",
+      "source": "arxiv",
+      "title": "The embrace of open science: An analysis of a decade of AI research and 56 800 conference papers",
+      "abstract": "The reproducibility crisis has directed the AI research community toward improving documentation practices. Several studies have identified methodological issues, and in response, the most impactful venues in the field have introduced reproducibility checklists. We seek to understand whether documentation practices have changed over time by assessing all published papers at five leading AI conferences over the past decade. Seven reproducibility variables were identified, quality-assured and used to analyse 56 800 publications. Our analysis reveals that in the period 2014 to 2024, documentation practices have improved; papers sharing both code and data increased nearly sixfold, from 11% to 64% Building on empirical reproducibility rates from a prior study, we estimate - inferred from documentation practices, not direct testing - that reproducibility increased from 28% in 2014 to 64% in 2024. Improvements in documentation practices predate the introduction of reproducibility checklists, suggesting these changes reflect a broader movement toward open science rather than a direct response to formal requirements.",
+      "authors": [
+        "Kevin L Coakley",
+        "Thijs Snelleman",
+        "Holger Hoos",
+        "Odd Erik Gundersen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-15T17:11:46+00:00",
+      "link": "https://arxiv.org/pdf/2606.16974v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Analyzes code sharing practices in AI research",
+      "llm_evidence_cn": "分析AI研究中代码共享实践",
+      "llm_evidence": "分析AI研究中代码共享实践",
+      "canonical_evidence": "分析AI研究中代码共享实践",
+      "llm_tldr_en": "A large-scale analysis of 56,800 AI conference papers shows code and data sharing increased sixfold from 2014 to 2024, indicating improved reproducibility practices.",
+      "llm_tldr_cn": "本文对过去十年顶级AI会议发表的56,800篇论文进行了大规模可重现性分析，识别了七个变量并评估了文档实践趋势。结果显示，共享代码和数据的论文比例从2014年的11%跃升至2024年的64%，涨幅近六倍。该研究为开放科学运动的成效提供了实证证据，并揭示了顶尖会议引入可重现性检查清单的积极影响。",
+      "llm_tldr": "本文对过去十年顶级AI会议发表的56,800篇论文进行了大规模可重现性分析，识别了七个变量并评估了文档实践趋势。结果显示，共享代码和数据的论文比例从2014年的11%跃升至2024年的64%，涨幅近六倍。该研究为开放科学运动的成效提供了实证证据，并揭示了顶尖会议引入可重现性检查清单的积极影响。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.19319v1",
+      "source": "arxiv",
+      "title": "Data Intelligence Agents: Interpreting, Modeling, and Querying Enterprise Data via Autonomous Coding Agents",
+      "abstract": "Production data integration is bottlenecked by repeated, lossy handoffs between data owners, engineers, and analysts who must collaboratively discover, structure, and query enterprise data. We present Data Intelligence Agents (DIA), a system of three agents (Data Interpreter, Schema Creator, and Query Generator) that compresses this workflow by treating autonomous coding agents (ACAs) as a first-class abstraction: rather than emitting text, the agents generate, execute, validate, and repair concrete artifacts, draw on a shared memory for experience reuse, and surface each for review by domain experts. DIA is deployed in production for enterprise customers. We study the Query Generator in depth and evaluate it in fully autonomous mode across seven SQL benchmarks spanning four task categories and four dialects. It matches or surpasses the best published results on all seven, demonstrating that an architecture grounded in execution, built on ACAs and a shared memory, generalizes across the data intelligence workload with adaptation confined to natural-language instructions.",
+      "authors": [
+        "Anoushka Vyas",
+        "Aarushi Dhanuka",
+        "Sina Khoshfetrat Pakazad",
+        "Henrik Ohlsson"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI",
+        "cs.DB"
+      ],
+      "published": "2026-06-17T17:45:32+00:00",
+      "link": "https://arxiv.org/pdf/2606.19319v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "proposes Data Intelligence Agents that use autonomous coding agents to generate, execute, and repair artifacts, relevant to reproducible research with code",
+      "llm_evidence_cn": "提出数据智能体，使用自主编码智能体生成、执行和修复制品，与含代码的可重复研究相关",
+      "llm_evidence": "提出数据智能体，使用自主编码智能体生成、执行和修复制品，与含代码的可重复研究相关",
+      "canonical_evidence": "提出数据智能体，使用自主编码智能体生成、执行和修复制品，与含代码的可重复研究相关",
+      "llm_tldr_en": "Introduces Data Intelligence Agents (DIA) that compress enterprise data integration workflows by leveraging autonomous coding agents to generate, validate, and repair code artifacts.",
+      "llm_tldr_cn": "针对企业数据集成中反复的手工交接瓶颈，本文提出数据智能体（DIA）系统，包含数据解释器、模式创建器和查询生成器三个自主编码智能体，它们生成、执行、验证和修复代码制品，并共享经验。该系统已在生产环境部署，实验重点评估了查询生成器的性能，表明自主编码智能体可有效压缩数据集成流程，提升效率。",
+      "llm_tldr": "针对企业数据集成中反复的手工交接瓶颈，本文提出数据智能体（DIA）系统，包含数据解释器、模式创建器和查询生成器三个自主编码智能体，它们生成、执行、验证和修复代码制品，并共享经验。该系统已在生产环境部署，实验重点评估了查询生成器的性能，表明自主编码智能体可有效压缩数据集成流程，提升效率。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.19789v1",
+      "source": "arxiv",
+      "title": "Dynamic Core Allocation for Malleable Jobs with Unknown Speed-up Parameters",
+      "abstract": "We study dynamic resource allocation in a multicore computing system with a fixed number of processing cores and a stream of {\\it malleable} jobs. Each job may adjust its level of parallelism during execution, allowing adaptive redistribution of resources across concurrently active jobs. Jobs belong to one of two observable classes, each characterized by a distinct speed-up function with unknown parameters. The objective is to learn a core-allocation policy that minimizes the long-run mean number of jobs in the system, equivalently the mean response time in steady state.   \\noindent To address this uncertainty, we develop an iterative learning-and-control framework. The system alternates between estimating the unknown speed-up parameters from observed job completions and solving the associated Markov decision process (MDP) to update the allocation policy. Within each job class, cores are shared equally among active jobs; the fraction of capacity assigned to each class is obtained from the MDP formulation of \\cite{berg2017}, evaluated at the current parameter estimates. We construct a maximum likelihood estimator based on state-dependent inter-departure times and prove its strong consistency under a fixed allocation policy. We further propose two learning algorithms that combine this estimation step with dynamic programming-based policy updates, and illustrate their through numerical experiments.",
+      "authors": [
+        "S. ~A. Bodas",
+        "J. ~L. Dorsman",
+        "M. Mandjes",
+        "L. Ravner"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC",
+        "stat.ME"
+      ],
+      "published": "2026-06-18T04:48:22+00:00",
+      "link": "https://arxiv.org/pdf/2606.19789v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Dynamic core allocation for malleable jobs, task scheduling in multicore systems",
+      "llm_evidence_cn": "针对可延展作业的动态核心分配，多核系统任务调度",
+      "llm_evidence": "针对可延展作业的动态核心分配，多核系统任务调度",
+      "canonical_evidence": "针对可延展作业的动态核心分配，多核系统任务调度",
+      "llm_tldr_en": "An iterative learning-and-control framework dynamically allocates cores to malleable jobs with unknown speed-up parameters, minimizing mean response time in multicore systems.",
+      "llm_tldr_cn": "本文研究多核系统中可延展作业的动态核心分配问题，提出迭代学习与控制框架，在未知加速参数下优化核心分配策略以最小化平均响应时间。通过在线估计加速参数并更新分配策略，系统可自适应调整资源。实验表明该方法能有效减少平均响应时间，优于静态分配方案，为数据中心资源调度提供了新思路。",
+      "llm_tldr": "本文研究多核系统中可延展作业的动态核心分配问题，提出迭代学习与控制框架，在未知加速参数下优化核心分配策略以最小化平均响应时间。通过在线估计加速参数并更新分配策略，系统可自适应调整资源。实验表明该方法能有效减少平均响应时间，优于静态分配方案，为数据中心资源调度提供了新思路。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.19830v1",
+      "source": "arxiv",
+      "title": "JAMER: Project-Level Code Framework Dataset and Benchmark on Professional Game Engines",
+      "abstract": "Current AI-driven game development has made substantial progress in asset generation, gameplay design, and web-based game coding, yet project-level code engineering on professional game engines remains largely unexplored due to the absence of large-scale datasets and deterministic evaluation methods. We present JamSet and JamBench, the first project-level game code framework dataset and benchmark built on a professional game engine. Our key insight is that Game Jam competitions, community events where developers build complete games under tight time constraints, yield thousands of open-source projects suitable for this purpose. Building on the Godot engine's text-based format and headless execution mode, we design a deterministic verification pipeline from file integrity to runtime behavior collection, distilling 8,133 verified projects from over 240,000 repositories. Of these, 300 manually verified projects form JamBench; the rest constitute JamSet. JamBench defines theme-driven generation and code completion tasks, evaluated through a pipeline combining compilation pass rates, Structural Completeness Score (SCS), and Behavioral Alignment Score (BAS). Evaluation of 9 frontier models reveals a capability cliff as project scale increases, with runtime pass rates dropping from 80.4% on small projects to 5.7% on large ones (Task2a). Code Agents improve compilation rates yet yield no gains in runtime behavioral quality, indicating that the bottleneck lies in architectural design rather than syntactic correctness. Experiments validate JamSet as effective training data. All data and code are publicly available.",
+      "authors": [
+        "Jianwen Sun",
+        "Chuanhao Li",
+        "Zizhen Li",
+        "Yukang Feng",
+        "Fanrui Zhang",
+        "Yifei Huang",
+        "Yu Dai",
+        "Kaipeng Zhang"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.CL"
+      ],
+      "published": "2026-06-18T06:17:46+00:00",
+      "link": "https://arxiv.org/pdf/2606.19830v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Provides open-source project-level game code framework dataset and benchmark",
+      "llm_evidence_cn": "提供了开源的项目级游戏代码框架数据集和基准",
+      "llm_evidence": "提供了开源的项目级游戏代码框架数据集和基准",
+      "canonical_evidence": "提供了开源的项目级游戏代码框架数据集和基准",
+      "llm_tldr_en": "JAMER introduces JamSet and JamBench, the first project-level game code benchmark on a professional engine, using open-source projects from Game Jams. It enables deterministic evaluation of AI code generation.",
+      "llm_tldr_cn": "当前AI游戏开发缺乏项目级代码工程的大规模数据集和确定性评估方法。本文利用游戏开发竞赛的开源项目，基于Godot引擎构建了首个项目级游戏代码框架数据集JamSet和基准JamBench。通过引擎的无头执行模式实现确定性验证。该工作为AI代码生成在专业引擎上的评估提供了标准化平台，并附带开源数据。",
+      "llm_tldr": "当前AI游戏开发缺乏项目级代码工程的大规模数据集和确定性评估方法。本文利用游戏开发竞赛的开源项目，基于Godot引擎构建了首个项目级游戏代码框架数据集JamSet和基准JamBench。通过引擎的无头执行模式实现确定性验证。该工作为AI代码生成在专业引擎上的评估提供了标准化平台，并附带开源数据。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

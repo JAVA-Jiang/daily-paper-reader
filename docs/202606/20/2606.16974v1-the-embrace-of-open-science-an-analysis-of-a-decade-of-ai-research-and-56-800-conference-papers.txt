@@ -1,0 +1,832 @@
+Title: The embrace of open science: An analysis of a decade of AI research and 56 800 conference papers
+
+URL Source: https://arxiv.org/pdf/2606.16974v1
+
+Published Time: Tue, 16 Jun 2026 02:36:51 GMT
+
+Number of Pages: 57
+
+Markdown Content:
+# The embrace of open science: An analysis of a decade of AI research and 56 800 conference papers 
+
+## Kevin L Coakley 1,2* , Thijs Snelleman 3, Holger Hoos 3,4 ,Odd Erik Gundersen 1* 
+
+> 1*
+
+Department of Computer Science, Norwegian University of Science and Technology, Sem Sælands Vei 7-9, Trondheim, 7031, Trønderlag, Norway. 
+
+> 2
+
+San Diego Supercomputer Center, University of California San Diego, 9500 Gilman Dr, La Jolla, 92093, California, USA. 
+
+> 3
+
+Chair of AI Methodology, RWTH Aachen University, Theaterstrasse 35-39, Aachen, 52062, North Rhine-Westphalia, Germany. 
+
+> 4
+
+Leiden Institute of Advanced Computer Science, Leiden University, Einsteinweg 55, Leiden, 2333 CC, South Holland, The Netherlands. *Corresponding author(s). E-mail(s): kcoakley@sdsc.edu; odderik@ntnu.no; Contributing authors: snelleman@aim.rwth-aachen.de; hh@aim.rwth-aachen.de; 
+
+Abstract 
+
+The reproducibility crisis has directed the AI research community toward improv-ing documentation practices. Several studies have identified methodological issues, and in response, the most impactful venues in the field have introduced repro-ducibility checklists. We seek to understand whether documentation practices have changed over time by assessing all published papers at five leading AI con-ferences over the past decade. Seven reproducibility variables were identified, quality-assured and used to analyse 56 800 publications. Our analysis reveals that in the period 2014 to 2024, documentation practices have improved; papers shar-ing both code and data increased nearly sixfold, from 11% to 64% Building on empirical reproducibility rates from a prior study, we estimate — inferred from documentation practices, not direct testing — that reproducibility increased from 28% in 2014 to 64% in 2024. Improvements in documentation practices predate the introduction of reproducibility checklists, suggesting these changes reflect a 
+
+1 
+
+> arXiv:2606.16974v1 [cs.AI] 15 Jun 2026 broader movement toward open science rather than a direct response to formal requirements.
+> Keywords: Reproducibility, Artificial Intelligence, Machine Learning
+
+Many scientific results cannot be reliably reproduced [ 1 ], and therefore conclusions cannot be trusted [ 2]. This phenomenon is called the reproducibility crisis [ 3] and has been described in a number of studies covering a broad range of disciplines, including psychology [ 4–6 ], economics [ 7], medicine [ 8–10 ], neuroscience [ 11 ], and genetics [ 12 ]. Reproducibility concerns also gained prominence in artificial intelligence (AI) [ 13 , 14 ], where rapid growth in the field and increasing social importance have intensified the urgency to mitigate the problem. One way to mitigate the reproducibility crisis is to provide detailed descriptions of the research alongside open code and data, and therefore a cultural shift toward open science [ 15 ] has emerged, advocating for transparent and accessible knowledge. As a large portion of empirical research in computer science and AI is conducted on computers and experiments are described in code, sharing detailed descriptions of experiments should, in principle, be straightforward [ 16 ]. Achieving this relies critically on high-quality documentation of experimental methods and artifacts, such as code, data, and workflows [ 17 –20 ]. This has again led communities and venues to demand stronger requirements from authors, reflected in the introduction of reproducibility checklists for example at NeurIPS [ 21 ] and JAIR [ 22 ]. However, the effect of these procedural and communal changes remains difficult to measure, especially at scale, due to the manual labour required to reproduce studies and the tenfold increase in published studies in the past decade, see Figure 1. It is widely acknowledged that empirical AI research can fail in subtle ways. Nondeterminism due to variability between execution (or computing) environments can cause results to vary so much that it affects reproducibility [ 23 – 27 ]. Poor data treatment, including poorly documented datasets, dataset splits, and data leakage also pose challenges to reproducibility [ 28 – 30 ]. Inadequate hyperparameter optimisation can lead to irreproducible results [ 23 , 31 –33 ], and the same holds for parallelization [ 34 ], compiler settings, and operating system [ 35 ]. Even when code is provided, software dependency issues, errors, and post-publication updates can prevent empirical AI research from being reproduced [ 36 , 37 ]. Gundersen et al. [38] categorizes different sources of irreproducibility, but few papers investigate to what degree empirical AI research results can be trusted. Several attempts have been made to quantify the reproducibility of empirical research in computer science and AI. Following Gundersen [39] , we use reproducibility to refer to the ability of independent investigators to draw the same conclusions from an experiment by following the documentation shared by the original investigators. No distinction is made between reproducibility and replication, consistent with Gundersen [39] , Schmidt [40] , Nosek and Lakens [41] , Goodman et al. [42] , and Gundersen and Kjensmo [13] . Collberg and Proebsting [43] were only able to execute the code of 48.3% of the 601 computer science papers that shared code as part of the publication, 2not even attempting to evaluate whether the results were reproduced. Raff [44] was able to reproduce 63.4% of 255 papers by reimplementing algorithms from scratch, while Gundersen et al. [45] reproduced 33% of papers that only provided data and 86% of papers that shared both code and data. These studies, while insightful, reveal intrinsic limitations of manual reproduction. Efforts are limited by the time required for manual reproduction, which introduces selection biases when choosing which papers to replicate and reduces sample size. Accu-rately measuring reproducibility trends in a field in which the leading five conferences publish more than 12 000 papers annually cannot be done manually. Another approach avoids reimplementing experiments entirely and instead focuses on the quality of documentation and the inclusion of open artifacts as a practical means of evaluating reproducibility in the spirit of open science. Gundersen and Kjensmo [13] manually evaluated 400 randomly selected papers for characteristics associated with reproducibility. Random selection reduced selection bias and documentation analysis allowed for increasing the sample size to 400, yet their results still represent only a fraction of conference papers published between 2013 and 2016. The reliance on manual effort, whether for full reproduction or documentation analysis, renders a large-scale, longitudinal analysis of the impact of open science on empirical AI research infeasible. To address this methodological gap and, to the best of our knowledge, provide the first comprehensive longitudinal analysis of open science in AI research, in this study, we automate the evaluation of reproducibility documentation at scale leveraging large language models (LLMs). We systematically assess documentation practices and the use of open artifacts, such as code and datasets, of 56 800 papers from five leading AI conferences — AAAI (Association for the Advancement of Artificial Intelligence Conference on Artificial Intelligence), ICLR (International Conference on Learning Representations), ICML (International Conference on Machine Learning), IJCAI (Inter-national Joint Conference on Artificial Intelligence), and NeurIPS (Conference on Neural Information Processing Systems) — spanning from 2014 to 2024. We confirmed the reliability of our approach through prompt optimisation against a manually anno-tated dataset; furthermore, we manually evaluating 160 randomly sampled papers from the resulting dataset. This automated method circumvents the prohibitive costs and inherent selection biases of manual reproduction, as well as the costs of manual documentation analysis that have constrained previous work, enabling an, previously infeasible, exhaustive analysis. With this scalable framework, our study tracks trends in artifact sharing, quantifies the impact of community practices, such as require-ments for reproducibility checklists, and characterizes the evolution of the estimated reproducibility rate of AI research. Our analysis reveals a quantifiable cultural shift toward open science through improved quality of documentation and increased artifact sharing within the AI research community. We estimate that the reproducibility rate of empirical research — inferred from documentation practices and the empirical rates reported by Gundersen et al. [45] , not direct testing — has more than doubled, increasing from 28% in 2014 to 64% in 2024, a trend supported by a fivefold increase in papers sharing both code and relying on open datasets. Our results show that improvements in documentation practices were underway before reproducibility checklists were introduced. Our study 3Annual publication counts across five leading AI conferences from 2014 to 2024. 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024  
+
+> Year
+> 0
+> 2000
+> 4000
+> 6000
+> 8000
+> 10000
+> 12000
+> Number of Papers
+> AAAI
+> ICLR
+> ICML
+> IJCAI
+> NeurIPS
+> Fig. 1 The number of papers published at five leading AI conferences (AAAI, ICLR, ICML, IJCAI, and NeurIPS) from 2014 to 2024. Publications increased tenfold over this period, from 1 206 papers in 2014 to 12 026 in 2024, reflecting the rapid expansion of AI research. IJCAI did not hold a conference in 2014. A tabular representation of this data can be found in Supplementary Table 10.
+
+advances the literature on AI reproducibility by demonstrating quantifiable trends in documentation practices, validated against manually annotated datasets, while establishing an LLM-based methodology for conducting meta-science at scale. 
+
+# 1 Results 
+
+We analysed 56 800 papers from five top-tier AI and ML conferences, AAAI, ICLR, ICML, IJCAI, and NeurIPS, published between 2014 and 2024. The number of publica-tions at these conferences has grown substantially over this period, from 1 206 papers in 2014 to 12 026 in 2024, a tenfold increase. 52 328 papers (92%) were identified as empirical research and thus form the basis of our analysis; we excluded theoretical papers, as the reproducibility of theoretical work warrants an analysis of an entirely different nature. 
+
+## 1.1 Reproducibility Variables 
+
+To quantify the progress of open science and documentation practices in empirical AI research, we evaluated each paper in our dataset for a set of variables. These variables have been proposed in other studies [ 13 , 44 , 46 ] and cover the previously introduced reproducibility checklists (see Supplementary Table 1). We use the reproducibility variables as seven Boolean indicators that represent whether a given paper contains the following information: (1) availability of open source code; (2) use of one or more open datasets; (3) specification of dataset splits; (4) pseudocode describing the algorithm(s) 4Distribution of empirical papers by number of documented reproducibility variables from 2014 to 2024. 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024        
+
+> Year
+> 0%
+> 10%
+> 20%
+> 30%
+> 40%
+> 50%
+> 60%
+> 70%
+> 80%
+> 90%
+> 100%
+> Percentage of Empirical Papers
+> Number of Documented Reproducibility Variables in the Paper
+> 76543210
+> 0%
+> 10%
+> 20%
+> 30%
+> 40%
+> 50%
+> 60%
+> 70%
+> 80%
+> 90%
+> 100%
+
+Fig. 2 The distribution of empirical papers grouped by how many of the seven reproducibility variables (pseudocode, open code, open datasets, dataset splits, hardware specification, software dependencies, and experiment setup) they document, shown for each year from 2014 to 2024. Each coloured band represents papers documenting a specific count of variables, from zero (top, dark green) to all seven (bottom, light orange). Documentation comprehensiveness improved substantially: the proportion of papers documenting none of these variables decreased from 3% to 0.3%, while papers documenting all seven increased from 0.1% to 1.7%. Most notably, papers documenting at least five of the seven variables increased more than fivefold, from 8% in 2014 to 43% in 2024, demonstrating a sustained shift toward more thorough documentation practices. 
+
+used; descriptions of (5) the hardware used to conduct the experiment; (6) the software dependencies; and (7) the setup of the experiment. In addition, we distinguish whether the study is considered empirical or theoretical, and capture whether at least one author has an industry (rather than academic) affiliation to assess how institutional context influences documentation practices. 
+
+## 1.2 Improved Documentation and Open Science Practices 
+
+Research documentation has improved from 2014 to 2024; we observed a substantial positive trend for reproducibility variables. In 2014, only 8% of the empirical papers provided documentation for five or more reproducibility variables (Figure 2), while by 2024 this figure had increased to 43%, representing more than a fivefold increase over the decade. The fraction of papers providing documentation for none of these variables vanished by 2019; at the same time, papers providing documentation for all variables emerged. 5Open code and open dataset documentation rates across five AI conferences from 2014 to 2024. 2014 2016 2018 2020 2022 2024                                 
+
+> Year
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+> Open Code Results by Conference
+> 2014 2016 2018 2020 2022 2024
+> Year
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+> Open Datasets Results by Conference
+> All Papers AAAI ICLR ICML IJCAI NeurIPS
+
+Fig. 3 The percentage of empirical papers documenting the availability of open code (left) and the use of open datasets (right) for each of the five conferences from 2014 to 2024. IJCAI did not hold a conference in 2014. Both metrics show substantial increases across all venues. Open code availability rose from 13% in 2014 to 69% in 2024 across all conferences (dashed black line), while open dataset usage increased from 68% to 91% over the same period. 
+
+The seven reproducibility variables were selected because each captures a distinct artifact or methodological description that reduces ambiguity for an independent team attempting to reproduce an experiment. Because empirical AI research encompasses a wide variety of methodologies, from reinforcement learning in simulated environments to benchmarking on static corpora, none of the seven is strictly required for every paper, and documenting all seven does not guarantee reproducibility. However, the absence of each variable introduces a specific barrier: without pseudocode or open code, algorithmic ambiguity increases [ 44 , 47 ]; without open datasets or dataset splits, an independent team must invest substantial time and compute identifying data and splits that yield comparable results [ 45 , 48 , 49 ]; without hardware and software specifications, environmental differences can shift results enough to alter conclusions, particularly when performance margins are small [ 35 , 50 , 51 ]; and without experiment setup details, hyperparameter search requires additional time and compute [ 44 , 52 , 53 ]. Each documented variable therefore removes one such barrier. At the population level, papers that document more variables leave fewer barriers in place, increasing the likelihood of successful reproduction. The year-over-year increase in the proportion of papers documenting five or more variables reflects a measurable shift in the expected reproducibility of the published literature, not a guarantee for any individual paper. Our analysis shows that the AI community has broadly adopted open science practices. Open science promotes transparency, accessibility and reproducibility in research, and sharing of code and data is a cornerstone for achieving this [ 16 ]. Our results show an increasing trend towards open source code and open datasets, as seen in Figure 3; the use of open datasets increased by 23 percentage points from 68% to a of 91%, whereas open source code increased five-fold from 13% to 69%. 6Rates of empirical papers documenting both open code and open datasets versus neither from 2014 to 2024. 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024             
+
+> Year
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+> Both Open Code and Datasets
+> Neither Open Code nor Datasets
+> Fig. 4 The percentage of all empirical papers across the five conferences that document both the availability of open code and the use of open datasets (blue) versus papers that document neither (orange), from 2014 to 2024. Papers sharing both code and data increased nearly sixfold, from 11% in 2014 to 64% in 2024, while papers sharing neither decreased sevenfold, from 29% to 4% over the same period. This shift represents a fundamental change in research transparency, as the combination of open code and open datasets is most strongly associated with reproducible findings [ 45 ]. The crossing point occurred around 2017, after which sharing both became more common than sharing neither.
+
+Sharing code and data correlates with successful replication [ 45 ]. Over the time period we analysed, the number of papers that provide open source code and open data, the combination most strongly associated with reproducible findings, increased fivefold, while the proportion that shares neither code nor data, which requires the most effort to reproduce, decreased by a factor of seven, as illustrated in Figure 4. The substantial growth in papers sharing both code and data is associated with a higher probability of reproducible findings. To estimate what proportion of publications can be reproduced, we performed an analysis based on the empirical reproducibility rates reported by Gundersen et al. [45] .Specifically, we applied two fixed rates from that study: 33% for papers sharing only open datasets, and 86% for papers sharing both open code and open datasets. For each year, we computed a weighted sum of these rates using the observed proportions of papers in each category as weights, providing the estimated reproducibility rate for each year (Figure 5). This procedure assumes that the reproducibility rates from Gundersen et al. [45] hold as constants across all five conferences and the full 2014–2024 period, and that papers using private datasets can be excluded from the estimate; the resulting values should therefore be interpreted as approximations rather than precise measurements. To quantify the uncertainty in these estimates, we computed Wilson score 95% confidence intervals for the two empirical reproducibility rates reported by Gundersen 7Estimated reproducibility rate of empirical AI papers from 2014 to 2024. 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 
+
+> Year
+> 0%
+> 10%
+> 20%
+> 30%
+> 40%
+> 50%
+> 60%
+> 70%
+> 80%
+> 90%
+> 100%
+> Percentage of Empirical Papers
+> Estimated Reproducible - Only Open Datasets Shared
+> Estimated Reproducible - Open Code & Datasets Shared
+> Estimated Irreproducible - Only Open Datasets Shared
+> Estimated Irreproducible - Open Code & Datasets Shared
+> No Data Shared - Unknown Reproducibility Rate
+> 95% Confidence Interval for Reproducibility Rate
+> Percentage of Papers with Open Datasets
+> Percentage of Reproducible Papers
+> 0%
+> 10%
+> 20%
+> 30%
+> 40%
+> 50%
+> 60%
+> 70%
+> 80%
+> 90%
+> 100%
+
+Fig. 5 Estimated reproducibility rate of empirical AI research from 2014 to 2024. The estimated reproducibility of papers based on the availability of open code and open datasets, applying the empirical reproducibility rates reported by Gundersen et al. [45] : 33% for papers using open datasets only and 86% for papers sharing both code and open datasets. The overall estimated reproducibility rate (dot-dash black line) more than doubled from 28% in 2014 to 64% in 2024. The dashed black line shows the percentage of papers using open datasets, which directly determines whether reproducibility can be estimated, increased from 68% to 91% of all empirical papers, while papers with unknown reproducibility (blue, no open datasets) decreased from 32% to 9%. The hatched band represents the 95% confidence interval for the estimated reproducibility rate, derived from a Monte Carlo simulation using Beta distributions parametrised from the replication counts of Gundersen et al. [45]. 
+
+This substantial improvement demonstrates the tangible impact of increased code and data sharing on the reproducibility of AI research. et al. [45] : 86% (6/7) for papers sharing both open code and open datasets and 33% (5/15) for papers sharing only open datasets. The lower and upper bounds were then applied to the per-year reproducibility rate estimate (Figure 5). Over the 11 years covered by our study, our results show a substantial increase in the estimated reproducibility rate, inferred from the documentation of the reproducibility variables, not direct testing, more than doubled from 28% in 2014 to 64% in 2024 (Figure 5). The proportion of empirical papers using private datasets, for which reproducibility could not be estimated, decreased by 72%, from 32% of the research analysed in 2014 to 9% in 2024. Although the overall number of published empirical papers increased tenfold during that time, the number of papers estimated to be reproducible increased nearly 24-fold, from approximately 305 in 2014 to approximately 7265 in 2024. These results illustrate how increased documentation, especially in the 8form of open code and datasets, and the broader adoption of open science practices have tangibly improved the rigour of AI research, even as the field has expanded rapidly. 
+
+## 1.3 The Effect of Introducing Reproducibility Checklists                                                                                                                
+
+> Reproducibility variable trend slopes (pp/year) before and after checklist introduction, by conference.
+> Reproducibility Variable All Papers AAAI ICLR Before After Before After Before After 2014-2018 2019-2024 2014-2020 2021-2024 2014-2021 2022-2024 Pseudocode -0.7 0.5 -1.12 -3.1 3.52 -1.44 Open Code 4.24 5.76 4.47 4.42 4.92 0Open Datasets 3.48 1.26 4.66 1.11 -0.38 -0.01 Dataset Splits 2.19 0.41 5.09 -3.15 0.01 -3.27 Hardware Specification 0.51 7.58 1.05 1.92 1.62 2.17 Software Dependencies -0.38 1.1 -0.78 -0.86 -0.07 0.68 Experiment Setup 1.19 1.26 3.17 -1.36 0.29 0.07 Reproducibility Variable ICML IJCAI NeurIPS Before After Before After Before After 2015-2022 2023-2024 2014-2020 2021-2024 2014-2018 2019-2024 Pseudocode -0.31 -4.44 -2.13 -0.35 -0.94 0.59 Open Code 5.67 1.42 4.8 5.2 5.04 4.91 Open Datasets 1.35 1.62 3.61 0.53 2.77 1.6 Dataset Splits -0.15 -0.61 3.91 -2.24 0.28 2.1 Hardware Specification 1.56 7.35 -0.34 1.23 0.81 11.74 Software Dependencies 0.37 -0.25 -1.3 0.73 01.64 Experiment Setup -0.02 -0.78 1.98 -0.69 -0.8 3.06
+> Table 1 The slope of the trend line for each reproducibility variables before and after reproducibility checklists were introduced by the conference organizers. For all papers, we used the year 2019, when NeurIPS introduced the first reproducibility checklist of the five leading AI conferences.
+
+Reproducibility checklists have been introduced to improve and standardize docu-mentation practices in the field, as checklists help establish a higher standard of baseline performance [ 54 ] yet little information on the effect of these checklists is available. To determine whether reproducibility checklists have had a positive effect on actual or predicted reproducibility of AI research, we analysed the correlation between the introduction of reproducibility checklists and the reproducibility variables. Four of the five leading AI conferences have introduced reproducibility checklists (Supplementary Table 11). NeurIPS was first in 2019, followed by AAAI and IJCAI in 2021, and ICML in 2023. ICLR has introduced a guideline in 2022 to include an optional reproducibility statement. Authors may self-select into conferences based on their requirements, includ-ing the presence of reproducibility checklists, a factor we are unable to control for. We fitted a trend line to each reproducibility variable. The slope quantifies the average rate of change in percentage points per year (pp/year). We expect to see an effect of 9Reproducibility variable documentation rates with pre- and post-checklist trend lines, across all five conferences from 2014 to 2024. 2014 2016 2018 2020 2022 2024 
+
+Year            
+
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+
+All Papers Results with Trendlines      
+
+> 2014 2016 2018 2020 2022 2024
+
+Year            
+
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+
+AAAI Results with Trendlines      
+
+> 2014 2016 2018 2020 2022 2024
+
+Year            
+
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+
+ICLR Results with Trendlines      
+
+> 2014 2016 2018 2020 2022 2024
+
+Year            
+
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+
+ICML Results with Trendlines     
+
+> 2015 2017 2019 2021 2023
+
+Year            
+
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+
+IJCAI Results with Trendlines      
+
+> 2014 2016 2018 2020 2022 2024
+
+Year            
+
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+
+NeurIPS Results with Trendlines 
+
+> Pseudocode
+> Open Code
+> Open Datasets
+> Dataset Splits
+> Hardware Specification
+> Software Dependencies
+> Experiment Setup
+
+Fig. 6 The percentage of empirical papers documenting seven reproducibility variables across all five conferences and for each conference individually from 2014 to 2024. Dashed lines show the observed annual percentages for each reproducibility variable; solid lines show the trend lines fitted before and after reproducibility checklist introduction, with slopes quantifying the rate of change in percentage points per year (pp/year). For aggregated results across all conferences, 2019 serves as the reference year, corresponding to NeurIPS’s introduction of the first reproducibility checklist. IJCAI did not hold a conference in 2014. The trends demonstrate that improvements in documentation practices were largely established before formal checklist requirements, with the notable exception of hardware specification, which showed increased slopes after checklist introduction, particularly at NeurIPS. 
+
+10 a reproducibility checklist – if there is any – would appear as a change in the slope of the trend line after it is introduced. To evaluate the impact of the reproducibility checklist, we test the hypothesis that the pp/year increased after checklist introduction, comparing pre- and post-checklist slopes using a one-sided binomial test. Our analysis shows that reproducibility checklists did not systematically improve the documentation rates of the reproducibility variables; the trends towards bet-ter documentation practices were present before formal procedural mandates were introduced. Figure 6 illustrates these trends graphically for the aggregate dataset of all papers across the conferences and for each conference individually, while Table 1 provides the slope (pp/year) values for each reproducibility variable before and after the reproducibility checklist was introduced. Across the seven reproducibility variables and five conferences (n = 35), 15 exhibited a higher post-checklist pp/year (Supplementary Table 3). A one-sided binomial test ( H0 :
+
+p = 0 .5) indicates this is consistent with chance variation ( p = 0 .84, Cohen’s h = −0.16), providing no statistical evidence that the adoption of the reproducibility checklist increased the rate of improvement in documentation. The exception is Hardware specification (purple line in Figure 6), which experiences an increase in all conferences after the introduction of reproducibility checklist. Although the increase is moderate for most conferences, the steep increase in Figure 6 is mainly driven by NeurIPS. 
+
+## 1.4 Comparison of Academia and Industry Documentation Practices 
+
+Observations suggest that papers associated with industry-affiliated authors share less code and data than papers solely by academic authors [ 43 , 55 ]. Industry-affiliated authors may have incentives to withhold code or data to protect intellectual property and to thus maintain a competitive advantage [ 21 , 43 ], or may be required to do so by their employer. To examine whether there are systematic differences in documentation practices, we evaluated which affiliation type documented each reproducibility variable at a higher rate. We applied one-sided binomial tests to assess whether the proportion of academic or industry papers with a higher percentage exceeded the 0.5 expected by chance if both groups were equally likely. Across the seven reproducibility variables, the five conferences, and 11 years (n = 378), academic papers documented more variables 177 times, while industry-affiliated papers had a higher percentage 200 times, with one instance being a statistical tie, see Supplementary Table 4. This result according to the binomial is consistent with chance variation and does not provide statistical evidence that there are systematic differences between academia and industry. Although it may appear that these findings are in disagreement with prior research, our analysis — in which industry-affiliated papers documented more variables overall, is broadly consistent with Gundersen [55] , whose analysis found academic papers to document reproducibility variables at higher rates, and indicates a shift in the trend of open code and open dataset sharing by industry-affiliated authors beginning in 2018. When restricting our analysis to the set of conferences common to both Gundersen [55] and our study and aggregating the results following their methodology, we observe comparable patterns: academic papers document six of the seven reproducibility 11 Industry affiliation rates and documentation practices relative to academia across five AI conferences from 2014 to 2024. 2014 2016 2018 2020 2022 2024                        
+
+> Year
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> 50 50
+> 60 60
+> 70 70
+> 80 80
+> 90 90
+> 100 100
+> Percentage of Empirical Papers
+> Percentage of Industry Papers
+> All Papers
+> AAAI
+> ICLR
+> ICML
+> IJCAI
+> NeurIPS 2014 2016 2018 2020 2022 2024
+> Year
+> 12 12
+> 14 14
+> 16 16
+> 18 18
+> 20 20
+> 22 22
+> 24 24
+> Count
+> Academia vs Industry Documentation Trends
+> Academia
+> Industry
+
+Fig. 7 Left : The percentage of empirical papers at the five AI conferences that have at least one or more authors with industry affiliation. While the overall number of industry-affiliated authors has increased from 2014 to 2024, there has been a notable decline since the peak between 2018 and 2021. IJCAI did not hold a conference in 2014. Right : For each year, we counted — across all 35 variable-conference combinations (seven reproducibility variables × five conferences) — how many combinations academic papers (blue) documented at a higher rate than industry-affiliated papers, and how many industry-affiliated papers (orange) documented at a higher rate. The pattern reveals a notable shift: academic papers consistently demonstrated superior documentation practices in early years (2014-2017), but industry-affiliated papers began documenting variables more comprehensively starting in 2018, a trend that has persisted through 2024. This reversal coincides with the decline in overall industry participation. 
+
+variables at higher rates, with dataset splits, a variable not examined by Gundersen [55] , showing a higher rate of documentation in industry papers, see Supplementary Table 5. Extending the analysis to the entire decade revealed a notable shift beginning in 2018, when industry-affiliated papers began to document reproducibility variables at higher rates than academic papers and continued to do so in subsequent years (Figure 7 right). This improvement in documentation quality among industry-affiliated papers coincides with a decline in their overall publication share (Figure 7 left), suggesting that while fewer industry-affiliated papers are now being published, those that are exhibit more comprehensive documentation of reproducibility variables, a reversal of the trend observed earlier in the decade. Gundersen [55] , based on analyses from AAAI and IJCAI conferences in 2014 and 2016, and Collberg and Proebsting [43] , published in 2016, both reported that industry-affiliated papers shared code less frequently than academic ones, a pattern consistent with our results, but began to change in 2018, when industry-affiliated papers started to exhibit more comprehensive documentation practices. A possible explanation for the relative improvement in documentation quality among industry-affiliated papers is that the number of industry papers has declined since the 2018–2021 peak (Figure 7 left). What remains as industry submissions may be essentially academic research conducted by researchers with academic backgrounds 12 following similar standards. Consequently, when industry-affiliated researchers do choose to publish at conferences, they may do so with the intention of including code and data; the materials may no longer offer a competitive edge, or to align with strategic or reputational goals. 
+
+## 1.5 The Prevalence of Theoretical Research 
+
+The trend in the last decade reveals a diminishing proportion of purely theoretical work, driven by the rapid expansion of empirical AI research rather than a contraction of theoretical work in absolute numbers (Supplementary Figure 1). Across the five leading AI conferences, the proportion of theoretical papers decreased from 10% in 2014 to 6% in 2024. This decline has been steady after a peak of 15% in 2015. As the field has shifted toward empirical research, open science practices have become increasingly important. Unlike theoretical work, where the logical and mathematical rigour of proofs is self-contained within papers, empirical research depends on access to external artifacts and explicit methodological descriptions for independent verification. With empirical papers now constituting 94% of the published works at the five leading AI conferences in 2024, open science practices, such as comprehensive documentation, open source code, and open data, are now even more important to ensure the rigour, reliability, and trustworthiness of AI research. An analysis of NeurIPS 2019 found that 9% of the submissions were designated by the authors as mainly theoretical [ 21 ]. Our LLM-based methodology, which analyses published papers rather than author-reported metadata, identified 10.3% of accepted papers as theoretical. The close agreement between these estimates, despite their derivation from different data sources and methodologies, provides evidence for the validity of our approach. 
+
+# 2 Discussion 
+
+We analysed 11 years of AI research from five top-tier AI conferences to assess how documentation trends have changed and influenced the reproducibility of empirical AI studies. Across 56 800 papers, documentation improved substantially over time: the share of empirical papers that provided documentation for five or more of the reproducibility variables increased from 8% in 2014 to 43% in 2024. This improvement included increased sharing of source code and datasets, which raised the estimated reproducibility rate of papers from 28% to 64%, under the assumptions described in Section 1.2. Statistical analysis revealed no evidence that the introduction of reproducibility checklists accelerated these changes. The upward trend in documentation started several years before the introduction of reproducibility checklists, indicating that broader shifts toward open science and improved documentation practices either preceded formal reproducibility requirements at these conferences or that formal requirements emerged as a response to the same underlying trends driving improved documentation practices. Given this progress, a critical question emerges: can this trajectory be sustained? The slowing growth in our estimated reproducibility rate in recent years suggests the community may be approaching practical limits. One limit is the use of closed datasets, 13 which accounted for 9% of empirical papers in 2024. Achieving 100% open data is neither realistic nor desirable, as legitimate privacy and confidentiality concerns renders in some cases openly sharing data unrealistic. A more tractable frontier for improvement lies with the 27% of papers that use open datasets but do not share code. Gundersen et al. [45] finds one third of these papers to be reproducible; closing this gap represents the most direct path to increasing the estimated reproducibility rate as the mentioned concerns of sharing of data rarely applies to code. Intellectual property is cited as a concern for researchers working in industry [ 21 , 43 ]. As AI research has become increasingly profitable, industry may have become more reluctant to publish work that is closest to actual applications to maintain a competitive advantage. However, if the implementation is described in sufficient detail to enable reproduction, code sharing reveals no additional proprietary information while reducing barriers to building on existing work, though this efficiency gain may diminish authors’ competitive advantage in pursuing follow-up research. Withholding code reduces transparency and hampers reproducibility, as code often contains crucial implementation details that may not be documented. Although there may be good reasons for withholding both code and data, the default should be an expectation to share. Those who cannot share should be asked to state why. Overcoming these challenges to push beyond the current plateau will require a more fundamental evolution in how we author and publish AI research. The principles behind initiatives such as the ”Geoscience Paper of the Future”, articulated by Gil et al. [56] , would strengthen AI reproducibility by ensuring that data and software are reusable, properly licensed, and persistently identifiable, while computational workflows are explicitly documented to capture provenance and support transparent verification and reuse. This is critical not just for human researchers, but for the next generation of AI research. As argued by Gil [57] , published papers are often too unstructured for automated analysis and reproduction. Tools that analyse papers, code, and data – such as Reproscreener [ 58 ], which automatically assesses computational reproducibility – and Reproducibility Copilots – such as OpenPub [ 59 ], which uses AI to facilitate replication by generating Jupyter Notebooks with code and actionable recommendations – demonstrate the use of AI to work around the challenges in extracting reproducibility information from traditional paper formats. These tools must work around incomplete or unstructured documentation and would benefit from an approach to publication that prioritizes documentation and open artifacts. By making publications machine-readable, we facilitate the development of AI systems that can independently reproduce, extend, and ultimately generate new scientific discoveries on their own. Researchers have already developed tools to help scientists generate novel hypotheses and research proposals, such as Google AI co-scientist [ 60 ]; although not without limitations [ 61 ], it has already shown to be valuable [62, 63]. Our study has several limitations. First, our LLM-based analysis relied exclusively on the plain text extracted from papers, excluding information potentially contained in figures, tables, supplementary materials, or external repositories not mentioned in the text. Second, our assessment of reproducibility variables is binary; it does not capture the quality or completeness of the shared artifacts. For example, a paper sharing partial code is treated the same as one with a complete, well-documented 14 repository. Third, LLMs can exhibit generalisation bias [ 64 ], and while our prompts were designed to mitigate this, a subtle influence on the model cannot be ruled out. Finally, our estimation of reproducibility is based on the availability of code and data and is highly uncertain. The numbers on which we base the analysis come from a small study that evaluated whether the authors were able to draw the same conclusions from the same data. The study did not evaluate whether the claims can be generalised to new data. Still, these are the best source data that we have found to base a field at scale estimation of reproducibility from. Future work should focus on addressing these limitations, and on expanding the scope of inquiry. Methodologically, future tools could move beyond binary classifications and plain text to assess documentation quality, parse code repositories, and interpret figures. Additional descriptive analyses, breakdowns by institution type, subfield, and geographic region, and a before/after analysis centered on the public release of AI coding assistants would complement the longitudinal trends we report. Expanding the analysis to include more conferences and journals would enable a more rigorous examination of researcher self-selection into venues with or without reproducibility checklists, and could support an empirical estimate of the probability of reproducibility when all seven variables are documented. Furthermore, comparing trends in AI to other scientific disciplines would provide valuable context, revealing whether this embrace of open science is unique to AI or part of a larger movement. 
+
+# 3 Methods 
+
+## 3.1 Reproducibility Variable Selection 
+
+The 20 variables identified by Gundersen and Kjensmo [13] provide the basis for our selection of the reproducibility variables used to assess the progress of open science in AI research. Gundersen and Kjensmo [13] provided both the conceptual framework and, critically, a prompt optimization dataset of 400 manually annotated papers. Building on this existing dataset allowed us to begin prompt engineering without first investing substantial time and resources in manual annotation, and the breadth of the variable set covers the major dimensions of empirical AI research documentation — method, data, experiment, and metadata — making it a well-motivated starting point. These include aspects of the method documentation (problem, objective/goal, research method, research questions, pseudocode), data documentation (training data, validation data, test data, results), experiment documentation (hypothesis, prediction, method source code, hardware specifications, software dependencies, experiment setup, experiment source code), and miscellaneous information about the research (research type, research outcome, affiliation, and contribution). The necessity of documenting these variables is rooted in the principle that sufficient detail must be provided for an independent team to reproduce the work. The variables are primarily Boolean, with one binary variable, research type (empirical/theoretical), and one ternary variable, author affiliation (academia/industry/collaboration). A subsequent replication study by Gundersen et al. [45] reinforced the critical importance of sharing code and data. This finding prompted us to refine the original 15 data-related variables. Instead of checking for separate training, validation, and test data sharing, we replaced them with two new reproducibility variables, reducing the effective variable set from 20 to 19: 
+
+• Open Datasets: This is true if the paper uses a well-known public dataset or shares the dataset via a URL, DOI, or formal citation. 
+
+• Dataset Splits: This is true if the paper specifies how data is split, whether through exact percentages, absolute counts, predefined splits, stratified methods, or cross-validation. To select a robust subset of variables for our automated analysis, we applied three criteria. First, we required class balance, excluding variables where one class had too few instances for reliable LLM evaluation; the first criterion eliminated seven variables, Result Outcomes, Research Method, Research Question, Hypothesis, Prediction, Open Experiment Code, and Results, from consideration. Supplementary Table 6 shows the class balance for each reproducibility variable. Second, we prioritized variables deemed most important for reproducibility based on the findings of Gundersen et al. [45] , which emphasised that providing code and data are paramount. Accordingly, we classified pseudocode, open datasets, dataset splits, results, open code, hardware specification, software dependencies, experiment setup, and open experiment code as important. We also included affiliation and research type as important variables, as their results may influence whether code and data are shared. Third, we required the LLM to achieve an F1 score of 75% or greater for the reproducibility variable during our prompt engineering phase on the prompt optimisation dataset; this threshold was selected to ensure reliable classification while retaining sufficient variables for a comprehensive analysis. Supplementary Table 2 shows the F1 scores for the reproducibility variables on the prompt optimisation dataset. The three remaining excluded variables, Problem Description, Goal/Objective, and Contribution, passed the class balance criterion but did not achieve F1 scores of 75% or greater on the prompt optimization dataset. These variables are not always stated explicitly using consistent terminology in papers and require a higher level of contextual understanding than we were able to achieve reliably through prompting on the LLMs we tested. The excluded variables are not necessarily less important in principle; rather, their reliable automated extraction was not achievable within our current methodology, and we chose not to include any variable for which we lacked confidence in the results. We made modifications to the original dataset from Gundersen and Kjensmo [13] to better suit the capabilities of our LLM-based evaluation. The open code variable was reevaluated; the original study verified if the code was still accessible at the provided link, a task current LLMs cannot perform. Our revised criterion only checks if the paper mentions a link to the code. We also reevaluated software dependencies to ensure the criterion was consistently applied, requiring the mention of both a software package and its version number. Justifications, with quotes from the papers, for the changes to open datasets, dataset splits, open code and software dependencies are provided in supplementary material. For the affiliation variable, we noticed that the original dataset contained only 11 papers in the industry category (i.e., with all authors from industry). With such a small sample size, we would not have been able to reliably 16 assess the ability of our method to detect this type of papers. We thus used a binary classification instead: papers written by authors solely from academia vs ones with at least one author affiliated with industry. 
+
+## 3.2 Automated Evaluation of Reproducibility Variables 
+
+To develop and validate the LLM prompts used for our automated evaluation method, we used the dataset created by Gundersen and Kjensmo [13] containing 400 papers from AAAI (2014 and 2016) and IJCAI (2013 and 2016) and manually evaluated for their 20 reproducible variables, which we refer to as the prompt optimisation dataset. We downloaded PDF versions of the 400 papers from the AAAI and IJCAI proceedings websites and extracted just the text of the papers, excluding figures but including figure captions and the text of the tables, without the table formatting. Then we created a script to automate the process of submitting the paper text and the reproducibility variable evaluation prompt to the APIs for Anthropic, Google, OpenAI and open weight models for inference and save the results in a structured format. We undertook an iterative prompt engineering process to optimise LLM accuracy on each of the 20 reproducibility variables with the prompt optimisation dataset. We did not modify the weights of the model or use other techniques, such as Retrieval-Augmented Generation (RAG). Instead, we utilised a few-shot prompting technique. A few-shot prompt provides a few natural language demonstrations of the task at inference time, but no weight updates are performed [ 65 ]. As the papers analysed in this study were almost certainly used to train the LLMs we evaluated, the degree to which responses reflect in-context reasoning versus recall remains an open question; the method nonetheless achieved F1 scores exceeding 90.0% for six of nine variables on the Evaluation Dataset (Supplementary Table 9). For each variable, we drafted a few-shot prompt and used it to evaluate a subset of the 400 papers. For each reproducibility variable we asked the LLM to return two values: (1) the Boolean, binary, or ternary result of the engineered prompt and (2) a string result that includes a quote of the text from the paper that supports the first result, otherwise explain why the information in the paper is insufficient. The classifications obtained from the LLM were then compared against the ground truth of the prompt optimisation dataset using a confusion matrix. We closely examined the false positives and false negatives, reviewing the quotes from the LLMs string output with the source text of the papers to identify patterns of error. This analysis informed subsequent revisions of the few-shot prompt and the cycle was repeated until the performance of the LLM stabilised at a high level of accuracy and F1 score. Examples demonstrating the model’s handling of negated statements, such as explicit declarations that a dataset is not publicly available, are provided in Supplementary Section S6. The final prompt submitted to the model for each paper consisted of a single API query containing a brief task description followed by the full plain text of the paper and the specific few-shot prompts for each of the 20 variables. The prompts for each variable asked the LLM to determine if the paper met the criterion, provided a list of positive and negative examples to guide its decision, requested a direct quote from the paper to support its answer, and concluded with a final yes/no question. The model was instructed to return its output in a structured JSON format, containing its binary 17 answer and the supporting text from the paper. The full prompt, excluding the text of the individual papers due to size limitations, is available in supplementary material. 
+
+## 3.3 Model Selection and Prompt Engineering 
+
+We evaluated 17 models from Anthropic, Google, OpenAI, Alibaba Cloud, and Microsoft, of which three were open weight models (Supplementary Table 8). We selected the Google Gemini 2.5 Flash model for the final large-scale evaluation based on four key criteria: 
+
+LLM API Features: The task required reliable structured output. The Google, OpenAI, and Ollama (used with the open weight models) APIs support generating JSON output based on a predefined schema, ensuring consistency. The Anthropic API lacked this native capability and was therefore eliminated. 
+
+Time: Due to limited access to GPU resources, we excluded the three open weights models, since we could not process 58 600 papers within a reasonable timeframe. 
+
+Cost: Reserving funds for reasoning and output tokens, which are more expensive and difficult to predict the length of, we selected models that would fit our budget for input tokens for all 56 800 papers, based on an estimated 13 000 input tokens per paper (Estimated costs are in Supplementary Table 8). 
+
+Accuracy: In preliminary tests, Gemini 2.5 Flash demonstrated superior accu-racy on our task compared to other models within our budget con-straints, a result corroborated by the public LLM leaderboard LMArena (https://web.archive.org/web/20250805194617/https://lmarena.ai/leaderboard/text -August 4, 2025) maintained by UC Berkeley. The LLM-generated results for each of the 400 papers were systematically evaluated against the ground truth from the prompt optimisation dataset over five runs. We calculated the mean accuracy and mean F1 score for each reproducibility variable to quantify model performance and selected affiliation, research type, pseudocode, open datasets, dataset splits, open code, hardware specification, software dependencies, and experiment setup as the final variables for our large-scale analysis. The results for each run can be found in Supplementary Table 7. Google Gemini 2.5 Flash demonstrated high performance and stability across five evaluation runs. For affiliation and pseudocode, mean F1 scores greater than 90% was achieved. For research type and hardware specification, open code, open datasets, and dataset splits, we found F1 scores greater than 80%. Software dependencies and experiment setup were also predicted reliably, with F1 scores of 78.3% and 78.8%, respectively. The variance across runs differed substantially for the different variables; the accuracy range varied from 0.5% (hardware specification) to 4.8% (dataset splits), and the F1 score range varied from 1.0% (hardware specification) to 11.9% (software dependencies) – see Supplementary Table 7 for all means and ranges. Furthermore, the consistency of classifications for individual papers was high. For research type, affiliation, pseudocode, open code, hardware specification, and software dependencies, the evaluation was identical across all five runs over 95% of the time. Open dataset, dataset splits, and experiment setup also showed high consistency, with consistent evaluations 87%, 84%, and 74% of the time, respectively, see Figure 8. 18 LLM classification consistency across five runs for each reproducibility variable. Research Type          
+
+> Affiliation
+> Pseudocode
+> Open Code
+> Open Datasets
+> Dataset Splits
+> Hardware Spec.
+> Software Depend.
+> Experiment Setup
+> 200 200
+> 225 225
+> 250 250
+> 275 275
+> 300 300
+> 325 325
+> 350 350
+> 375 375
+> 400 400
+> Number of Papers
+> 0 correct
+> 1 correct
+> 2 correct
+> 3 correct
+> 4 correct
+> 5 correct
+
+Fig. 8 The consistency of classification from the LLM over five runs for each of the reproducibility variables. Light orange represents the number of papers the LLM consistently correctly classified reproducibility variable and the purple represents the number of papers the LLM consistently incorrectly classified reproducibility variable. The dark orange, red, pink and blue, represents the number of papers the LLM did not consistently make the same classification over multiple runs. 
+
+## 3.4 Large-Scale Conference Paper Analysis 
+
+For our large-scale analysis, we selected five top-tier AI conferences: AAAI, ICLR, ICML, IJCAI, and NeurIPS. We collected all published papers over an 11-year period to analyse trends over time. After excluding papers from affiliated workshops and papers from joint proceedings, which often have different reviewing criteria, our final dataset comprised 56 800 main conference papers. We did not include journals in our analysis. Although these journals, such as JAIR and JMLR, play major roles in AI research, we excluded these due to time constraints. This set also included 300 papers from the original analysis by Gundersen and Kjensmo [13] (AAAI 2014, AAAI 2016, and IJCAI 2016). A detailed description of the paper selection and collection process is available in Supplementary Section S3. The workflow for processing the 56 800 papers mirrored the one used for the initial 400-paper evaluation. Each PDF was converted to text, and the same engineered prompt was used with Google Gemini 2.5 Flash for all of the reproducibility variables. Only the nine selected reproducibility variables from Section 1.1 were analysed. The results from the 56 800 paper LLM analysis containing the binary answer and the supporting text from the paper are provided as supplementary material. 
+
+## 3.5 Does the Method Generalise to the Population? 
+
+To validate how well our approach generalised from the prompt optimisation dataset to the full set of papers, we sampled 160 papers uniformly at random from full set of 56 800 papers and labelled them manually to create an evaluation dataset. The results are presented in Supplementary Table 9. The year and conference distributions of the 19 evaluation dataset closely mirror those of the full corpus (Supplementary Figure 2 and Supplementary Figure 3), supporting the generalisability of the results reported below. Surprisingly, the F1 scores show a substantial improvement for all classes, achieving greater than 90 .0% with the exception of three variables; data set splits (81 .48%), software dependencies (81 .25%) and experiment setup (86 .21%). This increase in performance can be attributed to various factors. First, the prompt optimisation dataset is a biased subset of the population, representing only AAAI and IJCAI in 2013, 2014 and 2016. Secondly, the LLM was not actually fitted to the training data, but rather the prompts were optimised, which prevents possible overfitting through backpropagation. Only for one variable a decrease in performance was measured between the prompt optimisation and evaluation datasets: for dataset splits performance dropped from 81 .48% to 79 .56%, a decrease of 1.92 percentage points. We found that the majority of the papers in the evaluation set that had mislabelled data splits were caused by inflexibility in the prompt; in 60.0% of the errors, the procedure produced a false negative due to the authors choosing not to use a validation set and therefore not providing the full data split containing training, validation and test sets. Overall, the results show us that our method generalises well to the full dataset of papers. 
+
+Supplementary information. The LLM prompt, code, results, and analysis can be found online: https://doi.org/10.5281/zenodo.19830174. 
+
+Acknowledgements. Cloud computing services provided by CloudBank: National Science Foundation [# 1925001]. 
+
+# Declarations 
+
+## 3.6 Author contributions 
+
+K.L.C. conceived and designed the experiments, performed the experiments, analysed the data, contributed materials/analysis tools, and wrote the paper. T.S. analysed the data, contributed materials/analysis tools, and wrote the paper. H.H. wrote the paper. O.E.G. conceived and designed the experiments, analysed the data, contributed materials/analysis tools, and wrote the paper. 
+
+## 3.7 Competing interest 
+
+The authors declare no competing interests. 
+
+## 3.8 Data availability 
+
+The datasets generated during the current study are available in the Zenodo repository, https://doi.org/10.5281/zenodo.19830174. We do not include the PDFs for of all 56 800 papers analysed for this study due to copyright concerns. The Zenodo repository includes the code to download and preprocess all 56 800 papers. 20 3.9 Code availability 
+
+The code used for the experiment, include preprocessing and analysis, is available in the Zenodo repository, https://doi.org/10.5281/zenodo.19830174. 
+
+## 3.10 Funding declaration 
+
+K.L.C discloses support for the research of this work from National Science Foundation [# 2226453]. O.E.G. discloses support for the research of this work from RICO (Robust Intelligent Control, Research Council of Norway) [# 329730]. T.S. and H.H. discloses support for the research of this work from through an Alexander von Humboldt Professorship held by Holger Hoos from the Alexander von Humboldt Foundation. 21 References 
+
+[1] Ioannidis, J.P.: Why most published research findings are false. PLoS medicine 
+
+2(8), 124 (2005) [2] McNutt, M.: Reproducibility. American Association for the Advancement of Science (2014) [3] Baker, M.: Reproducibility crisis. nature 533 (26), 353–66 (2016) [4] Pashler, H., Wagenmakers, E.-J.: Editors’ introduction to the special section on replicability in psychological science: A crisis of confidence? Perspectives on psychological science 7(6), 528–530 (2012) [5] Collaboration, O.S.: Estimating the reproducibility of psychological science. Science 
+
+349 (6251), 4716 (2015) [6] Klein, R.A., Ratliff, K.A., Vianello, M., Adams Jr, R.B., Bahn´ ık, ˇS., Bernstein, M.J., Bocian, K., Brandt, M.J., Brooks, B., Brumbaugh, C.C., et al.: Investigating variation in replicability. Social psychology (2014) [7] Camerer, C.F., Dreber, A., Forsell, E., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Almenberg, J., Altmejd, A., Chan, T., et al. : Evaluating replicability of laboratory experiments in economics. Science 351 (6280), 1433–1436 (2016) [8] Prinz, F., Schlange, T., Asadullah, K.: Believe it or not: how much can we rely on published data on potential drug targets? Nature reviews Drug discovery 10 (9), 712–712 (2011) [9] Collins, F.S., Tabak, L.A.: Policy: Nih plans to enhance reproducibility. Nature 
+
+505 (7485), 612–613 (2014) [10] Begley, C.G., Ellis, L.M.: Raise standards for preclinical cancer research. Nature 
+
+483 (7391), 531–533 (2012) [11] Button, K.S., Ioannidis, J.P., Mokrysz, C., Nosek, B.A., Flint, J., Robinson, E.S., Munaf` o, M.R.: Power failure: why small sample size undermines the reliability of neuroscience. Nature reviews neuroscience 14 (5), 365–376 (2013) [12] Hewitt, J.K.: Editorial policy on candidate gene association and candidate gene-by-environment interaction studies of complex traits. Behavior genetics 42 (1), 1–2 (2012) [13] Gundersen, O.E., Kjensmo, S.: State of the art: Reproducibility in artificial intelligence. In: Proceedings of the AAAI Conference on Artificial Intelligence, vol. 32 (2018) [14] Hutson, M.: Artificial intelligence faces reproducibility crisis. Science 22 359 (6377), 725–726 (2018) https://doi.org/10.1126/science.359.6377.725 https://www.science.org/doi/pdf/10.1126/science.359.6377.725 [15] Vicente-Saez, R., Martinez-Fuentes, C.: Open science now: A systematic literature review for an integrated definition. Journal of business research 88 , 428–436 (2018) [16] Bischl, B., Casalicchio, G., Das, T., Feurer, M., Fischer, S., Gijsbers, P., Mukherjee, S., M¨ uller, A.C., N´ emeth, L., Oala, L., et al.: Openml: Insights from 10 years and more than a thousand papers. Patterns (2025) [17] Foster, E.D., Deardorff, A.: Open science framework (OSF). J. Med. Libr. Assoc. 
+
+105 (2) (2017) [18] Wilkinson, M.D., Dumontier, M., Aalbersberg, I.J., Appleton, G., Axton, M., Baak, A., Blomberg, N., Boiten, J.-W., Silva Santos, L.B., Bourne, P.E., et al. : The fair guiding principles for scientific data management and stewardship. Scientific data 3(1), 1–9 (2016) [19] White, M., Haddad, I., Osborne, C., Liu, X.-Y.Y., Abdelmonsef, A., Varghese, S., Hors, A.L.: The model openness framework: Promoting completeness and openness for reproducibility, transparency, and usability in artificial intelligence. arXiv preprint arXiv:2403.13784 (2024) [20] Wilkinson, S.R., Aloqalaa, M., Belhajjame, K., Crusoe, M.R., Paula Kinoshita, B., Gadelha, L., Garijo, D., Gustafsson, O.J.R., Juty, N., Kanwal, S., et al. : Applying the fair principles to computational workflows. Scientific Data 12 (1), 328 (2025) [21] Pineau, J., Vincent-Lamarre, P., Sinha, K., Larivi` ere, V., Beygelzimer, A., d’Alch´ e-Buc, F., Fox, E., Larochelle, H.: Improving reproducibility in machine learning research (a report from the neurips 2019 reproducibility program). Journal of machine learning research 22 (164), 1–20 (2021) [22] Gundersen, O.E., Helmert, M., Hoos, H.: Improving reproducibility in ai research: Four mechanisms adopted by jair. Journal of Artificial Intelligence Research 81 ,1019–1041 (2024) [23] Lucic, M., Kurach, K., Michalski, M., Gelly, S., Bousquet, O.: Are gans created equal? a large-scale study. Advances in neural information processing systems 31 
+
+(2018) [24] Henderson, P., Islam, R., Bachman, P., Pineau, J., Precup, D., Meger, D.: Deep reinforcement learning that matters. In: Proceedings of the AAAI Conference on Artificial Intelligence, vol. 32 (2018) [25] Ferrari Dacrema, M., Cremonesi, P., Jannach, D.: Are we really making much progress? a worrying analysis of recent neural recommendation approaches. In: Proceedings of the 13th ACM Conference on Recommender Systems, pp. 101–109 23 (2019) [26] Belz, A.: A metrological perspective on reproducibility in nlp. Computational Linguistics 48 (4), 1125–1135 (2022) [27] Gundersen, O.E., Shamsaliei, S., Kjærnli, H.S., Langseth, H.: On reporting robust and trustworthy conclusions from model comparison studies involving neural networks and randomness. In: Proceedings of the 2023 ACM Conference on Reproducibility and Replicability, pp. 37–61 (2023) [28] Gebru, T., Morgenstern, J., Vecchione, B., Vaughan, J.W., Wallach, H., Iii, H.D., Crawford, K.: Datasheets for datasets. Communications of the ACM 64 (12), 86–92 (2021) [29] Varoquaux, G., Cheplygina, V.: Machine learning for medical imaging: method-ological failures and recommendations for the future. NPJ digital medicine 5(1), 48 (2022) [30] Kapoor, S., Narayanan, A.: Leakage and the reproducibility crisis in machine-learning-based science. Patterns 4(9) (2023) [31] Haibe-Kains, B., Adam, G.A., Hosny, A., Khodakarami, F., Directors Shraddha Thakkar 35 Kusko Rebecca 36 Sansone Susanna-Assunta 37 Tong Weida 35 Wolfinger Russ D. 38 Mason Christopher E. 39 Jones Wendell 40 Dopazo Joaquin 41 Furlanello Cesare 42, M.A.Q.C.M.S.B., Waldron, L., Wang, B., McIntosh, C., Goldenberg, A., Kundaje, A., et al. : Transparency and reproducibility in artificial intelligence. Nature 586 (7829), 14–16 (2020) [32] Belz, A., Agarwal, S., Shimorina, A., Reiter, E.: A systematic review of repro-ducibility research in natural language processing. arXiv preprint arXiv:2103.07929 (2021) [33] Bouthillier, X., Laurent, C., Vincent, P.: Unreproducible research is reproducible. In: International Conference on Machine Learning, pp. 725–734 (2019). PMLR [34] Hunold, S., Carpen-Amarie, A.: Reproducible mpi benchmarking is still not as easy as you think. IEEE Transactions on Parallel and Distributed Systems 27 (12), 3617–3630 (2016) [35] Hong, S.-Y., Koo, M.-S., Jang, J., Esther Kim, J.-E., Park, H., Joh, M.-S., Kang, J.-H., Oh, T.-J.: An evaluation of the software system dependency of a global atmospheric model. Monthly Weather Review 141 (11), 4165–4172 (2013) [36] Stodden, V., McNutt, M., Bailey, D.H., Deelman, E., Gil, Y., Hanson, B., Heroux, M.A., Ioannidis, J.P., Taufer, M.: Enhancing reproducibility for computational methods. Science 354 (6317), 1240–1241 (2016) 24 [37] Ajayi, K., Choudhury, M.H., Rajtmajer, S.M., Wu, J.: A study on reproducibil-ity and replicability of table structure recognition methods. In: International Conference on Document Analysis and Recognition, pp. 3–19 (2023). Springer [38] Gundersen, O.E., Coakley, K., Kirkpatrick, C., Gil, Y.: Sources of irreproducibility in machine learning: A review. arXiv preprint arXiv:2204.07610 (2022) [39] Gundersen, O.E.: The fundamental principles of reproducibility. Philosophical Transactions of the Royal Society A 379 (2197), 20200210 (2021) [40] Schmidt, S.: Shall we really do it again? the powerful concept of replication is neglected in the social sciences. Review of general psychology 13 (2), 90–100 (2009) [41] Nosek, B.A., Lakens, D.: A method to increase the credibility of published results. Social Psychology 45 (3), 137–141 (2014) [42] Goodman, S.N., Fanelli, D., Ioannidis, J.P.: What does research reproducibility mean? Science translational medicine 8(341), 341–1234112 (2016) [43] Collberg, C., Proebsting, T.A.: Repeatability in computer systems research. Communications of the ACM 59 (3), 62–69 (2016) [44] Raff, E.: A step toward quantifying independently reproducible machine learning research. In: Proceedings of the 33rd International Conference on Neural Informa-tion Processing Systems, vol. 32. Curran Associates Inc., Red Hook, NY, USA (2019) [45] Gundersen, O.E., Cappelen, O., Møln˚ a, M., Nilsen, N.G.: The unreasonable effectiveness of open science in ai: A replication study. In: Proceedings of the AAAI Conference on Artificial Intelligence, vol. 39, pp. 26211–26219 (2025) [46] Magnusson, I., Smith, N.A., Dodge, J.: Reproducibility in nlp: What have we learned from the checklist? In: Findings of the Association for Computational Linguistics: ACL 2023, pp. 12789–12811 (2023) [47] Gundersen, O.E., Gil, Y., Aha, D.W.: On reproducible ai: Towards reproducible research, open science, and digital scholarship in ai publications. AI magazine 
+
+39 (3), 56–68 (2018) [48] Makridakis, S., Spiliotis, E., Assimakopoulos, V.: Statistical and machine learning forecasting methods: Concerns and ways forward. PloS one 13 (3), 0194889 (2018) [49] Pouchard, L., Lin, Y., Van Dam, H.: Replicating machine learning experiments in materials science. In: Parallel Computing: Technology Trends, pp. 743–755. IOS Press, ??? (2020) [50] Coakley, K., Kirkpatrick, C.R., Gundersen, O.E.: Examining the effect of imple-mentation factors on deep learning reproducibility. In: Proceedings of the IEEE 25 18th International Conference on e-Science (e-Science), pp. 397–398 (2022). IEEE [51] Zhuang, D., Zhang, X., Song, S., Hooker, S.: Randomness in neural network training: Characterizing the impact of tooling. In: Marculescu, D., Chi, Y., Wu, C. (eds.) Proceedings of the Fourth Conference on Machine Learning and Systems, vol. 4, pp. 316–336 (2022) [52] Cooper, A.F., Lu, Y., Forde, J., De Sa, C.M.: Hyperparameter optimization is deceiving us, and how to stop it. Advances in Neural Information Processing Systems 34 , 3081–3095 (2021) [53] Reimers, N., Gurevych, I.: Reporting score distributions makes a difference: Per-formance study of LSTM-networks for sequence tagging. In: Palmer, M., Hwa, R., Riedel, S. (eds.) Proceedings of the 22nd Conference on Empirical Methods in Natural Language Processing, pp. 338–348. Association for Computational Lin-guistics, Copenhagen, Denmark (2017). https://doi.org/10.18653/v1/D17-1035 . 
+
+https://aclanthology.org/D17-1035/ 
+
+[54] Gawande, A.: The Checklist Manifesto: How to Get Things Right. Picador, ??? (2010) [55] Gundersen, O.E.: Standing on the feet of giants—reproducibility in ai. Ai Magazine 
+
+40 (4), 9–23 (2019) [56] Gil, Y., David, C.H., Demir, I., Essawy, B.T., Fulweiler, R.W., Goodall, J.L., Karlstrom, L., Lee, H., Mills, H.J., Oh, J.-H., et al. : Toward the geoscience paper of the future: Best practices for documenting and sharing research from data to software to provenance. Earth and Space Science 3(10), 388–415 (2016) [57] Gil, Y.: Will ai write scientific papers in the future? AI Magazine 42 (4), 3–15 (2022) [58] Bhaskar, A., Stodden, V.: Reproscreener: Leveraging llms for assessing computa-tional reproducibility of machine learning pipelines. In: Proceedings of the 2nd ACM Conference on Reproducibility and Replicability, pp. 101–109 (2024) [59] Bibal, A., Minton, S.N., Khider, D., Gil, Y.: Ai copilots for reproducibility in science: A case study. arXiv preprint arXiv:2506.20130 (2025) [60] Gottweis, J., Natarajan, V.: Accelerating scientific breakthroughs with an ai co-scientist. Google Research Blog (2025) [61] Cheetham, A.K., Seshadri, R.: Artificial intelligence driving materials discovery? perspective on the article: Scaling deep learning for materials discovery. Chemistry of Materials 36 (8), 3490–3495 (2024) https://doi.org/10.1021/acs.chemmater. 4c00643 26 [62] Guan, Y., Cui, L., Inchai, J., Fang, Z., Law, J., Brito, A.A.G., Pawlosky, A., Gottweis, J., Daryin, A., Myaskovsky, A., Ramakrishnan, L., Palepu, A., Kulkarni, K., Weng, W.-H., Cheng, Z., Natarajan, V., Karthikesalingam, A., Rong, K., Xu, Y., Tu, T., Peltz, G.: Ai-assisted drug re-purposing for human liver fibrosis. Advanced Science 12 (44), 08751 (2025) https://doi.org/10.1002/advs.202508751 https://advanced.onlinelibrary.wiley.com/doi/pdf/10.1002/advs.202508751 [63] He, L., Patkowski, J.B., Wang, J., Miguel-Romero, L., Aylett, C.H.S., Fillol-Salom, A., Costa, T.R.D., Penad´ es, J.R.: Chimeric infective particles expand species boundaries in phage-inducible chromosomal island mobilization. Cell 188 (23), 6636–665317 (2025) https://doi.org/10.1016/j.cell.2025.08.019 [64] Peters, U., Chin-Yee, B.: Generalization bias in large language model sum-marization of scientific research. Royal Society Open Science 12 (4), 241776 (2025) [65] Brown, T., Mann, B., Ryder, N., Subbiah, M., Kaplan, J.D., Dhariwal, P., Nee-lakantan, A., Shyam, P., Sastry, G., Askell, A., et al. : Language models are few-shot learners. Advances in neural information processing systems 33 , 1877–1901 (2020) 27 S4 Supplementary Tables 
+
+Reproducibility Variable AAAI ICML ICLR IJCAI NeurIPS 2021 2023 2022 2021 2019 
+
+Pseudocode ✓ – – ✓ –Open Code ✓ ✓ ✓ ✓ ✓
+
+Open Datasets ✓ ✓ ✓ ✓ ✓
+
+Dataset Splits – ✓ – ✓ ✓
+
+Hardware Specification ✓ ✓ – ✓ ✓
+
+Software Dependencies ✓ – – ✓ ✓
+
+Experiment Setup ✓ ✓ – ✓ ✓
+
+Supplementary Table 1 Reproducibility variables specified in conference reproducibility checklists. The year each checklist was introduced is shown beneath the conference name. Reproducibility variables are described in Section 1.1 . Checkmarks indicate which conferences require each variable in their submission guidelines. 
+
+Imbalanced Classes Accuracy F1Score Balanced Classes Accuracy F1 Score 
+
+Open Experiment Code 94.6% 55.5% Affiliation 97.4% 92.2% 
+
+Results 96.7% 30.8% Research Type 96.2% 88.7% 
+
+Result Outcome 91.9% 95.8% Pseudocode 91.2% 90.4% 
+
+Research Method 96.7% 5.7% Open Code 97.2% 81.8% 
+
+Research Question 93.5% 52.5% Open Datasets 80.8% 81.2% 
+
+Hypothesis 94.1% 54.3% Dataset Splits 90.2% 83.4% 
+
+Prediction 91.3% 14.8% Hardware Specification 93.7% 86.8% Software Dependencies 95.3% 78.3% Experiment Setup 73.1% 78.8% 
+
+Problem Description 58.9% 65.7% Goal Objective 81.9% 65.7% Contribution 68.7% 74.9% 
+
+Supplementary Table 2 Performance of the LLM-based automated method on reproducibility variables from Gundersen and Kjensmo [13]. Mean accuracy and F1 scores are shown across five evaluation runs. Variables are grouped by class balance, with ”Imbalanced Classes” containing variables where one class has fewer than 25 instances (see Supplementary Table 6 for distributions). The nine bolded variables were selected for the large-scale analysis based on three criteria: balanced class representation, importance for reproducibility, and F1 scores exceeding 75%. 
+
+28 Reproducibility Variable AAAI ICML ICLR IJCAI NeurIPS 
+
+Pseudocode – – – ✓ ✓
+
+Open Code – – – ✓ –Open Datasets – ✓ ✓ – –Dataset Splits – – – – ✓
+
+Hardware Specification ✓ ✓ ✓ ✓ ✓
+
+Software Dependencies – ✓ – ✓ ✓
+
+Experiment Setup – – – – ✓
+
+Supplementary Table 3 Summary of directional changes in documentation trends before and after the introduction of reproducibility checklists. For each reproducibility variable and conference, a checkmark indicates that the post-checklist slope (pp/year) exceeds the pre-checklist slope; “–” indicates no increase. Of the 35 variable-conference pairs, 15 showed an increase (one-sided binomial test, p = 0 .84, Cohen’s h = −0.16), providing no statistical evidence that checklist adoption accelerated documentation improvement. Corresponding slope estimates are reported in Table 1 .
+
+29 Reprod. Variable 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 
+
+AAAI Pseudocode A I A A A A A A A A AOpen Code A A A A A A A A A A AOpen Datasets A I A I I I I I I I IDataset Splits I A I I I I I I I I IHardware Specification A I A I I A A A A I ASoftware Dependencies A A A A A A A A A A AExperiment Setup I I A A I I I I A I IICLR Pseudocode A Tie A A I A A I I A AOpen Code A I A A A A A I A A AOpen Datasets A A A A A I I I I I IDataset Splits I I I A I I I I I I IHardware Specification A I A A I A I I I I ISoftware Dependencies A I I A A A I I A A IExperiment Setup I I A A I I I I I I IICML Pseudocode I I A A A I I A A A AOpen Code A A A A A A I A A A AOpen Datasets A I I I I I I I I I IDataset Splits I I I I I I I I I I IHardware Specification I I A I I I I I I I ISoftware Dependencies A I A A I I I I A I IExperiment Setup I I A I A I I I I I IIJCAI Pseudocode – A I I A A A I A I AOpen Code – A I A A I I A A A AOpen Datasets – A A I A A A I I I ADataset Splits – I I I I I I I I I IHardware Specification – A A A A A A A A I ISoftware Dependencies – A A A A A A A A A AExperiment Setup – I I A I A A I I I ANeurIPS Pseudocode I A A A A A A A A A AOpen Code A A I A A I A I A A AOpen Datasets I I I I I I I I I I IDataset Splits A I I I I I I I I I IHardware Specification A I I I I I I I I I ASoftware Dependencies A A A A A I A I I I AExperiment Setup I I A I I A A A I I I
+
+Supplementary Table 4 Comparison of academic and industry-affiliated authors’ documentation of reproducibility variables across AI conferences (2014–2024). Each cell indicates whether academic (A) or industry (I) papers had a higher percentage of documentation for a given reproducibility variable and year; “Tie” indicates no difference. One-sided binomial tests ( H0 : p = 0 .5, ties excluded, n = 377) find no statistically significant systematic difference favouring academia ( p = 0 .89, Cohen’s h = 0 .05) or industry ( p = 0 .13, Cohen’s h = 0 .05) 
+
+30 Reproducibility Variable Academia Industry 
+
+Pseudocode 46.9% 44.7% Open Code 10.9% 9.9% Open Datasets 67.9% 63.3% Dataset Splits 28.5% 34.2% 
+
+Hardware Specification 26.1% 23.0% Software Dependencies 10.7% 5.8% Experiment Setup 76.9% 75.7% 
+
+Supplementary Table 5 Comparison of documentation rates for reproducibility variables between academic and industry-affiliated papers at AAAI 2014, AAAI 2016, and IJCAI 2016, following the methodology of Gundersen [55]. Percentages indicate the proportion of papers documenting each variable within each affiliation group. Bold values indicate the affiliation group with the higher documentation rate for each reproducibility variable. Research Type Result Outcome Affiliation Problem Description Goal/ Objective True 75 (Theoretical) 377 (Positive) 69 (Industry/Collab) 186 81 False 325 (Empirical) 23 (Negative) 331 (Academia) 214 319 Total 400 400 400 400 400 Research Method Research Question Hypothesis Prediction Contribution True 5 20 17 4 187 False 395 380 383 396 213 Total 400 400 400 400 400 Pseudocode Open Source Code Open Experiment Code Open Datasets Dataset Splits True 177 29 18 171 126 False 148 296 307 154 199 Total 325 325 325 325 325 Results Hardware Specification Software Dependencies Experiment Setup True 12 89 46 223 False 313 236 279 102 Total 325 325 325 325 
+
+Supplementary Table 6 Distribution of results for the reproducibility variables across 400 manually evaluated State of the Art: Reproducibility in Artificial Intelligence papers. Reproducibility variables with fewer than 25 instances (in Bold) of either class were excluded from the large-scale conference paper analyses due to class imbalance. The final two rows include only 325 manual evaluations, as they apply only to empirical papers. 
+
+31 Run Research Type Affiliation Pseudocode Open Code Open Datasets Acc F1 Acc F1 Acc F1 Acc F1 Acc F1
+
+1 96.3% 88.9% 97.8% 93.3% 91.3% 90.5% 97.5% 83.9% 80.5% 81.0% 2 96.3% 88.9% 97.5% 92.7% 91.0% 90.2% 97.8% 84.8% 80.3% 80.7% 3 96.0% 88.1% 97.3% 91.9% 90.5% 89.7% 97.3% 82.5% 83.5% 83.5% 4 95.8% 87.2% 97.0% 91.4% 91.3% 90.5% 97.0% 80.7% 80.0% 80.8% 5 96.8% 90.5% 97.3% 91.9% 91.8% 91.0% 96.5% 77.4% 79.8% 80.2% Range 1.0% 3.3% 0.8% 1.9% 1.3% 1.2% 1.3% 7.3% 3.8% 3.3% Median 96.3% 88.9% 97.3% 91.9% 91.3% 90.5% 97.3% 82.5% 80.3% 80.8% Mean 96.2% 88.7% 97.4% 92.2% 91.2% 90.4% 97.2% 81.8% 80.8% 81.2% Run Dataset Splits Hardware Specification Software Dependencies Experiment Setup Acc F1 Acc F1 Acc F1 Acc F1
+
+1 91.5% 86.0% 93.8% 86.9% 95.3% 77.7% 73.0% 78.7% 2 92.3% 86.8% 93.5% 86.7% 94.5% 74.4% 73.8% 79.6% 3 89.5% 82.5% 93.5% 86.5% 95.0% 78.3% 72.8% 78.6% 4 87.5% 78.5% 94.0% 87.5% 94.5% 75.0% 72.0% 78.0% 5 90.0% 83.1% 93.5% 86.6% 97.0% 86.4% 73.8% 79.1% Range 4.8% 8.4% 0.5% 1.0% 2.5% 11.9% 1.8% 1.6% Median 90.0% 83.1% 93.5% 86.7% 95.0% 77.7% 73.0% 78.7% Mean 90.2% 83.4% 93.7% 86.8% 95.3% 78.3% 73.1% 78.8% 
+
+Supplementary Table 7 The accuracy and F1 score for five runs of the reproducibility variables selected to used for the large-scale conference paper analysis. 
+
+32 Provider Model Input Cost (1M Tokens) Output Cost (1M Tokens) Est. Input Cost (56 800 Papers) 
+
+Commercial Models 
+
+Anthropic claude-opus-4-20250514 $15.00 $75.00 $11 076.00 Anthropic claude-sonnet-4-20250514 $3.00 $15.00 $2 215.20 Anthropic claude-3-5-haiku-20241022 $0.80 $4.00 $590.72 Google gemini-2.5-pro $1.25 $10.00 $923.00 
+
+Google gemini-2.5-flash $0.30 $2.50 $221.52 Google gemini-2.5-flash-lite $0.10 $0.40 $73.84 Google gemini-2.0-flash-001 $0.15 $0.60 $110.76 
+
+OpenAI o3-2025-04-16 $2.00 $8.00 $1 476.80 OpenAI o4-mini-2025-04-16 $1.10 $4.40 $812.24 OpenAI gpt-4.1-2025-04-14 $2.00 $8.00 $1 476.80 OpenAI gpt-4o-2024-08-06 $2.50 $10.00 $1 846.00 
+
+OpenAI gpt-4.1-mini-2025-04-14 $0.40 $1.60 $295.36 OpenAI gpt-4.1-nano-2025-04-14 $0.10 $0.40 $73.84 
+
+open weights Models 
+
+Google gemma2:27B - - -Alibaba Cloud qwen3:14B - - -Microsoft phi4:14B - - -
+
+Supplementary Table 8 The LLM models considered for automated paper analysis. The Anthropic models were excluded from final consideration due to the API not supporting structured output. The open weights models were excluded from final consideration due to the time it would take to complete the large-scale conference paper analysis with the hardware we had access to. The Google and OpenAI models that we estimated would cost more than $300 USD for the Input Tokens for 56 800 papers were excluded from final consideration due to cost. The bolded models were in the final consideration based on Accuracy. We selected gemini-2.5-flash (red) for the large-scale conference paper analysis. Variable F1-score Precision Recall Accuracy Std. Dev 95% CI Research Type 100.00% 100.00% 100.00% 100.00% 0.00% [1.00, 1.00] Affiliation 94.96% 92.96% 97.06% 95.62% 20.45% [0.92, 0.99] Pseudocode 93.96% 88.61% 100.00% 94.38% 23.04% [0.91, 0.98] Open Code 92.90% 88.89% 97.30% 93.12% 25.30% [0.89, 0.97] Open Source Data 96.30% 94.35% 98.32% 94.38% 23.04% [0.91, 0.98] Dataset Splits 81.48% 83.02% 80.00% 87.50% 33.07% [0.82, 0.93] Hardware Specification 96.43% 94.74% 98.18% 97.50% 15.61% [0.95, 1.00] Software Dependencies 81.25% 72.22% 92.86% 96.25% 19.00% [0.93, 0.99] Experiment Setup 86.21% 76.34% 99.01% 80.00% 40.00% [0.74, 0.86] 
+
+Supplementary Table 9 Results on the evaluation dataset of our method per reproducibility variable. We present the F1-score, precision, recall, and, accuracy with standard deviation and 95% confidence interval. 
+
+33 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 
+
+Year      
+
+> 00
+> 10 10
+> 20 20
+> 30 30
+> 40 40
+> Percentage of All Papers
+
+Percentage of Theoretical Papers by Conference      
+
+> All Papers AAAI ICLR ICML IJCAI NeurIPS
+
+Supplementary Figure 1 The percentage of theoretical papers published at the five AI conferences from 2014 to 2024. IJCAI did not hold a conference in 2014. Theoretical work declined from 10% of all publications in 2014 to 6% in 2024, following a peak of 15% in 2015. This trend is most pronounced at IJCAI, which shifted from 24% theoretical papers in 2015 to 9% by 2024. The decline reflects a broader shift in AI research toward empirical methods, making open science practices, such as code and data sharing, increasingly critical for ensuring the reproducibility and trustworthiness of published findings. By 2024, empirical papers constituted 94% of publications across these five conferences. 
+
+# S5 Supplementary Figures 
+
+34 2014    
+
+> 3.1%
+> 2015
+> 2.5% 2016
+> 3.8%
+> 2017 1.9%
+> 2018 2.5%
+> 2019
+> 3.1%
+> 2020
+> 11.2%
+> 2021
+> 15.6% 2022
+> 15.6%
+> 2023
+> 18.1%
+> 2024
+> 22.5%
+
+Distribution of Years in Validation Set (160 papers)  
+
+> 2014
+> 2.1%
+> 2015
+> 3.4% 2016
+> 4.0%
+> 2017 4.7%
+> 2018
+> 6.4%
+> 2019
+> 8.3%
+> 2020
+> 10.4%
+> 2021
+> 11.6%
+> 2022
+> 12.3%
+> 2023
+> 15.6%
+> 2024
+> 21.2%
+
+Distribution of Years in All LLM Results (56800 papers) Supplementary Figure 2 Year distributions of the 160-paper evaluation dataset (left) and the full 56,800-paper corpus (right). Each slice represents the proportion of papers from a given year. The distributions are broadly comparable, particularly from 2020 onward; papers from 2014–2019 are modestly overrepresented in the evaluation dataset relative to the full corpus, reflecting the smaller absolute paper counts in those years. AAAI 25.6% 
+
+> ICLR
+> 16.2%
+> ICML
+> 15.0%
+> IJCAI 8.1%
+> NeurIPS
+> 35.0%
+
+Distribution of Conferences in Validation Set (160 papers)  
+
+> AAAI 22.9%
+> ICLR
+> 13.6%
+> ICML
+> 18.8%
+> IJCAI 11.9%
+> NeurIPS
+> 32.8%
+
+Distribution of Conferences in All LLM Results (56800 papers) 
+
+Supplementary Figure 3 Conference distributions of the 160-paper evaluation dataset (left) and the full 56,800-paper corpus (right). Each slice represents the proportion of papers from a given conference. All five conferences are within three percentage points of their corresponding share in the full corpus, with the exception of ICML (15.0% vs. 18.8%) and IJCAI (8.1% vs. 11.9%), supporting the generalizability of the F1 score estimates reported in Table A10 across venues. 
+
+35 S6 Paper Selection Methodology 
+
+The following section details the paper selection methodology for this work. We present the data sources, inclusion criteria, and exclusion criteria for each of the five leading AI conferences surveyed between 2014 and 2024. 
+
+## AAAI Conference on Artificial Intelligence (AAAI) 
+
+• Years Analysed: 2014–2024 
+
+• Data Source: Paper metadata was collected from the official AAAI Conference Pro-ceedings website: https://aaai.org/aaai-publications/aaai-conference-proceedings/. 
+
+• Inclusion Criteria: The analysis included all papers published in the main 
+
+Technical Tracks .
+
+• Exclusion Criteria: Papers from the following tracks were excluded: Student Abstract, Senior Member Summary Talks, Senior Member Blue Sky, Demonstrations, Doctoral Consortium, Senior Track, as well as papers from the affiliated EAAI and IAAI conferences. 
+
+• Errors: Two PDFs on AAAI’s website from 2019 were corrupt and could not be read: ”Deeply Fusing Reviews and Contents for Cold Start Users in Cross-Domain Recommendation Systems” and ”TransNFCM: Translation-Based Neural Fashion Compatibility Modeling”. The papers were downloaded from alterna-tive locations, https://ojs.aaai.org/index.php/AAAI/article/view/3773/3651 and https://ojs.aaai.org/index.php/AAAI/article/view/3811/3689, respectively. 
+
+## International Conference on Learning Representations (ICLR) 
+
+• Years Analysed: 2014–2024 
+
+• Data Sources: 
+
+– 2014: ICLR 2014 Archive (https://iclr.cc/archive/2014/old-site/program-details/ conference-program.html) – 2015–2016: ICLR Website Archives (https://iclr.cc/archive/www/2015.html & https://iclr.cc/archive/www/2016.html) – 2017–2024: OpenReview API (https://openreview.net/group?id=ICLR.cc) 
+
+• Inclusion Criteria: 
+
+– For 2014–2016, all papers designated as Orals and Posters were included. – For 2017–2024, we included all submissions from the OpenReview API that did not have a “reject” status in the final decision field (the specific field name, such as Acceptance Decision , Decision , or Meta Review , varied by year). This encompassed papers published as Orals , Posters , and Spotlights .
+
+• Exclusion Criteria: All papers from Workshop Tracks were excluded across all years. 
+
+• Errors: The paper ”The Concrete Distribution: A Continuous Relaxation of Discrete Random Variables” from 2017 returned an http 403 error. The paper was downloaded from an alternative location: https://ora.ox.ac.uk/objects/uuid:5635eaad-c1bf-4f13-8832-034b90c0023a/files/m493237e01997411d8db562cb30b3ec71. 36 International Conference on Machine Learning (ICML) 
+
+• Years Analysed: 2014–2024 
+
+• Data Source: Proceedings of Machine Learning Research (PMLR) website: https: //proceedings.mlr.press. 
+
+• Inclusion Criteria: The dataset includes all papers listed in the official proceedings for each year. 
+
+## International Joint Conference on Artificial Intelligence (IJCAI) 
+
+• Years Analysed: 2015–2024 
+
+• Data Source: Official IJCAI proceedings website: https://www.ijcai.org/all proceedings. 
+
+• Inclusion Criteria: Only papers from the main Technical Track were included. 
+
+• Exclusion Criteria: Papers from the following tracks were excluded: Demos, Journal Track, Best Papers from Sister Conferences, Doctoral Consortium, Invited Talks, Early Career, Survey track, Exhibits, AI and Arts, AI for Good, and Human-Centred AI. 
+
+## Conference on Neural Information Processing Systems (NeurIPS) 
+
+• Years Analysed: 2014–2024 
+
+• Data Source: NeurIPS Proceedings website: https://proceedings.neurips.cc. 
+
+• Inclusion Criteria: All papers belonging to the Main Conference Track were included. 
+
+• Exclusion Criteria: Papers from the Datasets and Benchmarks Track were excluded from the analysis.                                                                                
+
+> Year AAAI ICLR ICML IJCAI NeurIPS Total (Year)
+> 2014 447 38 310 -411 1 206 2015 651 31 270 569 403 1 924 2016 676 80 322 647 569 2 294 2017 645 245 434 664 679 2 667 2018 935 337 621 718 1 009 3 620 2019 1 146 502 773 846 1 428 4 695 2020 1 607 687 1 084 645 1 898 5 921 2021 1 654 859 1 183 586 2 334 6 616 2022 1 319 1 094 1 233 678 2 671 6 995 2023 1 578 1 573 1 828 639 3 218 8 836 2024 2 331 2 260 2 610 790 4 035 12 026
+> Total 12 989 7 706 10 668 6 782 18 655 56 800
+> Supplementary Table 10 Number of Papers Analysed by AI Conferences and Year
+
+37 Conference Year URL 
+
+NeurIPS 2019 https://neurips.cc/Conferences/2019/CallForPapers AAAI 2021 https://aaai-23.aaai.org/reproducibility-checklist/ IJCAI 2021 https://ijcai-21.org/wp-content/uploads/2020/12/20201226-IJCAI-Reproducibility.pdf ICML 2023 https://icml.cc/Conferences/2023/PaperGuidelines ICLR 2022 ∗ https://iclr.cc/Conferences/2022/AuthorGuide 
+
+Supplementary Table 11 Reproducibility checklists and guidelines introduced by the five leading AI conferences. The year column indicates when each conference introduced its checklist or guideline. ∗ICLR introduced an optional reproducibility statement guideline rather than a mandatory checklist. 
+
+# S7 LLM Prompt 
+
+The prompt submitted to the model for each paper consisted of a single API query containing the full plain text of the paper followed by questions for each of the 20 reproducibility variables defined by Gundersen and Kjensmo [13] . Plain text was extracted from the PDF of each paper, excluding figures but including figure captions and table text; this extracted text was inserted into the prompt at the location indicated by the placeholder ”PAPER TEXT INSERTED HERE” .Two JSON keys in the prompt differ from the variable names used in the main analysis. The train key corresponds to the open datasets variable, and the validation key corresponds to the dataset splits variable. These key names reflect the original variable definitions from Gundersen and Kjensmo [13] , in which separate training, validation, and test data variables were defined. As described in Section 3.1 , we replaced those three variables with open datasets and dataset splits to better capture artifact sharing practices relevant to reproducibility. The test variable from the original schema was retained in the prompt but excluded from the large-scale analysis. The affiliation question in the prompt distinguishes three categories: academia (0), collaboration between academia and industry (1), and industry (2). As described in Section 3.1 , the prompt optimization dataset contained only 11 purely industry-affiliated papers, which was insufficient to reliably assess classification performance for that category. We therefore combined industry and collaboration into a single binary category for the large-scale analysis, treating any paper with at least one industry-affiliated author as industry-affiliated.                                                                                          
+
+> You will be provided with aresearch paper , and your task is to answer questions about the contents of the research paper . Now , please analyze the following research paper : < PAPER TEXT INSERTED HERE > ## Questions for Paper Analysis Return the results of your analysis as avalid JSON object with the following structure . Each JSON key must contain two sub - elements : ### Output Format Requirements Return your analysis as avalid JSON object with the following structure . Each field must contain two sub - elements : -** result **: An Int with the specific value as defined for each question ( varies by question -see below )
+
+38 - ** paper_text **: A string containing the relevant text excerpt from the paper that supports your answer , or a brief explanation if not found The questions and JSON keys are as follows : Determine whether the paper is based on ** experimental research ** or ** theoretical research **. Return ** Experimental ** (0) if : - It conducts empirical studies , including running experiments , analyzing data , reporting metrics , or validating hypotheses - Indicators include evaluation on datasets , comparisons to baselines , test / train / validation splits , ablation studies , and performance tables or graphs Return ** Theoretical ** (1) if : - It focuses only on conceptual or mathematical contributions without empirical validation - Examples include algorithm design , proofs , lemmas , or symbolic derivations - These papers may include pseudocode but do not analyze results from actual experiments If the paper includes both theoretical and empirical components , classify it as ** Experimental **. Quote the text from the paper that supports your decision . ** Does the paper conduct EMPIRICAL STUDIES WITH DATA ANALYSIS ( experiments , dataset evaluation , performance metrics , or hypothesis validation ) rather than purely theoretical work ?** Return 0 for experimental research or 1 for theoretical framework and use research_type as the JSON key . Determine whether the paper reports a ** positive ** or ** negative ** outcome based on its main findings . Return ** Yes ** ( positive outcome ) if : - The authors explicitly state that their method improves upon prior work , achieves higher accuracy or F1 scores , or reaches state - of - the - art ( SOTA ) results - Key indicators include phrases like " Our method significantly outperforms ..." , " We achieve better results than ..." , " These results confirm the effectiveness ..." Return ** No ** ( negative outcome ) if : - The method fails to outperform baselines , results are marginal or inconclusive , or the hypothesis is not supported - Typical phrases include " No significant improvement was observed ..." , " Comparable to existing methods ..." , " Results were not conclusive ..." - Only classify as positive if the paper clearly claims at least one success Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper report CLEAR SUCCESS CLAIMS ( explicit statements of outperformance , higher accuracy , or confirmed effectiveness ) in its main findings ?** Return 1 for positive or 0 for negative and use result_outcome as the JSON key . Determine whether the paper ’ s authors have ** industry ** , ** academic ** , or ** collaborative ** affiliations . The authors ’ affiliations and email addresses are usually listed in the first few paragraphs of the paper . Use this information to classify the affiliation type : Return **2** ( classify as Industry ) if : - All authors are affiliated with corporations or private - sector labs 
+
+39 - Email addresses end in domains like ‘. com ‘ , ‘. ai ‘ , ‘. tech ‘ , or have company names like " IBM ," " Google ," " DeepMind ," etc . Return **0** ( classify as Academia ) if : - All authors are from universities or public research institutions - Email domains include ‘. edu ‘ , ‘. ac . uk ‘ , ‘. edu . cn ‘ , or subdomains like ‘ cs . cmu . edu ‘ , ‘ eecs . mit . edu ‘ , etc . Return **1** ( classify as Collaboration ) if : - There is a mix of academic and industry affiliations based on the institutional names or email domains Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper provide CLEAR INSTITUTIONAL AFFILIATIONS ( university names , company names , or email domains ) that allow classification of author affiliation types ?** Return 0 for academia only , 1 for collaboration of both academia and industry , or 2 for industry only and use affiliation as the JSON key . Determine whether the paper includes an ** explicit statement of the research problem ** , using exact phrasing or close lexical variants . Return ** Yes ** if : - The paper includes a sentence that uses one of the following patterns : " the problem [ is | we address | this paper addresses ]..." , " to solve [ this problem | the problem of ]..." - Statements that clearly describe what the research aims to solve if they are framed like a problem , such as " the challenge we tackle is ..." , " the main issue is ..." Return ** No ** if : - There are vague uses of the word " problem " or general task descriptions like " we study ..." or " our method is designed to ..." unless they directly align with the problem framing above Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper include an EXPLICIT RESEARCH PROBLEM STATEMENT ( using phrases like " the problem is " , " to solve the problem of " , or " the challenge we tackle ") ?** Return 1 for yes or 0 for no and use problem_description as the JSON key . Determine whether the paper includes an ** explicit statement of the research objective or goal ** , using exact phrasing or close lexical variants . Return ** Yes ** if : - The paper contains a sentence with one of these forms : " the objective [ of this paper | is | was ]..." , " our objective [ is | was ]..." , " the goal [ of this research | is | was ]..." , " our goal [ is | was ]..." - Clear variations such as " a key objective of this study is ..." , " one objective of this work is ..." , " the main goal of this approach is ..." , " this study has the objective / goal of ..." , " the research objective is defined as ..." , " an explicit goal is to ..." Return ** No ** if : - There are vague motivation or general intent phrases ( e . g . , " we aim to ..." , " we explore ..." , " our focus is ...") unless they use the words ** goal ** or ** objective ** in the sentence Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper explicitly state a RESEARCH GOAL OR OBJECTIVE ( using the exact words " goal " or " objective " in formal research statements ) ?** Return 1 for yes or 0 for no and use goal_objective as the JSON key . Determine whether the paper explicitly states the ** research methodology ** , using exact phrasing or close lexical variants . 
+
+40 Return ** Yes ** if : - The paper contains a sentence that includes any of the following exact or near - exact expressions : " the methodology ..." , " our methodology ..." , " the research methodology ..." , " the research method ..." , " our research method ..." - Variants like " this paper uses the methodology ..." , " we follow the research method of ..." are also acceptable , but only if they use the key phrases **" methodology "** or **" research method "** directly Return ** No ** if : - There are phrases like " our approach ..." or " we propose a method ..." unless they use one of the key phrases above Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper explicitly use the phrase METHODOLOGY OR RESEARCH METHOD ( exact terminology " methodology " or " research method " in formal statements ) ?** Return 1 for yes or 0 for no and use research_method as the JSON key . Determine whether the paper explicitly states one or more ** research questions ** , using exact phrasing or close lexical variants . Return ** Yes ** if : - The paper includes phrases like " the research questions are ..." , " this research seeks to answer ..." , " we pose the following research questions ..." - Lists labeled as " RQ " , " RQ1 " , " RQ2 " , or " Research Question 1" , etc . - A clearly structured sentence like " we aim to answer the following question ( s ) ..." , followed by one or more question - like statements Return ** No ** if : - There are vague intent statements like " we explore ..." or " we investigate ..." unless they are tied to a numbered or explicitly labeled research question Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper clearly present FORMAL RESEARCH QUESTIONS ( explicitly labeled as " RQ " , " Research Question " , or structured question statements ) ?** Return 1 for yes or 0 for no and use research_question as the JSON key . Determine whether the paper explicitly states a ** research hypothesis ** , using exact phrasing or close lexical variants . Return ** Yes ** if : - The paper includes a sentence that uses the word **" hypothesis "** in any of the following accepted forms : " the hypothesis is ..." , " the hypothesis that ..." , " we hypothesize that ..." , " our hypothesis is ..." , " our hypothesis assumes ..." , " our guiding hypothesis is ..." , " the central hypothesis ..." , " this hypothesis suggests that ..." , " we test the hypothesis that ..." , " this paper tests the hypothesis ..." , " we formulate the hypothesis that ..." , references to a " Null Hypothesis " or " Alternative Hypothesis " Return ** No ** if : - There are statements that imply assumptions or beliefs unless the term **" hypothesis "** appears in the sentence Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper explicitly refer to a RESEARCH HYPOTHESIS ( using the exact word " hypothesis " in formal research statements ) ?** Return 1 for yes or 0 for no and use hypothesis as the JSON key . Determine whether the paper explicitly states a ** predicted outcome ** , using exact phrasing or close lexical variants . Return ** Yes ** if : - The paper contains a sentence that uses any of the following phrases : " we predict that ..." , " the predicted outcome is ..." , " we expect that ..." , " our expectation is that ..." , " it is expected that ..." 
+
+41 - Phrasings like " the model is expected to ..." or " our approach is predicted to ..." Return ** No ** if : - There are vague goal statements like " we aim to ..." or " we intend to ..." unless they include the words ** predict ** or ** expect ** Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper include an EXPLICIT PREDICTED OUTCOME ( using specific prediction language like " we predict " , " we expect " , or " predicted outcome ") ?** Return 1 for yes or 0 for no and use prediction as the JSON key . Determine whether the paper explicitly states the ** contributions ** of the research , using exact phrasing or close lexical variants . Return ** Yes ** if : - The paper contains a sentence that clearly lists or describes contributions using any of the following : - " The contributions of this paper are ..." - " Our contributions are ..." - " This paper contributes the following ..." - " This contributes to ..." ( only if it refers to novel findings or technical contributions ) - Phrases like : " The main contribution is ..." , " A key contribution of this work is ..." Return ** No ** if : - There are vague mentions of impact or relevance unless the word **" contribution "** is clearly tied to something new , original , or specific to this research Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper explicitly list or state the CONTRIBUTIONS using the accepted phrasing to describe novel findings or technical advances ?** Return 1 for yes or 0 for no and use contribution as the JSON key . Determine whether the paper contains ** pseudocode ** or a clearly labeled algorithm block . Return ** Yes ** if : - The paper includes a figure , block , or section labeled " Pseudocode " , " Algorithm " , or " Algorithm X " - Structured steps for a method or procedure formatted like code or an algorithm ( even if not explicitly called " pseudocode ") Return ** No ** if : - The paper only describes steps in regular paragraph text without structured formatting Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper contain STRUCTURED PSEUDOCODE OR ALGORITHM BLOCKS ( clearly labeled algorithm sections or code - like formatted procedures ) ?** Return 1 for yes or 0 for no and use pseudocode as the JSON key . Determine whether the paper provides ** open - source code for the methodology it describes **. Return ** Yes ** if : - The paper includes an unambiguous sentence where the authors state they are releasing the code ** for the work described in this paper ** ( e . g . , " We release our code ..." , " The source code for our method is available at ...") - A direct link to a source - code repository ( e . g . , GitHub , GitLab , Bitbucket ) that contains the code for the paper ’ s methodology - A clear statement that code is provided in ** supplementary material ** , ** appendices ** , or via an ** anonymous review link ** 
+
+42 Return ** No ** if : - The code is promised for the future using phrases like " we plan to release ..." , " code will be made available ..." , or " our tool will be publicly available ..." - The code is only available " upon request " - The text discusses the source code of a ** third - party tool or platform that the authors used ** , but does not provide their own implementation code - The link points to a resource that is explicitly a ‘ dataset ‘ , ‘ benchmark ‘ , ‘ corpus ‘ , ‘ taxonomy ‘ , or ‘ data ‘ , and does not also clearly host the source code - The URL provided is for a general domain , a personal homepage , ** a project demonstration page , or a high - level project overview page ** instead of aspecific code repository - ** The text is ambiguous or lacks a clear , affirmative statement of release ** Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper provide CONCRETE ACCESS TO SOURCE CODE ( specific repository link , explicit code release statement , or code in supplementary materials ) for the methodology described in this paper ?** Return 1 for yes or 0 for no and use open_source_code as the JSON key . Determine whether the paper includes a link to the ** actual code used to run the experiments ** described in the paper . Return ** Yes ** if : - The paper provides a link to a GitHub , GitLab , Bitbucket , or anonymous repository and does ** not ** specify that the code is unrelated to experiments - The text mentions that code , scripts , or software used to run the experiments is " available at ..." , " shared in supplementary material " or " appendix " - The linked repo is implied to contain code that produces the ** results , tables , or figures ** in the paper Return ** No ** if : - The paper includes ** no link ** - The link is unrelated to this paper ’ s experiments ( e . g . , a third - party baseline , pretrained model , or unrelated library ) - The code is ** only promised ** or ** available upon request ** - The link is to a ** dataset ** , ** benchmark ** , or ** corpus ** Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper include CONCRETE ACCESS TO EXPERIMENT CODE ( specific repository links or explicit statements about code availability ) used to run its experiments ?** Return 1 for yes or 0 for no and use op en_expe riment _code as the JSON key . Determine whether the paper explicitly states that the ** dataset ** used in the experiments is ** publicly available ** or an ** open ** dataset . Return ** Yes ** if : - The paper uses a well - known public dataset ( e . g . , " CIFAR -10" , " MNIST " , " ImageNet " , " COCO " , " Penn Treebank ") - Provides a direct URL , DOI , or specific repository name ( e . g . , GitHub , Zenodo , Figshare ) where the dataset can be accessed - Cites a published paper or resource that contains the dataset with proper bibliographic information ** including author names and year in brackets or parentheses ** - States the dataset is in supplementary material with specific file names or section references - ** References standard academic datasets with citations ** or ** mentions datasets from well - known repositories or benchmarks with proper attribution ** Return ** No ** if : - The paper mentions the dataset but gives no indication of availability - The dataset is proprietary , private , or internal - The authors created their own dataset but do not provide public access ( no link , DOI , repository , or citation ) 
+
+43 - The paper describes or mentions a dataset but does not provide any source , link , citation , or repository information for accessing it - The dataset is described as " available upon request " or " available from authors " without permanent public access - The paper only describes the dataset characteristics , collection process , or statistics without providing access information - The paper mentions using " publicly available data " but does not specify the exact source or provide access details - ** The dataset name is mentioned but no citation , link , repository , or author attribution is provided ** Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper provide CONCRETE ACCESS INFORMATION ( specific link , DOI , repository name , formal citation with authors / year , or reference to established benchmark datasets ) for a publicly available or open dataset ?** Return 1 for yes or 0 for no and use train as the JSON key . Determine whether the paper explicitly provides ** training / test / validation dataset splits ** needed to reproduce the experiment . Return ** Yes ** if : - The paper specifies exact split percentages ( e . g . , "80/10/10 split " , "70% training , 15% validation , 15% test ") - Provides absolute sample counts for each split ( e . g . , "40 ,000 training samples , 5 ,000 validation , 5 ,000 test ") - References predefined splits with citations ( e . g . , " we use the standard train / test split from [ Author et al . , 2020]") - Mentions specific file names or URLs for custom splits ( e . g . , " train . txt , val . txt , test . txt available at ...") - Describes stratified or group - based splitting methodology ( e . g . , " stratified by class " , " split by subject ID " , " temporal split ") - Provides random seed with splitting strategy ( e . g . , " random split with seed 42") - Specifies cross - validation setup ( e . g . , "5 - fold cross - validation " , " leave - one - out cross - validation ") - Uses standard benchmark splits that are well - defined ( e . g . , " CIFAR -10 standard split " , " ImageNet validation set ") Return ** No ** if : - References datasets without mentioning splits ( e . g . , " we use the XYZ dataset ") - Splits are mentioned vaguely ( e . g . , " we split the data appropriately ") - Only mentions total dataset size without split information - Defers split details to supplementary materials or other papers without providing access - Uses phrases like " standard split " or " typical split " without specification Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper provide SPECIFIC DATASET SPLIT INFORMATION ( exact percentages , sample counts , citations to predefined splits , or detailed splitting methodology ) needed to reproduce the data partitioning ?** Return 1 for yes or 0 for no and use validation as the JSON key . Determine whether the paper explicitly states the ** test data split ** or ** testing subset ** used to evaluate the model ’ s performance . Return ** Yes ** if : - The paper explicitly mentions phrases like " test set " , " testing set " , " test portion " , " test split " , " held - out test data " - Mentions of dataset names used for testing ( e . g . , " CIFAR -10 test set " , " evaluated on the test set of ImageNet ") - Quantitative indicators such as "10 K examples for testing " , "20% used as test data " Return ** No ** if : - There are vague mentions like " test accuracy " or " we tested our model " with no details about the test data - " Test results " or " testing performance " without indicating the data used 
+
+44 - References to standard datasets ( like " we used MNIST ") without specifying the test subset or split Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper clearly describe the TEST DATA SPLIT ( explicit mention of test set , split , or subset with specific details ) used for evaluation ?** Return 1 for yes or 0 for no and use test as the JSON key . Determine whether the paper includes links to the ** results of the experiment **. Return ** Yes ** if : - The paper includes a URL ( e . g . , to GitHub , Google Drive , institutional repository , Zenodo , Dropbox , etc .) pointing to result files , visualizations , spreadsheets , or dashboards - It says results are in supplementary material , appendix , or provided anonymously for review - It includes phrases like " Results available at ..." , " Our results can be found in ..." , " The experimental output is linked at ..." Return ** No ** if : - Results are only shown in the paper ’ s main text ( figures or tables inside the PDF ) - The paper mentions results will be released later or are available upon request - The link is only to datasets , tools , or pretrained models not tied to the paper ’ s experimental output Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper link to or externally share CONCRETE ACCESS TO EXPERIMENTAL RESULTS ( specific URLs , repositories , or supplementary materials containing result files ) ?** Return 1 for yes or 0 for no and use results as the JSON key . Determine whether the paper ** explicitly describes the hardware used ** to run its experiments . Return ** Yes ** if : - The paper mentions any specific hardware setup , including : - ** Specific GPU models ** ( e . g . , " NVIDIA A100 " , " RTX 2080 Ti " , " Tesla V100 ") - ** Specific CPU models or processors ** ( e . g . , " Intel Core i7 -4770 K " , " Intel Xeon E5 -2630" , " AMD Ryzen 9 5950 X " , " Intel Core i5 -3210 M " , " Intel i7 -2600") - ** TPU or other accelerator references ** ( e . g . , " TPU v2 " , " Google TPU " , " Intel Neural Compute Stick ") - ** Cloud or cluster resources with specs ** ( e . g . , " AWS p3 .8 xlarge with V100 GPUs " , " Google Cloud TPU v3 ") - ** Computer specifications with processor details ** ( e . g . , " laptop with Intel Core i5 " , " workstation with Intel Xeon " , " desktop PC with Intel Core i7 ") - Direct statements about where experiments were run , such as : - " We trained our models using ..." - " Experiments were performed on ..." - " Hardware specifications include ..." - " All experiments ran on ..." - " Our machine has ..." - " Results are obtained on ..." Return ** No ** if : - No hardware is mentioned - The paper only discusses software , datasets , or ** vague terms like " on a GPU " , " using a High Performance Computing Resource " , or " on a server " without any specific model numbers , processor types , or memory details ** - Any mention of hardware is disconnected from the experimental process - The hardware mentioned ( like mobile phones , tablets , or IoT devices ) is not used for training or inference in the experiments - ** Only general computing environments are mentioned without any specific hardware details ( e . g . , " on a cluster " , " using cloud computing " with no specifications ) ** 
+
+45 Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper provide SPECIFIC HARDWARE DETAILS ( exact GPU / CPU models , processor types with speeds , memory amounts , or detailed computer specifications ) used for running its experiments ?** Return 1 for yes or 0 for no and use ha rd w ar e_ s pe ci f ic at i on as the JSON key . Determine whether the paper provides a reproducible description of the ancillary software . A reproducible description ** must include specific version numbers ** for key software components . Return ** Yes ** if the paper meets one of the following criteria : - It lists multiple key software components with their versions ( e . g . , " Python 3.8 , PyTorch 1.9 , and CUDA 11.1") - It names a self - contained solver , simulation environment , or specialized package with a specific version number ( e . g . , " CPLEX 12.4" , " Gecode 4.2.0" , " Choco 2.1.5") Return ** No ** if the paper only mentions : - Software names without version numbers ( e . g . , " using Caffe " , " the scikit - learn package ") - A programming language , even with a version , without listing any versioned libraries or solvers ( e . g . , " implemented in Java 7" by itself is not enough ) Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper provide SPECIFIC ANCILLARY SOFTWARE DETAILS ( e . g . , library or solver names with version numbers like Python 3.8 , CPLEX 12.4) needed to replicate the experiment ?** Return 1 for yes or 0 for no and use s of twa re _de pen de nci es as the JSON key . Determine whether the paper explicitly provides details about the ** experimental setup ** , especially hyperparameters or system - level training settings . Return ** Yes ** if : - The paper contains specific hyperparameter values ( e . g . , learning rate , batch size , number of epochs , optimizer settings ) - Details on model initialization , dropout rate , or training schedules - A clearly labeled table or paragraph describing training settings - A section titled " Experimental Setup " or similar with configuration information Return ** No ** if : - The paper only mentions that " we trained a model " or refers to " standard settings " without elaboration - The only details about training are deferred to supplemental materials , code , or prior work - There is no mention of hyperparameters , optimizer settings , or explicit configuration steps Quote the text from the paper that supports your decision . If the answer is No , explain briefly why the information is insufficient . ** Does the paper contain SPECIFIC EXPERIMENTAL SETUP DETAILS ( concrete hyperparameter values , training configurations , or system - level settings ) in the main text ?** Return 1 for yes or 0 for no and use experiment_setup as the JSON key . 
+
+Listing 1 Complete LLM Methodology Prompt 
+
+# S8 Selected Results 
+
+Supplementary Table 12 presents a sample of 10 papers drawn from the 160-paper evaluation dataset, selected to represent both the temporal and venue breadth of the full corpus: the sample includes papers from most years covered by the study and 46 from each of the five conferences. For each paper, the table reports the ground truth label assigned by a human annotator, the LLM classification, and the supporting text extracted by the LLM in response to the instruction ”Quote the text from the paper that supports your decision.” Rows in which the LLM classification disagrees with the ground truth are shown in bold. The papers were additionally selected to include at least one misclassification for each of the nine reproducibility variables included in the large-scale analysis, with the exception of research type, for which the LLM achieved 100% accuracy on the evaluation dataset. Author names in the supporting text for the affiliation variable have been replaced with *** to remove identifying information. 47 Reproducibility Variable  Manual Label  LLM Label  LLM Supporting Text ICLR 2024 - How Connectivity Structure Shapes Rich and Lazy Learning in Neural Circuits 
+
+> Research Type  Empirical  Empirical  Through both empirical and theoretical analyses, we discover that high-rank initializa-tions typically yield smaller network changes indicative of lazier learning, a finding we also confirm with experimentally-driven initial connectivity in recurrent neural networks. Affiliation  Industry  Industry  1University of Washington, Seattle, WA, USA 2Allen Institute for Brain Science, Seattle WA, USA 3Mila Quebec AI Institute, Montreal, QC, Canada 4Samsung SAIT AI Lab, Montreal, QC, Canada 5Mc Gill University, Montreal, QC, Canada 6Canada CIFAR AI Chair, CIFAR, Toronto, ON, Canada 7Universit´ e de Montr´ eal, Montreal, QC, Canada Pseudocode  False  False  The paper does not contain any structured pseudocode or algorithm blocks. Open Source Code  False  False  The paper does not provide any explicit statements about releasing source code or links to a code repository. Open Datasets  True  True  ”For our investigations, we applied this initialization scheme across a variety of cognitive tasks including two-alternative forced choice (2AF), delayed-match-to-sample (DMS), context-dependent decision-making (CXT) tasks implemented with Neurogym (Molano-Mazon et al., 2022) and the well-known machine learning benchmark sequential MNIST (s MNIST). Dataset Splits  False  False  The paper does not provide specific dataset split information (exact percentages, sample counts, or detailed splitting methodology) for reproduction. Hardware Specification  False  False  The paper does not provide specific hardware details (e.g., GPU/CPU models, processor types, or memory amounts) used for running its experiments. Software Dependencies  False  False  The paper mentions general tools like PyTorch in its references, but it does not specify any software dependencies with version numbers used for its experimental setup. Experiment Setup  False  False  The paper states ’Details of parameter settings can be found in Appendix C.’ and refers to Appendix C for other setup specifics, but these details are not provided in the main text.
+> NeurIPS 2015 - Online Gradient Boosting
+> Research Type  Empirical  Empirical  Finally, we conduct some proof-of-concept experiments which show that our online boosting algorithms do obtain performance improvements over di erent classes of base learners. All experiments were done on a collection of 14 publically available regression and classification datasets (described in Section D in the supplementary material) using squared loss. The following table reports the average and the median, over the datasets, relative improvement in squared loss over the respective base learner. Affiliation  Industry  Industry  ***  Yahoo  Labs  New  York,  NY  10036  ***@yahoo-inc.com  ***  Princeton  Uni-versity  Princeton,  NJ  08540  ***@cs.princeton.edu  ***  Yahoo  Labs  New  York, NY  10036  ***@yahoo-inc.com  ***  Princeton  University  Princeton,  NJ  08540 haipengl@cs.princeton.edu Pseudocode  True  True  Algorithm 1 Online Gradient Boosting for span(F) Algorithm 2 Online Gradient Boosting for CH(F)
+
+48 Reproducibility Variable  Manual Label  LLM Label  LLM Supporting Text 
+
+> Open Source Code  True  True  Is it possible to boost in an online fashion in practice with real base learners? To study this question, we implemented and evaluated Algorithms 1 and 2 within the Vowpal Wabbit (VW) open source machine learning system [23]. [23] VW. URL https://github.com/John Langford/vowpal wabbit/. The paper states that the algorithms were implemented *within* Vowpal Wabbit (an existing open-source system), but it does not state that the code for *their specific implementations* of Algorithms 1 and 2 is open-source or provided.
+> Open Datasets  False  True  All experiments were done on a collection of 14 publically available regression and classification datasets (described in Section D in the supplementary material) using squared loss. Dataset Splits  False  True  Parameters were tuned based on progressive validation loss on half of the dataset; reported is propressive validation loss on the remaining half. Progressive validation is a standard online validation technique, where each training example is used for testing before it is used for updating the model [3].
+> Hardware Specification  False  False  The paper does not provide any specific hardware details such as GPU/CPU models, memory, or cloud instance types used for running the experiments. It only states that experiments were conducted. Software Dependencies  False  False  The paper states that the algorithms were ’implemented and evaluated [...] within the Vowpal Wabbit (VW) open source machine learning system [23]’, but it does not specify a version number for Vowpal Wabbit or any other software dependencies.
+> Experiment Setup  False  True  The only parameters tuned were the learning rate and the number of weak learners, as well as the step size parameter for Algorithm 1. ICLR 2023 - Offline Reinforcement Learning with Differentiable Function Approximation is Provably Efficient
+> Research Type  Theoretical  Theoretical  We show offline RL with differentiable function approximation is provably efficient by analyzing the pessimistic fitted Q-learning (PFQL) algorithm, and our results provide the theoretical basis for understanding a variety of practical heuristics that rely on Fitted Q-Iteration style design. In addition, we further improve our guarantee with a tighter instance-dependent characterization. We hope our work could draw interest in studying reinforcement learning with differentiable function approximation beyond the scope of current research. Affiliation  Academic  Academic  Department of Computer Science Department of Electrical and Computer Engineering University of California, Santa Barbara Princeton University Pseudocode  True  True  Algorithm 1 Pessimistic Fitted Q-Learning (PFQL) Algorithm 2 Vanilla Fitted Q-Learning (VFQL) Algorithm 3 Variance-Aware Fitted Q Learning (VAFQL). Open Source Code  False  False  The paper does not provide any statement about making its source code available or links to a code repository. Open Datasets  False  False  This is a theoretical paper and does not describe empirical experiments or the use of any datasets for training.
+
+49 Reproducibility Variable  Manual Label  LLM Label  LLM Supporting Text 
+
+> Dataset Splits  False  False  This is a theoretical paper and does not describe empirical experiments or data splits for training, validation, or testing. Hardware Specification  False  False  This is a theoretical paper and does not describe empirical experiments, therefore, it does not mention any hardware specifications. Software Dependencies  False  False  This is a theoretical paper and does not describe empirical experiments, therefore, it does not list any software dependencies with specific version numbers. Experiment Setup  False  False  This is a theoretical paper and does not describe empirical experiments, therefore, it does not provide details about an experimental setup or hyperparameters.
+> NeurIPS 2022 - Look where you look! Saliency-guided Q-networks for generalization in visual Reinforcement Learning
+> Research Type  Empirical  Empirical  SGQN vastly improves the generalization capability of Soft Actor-Critic agents and outperforms existing state-of-the-art methods on the Deepmind Control Generalization benchmark, setting a new reference in terms of training efficiency, generalization gap, and policy interpretability.
+> Affiliation  Academic  Industry  ***IRT  Saint-Exup´ ery  ISAE-SUPAERO  IMT,  INSA  Toulouse  ANITI Toulouse, France ***@irt-saintexupery.com *** IRT Saint-Exup´ ery ISAE-SUPAERO Toulouse, France **@irt-saintexupery.com *** IRT Saint-Exup´ ery IMT, Universit´ e Paul Sabatier Toulouse, France ***@irt-saintexupery.com*** ISAE-SUPAERO Universit´ e de Toulouse ANITI Toulouse, France ***@isae-supaero.fr
+> Pseudocode  True  True  Algorithm 1 presents the pseudo-code of combining SGQN with SAC, yielding an SG-SAC algorithm.
+> Open Source Code  False  True  Did you include the code, data, and instructions needed to reproduce the main experimental results (either in the supplemental material or as a URL)? [Yes]
+> Open Datasets  True  True  We compare our approach with current state-of-the-art methods for generalization in continuous actions RL (RAD [Laskin et al., 2020b], Dr Q [Yarats et al., 2020], SODA [Hansen and Wang, 2021], SVEA [Hansen et al., 2021]) on five environments from the DMControl Generalization benchmark (DMControl-GB) [Hansen and Wang, 2021]. Dataset Splits  False  False  The paper discusses training on a ”vanilla training environment” and evaluating on ”video easy” and ”video hard” benchmarks, but does not explicitly mention a ”validation” split for purposes like hyperparameter tuning.
+> Hardware Specification  False  True  This work benefited from computing resources from CALMIP under grant P21001.
+> Software Dependencies  False  False  The paper does not explicitly provide specific software dependencies with version numbers in the main text or the provided ethical checklist.
+> Experiment Setup  False  True  We trained all agents for 500 000 steps using the vanilla training environment with no visual variation. Appendix A, B, and E discuss all the hyperpa-rameters, network architectures, and implementation choices used for this benchmark.
+
+50 Reproducibility Variable  Manual Label  LLM Label  LLM Supporting Text IJCAI 2022 - Parameterized Complexity of Hotelling-Downs with Party Nominees 
+
+> Research Type  Theoretical  Theoretical  We provide FPT and XP algorithms and we complement them with a W[1]-hardness result. Affiliation  Academic  Academic  ***,  ***,  ***  Royal  Holloway,  University  of  London  {***,  *** }@rhul.ac.uk, ***@gmail.com Pseudocode  False  False  The paper describes algorithmic approaches, such as dynamic programming, in prose, but it does not include any explicitly labeled ’Pseudocode’ or ’Algorithm’ blocks, nor does it present structured steps formatted like code. Open Source Code  False  False  The paper is theoretical and does not mention providing any open-source code for the described methodologies or models. Open Datasets  False  False  This is a theoretical paper and does not involve the use or release of any public datasets for training. Dataset Splits  False  False  This is a theoretical paper and does not involve dataset splits for validation or any other purpose. Hardware Specification  False  False  The paper is theoretical and does not describe any experimental setup that would require hardware specifications. Software Dependencies  False  False  The paper is theoretical and does not specify any software dependencies with version numbers for implementation or experimentation. Experiment Setup  False  False  The paper is theoretical and does not present experimental results, therefore no experimental setup details like hyperparameters or training configurations are provided.
+> AAAI 2021 - Escaping Local Optima with Non-Elitist Evolutionary Algorithms
+> Research Type  Empirical  Empirical  The theoretical analysis is complemented with an empirical investigation on instances of the set cover problem, showing that non-elitist EAs can perform better than the elitist ones. We also provide examples where usage of mutation rates close to the error thresholds is beneficial when employing non-elitist population-based EAs Affiliation  Academic  Academic  1Southampton Business School, University of Southampton, University Road, Southamp-ton, SO17 1BJ, United Kingdom 2Sobolev Institute of Mathematics SB RAS, 13, Pevtsov str., Omsk, 644099, Russia 3School of Computer Science, University of Birmingham, Edgbaston, B15 2TT Birmingham, United Kingdom” Pseudocode  True  True  Algorithm 1 (Dang and Lehre 2016a) Require: Initial population P0 X  λ, parameter  χ
+> [0, n]. 1: for t N until a termination cond. is met do 2: for i = 1 to  λ do 3: Sample It(i) psel(Pt), and set x := Pt(It(i)). 4: Sample x pmut(x,  χ), and set Pt+1(i) := x . 5: end for 6: end for
+> Open Source Code  False  True  The plots with confidence intervals, and the source code with the instruction on how to reproduce the experiments are provided in the supplementary material.
+
+51 Reproducibility Variable  Manual Label  LLM Label  LLM Supporting Text 
+
+> Open Datasets  True  True  We carried out some preliminary experiments with the non-elitist EAs on several instances of the Set Cover Problem (SCP) from the OR-library (Beasley 1990), representing the CYC and CLR families (Grossman and Wool 1997) and the Stein (Fulkerson, Nemhauser, and Trotter 1974) family of hard unicost benchmarks. Dataset Splits  False  False  The paper mentions using instances of the Set Cover Problem but does not provide specific details on training, validation, or test dataset splits, such as percentages or sample counts. Hardware Specification  True  True  They were compiled, then called from a Python program running on a server machine with AMD EPYC 7502 processors, Ubuntu 20.04 OS, GCC 9.3.0 and Python 3.8.3. Software Dependencies  True  True  They were compiled, then called from a Python program running on a server machine with AMD EPYC 7502 processors, Ubuntu 20.04 OS, GCC 9.3.0 and Python 3.8.3. Experiment Setup  True  True  Each algorithm was allowed the same budget of 2 108 function calls to evaluate its solutions, and each setting on each instance were tested with 40 replications of the run using different random seeds. The algorithms were implemented in C++ using its standard library for the random number generation. The graphs of non-elitist EAs with tournament selection are passing close to the best-known solution size 144 when  χ =0.67 if the tournament size is k = 2, and when  χ = 1.08 if k = 3.
+> ICML 2023 - Towards Practical Preferential Bayesian Optimization with Skew Gaussian Processes
+> Research Type  Empirical  Empirical  towards building a more practical preferential BO, we develop a new method that achieves both high computational efficiency and low sample complexity, and then demonstrate its effectiveness through extensive numerical experiments.Numerical experiments on 12 benchmark functions show that the proposed method achieves better or at least competitive performance in both terms of computational efficiency and sample complexity compared with Gaussian approximation-based preferential BO (Gonz alez et al., 2017; Siivola et al., 2021; Fauvel & Chalk, 2021) and MCMC-based preferential BO (Benavoli et al., 2021a;b), respectively. Affiliation  Industry  Industry  *** 1 2 3 *** 2 *** 1 n1Nagoya Institute of Technology, Aichi, Japan 2Cyber Agent, Tokyo, Japan 3RIKEN AIP, Tokyo, Japan. Pseudocode  True  True  Algorithm 1 shows the procedure of HB.Algorithm 2 shows the pseudo-code. Open Source Code  True  True  Our experimental codes are publicly available at https: //github.com/Cyber Agent AILab/preferential BO. Open Datasets  True  True  We employed the 12 benchmark functions.All the details of benchmark functions are shown in https://www.sfu.ca/ ssurjano/optimization.html. Dataset Splits  False  False  The paper evaluates the optimization algorithms on benchmark functions. It men-tions ”10 random initialization” for regret calculation but does not specify explicit train/validation/test dataset splits in the conventional sense for supervised learning tasks. Hardware Specification  False  False  The paper does not provide specific hardware details such as GPU or CPU models used for running the experiments.
+
+52 Reproducibility Variable  Manual Label  LLM Label  LLM Supporting Text 
+
+> Software Dependencies  False  False  The paper mentions general software components like ’RBF kernel’ and ’Python’, and refers to an implementation by other authors, but does not provide specific version numbers for key software dependencies or libraries.
+> Experiment Setup  False  True  For preferential GP models, we use RBF kernel with automatic relevance determination (Rasmussen & Williams, 2005), whose lengthscales are selected by marginal likelihood maximization per 10 iterations, and set fixed noise variance  σ2 noise = 10 4.For the parameters for Gibbs sampling, burn-in is 1000, and the MC sample size for Duel UCB and EIIG is 1000 (thinning is not performed).For HB-UCB, we use  β1/2 = 2. NeurIPS 2024 - Voila-A: Aligning Vision-Language Models with User’s Gaze Attention
+> Research Type  Empirical  Empirical  We evaluate Voila-A using a hold-out validation set and a newly collected VOILA-GAZE test set, which features real-life scenarios captured with a gaze-tracking device. Our experimental results demonstrate that Voila-A significantly outperforms several baseline models. Affiliation  Industry  Industry  ***1 , ***2 , ***3, ***2, ***3, ***1 1 SKLSDE Lab, Beihang University 2 Key Laboratory of Pervasive Computing, Tsinghua University 3 Microsoft Research Pseudocode  False  False  The paper does not contain any clearly labeled ’Pseudocode’ or ’Algorithm’ blocks, nor does it present structured steps in a pseudocode-like format. Open Source Code  True  True  Our code is available at https://github.com/naykun/Voila-A Open Datasets  True  True  Table 1: Statistics of Voila-COCO and Voila-Gaze Datasets, SR refers to Survival Rate from raw data after filtering DATASET SPLIT #IMAGES #QUESTIONS SR VOILA-COCO TRAINING 20000 70000 93.5% VOILA-COCO VALIDATION 100 550 71.1% VOILA-COCO TEST 500 1900 75.7% Dataset Splits  True  True  Table 1: Statistics of Voila-COCO and Voila-Gaze Datasets, SR refers to Survival Rate from raw data after filtering DATASET SPLIT #IMAGES #QUESTIONS SR VOILA-COCO TRAINING 20000 70000 93.5% VOILA-COCO VALIDATION 100 550 71.1% VOILA-COCO TEST 500 1900 75.7% Hardware Specification  False  False  The paper mentions training models and optimizing, but does not specify the particular GPU or CPU models, memory, or other hardware components used for the experiments. Section F, which is cited for compute resources in the NeurIPS checklist, only details model configurations and training parameters, not hardware.
+> Software Dependencies  False  True  The text model is an instance of MPTFor Causal LM 7B and the vision model is based on the CLIP Vi T-L/14 [42] vision encoder. ... The tokenizer used is Eleuther AI/gpt-neox-20b. The model s torch data type is set to bfloat16.
+> Experiment Setup  True  True  For optimization, we employ the Adam W optimizer [22] with a starting learning rate of 1e-5 and a batch size of 4. We train Voila for three epochs, scheduling the learning rate using a cosine annealing scheduler. To prevent exploding gradients, we apply gradient clipping with a threshold of 1.0.
+> ICML 2021 - Order-Agnostic Cross Entropy for Non-Autoregressive Machine Translation
+
+53 Reproducibility Variable  Manual Label  LLM Label  LLM Supporting Text 
+
+> Research Type  Empirical  Empirical  Extensive experiments on major WMT benchmarks show that OAXE substantially improves translation performance, setting new state of the art for fully NAT models. Affiliation  Industry  Industry  1School of Computing and Information System, Singapore Management University, Singapore. Work was done when Cunxiao Du was under the Rhino-Bird Elite Training Program of Tencent AI Lab. 2Tencent AI Lab, China.
+> Pseudocode  False  True  We use Hungarian algorithm to efficiently implement OAXE (e.g., 7 lines of core code, see Appendix A.1)
+> Open Source Code  True  True  Our code, data, and trained models are available at https://github.com/ tencent-ailab/ICML21 OAXE. Open Datasets  True  True  We conducted experiments on major benchmarking datasets that are widely-used in previous NAT studies (Gu et al., 2018; Shao et al., 2020; Ma et al., 2019; Saharia et al., 2020): WMT14 English German (En De, 4.5M sentence pairs), WMT16 English Romanian (En Ro, 0.6M sentence pairs). ... We use the dataset released by Ott et al. (2018) for evaluating translation uncertainty, which consists of ten human translations for 500 sentences taken from the WMT14 En-De test set. Dataset Splits  True  True  The training set consists of 300K instances, in which the target is an ordering sampled from a given set of ordering modes from a categorical distribution. Both the validation and test sets consist of 3K instances and all the ordering modes serves as the references for the test sets. Hardware Specification  False  False  The paper mentions that Hungarian Match was implemented with a CPU-version python package and that training speed is 1.36 times slower, but it does not provide specific details about the CPU or any other hardware components like GPU models, memory, or cloud instance types used for experiments. Software Dependencies  False  False  The paper mentions software like ’python package scipy’, ’PyTorch’, ’Adam’, and ’Fairseq’ but does not provide specific version numbers for these dependencies. Experiment Setup  True  True  We trained batches of approximately 128K tokens using Adam (Kingma & Ba, 2015). The learning rate warmed up to 5 10 4 in the first 10K steps, and then decayed with the inverse square-root schedule. We trained all models for 300k steps, measured the validation BLEU at the end of each epoch, and averaged the 5 best checkpoints.
+> ICLR 2015 - Move Evaluation in Go Using Deep Convolutional Neural Networks
+> Research Type  Empirical  Empirical  We train a large 12-layer convolutional neural network by supervised learning from a database of human professional games. The network correctly predicts the expert move in 55% of positions, equalling the accuracy of a 6 dan human player. When the trained convolutional network was used directly to play games of Go, without any search, it beat the traditional-search program Gnu Go in 97% of games, and matched the performance of a state-of-the-art Monte-Carlo tree search that simulates two million positions per move. Affiliation  Industry  Industry  *** University of Toronto ***@cs.toronto.edu ***1, ***2, ***1 Google Deep Mind1, Google Brain2  {***,***,*** }@google.com
+
+54 Reproducibility Variable  Manual Label  LLM Label  LLM Supporting Text 
+
+> Pseudocode  False  False  The paper describes its methods in prose, but does not include any structured pseudocode or algorithm blocks. Open Source Code  False  False  The paper does not provide any concrete access information (e.g., specific repository link, explicit code release statement, or code in supplementary materials) for the methodology described. Open Datasets  False  False  The dataset used in this work comes from the KGS Go Server. It consists of sequences of board positions st for complete games played between humans of varying rank. We collected 29.4 million board-state next-move pairs (st, at) corresponding to 160,000 games. While the source is named, no specific link, DOI, formal citation with authors/year, or repository for the collected dataset is provided for public access. Dataset Splits  True  True  The dataset was split into a training set of 27.4 million board-state next-move pairs and a test set of 2 million. This split was done before shuffling, so this corresponds to a test set with distinct games. Hardware Specification  True  True  Using a single machine with Intel Xeon CPU E5-2643 v2 @ 3.50GHz and Ge Force GTX Titan Black GPU, we are able to maintain a MCTS search at approximately 47,000 rollouts per second, without dropping CNN evaluations. Software Dependencies  False  False  The paper mentions methods like ’asynchronous stochastic gradient descent (Dean et al., 2012)’ but does not provide specific software names with version numbers (e.g., ’PyTorch 1.9’, ’CUDA 11.1’) for libraries or frameworks used in the implementation. Experiment Setup  True  True  We used a deep convolutional neural network with 12 weight matrices for each of 12 layers and rectified linear non-linearities. The first hidden layer s filters were of size 5 5 and the remainder were of size 3 3, with a stride of 1. ... For training the network, we used asynchronous stochastic gradient descent (Dean et al., 2012) with 50 replicas each on its own GPU. All parameters were initialized randomly from a uniform[-0.05, 0.05]. Each replica was trained for 25 epochs with a batchsize of 128, a fixed learning rate of 0.128 normalized by batchsize, and no momentum.
+> Supplementary Table 12 : A sample of LLM-generated reproducibility variable classifications for 10 papers from the evaluation dataset. Papers were selected to span most years and all five conferences covered by the study, and to include at least one misclassification for each reproducibility variable except research type, for which the LLM achieved 100% accuracy on the evaluation dataset. For each reproducibility variable, the Manual Label column reports the human annotation, the LLM Label column reports the LLM classification, and the LLM Supporting Text column reproduces the text extracted from the paper by the LLM in support of its classification. Author names in the Supporting Text for the affiliation variable have been replaced with ***. Rows where the LLM Label disagrees with the Ground Truth are shown in bold.
+
+55 S9 LLM Classification of Negated Variables 
+
+A common failure mode in keyword-based approaches is misclassifying explicit statements of non-sharing as evidence of open artifacts. To illustrate that our LLM-based method has the capability to handle negation, we present five representative examples for the open datasets variable, drawn from the manual evaluation dataset. The Label column reports the Boolean value assigned by the LLM: TRUE indicates that the paper uses at least one well-known public dataset or shares a dataset via a URL, DOI, or formal citation; FALSE indicates that no such evidence was found. In all cases where a dataset is described as not publicly available, the LLM correctly assigned FALSE. The NeurIPS 2022 example is labeled TRUE because the paper uses a publicly available benchmark (WIKITEXT103) despite also relying on a non-public dataset, demonstrating that the model does not require all datasets in a paper to be public to assign TRUE. 56 Conference  Paper Title  Paper Text  Open Dataset LLM Label 
+
+> NeurIPS 2019  No Press Diplomacy: Modeling Multi-Agent Gameplay We are going to release the dataset along with the game engine 5. Detailed dataset statistics are shown in Table 1.
+> 5Researchers  can  request  access  to  the  dataset  by  contacting  webdip-mod@gmail.com. An executive summary describing the research purpose and execution of a confidentiality agreement are required. False NeurIPS 2022  Memorization Without Overfitting: Ana-lyzing the Training Dynamics of Large Language Models Similarly, while for most of our experiments we section  § A.4. use WIKITEXT103 benchmark which is publicly available, some of our experiments run on the ROBERTA dataset which is not publicly available, and therefore, we are unable to release the exact data to re-create those experiments. True NeurIPS 2023  GlucoSynth: Generating Differentially-Private Synthetic Glucose Traces Limitations. In order to train on a huge set of glucose traces, we used a private dataset, not publicly available (one of the motivations for this project was actually to share a synthetic version of these traces). That being said, smaller samples of glucose traces with similar patient populations are available at OpenHumans [30] and T1D Exchange Registry [31]. In addition, one of the reasons our privacy results perform well is because we use two separate datasets for the training of the motif causality block and the GAN. However, this may be a limiting factor for others that do not have a large enough set of traces available to be able to train adequately on partitioned data. False NeurIPS 2024  Covariate Shift Corrected Conditional Randomization Test Replication code for our simulation studies is submitted as supplementary material. It will also be made publicly available on GitHub once our paper is accepted. The COVID data set used for the real example in our paper is not publicly available due to privacy constraints. False NeurIPS 2024  Learning Social Welfare Functions  The dataset we rely on (which is not publicly available) comes from the work of Lee et al. [11] with a US-based nonprofit that operates an on-demand donation transportation service supported by volunteers. False
+> Supplementary Table 13 : Five examples of LLM classification for the open datasets variable, drawn from the manual evaluation dataset, illustrating the model’s handling of negation and partial availability..
+
+57
