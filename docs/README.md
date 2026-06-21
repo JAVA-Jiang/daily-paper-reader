@@ -6,38 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-20
-- 运行时间：2026-06-20 21:30:24 UTC
+- 最新运行日期：2026-06-21
+- 运行时间：2026-06-21 21:02:48 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：2
-- 速读区：4
+- 本次总论文数：2
+- 精读区：0
+- 速读区：2
 
 ### 今日简报（AI）
-今日推荐6篇论文，精读2篇、速读4篇。重点聚焦两个方向：LLM生成数学的自动证明工具Visored，以及多智能体协作的Pull Request前协调分析。建议读者优先关注精读论文以掌握前沿方法论，再根据兴趣速读开放科学、数据智能体等主题。
-- 详情：[/202606/20/README](/202606/20/README)
+今日速读两篇高分论文，聚焦AI数据中心鲁棒调度与协作数据管理。
+
+最值得关注的是《Contextual Robust Optimization for AI Data Center Scheduling with Statistical Guarantees》，其统计保证方法值得深究。
+
+建议优先学习AI数据中心调度的鲁棒优化思路，再探索CollaboratoR工作流提升团队协作效率。
+- 详情：[/202606/21/README](/202606/21/README)
 
 ### 精读区论文标签
-1. [Visored: A Controlled-Natural-Language Prover for LLM-Generated Mathematics](/202606/20/2606.17581v1-visored-a-controlled-natural-language-prover-for-llm-generated-mathematics)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：在GitHub上提供了源代码
-2. [Before the Pull Request: Mining Multi-Agent Coordination](/202606/20/2606.19616v1-before-the-pull-request-mining-multi-agent-coordination)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：开源协调工具grite
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [The embrace of open science: An analysis of a decade of AI research and 56 800 conference papers](/202606/20/2606.16974v1-the-embrace-of-open-science-an-analysis-of-a-decade-of-ai-research-and-56-800-conference-papers)  
+1. [Contextual Robust Optimization for AI Data Center Scheduling with Statistical Guarantees](/202606/21/2606.17466v1-contextual-robust-optimization-for-ai-data-center-scheduling-with-statistical-guarantees)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：直接针对AI数据中心任务调度，采用鲁棒优化方法
+2. [CollaboratoR: A scalable workflow for collaborative data entry and management](/202606/21/2606.19280v1-collaborator-a-scalable-workflow-for-collaborative-data-entry-and-management)  
    标签：评分：6.0/10、query:code-paper
-   evidence：分析AI研究中代码共享实践
-2. [Data Intelligence Agents: Interpreting, Modeling, and Querying Enterprise Data via Autonomous Coding Agents](/202606/20/2606.19319v1-data-intelligence-agents-interpreting-modeling-and-querying-enterprise-data-via-autonomous-coding-agents)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提出数据智能体，使用自主编码智能体生成、执行和修复制品，与含代码的可重复研究相关
-3. [Dynamic Core Allocation for Malleable Jobs with Unknown Speed-up Parameters](/202606/20/2606.19789v1-dynamic-core-allocation-for-malleable-jobs-with-unknown-speed-up-parameters)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：针对可延展作业的动态核心分配，多核系统任务调度
-4. [JAMER: Project-Level Code Framework Dataset and Benchmark on Professional Game Engines](/202606/20/2606.19830v1-jamer-project-level-code-framework-dataset-and-benchmark-on-professional-game-engines)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提供了开源的项目级游戏代码框架数据集和基准
+   evidence：开源协作数据录入R包
 
 
 <div class="dpr-home-promo-card">
