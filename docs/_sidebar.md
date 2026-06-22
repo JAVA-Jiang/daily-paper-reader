@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-22 <!--dpr-date:20260622-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/22/2606.19988v1-repository-level-solidity-code-generation-with-large-language-models-from-prompting-to-fine-tuning" data-sidebar-item="{&quot;title&quot;: &quot;Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.19988v1-repository-level-solidity-code-generation-with-large-language-models-from-prompting-to-fine-tuning&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;提供了仓库级Solidity代码生成基准和评估指标&quot;}">Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning</a>
   * 2026-06-21 <!--dpr-date:20260621-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/21/2606.17466v1-contextual-robust-optimization-for-ai-data-center-scheduling-with-statistical-guarantees" data-sidebar-item="{&quot;title&quot;: &quot;Contextual Robust Optimization for AI Data Center Scheduling with Statistical Guarantees&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.17466v1-contextual-robust-optimization-for-ai-data-center-scheduling-with-statistical-guarantees&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;直接针对AI数据中心任务调度，采用鲁棒优化方法&quot;}">Contextual Robust Optimization for AI Data Center Scheduling with Statistical Guarantees</a>

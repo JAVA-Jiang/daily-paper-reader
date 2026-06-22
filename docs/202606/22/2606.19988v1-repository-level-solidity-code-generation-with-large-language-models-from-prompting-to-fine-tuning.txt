@@ -1,0 +1,822 @@
+Title: Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning
+
+URL Source: https://arxiv.org/pdf/2606.19988v1
+
+Published Time: Fri, 19 Jun 2026 00:41:32 GMT
+
+Number of Pages: 33
+
+Markdown Content:
+# 1Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 
+
+SHI CHEN and RONGCUN WANG ∗, School of Computer Science and Technology (School of Artificial Intelligence), China University of Mining and Technology, China, Mine Digitization Engineering Research Center of the Ministry of Education, China, and Jiangsu Provincial Industrial Technology Engineering Center for Intelligent Sensing and Emergency IoT in Underground Space, China 
+
+YUAN TIAN, School of Computing, Queen’s University, Canada 
+
+XIAOYUAN XIE, School of Computer Science, Wuhan University, China 
+
+WEI SONG, School of Computer Science and Engineering, Nanjing University of Science&Technology, China 
+
+RUBING HUANG, School of Computer Science and Engineering, Macau University of Science and Technology, China Large Language Models (LLMs) have exhibited remarkable capabilities in general-purpose code generation. However, achieving comparable performance in specialized software domains remains challenging, since generic pre-training alone often fails to capture domain-specific patterns. Smart contracts represent a high-impact domain for studying domain-specific code generation, as they are extensively used in practice, difficult to remediate after deployment, and frequently associated with high-stakes financial assets. Written in domain-specific languages such as Solidity, smart contracts impose specialized constraints at both the language and software levels. Despite these elevated demands on code quality, the performance and domain-specific challenges of Solidity code generation remain underexplored, largely due to the lack of comprehensive benchmarking datasets and evaluation metrics specifically designed to assess the semantic correctness of generated Solidity code. To fill this gap, we introduce a new benchmark consisting of 5,470 high-quality, repository-level Solidity smart contracts paired with natural language descriptions. To our knowledge, this dataset is the first of its kind in terms of scale and quality for the systematic evaluation of Solidity code generation. In addition, we propose SolidityScore , a semantics-aware evaluation metric that prioritizes domain-critical Solidity constructs, such as security modifiers, over surface-level token matching. Leveraging on this benchmarking framework, we conduct an empirical evaluation of representative code LLMs, including Qwen2.5-Coder, DeepSeek-Coder, and CodeLlama, across multiple adaptation paradigms, including zero-shot prompting, Chain-of-Thought (CoT) reasoning, in-context learning (ICL), retrieval-augmented generation 
+
+> ∗
+
+Corresponding author. Authors’ addresses: Shi Chen, ts24170102p31@cumt.edu.cn; Rongcun Wang, rcwang@cumt.edu.cn, School of Computer Science and Technology (School of Artificial Intelligence), China University of Mining and Technology, Xuzhou, Jiangsu Province, China, 221116 and Mine Digitization Engineering Research Center of the Ministry of Education, Xuzhou, Jiangsu Province, China, 221116 and Jiangsu Provincial Industrial Technology Engineering Center for Intelligent Sensing and Emergency IoT in Underground Space, Xuzhou, Jiangsu Province, China, 221116; Yuan Tian, y.tian@queensu.ca, School of Computing, Queen’s University, Kingston, Canada; Xiaoyuan Xie, xxie@whu.edu.cn, School of Computer Science, Wuhan University, Wuhan, Hubei Province, China, 430072; Wei Song, wsong@njust.edu.cn, School of Computer Science and Engineering, Nanjing University of Science&Technology, Nanjing, Jiangsu Province, China, 210094; Rubing Huang, rbhuang@must.edu.mo, School of Computer Science and Engineering, Macau University of Science and Technology, Macau, China, 999078. Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for components of this work owned by others than the author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org. 
+
+© 2018 Copyright held by the owner/author(s). Publication rights licensed to ACM. 0004-5411/2018/8-ART1 $15.00 https://doi.org/XXXXXXX.XXXXXXX J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018.            
+
+> arXiv:2606.19988v1 [cs.SE] 18 Jun 2026 1:2 S. Chen et al.
+> (RAG), and supervised fine-tuning (SFT). Our results show that: (1) general-purpose models exhibit systematic structural deficiencies, particularly in handling Solidity-specific constructs; (2) among non-parametric methods (that do not update model parameters), RAG achieves the strongest performance, while ICL suffers from rapid context saturation beyond two examples; and (3) SFT emerges as the most effective adaptation strategy, yielding substantial improvements in semantic correctness by internalizing Solidity-specific constraints directly into model parameters. Overall, our work establishes a comprehensive benchmark for repository-level Solidity code generation and identifies the combination of high-quality domain data and SFT as the most effective strategy for improving the reliability of LLM-generated smart contracts. CCS Concepts: •Software and its engineering →Software creation and management ;Software development techniques ;Software creation and management ;Software development techniques ;•
+> Information systems →Smart contracts .Additional Key Words and Phrases: Code Generation, Solidity, Large Language Models, Domain-Specific
+
+1 INTRODUCTION 
+
+The rapid advancement of Large Language Models (LLMs) has begun to reshape software en-gineering. Both general-purpose (e.g., GPT-4 [ 47 ]) and code-oriented foundation models (e.g., CodeLlama [ 55 ], DeepSeek-Coder [ 12 ]), have demonstrated strong capabilities in core software engineering tasks, including automated code completion [ 5 , 26 , 39 ], code generation [ 27 , 60 ], code translation [ 42 ], and program repair [ 10 , 22 , 75 ]. However, reported successes with LLM-based code generation are largely concentrated in popular general-purpose programming languages (GPLs), such as Python, due to the design and scope of current evaluation benchmarks. Widely adopted benchmarks such as HumanEval [ 9 ], MBPP [ 4 ], BigCodeBench [ 83 ], and TACO [ 35 ] pri-marily target standalone functions and general algorithmic reasoning in GPLs. As a result, the behavior, limitations, and failure modes of LLMs in domain-specific software and domain-specific programming languages (DSLs) remain underexplored. This gap is critical, as such languages are typically underrepresented in general-purpose pre-training corpora and require specialized domain knowledge, conditions under which LLMs are prone to hallucinations, incomplete semantic understanding, and misuse of critical APIs. In practice, general-purpose LLMs frequently struggle to produce reliable repository-level Solidity code due to a lack of domain-specific knowledge. Gener-ated outputs are often plagued by syntax errors, rendering them uncompilable. More critically, even when the generated code is syntactically valid, it often harbors high-risk, domain-specific security vulnerabilities—such as reentrancy attacks [ 3 ], which can lead to catastrophic financial losses. These limitations highlight the urgent need for a systematic investigation into domain-specific code generation. In this work, we focus on repository-level Solidity code generation for smart contracts, an emerging yet high-stakes domain of software development. Solidity, the core programming language of the Ethereum ecosystem, poses unique challenges that distinguish it sharply from general-purpose languages. It combines object-abstractions with multi-dimensional constraints, including gas consumption models, event-driven execution semantics, and strict security patterns [ 1 , 58 , 59 ]. Moreover, due to the immutability of deployed smart contracts and the substantial financial value they often manage, correctness and reliability are not merely performance considerations but fundamental security requirements. While recent benchmarks have attempted to address Solidity-specific evaluation, they remain insufficient for repository-level code generation. BenchSol [ 11 ], for example, contains only 15 manually curated samples, severely limiting its representativeness. Even though SolEval [ 50 ] advances the field by incorporating repository-level context, it primarily operates under a function completion paradigm. By providing the surrounding code structure and dependencies as input, this approach simplifies the repository-level generation challenge. Consequently, existing benchmarks fail to adequately capture the complexity of constructing  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:3
+
+complete Solidity smart contracts from scratch, particularly regarding global architectural logic, inheritance hierarchies, and complex inter-contract dependencies that characterize real-world Solidity repositories. Beyond dataset limitations, evaluating repository-level Solidity code generation poses unique challenges for existing evaluation metrics. Unlike typical Python repositories, Solidity projects often exhibit relatively shallow directory hierarchies, with complexity arising instead from their logical topology. Contracts commonly involve inheritance chains, cross-contract calls, shared state variables, strict compiler-version requirements, and reliance on versioned audited external libraries (e.g., OpenZeppelin contracts) [ 14 ]. Without reconstructing this precise dependency environment, which is particularly challenging in Solidity due to compiler-version sensitivity, transitive inheritance, and dependence on audited external libraries, generated code is frequently uncompilable, even when its core logic is correct. As a result, execution-based evaluation metrics such as Pass@k [ 50 ] become overly strict and misaligned with the logical correctness of generated code. On the other hand, widely used static and semantic evaluation metrics face complementary limitations. Surface-level token-matching metrics such as BLEU [ 48 ] ignore semantic equivalence, while structural metrics like CodeBLEU [ 15 , 53 ] rely on successful Abstract Syntax Tree construction and are fragile to minor syntax errors. Semantic similarity metrics such as CodeBERTScore [ 82 ]depend on encoders pre-trained on general-purpose languages, creating a domain gap that fails to capture Solidity-specific elements such as reserved keywords (e.g., modifier and event), specialized data types (e.g., mapping and address), and contract definition patterns. In addition to evaluation challenges, the most effective domain adaptation paradigm for repository-level Solidity code generation remains unclear. Although techniques such as Retrieval-Augmented Generation (RAG) [ 19 , 33 , 72 ], Chain-of-Thought reasoning (CoT) [ 28 , 32 , 34 , 71 ], In-Context Learn-ing (ICL) [ 44 , 49 , 73 ], and Supervised Fine-Tuning (SFT) [ 23 , 57 , 70 ] have demonstrated promise in other domains, there has been no systematic empirical study that quantitatively compares their relative effectiveness or characterizes the conditions under which they perform well for repository-level Solidity smart contract generation. To address these gaps, we construct a large-scale benchmark named SolidityBench . It comprises 5,470 repository-level Solidity smart contract samples, each paired with a natural language specifi-cation that captures repository-level functionality and design intent. The dataset is curated from authoritative sources, i.e., OpenZeppelin 1, Synthetix 2, and verified contracts on Etherscan 3, and reflects real-world inter-contract dependencies, inheritance structures, and library usage patterns. To address the limitations of existing evaluation metrics, we introduce SolidityScore , a domain-aware text-based metric that assesses the semantic alignment between generated code and ground-truth contracts. Unlike execution-based metrics that require a fully reconstructible compilation environ-ment, or surface-level similarity metrics that are insensitive to domain semantics, SolidityScore leverages a Solidity-adapted encoder and domain-weighted token matching to prioritize Solidity constructs. Building on the newly introduced dataset and metric, we conduct a systematic empirical study on representative code LLMs across multiple adaptation paradigms, including CoT, ICL, RAG, and SFT. Specifically, our empirical evaluation is guided by the following research questions: 
+
+RQ 1: How do general-purpose LLMs perform in generating repository-level Solidity code under a zero-shot setting? 
+
+RQ 2: To what extent can prompting-based adaptation strategies improve repository-level Solidity code generation?  
+
+> 1https://www.openzeppelin.com/
+> 2https://synthetix.io/
+> 3https://etherscan.io/ J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:4 S. Chen et al.
+
+RQ 3: How does domain-specific supervised fine-tuning compare with prompting-based strate-gies for repository-level Solidity code generation? 
+
+RQ 4: Does SolidityScore provide a more reliable assessment of the semantic correctness of generated Solidity code than BLEU? 
+
+RQ 5: To what extent can LLMs generate compilable repository-level Solidity contracts, and what are the dominant types of compilation errors? Our empirical study reveals that general-purpose LLMs exhibit substantial deficiencies under zero-shot settings; prompting-based strategies provide measurable but limited improvements, with RAG outperforming other non-parametric methods; SFT yields the most significant gains by internalizing Solidity-specific constraints; and compilation remains a major bottleneck, with diverse and recurring error types persisting even in syntactically and semantically plausible outputs. Our main contributions are summarized as follows: (1) We curate real-world Solidity repositories from authoritative platforms, including Synthetix, OpenZeppelin, and Etherscan, and construct SolidityBench 4, a dataset of 5,470 repository-level natural language specification–code pairs for training and evaluation. (2) We propose SolidityScore , a semantic-aware evaluation metric based on an encoder fine-tuned on Solidity code, enabling more accurate assessment of functional and structural alignment than existing general-purpose metrics. (3) We establish a systematic benchmark evaluating representative LLMs (e.g., Qwen2.5-Coder, DeepSeek-Coder, and CodeLlama) across multiple adaptation paradigms, including zero-shot infer-ence, CoT, ICL, RAG, and SFT, providing the first comprehensive comparison for repository-level Solidity code generation. The remainder of this paper is organized as follows. Section 2 introduces background and summarizes related work. Section 3 presents our benchmarking framework. Section 4 details the design and experimental setup of the empirical study. Section 5 presents and analyzes the experimental results. Section 6 presents a qualitative case study analyzing the characteristics of all considered Solidity smart contract generation approaches. Section 7 discusses implications and threats to validity, followed by the conclusion in Section 8. 
+
+2 BACKGROUND AND RELATED WORK 2.1 Solidity Smart Contract Generation: Challenges and Existing Benchmarks 
+
+Solidity is the core programming language of the Ethereum ecosystem and is used to specify the logic of smart contracts executed on the Ethereum Virtual Machine (EVM). Unlike traditional software systems, Solidity contracts operate in a decentralized and adversarial environment, where deployed code is immutable and often directly manages high-value digital assets, and are executed under a Turing-complete yet resource-constrained execution model [ 7 , 46 ]. These characteristics pose a set of unique requirements and challenges for automated code generation. First, immutability and adversarial execution impose strict correctness and security requirements. Once deployed, smart contracts cannot be modified, rendering post-deployment fixes costly or infeasible [ 64 ]. In addition, extensive code reuse and cloning practices in the ecosystem amplify the propagation of latent vulnerabilities across projects [ 31 ]. Many high-risk vulnerabilities—such as reentrancy, improper state updates, and flawed access control—arise from complex interaction patterns rather than superficial syntactic errors [ 18 ]. Consequently, automated generation systems must produce secure and correct code at deployment time, without relying on iterative debugging or patching.  
+
+> 4https://github.com/ChenS0827/SCG J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:5
+
+Beyond security concerns, Solidity exposes low-level control mechanisms that complicate se-mantic modeling. To enable fine-grained interaction with the EVM, Solidity allows inline assembly, which appears in approximately 23% of high-performance contracts [ 8 , 56 ]. Correctly generating such constructs requires an in-depth understanding of EVM execution semantics, storage layout, and calling conventions. However, general-purpose LLMs are primarily trained on high-level pro-gramming abstractions, and thus often lack representations of these low-level semantics, leading to logical inconsistencies, reduced readability, or unsafe interactions with EVM internals [38]. Finally, Solidity’s gas-based execution model introduces a cost-aware performance dimension absent from most general-purpose languages. Every EVM instruction incurs a monetary cost, and inefficient control flow or suboptimal data structures can result in excessive gas consumption or transaction failure. Prior work has shown that seemingly minor design choices, such as improper loop constructs, may trigger exponential gas growth [ 2 ]. As a result, Solidity code generation must jointly optimize functional correctness, security, and execution efficiency. These objectives are rarely considered simultaneously in existing LLM training or evaluation pipelines. Despite these unique requirements and challenges, the exploration of LLMs’ potential for Solidity code generation remains at an early stage. To date, only a limited number of benchmarks explicitly target this domain. Among them, SolEval [ 50 ] is a notable effort that evaluates Solidity code generation while incorporating repository-level context. However, a fundamental distinction lies in its evaluation paradigm compared to a realistic, holistic repository-level generation setting. Specifically, SolEval adopts a function completion approach, in which the LLM is tasked with generating a single function body based on the provided method signatures, requirements, and repository dependencies, which is subsequently integrated back into the codebase for evaluation. This setup substantially simplifies the task by assuming that the contract skeleton and external dependencies are pre-defined and correct. In contrast, practical development workflows often require holistic generation , where developers rely on LLMs to synthesize entire contracts. This demands not only local logic implementation but also autonomous reasoning about global structure, inter-function dependencies, and consistent state management without pre-supplied scaffolding. The injection-based evaluation paradigm enables SolEval to use execution-based metrics, such as Pass@k, because a complete compilation environment is guaranteed in advance. We argue that such metrics become less suitable as we move toward holistic repository-level code generation. Successful compilation requires LLMs not only to generate syntactically and semantically correct code, but also to correctly manage complex dependency structures. This challenge is illustrated by our benchmark dataset, which shows that the average code length exceeds 1,700 tokens and includes cross-file dependencies, audited library imports (e.g., OpenZeppelin), shared interfaces, and compiler-version constraints. Under these conditions, even logically correct code may fail to compile due to missing or incompatible dependencies, a phenomenon we refer to as the compilation gap . This gap fundamentally restricts the applicability of execution-based evaluation metrics, as compilation failure does not necessarily indicate semantic incorrectness. Consequently, evaluating repository-level Solidity code generation demands semantic-aware evaluation approaches that go beyond binary compilation success. Overall, existing benchmarks and evaluation paradigms fall short of capturing the full complexity of repository-level Solidity smart contract generation. This gap motivates the need for new datasets, evaluation metrics, and empirical analyses specifically designed to assess how LLMs perform under realistic architectural and dependency constraints, which we aim to address in this work. 
+
+2.2 Adaptation Strategies for LLM-driven Code Generation 
+
+To bridge the gap between pre-trained LLMs and downstream tasks, particularly code generation, a range of model adaptation techniques has been widely explored. Rather than retraining models  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:6 S. Chen et al.
+
+from scratch, these techniques aim to incorporate task-specific knowledge into LLMs and can be broadly categorized into prompting-based non-parametric approaches and parameter-updating approaches. Prompting-based adaptation strategies modify the input context provided to the model at in-ference time, guiding generation through carefully designed instructions or examples. Zero-shot prompting relies solely on natural language task descriptions, while more structured techniques introduce explicit reasoning steps or auxiliary context. Chain-of-Thought (CoT) prompting en-courages models to generate intermediate reasoning traces before producing final outputs, thereby improving performance on tasks that require multi-step logical reasoning [ 66 ]. However, traditional free-text CoT often encounters a semantic gap, where the reasoning process diverges from the resulting code implementation when handling structured code data. To address this issue, Li et al. [34 ] proposed Structured CoT (SCoT), which explicitly aligns reasoning steps with program control flows such as loops and branches, thereby improving logical rigor. Similarly, Li et al. [36 ]introduced the Chain of Functional Triggers (CoFT) strategy, which clarifies the functional seman-tics of key steps by incorporating standard programming identifiers. Collectively, these studies highlight that explicit structural guidance is critical for bridging natural language intent and formal code logic. This is also a vital requirement for smart contract generation, where error tolerance is low. In-Context Learning (ICL) enables models to adapt to specific tasks by including relevant examples directly within the prompt [ 6]. Kapu et al. [ 30 ] proposed the DemoCraft framework, which improves generation accuracy by employing a specialized retrieval strategy to select high-quality examples. Meanwhile, Yang et al. [73 ] found that clear variable and function naming is a key factor for effective examples, often more important than code formatting. Similarly, Patel et al. [ 49 ] evaluated the efficacy of ICL for library learning, demonstrating that providing API definitions in context enables models to use unseen or private libraries without fine-tuning. However, they also observed that ICL performance is sensitive to the inclusion of irrelevant APIs in the prompt. More generally, ICL is constrained by the model’s context window, which limits its ability to incorporate and leverage the extensive domain knowledge required for complex generation tasks. Retrieval-Augmented Generation (RAG) complements prompting by dynamically retrieving relevant external knowledge, such as code examples or API documentation, and incorporating it into the input context, thereby reducing reliance on parametric memory alone. By augmenting the prompt with the retrieved information, RAG mitigates the fixed-context bottleneck inherent to standard prompting approaches [ 33 ]. Li et al. [37 ] proposed a framework based on multiple retrievers that improves generation quality by combining code features at different levels. From a context scope perspective, Gu et al. [20 ] demonstrated the value of retrieving project-level APIs, highlighting that precise contextual information is essential to reduce hallucinations. Extending this idea to the repository level, Zhang et al. [78 ] introduced a method to retrieve relevant knowledge distributed throughout an entire codebase, thus improving consistency in large projects. Despite the strong empirical performance of RAG, the risk that the retrieved code snippets may contain vulnerabilities, and thus introduce new security risks in security-sensitive domains, remains an unresolved challenge [61]. When general-purpose models underperform in specialized domains, supervised fine-tuning (SFT) remains a popular approach to integrate domain knowledge. Given the high computational cost of full-parameter fine-tuning, Parameter-Efficient Fine-Tuning (PEFT) techniques, such as Low-Rank Adaptation (LoRA) [ 23 ], have emerged as practical alternatives. Weyssow et al. [ 69 ]demonstrated that updating only a small subset of parameters can achieve performance comparable to full-parameter fine-tuning for LLM-based code generation. Furthermore, Zhang et al. [ 77 ] 
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:7
+
+proposed an adaptive preference optimization approach, showing that targeted training guided by error logs can effectively mitigate specific categories of model errors. 
+
+2.3 Domain-specific Code Generation 
+
+Recent research has explored domain-specific code generation across a wide range of application areas. Gu et al. [20 ] systematically evaluated LLM-based code generation in web and game develop-ment domains, showing that leveraging API knowledge and CoT can improve performance. Zhao 
+
+et al. [81 ] examined scientific computing programs and identified challenges related to specialized APIs, demonstrating that fine-tuning and few-shot learning can mitigate these issues. Extending to low-resource settings, Yang et al. [ 74 ] proposed MetaCoder, which applies meta-learning to improve code generation for domain-specific neural code tasks. Domain-specific constraints are particularly pronounced in safety- and system-critical settings. In the aerospace domain, He et al. [ 21 ] constructed a benchmark for embedded device code generation and found that general-purpose models exhibit high error rates when generating code compliant with the DO-178C safety standard, whereas domain-specific fine-tuning improves both functional correctness and compliance. Similarly, Vale et al. [ 62 ] studied industrial robotics and emphasized the necessity of modeling system-level factors such as timing constraints and hardware resource limits. In hardware description languages, Thakur et al. [61 ] introduced VeriGen and demonstrated that domain-specific fine-tuning substantially improves functional correctness. Another line of work focuses on the enforcement of structural and syntactic constraints in domain-specific code generation. Kang et al. [ 29 ] showed that combining retrieval-augmented generation with preference optimization improves structural consistency in visual program generation. To directly address syntax constraints in DSLs, Wang et al. [63 ] proposed grammar prompting, which embeds Backus–Naur Form (BNF) specifications into prompts to guide LLMs toward syntactically valid outputs. 
+
+3 BENCHMARK CONSTRUCTION AND EVALUATION METRICS 3.1 Overview 
+
+As illustrated in Fig. 1, this study employs a systematic three-phase framework to evaluate the effectiveness of LLMs in generating repository-level Solidity code. The process begins with Phase I (Benchmark Construction), during which we establish a high-quality dataset by collecting, cleaning, and synthesizing multi-source data into aligned natural language–code pairs. This is followed by Phase II (Adaptation Paradigms), which investigates diverse strategies ranging from inference-time prompt engineering (e.g., CoT, ICL, RAG) to parameter-efficient SFT. Finally, in Phase III (Performance Benchmarking), we utilize multiple adaptation paradigms across three representative baseline models to generate repository-level Solidity code. The quality of the generated code is then assessed through multi-dimensional evaluation metrics by comparing model outputs against ground-truth references. 
+
+3.2 Benchmark Construction 
+
+Our benchmark is constructed from three Solidity code sources, namely Synthetix, OpenZeppelin, and Etherscan. They are selected according to the principle of triangulation [ 43 ] to ensure au-thority, diversity, and representativeness of real-world smart contract development. Synthetix is a large-scale DeFi protocol whose production-grade contracts implement complex financial logic and interdependent protocol mechanisms, making it suitable for evaluating a model’s ability to reason about sophisticated financial operations encoded in Solidity contracts [ 68 ]. OpenZeppelin is an open-source smart contract security framework and tooling ecosystem for Ethereum and 
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018.
+
+1:8 S. Chen et al. Data Source 
+
+Data Preprocessing 
+
+Rule Based Extraction 
+
+Solidity Files (.sol) 
+
+Based on GPT-4 Generation 
+
+NL-CODE 
+
+Phase I.  Benchmark Construction 
+
+Phase III. Performance Benchmarking 
+
+I.Retrieval Phase 
+
+bm25 
+
+C1:pragma solidity ^0.8.20;..... 
+
+C2:pragma solidity ^0.8.19;...... 
+
+C3:pragma solidity ^0.8.21;...... 
+
+...... 
+
+Ck:pragma solidity ^0.8.20;...... 
+
+Top K Similar Code 
+
+II.Fusion Phase 
+
+NL C1  NL C2  NL C3  ......  NL Ck 
+
+Sample Expansion Fusion 
+
+CodeLlama 
+
+DeepseekCoder 
+
+QwenCoder 
+
+Please analyze step by step according to the following steps 
+
+Input:[ function  parameters:  address  to, uint  amount] 
+
+Output:[ return  type:  bool ]
+
+1. Check  if  sender has enough balance 
+
+2. If amount  <=  0: 
+
+3.  revert  with error message 
+
+4. Else: 
+
+5. If recipient  is  zero  address :
+
+6.  revert  invalid  address 
+
+7. Else: 
+
+8. Subtract amount  from  sender balance 
+
+9. Emit Transfer  event 
+
+10. Return  true 
+
+11. End  if 
+
+12. Update total supply  if  needed 
+
+13. Check  for  overflow conditions 
+
+14. Return success status 
+
+15. Add necessary modifiers 
+
+16. Finalize  function  logic 
+
+> RAG
+
+COT 
+
+Few-Shot 
+
+You are an expert Solidity developer. 
+
+Please write a high-quality, secure and 
+
+complete Solidity smart contract based on 
+
+the following description.  Description: 
+
+{description} 
+
+description: {NL1}; code: {Code1} 
+
+description: {NL2}; code: {Code2} 
+
+...... 
+
+description: {NLk}; code: {Codek} 
+
+> Top k Examples
+
+Instruction: You are a senior Solidity engineer, writing contract code according to requirements. 
+
+Input: [Description] 
+
+Output: [Code] 
+
+Supervised Fine-Tuning 
+
+Target 
+
+Code 
+
+Task 
+
+Pretrained Weights 
+
+8-bit Quantization 
+
+> Target  Modules  Applied
+
+Attention Layers 
+
+k_proj 
+
+(Key) 
+
+v_proj 
+
+(Value) 
+
+o_proj 
+
+(Output) 
+
+q_proj 
+
+(Query) 
+
+FFN Layers 
+
+up_proj 
+
+(Up) 
+
+down_proj 
+
+(Down) 
+
+gate_proj 
+
+(Gate) 
+
+B
+
+Output 
+
+AGround Truth 
+
+SolidityScore 
+
+BLEU 
+
+Reference 
+
+Code 
+
+Phase II.  Adaptation Paradigms 
+
+Zero-Shot 
+
+You are an expert Solidity developer. 
+
+Please write a high-quality, secure and 
+
+complete Solidity smart contract based on 
+
+the following description. 
+
+Description: {description} 
+
+// Generate Solidity code 
+
+ICL 
+
+<NL-Code> 
+
+Input 
+
+Prompt Engineering 
+
+Lora Adapter 
+
+Model Selection 
+
+Evaluation Metrics 
+
+Fig. 1. Overall framework of the empirical study on repository-level Solidity code generation 
+
+other EVM-compatible blockchains. It provides a widely adopted collection of reusable, modu-lar, and extensively audited smart contract components, serving as a reference for security and standardization practices in the Ethereum ecosystem [ 31 ]. In contrast, Etherscan hosts a large repository of fully deployed, application-specific smart contracts sourced from the public Ethereum blockchain [ 14 ]. These contracts span a wide range of domains, coding styles, and quality lev-els, reflecting the heterogeneity and practical constraints of real-world deployments rather than curated best practices. We curated the Synthetix and OpenZeppelin corpora from their official version-controlled repositories. Etherscan contracts were collected from their verified contract registry. A summary of each source, including popularity metrics, is provided in Table 1. 
+
+Table 1. Statistics of target platforms and data samples in SolidityBench 
+
+Platform Domain Description Stars Samples 
+
+Synthetix DeFi/Finance Complex decentralized synthetic asset protocol 1.3K 550 OpenZeppelin Security Audited, standardized smart contract libraries 26.6K 1,150 Etherscan Diverse Apps Large-scale verified real-world deployed contracts N/A 3,770 
+
+Total 5,470 
+
+J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:9 
+
+To process the raw code, we developed a rigorous automated cleaning pipeline. First, we per-formed fine-grained filtering and removal of code comments using regular expressions. The op-eration removed non-functional boilerplate text, such as copyright notices and licenses, while precisely preserving NatSpec tags (e.g., @dev and @param) which encapsulate high-level semantic specifications and serve as critical semantic anchors for subsequent natural language construction. Next, to mitigate stylistic inconsistencies arising from diverse programming conventions, all code samples were standardized by reformatting them in strict accordance with the official Solidity style guide. This stem unified indentation, line breaks, and code layout specifications, ensuring the model could focus on learning the code’s deep semantic structures. 
+
+GPT-4 Prompt Template for Solidity Description Generation           
+
+> # System Instruction
+> You are an expert Solidity smart contract auditor and developer. Your task is to generate a high-quality, repository-level functional description for the provided Solidity code snippet.
+> # Constraints & Style Guidelines
+> •Format : Strictly follow NatSpec style ( @dev ,@notice ).
+> •Content : Focus on logic intent, state updates, and control flow.
+> •Security : Explicitly mention patterns (e.g., nonReentrant ,onlyOwner ).
+> •Tone : Maintain a professional technical tone (OpenZeppelin style).
+> # Few-Shot Demonstration
+> <Input Code> :
+> function withdraw(uint256 amount) public nonReentrant { ... }
+> <Target Output> :
+> @notice Allows users to withdraw funds. @dev Follows Checks-Effects-Interactions pattern to prevent re-entrancy during external call.
+> # Current Task
+> Input: {Input_Solidity_Code}
+> Output:
+> Fig. 2. The GPT-4 prompt template designed for generating natural language descriptions of Solidity code.
+
+The alignment of high-quality natural language descriptions with code is crucial to code gen-eration and a decisive factor in the effectiveness of SFT. However, raw smart contract code is often plagued by a paucity of high-quality natural language documentation, with descriptions that are either missing or ambiguous. To address this, we employed a hybrid labeling strategy that fuses rule-driven extraction with LLM-based semantic completion [ 65 , 67 ]. Specifically, for samples adhering to Solidity’s Natural Language Specification Format (NatSpec), accounting for approximately 65%, we applied regular expressions to filter out irrelevant text, such as licenses, and extracted key semantic tags (e.g., @dev and @param) to construct high-quality, repository-level Solidity code descriptions. For the remaining 35% lacking high-quality descriptions, GPT-4 was employed to generate missing code descriptions. To ensure high consistency in style and semantics between the generated content and native NatSpec annotations, we designed instruction templates based on few-shot learning and performed iterative optimization against existing high-quality samples. This guided GPT-4 to synthesize functional descriptions that strictly adhere to semantic  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:10 S. Chen et al.
+
+accuracy and stylistic norms. The specific prompt template, incorporating these constraints and few-shot examples, is presented in Fig. 2. Finally, we constructed a high-quality domain-specific dataset containing 5,470 smart contracts. In accordance with standard machine learning evaluation protocols [ 17 , 25 , 41 ], the dataset was strictly partitioned into training, validation, and test sets in an 8:1:1, comprising 4,376, 547, and 547 samples respectively. This partitioning strategy ensures sufficient model fitting while providing a balanced basis for hyperparameter optimization and unbiased evaluation. Statistical results are summarized in Table 2, which shows that the average code length exceeds 1,737 tokens, and the average number of functions per contract amounts to 19.09. Such high func-tional density demonstrates that our dataset encompasses diverse and complex real-world business logic. To further elaborate on the characteristics of the dataset, an example from SolidityBench is shown in Fig. 3. Distinct from trivial function completion tasks [ 50 ], This example concretely reveals three inherent and critical challenges posed by our task: (1) Dependency Management ,where the model is required to correctly handle external imports (e.g., OpenZeppelin libraries) for the reuse of audited and verified code; (2) Architectural Integrity , which demands the correct implementation of inheritance hierarchies (e.g., inheriting Ownable and ReentrancyGuard ); (3) 
+
+Global Coordination , where the model must generate multiple interrelated functions (e.g., stake ,
+
+withdraw , and claimReward ) that consistently operate on shared global states. This observation demonstrates that our benchmark entails rigorous demands on the model’s capacity to understand file-level contextual information and global logical flow. 
+
+> Table 2. Dataset partitioning and key statistical characteristics. The “Avg. Func.” column represents the average number of functions per contract
+
+Dataset Samples Proportion Avg. Code Length (tokens) Avg. Desc. Length (tokens) Avg. Func. (per file) 
+
+Training Set 4,376 80% 1,746.45 61.75 19.45 Validation Set 547 10% 1,789.72 61.40 18.62 Test Set 547 10% 1,614.16 61.40 16.63 
+
+Total 5,470 100% 1,737.55 61.68 19.09 
+
+3.3 Evaluation Metrics 
+
+While execution-based evaluation is valuable for assessing LLM-driven code generation, it is not always feasible as a primary metric for repository-level Solidity code generation. This is due to environment dependencies, deployment context, and the high prevalence of partial or uncompilable outputs, which can prevent reliable execution even when the generated code is logically meaningful. Given the availability of human-written ground-truth smart contracts, we therefore adopt text-based evaluation metrics, measuring the similarity between LLM-generated code and reference implementations to assess the semantic correctness of generated outputs. In addition, we treat compilation success as an auxiliary signal for analyzing the challenges of Solidity code generation (ref. Section 5.4), complementing the primary text-based semantic evaluation. We retain the widely used BLEU metric as a lightweight indicator of surface-form consistency. Solidity is a strongly typed language with strict syntactic requirements, including pragma and version declarations, function signatures, and precise use of punctuation and delimiters. In this setting, 𝑛 -gram overlap serves as a practical proxy for whether a model reproduces essential  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:11
+
+An Examplar Sample from SolidityBench 
+
+[Natural Language Description] 
+
+A staking contract that allows users to stake tokens and earn rewards. It imports the OpenZeppelin ERC20 library for token handling and Ownable for access control. The contract includes functions for staking, withdrawing, and claiming rewards, ensuring protection against re-entrancy. 
+
+[Solidity Code (Ground Truth)]                             
+
+> pragma solidity ^0.8.0;
+> import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+> import "@openzeppelin/contracts/access/Ownable.sol";
+> import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+> contract StakingContract is Ownable ,ReentrancyGuard {
+> IERC20 public stakingToken;
+> mapping (address => uint256 )public balances; // ... (State Variables) ...
+> function stake( uint256 amount) external nonReentrant { // ... (Logic for staking) ... }
+> function withdraw( uint256 amount) external nonReentrant { // ... (Logic for withdrawing) ... }
+> function claimReward() external { // ... (Logic for rewards) ... } }
+
+Fig. 3. An example from SolidityBench, which illustrates a natural language description aligned with a full smart contract involving external imports and inheritance hierarchies. 
+
+syntactic scaffolding and conventional code patterns observed in human-written contracts. However, BLEU is inherently limited in its expressiveness: it rewards token-level co-occurrence rather than semantic equivalence and penalizes logically correct variants that differ due to variable renaming, control-flow reorganization, or alternative but functionally equivalent implementations. As a result, BLEU alone is insufficient for assessing the functional correctness of generated Solidity code. To capture semantic correctness beyond lexical overlap, we examined existing semantic code evaluation metrics, including CodeBLEU [ 53 ] and CodeBERTScore [ 82 ], but found them insufficient for Solidity in practice. CodeBLEU relies heavily on parsing-driven signals such as ASTs, which makes it brittle in the Solidity setting: even minor syntactic errors can prevent successful parsing, resulting in missing or invalid scores precisely for partially correct outputs where robust evaluation is most needed. CodeBERTScore, while more tolerant of imperfect syntax, depends on encoders pre-trained primarily on general-purpose programming languages. This mismatch introduces a domain gap that limits its ability to accurately represent Solidity-specific semantics, particularly security-critical constructs (e.g., access control modifiers and reentrancy patterns) and execution constraints such as gas-related considerations. To overcome these limitations, we propose SolidityScore, a domain-adapted semantic evaluation metric that builds upon the core matching principle of CodeBERTScore while tailoring both representation and weighting to Solidity. Specifically, the metric encodes candidate and reference code into contextual token embeddings, computes pairwise cosine similarities between tokens, and aggregates alignment using a greedy matching strategy to produce an F1-style similarity score. We introduce two key adaptations: (1) replacing the general-purpose encoder with Solidity-LLM 5,a model fine-tuned on 650K high-quality Solidity instruction pairs, to capture domain-specific semantics; and (2) substituting standard inverse document frequency (IDF) weighting with a  
+
+> 5https://huggingface.co/Chain-GPT/Solidity-LLM J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:12 S. Chen et al.
+
+domain-adaptive weighting scheme that prioritizes security- and logic-critical tokens based on their functional importance rather than statistical rarity. Specifically, SolidityScore is computed via the following three steps: 
+
+Token Representation. To capture the functional semantics, we encode the natural language description along with the contract code. Formally, let 𝑥 = ⟨𝑥 1, . . . , 𝑥 𝑘 ⟩ represent the sequence of the natural language requirement, 𝑦 ∗ = ⟨𝑦 ∗
+
+> 1
+
+, . . . , 𝑦 ∗ 
+
+> 𝑚
+
+⟩ denote the ground-truth reference contract, and ˆ𝑦 = ⟨ ˆ𝑦 1, . . . , ˆ𝑦 𝑛 ⟩ denote the generated candidate contract. The description 𝑥 is concatenated separately with the reference code 𝑦 ∗ and the candidate code ˆ𝑦 . The resulting sequences are then tokenized using the tokenizer TM of Solidity-LLM model to produce the corresponding input sequences: 
+
+TM (𝑥 · 𝑦 ∗) = ⟨𝑥 1, . . . , 𝑥 𝑘 , 𝑦 ∗
+
+> 1
+
+, . . . , 𝑦 ∗ 
+
+> 𝑚
+
+⟩TM (𝑥 · ˆ𝑦 ) = ⟨𝑥 1, . . . , 𝑥 𝑘 , ˆ𝑦 1, . . . , ˆ𝑦 𝑛 ⟩ (1) where 𝑘 , 𝑛 , and 𝑚 represent the number of tokens in the natural language description, the reference contract, and the generated candidate contract, respectively. These sequences are fed into Solidity-LLM, from which we extract context-aware semantic vectors from its final hidden layer. We denote the vector of the 𝑖 -th token in the reference code as v𝑦 ∗ 
+
+> 𝑖
+
+and that of the 𝑗 -th token in the candidate code as v ˆ𝑦 𝑗 .
+
+Similarity Computation. We compute the cosine similarity (defined in Eq. 2) between token embeddings to measure semantic relatedness at the token level. This similarity reflects local semantic alignment between individual tokens and does not yet incorporate sequence-level structure. sim (u, v) = u⊤v
+
+∥u∥∥ v∥ (2) 
+
+SolidityScore Calculation. Domain-weighted Recall ( 𝑅 𝑠𝑜𝑙 ) and Precision ( 𝑃 𝑠𝑜𝑙 ) are obtained by greedy matching over the token-wise similarity matrix. During this matching process, we apply a domain-adaptive weight function 𝑤 (·) to individual tokens to reflect their functional importance. Specifically, the weights are derived from IDF statistics computed over the Solidity training corpus constructed in this study, assigning higher importance to tokens that are critical in Solidity. The final SolidityScore is defined as their harmonic mean (F1-score). Recall (Eq. (3)) measures how well the reference logic is covered by the generated code. Precision (Eq. (4)) assesses the relevance of the generated tokens with respect to the reference, and the combined SolidityScore (Eq. (5)) provides a balanced, length-invariant evaluation. 
+
+𝑅 𝑠𝑜𝑙 = 1
+
+Í𝑚 𝑖 =1 𝑤 (𝑦 ∗ 
+
+> 𝑖
+
+)
+
+> 𝑚
+
+∑︁ 
+
+> 𝑖 =1
+
+𝑤 (𝑦 ∗ 
+
+> 𝑖
+
+) · max  
+
+> 𝑗
+
+sim (v𝑦 ∗ 
+
+> 𝑖
+
+, v ˆ𝑦 𝑗 ) (3) 
+
+𝑃 𝑠𝑜𝑙 = 1
+
+Í𝑛 𝑗 =1 𝑤 ( ˆ𝑦 𝑗 )
+
+> 𝑛
+
+∑︁ 
+
+> 𝑗 =1
+
+𝑤 ( ˆ𝑦 𝑗 ) · max  
+
+> 𝑖
+
+sim (v ˆ𝑦 𝑗 , v𝑦 ∗ 
+
+> 𝑖
+
+) (4) SolidityScore = 2 · 𝑃 𝑠𝑜𝑙 · 𝑅 𝑠𝑜𝑙 
+
+𝑃 𝑠𝑜𝑙 + 𝑅 𝑠𝑜𝑙 
+
+(5) SolidityScore produces values in the range [0,1]. A high SolidityScore indicates that the gener-ated code preserves critical business logic and security-relevant constraints even when syntactic variations (e.g., variable renaming or code reorganization), which would typically lead to low scores under surface-form metrics like BLEU. In summary, we pair BLEU with SolidityScore to obtain a balanced evaluation of Solidity code generation. BLEU captures syntactic and stylistic proximity to the reference implementation, while  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:13
+
+SolidityScore measures semantic alignment that is robust to surface-level differences. High scores on both metrics suggest code that is both structurally conventional and logically faithful. Conversely, low BLEU but high SolidityScore often reflects functionally correct solutions expressed through alternative naming conventions or reorganized code structures. 
+
+4 EXPERIMENTAL SETUP 
+
+To ensure the reliability and reproducibility of the experimental results, all experiments were conducted on a unified hardware and software platform. A high-performance computing node equipped with a single NVIDIA GeForce RTX 5090 GPU (32GB VRAM) provided the computational resources for model inference and training. The software environment was built upon Python 3.12 and the PyTorch 2.8.0 framework. 
+
+4.1 Model Selection 
+
+To ensure a comprehensive and representative evaluation, we selected three popular open-source LLMs recognized for their strong coding performance: CodeLlama [ 55 ], DeepSeek-Coder [ 12 ], and Qwen2.5-Coder [ 24 ]. Specifically, we use CodeLlama-7B-Instruct-HF, DeepSeek-Coder-6.7B-Instruct, and Qwen2.5-Coder-7B-Instruct, all downloaded from their official standard releases on the Hugging Face Hub. The selection of LLMs was guided by four primary criteria: (1) Representative paradigms: The chosen models reflected the predominant training paradigms in code-specialized LLMs. CodeLlama exemplifies domain adaptation of a general-purpose foundation model. DeepSeek-Coder represents a model pre-trained from scratch on code, while Qwen2.5-Coder illustrates a powerful generalist model with robust coding capabilities. (2) Controlled model capacity: We standardized our comparison at the 7-billion (7B) parameter scale. While ICL permits the use of significantly larger models, we restrict our baselines to 7B to ensure a fair, apples-to-apples comparison of learning paradigms (SFT vs. ICL) under identical model capacities. Furthermore, the 7B scale represents the practical sweet spot for local deployment on consumer-grade hardware [80]. (3) Accessibility and reproducibility: All selected models were fully open-source and publicly available on the Hugging Face Hub 6, ensuring experimental transparency and facilitating commu-nity replication. (4) Established baselines: These models consistently rank at the top of major code generation benchmarks (e.g., HumanEval [ 9 ] and MBPP [ 4 ]) and are frequently adopted as reference models in contemporary [52, 76, 79], solidifying their status as standard benchmarks for comparison. 
+
+4.2 Research Question 
+
+Using the evaluation framework introduced in Section 3, we assess existing LLMs on repository-level Solidity code generation through the following five research questions (RQs). 
+
+• RQ1: How do general-purpose LLMs perform in generating repository-level Solidity code under a zero-shot setting? 
+
+• RQ2: To what extent can prompting-based adaptation strategies improve repository-level Solidity code generation? 
+
+– RQ2.1: Can structured reasoning via CoT improve repository-level Solidity code generation capabilities? 
+
+– RQ2.2: Can contextual demonstrations via ICL improve repository-level Solidity code generation capabilities?  
+
+> 6https://huggingface.co/ J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:14 S. Chen et al.
+
+– RQ2.3: Can dynamic knowledge injection via RAG improve repository-level Solidity code generation capabilities? 
+
+• RQ3: How does domain-specific SFT compare with prompt-based strategies for repository-level Solidity code generation? 
+
+• RQ4: Does SolidityScore provide a more reliable assessment of the semantic correctness of generated Solidity code than BLEU? 
+
+• RQ5: To what extent can LLMs generate compilable repository-level Solidity contracts, and what are the dominate types of compilation errors? These RQs are designed to form a coherent progression: from establishing baseline capabilities, to examining different adaptation paradigms, to validating evaluation metrics and practical feasibility. Specifically, RQ1 establishes the zero-shot performance of general-purpose LLMs without any form of adaptation. RQ2 investigates inference-time adaptation via prompt engineering strategies, with sub-questions (RQ2.1–RQ2.3) isolating the effects of individual mechanisms. RQ3 then examines parameter-level adaptation by comparing domain-specific supervised fine-tuning against prompt-based approaches. Beyond performance comparison, RQ4 focuses on evaluation validity by assessing whether our proposed semantics-aware metric, SolidityScore, provides more reliable semantic assessment than BLEU. Finally, RQ5 complements the semantic evaluation by examining the compilation feasibility of generated code and diagnosing the types of compilation failures that arise. 
+
+4.3 Hyperparameter Setting 
+
+The effectiveness of zero-shot and various prompt engineering strategies was empirically evaluated. To ensure the stability and reproducibility of the generated results, a low-temperature sampling strategy (with the temperature coefficient 𝑇 uniformly set to 0.2) was adopted across all inference experiments. This setting significantly reduced stochastic fluctuations while preserving a minimal degree of diversity, thereby providing a fair benchmark for performance comparison across different strategies. For the supervised fine-tuning (SFT) experiments, we employed LoRA for parameter-efficient fine-tuning, considering computational constraints and training efficiency. Specifically, the training duration was set to 30 epochs using a cosine learning rate scheduler, with an initial learning rate of 3e-4 and a warmup ratio of 0.05 [ 40 ]. To balance training stability and resource usage, the fine-tuning process utilized a batch size of 2 with a gradient accumulation of 5. Furthermore, an early stopping mechanism with a patience value of 2 was implemented to mitigate overfitting risks, following established regularization strategies [ 13 , 45 , 51 ]. This configuration yielded stable convergence and consistent performance in our preliminary tuning experiments. 
+
+5 EXPERIMENTAL RESULTS AND ANALYSIS 5.1 RQ1: Evaluating LLMs for Solidity Code Generation under Zero-Shot Setting 
+
+Methodology. To systematically evaluate the performance of general-purpose LLMs in generating repository-level Solidity code, we conduct experiments under a zero-shot setting. Under this setup, models are provided only with natural language functional descriptions from the test set, without any code demonstrations, reasoning cues, or auxiliary context. We designed a unified instruction template for all models, explicitly requiring the generation of complete, compilable, and syntactically correct smart contracts based on the given descriptions. The designed template is shown in Fig. 4. The performance of the studied LLMs is quantitatively and qualitatively analyzed under this scenario. Quantitatively, we utilize the BLEU metric to measure lexical overlap and syntactic adherence, and employ SolidityScore to assess semantic alignment and logical consistency within  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:15
+
+the Solidity domain; specifically, the mean values of both metrics across all samples in the test set are reported. Qualitatively, a manual inspection is conducted based on 5 instances randomly sampled from the test set. We specifically check compliance with Solidity-specific constraints, such as the correct use of modifiers and gas cost optimization, as well as critical security patterns including the CEI pattern. 
+
+Zero-shot Prompt Template  
+
+> # Instruction
+> You are an expert Solidity developer. Please write a high-quality, secure, and complete Solidity smart contract based on the following description.
+> # Task Specification
+> Description: {description}
+> # Response
+> Code:
+> Fig. 4. The zero-shot prompt template used for Solidity code generation.
+
+Results. The quantitative results in Table 3 show clear performance differences among the evalu-ated models under the zero-shot setting. Qwen2.5-Coder-7B-Instruct achieved the highest scores, with a BLEU of 18.84 and a SolidityScore of 0.5566, demonstrating strong foundational generation capabilities. DeepSeek-Coder-6.7B-Instruct delivered moderate performance, with scores of 12.14 and 0.5311, respectively. In contrast, CodeLlama-7B-Instruct-HF showed significantly lower profi-ciency, obtaining only 7.99 in BLEU and 0.4692 in SolidityScore, showing limited ability to directly generate valid repository-level Solidity code under the scenario. 
+
+> Table 3. Performance evaluation of models in the zero-shot setting
+
+Model BLEU SolidityScore 
+
+CodeLlama-7B-Instruct-HF 7.9957 0.4692 Deepseek-Coder-6.7B-Instruct 12.1412 0.5311 Qwen2.5-Coder-7B-Instruct 18.8433 0.5566 
+
+In addition to the quantitative evaluation, we performed a manual inspection by randomly sam-pling 5 instances from the test set to assess the functional and security quality of the generated code. This qualitative analysis showed that, under the zero-shot setting, all three models exhibited recur-ring and critical shortcomings. Common issues across models included the incorrect application of essential modifiers such as payable , the omission of visibility specifiers for state variables, and violations of foundational security patterns, for example, performing external calls before updating internal state. Although Qwen2.5-Coder achieved the highest quantitative scores, its generated code still contained significant deficiencies. Our inspection frequently identified syntactic violations and logical flaws in its outputs, primarily due to non-adherence to Solidity-specific domain rules and security conventions. These observations suggest that the unsatisfactory performance under the zero-shot setting may be attributable to missing domain-specific guidance, a hypothesis that we further examine through prompt-based and fine-tuning strategies in subsequent RQs.  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:16 S. Chen et al.
+
+Answer to RQ1. General-purpose LLMs struggle to generate accurate repository-level Solidity code under a zero-shot setting, as reflected by consistently low BLEU and SolidityScore values. Although Qwen2.5-Coder achieves higher scores than DeepSeek-Coder and CodeLlama, all evaluated models exhibit pervasive syntactic and security-related defects, indicating that improvements in baseline model capability alone are insufficient to achieve reliable repository-level Solidity code generation. 
+
+5.2 RQ2: Evaluating Different Prompt Optimization Strategies on Solidity Generation 
+
+5.2.1 RQ2.1: Effectiveness of Structured Chain-of-Thought. 
+
+Methodology. The effectiveness of CoT prompting in code generation tasks has been extensively validated in existing literature. However, traditional free-form CoT is often limited by its unstruc-tured reasoning process and insufficient alignment with the inherent structures of code. To address these challenges, Li et al. [ 34 ] proposed a SCoT method, which explicitly guides reasoning through foundational programming constructs (e.g., sequences, branches, and loops) to enhance generation quality. As a domain-specific languages for smart contract development, Solidity enforces strict architec-tural and security constraints. Generating correct code requires a thorough prior understanding of state variable relationships and access control logic. The SCoT approach mitigates common logical leaps and structural omissions by enforcing a stepwise reasoning process, progressing from requirement comprehension to structural planning and finally to implementation. This method mandates the explicit definition of control flows and input-output relationships, aligning closely with core Solidity constructs such as function signatures and state transitions. In this sense, follow-ing a previous study [ 34 ], we designed a SCoT prompt template, as shown in Fig. 5, specifically for Solidity code generation. The template guides the model to first parse the requirements by identifying key business entities, then plan the structure of function interfaces and control flows, and finally generate concrete Solidity code based on this structured blueprint. 
+
+SCoT Prompt Template               
+
+> # Instruction
+> You are a Solidity expert. Analyze the requirements step-by-step using Structured Chain-of-Thought before generating code.
+> # Reasoning Framework
+> •1. Interface Analysis : Define inputs (e.g., uint amount ) and outputs.
+> •2. Control Flow Planning :
+> –Sequential : Check balance →Update state →Emit events.
+> –Branch : Define conditions (e.g., if amount <= 0 ).
+> –Loop : Define iteration logic or explicitly state "None".
+> •3. Security & Finalization : Verify against vulnerabilities (e.g., Re-entrancy) and apply modifiers (e.g., onlyOwner ).
+> # Task
+> Requirement: {description}
+> SCoT Reasoning & Code:
+> Fig. 5. The Structured Chain-of-Thought prompt template designed for Solidity code generation.
+
+Results. The experimental results in Table 4 show that implementing the SCoT method substantially improved the generation performance across all studied models. This outcome confirms the general  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:17
+
+effectiveness of explicit reasoning guidance in complex programming tasks. Regarding quantita-tive metrics, CodeLlama-7B-Instruct-HF showed the greatest improvement, with its BLEU score increasing from 7.99 to 17.59 and its SolidityScore rising from 0.4692 to 0.5502. DeepSeek-Coder and Qwen2.5-Coder also exhibited consistent performance uplifts. Qwen2.5-Coder maintained its leading position, achieving a BLEU score of 20.33 and a SolidityScore of 0.5619. 
+
+> Table 4. Performance evaluation of models in the SCOT setting
+
+Model BLEU SolidityScore 
+
+CodeLlama-7B-Instruct-HF 17.5946 0.5502 Deepseek-Coder-6.7B-Instruct 14.7973 0.5309 Qwen2.5-Coder-7B-Instruct 20.3323 0.5619 
+
+Similar to RQ1, a manual inspection was conducted to qualitatively assess the quality of the generated code using the SCoT prompt, based on 5 instances randomly sampled from the test set. We found that the SCoT strategy effectively mitigated critical structural deficiencies identified in RQ1, such as missing constructor initializations and incorrect inheritance hierarchies, demonstrating a marked reduction in these architectural errors compared to the zero-shot baseline. With the introduction of structured planning steps, models demonstrated significantly improved accuracy in defining function visibility (e.g., external vs. public) and security-critical access control modifiers (e.g., onlyOwner) and a stronger adherence to standard conventions for declaring constructors and events. This qualitative analysis suggests that the reasoning chain not only refines local syntax, but also enhances the ’ high-level understanding of the overall contract architecture of the models. This architectural coherence is directly reflected in the increase in SolidityScore, which places a heavy weight on the correctness of state variable relationships and function interfaces. By mandating a deliberate design phase before code writing, SCoT ensures tight alignment between the overarching logic and its detailed implementation within Solidity’s constrained development paradigm. 
+
+Answer to RQ2.1. SCoT outperforms the zero-shot baseline and effectively enables the mapping of natural language functional descriptions to Solidity’s rigorous syntactic and state-dependency con-straints, thereby improving code generation quality. For models with lower baseline performance (e.g., CodeLlama), the structured reasoning steps primarily mitigated fundamental structural defi-ciencies, leading to observed improvements in syntactic coherence and completeness. In contrast, for models exhibiting stronger baseline capabilities (e.g., Qwen2.5), the explicit planning phase facilitated the accurate implementation of complex business logic and security patterns, such as adherence to the CEI pattern. Overall, decomposing the generation process reduces both low-level syntactic errors and high-level logical oversights, ensuring higher architectural integrity. 
+
+5.2.2 RQ2.2: Effectiveness of in-context learning. 
+
+Methodology. To explore the effectiveness and limitations of ICL for repository-level Solidity code generation, we randomly sampled contracts from the training set as few-shot demonstrations. These demonstrations were used to construct ICL prompt templates containing 𝑘 examples, where 
+
+𝑘 ∈ { 1, 2, 3, 4}. Random sampling was adopted to focus on the model’s intrinsic few-shot learning capability, without introducing confounding factors from external example selection mechanisms. In particular, by avoiding similarity-based retrieval or heuristic ranking strategies, this design ensures that observed performance differences reflect the model’s ability to learn from contextual examples rather than the effectiveness of a specific selection algorithm. The ICL prompt template we designed is shown in Fig. 6.  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:18 S. Chen et al.
+
+ICL Prompt Template      
+
+> # Instruction
+> You are an expert Solidity developer. Please write a high-quality, secure, and complete Solidity smart contract based on the following description.
+> # Demonstrations ( 𝑘 -Shot)
+> <Example 1>
+> Description: {example_1_description}
+> Code: {example_1_code}
+> ... (Repeated for 𝑘 examples) ...
+> # Current Task Description: {target_description}
+> Code:
+> Fig. 6. The In Context Learning prompt template designed for Solidity code generation.
+
+This setup allows us to investigate two aspects of ICL behavior. First, we examine whether the inclusion of few-shot demonstrations improves the structural organization and stylistic consistency of generated Solidity code. Second, we analyze how model performance evolves as the number of demonstrations increases, assessing whether additional examples lead to continuous performance gains or instead result in diminishing returns or performance degradation. To control experimental variables, all models share the same pool of demonstration examples, with only the number of included examples varying across settings. This design allows performance changes to be primarily attributed to the model’s capacity to learn and generalize patterns from the provided context. 
+
+Results. The experimental results are shown in Fig. 7. Taking Qwen2.5-Coder as an example, its performance on syntactic accuracy (BLEU) and semantic consistency (SolidityScore) improved with the addition of in-context examples. Starting with a baseline BLEU score of 18.8433 in the zero-shot setting, the score rose to 21.2989 with one example and peaked at 22.2377 with two examples. Similarly, the SolidityScore increased from a baseline of 0.5566 to a peak of 0.5806 at the two-shot setting, indicating that the model captured deeper logical semantics. However, this upward trend reversed when more than two examples were provided, with both metrics declining at the three-and four-shot settings The other two models exhibited the same pattern of initial improvement followed by decline. CodeLlama showed the most dramatic gains: its BLEU score jumped from 7.9957 in the zero-shot setting to a peak of 22.1527 with two examples, while its SolidityScore rose correspondingly from 0.4692 to 0.5709. DeepSeek-Coder followed a similar trend, with BLEU improving from 12.1412 to 16.6359 and SolidityScore from 0.5311 to 0.5480 at the two-shot setting. However, as shown in Fig. 7, DeepSeek-Coder’s performance deteriorated most sharply when the context expanded beyond two examples. These results collectively demonstrate that a limited number of in-context examples effectively activates domain knowledge, whereas an excessive context size leads to performance degradation across all models. We hypothesize that this phenomenon is likely attributable to the inherent complexity and high token consumption characteristic of repository-level tasks. In contrast to function-level code generation tasks, repository-level synthesis entails extensive logic and cross-file dependencies, meaning that each demonstration imposes a significant burden on the limited context window. Consequently, stacking multiple repository-level examples ( 𝑘 ≥ 3) results in an excessively long context. This overwhelms the model’s attention mechanism, introducing conflicting coding styles 
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018.
+
+Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:19 0 1 2 3 4
+
+> Number of random examples
+> 8
+> 10
+> 12
+> 14
+> 16
+> 18
+> 20
+> 22
+> BLEU Score
+> CodeLlama-7B-Instruct-HF
+> Deepseek-Coder-6.7B-Instruct
+> Qwen2.5-Coder-7B-Instruct
+
+(a) BLEU 0 1 2 3 4 
+
+> Number of random examples
+> 0.48
+> 0.50
+> 0.52
+> 0.54
+> 0.56
+> 0.58
+> SolidityScore
+> CodeLlama-7B-Instruct-HF
+> Deepseek-Coder-6.7B-Instruct
+> Qwen2.5-Coder-7B-Instruct
+
+(b) SolidityScore 
+
+Fig. 7. Performance trends of evaluated models using ICL with varying numbers of demonstrations ( 𝑘 ∈{0, 1, 2, 3, 4}). 
+
+and irrelevant details as noise. Instead of providing useful information, this information overload distracts the model from the target requirement. Therefore, providing exactly two high-quality examples offers the best balance, avoiding the negative impact of long-context saturation. 
+
+Answer to RQ2.2. Our empirical analysis reveals a consistent saturation point for in-context learning in repository-level Solidity code generation, where performance consistently peaks at two examples ( 𝑘 = 2) across all evaluated models. This suggests that a small number of examples is sufficient to convey essential structural and stylistic patterns of Solidity code. Beyond this point, adding more demonstrations leads to diminishing returns and, in some cases, measurable performance degradation. 
+
+5.2.3 RQ2.3 Effectiveness of Retrieval-Augmented Generation. 
+
+Methodology. To address the limitations of static ICL, where a fixed set of randomly selected examples is reused for all test queries regardless of their content, as in RQ2.2, we investigate RAG as a dynamic alternative. RAG selects query-specific examples at inference time, mitigating the risk that randomly chosen demonstrations may be irrelevant to a given task. We implement a RAG framework in which the entire training set (4,376 high-quality samples) is indexed as an external knowledge base. During inference, we apply the BM25 algorithm [ 54 ] to compute textual similarity between the natural language problem description of a test query and samples in the knowledge base. For each query, the top-𝑘 most similar examples ( 𝑘 ∈ { 1, 2, 3, 4}) are retrieved and incorporated into the prompt. This dynamic retrieval strategy helps ensure that the model conditions on code examples with closely related logic and functional requirements, providing more targeted domain guidance than generic few-shot demonstrations. 
+
+Results. As illustrated in Fig. 8, the RAG strategy significantly bolstered the code generation performance of all evaluated models compared to ICL. All models showed a consistent pattern: performance initially increased with the number of retrieved samples, then declined as the context expanded further. Qwen2.5-Coder demonstrated the most substantial gain. Its BLEU score rose from 25.9813 ( 𝑘 = 1)to a peak of 32.0489 at two retrieved samples ( 𝑘 = 2), while its SolidityScore simultaneously increased from 0.6125 to 0.6386. Notably, this peak performance represents a 44.1% relative improvement in BLEU and a 10.0% improvement in SolidityScore compared to its best static ICL result. DeepSeek-Coder followed a similar trend, peaking at 𝑘 = 2 with a BLEU score of 19.3276 and a SolidityScore of 0.5753. This corresponds to a 16.1% relative improvement in BLEU over the static ICL baseline. In 
+
+J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:20 S. Chen et al. 0 1 2 3 4
+
+> Number of retrieved examples
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> BLEU Score
+> CodeLlama-7B-Instruct-HF
+> Deepseek-Coder-6.7B-Instruct
+> Qwen2.5-Coder-7B-Instruct
+
+(a) BLEU 0 1 2 3 4 
+
+> Number of retrieved examples
+> 0.475
+> 0.500
+> 0.525
+> 0.550
+> 0.575
+> 0.600
+> 0.625
+> 0.650
+> SolidityScore
+> CodeLlama-7B-Instruct-HF
+> Deepseek-Coder-6.7B-Instruct
+> Qwen2.5-Coder-7B-Instruct
+
+(b) SolidityScore 
+
+Fig. 8. Performance trends of evaluated models using RAG with varying numbers of demonstrations ( 𝑘 ∈{0, 1, 2, 3, 4}). 
+
+contrast, CodeLlama exhibited a delayed peak. Its BLEU score continued to rise from 20.9843 ( 𝑘 = 1)to reach its zenith of 24.22 at three retrieved samples ( 𝑘 = 3), while its SolidityScore rose from 0.5842 to 0.5933. This represents a 9.3% relative improvement in BLEU and a 3.9% improvement in SolidityScore over its optimal ICL setting. It was only when the retrieved samples increased to four that its performance began to decline, indicating a distinct tolerance for context length compared to the other models. Our analysis of the performance trends and model-specific variations (Fig. 8) identifies two key mechanisms driving these results. First, RAG outperforms static ICL because it retrieves semantically relevant code that directly maps to the target requirements. However, the observed rise and fall trend confirms that context saturation is inevitable; while 2-3 relevant examples provide crucial logic and security patterns, stacking more examples ( 𝑘 ≥ 4) creates an excessively long context. This introduces information redundancy and cognitive noise that distracts the model from the core task, offsetting the benefits of retrieval. Second, the observed divergence in optimal retrieval volume—where Qwen2.5 peaks at 𝑘 = 2 while CodeLlama peaks at 𝑘 = 3, suggests a fundamental difference in their in-context learning efficiency. Newer models like Qwen2.5 appear capable of extracting sufficient task patterns from minimal context; thus, two high-quality examples provide ample guidance, rendering additional examples redundant. In contrast, models with lower baselines like CodeLlama seem to benefit from extended context, where a third example likely reinforces the generation paradigm. However, beyond these peaks, the increased context length introduces information overload that outweighs any marginal benefit, ultimately leading to performance degradation. 
+
+Answer to RQ2.3. RAG consistently outperforms static ICL, which relies on randomly sampled examples, across all evaluated models, highlighting the benefit of dynamically retrieving query-relevant demonstrations. Performance typically peaks with a small number of retrieved examples and degrades as more are added, indicating context saturation. The optimal retrieval size varies across models, suggesting differences in their in-context learning efficiency. 
+
+5.3 RQ3: Impact of SFT on Domain Adaptation 
+
+Methodology. To investigate the role of parameter updates in achieving deep domain adaptation, we performed SFT on our constructed high-quality Solidity instruction dataset. Given the computa-tional costs associated with full-parameter tuning, we adopted LoRA [ 23 ] as a parameter-efficient strategy. The configuration involved a rank 𝑟 = 16 and a scaling factor 𝛼 = 32 . To maximize 
+
+J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:21 
+
+the model’s representational capability, LoRA adapters were injected into all critical linear layers of the Transformer architecture, including the query ( 𝑞 _𝑝𝑟𝑜 𝑗 ), key ( 𝑘 _𝑝𝑟𝑜 𝑗 ), value ( 𝑣 _𝑝𝑟𝑜 𝑗 ), and output ( 𝑜 _𝑝𝑟𝑜 𝑗 ) projection layers, as well as the gate, up, and down projection layers within the feed-forward networks. The training process utilized 8-bit floating point (FP8) to quantization to optimize memory efficiency. All samples were formatted into a standard instruction-following structure. We employed a standard language modeling loss with masking as the optimization objective, calculating loss only on the code generation tokens while ignoring the instruction prefix. Training hyperparameters included a learning rate of 3𝑒 −4, using a cosine annealing scheduler with a 5% warmup ratio to ensure convergence and prevent overfitting. 
+
+Results. The experimental results presented in Table 5 demonstrate that SFT triggered a funda-mental improvement in model performance, significantly surpassing all non-parametric prompt engineering strategies (ICL and RAG). All fine-tuned models achieved a qualitative breakthrough, with performance metrics reaching new heights across the board. 
+
+> Table 5. Performance of models in the SFT setting
+
+Model BLEU SolidityScore 
+
+CodeLlama-7B-Instruct-HF 28.1663 0.6361 Deepseek-Coder-6.7B-Instruct 25.3060 0.6240 Qwen2.5-Coder-7B-Instruct 35.9584 0.6465 
+
+Qwen2.5-Coder-7B-Instruct exhibited exceptional domain adaptability. Its BLEU score soared to 35.96, and its SolidityScore reached 0.6465, establishing absolute dominance in the comparative experiments. This represents a significant improvement over its best RAG performance (BLEU: 32.05). CodeLlama-7b-Instruct-hf also recorded substantial gains. Its BLEU score reached 28.17, while its SolidityScore rose to 0.6361. Notably, this post-SFT performance significantly outperforms its RAG peak (BLEU: 24.22), proving that parameter optimization effectively bridges the gap between older architectures and domain-specific requirements. DeepSeek-Coder-6.7b-Instruct similarly showed robust growth, attaining a BLEU score of 25.3060 and a SolidityScore of 0.6240. The fact that the SolidityScore for all models exceeded the 0.62 threshold indicates that SFT enables models to master not just the syntax, but the deeper semantic logic of smart contracts. The experimental results reveal two key factors underlying the superior performance of SFT in domain adaptation. First, SFT’s ability to internalize domain knowledge proves more effective than external guidance mechanisms such as ICL and RAG. While ICL and RAG depend on retrieved context to “remind” the model of relevant knowledge–an approach constrained by context length and retrieval quality, SFT directly encodes domain-specific patterns into the model’s parameters. This eliminates reliance on noisy or incomplete external prompts and enables the model to absorb strict domain constraints (e.g., security rules and gas optimization in Solidity) as intrinsic capabilities. Consequently, SFT yields more consistent outputs and lower inference latency. Second, SFT unlocks significant potential across varied model architectures. Although newer, more capable models (e.g., Qwen2.5) attain higher absolute scores due to stronger pre-training, older models (e.g., CodeLlama) exhibit a steeper “adaptation curve” when fine-tuned with high-quality domain data. The dramatic improvement observed in CodeLlama indicates that even models with initially weaker instruction-following abilities can be transformed into specialized experts through targeted SFT. This underscores that, for technical domains like Solidity, a well-pre-trained base model coupled with a high-quality SFT pipeline is critical to achieving industrial-grade reliability.  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:22 S. Chen et al.
+
+Answer to RQ3. SFT is a decisive factor for effective domain adaptation in code generation, par-ticularly in specialized, constraint-rich domains like Solidity. SFT surpasses RAG or ICL methods by internalizing domain knowledge directly into the model parameters, thereby reducing incon-sistency and latency. Moreover, SFT enables substantial performance gains across diverse model architectures, including older or less instruction-tuned models, when applied with high-quality, domain-specific data. Thus, for industrial-strength domain adaptation, a robust SFT pipeline built upon a sufficiently pre-trained base model is essential. 
+
+5.4 RQ4: SolidityScore Reliability Verification 
+
+Methodology. To validate the reliability of SolidityScore, particularly its ability to correctly assess functionally equivalent but structurally distinct code, we designed an adversarial experiment. This addresses a key limitation of traditional 𝑁 -gram metrics like BLEU, which are overly sensitive to superficial lexical features and often penalize functionally correct code merely for differences in coding style or syntax. For the experiment, we constructed an adversarial test set of 100 high-quality samples. Critically, instead of applying simple rule-based code transformations, we leveraged the GPT-4 API as a semantic-preserving perturbation engine. By using meticulously designed prompt templates, we instructed GPT-4 to generate diverse code variants that preserve the original functionality, thereby creating a rigorous test for metric robustness. Specifically, while strictly constraining the business logic and control flow to remain unchanged, we performed multi-dimensional refactoring of the code. At the lexical level, we implemented aggressive variable anonymization, such as replacing descriptive identifiers (e.g., userBalance )with generic tokens like v1 . Structurally, we applied equivalent rewrites to loop logic and conditional branches, such as converting for loops into while structures or reconfiguring the nesting of if-else statements. This process generated adversarial samples that remain functionally identical to the originals despite exhibiting extremely low textual similarity. The objective was to force the evaluation metrics to penetrate surface-level noise and capture the underlying core semantics. We compared the stability of BLEU and SolidityScore on 50 semantically equivalent but syntactically perturbed adversarial samples. 
+
+Results. The experimental results, shown in Fig. 9, reveal a fundamental difference in their perfor-mance under adversarial conditions. Constrained by its rigid dependency on surface-level tokens, the BLEU metric proved fragile when faced with variable renaming and structural rewriting, achiev-ing an average score of only 72.7. This outcome indicates that evaluation methods based on textual overlap struggle to accommodate the diversified output styles of generative models, posing a significant risk of quality underestimation. In contrast, SolidityScore demonstrated exceptional semantic stability, maintaining a high average score of 92.4. Quantitative analysis shows that this corresponds to a semantic gain of +19.7 over the baseline BLEU score. This pronounced performance advantage can be attributed to its underlying Solidity-LLM encoder, which underwent large-scale domain-specific instruction fine-tuning to map code into a high-dimensional semantic space. 
+
+Answer to RQ4. SolidityScore effectively filtered out perturbations in variable names and syntactic structures while accurately identifying the inherent logical consistency of the code. Therefore, this experiment provides compelling evidence that SolidityScore possesses superior construct validity. It offers a more objective and robust quality measure for smart contract generation tasks compared to traditional lexical overlap metrics (e.g., BLEU). 
+
+5.5 RQ5: Compilability Analysis of SFT-generated Code across Different Models 
+
+Methodology. While metrics like BLEU and SolidityScore provide complementary views, respec-tively assessing surface-form similarity and deep semantic equivalence, they share a fundamental limitation: neither can guarantee the practical executability of generated code. A contract may    
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:23 BLEU SolidityScore 020 40 60 80 100
+> Similarity Score (0-100)
+> 72.7 92.4 Sensitive to syntax Robust to semantics
+> +19.7 Semantic Gain
+
+Fig. 9. Evaluation of metric robustness under adversarial attacks 
+
+achieve high scores on these metrics yet fail to compile due to unresolved dependencies, version mismatches, or project-level configuration errors. To examine the compilability performance of code generated under the SFT paradigm, we transitioned from static metric-based assessment to a compiler-based validation paradigm. Given the negligible compilation success of prompt-based methods (CoT, ICL, and RAG) in preliminary repository-level tasks, we focus this assessment exclusively on the SFT paradigm. Specifically, we employ two metrics: the Compilation Success Rate (CSR), which measures the ratio of samples that compile without errors using the Solidity compiler ( solc ) version 0.8.20 , and the Syntax Correctness Rate (SCR), which measures samples that can be parsed into a valid AST but may fail compilation due to external dependencies. Additionally, an automated parsing pipeline was implemented to categorize every compilation failure based on compiler feedback derived from the solc , resulting in a detailed taxonomy of error types (e.g., missing context, missing dependency, Markdown/Text noise). This methodology allows us to quantify compilability and diagnose the root causes of failure in a repository-level context. 
+
+Results. The compilablity results for code generated by different LLMs in the SFT setting are shown in Fig. 10. Qwen2.5-Coder significantly outperformed CodeLlama and DeepSeek-Coder across both metrics, achieving an SCR of 68.9% and a CSR of 31.3%, whereas the CSR for the latter two remained below 10%, at 8.8% and 6.8% respectively. Despite the overall performance variance, all models exhibited a substantial gap between SCR and CSR, suggesting that a significant portion of syntactically parsable code remains unusable at an engineering level. This observed discrepancy between high syntax correctness and low compilation success rate stems primarily from the lack of repository-level context in conventional instruction tuning datasets. By learning from high-quality, domain-specific samples, SFT enables models to closely approximate the distribution of Solidity code at the statement level. This allows them to master constructs such as function definitions, visibility modifiers, and event declarations, which significantly improves the SCR. The successful compilation of a Solidity contract also depends on external dependencies, such as library import paths, compiler version pragmas, and inheritance relationships across multiple files. As a result, while models can generate syntactically correct code fragments, they often fail to resolve these cross-file references correctly, leading to linking errors in practical compilation environments. This limitation highlights the current ceiling of SFT for generating fully compilable, repository-level smart contracts. 
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018.
+
+1:24 S. Chen et al. DeepSeek-Coder CodeLlama Qwen2.5-Coder  
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Percentage (%)
+> 6.8% 8.8%
+> 31.3%
+> 14.1%
+> 29.1%
+> 68.9%
+> CSR (Fully Compiled)
+> SCR (Syntax Correct)
+
+Fig. 10. Comparison of compilability for code generated by different LLMs in the SFT setting. The significant gap between SCR and CSR indicates the challenge of meeting strict Solidity compiler constraints beyond basic syntax. 
+
+The resulting taxonomy of compilation failures is presented in Fig. 11. For CodeLlama and DeepSeek-Coder, most failures stemmed from syntax errors, constituting 70.6% and 76.9% of their respective unsuccessful samples. This suggests that a significant portion of generated contracts is rejected during the initial parsing phase, often due to structurally incomplete definitions or invalid modifier usage. Moreover, DeepSeek-Coder displayed a 9.0% error rate attributed to “Format: Mark-down/Text Noise”, indicating some instability in adhering strictly to code-generation instructions. These observations imply that when a base model’s pre-training coverage of a strongly typed, domain-specific languages like Solidity is inherently limited, downstream instruction tuning alone cannot fundamentally reshape its underlying syntax generation patterns. 0 20 80 100 40 60    
+
+> Percentage of Compilation error
+> DeepSeek-Coder CodeLlama Qwen2.5-Coder
+> 6.8% 8.8% 31.3% 8.6% 12.6% 9.0% 76.9% 70.6% 31.1% 6.9% 15.5% 16.5%
+> Success Env: Missing Dependency Env: Context Missing Format: Markdown/Text Noise Syntax: Invalid Structure Other Error
+
+Fig. 11. Analysis of Compilation Failure Causes. The chart distributes compilation errors based on compiler feedback, categorizing failures into types like syntax errors, missing dependencies, and format noise. The result highlights a model capability gap: less capable models are limited by syntax, while advanced models like Qwen2.5-Coder are challenged by project-level environmental context. 
+
+J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:25 
+
+In contrast, Qwen2.5-Coder displayed a distinct error profile; its structural error rate dropped to 31.1%, while a higher proportion of failures stemmed from environment-related categories such as “Env: Missing Dependency” (8.6%) and “Env: Context Missing” (12.6%). This shift suggests that given sufficient syntactic knowledge, SFT encourages models to attempt more complex patterns involving external libraries, which manifests as environmental hallucinations in the absence of a real project structure. Overall, while SFT effectively reduces low-level syntactic errors in high-quality base models, it remains insufficient for ensuring the stable generation of compilable project-level Solidity contracts without integrated build environment information. 
+
+Answer to RQ5. The compiler-based evaluation reveals that while LLMs in the SFT setting can generate a substantial portion of syntactically valid Solidity code (e.g., achieving a SCR of up to 68.9%), their ability to produce fully compilable, repository-level contracts remains severely limited, with the highest CSR reaching only 31.3%, and performance across models varies significantly, with the CSR for others falling below 10%. Critically, although the specific distribution of error subtypes differs between models, ranging from fundamental grammatical mistakes to incorrect project-level references (e.g., missing dependencies), the evidence indicates that syntax errors constitute the principal cause of compilation failure. 
+
+6 CASE STUDY 
+
+While quantitative experiments have validated the significant performance gains of SFT models over their zero-shot baselines, we conducted this qualitative case study on a representative bidding refund scenario to explore how instruction tuning fundamentally transforms the model’s approach to logic construction and architectural robustness. Unlike prompt-engineering strategies (such as CoT, ICL, and RAG) that rely on external guidance to mitigate structural flaws, SFT internalizes complex programming constraints directly into the model’s parameters. The purpose of this dedicated analysis, moving beyond the brief qualitative notes in RQs, is to granularly expose the reasoning gap in a complex business logic: a bidding refund system. As illustrated in Fig. 12, the adaptation paradigms exhibited substantially different capability boundaries when addressing this task using Qwen2.5-Coder-7B-Instruct. The code synthesized by the pre-trained model in a zero-shot setting (Fig. 12 (b)) displayed significant structural defects and security blind spots. Structurally, it relied on deeply nested conditional statements—an “arrow-shaped” architecture that increases the cognitive load for auditors and obscures the core business logic. More critically, the model operating in the zero-shot setting severely violated the CEI pattern, a cornerstone of secure smart contract development. The code erroneously placed external transfer operations before state updates, sending funds before deducting the user’s balance. This “interaction-before-effect” logical flaw renders the contract highly vulnerable to re-entrancy attacks, where an attacker could utilize a malicious contract to recursively call the function before the balance is zeroed, thereby exhausting the contract’s funds. As shown in Fig. 12(c), the CoT strategy addressed these structural deficiencies that arise in the zero-shot setting by guiding the model through explicit reasoning steps. While this approach successfully optimized the control flow by replacing deep nesting with guard clauses, thereby making the code easier to read and follow, the logical reasoning failed to rectify the underlying domain misconception. The CoT-generated code retained the critical “interaction-before-effect” flaw, executing the external call prior to the state update, which leaves the re-entrancy vulnerability unresolved despite the improved readability. Conversely, the ICL paradigm (Fig. 12(d)) effectively regularized the generative style through pattern imitation. By attending to high-quality demon-strations, the model correctly implemented the CEI pattern. However, this reliance on imitation often leads to mechanical redundancy. As shown in Fig. 10(d), the model includes an unnecessary return true; statement, reflecting its inability to distinguish core logic from the decorative artifacts     
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:26 S. Chen et al.
+> (a) Ground Truth (b) Zero-shot
+> (c) CoT (d) ICL
+> (e) RAG (f) SFT
+
+Fig. 12. Qualitative comparison among different adaptation paradigms for the “Auction Withdrawal” task, based on outputs from Qwen2.5-Coder-7B-Instruct. (a) Ground Truth serves as the secure reference im-plementation. (b) Zero-shot exhibits chaotic nesting and a critical re-entrancy vulnerability (Interaction-before-Effect). (c) CoT improves structural clarity via guard clauses but fails to resolve the logical vulnerability. (d) ICL adopts the CEI security pattern through example imitation. (e) RAG introduces domain-specific protection via knowledge retrieval. (f) SFT achieves the optimal synthesis of structural optimization and strict adherence to security standards. 
+
+of the provided examples. Unlike the above strategies, RAG injected external domain knowledge to supplement the model’s internal representations (Fig. 12(e)). By retrieving relevant logic, the model incorporated advanced defense patterns like the nonReentrant modifier. Nevertheless, the output exhibits an over-reliance on external components. The inclusion of the emit statement and nonReentrant modifier—while functional—introduces unnecessary complexity and potential compilation risks if specific library dependencies are absent in the project environment. The fine-tuned model (Fig. 12(f)) distinguishes itself through structural optimization and logical autonomy. As illustrated in the code, SFT achieves a highly refined implementation that mirrors the Ground Truth without the redundant return statements found in ICL or the external modifier dependencies introduced by RAG. By autonomously adopting a flattened architecture with guard clauses, SFT replaces the chaotic nesting observed in the zero-shot baseline. More importantly, it demonstrates a sophisticated use of modern Solidity syntax, specifically the .call method, ensuring the generated code is not only correct but also aligned with current engineering best practices.  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:27
+
+This superior performance stems from training on our meticulously curated high-quality corpus, which enables the model to master Solidity’s core syntactic logic and specialized structures—such as the CEI pattern. By internalizing this specialized Solidity knowledge directly into the model’s parameters, SFT significantly enhances the model’s capability in Solidity code generation, allowing it to synthesize robust and optimized solutions without relying on any external cues. Additionally, to objectively validate our manual analysis, we employed Slither [ 16 ], a static analysis tool for Solidity smart contracts, to check for the presence of vulnerabilities. It can detect typical high-risk vulnerabilities such as integer overflow/underflow and reentrancy. The automated detection results confirmed our findings. For the zero-shot and CoT outputs, Slither explicitly flagged a re-entrancy vulnerability, reporting the error “State variables written after the call(s)” and pinpointing that pendingReturns was updated subsequent to the external send interaction. In contrast, the ICL, RAG, and SFT-generated codes successfully passed the re-entrancy check. Specifically, ICL passed by mimicking the CEI pattern, while RAG passed by applying the re-entrancy guard. This objective verification highlights that while prompting strategies (ICL/RAG) can effectively mitigate risks through external guidance, SFT achieves robust security by internalizing critical constraints, ensuring valid generation even in the absence of external cues. 
+
+7 DISCUSSION 7.1 Implications 
+
+According to our empirical findings, we summarize three key future research directions for domain-specific code generation: the evolution of evaluation frameworks, the advancement of optimization methodologies, and the expansion of data foundations. First, regarding evaluation frameworks, while SolidityScore effectively measures semantic consis-tency, static metrics inherently fail to reflect runtime behavior. Future benchmarks should integrate dynamic analysis techniques (e.g., fuzzing and symbolic execution) to detect high-risk vulnera-bilities (e.g., reentrancy). At the same time, establishing quantitative standards for gas efficiency is essential to shift the evaluation focus from mere syntactic correctness to execution safety and economic optimization. Second, in terms of optimization methodologies, currently isolated approaches (e.g., RAG and SFT) each face inherent limitations, necessitating the development of hybrid architectures. Future research should explore new paradigms (e.g., retrieval-augmented fine-tuning) to examine how dynamic knowledge bases can effectively guide model parameter updates. Furthermore, rigorous comparisons between full-parameter fine-tuning and parameter-efficient methods are needed to identify the optimal trade-off between computational cost and domain adaptation performance. Finally, regarding models and data foundations, it is crucial to investigate the scaling laws of repository-level Solidity code generation capabilities across different model sizes. Concurrently, larger and more diverse datasets covering complex logic and edge cases should be constructed. These datasets should be continuously updated to keep pace with the rapid evolution of Solidity language features and security standards, thereby ensuring the temporal relevance of model capabilities. Advancing these directions will significantly enhance the performance of LLMs in repository-level Solidity smart contract generation, providing reliable support for the blockchain ecosystem and offering important insights for other domain-specific code generation tasks. 
+
+7.2 Threats to Validity 
+
+Internal validity is primarily challenged by two factors. First, model performance is heavily sensitive to prompt template design. Although we standardized prompts using structured templates (e.g., CoT and SCoT) to ensure consistency, alternative prompting strategies could yield different results.  
+
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:28 S. Chen et al.
+
+Second, the implementation of our experimental scripts poses another potential threat. To address this, all scripts underwent rigorous verification and testing. Additionally, we utilized models from the official Hugging Face Hub to further ensure implementation correctness and reproducibility. External validity is primarily concerned with the generalizability of our findings. First, potential dataset bias is a key consideration. Although we curated data from authoritative and representative platforms (e.g., Synthetix and OpenZeppelin) using rigorous cleaning protocols, SolidiBench may not encompass all rare syntactic features or edge-case business logic. Consequently, the applicability of our conclusions to smart contracts written in other languages (e.g., Vyper and Move) requires further validation. Second, the selection of LLMs constitutes another external threat. This work focused on three 7B-parameter open-source models (DeepSeek-Coder, CodeLlama, and Qwen2.5-Coder). Therefore, our findings may not directly extrapolate to larger-scale or proprietary models. Future work should empirically evaluate a broader range of LLMs on our benchmark. Finally, computational constraints precluded an exhaustive hyperparameter search. While we enforced unified training configurations to ensure fair comparisons, this uniform approach may not have unlocked the optimal performance of each model architecture. Nevertheless, given Solidity’s dominance in the Ethereum ecosystem and the practical prevalence of 7B-scale models for private deployment, our findings retain significant reference value for the current industry landscape. Construct validity is primarily affected by the evaluation metrics used. Consistent with previous general-purpose code generation studies, we employed BLEU to evaluate the performance of the studied LLMs on Solidity code generation. In view of the limitations of BLEU, we introduced a novel metric to comprehensively evaluate model performance across different paradigms. Furthermore, we assessed the quality of generated code using SCR and CSR and analyzed the causes of compilation failures to understand the practical limitations of the Solidity code generated by the studied LLMs. 
+
+8 CONCLUSION 
+
+This paper presents a systematic empirical study on repository-level Solidity smart contract gen-eration using LLMs across different adaptation paradigms. To address the lack of datasets for repository-level Solidity code generation, we construct a specialized dataset, SolidiBench, consist-ing of 5,470 natural language-Solidity code pairs. Using this dataset, we empirically evaluate the performance of three LLMs, specifically Qwen2.5-Coder, DeepSeek-Coder, and CodeLlama, under multiple paradigms. These paradigms include zero-shot, CoT, ICL, RAG, and SFT. Furthermore, to overcome the limitations of traditional metrics such as BLEU and the domain shift issues inherent in general-purpose CodeBERTScore, we introduce a novel metric called SolidityScore to more accurately assess the quality of generated Solidity code . Our findings reveal that while general-purpose models perform poorly in zero-shot settings, CoT significantly improves logical coherence, and RAG effectively incorporates domain knowledge. Most notably, SFT leads to the most substantial performance breakthrough, achieving a qualitative leap in semantic accuracy by internalizing domain-specific constraints of Solidity. We conclude that a pipeline combining high-quality domain data with SFT represents the optimal pathway for building highly reliable smart contract generation models. This study not only establishes a rigorous performance benchmark but also provides a methodological roadmap for repository-level Solidity code generation. 
+
+REFERENCES   
+
+> [1] Elvira Albert, Jesús Correas, Pablo Gordillo, Guillermo Román-Díez, and Albert Rubio. 2020. GASOL: Gas analysis and optimization for ethereum smart contracts. In Tools and Algorithms for the Construction and Analysis of Systems - 26th International Conference, TACAS 2020, Held as Part of the European Joint Conferences on Theory and Practice of Software, ETAPS 2020, Dublin, Ireland, April 25-30, 2020, Proceedings, Part II (Lecture Notes in Computer Science,
+> J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018.
+
+Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:29 
+
+Vol. 12079) . Springer, 118–125. https://doi.org/10.1007/978-3-030-45237-7_7 [2] Elvira Albert, Jesús Correas, Pablo Gordillo, Guillermo Román-Díez, and Albert Rubio. 2020. GASOL: Gas analysis and optimization for ethereum smart contracts. In Tools and Algorithms for the Construction and Analysis of Systems - 26th International Conference, TACAS 2020, Held as Part of the European Joint Conferences on Theory and Practice of Software, ETAPS 2020, Dublin, Ireland, April 25-30, 2020, Proceedings, Part II (Lecture Notes in Computer Science, Vol. 12079) . Springer, 118–125. https://doi.org/10.1007/978-3-030-45237-7_7 [3] Vivi Andersson, Sofia Bobadilla, Harald Hobbelhagen, and Martin Monperrus. 2025. PoCo: Agentic proof-of-concept exploit generation for smart contracts. CoRR abs/2511.02780 (2025). https://doi.org/10.48550/ARXIV.2511.02780 arXiv:2511.02780 [4] Jacob Austin, Augustus Odena, Maxwell I. Nye, Maarten Bosma, Henryk Michalewski, David Dohan, Ellen Jiang, Carrie J. Cai, Michael Terry, Quoc V. Le, and Charles Sutton. 2021. Program Ssynthesis with large language models. 
+
+CoRR abs/2108.07732 (2021). arXiv:2108.07732 https://arxiv.org/abs/2108.07732 [5] Ramakrishna Bairi, Atharv Sonwane, Aditya Kanade, Vageesh D. C., Arun Iyer, Suresh Parthasarathy, Sriram K. Rajamani, Balasubramanyan Ashok, and Shashank Shet. 2024. CodePlan: Repository-level coding using LLMs and planning. Proc. ACM Softw. Eng. 1, FSE (2024), 675–698. https://doi.org/10.1145/3643757 [6] Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, Sandhini Agarwal, Ariel Herbert-Voss, Gretchen Krueger, Tom Henighan, Rewon Child, Aditya Ramesh, Daniel M. Ziegler, Jeffrey Wu, Clemens Winter, Christopher Hesse, Mark Chen, Eric Sigler, Mateusz Litwin, Scott Gray, Benjamin Chess, Jack Clark, Christopher Berner, Sam McCandlish, Alec Radford, Ilya Sutskever, and Dario Amodei. 2020. Language models are few-shot learners. In Advances in Neural Information Processing Systems 33: Annual Conference on Neural Information Processing Systems 2020, NeurIPS 2020, December 6-12, 2020, virtual . https://proceedings.neurips.cc/paper/2020/hash/1457c0d6bfcb4967418bfb8ac142f64a-Abstract.html [7] Vitalik Buterin et al . 2014. A next-generation smart contract and decentralized application platform. white paper 3, 37 (2014), 2–1. [8] Stefanos Chaliasos, Arthur Gervais, and Benjamin Livshits. 2022. A study of inline assembly in solidity smart contracts. 
+
+Proc. ACM Program. Lang. 6, OOPSLA2 (2022), 1123–1149. https://doi.org/10.1145/3563328 [9] Mark Chen, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Pondé de Oliveira Pinto, Jared Kaplan, Harri Edwards, Yuri Burda, Nicholas Joseph, Greg Brockman, Alex Ray, Raul Puri, Gretchen Krueger, Michael Petrov, Heidy Khlaaf, Girish Sastry, Pamela Mishkin, Brooke Chan, Scott Gray, Nick Ryder, Mikhail Pavlov, Alethea Power, Lukasz Kaiser, Mohammad Bavarian, Clemens Winter, Philippe Tillet, Felipe Petroski Such, Dave Cummings, Matthias Plappert, Fotios Chantzis, Elizabeth Barnes, Ariel Herbert-Voss, William Hebgen Guss, Alex Nichol, Alex Paino, Nikolas Tezak, Jie Tang, Igor Babuschkin, Suchir Balaji, Shantanu Jain, William Saunders, Christopher Hesse, Andrew N. Carr, Jan Leike, Joshua Achiam, Vedant Misra, Evan Morikawa, Alec Radford, Matthew Knight, Miles Brundage, Mira Murati, Katie Mayer, Peter Welinder, Bob McGrew, Dario Amodei, Sam McCandlish, Ilya Sutskever, and Wojciech Zaremba. 2021. Evaluating large language models trained on code. CoRR abs/2107.03374 (2021). arXiv:2107.03374 https://arxiv.org/abs/2107.03374 [10] Yuxiao Chen, Jingzheng Wu, Xiang Ling, Changjiang Li, Zhiqing Rui, Tianyue Luo, and Yanjun Wu. 2024. When Large Language Models Confront Repository-Level Automatic Program Repair: How Well They Done?. In Proceedings of the 2024 IEEE/ACM 46th International Conference on Software Engineering: Companion Proceedings, ICSE Companion 2024, Lisbon, Portugal, April 14-20, 2024 . ACM, 459–471. https://doi.org/10.1145/3639478.3647633 [11] Etienne Daspe, Mathis Durand, Julien Hatin, and Salma Bradai. 2024. Benchmarking Large Language Models for Ethereum Smart Contract Development. In 6th Conference on Blockchain Research & Applications for Innovative Networks and Services , BRAINS 2024, Berlin, Germany, October 9-11, 2024 . IEEE, 1–4. https://doi.org/10.1109/BRAINS63024.2024. 10732686 [12] DeepSeek-AI, Qihao Zhu, Daya Guo, Zhihong Shao, Dejian Yang, Peiyi Wang, Runxin Xu, Y. Wu, Yukun Li, Huazuo Gao, Shirong Ma, Wangding Zeng, Xiao Bi, Zihui Gu, Hanwei Xu, Damai Dai, Kai Dong, Liyue Zhang, Yishi Piao, Zhibin Gou, Zhenda Xie, Zhewen Hao, Bingxuan Wang, Junxiao Song, Deli Chen, Xin Xie, Kang Guan, Yuxiang You, Aixin Liu, Qiushi Du, Wenjun Gao, Xuan Lu, Qinyu Chen, Yaohui Wang, Chengqi Deng, Jiashi Li, Chenggang Zhao, Chong Ruan, Fuli Luo, and Wenfeng Liang. 2024. DeepSeek-Coder-V2: Breaking the barrier of closed-source Models in code intelligence. CoRR abs/2406.11931 (2024). https://doi.org/10.48550/ARXIV.2406.11931 arXiv:2406.11931 [13] Jesse Dodge, Gabriel Ilharco, Roy Schwartz, Ali Farhadi, Hannaneh Hajishirzi, and Noah A. Smith. 2020. Fine-Tuning Pretrained Language Models: Weight Initializations, Data Orders, and Early Stopping. CoRR abs/2002.06305 (2020). arXiv:2002.06305 https://arxiv.org/abs/2002.06305 [14] Thomas Durieux, João F. Ferreira, Rui Abreu, and Pedro Cruz. 2020. Empirical review of automated analysis tools on 47, 587 Ethereum smart contracts. In ICSE ’20: 42nd International Conference on Software Engineering, Seoul, South Korea, 27 June - 19 July, 2020 . ACM, 530–541. https://doi.org/10.1145/3377811.3380364 [15] Mikhail Evtikhiev, Egor Bogomolov, Yaroslav Sokolov, and Timofey Bryksin. 2023. Out of the BLEU: How should we assess quality of the Code Generation models? J. Syst. Softw. 203 (2023), 111741. https://doi.org/10.1016/J.JSS.2023.111741 J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:30 S. Chen et al. 
+
+[16] Josselin Feist, Gustavo Grieco, and Alex Groce. 2019. Slither: A static analysis framework for smart contracts. In 
+
+Proceedings of the 2nd International Workshop on Emerging Trends in Software Engineering for Blockchain, WETSEB@ICSE 2019, Montreal, QC, Canada, May 27, 2019 . IEEE / ACM, 8–15. https://doi.org/10.1109/WETSEB.2019.00008 [17] Zhangyin Feng, Daya Guo, Duyu Tang, Nan Duan, Xiaocheng Feng, Ming Gong, Linjun Shou, Bing Qin, Ting Liu, Daxin Jiang, and Ming Zhou. 2020. CodeBERT: A Pre-Trained Model for Programming and Natural Languages. In Findings of the Association for Computational Linguistics: EMNLP 2020, Online Event, 16-20 November 2020 (Findings of ACL, Vol. EMNLP 2020) . Association for Computational Linguistics, 1536–1547. https://doi.org/10.18653/V1/2020.FINDINGS-EMNLP.139 [18] Zhipeng Gao, Lingxiao Jiang, Xin Xia, David Lo, and John Grundy. 2021. Checking smart contracts with structural code embedding. IEEE Trans. Software Eng. 47, 12 (2021), 2874–2891. https://doi.org/10.1109/TSE.2020.2971482 [19] Qian-wen Gou, Yunwei Dong, YuJiao Wu, and Qiao Ke. 2024. RRGcode: Deep hierarchical search-based code generation. 
+
+Journal of Systems and Software 211 (2024), 111982. https://doi.org/10.1016/J.JSS.2024.111982 [20] Xiaodong Gu, Meng Chen, Yalan Lin, Yuhan Hu, Hongyu Zhang, Chengcheng Wan, Zhao Wei, Yong Xu, and Juhong Wang. 2025. On the effectiveness of large language models in domain-specific code generation. ACM Trans. Softw. Eng. Methodol. 34, 3 (2025), 78:1–78:22. https://doi.org/10.1145/3697012 [21] Rui He, Liang Zhang, Mengyao Lyu, Liangqing Lyu, and Changbin Xue. 2025. Using large language models for aerospace code generation: Methods, benchmarks, and potential values. Aerospace 12, 6 (2025), 498. [22] Soneya Binta Hossain, Nan Jiang, Qiang Zhou, Xiaopeng Li, Wen-Hao Chiang, Yingjun Lyu, Hoan Anh Nguyen, and Omer Tripp. 2024. A Deep Dive into Large Language Models for Automated Bug Localization and Repair. Proc. ACM Softw. Eng. 1, FSE (2024), 1471–1493. https://doi.org/10.1145/3660773 [23] Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. 2022. LoRA: Low-rank adaptation of large language models. In The Tenth International Conference on Learning Representations, ICLR 2022, Virtual Event, April 25-29, 2022 . OpenReview.net. https://openreview.net/forum?id=nZeVKeeFYf9 [24] Binyuan Hui, Jian Yang, Zeyu Cui, Jiaxi Yang, Dayiheng Liu, Lei Zhang, Tianyu Liu, Jiajun Zhang, Bowen Yu, Kai Dang, An Yang, Rui Men, Fei Huang, Xingzhang Ren, Xuancheng Ren, Jingren Zhou, and Junyang Lin. 2024. Qwen2.5-Coder Technical Report. CoRR abs/2409.12186 (2024). https://doi.org/10.48550/ARXIV.2409.12186 arXiv:2409.12186 [25] Hamel Husain, Ho-Hsiang Wu, Tiferet Gazit, Miltiadis Allamanis, and Marc Brockschmidt. 2019. CodeSearchNet Challenge: Evaluating the State of Semantic Code Search. CoRR abs/1909.09436 (2019). arXiv:1909.09436 http: //arxiv.org/abs/1909.09436 [26] Maliheh Izadi, Jonathan Katzy, Tim van Dam, Marc Otten, Razvan Mihai Popescu, and Arie van Deursen. 2024. Language models for code completion: A practical evaluation. In Proceedings of the 46th IEEE/ACM International Conference on Software Engineering, ICSE 2024, Lisbon, Portugal, April 14-20, 2024 . ACM, 79:1–79:13. https://doi.org/10.1145/3597503. 3639138 [27] Juyong Jiang, Fan Wang, Jiasi Shen, Sungju Kim, and Sunghun Kim. 2025. A survey on large language models for code generation. ACM Trans. Softw. Eng. Methodol. (July 2025). https://doi.org/10.1145/3747588 Just Accepted. [28] Xue Jiang, Yihong Dong, Lecheng Wang, Zheng Fang, Qiwei Shang, Ge Li, Zhi Jin, and Wenpin Jiao. 2024. Self-planning code generation with large language models. ACM Transactions on Software Engineering and Methodology 33, 7 (2024), 182:1–182:30. https://doi.org/10.1145/3672456 [29] Deokhyung Kang, Jeonghun Cho, Yejin Jeon, Sunbin Jang, Minsub Lee, Jawoon Cho, and Gary Geunbae Lee. 2025. Retrieval-Augmented Fine-Tuning With Preference Optimization For Visual Program Generation. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), ACL 2025, Vienna, Austria, July 27 - August 1, 2025 . Association for Computational Linguistics, 22667–22686. https://aclanthology.org/2025.acl-long.1106/ [30] Nirmal Joshua Kapu and Mihit Sreejith. 2024. DemoCraft: Using in-context learning to improve code generation in large language models. CoRR abs/2411.00865 (2024). https://doi.org/10.48550/ARXIV.2411.00865 arXiv:2411.00865 [31] Faizan Khan, Istvan David, Dániel Varró, and Shane McIntosh. 2023. Code cloning in smart contracts on the ethereum platform: An extended replication study. IEEE Trans. Software Eng. 49, 4 (2023), 2006–2019. https://doi.org/10.1109/ TSE.2022.3207428 [32] Ranim Khojah, Francisco Gomes de Oliveira Neto, Mazen Mohamad, and Philipp Leitner. 2025. The impact of prompt programming on function-level code generation. IEEE Transactions on Software Engineering 51, 8 (2025), 2381–2395. https://doi.org/10.1109/TSE.2025.3587794 [33] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, Sebastian Riedel, and Douwe Kiela. 2020. Retrieval-augmented generation for knowledge-intensive NLP tasks. In Advances in Neural Information Processing Systems 33: Annual Conference on Neural Information Processing Systems 2020, NeurIPS 2020, December 6-12, 2020, virtual . https://proceedings.neurips.cc/ paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html [34] Jia Li, Ge Li, Yongmin Li, and Zhi Jin. 2025. Structured chain-of-thought prompting for code generation. ACM Transactions on Software Engineering and Methodology 34, 2 (2025), 37:1–37:23. https://doi.org/10.1145/3690635 J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:31 
+
+[35] Rongao Li, Jie Fu, Bo-Wen Zhang, Tao Huang, Zhihong Sun, Chen Lyu, Guang Liu, Zhi Jin, and Ge Li. 2023. TACO: Topics in algorithmic code generation dataset. CoRR abs/2312.14852 (2023). https://doi.org/10.48550/ARXIV.2312.14852 arXiv:2312.14852 [36] Weijia Li, Yongjie Qian, Ke Gao, Haixin Chen, Xinyu Wang, Yuchen Tong, Ling Li, Yanjun Wu, and Chen Zhao. 2025. Coft: Making large language models better zero-shot learners for code generation. In 33rd IEEE/ACM International Conference on Program Comprehension, ICPC@ICSE 2025, Ottawa, ON, Canada, April 27-28, 2025 . IEEE, 489–499. https://doi.org/10.1109/ICPC66645.2025.00059 [37] Zongjie Li, Daoyuan Wu, Shuai Wang, and Zhendong Su. 2025. API-guided dataset synthesis to finetune large code models. Proc. ACM Program. Lang. 9, OOPSLA1 (2025), 786–815. https://doi.org/10.1145/3720449 [38] Zhou Liao, Shuwei Song, Hang Zhu, Xiapu Luo, Zheyuan He, Renkai Jiang, Ting Chen, Jiachi Chen, Tao Zhang, and Xiaosong Zhang. 2023. Large-scale empirical study of inline assembly on 7.6 million ethereum smart contracts. IEEE Trans. Software Eng. 49, 2 (2023), 777–801. https://doi.org/10.1109/TSE.2022.3163614 [39] Tianyang Liu, Canwen Xu, and Julian J. McAuley. 2024. RepoBench: Benchmarking repository-level code auto-completion systems. In The Twelfth International Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net. https://openreview.net/forum?id=pPjZIOuQuF [40] Ilya Loshchilov and Frank Hutter. 2017. SGDR: Stochastic Gradient Descent with Warm Restarts. In 5th International Conference on Learning Representations, ICLR 2017, Toulon, France, April 24-26, 2017, Conference Track Proceedings .OpenReview.net. https://openreview.net/forum?id=Skq89Scxx [41] Shuai Lu, Daya Guo, Shuo Ren, Junjie Huang, Alexey Svyatkovskiy, Ambrosio Blanco, Colin B. Clement, Dawn Drain, Daxin Jiang, Duyu Tang, Ge Li, Lidong Zhou, Linjun Shou, Long Zhou, Michele Tufano, Ming Gong, Ming Zhou, Nan Duan, Neel Sundaresan, Shao Kun Deng, Shengyu Fu, and Shujie Liu. 2021. CodeXGLUE: A Machine Learning Benchmark Dataset for Code Understanding and Generation. In Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks 1, NeurIPS Datasets and Benchmarks 2021, December 2021, virtual . https://datasets-benchmarks-proceedings.neurips.cc/paper/2021/hash/c16a5320fa475530d9583c34fd356ef5-Abstract-round1.html [42] Marcos Macedo, Yuan Tian, Pengyu Nie, Filipe Roseiro Côgo, and Bram Adams. 2025. INTERTRANS: Lever-aging Transitive Intermediate Translations to Enhance LLM-Based Code Translation. In 47th IEEE/ACM Interna-tional Conference on Software Engineering, ICSE 2025, Ottawa, ON, Canada, April 26 - May 6, 2025 . IEEE, 1153–1164. https://doi.org/10.1109/ICSE55347.2025.00236 [43] James Miller. 2008. Triangulation as a basis for knowledge discovery in software engineering. Empir. Softw. Eng. 13, 2 (2008), 223–228. https://doi.org/10.1007/S10664-008-9063-Y [44] Sewon Min, Mike Lewis, Luke Zettlemoyer, and Hannaneh Hajishirzi. 2022. MetaICL: Learning to learn in context. In Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, NAACL 2022, Seattle, WA, United States, July 10-15, 2022 . Association for Computational Linguistics, 2791–2809. https://doi.org/10.18653/V1/2022.NAACL-MAIN.201 [45] Marius Mosbach, Maksym Andriushchenko, and Dietrich Klakow. 2021. On the Stability of Fine-tuning BERT: Misconceptions, Explanations, and Strong Baselines. In 9th International Conference on Learning Representations, ICLR 2021, Virtual Event, Austria, May 3-7, 2021 . OpenReview.net. https://openreview.net/forum?id=nzpLWnVAyah [46] Satoshi Nakamoto, Bit Bit, et al. 2007. Bitcoin: A peer-to-peer electronic cash system. 2008 (2007). [47] OpenAI. 2023. GPT-4 Technical Report. CoRR abs/2303.08774 (2023). https://doi.org/10.48550/ARXIV.2303.08774 arXiv:2303.08774 [48] Kishore Papineni, Salim Roukos, Todd Ward, and Wei-Jing Zhu. 2002. BlEU: A method for automatic evaluation of machine translation. In Proceedings of the 40th Annual Meeting of the Association for Computational Linguistics, July 6-12, 2002, Philadelphia, PA, USA . ACL, 311–318. https://doi.org/10.3115/1073083.1073135 [49] Arkil Patel, Siva Reddy, Dzmitry Bahdanau, and Pradeep Dasigi. 2024. Evaluating In-Context Learning of Libraries for Code Generation. In Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers), NAACL 2024, Mexico City, Mexico, June 16-21, 2024 .Association for Computational Linguistics, 2908–2926. https://doi.org/10.18653/V1/2024.NAACL-LONG.161 [50] Zhiyuan Peng, Xin Yin, Rui Qian, Peiqin Lin, Yongkang Liu, Chenhao Ying, and Yuan Luo. 2025. SolEval: Benchmarking Large Language Models for Repository-level Solidity Code Generation. CoRR abs/2502.18793 (2025). https://doi.org/ 10.48550/ARXIV.2502.18793 arXiv:2502.18793 [51] Lutz Prechelt. 1996. In Neural Networks: Tricks of the Trade . Lecture Notes in Computer Science, Vol. 1524. Springer, 55–69. https://doi.org/10.1007/3-540-49430-8_3 [52] Musfiqur Rahman, SayedHassan Khatoonabadi, and Emad Shihab. 2025. Beyond Synthetic Benchmarks: Evaluating LLM Performance on Real-World Class-Level Code Generation. CoRR abs/2510.26130 (2025). https://doi.org/10.48550/ ARXIV.2510.26130 arXiv:2510.26130 [53] Shuo Ren, Daya Guo, Shuai Lu, Long Zhou, Shujie Liu, Duyu Tang, Neel Sundaresan, Ming Zhou, Ambrosio Blanco, and Shuai Ma. 2020. CodeBLEU: A method for automatic evaluation of code synthesis. CoRR abs/2009.10297 (2020). J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. 1:32 S. Chen et al. 
+
+arXiv:2009.10297 https://arxiv.org/abs/2009.10297 [54] Stephen E. Robertson and Hugo Zaragoza. 2009. The Probabilistic Relevance Framework: BM25 and Beyond. Found. Trends Inf. Retr. 3, 4 (2009), 333–389. https://doi.org/10.1561/1500000019 [55] Baptiste Rozière, Jonas Gehring, Fabian Gloeckle, Sten Sootla, Itai Gat, Xiaoqing Ellen Tan, Yossi Adi, Jingyu Liu, Tal Remez, Jérémy Rapin, Artyom Kozhevnikov, Ivan Evtimov, Joanna Bitton, Manish Bhatt, Cristian Canton-Ferrer, Aaron Grattafiori, Wenhan Xiong, Alexandre Défossez, Jade Copet, Faisal Azhar, Hugo Touvron, Louis Martin, Nicolas Usunier, Thomas Scialom, and Gabriel Synnaeve. 2023. Code Llama: Open foundation models for code. CoRR abs/2308.12950 (2023). https://doi.org/10.48550/ARXIV.2308.12950 arXiv:2308.12950 [56] Chaochen Shi, Yong Xiang, Jiangshan Yu, Keshav Sood, and Longxiang Gao. 2023. Machine translation-based fine-grained comments generation for solidity smart contracts. Inf. Softw. Technol. 153 (2023), 107065. https://doi.org/10. 1016/J.INFSOF.2022.107065 [57] Zhengxiang Shi and Aldo Lipani. 2023. Don’t stop pretraining? Make prompt-based fine-tuning powerful learner. In 
+
+Advances in Neural Information Processing Systems 36: Annual Conference on Neural Information Processing Systems 2023, NeurIPS 2023, New Orleans, LA, USA, December 10 - 16, 2023 . http://papers.nips.cc/paper_files/paper/2023/hash/ 1289f9195d2ef8cfdfe5f50930c4a7c4-Abstract-Conference.html [58] Miklós Sipos and Sándor Szénási. 2025. Optimal gas consumption in ethereum smart contracts: A targeted review of empirical results, design patterns and formal methods. In IEEE 25th International Symposium on Computational Intelligence and Informatics (CINTI 2025) . https://doi.org/10.1109/CINTI67731.2025.11311839 [59] Qiyang Song, Heqing Huang, Xiaoqi Jia, Yuanbo Xie, and Jiahao Cao. 2025. Silence false alarms: Identifying anti-reentrancy patterns on ethereum to refine smart contract reentrancy detection. In 32nd Annual Network and Dis-tributed System Security Symposium, NDSS 2025, San Diego, California, USA, February 24-28, 2025 . The Internet Soci-ety. https://www.ndss-symposium.org/ndss-paper/silence-false-alarms-identifying-anti-reentrancy-patterns-on-ethereum-to-refine-smart-contract-reentrancy-detection/ [60] Florian Tambon, Amin Nikanjam, Cyrine Zid, Foutse Khomh, and Giuliano Antoniol. 2025. TaskEval: Assessing difficulty of code generation tasks for large language models. ACM Trans. Softw. Eng. Methodol. (Oct. 2025). https: //doi.org/10.1145/3773285 Just Accepted. [61] Shailja Thakur, Baleegh Ahmad, Hammond Pearce, Benjamin Tan, Brendan Dolan-Gavitt, Ramesh Karri, and Siddharth Garg. 2024. VeriGen: A large language model for verilog code generation. ACM Trans. Design Autom. Electr. Syst. 29, 3 (2024), 46:1–46:31. https://doi.org/10.1145/3643681 [62] Pedro Vale and Fernando Pereira. 2023. Automatic Python code generation for Embedded/Cyber-Physical Systems. In 
+
+2023 7th International Young Engineers Forum (YEF-ECE) . 49–55. https://doi.org/10.1109/YEF-ECE58420.2023.10209340 [63] Bailin Wang, Zi Wang, Xuezhi Wang, Yuan Cao, Rif A. Saurous, and Yoon Kim. 2023. Grammar Prompting for Domain-Specific Language Generation with Large Language Models. In Advances in Neural Information Processing Systems 36: Annual Conference on Neural Information Processing Systems 2023, NeurIPS 2023, New Orleans, LA, USA, December 10 -16, 2023 . http://papers.nips.cc/paper_files/paper/2023/hash/cd40d0d65bfebb894ccc9ea822b47fa8-Abstract-Conference. html [64] Yilin Wang, Xiangping Chen, Yuan Huang, Hao-Nan Zhu, Jing Bian, and Zibin Zheng. 2023. An empirical study on real bug fixes from solidity smart contract projects. J. Syst. Softw. 204 (2023), 111787. https://doi.org/10.1016/J.JSS.2023. 111787 [65] Yizhong Wang, Yeganeh Kordi, Swaroop Mishra, Alisa Liu, Noah A. Smith, Daniel Khashabi, and Hannaneh Hajishirzi. 2023. Self-Instruct: Aligning Language Models with Self-Generated Instructions. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), ACL 2023, Toronto, Canada, July 9-14, 2023 . Association for Computational Linguistics, 13484–13508. https://doi.org/10.18653/V1/2023.ACL-LONG.754 [66] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed H. Chi, Quoc V. Le, and Denny Zhou. 2022. Chain-of-thought prompting elicits reasoning in large language models. In Advances in Neu-ral Information Processing Systems 35: Annual Conference on Neural Information Processing Systems 2022, NeurIPS 2022, New Orleans, LA, USA, November 28 - December 9, 2022 . http://papers.nips.cc/paper_files/paper/2022/hash/ 9d5609613524ecf4f15af0f7b31abca4-Abstract-Conference.html [67] Yuxiang Wei, Zhe Wang, Jiawei Liu, Yifeng Ding, and Lingming Zhang. 2023. Magicoder: Source Code Is All You Need. 
+
+CoRR abs/2312.02120 (2023). https://doi.org/10.48550/ARXIV.2312.02120 arXiv:2312.02120 [68] Sam Werner, Daniel Perez, Lewis Gudgeon, Ariah Klages-Mundt, Dominik Harz, and William J. Knottenbelt. 2022. SoK: Decentralized Finance (DeFi). In Proceedings of the 4th ACM Conference on Advances in Financial Technologies, AFT 2022, Cambridge, MA, USA, September 19-21, 2022 . ACM, 30–46. https://doi.org/10.1145/3558535.3559780 [69] Martin Weyssow, Xin Zhou, Kisub Kim, David Lo, and Houari A. Sahraoui. 2025. Exploring parameter-efficient fine-tuning techniques for code generation with large language models. ACM Trans. Softw. Eng. Methodol. 34, 7 (2025), 204:1–204:25. https://doi.org/10.1145/3714461 J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018. Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning 1:33 
+
+[70] Yuhui Xu, Lingxi Xie, Xiaotao Gu, Xin Chen, Heng Chang, Hengheng Zhang, Zhengsu Chen, Xiaopeng Zhang, and Qi Tian. 2024. QA-LoRA: Quantization-aware low-rank adaptation of large language models. In The Twelfth International Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net. https://openreview.net/forum?id=WvFoJccpo8 [71] Guang Yang, Yu Zhou, Xiang Chen, Xiangyu Zhang, Terry Yue Zhuo, and Taolue Chen. 2024. Chain-of-thought in neural code generation: From and for lightweight language models. IEEE Transactions on Software Engineering 50, 9 (2024), 2437–2457. https://doi.org/10.1109/TSE.2024.3440503 [72] Zezhou Yang, Sirong Chen, Cuiyun Gao, Zhenhao Li, Xing Hu, Kui Liu, and Xin Xia. 2025. An empirical study of retrieval-augmented code generation: Challenges and opportunities. ACM Trans. Softw. Eng. Methodol. 34, 7 (2025), 188:1–188:28. https://doi.org/10.1145/3717061 [73] Zezhou Yang, Sirong Chen, Cuiyun Gao, Zhenhao Li, Xing Hu, Kui Liu, and Xin Xia. 2025. An empirical study of retrieval-augmented code generation: Challenges and opportunities. ACM Trans. Softw. Eng. Methodol. 34, 7 (2025), 188:1–188:28. https://doi.org/10.1145/3717061 [74] Zhen Yang, Jacky Wai Keung, Zeyu Sun, Yunfei Zhao, Ge Li, Zhi Jin, Shuo Liu, and Yishu Li. 2024. Improving domain-specific neural code generation with few-shot meta-learning. Inf. Softw. Technol. 166 (2024), 107365. https: //doi.org/10.1016/J.INFSOF.2023.107365 [75] Xin Yin, Chao Ni, Shaohua Wang, Zhenhao Li, Limin Zeng, and Xiaohu Yang. 2024. ThinkRepair: Self-Directed Automated Program Repair. In Proceedings of the 33rd ACM SIGSOFT International Symposium on Software Testing and Analysis, ISSTA 2024, Vienna, Austria, September 16-20, 2024 . ACM, 1274–1286. https://doi.org/10.1145/3650212.3680359 [76] Zhaojian Yu, Yilun Zhao, Arman Cohan, and Xiaoping Zhang. 2025. HumanEval Pro and MBPP Pro: Evaluating Large Language Models on Self-invoking Code Generation Task. In Findings of the Association for Computational Linguistics, ACL 2025, Vienna, Austria, July 27 - August 1, 2025 . Association for Computational Linguistics, 13253–13279. https://aclanthology.org/2025.findings-acl.686/ [77] Jianqing Zhang, Wei Xia, Hande Dong, Qiang Lin, and Jian Cao. 2025. AP2O: Correcting LLM-generated code errors type by type like humans via adaptive progressive preference optimization. CoRR abs/2510.02393 (2025). https://doi.org/10.48550/ARXIV.2510.02393 arXiv:2510.02393 [78] Sheng Zhang, Yifan Ding, Shuquan Lian, Shun Song, and Hui Li. 2025. CodeRAG: Finding relevant and necessary knowledge for retrieval-augmented repository-level code completion. CoRR abs/2509.16112 (2025). https://doi.org/10. 48550/ARXIV.2509.16112 arXiv:2509.16112 [79] Shudan Zhang, Hanlin Zhao, Xiao Liu, Qinkai Zheng, Zehan Qi, Xiaotao Gu, Yuxiao Dong, and Jie Tang. 2024. NaturalCodeBench: Examining Coding Performance Mismatch on HumanEval and Natural User Queries. In Findings of the Association for Computational Linguistics, ACL 2024, Bangkok, Thailand and virtual meeting, August 11-16, 2024 .Association for Computational Linguistics, 7907–7928. https://doi.org/10.18653/V1/2024.FINDINGS-ACL.471 [80] Jiawei Zhao, Zhenyu Zhang, Beidi Chen, Zhangyang Wang, Anima Anandkumar, and Yuandong Tian. 2024. GaLore: Memory-Efficient LLM Training by Gradient Low-Rank Projection. In Forty-first International Conference on Machine Learning, ICML 2024, Vienna, Austria, July 21-27, 2024 . OpenReview.net. https://openreview.net/forum?id=hYHsrKDiX7 [81] Qianhui Zhao, Fang Liu, Xiao Long, Chengru Wu, and Li Zhang. 2025. On the Applicability of Code Language Models to Scientific Computing Programs. IEEE Trans. Software Eng. 51, 6 (2025), 1685–1701. https://doi.org/10.1109/TSE.2025. 3564599 [82] Shuyan Zhou, Uri Alon, Sumit Agarwal, and Graham Neubig. 2023. CodeBERTScore: Evaluating code generation with pretrained models of code. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing, EMNLP 2023, Singapore, December 6-10, 2023 . Association for Computational Linguistics, 13921–13937. https://doi.org/10.18653/V1/2023.EMNLP-MAIN.859 [83] Terry Yue Zhuo, Minh Chien Vu, Jenny Chim, Han Hu, Wenhao Yu, Ratnadira Widyasari, Imam Nur Bani Yusuf, Haolan Zhan, Junda He, Indraneil Paul, Simon Brunner, Chen Gong, James Hoang, Armel Randy Zebaze, Xiaoheng Hong, Wen-Ding Li, Jean Kaddour, Ming Xu, Zhihan Zhang, Prateek Yadav, and et al. 2025. BigCodeBench: Benchmarking code generation with diverse function calls and complex instructions. In The Thirteenth International Conference on Learning Representations, ICLR 2025, Singapore, April 24-28, 2025 . OpenReview.net. https://openreview.net/forum?id=YrycTjllL0 J. ACM, Vol. 37, No. 4, Article 1. Publication date: August 2018.

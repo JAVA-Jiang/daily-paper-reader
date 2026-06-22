@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-22T22:28:52.097254+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.19988v1",
+      "source": "arxiv",
+      "title": "Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning",
+      "abstract": "Large Language Models (LLMs) have shown strong capabilities in general-purpose code generation, but their effectiveness in specialized software domains remains underexplored. Solidity smart contracts represent a high-stakes domain where generated code must satisfy strict language-level, security, and software-engineering constraints. Existing benchmarks and metrics remain insufficient for repository-level Solidity generation, where models must synthesize complete contracts from natural language requirements. To address this gap, we introduce SolidityBench, a benchmark of 5,470 repository-level Solidity smart contracts paired with natural language descriptions. We also propose SolidityScore, a Solidity-aware semantic metric that emphasizes domain-critical constructs such as security modifiers, contract declarations, and Solidity-specific keywords. Using this benchmark, we evaluate representative code LLMs, including Qwen2.5-Coder, DeepSeek-Coder, and CodeLlama, across zero-shot prompting, Chain-of-Thought reasoning, in-context learning, retrieval-augmented generation, and supervised fine-tuning. The results show that general-purpose models exhibit systematic structural deficiencies in repository-level Solidity generation. Among non-parametric methods, retrieval-augmented generation performs best, while in-context learning degrades beyond two examples due to context saturation. Supervised fine-tuning achieves the largest improvement by internalizing Solidity-specific constraints into model parameters. Overall, our study provides a comprehensive benchmark for repository-level Solidity code generation and shows that high-quality domain data combined with supervised fine-tuning is the most effective strategy for improving the reliability of LLM-generated smart contracts.",
+      "authors": [
+        "Shi Chen",
+        "Rongcun Wang",
+        "Yuan Tian",
+        "Xiaoyuan Xie",
+        "Wei Song",
+        "Rubing Huang"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-18T09:28:30+00:00",
+      "link": "https://arxiv.org/pdf/2606.19988v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Provides Solidity benchmark and metric for repository-level code generation",
+      "llm_evidence_cn": "提供了仓库级Solidity代码生成基准和评估指标",
+      "llm_evidence": "提供了仓库级Solidity代码生成基准和评估指标",
+      "canonical_evidence": "提供了仓库级Solidity代码生成基准和评估指标",
+      "llm_tldr_en": "Introduces SolidityBench, a benchmark of 5,470 repository-level Solidity smart contracts with natural language descriptions, and SolidityScore, a semantic metric for evaluating generated code.",
+      "llm_tldr_cn": "大型语言模型在通用代码生成上表现出色，但在Solidity等专业领域效果未知，且缺乏仓库级生成基准。本文提出SolidityBench，包含5470个仓库级Solidity智能合约及其自然语言描述，以及SolidityScore语义度量。该工作为Solidity代码生成提供标准化评估，促进领域特定代码生成研究。",
+      "llm_tldr": "大型语言模型在通用代码生成上表现出色，但在Solidity等专业领域效果未知，且缺乏仓库级生成基准。本文提出SolidityBench，包含5470个仓库级Solidity智能合约及其自然语言描述，以及SolidityScore语义度量。该工作为Solidity代码生成提供标准化评估，促进领域特定代码生成研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
