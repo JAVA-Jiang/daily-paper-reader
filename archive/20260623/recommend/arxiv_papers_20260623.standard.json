@@ -1,0 +1,168 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-23T22:10:07.668031+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.21125v1",
+      "source": "arxiv",
+      "title": "SALMON 2.3: Implementation of divide-and-conquer ground-state initialization for large-scale real-time TDDFT",
+      "abstract": "In large-scale real-time time-dependent density functional theory (TDDFT), preparing the ground-state electronic structure can be more expensive than the subsequent time propagation, limiting simulations of nonequilibrium electron dynamics in realistic systems containing thousands of atoms. This bottleneck is especially important for disordered materials, liquids, nanostructures, and heterogeneous condensed-matter systems, where nonlinear and strong-field phenomena such as high-harmonic generation and light-induced phase transitions require explicit real-time treatment.   SALMON is an open-source first-principles code for light-matter interaction simulations based on real-time TDDFT on real-space grids, supporting massively parallel calculations with MPI combined with OpenMP or GPU acceleration. In SALMON 2.3, we implement a divide-and-conquer density functional theory (DC-DFT) scheme and combine it with a postprocessing method that reconstructs spatially extended Kohn-Sham orbitals of the entire system. These reconstructed global orbitals are used directly as initial states for the standard real-time, real-space TDDFT module of SALMON.   The resulting workflow connects efficient DC-DFT ground-state preparation to conventional real-time TDDFT. The DC-DFT self-consistent-field procedure exhibits linear scaling with system size, addressing a major bottleneck in large-scale electron-dynamics simulations while retaining the robustness and broad applicability of SALMON's established time-propagation scheme. We describe the computational procedure, parallelization strategy, and input/output design. Weak-scaling tests using Si supercells on Fugaku confirm the linear-scaling behavior. Accuracy tests for a 512-atom amorphous Si system and a bulk H2O liquid system containing 4134 atoms demonstrate that the workflow enables practical large-scale real-time TDDFT simulations.",
+      "authors": [
+        "Shunsuke Yamada",
+        "Tomohito Otobe"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-06-19T05:53:34+00:00",
+      "link": "https://arxiv.org/pdf/2606.21125v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source code for TDDFT simulations",
+      "llm_evidence_cn": "提供开源TDDFT模拟代码",
+      "llm_evidence": "提供开源TDDFT模拟代码",
+      "canonical_evidence": "提供开源TDDFT模拟代码",
+      "llm_tldr_en": "SALMON 2.3 introduces divide-and-conquer ground-state initialization for real-time TDDFT, enabling efficient large-scale simulations of nonequilibrium electron dynamics. The open-source code overcomes the bottleneck of electronic structure preparation, supporting materials like nanostructures and disordered systems.",
+      "llm_tldr_cn": "SALMON 2.3提出了一种分治基态初始化方法，用于大规模实时间密度泛函理论（TDDFT）模拟，解决了电子结构制备的耗时瓶颈问题。该方法基于开源代码实现，能够高效模拟非平衡电子动力学，适用于无序材料、纳米结构和凝聚态系统。作为SALMON软件包的重大更新，它促进了光与物质相互作用领域的研究，特别是在高次谐波产生和光致相变等非线性现象中。",
+      "llm_tldr": "SALMON 2.3提出了一种分治基态初始化方法，用于大规模实时间密度泛函理论（TDDFT）模拟，解决了电子结构制备的耗时瓶颈问题。该方法基于开源代码实现，能够高效模拟非平衡电子动力学，适用于无序材料、纳米结构和凝聚态系统。作为SALMON软件包的重大更新，它促进了光与物质相互作用领域的研究，特别是在高次谐波产生和光致相变等非线性现象中。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.21071v1",
+      "source": "arxiv",
+      "title": "Local LLM Agents as Vulnerable Runtimes:A Source-Code Audit of the Agent Runtime Layer",
+      "abstract": "Local LLM agents such as OpenClaw and Nanobot run on end-user machines and act on host resources - the shell, filesystem, browser, stored credentials, and messaging applications - through natural-language goals. These agents have become privileged software runtimes that mediate between user intent, model outputs, and host-level actions. Existing research characterizes the landscape through prompt injection, malicious skills, marketplace risks, or black-box evaluation of agents. But the implementation layer that performs this mediation, the prompt builder, parser, tool dispatcher, skill loader, memory writer, network client, and permission gate, has remained an unexamined safety boundary. To our knowledge, no prior work has examined the agent's source tree to audit these components for implementation-level security weaknesses. We present CLAWAUDIT, a static auditing framework for measuring vulnerability exposure in local LLM agent runtimes. CLAWAUDIT derives a five-category vulnerability taxonomy from STRIDE and develops custom static-analysis rules that target agent-specific patterns absent from established rule sets for vulnerability analysis. We instantiate the taxonomy in two backends, 47 Semgrep YAML rules and 30 CodeQL queries, and evaluate on OPENCLAWBENCH, a benchmark of 446 source-code-level advisories from the OpenClaw repository and split temporally into 229 rule-derivation (train) and 217 held-out (test) advisories. On the held-out test, CLAWAUDIT raises Semgrep recall from 21.7% (Pro baseline) to 66.8%, and CodeQL recall from 13.8% (security-extended) to 75.1%. Train/test gaps remain within 4 percentage points for all four configurations, indicating that the rules generalize to vulnerabilities unseen during rule writing. A preliminary live-code audit shows that these recall-oriented rules require manual triage, motivating semantic filtering before production deployment.",
+      "authors": [
+        "Zhengsong Zhang",
+        "Zongze Li",
+        "Jiawei Guo",
+        "Haipeng Cai"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-06-19T03:40:00+00:00",
+      "link": "https://arxiv.org/pdf/2606.21071v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "source-code audit of agent runtime layer",
+      "llm_evidence_cn": "智能体运行时层源码审计，直接涉及代码提供",
+      "llm_evidence": "智能体运行时层源码审计，直接涉及代码提供",
+      "canonical_evidence": "智能体运行时层源码审计，直接涉及代码提供",
+      "llm_tldr_en": "Presents a source-code audit of local LLM agent runtimes, examining prompt builder, parser, tool dispatcher, and other components for security issues.",
+      "llm_tldr_cn": "针对本地LLM智能体运行时层进行系统性源码审计，这是首个关注实现层安全边界的工作。分析了提示构建器、解析器、工具调度器等组件，揭示了未被充分检查的漏洞。通过代码审计发现多个安全隐患，为智能体系统的安全部署提供了重要参考。",
+      "llm_tldr": "针对本地LLM智能体运行时层进行系统性源码审计，这是首个关注实现层安全边界的工作。分析了提示构建器、解析器、工具调度器等组件，揭示了未被充分检查的漏洞。通过代码审计发现多个安全隐患，为智能体系统的安全部署提供了重要参考。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.20243v2",
+      "source": "arxiv",
+      "title": "Phoenix: Safe GitHub Issue Resolution via Multi-Agent LLMs",
+      "abstract": "We present Phoenix, a multi-agent LLM system that resolves GitHub issues from triage through pull-request creation, combining seven layered safety controls with a baseline-aware test evaluation strategy. Phoenix decomposes the work across six specialized agents. Planner, reproducer, coder, tester, failure analyst and Pull Request (PR) agent, all coordinated by a label-based GitHub webhook state machine. Every change is checked against a baseline test run before a pull request is opened. On a 24-instance slice of SWE-bench Lite. run on the production webhook path, Phoenix oracle-resolves 75% of instances with no pass-to-pass regressions on successful runs; this curated slice is not directly comparable to full-split leaderboard results, and we discuss the limits of the comparison. A complementary pilot on 42 real issues across 14 repositories yields 100% correctness preservation (CP; mean 122s on the hard tier). Manual inspection shows that about half of the resulting pull requests are well-targeted fixes. The other half place code at incorrect paths, a planner localization limitation we are addressing with retrieval. We also report the deployment failure modes (WAF filtering, token expiry, permission boundaries, flaky CI) that motivated each safety mechanism.",
+      "authors": [
+        "Kipngeno Koech",
+        "Muhammad Adam",
+        "Baimam Boukar Jean Jacques",
+        "Joao Barros"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.MA"
+      ],
+      "published": "2026-06-18T13:56:12+00:00",
+      "link": "https://arxiv.org/pdf/2606.20243v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multi-agent LLM system for issue resolution, likely with code",
+      "llm_evidence_cn": "多智能体LLM系统用于问题解决，很可能附带代码",
+      "llm_evidence": "多智能体LLM系统用于问题解决，很可能附带代码",
+      "canonical_evidence": "多智能体LLM系统用于问题解决，很可能附带代码",
+      "llm_tldr_en": "Phoenix multi-agent system resolves GitHub issues with safety controls, achieves 75% on SWE-bench slice; code likely available.",
+      "llm_tldr_cn": "现有GitHub问题解决依赖人工，自动化系统面临安全性挑战。本文提出Phoenix，一个包含六种专门智能体的多智能体LLM系统，通过分层安全控制和回归测试自动生成拉取请求。在SWE-bench Lite子集上达到75%的Oracle解决率，且无回归。论文暗示系统代码可能开源，但未明确说明。",
+      "llm_tldr": "现有GitHub问题解决依赖人工，自动化系统面临安全性挑战。本文提出Phoenix，一个包含六种专门智能体的多智能体LLM系统，通过分层安全控制和回归测试自动生成拉取请求。在SWE-bench Lite子集上达到75%的Oracle解决率，且无回归。论文暗示系统代码可能开源，但未明确说明。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Search thesis which has code with it.",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.21416v1",
+      "source": "arxiv",
+      "title": "Bridging Design and Execution: A Visual Graph Editor for Edge and Cloud Workflows",
+      "abstract": "Designing modular applications for edge and cloud computing environments involves coordinating multiple computational kernels, shared data, and event-driven execution. This paper presents a domain-specific visual graph editor that enables users to model such applications using a unified interface. The editor supports three first-class abstractions: kernels, representing computational units; shared memory nodes, modeling distributed data; and event triggers, capturing execution dependencies. Users can construct graphs visually, configure node properties, and connect elements to define data and control flow. The resulting graphs are automatically serialized into machine-readable representations (JSON/XML) and can be passed to an execution API, bridging the gap between design-time modeling and runtime deployment. The editor's graph-based model improves reasoning about data sharing, execution order, and dependencies, particularly in distributed edge and cloud scenarios. To demonstrate its applicability, we discuss a federated learning workflow, where local training kernels interact with a shared global model through event-driven coordination. Compared to traditional workflow editors and general-purpose diagramming tools, the proposed system provides explicit execution semantics, modularity, and direct deployability. This work lays the foundation for visual orchestration of modular computation in distributed environments and offers extensibility for user-defined kernels, event types, and alternative execution backends, enabling future exploration of complex distributed applications.",
+      "authors": [
+        "Katarina-Glorija Grujić",
+        "Nikola Stanković",
+        "Maja Vukasović",
+        "Miloš Simić"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.SE"
+      ],
+      "published": "2026-06-19T13:34:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.21416v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "visual graph editor for edge and cloud workflows, supporting task scheduling",
+      "llm_evidence_cn": "用于边缘和云工作流的可视化图形编辑器，支持任务调度",
+      "llm_evidence": "用于边缘和云工作流的可视化图形编辑器，支持任务调度",
+      "canonical_evidence": "用于边缘和云工作流的可视化图形编辑器，支持任务调度",
+      "llm_tldr_en": "Presents a visual graph editor for designing and executing edge/cloud workflows, with abstractions for kernels, shared data, and event triggers.",
+      "llm_tldr_cn": "边缘云计算应用设计复杂，缺乏统一可视化工具。本文提出领域特定可视化图形编辑器，支持内核、共享内存和事件触发三种抽象。用户可直观构建工作流图，并自动序列化为可执行格式。该工具直接适用于云边协同的任务调度场景，且很可能提供源代码，与用户需求高度匹配。",
+      "llm_tldr": "边缘云计算应用设计复杂，缺乏统一可视化工具。本文提出领域特定可视化图形编辑器，支持内核、共享内存和事件触发三种抽象。用户可直观构建工作流图，并自动序列化为可执行格式。该工具直接适用于云边协同的任务调度场景，且很可能提供源代码，与用户需求高度匹配。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

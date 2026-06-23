@@ -1,0 +1,510 @@
+Title: SALMON 2.3: Implementation of divide-and-conquer ground-state initialization for large-scale real-time TDDFT
+
+URL Source: https://arxiv.org/pdf/2606.21125v1
+
+Published Time: Tue, 23 Jun 2026 00:39:28 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# SALMON 2.3: Implementation of divide-and-conquer ground-state initialization for large-scale real-time TDDFT 
+
+Shunsuke Yamada a, ∗, Tomohito Otobe a
+
+> aKansai Institute for Photon Science, National Institutes for Quantum Science and Technology (QST), Kyoto 619-0215, Japan
+
+Abstract 
+
+In large-scale real-time time-dependent density functional theory (TDDFT) simulations, preparing the ground-state electronic struc-ture can demand more computation than the subsequent time propagation. This creates a major bottleneck for simulations of non-equilibrium electron dynamics. This limitation is particularly severe for realistic systems, such as disordered materials, liquids, nanostructures, and heterogeneous condensed-matter systems, that contain thousands to tens of thousands of atoms. Real-time TDDFT provides a powerful framework for describing nonlinear and strong-field phenomena, including high-harmonic genera-tion and light-induced phase transitions. However, its application to large-scale systems is hindered by the computational cost of conventional ground-state density functional theory (DFT) calculations. SALMON is an open-source first-principles code for light-matter interaction simulations based on real-time TDDFT on real-space grids. It supports massively parallel calculations that combined message passing interface (MPI) with OpenMP or GPU acceleration [1,2]. In SALMON 2.3, a new stable version of the code, we implement a divide-and-conquer density functional theory (DC-DFT) scheme. We combine this scheme with a postprocessing method that reconstructs spatially extended Kohn– Sham orbitals of the entire system. These reconstructed global orbitals serve directly as initial states for the real-time TDDFT module of SALMON. This establishes a practical workflow that connects e ffi cient ground-state preparation based on DC-DFT to the standard real-time, real-space TDDFT framework. Therefore, nonequilibrium and nonlinear phenomena in large-scale systems can be simulated at a realistic computational cost. The present approach combines the e ffi ciency of DC-DFT for ground-state preparation with the robustness and general ap-plicability of conventional real-time TDDFT in SALMON. In particular, the self-consistent-field procedure based on DC-DFT exhibits linear scaling with system size. This directly addresses a major bottleneck in large-scale electron-dynamics simulations. We describe the computational procedure, parallelization strategy, and input /output design of the implementation. Weak-scaling measurements using Si supercells on Fugaku confirm the linear-scaling behavior of the DC-DFT implementation. We assess the accuracy of DC-initialized real-time TDDFT for a 512-atom amorphous Si system and a bulk H 2O liquid system containing 4134 atoms. These results demonstrate that the present workflow provides a practical route toward large-scale simulations of nonequi-librium electron dynamics by combining linear-scaling ground-state preparation with the established real-space, real-time TDDFT framework of SALMON. 
+
+NEW VERSION PROGRAM SUMMARY 
+
+Program Title: SALMON: Scalable Ab-initio Light–Matter simulator for Optics and Nanoscience 
+
+CPC Library link to program files: (to be added by Technical Editor) 
+
+Developer’s repository link: https: // github.com /SALMON-TDDFT /SALMON2 
+
+Licensing provisions(please choose one): Apache-2.0 
+
+Programming language: Fortran 2003 
+
+Journal reference of previous version: Comput. Phys. Commun. 235 , 356–365 (2019). 
+
+Does the new version supersede the previous version?: Yes 
+
+Reasons for the new version: The new version adds a DC-DFT workflow to SALMON for e ffi cient ground-state preparation of large systems. It also reconstructs global Kohn–Sham orbitals from fragment orbitals, so that DC-DFT results can serve directly as initial states for conventional real-time TDDFT simulations. 
+
+Summary of revisions: The main revisions include a DC-DFT calculation mode, new input keywords for fragment decomposition and bu ff er regions, and a DC-LCFO (linear combinations of fragment orbitals) postprocessing solver. The output structure has also been extended to store fragment data, basis functions, Hamiltonian matrices, and wavefunction coe ffi cients. 
+
+Nature of problem: Real-time TDDFT requires accurate ground-state Kohn–Sham orbitals as initial states. For large systems, conventional ground-state DFT becomes expensive because diagonalization and orthonormalization scale poorly with system size. This cost can exceed that of subsequent time propagation, limiting large-scale electron-dynamics simulations. 
+
+Solution method: The system is divided into overlapping fragments, and local Kohn–Sham equations are solved independently. The total electron density is assembled from fragment contributions, yielding linear-scaling SCF calculations. Global Kohn–Sham orbitals are then reconstructed from fragment orbitals by DC-LCFO and used as initial states for real-time TDDFT. 
+
+Additional comments, including restrictions and unusual features: The current implementation targets large periodic systems on real-space grids and assumes regular fragment decomposition. k-point sampling is not currently included in the DC-DFT mode. The final DC-LCFO diagonaliza-tion does not scale linearly; however, the reduced Hamiltonian dimension is much smaller than in conventional real-space calculations. 
+
+References 
+
+[1] M. Noda, et al., Comput. Phys. Commun. 235 , 356–365 (2019). 
+
+> arXiv:2606.21125v1 [cond-mat.mtrl-sci] 19 Jun 2026
+
+1. Introduction 
+
+First-principles simulations based on density functional the-ory (DFT) [1, 2] and time-dependent density functional theory (TDDFT) [3] are essential tools for studying electronic struc-tures [4, 5] and ultrafast electron dynamics [6, 7, 8] in condensed-matter systems. Real-time TDDFT is particularly powerful be-cause it directly follows the nonequilibrium motion of electrons under external electromagnetic fields. This approach can de-scribe nonlinear and strong-field phenomena beyond the scope of linear-response calculations. In practice, however, real-time TDDFT has been applied mainly to small and medium-sized systems. Simulations of very large systems, by contrast, have often been limited to ground-state or linear-response approaches [9, 10, 11, 12, 13, 14]. This leaves an important gap, as many realistic systems, such as disordered materials, amorphous structures, nanoscale hetero-geneous systems, liquids, and interfaces, require large system sizes and an explicit real-time description of electron dynamics. Localized-basis approaches can provide e ffi cient descriptions of electron dynamics induced by weak pulses close to the linear response regime [13, 11, 15, 16]. This picture breaks down into strongly excited, plasma-like states, where the number of ba-sis functions needed to represent highly delocalized electronic states can become prohibitively large. For highly nonlinear and nonequilibrium phenomena in large systems, such as high-harmonic generation and light-induced phase transitions, real-time simulations must therefore rely on basis-independent frame-works, such as real-space finite-di ff erence methods. SALMON has been developed as an open-source computa-tional framework for light-matter interaction simulations based on real-time TDDFT on real-space grids [17, 18]. By solv-ing the time-dependent Kohn–Sham (KS) equation with a real-time, real-space finite-di ff erence approach, SALMON can de-scribe the coupled dynamics of electrons, electromagnetic fields, and atomic motion. It is designed for massively parallel ex-ecution using message passing interface (MPI) together with OpenMP or GPU acceleration [17, 18]. Large-scale real-time simulations have already been demonstrated with SALMON, for example, for amorphous SiO 2 thin films containing 10,224 atoms on Fugaku [19]. Such calculations demonstrate the po-tential of large-scale real-time TDDFT. At the same time, they expose a central bottleneck: preparing the initial ground state with conventional DFT. In conventional real-space implemen-tations, the computational cost of ground-state DFT scales as 
+
+O(N3) with the system size N, mainly owing to diagonaliza-tion and orthonormalization of KS orbitals. Real-time TDDFT propagation, by comparison, scales only as O(N2). Therefore, the ground-state calculation can become more expensive than the subsequent time propagation, posing a critical obstacle to extending real-time TDDFT to larger and more complex sys-tems. Linear-scaling DFT methods provide a natural route to over-come this bottleneck [20, 21]. Among them, the divide-and- 
+
+> ∗Corresponding author.
+> E-mail address: yamada.shunsuke@qst.go.jp
+
+conquer (DC) method [22, 23, 24, 25, 26, 27] is attractive be-cause it exploits the locality, or nearsightedness, of electronic matter [28, 29]. In DC-DFT, the system is divided into overlap-ping subsystems (fragments). Local KS equations are solved independently for each fragment, and the total electron density is assembled from their contributions. This reduces the cost of the self-consistent field (SCF) procedure to linear scaling with system size. However, this locality-based formulation is not directly compatible with conventional real-time TDDFT. Real-time propagation requires global KS orbitals extending over the whole simulation cell, whereas DC-DFT naturally provides only fragment-localized orbitals. To bridge this gap, Ref. [30] proposed a postprocessing method based on DC-DFT in which spatially extended global KS or-bitals are reconstructed from fragment orbitals. In this method, a reduced orthonormal basis is constructed from low-energy fragment orbitals and the Hamiltonian matrix represented in this basis is diagonalized to obtain global electronic states. The resulting whole-system orbitals are expressed as linear combi-nations of fragment orbitals (LCFO), enabling a practical re-construction of extended KS orbitals for large systems. We refer to this reconstruction scheme as DC-LCFO. The method was demonstrated for systems such as P-doped Si and InGaN /GaN superlattices, reproducing eigen energies and extended wave-functions with useful accuracy [30]. Nevertheless, its integra-tion into a real-time TDDFT code as a practical initial-state preparation workflow had not been established. In this paper, we implement DC-DFT and DC-LCFO solvers in SALMON and integrate them with the real-space, real-time TDDFT workflow. This implementation makes it possible to simulate nonlinear and nonequilibrium phenomena in large-scale systems at a realistic computational cost. The DC-DFT mode is added to the ground-state module of SALMON and operates much like conventional DFT, requiring only a few additional input parameters. After the DC-DFT SCF calculation, the DC-LCFO solver reconstructs global KS orbitals from fragment orbitals and passes them to the standard real-time, real-space TDDFT module of SALMON. Although DC-LCFO contains an O(N3) diagonalization step, its cost is modest in the overall workflow because it is executed only once as a postprocessing procedure. The present workflow establishes a practical approach to large-scale simulations of nonequilibrium electron dynamics by combining linear-scaling ground-state preparation with the es-tablished real-space, real-time TDDFT framework of SALMON. The key advantage of this strategy is that it considerably re-duces the cost of initial-state preparation for large systems. At the same time, it retains the robustness and broad applicabil-ity of the real-space, real-time TDDFT propagation scheme, including strong-field simulations. In particular, the present workflow enables microscopic simulations of coupled electron, electromagnetic-field, and atomic dynamics in large systems, as demonstrated in Ref. [19]. This capability allows simulations that more closely reflect realistic conditions in optical-science experiments. The reconstructed orbitals can also serve as ini-tial orbitals for subsequent conventional DFT calculations, sub-stantially reducing the number of SCF iterations required when 2higher ground-state accuracy is needed. To demonstrate the capability of the implementation, we examine performance and numerical accuracy. Weak-scaling tests on Fugaku show the linear-scaling behavior of the DC-DFT SCF procedure. We then assess the accuracy of real-time TDDFT calculations initialized with DC-DFT for a 512-atom amorphous Si system. We compare the real-time current, ex-citation energy, linear-response dielectric function, and high-harmonic spectra against those obtained from conventional DFT initial states. As a more practical demonstration of large-system real-time TDDFT, we perform high-harmonic generation calcu-lations for a bulk H 2O liquid system containing 4,134 atoms. These tests show that the present workflow provides practically useful accuracy for large-scale electron-dynamics simulations. They further clarify that the remaining discrepancies mainly originate from the quality of the DC-DFT ground-state density rather than from the LCFO reconstruction itself. The remainder of this paper is organized as follows. Sec-tion 2 describes the DC formalism adopted in SALMON and summarizes the DC-LCFO method. Section 3 presents perfor-mance benchmarks and accuracy tests for representative sys-tems, including amorphous Si and liquid water systems under linear and nonlinear optical excitation. Finally, Section 4 sum-marizes the main findings and discusses future extensions of the present framework. 
+
+2. Methods 
+
+2.1. Overview of the divide-and-conquer workflow in SALMON 
+
+To accelerate ground-state preparation for large-scale real-time TDDFT simulations, we implement a DC-DFT workflow in SALMON. The overall workflow consists of the following steps: (i) an SCF loop based on DC-DFT for the total ground-state electron density, (ii) reconstruction and storage of the global KS orbitals by DC-LCFO, and (iii) conventional real-time TDDFT (or ground-state DFT) calculations using the reconstructed or-bitals as initial states. The DC-DFT part follows the standard formulation and relies on the nearsightedness principle of the electron density in DFT [28, 29]. By exploiting the short-range character of the electron density, the system is divided into small subsystems or fragments. The total electron density is then reconstructed from these fragments, achieving linear-scaling computational cost. DC-DFT is especially e ff ective for gapped and disordered systems, in which the correlations in the density matrix decay exponentially [29]. A key requirement for coupling DC-DFT to conventional real-time TDDFT is the availability of global KS orbitals as initial states. For this purpose, we adopt the fragment-orbital-based postprocessing method proposed in Ref. [30], which we refer to as DC-LCFO. In this method, a reduced orthonormal basis is constructed from low-energy fragment orbitals, a com-pact Hamiltonian matrix for the whole system is assembled in this basis, and the global KS orbitals are reconstructed from the resulting eigenvectors. In SALMON, these reconstructed KS orbitals are directly passed to the standard real-time TDDFT propagation module without modifying the time-evolution for-malism itself. Furthermore, the reconstructed orbitals can serve ⌦↵
+
+## ⌦↵
+
+> 0
+
+## b      
+
+> Figure 1: Schematic of a fragment Ωαin the divide-and-conquer method. The shaded area denotes the core region Ωα
+> 0, and bis the bu ff er thickness.
+
+as initial orbitals for conventional DFT calculations, accelerat-ing SCF convergence. The details of these workflows are de-scribed in the following subsections. 
+
+2.2. Divide-and-conquer ground-state calculation 
+
+In the DC-DFT formalism [22, 23, 27, 30], the physical space of the total system is represented as a union of nonover-lapping core domains {Ωα 
+
+> 0
+
+}. Each core domain is then extended by a bu ff er region to define an overlapping fragment Ωα. For each fragment α, the fragment KS equation is solved as fol-lows: ˆHαϕα 
+
+> i
+
+(r) = εα 
+
+> i
+
+ϕα 
+
+> i
+
+(r), (1) where ˆ Hα denotes the local KS Hamiltonian defined in Ωα. ϕα
+
+> i
+
+and εα 
+
+> i
+
+denote the corresponding fragment orbitals and eigen-values, respectively. In the present SALMON implementation, the whole sys-tem is assumed to be a rectangular cell with periodic bound-ary conditions. Because this implementation targets large pe-riodic condensed-matter systems, k-point sampling is not cur-rently included. The core regions are defined by dividing the whole system into a regular grid according to the prescribed number of fragments. Each fragment is then constructed by at-taching a bu ff er region of thickness b to the corresponding core region (Fig. 1). Periodic boundary conditions are imposed at the boundaries of each fragment, ∂Ωα. The total electron den-sity, ρtot (r), is reconstructed by summing the fragment densities projected onto the respective core regions, ¯ ρα(r). These quanti-ties are defined as follows: 
+
+ρtot (r) =
+
+X
+
+> α
+
+¯ρα(r), (2) ¯ρα(r) =
+
+
+
+ρα(r), (r ∈ Ωα 
+
+> 0
+
+)0, (r < Ωα 
+
+> 0
+
+), (3) 3ρα(r) =
+
+X
+
+> i
+
+f (εα 
+
+> i
+
+− μ)|ϕα 
+
+> i
+
+(r)|2, (4) where ρα(r) is the fragment density and f is the Fermi-Dirac distribution function. The chemical potential μ is determined globally to conserve the total number of electrons, Ne = R d3r ρtot (r). The fragment KS Hamiltonian ˆ Hα is defined as follows: ˆHα = − ℏ2
+
+2m ∇2 + Vloc (ˆ r) + ˆVNL + VH[ρtot ](ˆ r) + Vxc [ρα](ˆ r) + Vα(ˆ r),
+
+(5) where Vloc and ˆ VNL denote the local and nonlocal parts, respec-tively, of the ionic pseudopotential defined within Ωα. VH[ρtot ]denotes the Hartree potential, determined from the global Pois-son equation using the total density ρtot (r). Vxc [ρα] denotes the exchange-correlation potential calculated from the fragment density ρα(r). Vα(r) = [ρα(r) − ρtot (r)] /ξ with ξ > 0 denotes the density-template potential [26, 27] and is set to zero by default. The SCF loop for the total density ρtot (r) is iterated using the same procedure as in conventional DFT but solving the local-ized KS equations Eq. (1) for the respective fragments. The dominant computational cost in a ground-state calcula-tion arises from the diagonalization of the KS equation and the orthonormalization of the KS orbitals. In DC-DFT, however, only fragment-localized KS orbitals are considered. Therefore, when the system size is increased, the fragment size can be kept constant. Only the number of fragments needs to increase, so that the computational cost scales only with the number of fragments. Although the calculation of the Hartree potential re-quires a fast Fourier transform (FFT) over the whole system, its computational cost scales as O(Nlog N). Therefore, the overall cost of the DC-DFT calculation is approximately O(N), namely, it exhibits linear scaling [20, 21, 27]. For practical use in SALMON, fragment decomposition is controlled by user-defined input parameters specifying the num-ber of fragments in each direction, the number of grid points in the bu ff er region, and the number of fragment states to be retained. In addition, density summation can be performed at a finite electronic temperature for the occupation function f .In this paper, a temperature of 300 K is used for the density sum in the representative calculations for numerical stability. The norm-conserving pseudopotential [31] and (adiabatic) lo-cal density approximation [32] are used in the calculations. 
+
+2.3. Reconstruction of global Kohn–Sham orbitals 
+
+After the SCF loop has converged, the global KS states are reconstructed using the DC-LCFO postprocessing method, which employs a compact basis derived from fragment orbitals. Following the procedure of Ref. [30], we first select fragment orbitals whose eigenvalues are lower than the prescribed cut-off energy εcut . To suppress redundant contributions from the bu ff er region, each selected fragment orbital is projected onto the corresponding core region Ωα 
+
+> 0
+
+, yielding projected orbitals 
+
+{ ¯ϕα 
+
+> i
+
+} defined in the same manner as Eq. (3). An overlap matrix is then constructed independently for each fragment. 
+
+S α 
+
+> i j
+
+= ⟨ ¯ϕα 
+
+> i
+
+| ¯ϕα 
+
+> j
+
+⟩. (6) The overlap matrix is diagonalized. Eigenvectors associated with su ffi ciently small eigenvalues are then discarded using a threshold parameter λcut , which removes overcompleteness and controls the number of basis functions [30]. The retained eigenvectors of the overlap matrix define a new set of orthonormal basis functions {λα 
+
+> i
+
+}, each localized to a given core domain Ωα 
+
+> 0
+
+but built from low-energy fragment or-bitals. The basis functions are localized in the core region of each fragment and orthonormalized within it. Therefore, they also satisfy the orthonormality condition as a whole: 
+
+⟨λα 
+
+> i
+
+|λα′ 
+
+> i′
+
+⟩ = δαα ′ δii ′ . (7) In this way, the basis is compact and systematically generated from fragment electronic structure data, while still capable of representing spatially extended states of the whole system through linear combinations across fragments. The use of a reduced ba-sis is essential for avoiding the large Hamiltonian dimension associated with conventional real-space or plane-wave repre-sentations. In the original DC-LCFO formulation, practical ac-curacy was achieved with roughly 10–20 basis functions per atom in representative systems. The present SALMON imple-mentation follows the same construction principle [30]. In the validation examples presented here, representative values such as λcut = 10 −7 and εcut − μ = 0.1 eV are used; the optimal choice, however, may depend on the target system and the de-sired energy window. To obtain the global KS orbitals, we construct the Hamil-tonian matrix ⟨λα 
+
+> i
+
+| ˆH|λα′ 
+
+> i′
+
+⟩ of the whole system using the basis functions {λα 
+
+> i
+
+} and then diagonalize the matrix. Here, ˆH is the KS Hamiltonian defined in the whole system: ˆH = − ℏ2
+
+2m ∇2 + Vloc (ˆ r) + ˆVNL + VH[ρtot ](ˆ r) + Vxc [ρtot ](ˆ r). (8) In practice, the total KS Hamiltonian ˆ H is approximated by the local KS Hamiltonian ˆHα, and the matrix elements are eval-uated by applying the ordinary Hamiltonian operation to the basis functions, λα 
+
+> i
+
+(r) → ˆHαλα 
+
+> i
+
+(r), as follows: 
+
+⟨λα 
+
+> i
+
+| ˆH|λα′ 
+
+> i′
+
+⟩ =
+
+
+
+⟨λα 
+
+> i
+
+| ˆHα|λα 
+
+> i′
+
+⟩, (α = α′),
+
+> 12
+
+h(⟨λα 
+
+> i
+
+| ˆHα)|λα′ 
+
+> i′
+
+⟩ + ⟨λα 
+
+> i
+
+|( ˆ Hα′
+
+|λα′ 
+
+> i′
+
+⟩)i , (α , α′).
+
+(9) The resulting Hamiltonian matrix is sparse in the sense that nonzero couplings arise between basis functions associated with the same fragment or with neighboring fragments, reflecting the semilocality of the KS Hamiltonian. Here, the second line of the right-hand side involves inner products between vectors belonging to di ff erent fragments. In the parallel implementa-tion, this requires one-to-one communication between the MPI processes responsible for the bu ff er region and the overlapping neighboring core region. Once the Hamiltonian matrix has been diagonalized, we ob-tain eigenvectors expressed in the orthonormal basis {λα 
+
+> i
+
+}, from which the global KS orbitals are reconstructed as follows: 
+
+ψn(r) =
+
+X
+
+> α
+
+X
+
+> i∈α
+
+Cαi,n λα 
+
+> i
+
+(r), (10) 4where Cαi,n are the coe ffi cients of the n-th eigenstate on the reduced basis. This reconstruction yields orbitals that are de-fined on the global real-space grid and suitable for direct use in subsequent conventional DFT or TDDFT calculations within SALMON. The basis functions λα 
+
+> i
+
+(r) and wavefunction coe ffi cients Cαi,n
+
+are written to output files that the subsequent simulation stages can read. In the current directory structure, the DC-related data are separated into directories for each fragment, which contain basis-function data, local Hamiltonian data, and wavefunction coe ffi cients. The matrix construction includes communications among neighboring fragments when o ff -diagonal blocks are required, while dominant local operations are carried out independently on each fragment. According to the implemented workflow, the SCF loop for the total density, the basis construction, and the Hamiltonian assembly are all treated as nearly linear-scaling computations. However, the final matrix diagonalization re-mains an O(N3) computational step, although the use of a com-pact basis substantially decreases this dimension compared to conventional calculations. This division of computational cost is a central feature of the present implementation. Moreover, since diagonalization is performed only once as a postprocess-ing step, its contribution to the overall computational cost is not a major concern in practice. The current implementation uses EigenExa [33, 34] for diagonalization, and a sparse-matrix solver, such as the Sakurai-Sugiura method [35], is considered a future extension. 
+
+2.4. Real-time TDDFT 
+
+Once the global KS orbitals have been constructed using DC-DFT and its postprocessing method, DC-LCFO, we per-form real-time TDDFT calculations using them as initial states. Details of the real-time TDDFT calculation are given in Ref. [17]. Taking ψn(r) as the initial state of the time-dependent KS orbital 
+
+ψn(r, t), we solve the following time-dependent KS equation: 
+
+iℏ ∂∂t ψn(r, t) = ˆH(t)ψn(r, t), (11) ˆH(t) = 12m
+
+
+
+−iℏ∇ + ec A(t)
+
+2
+
++ Vloc (ˆ r)
+
++e−i e  
+
+> ℏcA(t)·ˆr
+
+ˆVNL ei e  
+
+> ℏcA(t)·ˆr
+
++ VH[ρtot (t)](ˆ r)
+
++Vxc [ρtot (t)](ˆ r), (12) 
+
+ρtot (r, t) =
+
+> occ
+
+X
+
+> n
+
+|ψn(r, t)|2, (13) where A(t) is the spatially uniform vector potential of the ap-plied electric field. In this paper, we use the waveform given by 
+
+A(t) =
+
+
+
+− cE 0 
+
+> ω
+
+sin hω t − T
+
+> 2
+
+i sin 2  πtT
+
+ ˆz, (0 < t < T ),
+
+0, (otherwise) , (14) where E0, ω, and T are the peak amplitude, central frequency, and pulse duration of the laser pulse, respectively. The main physical quantities analyzed in real-time TDDFT are the excitation energy and electron current density. The for-mer is given by 
+
+Eex (t) = E[ρtot (t)] − E[ρtot (t = 0)] , (15) where E[ρ] is the total energy functional of the electron density 
+
+ρ(r). The electron current density averaged over the calculation cell, j(t), is given by 
+
+j(t) =
+
+Z
+
+> Ω
+
+d3r
+
+Ω
+
+> occ
+
+X
+
+> n
+
+ψ∗
+
+> n
+
+(r, t) 1
+
+iℏ
+
+hˆr, ˆH(t)i ψn(r, t), (16) where Ω is the volume of the cell. These physical quantities are used in the latter part of this paper to assess the accuracy of the initial states prepared by DC-DFT. 
+
+2.5. User input and output structure 
+
+SALMON has dedicated input keywords for the DC-DFT workflow in the &calculation and &dc namelists. The main keyword is yn_dc = ‘y/n ’ (yes or no) in the &calculation 
+
+namelist. DC-DFT is activated when yn_dc = ‘y’ is specified. The &dc namelist contains keywords dedicated to DC-DFT, as listed in Table. 1. The implementation is designed for massively parallel en-vironments using the MPI library. In the SCF loop of DC-DFT, the fragments are distributed over MPI processes, and additional parallelization can be introduced within each frag-ment through orbital and real-space decompositions. Parallel execution in each fragment is controlled through parameters of nproc_k (k-point MPI distribution; must be set to 1 for DC-DFT), nproc_ob (orbital MPI distribution), and nproc_ rgrid(1:3) (real-space grid MPI distribution) in the &parallel 
+
+namelist. These input parameters are common to conventional calculations. In the SALMON input structure, the MPI process distribu-tion is related to fragment decomposition and internal paral-lelization. #(Processes) =
+
+Y
+
+nproc_rgrid_tot 
+
+= Y 
+
+num_fragment 
+
+× nproc_ob × Y 
+
+nproc_rgrid  ,(17) where the left-hand side is the total number of MPI processes. Here, the right-hand side of the first equality corresponds to the MPI process distribution for FFT of the global Poisson equa-tion. The right-hand side of the second equality is the MPI pro-cess distribution for the fragment KS orbitals, where Q num_ fragment equals the number of fragments. The output files are organized under a dedicated DC-DFT data directory ( data_dcdft ), which contains separate subdi-rectories for fragment data ( data_dcdft/fragments/000001 ,
+
+data_dcdft/fragments/000002 , · · · ) and total-system data (data_dcdft/total ). The total-system directory stores quan-tities, such as the eigenenergies of the whole system calculated 5Table 1: Input parameters in the &dc namelist for DC-DFT calculations in SALMON. 
+
+Keyword Type Description 
+
+num_fragment(1:3) Integer Number of fragment decompositions in each direction. 
+
+nstate_frag Integer Number of orbitals in each fragment. 
+
+num_rgrid_buffer(1:3) Integer Number of grid points corresponding to the bu ff er thickness b in each direction. 
+
+nproc_rgrid_tot(1:3) Integer Number of MPI process decompositions in each direction for the real-space grid of the whole system. 
+
+yn_dc_lcfo Character(1) Keyword to activate the DC-LCFO calculation (‘y’ or ‘n’). 
+
+lambda_cut Real(8) Truncation threshold for overlap matrix eigenvalues λcut .
+
+energy_cut Real(8) Energy cuto ff for fragment orbitals εcut .in the DC-LCFO solver. Each fragment directory contains ba-sis functions λα 
+
+> i
+
+(r) ( basis_functions.bin ), local Hamilto-nian matrices ⟨λα 
+
+> i
+
+| ˆH|λα′ 
+
+> i′
+
+⟩ (hamiltonian_local.bin ), wave-function coe ffi cients Cαi,n (wavefunctions.bin ), and grid-index information ( rgrid_index.bin ). To read files generated by DC-LCFO and perform conven-tional DFT or TDDFT calculations, the input keyword yn_conventional_ from_dcdft = ‘y’ should be specified in the &calculation 
+
+namelist. In this case, all other input keywords can be the same as those used for standard DFT or TDDFT calculations. An advantage of representing the global KS orbitals in the DC-LCFO basis is that the data size can be significantly re-duced. This is in contrast with wavefunction data represented on the global real-space grid used in conventional calculations within SALMON. In the latter case, the data size scales with both the number of real-space grid points and the number of or-bitals, resulting in extremely large files for large systems. In the DC-LCFO representation, by contrast, the data size of the basis functions scales only with the number of fragments. The num-ber of wavefunction coe ffi cients, meanwhile, scales with the product of the number of fragments and the number of orbitals. Consequently, the overall data size in the DC-LCFO represen-tation is much smaller than that in the real-space grid represen-tation. 
+
+2.6. Practical usage 
+
+The DC-DFT workflow implemented in SALMON supports the following three practical use cases. (1) The ground-state KS orbitals calculated in the DC-DFT mode ( yn_dc = ‘y’) are stored and then read as the initial states for conventional real-time TDDFT calculations ( yn_conventional_ from_dcdft = ‘y’). This approach is particularly useful for analyzing physical quantities in real time during excitation dy-namics induced by intense laser irradiation in large-scale sys-tems. Because residual noise arises from the density error spe-cific to DC-DFT, its applicability is limited for analyses in the linear-response regime and for high-harmonic spectra (see Sec. 3.2). (2) The ground-state KS orbitals calculated in the DC-DFT mode ( yn_dc = ‘y’) are stored and then read as the initial states for a conventional ground-state DFT calculation ( yn_conventional_ from_dcdft = ‘y’). Because the initial wavefunctions are al-ready nearly converged with respect to the SCF procedure, the subsequent convergence is extremely fast. In particular, for sys-tems with a large gap, practically su ffi cient accuracy can be reached within only a few iterations. Therefore, compared with the standard workflow of performing DFT followed by TDDFT, a three-step workflow of DC-DFT, DFT, and TDDFT can sub-stantially reduce the computational time of the DFT stage. Cru-cially, it does so while maintaining the same final accuracy. (3) Only the electron density ρtot (r) obtained by a conven-tional DFT calculation is stored in a file. A DC-DFT calcu-lation is then performed with the electron density fixed to the value read from this file (fixed-density DC). In this case, the conventional DFT calculation does not need to output the ex-tremely large wavefunction files. Instead, the global KS or-bitals are reconstructed in the DC-LCFO basis, whose file size is much smaller. Because the electron density is fixed to that of conventional DFT, the density error specific to DC-DFT is eliminated. As a result, TDDFT calculations can be performed with essentially the same accuracy as when orbitals from con-ventional DFT are used as the initial states. This approach is particularly useful when disk space usage must be minimized. 
+
+2.7. Comparison with other approaches 
+
+Representative real-time TDDFT codes besides SALMON include Octopus [36], Elk [37], CP2K [38], and NWChem [39]. ONETEP [13, 11] and SIESTA [15] are major linear-scaling DFT codes. Both have developed real-time TDDFT schemes based on localized orbitals. To our knowledge, no code has yet been established that connects a linear-scaling DFT workflow to a standard real-time TDDFT scheme via the explicit recon-struction of global KS orbitals on a real-space grid. A recent study [16] reported electron dynamics calculations for million-atom systems using real-time TDDFT within a discontinuous-Galerkin framework [40, 41]. Although that work and the present study both use compact localized basis functions, the underly-ing strategy di ff ers. In the present implementation, DC-LCFO serves as a postprocessing step for the linear-scaling ground-state calculation based on DC-DFT, generating global KS or-bitals on the real-space grid. These orbitals are then passed to the standard real-time, real-space finite-di ff erence TDDFT scheme of SALMON, whereas the discontinuous-Galerkin method propagates the dynamics using a Hamiltonian matrix represented on a localized basis [16]. This di ff erence is particularly impor-tant in the strong-field regime, where localized-basis TDDFT 60510 15 20 25 0 4000 8000 12000 Time (second/iteration) Numbers of atoms Conventional DC Figure 2: Comparison of computational time in weak-scaling calculations on Fugaku. For Si supercells, one node is used per unit cell. The red and blue lines denote conventional DFT and DC-DFT, respectively. 
+
+requires careful checks of basis convergence. Basis truncation can a ff ect physical quantities there, especially for highly ex-cited, delocalized, or plasma-like electronic states. Real-time, real-space finite-di ff erence TDDFT has already proven success-ful for intense ultrashort pulses and high-harmonic generation [17, 8]. Therefore, the present SALMON implementation o ff ers a distinct route, combining an O(N) initial-state preparation for very large systems with a grid-based TDDFT formalism suit-able even for strong-field simulations. 
+
+3. Results and Discussion 
+
+3.1. Weak-scaling performance of the SCF loop in DC-DFT 
+
+We begin by assessing the parallel performance of the DC-DFT SCF procedure implemented in SALMON. As a repre-sentative benchmark, we consider Si supercells and distribute the calculation over the Fugaku supercomputer, using one node per unit cell. The cubic unit cell contains eight Si atoms in the diamond structure. Figure 2 shows the calculation time per it-eration step of SCF as a function of the number of atoms. The red and blue lines correspond to results from conventional DFT and DC-DFT, respectively. The calculations are performed using n × n × n computa-tional nodes of Fugaku for a n × n × n supercell comprising 8 n3
+
+atoms. The largest case is a 12 × 12 × 12 supercell containing 13,824 atoms, using 1,728 Fugaku nodes. We use 4 MPI pro-cesses and 12 OpenMP threads per node. The grid spacing of the real-space grid is set to 0.45 Å. For the conventional DFT case, nproc_ob = 32 and nproc_rgrid = (n/2, n/2, n/2) are specified. For the DC-DFT case, the n × n × n supercell is di-vided into n × n × n fragments ( num_fragment = n, n, n). Here, 
+
+nproc_ob = 1, nproc_rgrid = (1 , 2, 2), and nproc_rgrid_ tot = (n, 2n, 2n) are specified. The bu ff er thickness b is set to one Si lattice constant (5.43 Å), and each fragment corresponds to a 3 × 3 × 3 cell system ( num_rgrid_buffer = 12 , 12 , 12). For the DC-DFT case, the measured wall-clock time per SCF iteration exhibits linear-scaling behavior over the tested system sizes. By contrast, the conventional DFT result exhibits the expected O(N3) behavior. The crossover between the two -2 ×10 -3 0×10 02×10 -3 4×10 -3 0 5 10 15 20 (a) J (fs -1  Å -2  )Time (fs) Conventional DC (b=0.5c) DC (b=0.75c) DC (b=c) DC,  fi x (b=c) -4 ×10 -4 0×10 04×10 -4 8×10 -4 0 5 10 15 20 (b) Energy (eV/atom) Time (fs) Conventional DC (b=0.5c) DC (b=0.75c) DC (b=c) DC,  fi x (b=c)                
+
+> Figure 3: Current density (a) and excitation energy (b) in the 512-atom amor-phous Si system from real-time TDDFT calculations for a laser pulse with
+> I=10 9W/cm 2,ℏω=1.55 eV, and T=20 fs, using di ff erent initial-state preparation methods. The red solid line corresponds to the initial state obtained from conventional DFT. The other curves correspond to initial states obtained from DC-DFT with bu ff er thickness b(cis the side length of the core domain). The thin black dotted line denotes the fixed-density DC calculation for b=c.
+
+cases occurs at 512 atoms. These results support the linear-scaling character of the DC-DFT SCF loop discussed in Sec. 2 and demonstrate that the implementation is suitable for large-scale execution on massively parallel architectures. 
+
+3.2. Amorphous Si 
+
+We assess the accuracy of real-time TDDFT calculations initialized with global KS orbitals prepared by DC-DFT using an amorphous Si system. From the nearsightedness principle of DFT [28, 29], DC-DFT can perform well for gapped and disordered systems, where correlations in the density matrix decay exponentially. The deviation of DC-DFT from conven-tional DFT arises from truncating the electron density at short distances. The resulting accuracy can be improved by increas-ing the bu ff er thickness b. However, increasing b also leads to a higher computational cost, resulting in a trade-o ff between ac-curacy and e ffi ciency. Herein, we focus on amorphous Si, an important disordered system for practical applications. We sys-tematically evaluate how the accuracy of real-time TDDFT cal-7culations initialized with DC-DFT depends on the bu ff er thick-ness b.We consider a 512-atom amorphous Si system whose atomic coordinates are taken from Ref. [42]. The simulation cell is a cube with side length L = 22 Å, and the real-space grid spacing is set to L/80 = 0.27 Å. In the DC-DFT calculations, the sim-ulation cell is divided into 4 × 4 × 4 fragments so that the side length of each core region is set to c = L/4. Figures 3(a) and 3(b) show the current density and excita-tion energy, respectively, for a laser pulse with intensity I =
+
+10 9 W/cm 2, photon energy ℏω = 1.55 eV, and pulse duration T
+
+= 20 fs. This intensity corresponds to an extremely weak field in the linear-response regime. The red solid line represents the real-time TDDFT calculation initialized with the KS orbitals obtained from conventional DFT, whereas the other curves cor-respond to calculations initialized with the KS orbitals obtained from DC-DFT. The blue dashed, green dotted, and light-blue dash-dotted lines correspond to bu ff er thicknesses b = c/2, 3c/4, and c, respectively. In addition, the thin black dotted line represents a calculation for the DC-DFT case with b = c in which the total electron density ρtot (r) is fixed to that obtained from conventional DFT (fixed-density DC). Because the total density is fixed to the reference value in this calculation, we can isolate and assess only the accuracy of the DC-LCFO method used to construct the global KS orbitals. The current density shown in Fig. 3(a) is in overall agree-ment for all cases, although some noise is observed around t = 0in the DC-DFT results. In the fixed-density DC case, the result agrees perfectly with the conventional one. By contrast, the ex-citation energy in Fig. 3(b) shows a much larger deviation of the DC-DFT results from the conventional result. Because the intensity I = 10 9 W/cm 2 is extremely small, the energy shift originating from the electron density error specific to the DC-DFT SCF loop appears large. This energy shift arises because the electron density in the initial state of the real-time TDDFT calculation is not fully converged in the SCF procedure, owing to the error of DC-DFT. We confirm that increasing the bu ff er thickness b systematically improves the accuracy of the electron density and correspondingly reduces the error in the excitation energy. Furthermore, the fixed-density DC result agrees with the conventional one, confirming that the actual source of the error is the convergence of the electron density. These results demonstrate that the accuracy of the DC-LCFO method is suf-ficient for practical use. They further show that the remaining error can be systematically reduced by improving the accuracy of the SCF part of the DC-DFT calculation. Figure 4 shows the same quantities as in Fig. 3, but for a laser intensity of I = 10 12 W/cm 2. This corresponds to cal-culations under an intense laser pulse that induces nonlinear excitation phenomena, such as high-harmonic generation. In this case, the error originating from DC-DFT becomes small and the current and excitation energy agree almost perfectly for all cases considered. This indicates that for real-time dynami-cal simulations driven by intense laser pulses, the initial states prepared by DC-DFT have su ffi cient accuracy. Next, we assess the accuracy of frequency-domain analysis. Figure 5 shows the real part (a) and the imaginary part (b) of -5 ×10 -2 0×10 05×10 -2 0 5 10 15 20 (a) J (fs -1  Å -2  )Time (fs) Conventional DC (b=0.5c) DC (b=0.75c) DC (b=c) DC,  fi x (b=c) 00.2 0.4 0.6 0.8 10 5 10 15 20 (b) Energy (eV/atom) Time (fs) Conventional DC (b=0.5c) DC (b=0.75c) DC (b=c) DC,  fi x (b=c)     
+
+> Figure 4: Same as Fig. 3, but for an intensity of I=10 12 W/cm 2.
+
+8-10 010 20 2 4 6 8 10 (a) Re  ε      
+
+> Photon Energy (eV) Conventional DC (b=0.5c) DC (b=0.75c) DC (b=c) DC, fi x (b=c) 010 20 30 246810 (b) Im  ε
+> Photon Energy (eV) Conventional DC (b=0.5c) DC (b=0.75c) DC (b=c) DC, fi x (b=c) Figure 5: Real part (a) and imaginary part (b) of the dielectric function of the 512-atom amorphous Si system.
+
+the dielectric function of amorphous Si obtained from real-time linear-response calculations. In these calculations, an impulsive electric field in the linear-response regime is applied at t = 0and the dielectric function is obtained by Fourier-transforming the current calculated up to t = 20 fs. The results obtained with conventional DFT and DC-DFT are in overall agreement, although deviations are observed around zero frequency. The error also tends to decrease as the bu ff er thickness b increases. In addition, the fixed-density DC result agrees almost perfectly with the conventional result. Figure 6 shows the high-harmonic spectrum obtained by Fourier-transforming the current calculated in Fig. 4(a) and plot-ting the squared magnitude as a function of photon energy. Be-low 10 eV, the first-, third-, and fifth-order harmonic peaks can be identified from left to right. In the DC-DFT cases, no-table background noise appears above 10 eV, which buries the seventh harmonic around 11 eV that is visible in the conven-tional result. By contrast, the fixed-density DC result agrees almost perfectly with the conventional result even in the high-frequency region. These results indicate that DC-DFT initial states are gen-erally accurate enough for practical analyses in the frequency domain as well. However, in calculations that are particularly sensitive to background noise in the current, such as the low-frequency region of linear response and the high-frequency re-gion of high-harmonic spectra, the electron density error spe-cific to DC-DFT becomes a limiting factor. For calculations requiring such high accuracy, the DC-DFT initial states need to be connected to a conventional DFT calculation to remove the 10 -15 10 -12 10 -9 10 -6 10 -3 0 5 10 15 20 |J( ω)|  2 (Å -4  )Photon Energy (eV) Conventional DC (b=0.5c) DC (b=0.75c) DC (b=c) DC,  fi x (b=c) 
+
+> Figure 6: High-harmonic spectrum calculated from the current density shown in Fig. 4(a).
+
+noise. In this case, the wavefunctions from conventional DFT do not need to be stored because su ffi cient accuracy can be ob-tained by storing only the electron density and reconstructing the global KS orbitals via fixed-density DC calculation. This approach is especially useful when storage capacity is a concern because it avoids the need to generate extremely large wave-function files. 
+
+3.3. Bulk H 2O liquid 
+
+Figure 7 shows the current density (a), excitation energy (b), and high-harmonic spectrum obtained from the current density (c) for liquid water. In this calculation, we use a bulk cubic pe-riodic cell with side length 35 Å containing 4,134 atoms, i.e., 1,378 H 2O molecules. The atomic structure is obtained using GROMACS code [43, 44]. The applied laser pulse has an in-tensity of I = 10 13 W/cm 2, a photon energy of ℏω = 1.55 eV, and a pulse duration of T = 20 fs. The real-space grid spacing is set to 35 /160 = 0.22 Å. In the DC-DFT calculation, we use an 8 × 8 × 8 fragment decomposition with a bu ff er thickness of 
+
+b = 3.5 Å. The red solid and blue dashed lines represent the real-time TDDFT results obtained using initial states prepared by conventional DFT and DC-DFT, respectively. Figure 7(a) shows that the current exhibits strongly non-linear behavior under an extremely intense electric field. In Figs. 7(a) and 7(b), the results of conventional DFT and DC-DFT agree almost perfectly. In the high-harmonic spectrum shown in Fig. 7(c), the two results also agree well in the low-frequency region below 10 eV, whereas deviations appear in the higher-frequency region. These trends are consistent with those observed for amorphous Si under intense laser irradia-tion. Therefore, we performed an additional conventional DFT calculation starting from the DC-DFT initial states, with only five SCF iterations, and the result of the subsequent real-time TDDFT calculation is shown by the thin black dotted line in Fig. 7(c). The noise originating from the density error in DC-DFT is removed, and the result agrees almost perfectly with that of conventional DFT, even in the high-frequency region. We further confirmed that after five more iterations, i.e., 10 SCF 9-2 ×10 -3 0×10 02×10 -3 0 5 10 15 20 (a) J (fs -1  Å -2  )Time (fs) Conventional DC 0×10 01×10 -2 2×10 -2 0 5 10 15 20 (b) Energy (eV/atom) Time (fs) Conventional DC 10 -16 10 -13 10 -10 10 -7 10 -4 0 5 10 15 20 25 (c) |J( ω)|  2 (Å -4  )Photon Energy (eV) Conventional DC DC + 5 Iteration Figure 7: Current density (a), excitation energy (b), and high-harmonic spec-trum (c) for the 4,134-atom liquid-water system from real-time TDDFT cal-culations with di ff erent initial-state preparation methods for a laser pulse with          
+
+> I=10 13 W/cm 2,ℏω=1.55 eV, and T=20 fs. The red solid and blue dashed lines represent results from conventional DFT and DC-DFT, respectively. The thin black dotted line in panel (c) corresponds to five additional SCF iterations of conventional DFT starting from the DC-DFT initial states.
+
+iterations, the result becomes indistinguishable from the con-ventional DFT result. The wall-clock times for DFT, DC-DFT, and TDDFT were 4.3 h, 3 min, and 5.7 h, respectively, on 512 Fugaku nodes. In the DFT and DC-DFT calculations, convergence was judged using the criterion R d3r|ρi(r) − ρi−1(r)|/Ne < 10 −9, where i
+
+denotes the iteration index. Convergence was reached in 166 iterations for DFT and 152 iterations for DC-DFT. Of the total DC-DFT time of 183 s, 67 s was spent in the SCF loop, 53 s in the preparation of the basis functions for the DC-LCFO method, and 62 s in the diagonalization of the Hamiltonian matrix. The diagonalization was performed using EigenExa, and the matrix dimension was 56,163. This corresponds to 13.6 basis functions per atom, which is comparable to the number of basis functions required in Ref. [30]. In this calculation, replacing DFT with DC-DFT reduced the computational time for initial-state preparation from 4.3 h to 3 min. Even when 10 additional DFT iterations are per-formed starting from the DC-DFT initial states, the required computation time remains less than 20 min. This practically relevant example demonstrates that the DC-DFT implementa-tion in SALMON can drastically reduce the computational cost of initial-state preparation for large-scale TDDFT simulations. For the present 4,134-atom system, the cost of conventional DFT and that of TDDFT propagation are comparable. There-fore, if only a single real-time simulation is required, replac-ing the conventional DFT step with DC-DFT provides a mod-erate advantage. However, when several TDDFT calculations are performed from the same ground state, for example, with di ff erent laser intensities, polarizations, or pulse shapes, the cost of a single conventional DFT calculation can be amor-tized over multiple propagations. In such a situation, especially when the high accuracy of the initial density is required, the practical advantage of DC-DFT becomes less pronounced for a system of this size. This balance changes rapidly for larger systems. As the conventional DFT preparation scales approx-imately as O(N3), whereas the real-time TDDFT propagation scales as O(N2), doubling the system size makes the DFT stage grow faster than the propagation stage. Thus, for systems of 8,000 atoms, DC-DFT can provide a clear advantage even when several real-time propagations are performed. For systems of 16,000 atoms or larger, the conventional DFT ground-state cal-culation would become a dominant cost and the DC-DFT-based workflow should be substantially more favorable. The sizes of the files basis_functions.bin , hamiltonian_ local.bin , wavefunctions.bin , and rgrid_index.bin in each fragment directory were 16, 13, 12, and 0.6 MB, respec-tively. As the calculation comprises 512 fragments in total, the total size of the data_dcdft directory amounts to 20 GB. By contrast, the wavefunction file stored in a conventional DFT calculation is 170 GB. This demonstrates that DC-DFT o ff ers a substantial advantage in terms of file size. 
+
+4. Conclusion 
+
+Herein, we developed a practical route toward large-scale simulations of strongly driven electron dynamics by combin-10 ing linear-scaling ground-state preparation with the established grid-based real-time TDDFT framework of SALMON. We have implemented a DC-DFT workflow in SALMON and established its direct connection to conventional real-time TDDFT calcu-lations. This connection is achieved through a postprocessing method that reconstructs global KS orbitals. The present im-plementation combines four steps: DC-DFT-based SCF calcu-lations, construction of orthonormal basis functions from local-ized KS orbitals used in the DC method, assembly and diago-nalization of a reduced Hamiltonian matrix, and reconstruction of global wavefunctions. These reconstructed wavefunctions can then be used as initial states for standard real-time prop-agation. Taken together, this provides a practical, end-to-end workflow for accelerating large-scale electron-dynamics simu-lations in SALMON. The performance benchmarks demonstrate that the DC-DFT-based SCF procedure exhibits linear-scaling behavior on the Fugaku supercomputer. They further show that the overall work-flow can be applied to large-scale systems. Furthermore, us-ing a 512-atom amorphous Si system and a 4,134-atom liquid-water system, we assessed the accuracy of physical observ-ables obtained from real-time TDDFT calculations initialized with DC-DFT. We also identified the regimes in which prac-tically su ffi cient accuracy is achieved. In particular, for the liquid-water system, we showed that the computational time for initial-state preparation can be reduced from 4.3 h to 3 min compared with the conventional approach. The file size re-quired for constructing the KS orbitals can likewise be reduced relative to the conventional approach, from 170 GB to 20 GB. These examples illustrate the practical usage and advantages of the DC-DFT workflow implemented in SALMON. The present implementation is not intended to replace localized-basis real-time TDDFT approaches. Instead, it provides a com-plementary strategy that retains the existing real-space descrip-tion of highly excited and spatially extended electronic states while removing the bottleneck of ground-state preparation. This capability should be particularly valuable for simulations of strong-field and nonequilibrium phenomena in realistic systems containing thousands to tens of thousands of atoms. 
+
+5. Acknowledgements 
+
+The authors thank Dr. Junichi Iwata (Quemix Inc.) for the fruitful discussions. This research was supported by a grant (No. JPMXS0118067246) from the Japanese Ministry of Edu-cation, Culture, Sports, Science and Technology (MEXT) Quan-tum Leap Flagship Program (Q-LEAP) and by Kakenhi grants-in-aid (Nos. 24K01224 and 24K17629) from the Japan Society for the Promotion of Science (JSPS). Calculations were per-formed on the Fugaku supercomputer with support from the HPCI System Research Project (Project IDs: hp240124 and hp250102), the Miyabi supercomputer at the University of Tokyo under a Multidisciplinary Cooperative Research Program of the Center for Computational Sciences at the University of Tsukuba. 
+
+References 
+
+[1] P. Hohenberg, W. Kohn, Inhomogeneous elec-tron gas, Physical Review 136 (1964) B864–B871. doi:10.1103 /PhysRev.136.B864. [2] W. Kohn, L. J. Sham, Self-consistent equations includ-ing exchange and correlation e ff ects, Physical Review 140 (1965) A1133–A1138. doi:10.1103 /PhysRev.140.A1133. [3] E. Runge, E. K. U. Gross, Density-functional theory for time-dependent systems, Physical Review Letters 52 (1984) 997–1000. doi:10.1103 /PhysRevLett.52.997. URL https://journals.aps.org/prl/pdf/10. 1103/PhysRevLett.52.997https://link.aps. org/doi/10.1103/PhysRevLett.52.997 
+
+[4] K. Burke, Perspective on density functional theory, The Journal of Chemical Physics 136 (4 2012). doi:10.1063 /1.4704546. [5] R. Jones, Density functional theory: Its origins, rise to prominence, and future, Reviews of Modern Physics 87 (2015) 897–923. doi:10.1103 /RevModPhys.87.897. [6] C. A. Ullrich, Time-Dependent Density-Functional The-ory: Concepts and Applications, Oxford University Press, Oxford, 2011. [7] M. A. L. Marques, C. A. Ullrich, F. Nogueira, A. Rubio, K. Burke, E. K. U. Gross (Eds.), Time-Dependent Density Functional Theory, Vol. 706 of Lecture Notes in Physics, Springer, Berlin and Heidelberg, 2006. [8] S. A. Sato, H. Hübener, U. D. Giovannini, A. Ru-bio, Technical review: Time-dependent density functional theory for attosecond physics ranging from gas-phase to solids, npj Computational Materials 11 (2025) 233. doi:10.1038 /s41524-025-01715-1. [9] J. VandeVondele, U. Borštnik, J. Hutter, Linear scal-ing self-consistent field calculations with millions of atoms in the condensed phase, Journal of Chemi-cal Theory and Computation 8 (2012) 3565–3573. doi:10.1021 /ct200897x. [10] A. Nakata, J. S. Baker, S. Y. Mujahed, J. T. L. Poul-ton, S. Arapan, J. Lin, Z. Raza, S. Yadav, L. Truflandier, T. Miyazaki, D. R. Bowler, Large scale and linear scal-ing dft with the conquest code, The Journal of Chemical Physics 152 (4 2020). doi:10.1063 /5.0005074. [11] J. C. A. Prentice, J. Aarons, J. C. Womack, A. E. A. Allen, L. Andrinopoulos, L. Anton, R. A. Bell, A. Bhan-dari, G. A. Bramley, R. J. Charlton, R. J. Clements, D. J. Cole, G. Constantinescu, F. Corsetti, S. M.-M. Dubois, K. K. B. Du ff , J. M. Escartín, A. Greco, Q. Hill, L. P. Lee, E. Linscott, D. D. O’Regan, M. J. S. Phipps, L. E. Ratcli ff ,Álvaro Ruiz Serrano, E. W. Tait, G. Teobaldi, V. Vitale, N. Yeung, T. J. Zuehlsdor ff , J. Dziedzic, P. D. Haynes, 11 N. D. M. Hine, A. A. Mostofi, M. C. Payne, C.-K. Sky-laris, The onetep linear-scaling density functional theory program, The Journal of Chemical Physics 152 (5 2020). doi:10.1063 /5.0004445. [12] T. J. Zuehlsdor ff , N. D. M. Hine, J. S. Spencer, N. M. Harrison, D. J. Riley, P. D. Haynes, Linear-scaling time-dependent density-functional theory in the linear response formalism, The Journal of Chemical Physics 139 (8 2013). doi:10.1063 /1.4817330. [13] C. O’Rourke, D. R. Bowler, Linear scaling density ma-trix real time tddft: Propagator unitarity and matrix trun-cation, The Journal of Chemical Physics 143 (9 2015). doi:10.1063 /1.4919128. [14] A. Bussy, J. Hutter, Effi cient and low-scaling linear-response time-dependent density functional theory imple-mentation for core-level spectroscopy of large and peri-odic systems, Physical Chemistry Chemical Physics 23 (2021) 4736–4746. doi:10.1039 /D0CP06164F. [15] Y. Takimoto, F. D. Vila, J. J. Rehr, Real-time time-dependent density functional theory approach for frequency-dependent nonlinear optical response in pho-tonic molecules, The Journal of Chemical Physics 127 (10 2007). doi:10.1063 /1.2790014. [16] J. Feng, J. Chen, X. Zhang, J. Liu, X. Qin, L. Wan, S. Chen, W. Wu, B. Hou, Y. Lin, Y. Zhang, Z. Zhang, Y. Hu, W. Jia, H. An, J. Yang, W. Hu, Million-atom ab ini-tio electron dynamics: Discontinuous galerkin real-time time-dependent density functional theory, in: Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis, ACM, 2025, pp. 1874–1887. doi:10.1145 /3712285.3759813. [17] M. Noda, S. A. Sato, Y. Hirokawa, M. Uemoto, T. Takeuchi, S. Yamada, A. Yamada, Y. Shinohara, M. Yamaguchi, K. Iida, I. Floss, T. Otobe, K.-M. K.-M. Lee, K. Ishimura, T. Boku, G. F. Bertsch, K. Nobusada, K. Yabana, Salmon: Scalable ab-initio light–matter simulator for optics and nanoscience, Com-puter Physics Communications 235 (2019) 356–365. doi:10.1016 /j.cpc.2018.09.018. URL https://linkinghub.elsevier.com/ retrieve/pii/S0010465518303412 
+
+[18] https://salmon-tddft.jp , SALMON o ffi cial web-site. [19] Y. Hirokawa, A. Yamada, S. Yamada, M. Noda, M. Uemoto, T. Boku, K. Yabana, Large-scale ab initio simulation of light–matter interaction at the atomic scale in fugaku, The International Journal of High Perfor-mance Computing Applications 36 (2022) 182–197. doi:10.1177 /10943420211065723. URL http://journals.sagepub.com/doi/10. 1177/10943420211065723 
+
+[20] S. Goedecker, Linear scaling electronic structure meth-ods, Reviews of Modern Physics 71 (1999) 1085–1123. doi:10.1103 /RevModPhys.71.1085. [21] D. R. Bowler, T. Miyazaki, {{O}(N)} methods in electronic structure calculations, Reports on Progress in Physics 75 (2012) 036503. doi:10.1088 /0034-4885 /75 /3/036503. URL https://iopscience.iop.org/article/10. 1088/0034-4885/75/3/036503 
+
+[22] W. Yang, Direct calculation of electron density in density-functional theory, Physical Review Letters 66 (1991) 1438–1441. doi:10.1103 /PhysRevLett.66.1438. [23] W. Yang, T.-S. Lee, A density-matrix divide-and-conquer approach for electronic structure calculations of large molecules, The Journal of Chemical Physics 103 (1995) 5674–5678. doi:10.1063 /1.470549. [24] F. Shimojo, R. K. Kalia, A. Nakano, P. Vashishta, Embedded divide-and-conquer algorithm on hierarchical real-space grids: Parallel molecular dynamics simula-tion based on linear-scaling density functional theory, Computer Physics Communications 167 (2005) 151–164. doi:10.1016 /j.cpc.2005.01.005. [25] F. Shimojo, R. K. Kalia, A. Nakano, P. Vashishta, Divide-and-conquer density functional theory on hi-erarchical real-space grids: Parallel implementation and applications, Physical Review B 77 (2008) 1–12. doi:10.1103 /PhysRevB.77.085103. [26] N. Ohba, S. Ogata, T. Kouno, T. Tamura, R. Kobayashi, Linear scaling algorithm of real-space density functional theory of electrons with correlated overlapping domains, Computer Physics Communications 183 (2012) 1664– 1673. doi:10.1016 /j.cpc.2012.03.004. URL http://dx.doi.org/10.1016/j.cpc.2012. 03.004 
+
+[27] F. Shimojo, S. Hattori, R. K. Kalia, M. Kunaseth, W. Mou, A. Nakano, K. I. Nomura, S. Ohmura, P. Rajak, K. Shima-mura, P. Vashishta, A divide-conquer-recombine algorith-mic paradigm for large spatiotemporal quantum molecular dynamics simulations, Journal of Chemical Physics 140 (2014). doi:10.1063 /1.4869342. [28] W. Kohn, Density functional and density matrix method scaling linearly with the number of atoms, Physical Review Letters 76 (1996) 3168–3171. doi:10.1103 /PhysRevLett.76.3168. [29] E. Prodan, W. Kohn, Nearsightedness of electronic matter, Proceedings of the National Academy of Sciences 102 (2005) 11635–11638. doi:10.1073 /pnas.0505436102. URL http://www.pnas.org/cgi/doi/10.1073/ pnas.0505436102 
+
+12 [30] S. Yamada, F. Shimojo, R. Akashi, S. Tsuneyuki, Effi cient method for calculating spatially extended electronic states of large systems with a divide-and-conquer approach, Physical Review B 95 (2017) 045106. doi:10.1103 /PhysRevB.95.045106. URL https://link.aps.org/doi/10.1103/ PhysRevB.95.045106http://link.aps.org/doi/ 10.1103/PhysRevB.95.045106 
+
+[31] N. Troullier, J. L. Martins, E ffi cient pseudopotentials for plane-wave calculations, Physical Review B 43 (1991) 1993–2006. doi:10.1103 /PhysRevB.43.1993. URL https://journals.aps.org/prb/pdf/10. 1103/PhysRevB.43.1993https://link.aps.org/ doi/10.1103/PhysRevB.43.1993 
+
+[32] J. P. Perdew, A. Zunger, Self-interaction correction to density-functional approximations for many-electron systems, Physical Review B 23 (1981) 5048–5079. doi:10.1103 /PhysRevB.23.5048. URL https://link.aps.org/doi/10.1103/ PhysRevB.23.5048 
+
+[33] T. Fukaya, T. Imamura, Performance evaluation of the eigen exa eigensolver on oakleaf-fx: Tridi-agonalization versus pentadiagonalization, in: 2015 IEEE International Parallel and Distributed Process-ing Symposium Workshop, IEEE, 2015, pp. 960–969. doi:10.1109 /IPDPSW.2015.128. [34] https://www.r-ccs.riken.jp/labs/lpnctrt/ projects/eigenexa , EigenExa website. [35] T. Sakurai, H. Sugiura, A projection method for gener-alized eigenvalue problems using numerical integration, Journal of Computational and Applied Mathematics 159 (2003) 119–128. doi:10.1016 /S0377-0427(03)00565-X. [36] X. Andrade, J. Alberdi-Rodriguez, D. A. Strubbe, M. J. T. Oliveira, F. Nogueira, A. Castro, J. Muguerza, A. Ar-ruabarrena, S. G. Louie, A. Aspuru-Guzik, A. Rubio, M. A. L. Marques, Time-dependent density-functional theory in massively parallel computer architectures: the octopus project, Journal of Physics: Condensed Matter 24 (2012) 233202. doi:10.1088 /0953-8984 /24 /23 /233202. [37] http://elk.sourceforge.net , Elk website, J. K. De-whurst et al. [38] K. Hanasaki, S. Luber, Development of real-time tddft program with k -point sampling and dft + u in a gaus-sian and plane waves framework, Journal of Chem-ical Theory and Computation 21 (2025) 1879–1891. doi:10.1021 /acs.jctc.4c01515. [39] K. Lopata, N. Govind, Modeling fast electron dynamics with real-time time-dependent density functional theory: Application to small molecules and chromophores, Jour-nal of Chemical Theory and Computation 7 (2011) 1344– 1355. doi:10.1021 /ct200137z. [40] L. Lin, J. Lu, L. Ying, W. E, Adaptive local basis set for kohn–sham density functional theory in a discon-tinuous galerkin framework i: Total energy calculation, Journal of Computational Physics 231 (2012) 2140–2154. doi:10.1016 /j.jcp.2011.11.032. [41] G. Zhang, L. Lin, W. Hu, C. Yang, J. E. Pask, Adap-tive local basis set for kohn–sham density functional the-ory in a discontinuous galerkin framework ii: Force, vibration, and molecular dynamics calculations, Jour-nal of Computational Physics 335 (2017) 426–443. doi:10.1016 /j.jcp.2016.12.052. [42] V. L. Deringer, N. Bernstein, A. P. Bartók, M. J. Cli ff e, R. N. Kerber, L. E. Marbella, C. P. Grey, S. R. Elliott, G. Csányi, Realistic atomistic structure of amorphous sil-icon from machine-learning-driven molecular dynamics, The Journal of Physical Chemistry Letters 9 (2018) 2879– 2885. doi:10.1021 /acs.jpclett.8b00902. [43] M. J. Abraham, T. Murtola, R. Schulz, S. Páll, J. C. Smith, B. Hess, E. Lindahl, Gromacs: High performance molec-ular simulations through multi-level parallelism from lap-tops to supercomputers, SoftwareX 1-2 (2015) 19–25. doi:10.1016 /j.softx.2015.06.001. [44] https://www.gromacs.org , GROMACS website. 13

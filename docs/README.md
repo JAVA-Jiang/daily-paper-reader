@@ -6,24 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-22
-- 运行时间：2026-06-22 22:30:03 UTC
+- 最新运行日期：2026-06-23
+- 运行时间：2026-06-23 22:12:47 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：0
-- 速读区：1
+- 本次总论文数：4
+- 精读区：2
+- 速读区：2
 
 ### 今日简报（AI）
-今日关注仓库级Solidity代码生成的LLM方法，从提示工程到微调策略均有探讨。该文对比了不同生成方式对智能合约代码质量的影响，值得开发者参考。后续可深入验证其实验设置，或结合其他相关工作交叉理解。
-- 详情：[/202606/22/README](/202606/22/README)
+今日阅读4篇论文，精读2篇（SALMON 2.3评分9.0，Local LLM Agents评分8.0），速读2篇（Phoenix与图编辑器各6.0）。最值得关注的是大规模实时TDDFT的高效初始化方法，以及LLM代理运行时的安全漏洞审计。建议优先精读评分9.0的SALMON 2.3，再结合Local LLM Agents理解代理系统风险。
+- 详情：[/202606/23/README](/202606/23/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [SALMON 2.3: Implementation of divide-and-conquer ground-state initialization for large-scale real-time TDDFT](/202606/23/2606.21125v1-salmon-23-implementation-of-divide-and-conquer-ground-state-initialization-for-large-scale-real-time-tddft)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：提供开源TDDFT模拟代码
+2. [Local LLM Agents as Vulnerable Runtimes:A Source-Code Audit of the Agent Runtime Layer](/202606/23/2606.21071v1-local-llm-agents-as-vulnerable-runtimesa-source-code-audit-of-the-agent-runtime-layer)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：智能体运行时层源码审计，直接涉及代码提供
 
 ### 速读区论文标签
-1. [Repository-Level Solidity Code Generation with Large Language Models: From Prompting to Fine-Tuning](/202606/22/2606.19988v1-repository-level-solidity-code-generation-with-large-language-models-from-prompting-to-fine-tuning)  
+1. [Phoenix: Safe GitHub Issue Resolution via Multi-Agent LLMs](/202606/23/2606.20243v2-phoenix-safe-github-issue-resolution-via-multi-agent-llms)  
    标签：评分：6.0/10、query:code-paper
-   evidence：提供了仓库级Solidity代码生成基准和评估指标
+   evidence：多智能体LLM系统用于问题解决，很可能附带代码
+2. [Bridging Design and Execution: A Visual Graph Editor for Edge and Cloud Workflows](/202606/23/2606.21416v1-bridging-design-and-execution-a-visual-graph-editor-for-edge-and-cloud-workflows)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：用于边缘和云工作流的可视化图形编辑器，支持任务调度
 
 
 <div class="dpr-home-promo-card">
