@@ -1,0 +1,210 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-24T21:17:02.141432+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.21130v1",
+      "source": "arxiv",
+      "title": "Learning Burst-Aware Early Warning Models for Capacity Stress under AI Workload Surges in Hyperscale Data Centers",
+      "abstract": "The rapid growth of large-scale AI workloads, particularly Large Language Model (LLM) training and inference, is fundamentally reshaping the operational dynamics of hyperscale data centers. Unlike traditional cloud workloads, AI-driven jobs exhibit bursty, high-intensity, and rapidly shifting resource demands, often leading to sudden capacity stress that cannot be effectively handled by reactive threshold-based mechanisms. In this paper, we propose a deployment-oriented, burst-aware early warning framework for proactive capacity stress prediction under AI workload surges. We formulate the problem as a high-recall forecasting task over multivariate telemetry windows, with the explicit goal of enabling operational intervention before system degradation occurs. The proposed framework integrates workload intensity, temporal variation, and system pressure signals, and employs a lightweight tree-based learning model to capture nonlinear interactions in highly imbalanced environments. To evaluate the system under realistic conditions, we introduce an AI workload surge injection methodology that simulates burst-driven demand patterns observed in large-scale AI systems. Our XGBoost-based model achieves an ROC AUC of 0.697 and an AP of 0.670, significantly outperforming baseline methods. Under deployment-oriented threshold selection, the framework achieves a Recall of 0.914, enabling the detection of the majority of stress-prone periods with acceptable false-alarm cost. Beyond predictive performance, we show how the proposed framework can be integrated into operational control loops to support proactive actions such as workload throttling and resource scaling. Our results highlight the practical value of high-recall, learning-based early warning systems in enabling resilient and adaptive data center operations in the era of AI-driven workloads.",
+      "authors": [
+        "Zihan Yu",
+        "Xianling Zeng",
+        "Zhiming Xue",
+        "Yalun Qi",
+        "Sichen Zhao"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-19T06:15:41+00:00",
+      "link": "https://arxiv.org/pdf/2606.21130v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "burst-aware early warning for capacity stress in data centers under AI workloads, related to task scheduling",
+      "llm_evidence_cn": "AI工作负载下数据中心容量压力的突发感知预警，与任务调度相关",
+      "llm_evidence": "AI工作负载下数据中心容量压力的突发感知预警，与任务调度相关",
+      "canonical_evidence": "AI工作负载下数据中心容量压力的突发感知预警，与任务调度相关",
+      "llm_tldr_en": "A deployment-oriented burst-aware early warning framework for capacity stress prediction under AI workload surges in hyperscale data centers, formulated as high-recall forecasting task.",
+      "llm_tldr_cn": "大规模AI工作负载（如LLM训练）对数据中心造成突发容量压力，传统阈值机制无效。本文提出面向部署的突发感知早期预警框架，将问题建模为多变量遥测窗口上的高召回预测任务。该方法旨在实现主动容量管理，可能提供代码。",
+      "llm_tldr": "大规模AI工作负载（如LLM训练）对数据中心造成突发容量压力，传统阈值机制无效。本文提出面向部署的突发感知早期预警框架，将问题建模为多变量遥测窗口上的高召回预测任务。该方法旨在实现主动容量管理，可能提供代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.20966v1",
+      "source": "arxiv",
+      "title": "Beyond the Grave: An Empirical Study of Dormancy and Revival in Scientific Open-Source Software",
+      "abstract": "Background. Inactivity thresholds classify scientific open-source software (OSS) as abandoned but cannot distinguish permanent abandonment from temporary dormancy; moving the cutoff from 1 to 36 months changes the abandoned count in the SciCat corpus from 18,030 to 8,010. Aims. We characterize dormancy causes, revival mechanisms, recovery durability, and lifecycle archetypes in dormant-revived scientific OSS. Method. From 18,247 SciCat repositories we identify 2,984 dormant-revived candidates and field-code a stratified sample of 750 projects with 75 analyst-coders under a two-phase adjudication protocol (post-adjudication kappa 0.779-0.857). A rule-based classifier produces five dimensions: dormancy cause (T1), revival mechanism (T2), nature of revival work (T3), revival sustainability (T4), and lifecycle archetype (T5). Results. Dormancy cause is unresolvable from repository evidence for 52.5% of projects; among resolvable cases, feature/milestone freeze outnumbers research-output completion 5.4:1. Non-sustained recovery outnumbers sustained 2.14:1; 11.5% of apparent revivals are bot-only or single-spike artifacts. Lifecycle archetype is more strongly associated with sustainability than revival mechanism or work type (medium effect on the structurally-independent subset). Conclusions. A fixed inactivity threshold is insufficient to reliably classify scientific OSS abandonment. Gap duration, lifecycle archetype, and contributor continuity together provide more discriminating information than any single threshold.",
+      "authors": [
+        "Addi Malviya Thakur",
+        "Bogdan Vasilescu",
+        "Audris Mockus"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-18T22:06:07+00:00",
+      "link": "https://arxiv.org/pdf/2606.20966v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "empirical study on scientific open-source software dormancy and revival",
+      "llm_evidence_cn": "对科学开源软件休眠与复苏的经验研究",
+      "llm_evidence": "对科学开源软件休眠与复苏的经验研究",
+      "canonical_evidence": "对科学开源软件休眠与复苏的经验研究",
+      "llm_tldr_en": "This paper empirically studies dormancy and revival in scientific open-source software, offering insights into lifecycle archetypes and resurrection mechanisms.",
+      "llm_tldr_cn": "针对科学开源软件（OSS）的休眠与复活现象，本文基于SciCat语料库进行大规模经验研究。通过人工编码和分析，揭示了休眠原因、复活机制及生命周期原型，为理解科学OSS的维护状态提供了量化证据，有助于研究人员评估软件可持续性。",
+      "llm_tldr": "针对科学开源软件（OSS）的休眠与复活现象，本文基于SciCat语料库进行大规模经验研究。通过人工编码和分析，揭示了休眠原因、复活机制及生命周期原型，为理解科学OSS的维护状态提供了量化证据，有助于研究人员评估软件可持续性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Search thesis which has code with it.",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.21810v1",
+      "source": "arxiv",
+      "title": "GitReq: A Gold Standard Dataset for Software Quality Requirements",
+      "abstract": "GitHub issue trackers contain millions of developer-written quality concerns, including performance bottlenecks and security vulnerabilities, yet no publicly available GitHub dataset classifies these into fine-grained software quality categories. We construct and release GitReq GitHub Requirement Issue, comprising 6,302 expert-validated requirements mined from 55,588 raw GitHub candidates across 4,080 repositories, labeled across eight ISO/IEC 25010:2011-aligned categories: Performance, Security, Portability, Availability, Fault-tolerance, Scalability, Maintainability, and a Functional baseline. Dataset construction involved category-specific triple-signal GitHub mining, separate non-functional requirement (NFR) and functional requirement (FR) preprocessing pipelines with per-category parameters, and expert human annotation achieving substantial inter-annotator agreement (Fleiss' Kappa~=~0.72). Zero-shot evaluation with four large language models (LLMs) establishes baselines, with GPT-5.2 reaching the highest macro-averaged F1 of 0.641. GitReq is publicly released with full materials to advance research in automated requirement classification and software quality analysis.",
+      "authors": [
+        "Farha Kamal",
+        "Md Humaun Kabir",
+        "Md Rakibul Islam"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-20T00:05:32+00:00",
+      "link": "https://arxiv.org/pdf/2606.21810v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides a dataset of software quality requirements from GitHub",
+      "llm_evidence_cn": "提供从GitHub挖掘的软件质量需求数据集",
+      "llm_evidence": "提供从GitHub挖掘的软件质量需求数据集",
+      "canonical_evidence": "提供从GitHub挖掘的软件质量需求数据集",
+      "llm_tldr_en": "GitReq is a gold-standard dataset of 6,302 expert-validated software quality requirements from GitHub, covering eight quality categories.",
+      "llm_tldr_cn": "针对GitHub问题跟踪器中软件质量需求缺乏分类标注的问题，本文构建并发布了GitReq数据集。该数据集包含6,302条经专家验证的需求，涵盖性能、安全等八个ISO/IEC 25010类别。数据集的构建采用分类特定的三重信号挖掘和双阶段预处理，为软件质量研究提供了标准化基准。",
+      "llm_tldr": "针对GitHub问题跟踪器中软件质量需求缺乏分类标注的问题，本文构建并发布了GitReq数据集。该数据集包含6,302条经专家验证的需求，涵盖性能、安全等八个ISO/IEC 25010类别。数据集的构建采用分类特定的三重信号挖掘和双阶段预处理，为软件质量研究提供了标准化基准。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.22413v2",
+      "source": "arxiv",
+      "title": "Formal-Method-Guided Vibe Coding: Closing the Verification Loop on AI-Generated Safety-Critical Software Through Model-Driven Engineering",
+      "abstract": "Vibe coding -- accepting LLM-generated source from natural-language intent with minimal review -- is fast and may be adequate for low-criticality consumer software. But for safety-critical systems governed by DO-178C, IEC 61508, or ISO 26262, it offers no path to certification: large language models (LLMs) provide no formal correctness guarantees, and existing remedies target verification-aware languages (Dafny, Verus, Lean) that are scarce in pretraining data and absent from industrial toolchains.   This paper closes the gap. We present Forge (Formal method Oriented Refinement loop for GEnerated code): a closed-loop pipeline that guides vibe coding through formal verification using established Model-Driven Engineering (MDE) infrastructure. Through vibe coding, we generate Java source code; our pipeline then extracts -- via model transformations -- formal artefacts in three different formalisms, each checked by a complementary verifier: deductive verification (Dafny), Communicating Sequential Processes (CSP) refinement via the Failures-Divergences Refinement checker (FDR4), and theorem proving using Z-Machines in Isabelle; every verification failure becomes a structured correction prompt that drives the next code-generation iteration. The LLM is the draft generator, the MDE chain is the discriminator, and the developer never has to read the formal models.   Empirically, we find that the pipeline produces standards-relevant verification evidence for LLM-generated Java -- a step toward certification.",
+      "authors": [
+        "Ran Wei",
+        "Le Zhu",
+        "Haochi Wang",
+        "Jim Woodcock",
+        "Fang Yan",
+        "Simon Foster",
+        "Xiangyang Ji"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.FL"
+      ],
+      "published": "2026-06-21T10:01:45+00:00",
+      "link": "https://arxiv.org/pdf/2606.22413v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "presents Forge pipeline that closes verification loop on AI-generated code",
+      "llm_evidence_cn": "提出Forge流水线，对AI生成代码进行形式化验证",
+      "llm_evidence": "提出Forge流水线，对AI生成代码进行形式化验证",
+      "canonical_evidence": "提出Forge流水线，对AI生成代码进行形式化验证",
+      "llm_tldr_en": "Forge integrates formal verification with vibe coding to ensure correctness of AI-generated safety-critical software, delivering verified code.",
+      "llm_tldr_cn": "针对AI代码生成缺乏形式化保证的问题，本文提出Forge流水线，将形式化方法融入自然语言驱动的代码生成。Forge通过模型驱动工程迭代优化生成代码，直至通过验证，为安全关键系统提供可认证的代码生成路径。实验表明Forge能成功生成通过形式验证的代码。",
+      "llm_tldr": "针对AI代码生成缺乏形式化保证的问题，本文提出Forge流水线，将形式化方法融入自然语言驱动的代码生成。Forge通过模型驱动工程迭代优化生成代码，直至通过验证，为安全关键系统提供可认证的代码生成路径。实验表明Forge能成功生成通过形式验证的代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.22417v1",
+      "source": "arxiv",
+      "title": "Code Isn't Memory: A Structural Codebase Index Inside a Coding Agent",
+      "abstract": "Coding agents now interleave LLMs with retrieval over the working repository, and retrieval implementations vary widely across deployed harnesses. Inside a fixed coding-agent harness on a fixed model, does adding a structural codebase index actually change cost or resolve? We ran three arms (the harness with the index, the same harness without it, and an agentic-grep comparator) on SWE-PolyBench Verified and SWE-bench Pro with Claude Opus 4.7 held fixed throughout, across three seeds, inside a leak-audited per-task sandbox. The within-harness ablation produces a large localization gain and a statistically separated resolve gain, with no cost penalty per cell and lower cost per solve. The cross-harness check shows that the index does not regress against an agentic-grep baseline on resolve or localization, again at no cost penalty. We release the per-cell exclusion ledger, the leak-audit script, the localization extractor, and the results database. The deployment question for a structural codebase index is thus not whether it is too expensive to run (across seeds, the index lands at a lower $/solved than agentic grep) but whether the workload includes multi-file changes where structural ranking pays off.",
+      "authors": [
+        "Ishaan Bhola",
+        "Adithyan Krishnan",
+        "Sravanth Kurmala",
+        "Mukunda NS"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-21T10:10:51+00:00",
+      "link": "https://arxiv.org/pdf/2606.22417v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "structural codebase index for coding agents, likely provides implementation code",
+      "llm_evidence_cn": "面向编码代理的结构化代码库索引，可能提供实现代码",
+      "llm_evidence": "面向编码代理的结构化代码库索引，可能提供实现代码",
+      "canonical_evidence": "面向编码代理的结构化代码库索引，可能提供实现代码",
+      "llm_tldr_en": "Abalation study on structural codebase index inside coding agent shows large localization gain and statistically separated resolve gain with no cost penalty.",
+      "llm_tldr_cn": "现有编码代理在仓库检索上实现各异，缺乏对结构化索引效果的严格评估。本文在固定模型和代理框架下，通过添加结构化的代码库索引进行消融实验，发现索引能显著提升定位和解决能力且不增加单次成本。跨框架对比也表明索引不退化性能。该工作强调索引的价值，但未说明是否开源。",
+      "llm_tldr": "现有编码代理在仓库检索上实现各异，缺乏对结构化索引效果的严格评估。本文在固定模型和代理框架下，通过添加结构化的代码库索引进行消融实验，发现索引能显著提升定位和解决能力且不增加单次成本。跨框架对比也表明索引不退化性能。该工作强调索引的价值，但未说明是否开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

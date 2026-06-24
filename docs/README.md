@@ -6,32 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-23
-- 运行时间：2026-06-23 22:12:47 UTC
+- 最新运行日期：2026-06-24
+- 运行时间：2026-06-24 21:18:42 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：2
-- 速读区：2
+- 本次总论文数：5
+- 精读区：0
+- 速读区：5
 
 ### 今日简报（AI）
-今日阅读4篇论文，精读2篇（SALMON 2.3评分9.0，Local LLM Agents评分8.0），速读2篇（Phoenix与图编辑器各6.0）。最值得关注的是大规模实时TDDFT的高效初始化方法，以及LLM代理运行时的安全漏洞审计。建议优先精读评分9.0的SALMON 2.3，再结合Local LLM Agents理解代理系统风险。
-- 详情：[/202606/23/README](/202606/23/README)
+1) 今日速读5篇论文，重点关注AI工作负载突发预警、开源软件休眠与复苏、软件质量需求数据集三大方向。  
+2) 最值得看的是《Learning Burst-Aware Early Warning Models...》（7.0/10），揭示超大规模数据中心应对AI任务潮汐的容量压力预警方案；《Beyond the Grave...》（6.0/10）则从实证层面分析科学领域开源软件“假死”与“复活”现象，对维护者决策有启发。  
+3) 建议普通读者优先阅读上述两篇，前者可帮助理解AI基建的弹性设计，后者则能提升对开源项目长期健康的认知。
+- 详情：[/202606/24/README](/202606/24/README)
 
 ### 精读区论文标签
-1. [SALMON 2.3: Implementation of divide-and-conquer ground-state initialization for large-scale real-time TDDFT](/202606/23/2606.21125v1-salmon-23-implementation-of-divide-and-conquer-ground-state-initialization-for-large-scale-real-time-tddft)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：提供开源TDDFT模拟代码
-2. [Local LLM Agents as Vulnerable Runtimes:A Source-Code Audit of the Agent Runtime Layer](/202606/23/2606.21071v1-local-llm-agents-as-vulnerable-runtimesa-source-code-audit-of-the-agent-runtime-layer)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：智能体运行时层源码审计，直接涉及代码提供
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Phoenix: Safe GitHub Issue Resolution via Multi-Agent LLMs](/202606/23/2606.20243v2-phoenix-safe-github-issue-resolution-via-multi-agent-llms)  
+1. [Learning Burst-Aware Early Warning Models for Capacity Stress under AI Workload Surges in Hyperscale Data Centers](/202606/24/2606.21130v1-learning-burst-aware-early-warning-models-for-capacity-stress-under-ai-workload-surges-in-hyperscale-data-centers)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：AI工作负载下数据中心容量压力的突发感知预警，与任务调度相关
+2. [Beyond the Grave: An Empirical Study of Dormancy and Revival in Scientific Open-Source Software](/202606/24/2606.20966v1-beyond-the-grave-an-empirical-study-of-dormancy-and-revival-in-scientific-open-source-software)  
    标签：评分：6.0/10、query:code-paper
-   evidence：多智能体LLM系统用于问题解决，很可能附带代码
-2. [Bridging Design and Execution: A Visual Graph Editor for Edge and Cloud Workflows](/202606/23/2606.21416v1-bridging-design-and-execution-a-visual-graph-editor-for-edge-and-cloud-workflows)  
+   evidence：对科学开源软件休眠与复苏的经验研究
+3. [GitReq: A Gold Standard Dataset for Software Quality Requirements](/202606/24/2606.21810v1-gitreq-a-gold-standard-dataset-for-software-quality-requirements)  
    标签：评分：6.0/10、query:code-paper
-   evidence：用于边缘和云工作流的可视化图形编辑器，支持任务调度
+   evidence：提供从GitHub挖掘的软件质量需求数据集
+4. [Formal-Method-Guided Vibe Coding: Closing the Verification Loop on AI-Generated Safety-Critical Software Through Model-Driven Engineering](/202606/24/2606.22413v2-formal-method-guided-vibe-coding-closing-the-verification-loop-on-ai-generated-safety-critical-software-through-model-driven-engineering)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：提出Forge流水线，对AI生成代码进行形式化验证
+5. [Code Isn't Memory: A Structural Codebase Index Inside a Coding Agent](/202606/24/2606.22417v1-code-isnt-memory-a-structural-codebase-index-inside-a-coding-agent)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：面向编码代理的结构化代码库索引，可能提供实现代码
 
 
 <div class="dpr-home-promo-card">

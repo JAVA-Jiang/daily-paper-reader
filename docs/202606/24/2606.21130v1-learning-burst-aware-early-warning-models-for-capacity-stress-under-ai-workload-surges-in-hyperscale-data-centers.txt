@@ -1,0 +1,203 @@
+Title: Learning Burst-Aware Early Warning Models for Capacity Stress under AI Workload Surges in Hyperscale Data Centers
+
+URL Source: https://arxiv.org/pdf/2606.21130v1
+
+Published Time: Tue, 23 Jun 2026 00:35:37 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Learning Burst-Aware Early Warning Models for Capacity Stress under AI Workload Surges in Hyperscale Data Centers 
+
+Zihan Yu *
+
+College of Professional Studies Northeastern University 
+
+Boston, USA yu.zihan1@northeastern.edu 
+
+Xianling Zeng 
+
+College of Engineering Northeastern University 
+
+Boston, USA zeng.xian@northeastern.edu 
+
+Zhiming Xue 
+
+College of Engineering Northeastern University 
+
+Boston, USA xue.zh@northeastern.edu 
+
+Yalun Qi 
+
+Khoury College of Computer Sciences Northeastern University 
+
+Boston, USA qi.yal@northeastern.edu 
+
+Sichen Zhao 
+
+College of Engineering Northeastern University 
+
+Boston, USA zhao.siche@northeastern.edu 
+
+Abstract —The rapid growth of large-scale AI workloads, par-ticularly Large Language Model (LLM) training and inference, is fundamentally reshaping the operational dynamics of hyperscale data centers. Unlike traditional cloud workloads, AI-driven jobs exhibit bursty, high-intensity, and rapidly shifting resource demands, often leading to sudden capacity stress that cannot be effectively handled by reactive threshold-based mechanisms. In this paper, we propose a deployment-oriented, burst-aware early warning framework for proactive capacity stress prediction under AI workload surges. We formulate the problem as a high-recall forecasting task over multivariate telemetry windows, with the explicit goal of enabling operational intervention before system degradation occurs. The proposed framework integrates work-load intensity, temporal variation, and system pressure signals, and employs a lightweight tree-based learning model to capture nonlinear interactions in highly imbalanced environments. To evaluate the system under realistic conditions, we introduce an AI workload surge injection methodology that simulates burst-driven demand patterns observed in large-scale AI systems. Experimental results show that AI workload surges increase the capacity stress rate by 37.9%, highlighting the urgency of proac-tive mitigation. Our XGBoost-based model achieves an ROC AUC of 0.697 and an AP of 0.670, significantly outperforming baseline methods. Under deployment-oriented threshold selection, the framework achieves a Recall of 0.914, enabling the detection of the majority of stress-prone periods with acceptable false-alarm cost. Beyond predictive performance, we show how the proposed framework can be integrated into operational control loops to support proactive actions such as workload throttling and resource scaling. Our results highlight the practical value of high-recall, learning-based early warning systems in enabling resilient and adaptive data center operations in the era of AI-driven workloads. 
+
+Index Terms —AI workloads, capacity stress, early warning, hyperscale data centers, XGBoost 
+
+I. I NTRODUCTION 
+
+The rapid proliferation of large-scale AI workloads, particu-larly Large Language Model (LLM) training and inference, is fundamentally changing how hyperscale data centers operate [2]. Unlike traditional cloud applications with relatively stable demand patterns, AI workloads introduce bursty, high-intensity resource consumption that can rapidly push systems into capacity stress states within short time horizons. These burst-driven dynamics create significant challenges for maintaining system stability, as resource contention can escalate quickly and propagate across shared infrastructure. Existing capacity management approaches are predomi-nantly reactive, relying on static thresholds or post-hoc scaling mechanisms that respond only after resource pressure has already materialized. Under AI workload surges, such reactive strategies are often too slow to prevent performance degrada-tion and Service Level Objective (SLO) violations. Moreover, traditional workload prediction methods are not designed to capture rare but high-impact stress events, particularly under highly dynamic and imbalanced conditions. This mismatch highlights a critical need for proactive, deployment-oriented early warning systems that can iden-tify stress-prone periods before they fully manifest, enabling timely operational intervention. Unlike conventional prediction tasks that prioritize overall accuracy, early warning systems in data center operations must emphasize high recall, as missing a stress event can lead to significant service disruption, while false positives typically incur relatively low operational cost. To address this challenge, we propose a deployment-oriented, burst-aware early warning framework for proactive capacity stress prediction under AI workload surges. We formulate the problem as a high-recall forecasting task over multivariate telemetry windows, where the goal is to detect future stress-prone periods with sufficient lead time to enable intervention. The proposed framework integrates workload intensity, temporal variation, and system pressure signals to capture the characteristic dynamics of burst-driven workloads. To support realistic evaluation, we introduce an AI workload surge injection methodology that simulates high-intensity de-
+
+> arXiv:2606.21130v1 [cs.AI] 19 Jun 2026
+
+mand patterns observed in large-scale AI systems. We employ a lightweight tree-based learning model to capture nonlinear relationships in heterogeneous telemetry data, enabling effi-cient and practical deployment. Experimental results demonstrate that AI workload surges significantly increase the frequency and volatility of capacity stress events, underscoring the importance of proactive miti-gation. Under a deployment-oriented threshold selection, the proposed framework achieves high recall in identifying stress-prone periods, providing actionable early warning signals that can support operational decision-making. Beyond predictive performance, the framework can be integrated into system control loops to enable proactive actions such as workload throttling, resource scaling, and load redistribution. The main contributions of this paper are as follows:  
+
+> •
+
+We identify AI workload surges as a key driver of burst-driven capacity stress in hyperscale data centers, and highlight the fundamental mismatch between AI-era workload dynamics and traditional reactive capacity management.  
+
+> •
+
+We propose a deployment-oriented, burst-aware early warning framework that integrates workload intensity, temporal variation, and system pressure signals to proac-tively identify stress-prone periods under highly dynamic and imbalanced conditions.  
+
+> •
+
+We introduce an AI workload surge injection methodol-ogy to emulate realistic burst scenarios, enabling system-atic evaluation of early warning systems under conditions that are not observable in publicly available datasets.  
+
+> •
+
+We demonstrate that a high-recall, threshold-aware de-cision framework can effectively support proactive op-erational interventions, providing practical value beyond traditional accuracy-oriented prediction models. II. R ELATED WORK 
+
+A. Data Center Capacity Management 
+
+Traditional capacity management in hyperscale environ-ments has focused on long-term hardware provisioning and steady-state resource allocation [1]. Recent work has explored dynamic resource management to improve utilization. For instance, FIRM proposes a fine-grained resource management framework for SLO-oriented microservices [5], and Meta’s ReBalancer addresses global resource allocation across mil-lions of servers [6]. Capacity variation penalties have also been studied in cloud resource management [3]. However, these approaches often assume relatively stable workload patterns and struggle with the extreme burstiness of modern AI workloads. 
+
+B. Anomaly Detection and Workload Prediction 
+
+Machine learning has been widely applied to anomaly detection and workload prediction in cloud environments. Several studies have utilized ARIMA, LSTM, and gradient boosting methods for predicting server load and energy con-sumption [7], [8]. While these models perform well for gen-eral cloud workloads, predicting capacity stress—a rare and extreme event—presents unique challenges related to severe class imbalance and rapid temporal dynamics. Furthermore, regime-dependent analysis has demonstrated that time-series relationships can shift markedly across distinct operational states—a finding directly applicable to the Normal vs. AI-Surge regimes studied in this work [10]. 
+
+C. Handling Microbursts 
+
+Network microbursts in data centers have been extensively studied. Systems like Trumpet [9] provide high-resolution monitoring to detect short-lived network anomalies. Our work extends this concept from the network layer to holistic, system-wide capacity stress, focusing on the macroscopic impact of AI workload surges across compute and memory resources. Unlike prior work that focuses on steady-state anomaly detec-tion or network-level microbursts, our work explicitly targets deployment-oriented early warning under AI workload surges, prioritizing high-recall decision making under severe class imbalance. III. M ETHODOLOGY 
+
+A. Problem Formulation 
+
+We formulate the task as a deployment-oriented early warn-ing problem over multivariate telemetry windows. Rather than optimizing generic classification accuracy, the objective is to identify future stress-prone periods early enough to enable operational intervention before severe degradation occurs. This setting emphasizes early detection of rare but high-impact events, which is critical for maintaining system stability under burst-driven AI workload surges. Let Xt represent the mul-tivariate telemetry vector at time window t, as defined in ( 1): 
+
+Xt = [ x(1)  
+
+> t
+
+, x (2)  
+
+> t
+
+, . . . , x (d) 
+
+> t
+
+]⊤ ∈ Rd (1) Each feature vector is constructed over a fixed-length win-dow and concatenates multiple resource metrics into a unified representation. The input feature vector consists of multivariate telemetry signals, including CPU utilization, memory usage, and network throughput, which collectively characterize the system’s resource dynamics. These features are designed to capture both sustained load patterns and transient spikes that may lead to capacity stress. All features are normalized to ensure stable model training and to mitigate scale differences across heterogeneous metrics. Temporal dependencies are cap-tured through lag-based and rolling-window features, which enable the model to detect short-horizon variations and burst patterns in system behavior. This burst-aware representation allows the framework to respond not only to sustained high utilization, but also to rapid changes that often precede capac-ity stress under AI workload surges. Let Yt+k be the binary stress label at a future time window 
+
+t + k, as shown in (2): 
+
+Yt+k ∈ { 0, 1}, k ≥ 1 (2) Our goal is to learn a mapping function f that estimates the probability of impending capacity stress, as formalized in (3): 
+
+f : Xt −→ ˆpt = P (Yt+k = 1 | Xt) (3) At inference time, the early warning decision is made by comparing the predicted probability against a classification threshold τ , as shown in (4): 
+
+ˆYt+k = 1[ˆ pt ≥ τ ], τ = 0 .1 (4) In practice, the prediction threshold is not selected solely based on threshold-independent metrics such as ROC AUC. Instead, it is determined according to operational requirements, where missing a stress event (false negative) is significantly more costly than issuing a false alarm. Therefore, the model is designed to operate under a high-recall regime, ensuring that the majority of stress-prone periods can be identified in advance. The choice of the threshold τ governs the trade-off between precision and recall. In the context of early warning, the threshold is selected to satisfy a high-recall objective, prioritizing the detection of rare but high-impact stress events over minimizing false positives. The specific threshold value is determined empirically based on validation performance and is discussed in detail in Section IV-E. 
+
+B. Data Collection and AI Surge Injection 
+
+To emulate burst-driven infrastructure conditions, we con-struct a window-level telemetry dataset and introduce an AI workload surge injection procedure. The data is aggregated into 5-minute windows over approximately 30 days. We distin-guish a Normal Period representing baseline cloud operations from an AI Surge Period where high-intensity, bursty demand patterns are injected to emulate large-scale AI training and inference behavior. We acknowledge that this injection model simplifies real LLM workloads. It omits multi-phase effects such as epoch-wise batch variation, collective communication, checkpoint I/O bursts, and inference request volatility, which may underesti-mate the temporal complexity of real AI-driven stress events. Future work should calibrate these injection parameters using traces from production-scale AI clusters. 
+
+C. Model Architecture: XGBoost 
+
+In this work, we adopt a lightweight and deployment-friendly tree-based model as the predictive engine of the proposed framework. This design choice prioritizes inference efficiency, robustness under class imbalance, and ease of inte-gration into real-time monitoring systems. Tree-based models are particularly well suited to heterogeneous infrastructure telemetry, as they can capture nonlinear interactions among workload intensity, temporal variation, and system pressure signals without requiring strong distributional assumptions. This makes them effective for modeling burst-driven dynamics under AI workload surges. We implement the predictive engine using XGBoost [4], a gradient-boosted tree model that builds an ensemble of decision trees in a stage-wise manner. This allows the model to capture complex nonlinear relationships while maintaining low inference latency, which is critical for deployment in operational environments. The regularized objective function is given in (5): 
+
+L =
+
+> n
+
+X
+
+> i=1
+
+ℓ(yi, ˆy(T ) 
+
+> i
+
+) + 
+
+> T
+
+X
+
+> t=1
+
+Ω( ft),
+
+Ω( f ) = γ|leaves | + 12 λ∥w∥2
+
+(5) This consideration is consistent with recent hardware-aware model co-design work [11], which demonstrates that matching model topology to inference substrate constraints is critical for achieving real-time performance in production environments. XGBoost is particularly suitable for this early warning setting for several reasons. First, it effectively handles het-erogeneous and partially correlated system metrics without requiring extensive feature normalization. Second, it supports imbalance-aware training through built-in weighting mech-anisms, which is critical for detecting rare stress events. Third, its inference efficiency enables low-latency prediction, making it practical for deployment in real-time monitoring systems. Finally, the model provides feature importance scores that help interpret key drivers of predicted capacity stress, offering additional insight for system operators. To further contextualize its performance, we compare XGBoost with baseline models including Logistic Regression and LightGBM in the experimental evaluation. Modern deep learning-based time-series models such as TFT and N-BEATS are not the focus here because they require more labeled stress windows and larger inference budgets than available in our deployment setting. Their training warm-up, latency, and memory costs are less compatible with real-time monitoring on structured telemetry windows, for which gradient-boosted trees are a better fit. We leave these models to future work with larger datasets and stronger inference infrastructure. IV. E XPERIMENTAL EVALUATION 
+
+A. Dataset 
+
+We conduct experiments using a real-world workload trace derived from the Google Cluster Workload Traces (2019), which represents production-scale resource usage in large compute clusters. The trace contains fine-grained job-level telemetry, including CPU, memory, and scheduling metadata, making it suitable for studying capacity stress dynamics in data center environments. In this work, we extract temporal workload signals and construct window-level features to characterize system load variations and capacity stress patterns. Compared to synthetic benchmarks, the use of a real-world production trace improves the practical relevance and generalizability of the framework. At the same time, we acknowledge that the Google Clus-ter Workload Traces predate the widespread deployment of modern large-scale LLM training and inference workloads, so the base trace does not natively capture the full resource signature of contemporary AI jobs. To partially compensate for this gap, we synthetically inject AI workload surge patterns calibrated to observed properties of large-scale AI clusters. Accordingly, the present evaluation should be interpreted as a proof-of-concept on a well-established benchmark, with future validation on newer AI-centric production traces remaining an important next step.            
+
+> TABLE I KEY FEATURES USED IN THE MODEL
+> Category Features Description
+> Resource Us-age CPU utilization, memory usage trends Reflects system load and capac-ity utilization Temporal Signals Workload variance, moving average Captures dynamic changes over time System Behavior Job arrival rate, scheduling density Represents workload intensity and scheduling patterns Derived Met-rics Capacity stress indi-cator, change rate Indicates potential system stress conditions
+
+B. Experimental Setup 
+
+All experiments are conducted using the preprocessed Google cluster workload dataset. The data is segmented into fixed temporal windows to capture workload dynamics over time. Continuous features are normalized to ensure stable model training and to mitigate scale differences across hetero-geneous metrics. We adopt XGBoost as the primary prediction model due to its robustness and strong performance on struc-tured data. The dataset is split into training and testing sets using a chronological split to avoid temporal leakage. Model performance is evaluated using standard classification metrics including precision, recall, and F1-score. Hyperparameters are tuned using a validation set to balance recall and precision under class imbalance conditions. 
+
+C. Impact of AI Workload Surges 
+
+We first quantify the impact of AI workloads on data center capacity. Figure 1 illustrates the proportion of time windows experiencing capacity stress during the Normal Period versus the AI Surge Period. During the Normal Period, the baseline stress rate is 0.255. Following the injection of AI workloads, the stress rate jumps significantly to 0.351, representing a relative increase of 37.9%. This finding underscores the severe strain that AI workloads place on existing infrastructure and highlights the necessity of proactive management. Figure 2 visualizes the temporal evolution of capacity stress over the full observation period. The red dashed line marks the onset of the AI Surge Period (at time window 6,000). The rolling mean clearly demonstrates a sustained elevation and increased volatility in stress levels following the surge. These observations highlight the importance of modeling burst-driven workload dynamics for accurate stress prediction. 
+
+D. Model Performance 
+
+We evaluate the proposed framework using three represen-tative models: Logistic Regression, LightGBM, and XGBoost. Model thresholds are selected to satisfy a minimum recall requirement of 0.90, reflecting the priority of minimizing missed stress events.     
+
+> Fig. 1. Comparison of capacity stress rates between the Normal Period and the AI Surge Period. Error bars represent 95% bootstrap confidence intervals. Statistical significance is confirmed by a Mann-Whitney U test ( ∗ ∗ ∗ p <
+> 0.001 ).
+> Fig. 2. Rolling mean of capacity stress rate over ∼30 days (5-minute windows). The blue region denotes the Normal Period; the red region denotes the AI Surge Period. The red dashed line marks the AI Surge onset at window 6,000.
+
+As shown in Table II, Logistic Regression achieves high recall but suffers from low precision, while LightGBM under-performs on ROC AUC despite its greater model complexity. On this highly imbalanced dataset, LightGBM appears less stable than XGBoost for ranking sparse positive windows, and its boosting behavior is less sensitive to weak positive-class signals. We further note that the baseline comparison is inten-tionally scoped to lightweight models that share XGBoost’s deployment profile. Comparisons with heavier deep learning baselines are deferred to future work with larger labeled datasets and dedicated inference infrastructure. XGBoost therefore achieves the most favorable balance between predictive performance and deployment practicality under severe class imbalance. The results in Table II are reported under a fixed high-recall operating constraint (Recall ≥ 0.90 ), while the ROC                             
+
+> TABLE II MODEL PERFORMANCE COMPARISON FOR EARLY WARNING OF
+> CAPACITY STRESS UNDER AI W ORKLOAD SURGES
+> Model ROC-AUC AP Precision Recall F1
+> Logistic Regression 0.576 0.129 0.083 0.977 0.153 LightGBM 0.532 0.097 0.085 0.909 0.156 XGBoost 0.697 0.670 0.525 0.914 0.667
+
+and PR curves evaluate model performance across all possible thresholds.  
+
+> Fig. 3. ROC curve for the XGBoost model. The model achieves an AUC of 0.697 (95% bootstrap CI [0.688, 0.708]), substantially outperforming the random baseline (AUC = 0.5).
+
+As shown in Figure 3, the XGBoost model achieves an ROC AUC of 0.697. However, ROC curves can be overly optimistic on imbalanced datasets. We therefore also examine the PR curve (Figure 4).    
+
+> Fig. 4. Precision-recall curve for the XGBoost model (AP = 0.670) versus the random baseline (AP = 0.478). The red dot marks the operating point at the selected threshold τ= 0 .1, where Precision = 0.525 and Recall = 0.914. The jagged region near Recall = 0 reflects low-threshold instability caused by sparse positive predictions.
+
+The model achieves an Average Precision (AP) of 0.670, significantly outperforming the random baseline (AP = 0.478). The PR curve highlights the inherent trade-off in early warning systems: achieving high recall inevitably comes at the cost of lower precision. The instability observed near Recall = 0 is attributable to sparse positive predictions at very low thresholds and does not affect the operating region of interest. 
+
+E. Threshold Selection for Early-Warning Deployment 
+
+In data center operations, the cost of a false negative (failing to predict a stress event, leading to an outage) is typically much higher than the cost of a false positive (unnecessarily throttling background tasks). Therefore, an effective early warning system must prioritize recall. This mirrors a broader principle in intelligent system design: knowing when to trigger an action is insufficient without a well-defined strategy for how to act upon it [14].    
+
+> Fig. 5. Effect of the classification threshold on precision (smoothed), recall, and F1-score. The red dashed line marks the selected threshold τ= 0 .1,which achieves a recall of 0.914 and an F1-score of 0.667 at the selected operating threshold.
+
+Figure 5 illustrates the effect of varying the classification threshold on all three metrics. At the selected threshold of τ =0.1, the model achieves a recall of 0.914, meaning the system successfully anticipates 91.4% of all capacity stress events. The corresponding precision of 0.525 implies a moderate false-alarm rate, which is an acceptable trade-off given the low cost of preventive actions (e.g., pausing batch jobs) relative to the cost of an undetected outage. 
+
+F. Interpretability Analysis 
+
+We use TreeSHAP to explain XGBoost predictions at both global and instance levels. Figure 6 shows that memory-demand and failure-rate features dominate, while Figure 7 shows monotonic directionality: high memory demand and elevated failure rates push predictions toward stress, whereas low values reduce stress probability. These patterns indicate that the model learned physically meaningful relationships and help operators distinguish memory-constrained alerts from compute-bound bursts. Note on Cluster ID. Its high SHAP importance likely reflects cluster-level fixed effects rather than a causal stress mecha-nism. Excluding Cluster ID, memory-demand and failure-rate features remain the main precursors identified in Section III. V. D ISCUSSION 
+
+These results highlight a fundamental shift from reactive resource management to predictive, learning-driven control in AI-centric data center operations. By operating at a threshold of τ = 0 .1, our system provides data center operators with Fig. 6. Global SHAP feature importance for the XGBoost early warning model. Memory-demand and failure-rate features dominate the ranking. 
+
+Fig. 7. SHAP beeswarm plot for individual predictions. High memory demand and elevated failure rates consistently push predictions toward stress, while low values reduce stress probability. 
+
+a critical lead time to take preventive action. From a system perspective, the proposed early warning mechanism can be integrated into automated orchestration frameworks to enable proactive mitigation. When a warning is triggered, automated orchestration systems can: 1) Pause or migrate low-priority batch jobs (e.g., data back-ups, log processing) to free up resources immediately. 2) Proactively spin up additional virtual machines or allo-cate reserve hardware before the AI burst fully materi-alizes. 3) Implement dynamic rate limiting on incoming API re-quests to prevent cascading failures. While the precision of 0.525 implies a moderate false-alarm rate, the mitigation actions described above are generally low-cost and non-disruptive to user-facing services. Thus, the trade-off heavily favors the high recall achieved by our model. This highlights the importance of integrating predictive models into operational control loops, shifting from passive monitoring to active system optimization. 
+
+Limitations. The current evaluation relies on synthetically injected AI surge patterns. While the injection methodology is grounded in observed characteristics of real AI workloads, validation on production traces from live hyperscale envi-ronments remains an important direction for future work. Furthermore, the moderate AUC of 0.697 suggests that richer feature engineering—incorporating thermal metrics, power draw, and inter-rack network telemetry—could further im-prove predictive accuracy. More broadly, our model faces a generalization challenge analogous to the memorization-versus-reasoning tension documented in recent LLM studies [13]: the learned feature correlations may reflect surface-level co-occurrences in the training distribution rather than robust causal signals, motivating future work on distribution-shift robustness and continual learning for capacity stress prediction. VI. C ONCLUSION 
+
+The rapid growth of AI workloads is fundamentally redefin-ing the operational paradigm of hyperscale data centers. In this paper, we quantified the impact of AI workload surges, demonstrating a statistically significant 37.9% increase in capacity stress rates. To address this challenge, we proposed a deployment-oriented, burst-aware early warning framework for proactive capacity stress prediction. By formulating the problem as a high-recall forecasting task and selecting an operationally meaningful decision threshold, the proposed framework successfully identifies the majority of stress-prone periods in advance (Recall = 0.914), enabling timely and practical intervention. Unlike conventional accuracy-oriented prediction approaches, our method emphasizes decision ef-fectiveness under class imbalance, aligning with real-world operational priorities. Future work will focus on validating the framework on production-scale telemetry, extending the feature space with additional system signals such as power and thermal metrics, and integrating predictive models into orchestration frame-works (e.g., Kubernetes) for closed-loop mitigation. To further scale deployment across millions of servers, a cascade archi-tecture inspired by the Filter-And-Refine paradigm [12] could reduce inference overhead while preserving high recall. More broadly, the challenge of robust generalization remains related to the memorization-versus-reasoning tension highlighted in recent LLM work [13], while pattern-aware tool-integrated reasoning agents [14] may improve adaptive response selection in future orchestration pipelines. REFERENCES
