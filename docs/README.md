@@ -6,38 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-24
-- 运行时间：2026-06-24 21:18:42 UTC
+- 最新运行日期：2026-06-25
+- 运行时间：2026-06-25 21:46:43 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：0
-- 速读区：5
+- 本次总论文数：4
+- 精读区：3
+- 速读区：1
 
 ### 今日简报（AI）
-1) 今日速读5篇论文，重点关注AI工作负载突发预警、开源软件休眠与复苏、软件质量需求数据集三大方向。  
-2) 最值得看的是《Learning Burst-Aware Early Warning Models...》（7.0/10），揭示超大规模数据中心应对AI任务潮汐的容量压力预警方案；《Beyond the Grave...》（6.0/10）则从实证层面分析科学领域开源软件“假死”与“复活”现象，对维护者决策有启发。  
-3) 建议普通读者优先阅读上述两篇，前者可帮助理解AI基建的弹性设计，后者则能提升对开源项目长期健康的认知。
-- 详情：[/202606/24/README](/202606/24/README)
+今日聚焦AI责任评估与代码生成模型，精读2篇高分论文。最值得关注GRAIDES评估框架保障地方政府AI可信，以及CodeXHug数据集增强模型卡片。建议优先精读这两篇，深入了解AI治理与代码使用模式优化方向。
+- 详情：[/202606/25/README](/202606/25/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Generative Responsible AI Data Evaluation Schema (GRAIDES) for AI Assurance in Local Government](/202606/25/2606.20963v1-generative-responsible-ai-data-evaluation-schema-graides-for-ai-assurance-in-local-government)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：提供开源数据模型及代码蓝图
+2. [Generate with CodeXHug: A Dataset to Enhance Model Cards with Code Usage Patterns](/202606/25/2606.23329v1-generate-with-codexhug-a-dataset-to-enhance-model-cards-with-code-usage-patterns)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：提供了预训练模型代码使用模式的精选代码库
+3. [SHERLOC: Structured Diagnostic Localization for Code Repair Agents](/202606/25/2606.24820v1-sherloc-structured-diagnostic-localization-for-code-repair-agents)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：提出了无需训练的代码修复定位框架，很可能发布了源代码
 
 ### 速读区论文标签
-1. [Learning Burst-Aware Early Warning Models for Capacity Stress under AI Workload Surges in Hyperscale Data Centers](/202606/24/2606.21130v1-learning-burst-aware-early-warning-models-for-capacity-stress-under-ai-workload-surges-in-hyperscale-data-centers)  
+1. [LibEvoBench: Probing Temporal Knowledge Stratification in Code Generation Models](/202606/25/2606.25402v1-libevobench-probing-temporal-knowledge-stratification-in-code-generation-models)  
    标签：评分：7.0/10、query:code-paper
-   evidence：AI工作负载下数据中心容量压力的突发感知预警，与任务调度相关
-2. [Beyond the Grave: An Empirical Study of Dormancy and Revival in Scientific Open-Source Software](/202606/24/2606.20966v1-beyond-the-grave-an-empirical-study-of-dormancy-and-revival-in-scientific-open-source-software)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：对科学开源软件休眠与复苏的经验研究
-3. [GitReq: A Gold Standard Dataset for Software Quality Requirements](/202606/24/2606.21810v1-gitreq-a-gold-standard-dataset-for-software-quality-requirements)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提供从GitHub挖掘的软件质量需求数据集
-4. [Formal-Method-Guided Vibe Coding: Closing the Verification Loop on AI-Generated Safety-Critical Software Through Model-Driven Engineering](/202606/24/2606.22413v2-formal-method-guided-vibe-coding-closing-the-verification-loop-on-ai-generated-safety-critical-software-through-model-driven-engineering)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提出Forge流水线，对AI生成代码进行形式化验证
-5. [Code Isn't Memory: A Structural Codebase Index Inside a Coding Agent](/202606/24/2606.22417v1-code-isnt-memory-a-structural-codebase-index-inside-a-coding-agent)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：面向编码代理的结构化代码库索引，可能提供实现代码
+   evidence：提出了跨版本库的基准测试，很可能附带源代码
 
 
 <div class="dpr-home-promo-card">

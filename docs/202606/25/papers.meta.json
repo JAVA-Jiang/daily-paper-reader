@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-25",
+  "date": "2026-06-25",
+  "generated_at": "2026-06-25T21:46:49",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/25/2606.20963v1-generative-responsible-ai-data-evaluation-schema-graides-for-ai-assurance-in-local-government",
+      "section": "deep",
+      "title_en": "Generative Responsible AI Data Evaluation Schema (GRAIDES) for AI Assurance in Local Government",
+      "authors": "Ethan Knights, Christopher Conlan, Temilorun Gbolahan, Stephen Waterman, Gurpreet Muctor",
+      "date": "2026-06-18",
+      "pdf": "https://arxiv.org/pdf/2606.20963v1",
+      "score": "8.0",
+      "evidence": "提供开源数据模型及代码蓝图",
+      "tldr": "地方政府生成式AI应用的可信度因评估数据碎片化、结构不一致而难以保障。提出GRAIDES轻量级开源数据模型，集中管理多家供应商的AI可观测性，并提供代码、架构及统计评估蓝图。在Westminster市议会案例中，成功测量人-模型对齐并检测评价者间系统性分歧。该方案为生成式AI系统实现更一致、可重复的基准测试与保障提供了实用路径。",
+      "tags": "query:code-paper",
+      "abstract_en": "Trust in the application of generative Artificial Intelligence (AI) relies on well-governed measurable evidence of performance and safety. In practice, however, evaluation data is often fragmented across systems, inconsistently structured and difficult to compare. We introduce the Generative Responsible AI Data Evaluation Schema (GRAIDES) as a lightweight open-source data model for centralising AI observability across popular vendors. Practical blueprints for code, architecture and statistical evaluation are shared as guidance about how to approach generative system assurance at the organisational level. Illustrative case study results are reported from Westminster City Council's AI catalogue with a focus on measuring human-model alignment including detecting systematic disagreement between evaluators. By framing evaluations as a data modelling problem, GRAIDES provides a practical pathway toward more consistent and reproducible benchmarking, tuning and assurance activities for generative AI systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/25/2606.23329v1-generate-with-codexhug-a-dataset-to-enhance-model-cards-with-code-usage-patterns",
+      "section": "deep",
+      "title_en": "Generate with CodeXHug: A Dataset to Enhance Model Cards with Code Usage Patterns",
+      "authors": "Stefano Palombo, Claudio Di Sipio, Juri Di Rocco, Davide Di Ruscio",
+      "date": "2026-06-22",
+      "pdf": "https://arxiv.org/pdf/2606.23329v1",
+      "score": "8.0",
+      "evidence": "提供了预训练模型代码使用模式的精选代码库",
+      "tldr": "预训练模型在软件工程中日益普及，但许多模型卡片缺乏代码使用模式，增加了新用户的难度。为此，本文构建了CodeXHug数据集，从HuggingFace和GitHub收集了7325个模型和20545个Python文件，并通过统计分析和聚类提取代表性代码使用模式。该数据集有助于开发者理解模型的实际用法，提升模型卡片的实用性和可复用性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Pre-trained models (PTMs) are becoming increasingly popular in the software engineering community. Their usage is facilitated by model repositories, e.g., HuggingFace, which collect, store, and maintain a wide range of PTMs. However, the actual adoption of these models in real-world projects is still an open question, i.e., many of them are used in toy projects or simply as a mirror for the HF repository. In addition, most of the available model cards and textual documents that contain critical information about their usage do not include explanatory code patterns, thus increasing the difficulty for newcomers. Thus, we see the need for a curated codebase related to PTMs to support developers and practitioners who are interested in using them in their projects.   In this paper, we present CodeXHug, a curated dataset of HuggingFace PTMs exploited in the Github ecosystem and the related code usage patterns. Starting from the latest HF dump, we first conduct a data curation to collect PTMs with a tag and a model card. Then, the Github platform has been queried to find actual usages of the identified PTMs, resulting in 7,325 different models and 20,545 Python files.   To demonstrate a concrete application of CodeXHug, we propose a usage scenario focused on extracting representative code usage patterns for specific PTMs through a statistical analysis and clustering techniques applied to relevant code snippets.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/25/2606.24820v1-sherloc-structured-diagnostic-localization-for-code-repair-agents",
+      "section": "deep",
+      "title_en": "SHERLOC: Structured Diagnostic Localization for Code Repair Agents",
+      "authors": "Hovhannes Tamoyan, Sean Narenthiran, Erik Arakelyan, Mira Mezini, Boris Ginsburg",
+      "date": "2026-06-23",
+      "pdf": "https://arxiv.org/pdf/2606.24820v1",
+      "score": "8.0",
+      "evidence": "提出了无需训练的代码修复定位框架，很可能发布了源代码",
+      "tldr": "代码修复智能体在定位故障上消耗大量预算，但现有定位方法仅输出文件级位置，缺乏诊断上下文。本文提出SHERLOC，一种无需训练的框架，将推理LLM与紧凑仓库工具结合，通过结构化假设驱动实现精准诊断。在SWE-Bench上以约30B参数达到84.33% accuracy@1和81.27% recall@1，匹配或超越更大模型。将诊断结果注入修复智能体后，解决率平均提升5.95个百分点，同时定位令牌减少36.7%，总令牌减少23.1%。",
+      "tags": "query:code-paper",
+      "abstract_en": "LLM agents solve repository-level coding tasks through multi-turn tool use, but utilize half their budget on locating faults before editing. Dedicated localization frameworks have emerged, yet are still evaluated as file retrieval rather than actionable diagnosis, producing locations without the diagnostic context a repair agent needs. We introduce SHERLOC (Structured Hypothesis-driven Exploration and Reasoning for Localization), a training-free framework pairing a reasoning LLM with compact repository tools and self-recovery, without fine-tuning or multi-agent orchestration. SHERLOC reaches state-of-the-art localization across model scales: 84.33% accuracy@1 on SWE-Bench Lite and 81.27% recall@1 on SWE-Bench Verified; at ~30B parameters, it matches or outperforms other agentic methods. Injecting our locations and diagnostic findings into repair agents yields, on average, +5.95 pp resolve rate on SWE-Bench Verified while cutting localization and total tokens by 36.7% and 23.1%.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/25/2606.25402v1-libevobench-probing-temporal-knowledge-stratification-in-code-generation-models",
+      "section": "quick",
+      "title_en": "LibEvoBench: Probing Temporal Knowledge Stratification in Code Generation Models",
+      "authors": "Daniele Cipollone, Sergey Titov, Maliheh Izadi, Egor Bogomolov, Arie van Deursen",
+      "date": "2026-06-24",
+      "pdf": "https://arxiv.org/pdf/2606.25402v1",
+      "score": "7.0",
+      "evidence": "提出了跨版本库的基准测试，很可能附带源代码",
+      "tldr": "大型软件项目常依赖旧版本库，而LLM训练数据混杂多版本API，导致生成代码出现版本错位错误。为系统评估此问题，提出LibEvoBench基准，覆盖多个Python库版本及新指标SEUS。实验表明，SOTA模型对API版本无感知，简单指定版本无帮助，但提供相关文档能显著提升准确性。该工作揭示了当前训练范式在时间知识分层上的系统性缺陷，为代码生成模型的版本感知能力提升提供了新方向。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large software projects often depend on older versions of libraries, even as APIs continue to evolve across releases. This creates a challenge for LLMs: they must maintain knowledge of multiple API versions, not merely the latest or most common one. However, current LLMs are trained on temporally mixed corpora and lack explicit mechanisms for such version-specific reasoning, leading to anachronistic errors - calling APIs as they exist in a different library version. To systematically evaluate this phenomenon, we introduce LibEvoBench, a multi-task benchmark spanning multiple versions of widely used Python libraries, along with a new metric, the Software Evolution Understanding Score (SEUS), to measure models' consistency when working with evolving APIs. Our results show that state-of-the-art models are largely version-oblivious: performance degrades for evolving APIs, while for stable APIs it remains the same across versions. Moreover, simply specifying the target version provides no benefit, while relevant documentation significantly boosts models' accuracy. These findings highlight a systematic limitation of current training paradigms and motivate new approaches for temporally grounded knowledge in code generation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

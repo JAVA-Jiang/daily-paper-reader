@@ -1,0 +1,339 @@
+Title: Generate with CodeXHug: A Dataset to Enhance Model Cards with Code Usage Patterns
+
+URL Source: https://arxiv.org/pdf/2606.23329v1
+
+Published Time: Tue, 23 Jun 2026 03:07:25 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Generate with CodeXHug: A Dataset to Enhance Model Cards with Code Usage Patterns 
+
+Stefano Palombo 
+
+University of l’Aquila, Italy 
+
+stefano.palombo@student.unviaq.it 
+
+Claudio Di Sipio 
+
+University of l’Aquila, Italy 
+
+claudio.disipio@univaq.it 
+
+Juri Di Rocco 
+
+University of l’Aquila, Italy 
+
+juri.dirocco@univaq.it 
+
+Davide Di Ruscio 
+
+University of l’Aquila, Italy 
+
+davide.diruscio@univaq.it 
+
+Abstract —Pre-trained models (PTMs) are becoming increas-ingly popular in the software engineering community. Their usage is facilitated by model repositories, e.g., Hugging Face, which collect, store, and maintain a wide range of PTMs. However, the actual adoption of these models in real-world projects is still an open question, i.e., many of them are used in toy projects or simply as a mirror for the HF repository. In addition, most of the available model cards and textual documents that contain critical information about their usage do not include explanatory code patterns, thus increasing the difficulty for newcomers. Thus, we see the need for a curated codebase related to PTMs to support developers and practitioners who are interested in using them in their projects. In this paper, we present CodeXHug, a curated dataset of Hugging Face PTMs exploited in the GitHub ecosystem and the related code usage patterns. Starting from the latest HF dump, we first conduct a data curation to collect PTMs with a tag and a model card. Then, the GitHub platform has been queried to find actual usages of the identified PTMs, resulting in 7,325 different models and 372,063 Python files. To demonstrate a concrete application of CodeXHug, we propose a usage scenario focused on extracting representative code usage patterns for specific PTMs through a statistical analysis and clustering techniques applied to relevant code snippets. Finally, we discuss the research opportunities enabled by CodeXHug and the implications of our findings for the software engineering community. In particular, we believe that CodeXHug can be used to support different tasks related to the usage of PTMs, from providing developers with concrete usage examples to generating curated model cards, contributing to the develop-ment of next-generation solutions based on top of PTMs 
+
+Index Terms —mining software repositories, pre-trained mod-els, code generation, hugging face 
+
+I. I NTRODUCTION 
+
+With the advent of foundation models, e.g., large language models (LLMs) [1] or pre-trained models (PTMs) [2], the field of software engineering (SE) has been significantly trans-formed, fostering the automation of several tasks leveraging those cutting-edge technologies. PTMs can be seen as spe-cialized off-the-shelf components that support specific tasks, outperforming traditional techniques in many cases [3], [4], [5]. In addition, the proliferation of open model repositories 
+
+has facilitated their usage in practice. Hugging Face is the largest model repository for SE tasks, providing a wide range of PTMs to support more than thirty different tasks, e.g., text generation, image classification, or code summarization. Each model is labeled with pipeline tags , thus facilitating the repository’s browsing and increasing the models’ discoverabil-ity given the current software engineering task. In addition, Hugging Face also provides dedicated capabilities that allow developers to upload their models, categorize them, and upload relevant information and meta-data using the model card [6]. This README-like document provides detailed instructions on how to run and install store models. Nevertheless, recent research has shown that different information is missing, e.g., carbon emission [7] or license information [8], which may hinder the adoption of PTMs in practice. In particular, several model cards lacks of concrete code usage examples , thus mak-ing the integration in existing projects challeging especially for non-expert users. In this respect, open-source software (OSS) ecosystems, such as GitHub, can come in handy, providing a valuable codebase for thos cutting edge models. Neverthelss, indetifying useful code snippets for PTMs is still an open issue, as many of them are used in toy projects or simply as a mirror for the HF repository. To fill this gap, we propose CodeXHug, a curated dataset of PTMs stored in HF that have been used in GitHub repositories. To collect data, we leverage the latest version of the Hugging Face dump provided by the HF community project [9]. We first filter out unpopular models using the number of downloads as a proxy, and then we identify the projects that exploit the elicited PTMs. To this end, we rely on a well-adopted Python library, i.e., PyGithub [10], to collect relevant data from the identified PTMs. We ended up with 7,325 different models and 372,063 Python files. In addition, we applied a set of qualtiative filters to enable the generation of code usage patterns by combining KNN clustering algorithm and Llama 3 model. To the best of our knowledge, CodeXHug is the first dataset that provides a comprehensive overview of the actual usage of PTMs in the GitHub ecosystem, thus enabling different research opportunities, e.g., code assistants for developing PTMs, PTMs usage analysis, and model card generation. The contributions of this paper are as follows:  
+
+> •
+
+A curated dataset, named CodeXHug, that maps existing code snippets to most popular PTMs available on HF platform, available on the Zenodo open-access research data repository [11].  
+
+> •
+
+A qualitative analysis of the collected code snippets to provide developers with concrete usage examples for PTMs.  
+
+> •
+
+An explanatory example of how to use CodeXHug to pre-dict the usage of PTMs in real-world projects leveraging 
+
+> arXiv:2606.23329v1 [cs.SE] 22 Jun 2026
+
+LLM and clustering techniques. The paper is structured as follows. Section II presents an explanatory example to motivate the work. Section III-D describes the data collection process while Section IV provides an overview of the dataset, including a statistical analysis of the collected data. We present a concrete usage of CodeXHug for generating code usage patterns in Section V-C. Section VII discusses the threats to validity of our study. Finally, Section VIII-B presents related works and Section IX concludes the paper. II. B ACKGROUND AND MOTIVATION 
+
+While Hugging face offers different capabilties to store, maintain, and document PTMs, recent studies highlight the limitation in terms of relevant information for developers, e.g., discrepancies in the documentations [12], or lack of user liceses [8]. In particular, the lack of code usage examples in model cards can make difficult their reusage in practice, especially for non-expert developers. Figure 1a shows the model card of the 
+
+deberta-largew-mnli PTM provided by Microsoft. It is worth mentioning that the document do not contains any usage examples even though the model is very popular according to HF statistics. In contrast, Figure 1b shows a model card related to the all-MiniLM-L6-v2 with code usage examples. In particular, this model card is enriched with useful scripts for installing and a basic usage of the model, thus making it easier for developers to exploit it in their projects. III. D ATA COLLECTION 
+
+Figure 2 deipicts the CodeXHug collection process. The process begins with a data cleaning step, where PTMs with null content, i.e., those lacking tags or model cards, are filtered out. Next, we focus on selecting a sample of the most popular PTMs based on download counts. To ensure a balanced dataset, we identify the 13 most representative categories and then proceed to search for code usage in GitHub. 
+
+A. CodeXHug data model 
+
+Figure 3 shows the CodeXHug data model consisting of two main entities, i.e., HF model and GH repository .The former contains the name of the PTM, the pipeline tag, the model card, and the number of likes and downloads. The latter contains the name of the repository, the topics, the description, the README content, and the number of commits, pull requests, forks, and stars. In addition, we store the files of each repository, i.e., the file name and the URL. In addition, we report the 13 different categories that are included in CodeXHug dataset as an enumeration since they refer to the pipeline tags available on HF which is a closed set of values. 
+
+B. Data cleaning and sampling 
+
+The first step involves the data cleaning and curation of the HF dump provided by the HF community project [9], namely the one released on June 2024. To interact with the dataset, we rely on Python MySQL connector [13] to query 
+
+(a) Deperta model card 
+
+(b) all-MiniLM-L6-v2 model card 
+
+Fig. 1: Model cards with and without code usage examples the database and retrieve the relevant information. The dump contains 681,682 different models even though several missing entries are present, i.e., null values for tags or model cards. Since those data are relevant for our analysis, we filter out the PTMs with null content, resulting in 262,670 PTMs and the corresponding metadata, i.e., pipeline tag, model card, and number of likes, and download. Afterward, we select a sample of 10% the most popular PTMs in terms of download, i.e., 20,545 PTMs. The rationale behind this choice is that the most HF dump   
+
+> Removing
+> null content
+> Filtered PTMs
+> 681,682 262,670 Sampling
+> Popular PTMs
+> 20,545
+> Github
+> mapping
+> PTMs with usage
+> Tag filtering
+> Tagged PTMs
+> 17,760 7,325
+> Data dump
+> CodeXHug
+
+Fig. 2: The CodeXHug collection process HF model  
+
+> name: String
+> model_card: String
+> pipeline_tag: TagType
+> download: int
+> likes: int
+> SourceCodeFile
+> name: String
+> content: String
+> GH repository
+> name: String
+> description: String
+> README content: String
+> commits: int
+> pull_requests: int
+> forks: int
+> stars: int
+> 0..1 *
+> used by
+> TagType <<Enum>>
+> text-generation
+> fill-mask
+> image-classification
+> text-to-image
+> text2text-generation
+> text-classification
+> sentence-similarity
+> image-to-text
+> zero-shot-image-classification
+> image-segmentation
+> question-answering
+> text-to-image
+> summarization
+> [1...*]files
+
+Fig. 3: The CodeXHug data model downloaded PTMs are more likely to be used in real-world projects, thus providing a more representative sample for our analysis. 
+
+C. Tag filtering 
+
+Afterward, we investigated to what categories the collected PTMs belongs. In particular, we identify 13 different cate-gories such that we include i) the most popular ones in terms of the number of downloads and ii) less popular ones to guarantee a diverse enough dataset. It is worth noting that we check the number of PTMs for each category with the aim of balancing the dataset as much as possible. This additional filtering step ends up with 17,760 PTMs. 
+
+D. GitHub mapping 
+
+This step involves the search on the whole GitHub platform, even though we introduce quality filters in the query to retrieve only relevant repositories for our analysis. To this end, we rely on the PyGithub library [10] to interact with the GitHub API and collect the relevant data. First, we search the name of each PTM and limit our search to repositories written in Python, as the examined PTMs are mainly imported and tested using the HF utilities 1. Second, we queried the README file content using the pipeline tag 
+
+element to further remove possible false positives. After the relevant PTMs have been identified, we retrieve the source code files, i.e., the ones ending with .py , by limiting the search to 1,000 for each project to avoid that big repository could lead to an unbalanced number of samples in the dataset. In addition, we collect also the README content of the project since it may contain additional usage information. In the scope of this paper, we store only the URLs for each file even though we provide a dedicated Pythoh function in the supporting online appendix that retrieves the whole content. Listing 1 shows the explanatory structure of the sentence-transformers/all-MiniLM-L12-v2 PTM used by run-llama/llama index GH project. In addition to files and README, we collect relevant metadata, i.e., number of commits, pull requests, forks, and stars, to provide a comprehensive overview of the project. 
+
+> 1
+
+https://huggingface.co/docs/transformers/autoclass tutorial 
+
+This mapping phase ends up with 7,325 different models and 372,063 Python files contained into 71,748 repositories.                                              
+
+> 1"sentence-transformers/all-MiniLM-L12-v2": {
+> 2"run-llama/llama_index": {
+> 3"topics": <list of GH topics>,
+> 4"description": "LlamaIndex is adata framework for your LLM applications",
+> 5"readme": <content>",
+> 6"numbers of commits:": 5494,
+> 7"number of pull requests": 6146,
+> 8"number of forks": 5195,
+> 9"number of stars": 36388,
+> 10 "files": [
+> 11 {
+> 12 "file_name": "bench_embeddings.py",
+> 13 "file_url": "<file_url>"
+> 14 }
+> 15 ]
+> 16 }
+
+Listing 1: Example of retrieved data To further facilitate the analysis and the reproducibility of our study, we store the collected data in a MongoDB database [14] as it provides faster access compared to SQL databases. The provided dump is composed of two collections, i.e., models and files , where the former contains the name of PTM and pipeline tag while the latter contains the content of each file encoded in UTF-8 standard. IV. D ATA OVERVIEW 
+
+This section presents an overview of CodeXHug data by providing basic descriptive statistics. In particular, we aim to investigate two aspects, i.e., the number of files of each indetified pipeline tag and the usage of the PTMs in the GitHub ecosystem. Concerning the first aspect, we present the distribution of the number of files for each tag in CodeXHug. As shown in Figure 4, the file distribution is unbalanced since some tags are more used compared to others. In particular, the most popular tag is text-generation , followed by fill-mask 
+
+and image-classification . This is quite expected since the most popular PTMs, like gpt-2 and RoBERTa model, are tagged with text-generation and fill-mask, respectively. Nevertheless, we include also less popular tags to support the development of a wide range of applications based on PTMs, thus increasing the diversity of the dataset. Concerning the popularity of the PTMs in the GitHub ecosystem, Figure 5 reports the actual usage of the collected PTMs. In particular, we investigate the distribution of the number of projects for each PTM depicted in Figure 5a. The result shows a skewed distribution that exibiths a long-tail effect, with a small number of PTMs used in a large number of GitHub projects. By carefully inspecting the data, we discovered that the most popular PTMs are gpt-2 , roberta-large , and Salesforce/blip-image-captioning-large , which are used in more than 800 projects. Thus, we can conclude that there are few PTMs that are widely used in the GitHub ecosystem, while the majority of the PTMs are used in a small number of projects. In addition, we investigated the how many PTMs GitHub repositories include. Figure 5b shows that a considerable number of repositories (43.7%) uses more than one PTMs, 0 20000 40000 60000 80000 100000 120000 140000 
+
+> text-generation
+> fill-mask
+> image-classification
+> text-to-image
+> text2text-generation
+> text-classification
+> sentence-similarity
+> image-to-text
+> zero-shot-image-classification
+> image-segmentation
+> question-answering
+> object-detection
+> summarization
+
+Fig. 4: Num. of files for each tag in CodeXHug meaning that developers may combine different models to support one or more tasks. Interestigly, we spot repositories that use more than 100 models, e.g., hugging-downloader 2.By carefully investigate this, we discovered that those kinds of projects are model downloaders employed to store and test many PTMs at once. 0-200    
+
+> 200-400
+> 400-600
+> 600-800
+> 800-1000
+> Num. of GH clients
+> 0
+> 500
+> 1000
+> 1500
+> 2000
+> 2500
+> 3000
+> 3500
+> Num. of PTMs
+> 3795
+> 284 108 44 7
+
+(a) PTMs popularity 
+
+(b) PTMs usage 
+
+Fig. 5: Distribution of PTMs in CodeXHug 
+
+> 2
+
+/https://github.com/isLinXu/hugging-downloader 
+
+V. P REDICT PTM USAGE PATTERNS 
+
+Building upon our novel dataset that establishes a crucial link between Hugging Face model cards and their corre-sponding usage in publicly available source code, this section explores an illustrative application of this resource. While not the central focus of this paper, this explanatory use case demonstrates that CodeXHug can be used to support the prediction of code usage patterns. First, we filter out outliers and applied a clustering technique to indetify the most suitable code patterns. Then, we expolit the Llama model to generate code snippets based on the identified patterns. 
+
+A. Outlier filtering 
+
+As reveal by our previous analysis, the collected data presents a long-tail effect, i.e., a small subset of models is employed far more frequently than the majority. Thus, we filter out outliers from our analysis to those pre-trained models (PTMs) associated with more than 100 files. This criterion yielded a subset of 1,064 models, encompassing a total of 393,484 script files. Table I summarizes the key statistics of the original and filtered dataset. TABLE I: Number of file for each PTM 
+
+Metric Value (Original) Value (Filtered) 
+
+Mean 63.99 369.82 Median 6.00 272.50 Standard deviation 162.54 265.65 Skewness 3.86 1.17 Kurtosis 16.09 0.31 
+
+In particular, the process increase the number of supportin file for each PTM on average, from 63.99 to 369.82. In addition, skewness and kurtosis decreased to 1.17 and 0.31, respectively. Overall, this filtering step contributes to a more balanced distribution of the data, which is crucial for gener-ating accurate snippets. To further enhance the quality of the code snippets, we applied an additiona filter on the size of each snippet. On the one hand, excessively brief scripts may lack substantive content regarding a model’s usage. On the other hand, long scripts often contain non-pertinent material e.g., extensive documentation or commentar. Thus, we restrict our analysis to those scripts whose length, measured in lines of code, falls within a specified interquartile range (IQR) centered on the median [15], defined as follows: 
+
+min length = max (mediana − 0.25 ∗ IQR, 1) (1) 
+
+max length = mediana + 0 .25 ∗ IQR (2) 
+
+B. Clustering Analysis 
+
+After the selection of the most similar snippets, we grouped snippets that contain at least one match to the predefined keywords. However, selecting the optimal candidate requires accounting for the semantic content of the code. A similar strategy was employed by Zhong et al.[16], who improve recommendation quality by clustering code snippets according to analogous API usage patterns. Thus, we applied the K-means algorithm from the scikit-learn library[17] to numerical representations of the snippets. Since the snippets are initially plain text, we employed the all-MiniLM-L6-v2 3 embedding model provided by Hugging Face via the sentence transformers package 4. This model based on a lightweight Transformer variant of BERT—converts each snippet into a 384-dimensional vector through tokenization, attention computation, and mean-pooling across token embed-dings. Although sentence transformers models are primarily optimized for natural language, they nevertheless capture sub-stantial syntactic and semantic information in code fragments, particularly when natural-language comments elucidate code structures and functions. Moreover, their relatively modest inference time and memory footprint present a favorable trade-off for processing hundreds of thousands of files, in contrast to more heavyweight alternatives such as CodeBERT [18]. The resulting embeddings are then clustered via K-means, with the number of clusters k chosen empirically as the mini-mum of three and the total number of snippet candidates; this heuristic ensures dynamic adaptation to the available snippet set. Upon convergence, the snippet whose embedding lies closest to each cluster centroid is selected as the representative exemplar. By virtue of its proximity to the centroid, this snippet best encapsulates the shared semantic characteristics of its cluster members. 
+
+C. Code pattern prediction 
+
+To perform code generation, we exploit LLM for generating code usage example. Noteworthy, the dataset and the whole process can be adopted in combination with more traditional techniques, i.e., collaborative filtering [19], [20] or mining usage pattenrs [21], [22]. In the scope of this paper, we employ Llama 3 model [23] with a zero-shot prompting paradigm, wherein the model receives no explicit exemplars of the desired output within the input string and must rely solely on its inherent generalization capabilities. As detailed in Listing 2, the prompt further assigns the role of “Python assistant” to the model, thereby optimizing contextual relevance. In additoin, the prompt includes constraints to avoid the generation of natural-language content. Concerning the hyperparamers, we set a temperature pa-rameter of 0.2, the top p parameter equal to 1.0, meaning that token selection considers the full probability distribution produced by the model. By avoiding the truncation inherent in lower top p thresholds—which limit selection to tokens within a cumulative-probability cutoff—this configuration fully lever-ages the model’s capabilities without prematurely excluding less probable yet potentially valid alternatives. Given that the goal is precise identification of code patterns rather than creative generation, this low temperature reduces response variance and mitigates the risk of spurious or hallucinatory outputs.    
+
+> 1system_prompt =(
+> 3
+
+https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2 
+
+> 4
+
+https://sbert.net/                                                                                                                   
+
+> 2"You are an AI assistant specialized in Python.
+> 3Iwill provide you with aseries of code snippets extracted from various Python files.
+> 4Note that these snippets might not form acoherent or complete code module when combined together.
+> 5Your task is to analyze these snippets and extract recurring code patterns, such as function definitions (using ’def’), common imports, and other typical structures found in Python code.
+> 6Focus solely on identifying and returning the common patterns in the context of the model {snippet_model }.
+> 7Return ONLY the code snippets.
+> 8DO NOT include only the common imports.
+> 9Do NOT include any explanations, descriptions, or metadata.
+> 10 Do NOT generate any summaries, bullet points, markdown formatting, or additional text.
+> 11 If you are unable to find any relevant patterns, please return an empty string."
+> 12 )
+
+Listing 2: The zero-shot prompt used to generate model card usage patterns Listing 3 presents an illustrative code excerpt generated by the LLM for the model kakaobrain/karlo-v1-alpha-image-variations, a framework typically employed to synthesize images from natural-language prompts 5. In particular, the generated code support the data loading, suggesting a standard procedure for ingesting such datasets into memory (lines 1-4). Then, a preprocessing pipeline (lines 6–10) is estab-lished, by including a sequence of image transformations is applied—namely, resizing and normalization—ensuring that inputs conform to the model’s expected dimensionality and value range. Finally, the snippet outlines the construction of a convolutional encoder–decoder architecture leveraging the Keras API 6 as shown in Lines 12-24. While this example may diverge in detail from the official Karlo model card, it provides a relevant usage patterns that can help developers in integrating or extending the within their active projects.                                                                
+
+> 1def load_data():
+> 2#Load data from kakaobrain/karlo-v1-alpha-image-variations
+> 3data =pd.read_csv(’data/train.csv’)
+> 4return data
+> 56def preprocess_image(image):
+> 7#Resize and normalize image
+> 8image =tf.image.resize(image, (224, 224))
+> 9image =tf.image.per_image_standardization(image)
+> 10 return image
+> 11 12 def create_model(input_shape):
+> 13 #Create Keras model
+> 14 model =tf.keras.models.Sequential([
+> 15 tf.keras.layers.Conv2D(32, (3, 3), activation=’relu ’, input_shape=input_shape),
+> 16 tf.keras.layers.MaxPooling2D((2, 2)),
+> 17 tf.keras.layers.Conv2D(64, (3, 3), activation=’relu ’),
+> 18 tf.keras.layers.MaxPooling2D((2, 2)),
+> 19 tf.keras.layers.Conv2D(128, (3, 3), activation=’ relu’),
+> 20 tf.keras.layers.Flatten(),
+> 21 tf.keras.layers.Dense(128, activation=’relu’),
+> 22 tf.keras.layers.Dense(10, activation=’softmax’)
+> 23 ])
+> 24 return model
+> 25
+> 5
+
+https://huggingface.co/kakaobrain/karlo-v1-alpha-image-variations 
+
+> 6
+
+https://keras.io/ 26 def train_model(model, data):                           
+
+> 27 #Train model
+> 28 model.compile(optimizer=’adam’, loss=’ sparse_categorical_crossentropy’, metrics=[’ accuracy’])
+> 29 model.fit(data, epochs=10)
+> 30 return model
+> 31 32 def evaluate_model(model, data):
+> 33 #Evaluate model
+> 34 loss, accuracy = model.evaluate(data)
+> 35 return loss, accuracy
+> 36 37 def save_model(model):
+> 38 #Save model
+> 39 model.save(’model.h5’)
+
+Listing 3: Explanatory output for kakaobrain/karlo-v1-alpha-image-variations model VI. D ISCUSSION 
+
+This section forseen possible usages of the CodeXHug dataset. The primary usage of CodeXHug is generating en-hanced version of model card, i.e., providing relevant snippets of code. In Section V-C, we demonstrated that curated model card can be used to automatically generate enhanced model card with code usage leveraging the provided source code from GitHub. However, preprocessing and filtering steps are still needed to provide a high-quality model card as the raw data exhibited a significant long-tail effect. Subsequentely, there is the need to filter out outliers and analyze the frequency of model usage across a large corpus of source code to effectively generate a useful model card. In this respect, the evaluation of our proposed approach for automated model usage recommendation relies on the insights derived from this dataset although an in-depth analysis is needed to confirm our findings. To understand the performances of the envisioned approach in Section V-C, a direct comparison between the textual information in the cards and the patterns observed in the linked source code is essential. Overall, our curated dataset can be effectively used for the three abovementioned tasks. Besides the model card generation, we belive that CodeX-Hug can be used to the CodeXHug dataset can be used to in-vestigate how PTMs are used in real-world projects on GitHub, thus fostering application of different automated techiques to support developers that want to implement, fine-tune, or test their wown models. In particular, CodeXHug dataset can be used to provide different types of recommendations, spanning from API function calls [19], [20] to code usage pattern retrieval [21], [22], providing a specific support to developers interested in integrating PTMS in their software projects. In addition, our dataset can be used to analyze how PTMs are used in real-world projects. In particular, the retrieved code can be used to assess the overall quality of the code, e.g., code smells [24], techinical debt in AI-based system [25], or anti-patterns [26]. In addition, the dataset can be used to investigate the impact of PTMs on the GitHub community, e.g., how the adoption of PTMs affects the project’s popularity, its quality, and discoverability. VII. T HREATS TO VALIDITY 
+
+This section discusses threats that may hamper the quality of the collected data. Concerning the internal validity , the main issue is related to the dump used for collecting CodeX-Hug, i.e., the HF dump may not contain recently released PTMs. To mitigate this issue, we focus on popular and well-established models by selecting PTMs. In addition, we applied different quality filter to reduce the number of the outliers. Concerning the generation of usage patters scenario presented in Section V-C, we acknowledge that the clustering technique used to group similar snippets may not be the most suitable for all scenarios. To mitigate this, we plan to investigate more advanced clustering techniques in future work. We also acknowledge that employed LLM,i.e., Llama, may not be the best choice for all tasks, thus generating erroneous or irrelevant code snippets. To handle this, we first filter out outliers and used a curated prompt. External validity is related to missing data that may not be collected during the GH mapping phase. To handle this, we rely on the GitHub query language to apply quality filters. In addition, we manually select six categories to include less popular PTMs in the final dataset. Another threat is related to the possible usage of the dataset, i.e., the PTM snippets may be not enough to train a traditional model. To mitigate this, we employ a clustering technique to group similar snippets and increase the amount of data. Another threat is related to the generalizability of the results, i.e., the dataset may not provide enough examples to support the generation of generic model cards. While we acknowledge that this can be mitigated by enlarging the dataset with additional PTMs, this goes beyond the scope of this paper as we focus on the collection and curation of the retrieved data from HF and GitHub. VIII. R ELATED WORKS 
+
+In this section, we present existing empirical studies on PTMs in Section VIII-A while Section VIII-B reviews existing woks on recommending code usage pattern. 
+
+A. Emprical Studies on PTMs 
+
+Castano et. al [7] investigate the carbon footprints of 1,417 different models hosted on the platform. The measured emission correlated with different factors such as model size, dataset size, and application domains. The same authors [7] also provide an empirical investigation on the evolution of PTMs in terms of maintenance, popularity, and usage. Gong et. al [27] conducted a comprehensive study of the PTMs reuse stored in six different model repositories, including Hugging Face. After data cleaning and labeling steps, the authors propose a code contract composed of pre- and post-conditions for re-usage in software development, e.g., input data, intended usage, and performance. Montes et. al [12] highlights discrepancies in the documentation of 36 PTMs that support image classification across four different model repositories, i.e., TensorFlow Model Garden, ONNX Model Zoo, Torchvision Models, and Keras Applications, highlight-ing the need for standardized documentation. Pepe et. al [8] conducted a large-scale study on 159,132 models stored on HF by focusing on the documentation, licenses, and fairness aspects. Overall, only a few PTMs provide permissive licenses and mention potential bias in the documentation. Gao et. al [28] investigate ethical concerns in HF models leveraging the API and KeyBERT model, ending up with a dedicated taxonomy. In our prior work et. al [29], we investigate to what extent traditional ML models, namely Naive Bayesian and SVC, can classify PTM given their model card. Compared with the abovementioned works, CodeXHug provides a direct mapping between PTMs and GitHub projects that use them in practice. 
+
+B. Recommending code usage patterns 
+
+FACER [30] retrieves API usage for opportunistic reuse built on top of a code fact repository, including methods’ textual body, call graphs, and API usages. The approach combines custering technique based on Lucene and frequent pattern mining strategy to retrieve similar API compared to the developer’s context. 
+
+api2vec [31] is an approach based on Word2Vec model to suggest relevant API patterns and usage. First, the tool mines the pairs of API elements that share the same usage relations among them. Afterward, the mined content has been used to support code translation task between Java and C# using a characteristic of the API2Vec embeddings. Multi-HyLSTM [32] is an automated approach that exploits a modified version Short Long Term Memory (LSTM) neural network to support multi-path API prediction. The system is equipped with global dependence-enhancing learning module to accurately capture the program dependencies for an API calls. To enhance the prediction of LLM like GPT-3 and Codex, Jain et. al propose Jigsaw [33], a tool based on program synthesis architecture to augment the input of LLM in code generation task. In particular, it contextualizes the input to the black-box language model using heuristic techniques. After-ward, a post-processing module speed up the combinatorial search space of API functions and their arguments leveraging API usage example provided by humans. Specifically trained on a Pandas dataset, Jigsaw improves the quality of the generated code of GPT-3 and Codex. Compared to those work, CodeXHug can be seen as a cu-rated source of knowledge to enable tailored recommendations for PTMs and their usage patterns. In particular, we provide a dataset of PTMs and their related code usage patterns, which can be used to train and evaluate different recommendation systems. IX. C ONCLUSION 
+
+Motivated by increasing usage of pre-trained models (PTMs) for prominent software engineering tasks, we propose CodeXHug, a curated dataset of PTMs exploited in the GitHub ecosystem. First, we identified the most downloaded PTMs from the Hugging Face model repository dump and filtered out PTMs with missing content. Afterward, we leverage the PyGithub library to collect the actual usage of the identified PTMs in GitHub projects. We ended up with 7,325 different models and 372,063 Python files. We also present a statistical analysis of the dataset, highlighting the most popular PTMs and the most common tasks for which they are used. In addition, we demonstrate a concrete application of CodeXHug, focusing on extracting representative code usage patterns for specific PTMs by combining clustering techniques and Large Language Models (LLMs). We also discuss the research op-portunities enabled by CodeXHug and the implications of our findings for the software engineering community. In particular, we believe that CodeXHug can be used to support a plethora of tasks, ranging from API recommendation to generating enhanced model cards, contributing to the development of next-generation solutions based on top of PTMs. For future work, we plan to extend the dataset by lever-aging new dumps released by the HF community project or Hugging Face dedicated API. In addition, we can mine source code from additional open-source repositories, e.g., Software Heritage or GitLab, or model repositories, e.g., TensorFlow Model Garden or ONNX Model Zoo, and their usage in the GitHub platform. Concering the prediction of PTM usage patterns, we plan to investigate the use of more advanced clustering techniques, such as deep learning-based approaches, and experiment with different LLMs to generate more accurate and relevant code usage patterns. Finally, we plan to conduct a user study to evaluate the effectiveness of the proposed approach in real-world PTM-based project. REFERENCES [1] X. Hou, Y. Zhao, Y. Liu, Z. Yang, K. Wang, L. Li, X. Luo, D. Lo, J. Grundy, and H. Wang, “Large language models for software engineering: A systematic literature review,” ACM Trans. Softw. Eng. Methodol. , Sep. 2024, just Accepted. [Online]. Available: https://doi-org.univaq.idm.oclc.org/10.1145/3695988 [2] X. Han, Z. Zhang, N. Ding, Y. Gu, X. Liu et al. , “Pre-trained models: Past, present and future,” AI Open , vol. 2, pp. 225–250, 2021. [Online]. Available: https://www.sciencedirect.com/science/article/pii/ S2666651021000231 [3] R. Tufano, S. Masiero, A. Mastropaolo, L. Pascarella, D. Poshyvanyk                                                              
+
+> et al. , “Using pre-trained models to boost code review automation,” in Proceedings of the 44th International Conference on Software Engineering , ser. ICSE ’22. New York, NY, USA: Association for Computing Machinery, Jul. 2022, pp. 2291–2302. [Online]. Available: https://dl.acm.org/doi/10.1145/3510003.3510621 [4] Z. Ding, H. Li, W. Shang, and T.-H. P. Chen, “Can pre-trained code embeddings improve model performance? Revisiting the use of code embeddings in software engineering tasks,” Empirical Software Engineering , vol. 27, no. 3, p. 63, Mar. 2022. [Online]. Available: https://doi.org/10.1007/s10664-022-10118-5 [5] J. Zhang, T. Mytkowicz, M. Kaufman, R. Piskac, and S. K. Lahiri, “Using pre-trained language models to resolve textual and semantic merge conflicts (experience paper),” in Proceedings of the 31st ACM SIGSOFT International Symposium on Software Testing and Analysis , ser. ISSTA 2022. New York, NY, USA: Association for Computing Machinery, Jul. 2022, pp. 77–88. [Online]. Available: https://dl.acm.org/doi/10.1145/3533767.3534396 [6] M. Mitchell, S. Wu, A. Zaldivar, P. Barnes, L. Vasserman et al. ,“Model cards for model reporting,” in Proceedings of the Conference on Fairness, Accountability, and Transparency , ser. FAT*’19. New York, NY, USA: Association for Computing Machinery, 2019, p. 220–229. [Online]. Available: https://doi-org.univaq.idm.oclc.org/10. 1145/3287560.3287596
+
+[7] J. Casta˜ no, S. Mart´ ınez-Fern´ andez, X. Franch, and J. Bogner, “Analyzing the Evolution and Maintenance of ML Models on Hugging Face,” Nov. 2023, arXiv:2311.13380 [cs]. [Online]. Available: http://arxiv.org/abs/2311.13380 [8] F. Pepe, V. Nardone, A. Mastropaolo, G. Bavota, G. Canfora, and M. Di Penta, “How do hugging face models document datasets, bias, and licenses? an empirical study,” in Proceedings of the 32nd IEEE/ACM International Conference on Program Comprehension , ser. ICPC ’24. New York, NY, USA: Association for Computing Machinery, 2024, p. 370–381. [Online]. Available: https://doi.org/10.1145/3643916.3644412 [9] A. Ait, J. L. C. Izquierdo, and J. Cabot, “HFCommunity: ATool to Analyze the Hugging Face Hub Community,” in 2023 IEEE International Conference on Software Analysis, Evolution and Reengineering (SANER) , Mar. 2023, pp. 728–732, iSSN: 2640-7574. [Online]. Available: https://ieeexplore.ieee.org/document/10123660 [10] “Pygithub documentation,” https://pygithub.readthedocs.io/en/stable/, accessed: 2024-03-11. [11] C. Di Sipio, J. Di Rocco, D. Di Ruscio, and S. Palombo, “Cofexhug: A curated dataset of huggingface pre- trained models exploited in the github ecosystem,” Dec. 2024. [Online]. Available: https://doi.org/10.5281/zenodo.14267550 [12] D. Montes, P. Peerapatanapokin, J. Schultz, C. Guo, W. Jiang et al. ,“Discrepancies among pre-trained deep neural networks: a new threat to model zoo reliability,” in Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering , ser. ESEC/FSE 2022. New York, NY, USA: Association for Computing Machinery, Nov. 2022, pp. 1605–1609. [Online]. Available: https://dl.acm.org/doi/10.1145/3540250.3560881 [13] “Mysql connector/python,” https://pypi.org/project/ mysql-connector-python/, accessed: 2024-03-11. [14] “Mongodb,” https://www.mongodb.com/, accessed: 2024-03-11. [15] H. Vinutha, B. Poornima, and B. Sagar, “Detection of outliers using interquartile range technique from intrusion dataset,” in Information and decision sciences: Proceedings of the 6th international conference on ficta . Springer, 2018, pp. 511–518. [16] H. Zhong, T. Xie, L. Zhang, J. Pei, and H. Mei, “Mapo: Mining and recommending api usage patterns,” in ECOOP 2009–Object-Oriented Programming: 23rd European Conference, Genoa, Italy, July 6-10, 2009. Proceedings 23 . Springer, 2009, pp. 318–343. [17] F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel, B. Thirion, O. Grisel, M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, J. Vander-plas, A. Passos, D. Cournapeau, M. Brucher, M. Perrot, and E. Duch-esnay, “Scikit-learn: Machine learning in Python,” Journal of Machine Learning Research , vol. 12, pp. 2825–2830, 2011. [18] Z. Feng, D. Guo, D. Tang, N. Duan, X. Feng, M. Gong, L. Shou, B. Qin, T. Liu, D. Jiang, and M. Zhou, “Codebert: A pre-trained model for programming and natural languages,” 2020. [Online]. Available: https://arxiv.org/abs/2002.08155 [19] J. Fowkes and C. Sutton, “Parameter-free Probabilistic API Mining Across GitHub,” in 24th ACM SIGSOFT International Symposium on Foundations of Software Engineering . New York: ACM, 2016, pp. 254–265. [20] P. T. Nguyen, J. Di Rocco, D. Di Ruscio et al. , “FOCUS: ARecommender System for Mining API Function Calls and Usage Patterns,” in Proceedings of the 41st International Conference on Software Engineering , ser. ICSE ’19. Piscataway, NJ, USA: IEEE Press, 2019, pp. 1050–1060. [Online]. Available: https: //doi.org/10.1109/ICSE.2019.00109 [21] J. Wang, Y. Dang, H. Zhang, K. Chen, T. Xie, and D. Zhang, “Mining succinct and high-coverage api usage patterns from source code,” in 
+
+2013 10th Working Conference on Mining Software Repositories (MSR) ,2013, pp. 319–328. [22] S. Abid, S. Shamail, H. A. Basit, and S. Nadi, “Facer: An api usage-based code-example recommender for opportunistic reuse,” 
+
+Empirical Softw. Engg. , vol. 26, no. 6, Nov. 2021. [Online]. Available: https://doi.org/10.1007/s10664-021-10000-w [23] A. Grattafiori, A. Dubey, A. Jauhri, A. Pandey et al. , “The llama 3 herd of models,” 2024. [Online]. Available: https://arxiv.org/abs/2407.21783 [24] F. Palomba, G. Bavota, M. Di Penta, F. Fasano, R. Oliveto, and A. De Lucia, “On the diffuseness and the impact on maintainability of code smells: a large scale empirical investigation,” in Proceedings of the 40th International Conference on Software Engineering , ser. ICSE ’18. New York, NY, USA: Association for Computing Machinery, 2018, p. 482. [Online]. Available: https://doi.org/10.1145/3180155.3182532 [25] G. Recupito, F. Pecorelli, G. Catolino, V. Lenarduzzi, D. Taibi, D. Di Nucci, and F. Palomba, “Technical debt in ai-enabled systems: On the prevalence, severity, impact, and management strategies for code and architecture,” Journal of Systems and Software , vol. 216, p. 112151, 2024. [Online]. Available: https: //www.sciencedirect.com/science/article/pii/S0164121224001961 [26] F. Khomh, M. D. Penta, Y.-G. Gu´ eh´ eneuc, and G. Antoniol, “An exploratory study of the impact of antipatterns on class change-and fault-proneness,” Empirical Software Engineering , vol. 17, no. 3, pp. 243–275, Jun. 2012. [Online]. Available: https://doi.org/10.1007/ s10664-011-9171-y [27] L. Gong, J. Zhang, M. Wei, H. Zhang, and Z. Huang, “What Is the Intended Usage Context of This Model? An Exploratory Study of Pre-Trained Models on Various Model Repositories,” ACM Transactions on Software Engineering and Methodology , vol. 32, no. 3, pp. 69:1–69:57, May 2023. [Online]. Available: https://dl.acm.org/doi/10.1145/3569934 [28] H. Gao, M. Zahedi, C. Treude, S. Rosenstock, and M. Cheong, “Documenting ethical considerations in open source ai models,” in 
+
+Proceedings of the 18th ACM/IEEE International Symposium on Empirical Software Engineering and Measurement , ser. ESEM ’24. New York, NY, USA: Association for Computing Machinery, 2024, p. 177–188. [Online]. Available: https://doi.org/10.1145/3674805.3686679 [29] C. Di Sipio, R. Rubei, J. Di Rocco, D. Di Ruscio, and P. T. Nguyen, “Automated categorization of pre-trained models in software engineering: A case study with a hugging face dataset,” in Proceedings of the 28th International Conference on Evaluation and Assessment in Software Engineering , ser. EASE ’24. New York, NY, USA: Association for Computing Machinery, 2024, p. 351–356. [Online]. Available: https://doi.org/10.1145/3661167.3661215 [30] S. Abid, S. Shamail, H. A. Basit, and S. Nadi, “FACER: An API usage-based code-example recommender for opportunistic reuse,” 
+
+Empirical Software Engineering , vol. 26, no. 6, p. 110, Aug. 2021. [Online]. Available: https://doi.org/10.1007/s10664-021-10000-w [31] T. D. Nguyen, A. T. Nguyen, H. D. Phan, and T. N. Nguyen, “Exploring API Embedding for API Usages and Applications,” in 2017 IEEE/ACM 39th International Conference on Software Engineering (ICSE) . Buenos Aires: IEEE, May 2017, pp. 438–449. [Online]. Available: http://ieeexplore.ieee.org/document/7985683/ [32] Y. Xiao, W. Song, J. Qi, B. Viswanath, P. McDaniel, and D. Yao, “Specializing Neural Networks for Cryptographic Code Completion Applications,” IEEE Transactions on Software Engineering ,vol. 49, no. 6, pp. 3524–3535, Jun. 2023, conference Name: IEEE Transactions on Software Engineering. [Online]. Available: https://ieeexplore.ieee.org/document/10097631 [33] N. Jain, S. Vaidyanath, A. Iyer, N. Natarajan, S. Parthasarathy, S. Rajamani, and R. Sharma, “Jigsaw: large language models meet program synthesis,” in Proceedings of the 44th International Conference on Software Engineering , ser. ICSE ’22. New York, NY, USA: Association for Computing Machinery, Jul. 2022, pp. 1219–1231. [Online]. Available: https://dl.acm.org/doi/10.1145/3510003.3510203

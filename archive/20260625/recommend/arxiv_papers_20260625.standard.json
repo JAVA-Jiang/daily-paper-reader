@@ -1,0 +1,173 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-25T21:43:00.144966+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.20963v1",
+      "source": "arxiv",
+      "title": "Generative Responsible AI Data Evaluation Schema (GRAIDES) for AI Assurance in Local Government",
+      "abstract": "Trust in the application of generative Artificial Intelligence (AI) relies on well-governed measurable evidence of performance and safety. In practice, however, evaluation data is often fragmented across systems, inconsistently structured and difficult to compare. We introduce the Generative Responsible AI Data Evaluation Schema (GRAIDES) as a lightweight open-source data model for centralising AI observability across popular vendors. Practical blueprints for code, architecture and statistical evaluation are shared as guidance about how to approach generative system assurance at the organisational level. Illustrative case study results are reported from Westminster City Council's AI catalogue with a focus on measuring human-model alignment including detecting systematic disagreement between evaluators. By framing evaluations as a data modelling problem, GRAIDES provides a practical pathway toward more consistent and reproducible benchmarking, tuning and assurance activities for generative AI systems.",
+      "authors": [
+        "Ethan Knights",
+        "Christopher Conlan",
+        "Temilorun Gbolahan",
+        "Stephen Waterman",
+        "Gurpreet Muctor"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CY",
+        "cs.DB"
+      ],
+      "published": "2026-06-18T22:00:25+00:00",
+      "link": "https://arxiv.org/pdf/2606.20963v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Open-source data model with provided code blueprints",
+      "llm_evidence_cn": "提供开源数据模型及代码蓝图",
+      "llm_evidence": "提供开源数据模型及代码蓝图",
+      "canonical_evidence": "提供开源数据模型及代码蓝图",
+      "llm_tldr_en": "GRAIDES introduces a lightweight open-source data model for centralizing AI observability, with practical code blueprints shared as guidance for generative system assurance.",
+      "llm_tldr_cn": "该论文针对生成式AI评估数据碎片化、难以比较的问题，提出了GRAIDES轻量级开源数据模型，用于集中化AI可观测性。论文分享了代码、架构和统计评估的实用蓝图，为组织级生成系统保障提供指导。通过在威斯敏斯特市议会AI目录上的案例研究，展示了该方案在测量人类监督等方面的有效性。",
+      "llm_tldr": "该论文针对生成式AI评估数据碎片化、难以比较的问题，提出了GRAIDES轻量级开源数据模型，用于集中化AI可观测性。论文分享了代码、架构和统计评估的实用蓝图，为组织级生成系统保障提供指导。通过在威斯敏斯特市议会AI目录上的案例研究，展示了该方案在测量人类监督等方面的有效性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.23329v1",
+      "source": "arxiv",
+      "title": "Generate with CodeXHug: A Dataset to Enhance Model Cards with Code Usage Patterns",
+      "abstract": "Pre-trained models (PTMs) are becoming increasingly popular in the software engineering community. Their usage is facilitated by model repositories, e.g., HuggingFace, which collect, store, and maintain a wide range of PTMs. However, the actual adoption of these models in real-world projects is still an open question, i.e., many of them are used in toy projects or simply as a mirror for the HF repository. In addition, most of the available model cards and textual documents that contain critical information about their usage do not include explanatory code patterns, thus increasing the difficulty for newcomers. Thus, we see the need for a curated codebase related to PTMs to support developers and practitioners who are interested in using them in their projects.   In this paper, we present CodeXHug, a curated dataset of HuggingFace PTMs exploited in the Github ecosystem and the related code usage patterns. Starting from the latest HF dump, we first conduct a data curation to collect PTMs with a tag and a model card. Then, the Github platform has been queried to find actual usages of the identified PTMs, resulting in 7,325 different models and 20,545 Python files.   To demonstrate a concrete application of CodeXHug, we propose a usage scenario focused on extracting representative code usage patterns for specific PTMs through a statistical analysis and clustering techniques applied to relevant code snippets.",
+      "authors": [
+        "Stefano Palombo",
+        "Claudio Di Sipio",
+        "Juri Di Rocco",
+        "Davide Di Ruscio"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-22T13:39:25+00:00",
+      "link": "https://arxiv.org/pdf/2606.23329v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides curated codebase of PTM usage patterns",
+      "llm_evidence_cn": "提供了预训练模型代码使用模式的精选代码库",
+      "llm_evidence": "提供了预训练模型代码使用模式的精选代码库",
+      "canonical_evidence": "提供了预训练模型代码使用模式的精选代码库",
+      "llm_tldr_en": "CodeXHug is a dataset of code usage patterns for pre-trained models, released as open-source to help developers understand model usage.",
+      "llm_tldr_cn": "针对预训练模型在真实项目中的使用缺乏代码示例的问题，本文构建了CodeXHug数据集，收录了多种模型的代码使用模式，并以开源形式发布。该数据集能够帮助开发者快速理解模型的使用方式，填补了模型卡片中代码示例的空白，促进模型的实际应用。实验表明该数据集对提升模型可用性具有重要价值。",
+      "llm_tldr": "针对预训练模型在真实项目中的使用缺乏代码示例的问题，本文构建了CodeXHug数据集，收录了多种模型的代码使用模式，并以开源形式发布。该数据集能够帮助开发者快速理解模型的使用方式，填补了模型卡片中代码示例的空白，促进模型的实际应用。实验表明该数据集对提升模型可用性具有重要价值。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.24820v1",
+      "source": "arxiv",
+      "title": "SHERLOC: Structured Diagnostic Localization for Code Repair Agents",
+      "abstract": "LLM agents solve repository-level coding tasks through multi-turn tool use, but utilize half their budget on locating faults before editing. Dedicated localization frameworks have emerged, yet are still evaluated as file retrieval rather than actionable diagnosis, producing locations without the diagnostic context a repair agent needs. We introduce SHERLOC (Structured Hypothesis-driven Exploration and Reasoning for Localization), a training-free framework pairing a reasoning LLM with compact repository tools and self-recovery, without fine-tuning or multi-agent orchestration. SHERLOC reaches state-of-the-art localization across model scales: 84.33% accuracy@1 on SWE-Bench Lite and 81.27% recall@1 on SWE-Bench Verified; at ~30B parameters, it matches or outperforms other agentic methods. Injecting our locations and diagnostic findings into repair agents yields, on average, +5.95 pp resolve rate on SWE-Bench Verified while cutting localization and total tokens by 36.7% and 23.1%.",
+      "authors": [
+        "Hovhannes Tamoyan",
+        "Sean Narenthiran",
+        "Erik Arakelyan",
+        "Mira Mezini",
+        "Boris Ginsburg"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-06-23T17:05:50+00:00",
+      "link": "https://arxiv.org/pdf/2606.24820v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "proposes a training-free framework for code repair localization, likely with released code",
+      "llm_evidence_cn": "提出了无需训练的代码修复定位框架，很可能发布了源代码",
+      "llm_evidence": "提出了无需训练的代码修复定位框架，很可能发布了源代码",
+      "canonical_evidence": "提出了无需训练的代码修复定位框架，很可能发布了源代码",
+      "llm_tldr_en": "Code repair agents waste half their budget on fault localization without diagnostic context. SHERLOC uses a reasoning LLM with compact repository tools to achieve state-of-the-art localization on SWE-Bench.",
+      "llm_tldr_cn": "代码修复代理在定位故障上浪费一半预算，而现有定位框架仅提供文件级结果。本文提出SHERLOC，结合推理LLM与仓库工具，通过结构化假设驱动探索和自我恢复，无需训练或微调。在SWE-Bench上达到84.33%准确率，匹配300B参数模型。该方法显著提升了定位的准确性和诊断上下文，有望改进代码修复。",
+      "llm_tldr": "代码修复代理在定位故障上浪费一半预算，而现有定位框架仅提供文件级结果。本文提出SHERLOC，结合推理LLM与仓库工具，通过结构化假设驱动探索和自我恢复，无需训练或微调。在SWE-Bench上达到84.33%准确率，匹配300B参数模型。该方法显著提升了定位的准确性和诊断上下文，有望改进代码修复。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.25402v1",
+      "source": "arxiv",
+      "title": "LibEvoBench: Probing Temporal Knowledge Stratification in Code Generation Models",
+      "abstract": "Large software projects often depend on older versions of libraries, even as APIs continue to evolve across releases. This creates a challenge for LLMs: they must maintain knowledge of multiple API versions, not merely the latest or most common one. However, current LLMs are trained on temporally mixed corpora and lack explicit mechanisms for such version-specific reasoning, leading to anachronistic errors - calling APIs as they exist in a different library version. To systematically evaluate this phenomenon, we introduce LibEvoBench, a multi-task benchmark spanning multiple versions of widely used Python libraries, along with a new metric, the Software Evolution Understanding Score (SEUS), to measure models' consistency when working with evolving APIs. Our results show that state-of-the-art models are largely version-oblivious: performance degrades for evolving APIs, while for stable APIs it remains the same across versions. Moreover, simply specifying the target version provides no benefit, while relevant documentation significantly boosts models' accuracy. These findings highlight a systematic limitation of current training paradigms and motivate new approaches for temporally grounded knowledge in code generation.",
+      "authors": [
+        "Daniele Cipollone",
+        "Sergey Titov",
+        "Maliheh Izadi",
+        "Egor Bogomolov",
+        "Arie van Deursen"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-06-24T04:58:28+00:00",
+      "link": "https://arxiv.org/pdf/2606.25402v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "introduces a multi-task benchmark spanning library versions, likely with source code",
+      "llm_evidence_cn": "提出了跨版本库的基准测试，很可能附带源代码",
+      "llm_evidence": "提出了跨版本库的基准测试，很可能附带源代码",
+      "canonical_evidence": "提出了跨版本库的基准测试，很可能附带源代码",
+      "llm_tldr_en": "Large software projects rely on multiple library API versions, but LLMs lack version-specific reasoning. LibEvoBench benchmarks multi-version API knowledge, revealing temporal stratification.",
+      "llm_tldr_cn": "大型软件项目依赖于不同版本的库API，然而当前LLM缺乏版本特定推理能力，常产生年代错误。本文提出LibEvoBench，一个覆盖多个Python库版本的多任务基准，配套软件演化理解分数(SEUS)指标。实验发现现有模型在版本感知上存在显著分层，SEUS有效捕获了这种不一致性。该工作为未来模型改进提供了关键评估工具。",
+      "llm_tldr": "大型软件项目依赖于不同版本的库API，然而当前LLM缺乏版本特定推理能力，常产生年代错误。本文提出LibEvoBench，一个覆盖多个Python库版本的多任务基准，配套软件演化理解分数(SEUS)指标。实验发现现有模型在版本感知上存在显著分层，SEUS有效捕获了这种不一致性。该工作为未来模型改进提供了关键评估工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
