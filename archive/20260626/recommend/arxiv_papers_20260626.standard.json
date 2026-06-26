@@ -1,0 +1,247 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-26T21:25:55.591506+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2606.25778v1",
+      "source": "arxiv",
+      "title": "Fuzzy Quantification over OWL Ontologies and Knowledge Graphs",
+      "abstract": "This paper presents a versatile framework for evaluating fuzzy quantification queries over both standard and fuzzy ontologies as well as knowledge graphs. The primary objective is the retrieval of individuals that satisfy queries articulated via Type I or Type II fuzzy quantified expressions. A key advantage of the proposed approach is its inherent adaptability: it remains entirely agnostic to the quantifier type, the underlying evaluation method, and the specific data source of the ontology (i.e., OWL ontologies or RDFS knowledge graphs). Furthermore, we present Q2S2, a publicly accessible implementation of this system developed to support future research.",
+      "authors": [
+        "Enrique Palacín",
+        "Fernando Bobillo",
+        "Ignacio Huitzil",
+        "Francesca A. Lisi",
+        "Umberto Straccia"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-24T12:56:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.25778v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "publicly accessible implementation (Q2S2)",
+      "llm_evidence_cn": "公开可用的实现Q2S2",
+      "llm_evidence": "公开可用的实现Q2S2",
+      "canonical_evidence": "公开可用的实现Q2S2",
+      "llm_tldr_en": "Presents a framework for fuzzy quantification over ontologies and knowledge graphs, with a publicly accessible implementation Q2S2.",
+      "llm_tldr_cn": "针对模糊量化查询在本体和知识图谱上的评估问题，提出一个与量化词类型、评估方法和数据源无关的通用框架。并提供了公开可用的系统实现Q2S2，以支持未来研究。尽管提供了代码，但领域与电网、数据中心等无关。",
+      "llm_tldr": "针对模糊量化查询在本体和知识图谱上的评估问题，提出一个与量化词类型、评估方法和数据源无关的通用框架。并提供了公开可用的系统实现Q2S2，以支持未来研究。尽管提供了代码，但领域与电网、数据中心等无关。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.25922v1",
+      "source": "arxiv",
+      "title": "Interference-Aware Cross-Application Placement: A Multi-Objective Optimization Approach for Microservice Clusters",
+      "abstract": "In modern cloud architectures, multiple applications often run within the same clustered environment, sharing underlying resources. This resource sharing can cause interference among applications, leading to degraded latency and reduced system stability. As containerized microservices become increasingly central to cloud-native applications, their performance can suffer from complex interference scenarios related to resource competition. Meanwhile, most existing microservice approaches address interference either by detecting and localizing performance issues or by optimizing latency alone, without explaining why specific co-locations cause cross-application interference, and how this can inform service placement optimization. This work closes that gap by building a spatio-temporal data structure that captures the causal effects of cross-application interference. These causal effects are mathematically formalized as necessary and sufficient conditional probabilities that inform a multi-objective optimizer (Optuna). Cross-application profiling is used to simulate traces and estimate interference probabilities, while per-service latency baselines are provided by performance data, such as 95th-percentile response times (p95). Our approach supports network penalties, application isolation requirements, and adjustable weighting of necessary and sufficient causal metrics. Experimental results on real multi-application workloads show that interference-aware placements significantly reduce cross-application interference and improve response performance. Ultimately, the causality-driven multi-objective formulation gives cloud operators explicit control over interference, latency, and communication overhead when configuring service placements.",
+      "authors": [
+        "Iqra Zafar",
+        "Christian Medeiros Adriano",
+        "Holger Giese"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-06-24T15:01:24+00:00",
+      "link": "https://arxiv.org/pdf/2606.25922v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "task scheduling in microservice clusters",
+      "llm_evidence_cn": "微服务集群中的任务调度",
+      "llm_evidence": "微服务集群中的任务调度",
+      "canonical_evidence": "微服务集群中的任务调度",
+      "llm_tldr_en": "Proposes interference-aware cross-application placement for microservice clusters using multi-objective optimization to address resource competition and latency degradation.",
+      "llm_tldr_cn": "现有云环境中多应用共享资源导致干扰，降低延迟和稳定性。本文提出一种干扰感知的跨应用放置方法，采用多目标优化框架，不仅检测干扰还解释为何特定共置会引发问题，并据此优化服务部署。实验表明该方法能有效减少干扰，提升系统性能。",
+      "llm_tldr": "现有云环境中多应用共享资源导致干扰，降低延迟和稳定性。本文提出一种干扰感知的跨应用放置方法，采用多目标优化框架，不仅检测干扰还解释为何特定共置会引发问题，并据此优化服务部署。实验表明该方法能有效减少干扰，提升系统性能。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.22590v1",
+      "source": "arxiv",
+      "title": "Dynamic Resilience Assessment of Power Systems With Data Center Load Events Using Physics-Informed Neural Networks",
+      "abstract": "Large data center loads introduce new resilience challenges to power systems because their disconnection and staged reconnection can induce fast voltage and frequency dynamics that are not captured by static service-status or energy-based metrics. This paper proposes a utility-side, physics-informed resilience assessment framework that evaluates these events using only grid-side dynamic models and observable post-disturbance trajectories, without requiring detailed internal data center models. An unsupervised differential algebraic equation-physics informed neural network (DAE-PINN) based on an implicit backward Euler residual is developed to jointly predict dynamic and algebraic states, enabling repeated post-disturbance trajectory evaluation while enforcing network algebraic consistency. Normalized multi-phase resilience metrics are then used to quantify disturbance, degraded-state, and restoration-period impacts and to screen data center reconnection timing and load-ramping strategies under security constraints. Case studies on a modified IEEE 33-bus feeder show that the proposed DAE-PINN accurately tracks numerical DAE solutions and substantially reduces computation time in repeated restoration screening. The proposed metrics distinguish the effects of disturbance size, data center location, and reconnection strategy, revealing the trade-off between restoration speed and transient resilience loss.",
+      "authors": [
+        "Chen Chao",
+        "Zixiao Ma",
+        "Ziang Zhang"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-06-21T16:54:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.22590v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "power systems with data center load events using PINN",
+      "llm_evidence_cn": "使用物理信息神经网络评估电力系统数据中心负载事件的韧性",
+      "llm_evidence": "使用物理信息神经网络评估电力系统数据中心负载事件的韧性",
+      "canonical_evidence": "使用物理信息神经网络评估电力系统数据中心负载事件的韧性",
+      "llm_tldr_en": "Proposes physics-informed neural network for resilience assessment of power systems under data center load events, using grid-side dynamic models.",
+      "llm_tldr_cn": "该论文提出了一种基于物理信息神经网络（PINN）的电力系统韧性评估框架，针对数据中心负载事件（如断开和分阶段重连）引起的快速电压和频率动态。方法无需内部数据中心模型，仅使用电网侧动态模型和可观测的扰动后轨迹，通过DAE-PINN联合预测动态和代数状态。实验在IEEE测试系统上验证了其有效性，为电力系统运行人员提供了实用评估工具。",
+      "llm_tldr": "该论文提出了一种基于物理信息神经网络（PINN）的电力系统韧性评估框架，针对数据中心负载事件（如断开和分阶段重连）引起的快速电压和频率动态。方法无需内部数据中心模型，仅使用电网侧动态模型和可观测的扰动后轨迹，通过DAE-PINN联合预测动态和代数状态。实验在IEEE测试系统上验证了其有效性，为电力系统运行人员提供了实用评估工具。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.20243v1",
+      "source": "arxiv",
+      "title": "Phoenix: Safe GitHub Issue Resolution via Multi-Agent LLMs",
+      "abstract": "We present Phoenix, a multi-agent LLM system that resolves GitHub issues from triage through pull-request creation, combining seven layered safety controls with a baseline-aware test evaluation strategy. Phoenix decomposes the work across six specialized agents. Planner, reproducer, coder, tester, failure analyst and Pull Request (PR) agent, all coordinated by a label-based GitHub webhook state machine. Every change is checked against a baseline test run before a pull request is opened. On a 24-instance slice of SWE-bench Lite. run on the production webhook path, Phoenix oracle-resolves 75% of instances with no pass-to-pass regressions on successful runs; this curated slice is not directly comparable to full-split leaderboard results, and we discuss the limits of the comparison. A complementary pilot on 42 real issues across 14 repositories yields 100% correctness preservation (CP; mean 122s on the hard tier). Manual inspection shows that about half of the resulting pull requests are well-targeted fixes. The other half place code at incorrect paths, a planner localization limitation we are addressing with retrieval. We also report the deployment failure modes (WAF filtering, token expiry, permission boundaries, flaky CI) that motivated each safety mechanism.",
+      "authors": [
+        "Kipngeno Koech",
+        "Muhammad Adam",
+        "Baimam Boukar Jean Jacques",
+        "Joao Barros"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.MA"
+      ],
+      "published": "2026-06-18T13:56:12+00:00",
+      "link": "https://arxiv.org/pdf/2606.20243v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multi-agent LLM system for GitHub issues, likely provides code",
+      "llm_evidence_cn": "用于GitHub问题的多智能体LLM系统，很可能提供代码",
+      "llm_evidence": "用于GitHub问题的多智能体LLM系统，很可能提供代码",
+      "canonical_evidence": "用于GitHub问题的多智能体LLM系统，很可能提供代码",
+      "llm_tldr_en": "Phoenix is a multi-agent system with safety controls that resolves GitHub issues automatically, likely releasing code.",
+      "llm_tldr_cn": "自动解决GitHub问题面临安全挑战。Phoenix采用六智能体协作架构，结合七层安全控制与基线测试策略。在SWE-bench Lite子集上达到75%的解决率，且无回退回归，展示了可靠的问题修复能力。",
+      "llm_tldr": "自动解决GitHub问题面临安全挑战。Phoenix采用六智能体协作架构，结合七层安全控制与基线测试策略。在SWE-bench Lite子集上达到75%的解决率，且无回退回归，展示了可靠的问题修复能力。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.22082v1",
+      "source": "arxiv",
+      "title": "CodeTeam: An LLM-Powered Multi-Agent Framework for Repository-Level Code Generation",
+      "abstract": "Natural language to repository generation (NL2Repo) requires a system to construct an entire software repository from a natural-language requirements document. Compared with function-level code generation, this task demands longer planning horizons, stable interfaces across files, and iterative debugging of cross-file inconsistencies. To address these challenges, we propose CodeTeam, an LLM-based multi-agent framework that separates planning, decision making, and implementation into distinct, coordinated stages. In the planning stage, multiple Architect agents draft competing software design sketches (SDS), optionally grounded by retrieved design references. A CTO agent then evaluates, selects, and normalizes the most promising SDS into a machine-checkable contract that specifies file ownership, public interfaces, and dependency constraints. In the implementation stage, Developer agents generate code under a dependency-aware scheduler with bounded context and lightweight Git-based coordination, while a QA agent runs tests and drives iterative repairs. On the synthesis-based SketchEval benchmark, we explicitly compare CodeTeam's prompt-engineering (PE) and supervised fine-tuning (SFT) variants with the corresponding CodeS variants, where CodeTeam improves the overall SketchBLEU by 4.1 and 2.9 absolute points, respectively. On the execution-based NL2Repo-Bench benchmark, used as an external validation protocol, CodeTeam achieves the highest average test pass rate in both settings (34.6% PE, 42.3% SFT), confirming that the sketch-improvements extend to functional correctness under upstream test suites. Ablation results show that project-specific developer allocation and retrieval-augmented planning each contribute substantially to the SketchBLEU improvement (9.9% and 8.1% relative, respectively). CodeTeam and the experimental results are available at https://github.com/WhitenWhiten/CodeTeam",
+      "authors": [
+        "Yifei Wang",
+        "Ruiyin Li",
+        "Peng Liang",
+        "Qiong Feng",
+        "Zengyang Li",
+        "Mojtaba Shahin",
+        "Arif Ali Khan"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-06-20T14:57:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.22082v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "code generation framework, likely open-source",
+      "llm_evidence_cn": "代码生成框架，可能开源",
+      "llm_evidence": "代码生成框架，可能开源",
+      "canonical_evidence": "代码生成框架，可能开源",
+      "llm_tldr_en": "CodeTeam is a multi-agent framework for repository-level code generation from natural language, likely providing source code, but unrelated to task scheduling in data centers.",
+      "llm_tldr_cn": "CodeTeam是一个基于LLM的多智能体框架，用于从自然语言需求生成整个代码仓库。它通过多个架构师智能体协同设计、CTO智能体评估选择，实现了跨文件的代码生成。该框架很可能提供开源代码，但与任务调度、数据中心等需求不直接相关。",
+      "llm_tldr": "CodeTeam是一个基于LLM的多智能体框架，用于从自然语言需求生成整个代码仓库。它通过多个架构师智能体协同设计、CTO智能体评估选择，实现了跨文件的代码生成。该框架很可能提供开源代码，但与任务调度、数据中心等需求不直接相关。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.22586v1",
+      "source": "arxiv",
+      "title": "Text2DSL: LLM-Based Code Generation for Domain-Specific Languages",
+      "abstract": "Domain-specific languages (DSLs) are widely used for managing operating system security policies, yet manually authoring rules in such languages demands high expertise and is error-prone. This paper formalises the task of automatic DSL code generation from natural language descriptions - Text2DSL - as a distinct problem class, separate from Text-to-SQL and general-purpose code generation. We introduce the PolkitBench dataset comprising 4,204 verified natural-language-to-Polkit-rule pairs, each validated through a three-level AST-based pipeline. Controlled prompt experiments on two MoE models of different scale and provenance - GigaChat-10B-A1.8B (1.8B active parameters) and Nemotron-3-Nano-30B-A3B (3B active) - demonstrate the critical role of structured context (BNF grammar, API specification, permitted identifier vocabulary) for LLM-based DSL code generation. Across both models, supplying context raises syntactic validity to 98.6-99.4%, structural validity by +9.7 to +35.5 pp, and the CodeBLEU score by +60% to +95%. The consistency of the effect across models of different scale and provenance indicates that, for the Text2DSL class of problems, injecting a formal target-language specification into the prompt context is a robust enabling factor for high-quality generation without model fine-tuning.",
+      "authors": [
+        "Alexander V. Kozachok",
+        "Alexander M. Nazimov",
+        "Shamil G. Magomedov"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-06-21T16:44:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.22586v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "introduces PolkitBench dataset with verified pairs, likely includes code",
+      "llm_evidence_cn": "引入PolkitBench数据集及验证管道，很可能包含代码",
+      "llm_evidence": "引入PolkitBench数据集及验证管道，很可能包含代码",
+      "canonical_evidence": "引入PolkitBench数据集及验证管道，很可能包含代码",
+      "llm_tldr_en": "Text2DSL formalizes generation of DSL code from natural language, releasing a dataset and demonstrating structured prompting's role.",
+      "llm_tldr_cn": "领域特定语言（DSL）的编写需要专业知识且易错。本文形式化Text2DSL任务，构建PolkitBench数据集（4204对自然语言到策略规则），并提出三层AST验证管道。实验表明结构化提示对模型性能至关重要。",
+      "llm_tldr": "领域特定语言（DSL）的编写需要专业知识且易错。本文形式化Text2DSL任务，构建PolkitBench数据集（4204对自然语言到策略规则），并提出三层AST验证管道。实验表明结构化提示对模型性能至关重要。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
