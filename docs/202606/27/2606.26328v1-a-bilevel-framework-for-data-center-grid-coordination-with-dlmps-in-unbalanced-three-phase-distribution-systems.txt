@@ -1,0 +1,556 @@
+Title: A Bilevel Framework for Data Center-Grid Coordination with DLMPs in Unbalanced Three-Phase Distribution Systems
+
+URL Source: https://arxiv.org/pdf/2606.26328v1
+
+Published Time: Fri, 26 Jun 2026 00:10:02 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# A Bilevel Framework for Data Center-Grid Coordination with DLMPs in Unbalanced Three-Phase Distribution Systems 
+
+Arash Baharvandi, Student Member, IEEE and Duong Tung Nguyen, Member, IEEE 
+
+Abstract —This paper proposes a grid-aware coordination framework between data centers and distribution grids using a DLMP-based bilevel optimization model. The data center aggregator (DCA) determines active power demand in response to distribution locational marginal prices (DLMPs), while the distribution system operator (DSO) solves a network-constrained optimal power flow problem to determine DLMPs in an unbal-anced three-phase system. The model incorporates both active and reactive power consumption of data centers to evaluate their impacts on voltage regulation and phase imbalance. To mitigate adverse network effects, two operating cases are analyzed: without reactive power compensation and with static var generator (SVG)-based compensation. The proposed approach is validated on the IEEE 37-bus unbalanced distribution test system. Simulation results show that DLMP-based coordination captures economi-cally efficient data center operation, and phase- and location-dependent network conditions, while SVG-based compensation improves voltage profiles and reduces phase unbalance. 
+
+Index Terms —Bilevel optimization, Data center aggregator, Distribution locational marginal pricing, Unbalanced three-phase distribution systems, Voltage control. 
+
+I. I NTRODUCTION 
+
+The rapid growth of cloud computing, social networks, big data, and Internet of Things (IoT) has driven large-scale data center expansion worldwide. As capacity and energy demand rise, the data center rack market is projected to grow from $4.6 billion in 2025 to $9.1 billion by 2034 [1]. Data centers already accounted for about 3% of global electricity consumption in 2016 [2], and with emerging artificial intelligence workloads, their energy use may reach up to 21% of global demand by 2030, creating major challenges for efficient and reliable power system operation. Several studies have examined the role of data centers in supporting power system operation [3]–[6]. Delay-tolerant workloads can serve as flexible resources to improve renewable energy integration and operational efficiency through optimal scheduling [3]. Geo-distributed data centers have been coor-dinated to reduce operational costs by considering electricity prices, renewable generation, and energy storage [4]. They can also participate in local flexibility markets to support coordinated regional energy management and balance flexi-bility supply and demand [5]. In addition, data centers have been modeled as flexible loads for wind power integration 
+
+The authors are with the School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ, United States. Email: 
+
+{abaharv1, duongnt }@asu.edu. 
+
+and curtailment mitigation under uncertainty using stochastic scheduling [6]. Several studies have used bilevel optimization [7] to model data center–grid coordination [8]–[11]. These frameworks com-monly design grid-side pricing strategies to guide workload distribution across geographically dispersed data centers, im-proving load balancing and reducing operational costs [8]. Stackelberg game models capture hierarchical decisions, where the grid sets pricing signals and data centers optimize workload allocation for economic performance [9]. Data center flexibil-ity has also been coordinated through incentive-based bilevel models to improve system efficiency and renewable energy integration [10]. More recently, distribution locational marginal price (DLMP)-based bilevel frameworks have enabled data centers to schedule workloads and energy storage in response to locational prices while satisfying network constraints [11]. 
+
+However, none of these studies consider unbalanced three-phase distribution systems within a bilevel framework for coordinating data centers and power grids. 
+
+Some studies have incorporated reliability and stability con-siderations when integrating data centers into power grid op-eration [12]–[14]. Dynamic models show that data centers are sensitive to grid disturbances, such as load variations and faults, highlighting the need for accurate representation to ensure reliable operation [12]. Data centers have also been used as computational resources for ancillary services, with optimal job scheduling and service-level agreements improving effi-ciency and reliability [13]. Moreover, variations in data center power consumption can affect grid stability and cause voltage instability, motivating coordinated workload control strategies that maintain performance requirements [14]. However, existing studies do not explicitly capture the impact of data center reactive power consumption on voltage. 
+
+Some studies have investigated voltage unbalance in three-phase distribution networks [15]–[17]. Data center integration can influence phase imbalance, while coordination with dis-tributed energy resources can improve power quality, reliability, and operational efficiency [15]. Bilevel optimization has also been used to mitigate three-phase unbalance in low-voltage sys-tems through optimal phase switch placement while considering investment and operational costs [16]. In addition, coordinated control of distributed resources, such as photovoltaic inverter reactive power, can simultaneously regulate voltage and reduce unbalance [17]. Existing studies do not explicitly capture the impact of data center reactive power consumption on volt-
+
+> arXiv:2606.26328v1 [eess.SY] 24 Jun 2026
+
+age regulation in unbalanced three-phase distribution systems within a bilevel framework. 
+
+To address the aforementioned gaps, this paper proposes a DLMP-based bilevel optimization framework for coordinated operation between data centers and distribution systems. In the proposed approach, the DCA determines its operational strategy in response to pricing signals, while the distribution system operator (DSO) is responsible for the economic dispatch of distributed generations (DGs) while respecting operational and technical constraints, including voltage limits and power flow conditions. The framework explicitly captures the impact of both active and reactive power consumption of data centers on voltage regulation and phase unbalance in unbalanced three-phase distribution systems. In addition, reactive power support is incorporated to mitigate adverse network effects and enhance system performance. The main contributions of this work are summarized as follows:  
+
+> •
+
+Modeling : A DLMP-based bilevel coordination model is developed to quantify the interaction between data center load scheduling and distribution-grid operation in unbalanced three-phase networks. The model explicitly incorporates data center reactive power consumption and evaluates its impact on voltage regulation and phase im-balance.  
+
+> •
+
+Solution Approach : The proposed bilevel problem is reformulated into a tractable single-level optimization problem using Karush–Kuhn–Tucker (KKT) conditions. Standard linearization techniques, including McCormick formulations and binary expansion, are employed to enable efficient computation while preserving the economic and operational interactions between the DCA and DSO.  
+
+> •
+
+Numerical Results : Simulation studies on the IEEE 37-bus unbalanced three-phase test feeder demonstrate how DLMPs influence data center load allocation and how SVG-based reactive power compensation mitigates voltage drops and phase-dependent network stress caused by data center loading. The remainder of this paper is organized as follows. Section II describes the system model, and Section III presents the prob-lem formulation. Simulation results are provided in Section IV, followed by conclusions in Section V. II. S YSTEM MODEL 
+
+In this paper, we consider a data center aggregator (DCA) managing geographically distributed data centers connected to an unbalanced three-phase distribution network. The DCA minimizes operational costs by scheduling active power con-sumption in response to distribution locational marginal prices (DLMPs), while the distribution system operator (DSO) per-forms economic dispatch subject to network, operational, and technical constraints, including power flow and voltage limits. The proposed framework captures the hierarchical coordination between the DCA and DSO, where the DCA responds to pricing signals and the DSO determines DLMPs based on network conditions. The data center power consumption is explicitly modeled because of its impact on voltage profiles and phase unbalance, and reactive power support devices, such TABLE I: NOTATIONS 
+
+Notation Meaning Sets and Indices 
+
+n, N Index and set of buses 
+
+ϕ, Φ Index and set of phases 
+
+g, G, Gn Index and set of distributed generators (DGs), and set of DGs on bus nl,L Index and set of lines 
+
+Lout , Lin Sets of outgoing and incoming lines 
+
+t, T Indices and set of periods 
+
+i, I, N i Indices and set of data center facility, and set of buses with facilities 
+
+Parameters 
+
+Cg,ϕ,t DG cost function 
+
+pdn,ϕ,t , q dn,ϕ,t Active/reactive load at bus n, phase ϕ and time trϕ,ϕ 0 , x ϕ,ϕ 0 Self and mutual impedance between phases 
+
+pg , p g Minimum/maximum active capacity for DG gqg , q g Minimum/maximum reactive capacity for DG gf pl , f ql Capacity for active and reactive power on line lvn, v n Minimum and maximum squared voltage at bus nP id i , P max i Server idle and maximum active power 
+
+∆t Duration of period tP U E i Power usage efficiency for facility iF ri Server service rate 
+
+W max i Maximum number of servers at facility iDT The maximum delay time 
+
+F f e t Front-end server workload forecast 
+
+˜Qsi SVG capacity 
+
+Variables 
+
+pg,ϕ,t , q g,ϕ,t Active and reactive power for DG g at phase ϕ
+
+and period tf pl,ϕ,t , f ql,ϕ,t Active and reactive power flows through line l at phase ϕ and period tvn,ϕ,t Squared voltage at bus n, phase ϕ and period tP dc i,t , Q dc i,t Active and reactive power of facility i at period tλpn,ϕ,t DLMP at bus n, phase ϕ, and period tWi,t Number of active servers for facility i at period tFi,t Total arriving workloads at facility i and period tQsi,t Reactive power of SVG at facility i and period t
+
+as static var generators (SVGs), are incorporated to mitigate these effects. This bidirectional coupling between data cen-ter operation and network performance motivates a bilevel optimization model. In practice, data center electricity tariffs are typically based on fixed, demand-based, or time-of-use pricing rather than phase-specific DLMPs due to regulatory, metering, and billing limitations. Thus, DLMPs are not assumed to be directly passed to individual data centers as retail prices; instead, they are internalized by the DCA as coordination signals for workload allocation and power consumption across facilities while respecting distribution-network constraints. The proposed model focuses on the electrical interaction between data centers and unbalanced distribution grids. Other flexibility costs, including thermal cycling, cooling dynamics, server wear, workload migration overhead, and infrastructure-level degradation, are not explicitly modeled. These hidden costs for data center operators can be incorporated in future work. Fig. 1 illustrates the bilevel interaction between the DCA and the DSO. Let N denote the set of buses in the distribution network, Data Center Operator (Upper Level) 
+
+> Minimizing Power Cost
+> Active and Reactive
+> Power Consumption
+> Distribution System Operator (Lower Level)
+> Three -phase OPF
+> KKT Conditions
+> DLMP
+> DLMP Power Consumption
+
+Fig. 1: System Model where n represents the bus index. The set of phases is denoted by Φ, with ϕ indicating the phase index. Let G be the set of distributed generators (DGs), and Gn denote the subset of DGs connected to bus n, where g is the DG index. The set of distribution lines is represented by L, with l as the line index, and Lout and Lin denote the sets of outgoing and incoming lines, respectively. The time horizon is indexed by t ∈ T ,where T is the set of periods. Moreover, I denotes the set of data center facilities, and N i represents the set of buses hosting data center facilities, where i is the facility index. The active and reactive power cost of DG g at phase ϕ and time t is represented by Cg,ϕ,t . The active and reactive demands at bus n, phase ϕ, and time t are denoted by pdn,ϕ,t and qdn,ϕ,t ,respectively. The self and mutual impedances between phases are given by rϕ,ϕ 0 and xϕ,ϕ 0 . The minimum and maximum active and reactive capacities for DGs are denoted by pg and 
+
+pg , qg and qg , respectively, while f pl and f ql represent the active and reactive power flow limits of line l. The squared voltage magnitude limits at bus n are specified by vn and vn. For each data center facility i, P id i and P max i denote the idle and maximum server active power consumption, P U E i is the power usage efficiency, F ri is the server service rate, W max i is the maximum number of active servers, DT is the maximum delay time, F f e t is the front-end workload forecast, and ˜Qsi is the SVG capacity. The duration of each period is given by ∆t.The decision variables include the DG active and reactive power outputs pg,ϕ,t and qg,ϕ,t , the active and reactive line flows f pl,ϕ,t and f ql,ϕ,t , and the squared voltage magnitude vn,ϕ,t 
+
+at each bus, phase, and time period. The data center active and reactive power consumptions are represented by P dc i,t and Qdc i,t ,respectively, while λpn,ϕ,t denotes the DLMP at bus n, phase 
+
+ϕ, and time t. In addition, Wi,t is the number of active servers at facility i, Fi,t is the total arriving workload, and Qsi,t is the reactive power injected by the SVG at facility i and time t.III. P ROBLEM FORMULATION 
+
+This section formulates coordinated data center–grid opera-tion as a bilevel optimization problem. The upper level models a data center aggregator (DCA), which allocates computational workloads and manages local energy resources across geo-graphically distributed facilities to minimize electricity pro-curement cost. The lower level represents the distribution sys-tem operator (DSO), which determines distribution locational marginal prices (DLMPs) by solving a network-constrained op-timal power flow (OPF) problem subject to distribution-network constraints. The two levels are coupled through DLMPs, which link data center decisions with grid operation. 
+
+A. Upper-Level Model: Data Center Aggregator 
+
+At the upper level, the DCA acts as the leader and coor-dinates multiple data center facilities. The electrical demand of each facility includes both IT-related consumption (e.g., servers, networking equipment) and auxiliary consumption such as cooling and lighting. The relationship between total power consumption and IT load is characterized by the power usage efficiency (PUE) [18]. The DCA aims to minimize its total electricity procurement cost based on nodal prices provided by the lower-level distri-bution operator. Upper-level formulation is given as follows: 
+
+min    
+
+> Pdc ,W,
+> F,QS
+
+X 
+
+> i∈N i
+
+X
+
+> ϕ∈Φ
+
+X
+
+> t∈T
+
+λpi,ϕ,t P dc i,t ∆t (1a) 
+
+s.t: P dc i,t = P id i + ( P U E i − 1) P max i
+
+ Wi,t 
+
++ P max i − P id i
+
+F ri
+
+Fi,t , ∀i, t (1b) 
+
+0 ≤ Wi,t ≤ W max i , ∀i, t (1c) 
+
+1
+
+DT ≤ F ri Wi,t − Fi,t , ∀i, t (1d) 
+
+Fi,t ≥ 0, ∀i, t (1e) 
+
+X
+
+> i
+
+Fi,t ≥ F f e t , ∀t (1f) 
+
+− ˜Qsi ≤ Qsi,t ≤ 0 ∀i, t. (1g) The objective function (1a) minimizes the total electricity procurement cost of the data center aggregator, where λi,ϕ,t 
+
+represents the DLMP at node i, phase ϕ and time t, obtained from the lower-level problem. Constraints (1b) define the total active power consumption of data center facility i at time 
+
+t. The terms P id i Wi,t and (P U E i − 1) P max i Wi,t capture idle server power and non-information-technology auxiliary power, such as cooling and power delivery overhead, respec-tively. The term P max i −P id i 
+
+> Fri
+
+Fi,t represents workload-dependent information-technology power. Thus, P dc i,t includes both base-line and workload-dependent power consumption. Constraints (1c) limit the available number of active servers. Constraints (1d) represent the quality-of-service (QoS) requirement for a non-zero workload, where the waiting time is modeled based on M/M/1 queueing theory [19]. The parameter DT 
+
+represents the maximum allowable delay and defines the QoS limit of the data center operation. A smaller value of DT 
+
+enforces a stricter QoS requirement and reduces the flexibility available for DLMP-based load adjustment, while a larger value increases flexibility at the expense of looser latency performance. Constraints (1e) ensure the non-negativity of the arriving workload, while constraints (1f) guarantee that the total incoming workload demand is satisfied across all data center facilities. Also, constraints (1g) represent the operational limits of SVG. The forecast workload and quality-of-service (QoS) requirement are assumed feasible within available data center capacity; otherwise, additional capacity, workload shedding, or QoS relaxation would be required. B. Lower-Level Problem: Distribution System Operator 
+
+At the lower level, the DSO optimizes network operation by solving a network-constrained economic dispatch problem. The goal is to minimize the total generation cost while satisfying power flow and operational constraints, given the aggregate data center demand provided by the upper-level problem. 
+
+min p,q ,   
+
+> fp, f q,v
+
+X
+
+> g∈G
+
+X
+
+> ϕ∈Φ
+
+X
+
+> t∈T
+
+Cg,ϕ,t (pg,ϕ,t ) (2a) 
+
+s.t. X
+
+> g∈G n
+
+pg,ϕ,t − X
+
+> l∈L out
+
+f pl,ϕ,t + X
+
+> l∈L in
+
+f pl,ϕ,t = pdn,ϕ,t 
+
++ X 
+
+> i∈N i
+
+P dc i,t ∀n, ϕ, t (λpn,ϕ,t ) (2b) 
+
+X
+
+> g∈G n
+
+qg,ϕ,t − X
+
+> l∈L out
+
+f ql,ϕ,t + X
+
+> l∈L in
+
+f ql,ϕ,t = qdn,ϕ,t 
+
++ X 
+
+> i∈N i
+
+Qdc i,t + X 
+
+> i∈N i
+
+Qsi,t ∀n, ϕ, t (λqn,ϕ,t ) (2c) 
+
+vm(l),ϕ,t − vn(l),ϕ,t = X
+
+> ϕ0∈Φ
+
+(hϕ,ϕ 0,l f pl,ϕ 0,t 
+
++ bϕ,ϕ 0,l f ql,ϕ 0,t ), ∀l ∈ L , t, ϕ, (βl,ϕ,t ) (2d) 
+
+Hϕϕ 0=
+
+
+
+−2raa rab −√3xab rac +√3xac 
+
+rba +√3xba −2rbb rbc −√3xbc 
+
+rca −√3xca rcb +√3xcb −2rcc 
+
+
+
+> l
+
+(2e) 
+
+Bϕϕ 0=
+
+
+
+−2xaa xab +√3rab xac −√3rac 
+
+xba −√3rba −2xbb xbc +√3rbc 
+
+xca +√3rca xcb −√3rcb −2xcc 
+
+
+
+> l
+
+(2f) 
+
+pg ≤ pg,ϕ,t ≤ pg , ∀g, ϕ, t (αp−
+
+> g,ϕ,t
+
+, α p+
+
+> g,ϕ,t
+
+) (2g) 
+
+qg ≤ qg,ϕ,t ≤ qg , ∀g, ϕ, t (αq−
+
+> g,ϕ,t
+
+, α q+
+
+> g,ϕ,t
+
+) (2h) 
+
+− f pl ≤ f pl,ϕ,t ≤ f pl , ∀l, ϕ, t (σp−
+
+> l,ϕ,t
+
+, σ p+
+
+> l,ϕ,t
+
+) (2i) 
+
+− f ql ≤ f ql,ϕ,t ≤ f ql , ∀l, ϕ, t (σq−
+
+> l,ϕ,t
+
+, σ q+
+
+> l,ϕ,t
+
+) (2j) 
+
+vn ≤ vn,ϕ,t ≤ vn, ∀n, ϕ, t (τ −
+
+> n,ϕ,t
+
+, τ +
+
+> n,ϕ,t
+
+) (2k) The DSO minimizes the total generation cost of DGs in the network, as defined in (2a). For modeling simplicity, the up-stream grid is more expensive than existing DGs, and grid does not import power from upstream. Constraints (2b)–(2c) enforce active and reactive power balance at each node and phase for every time period. The reactive power of the data center is modeled as Qdc i,t = P dc i,t tan (cos −1(P F )) , where PF denotes the power factor of the data center. Constraints (2d) describe the load flow equations for an unbalanced three-phase network, capturing voltage drops along distribution lines as functions of active and reactive power flows, while neglecting line losses [20]. hϕ,ϕ 0,l and bϕ,ϕ 0,l denote the elements of the matrices defined in (2e) and (2f), respectively. It is noted that a, b, and 
+
+c denote phases in these matrices. Generator operating limits on active and reactive power are imposed through constraints (2g)–(2h). Line flow limits for active and reactive power are enforced in constraints (2i)–(2j), while bus voltage magnitude limits are maintained through (2k). The variables shown in parentheses after each constraint denote the corresponding dual variables. 
+
+C. Solution Approach 
+
+To transform the bilevel optimization problem into a single-level formulation, the Karush–Kuhn–Tucker (KKT) conditions of the lower-level problem are incorporated into the upper-level model. This reformulation is valid due to the convexity of the lower-level problem, which ensures that the KKT conditions are both necessary and sufficient for optimality. By embedding the stationarity, primal feasibility, dual feasibility, and complemen-tary slackness conditions, the lower-level (follower) problem is implicitly represented within the upper-level (leader) problem. The KKT conditions of the lower-level problem are given as follows: 
+
+∂C g,ϕ,t 
+
+∂p g,ϕ,t 
+
+− λpn,ϕ,t + αp+ 
+
+> g,ϕ,t
+
+− αp− 
+
+> g,ϕ,t
+
+= 0 , ∀t, ϕ, (g, n )∈G n (3a) 
+
+λpn,ϕ,t − λpm,ϕ,t + X
+
+> ϕ0
+
+hϕ0,ϕ,l βl,ϕ 0,t + σp+ 
+
+> l,ϕ,t
+
+− σp−
+
+> l,ϕ,t
+
+= 0 , ∀l, ϕ, t (3b) 
+
+λqn,ϕ,t − λqm,ϕ,t + X
+
+> ϕ0
+
+bϕ0,ϕ,l βl,ϕ 0,t + σq+ 
+
+> l,ϕ,t
+
+− σq−
+
+> l,ϕ,t
+
+= 0 , ∀l, ϕ, t (3c) 
+
+− λqn,ϕ,t + αq+ 
+
+> g,ϕ,t
+
+− αq− 
+
+> g,ϕ,t
+
+= 0 , ∀t, ϕ, (g, n ) ∈ G n (3d) 
+
+X
+
+> l∈L out
+
+βl,ϕ,t − X
+
+> l∈L in
+
+βl,ϕ,t − τ − 
+
+> n,ϕ,t
+
++ τ + 
+
+> n,ϕ,t
+
+= 0 , ∀n, ϕ, t (3e) 
+
+(pg − pg,ϕ,t )αp− 
+
+> g,ϕ,t
+
+= 0 , ∀g, ϕ, t (3f) 
+
+(pg,ϕ,t − pg )αp+ 
+
+> g,ϕ,t
+
+= 0 , ∀g, ϕ, t (3g) 
+
+(qg − qg,ϕ,t )αq− 
+
+> g,ϕ,t
+
+= 0 , ∀g, ϕ, t (3h) 
+
+(qg,ϕ,t − qg )αq+ 
+
+> g,ϕ,t
+
+= 0 , ∀g, ϕ, t (3i) 
+
+(−f pl − f pl,ϕ,t )σp− 
+
+> l,ϕ,t
+
+= 0 , ∀l, ϕ, t (3j) 
+
+(−f pl + f pl,ϕ,t )σp+ 
+
+> l,ϕ,t
+
+= 0 , ∀l, ϕ, t (3k) 
+
+(−f ql − f ql,ϕ,t )σq− 
+
+> l,ϕ,t
+
+= 0 , ∀l, ϕ, t (3l) 
+
+(−f ql + f ql,ϕ,t )σq+ 
+
+> l,ϕ,t
+
+= 0 , ∀l, ϕ, t (3m) 
+
+(vn − vn,ϕ,t )τ − 
+
+> n,ϕ,t
+
+= 0 , ∀n, ϕ, t (3n) 
+
+(−vn + vn,ϕ,t )τ + 
+
+> n,ϕ,t
+
+= 0 , ∀n, ϕ, t (3o) 
+
+αp−,αp+,αq−,αq+,σp−,σp+,σq−,σq+,τ −,τ +≥ 0. (3p) Constraints (3a)–(3e) correspond to the stationarity conditions of the Lagrangian. The complementary slackness conditions are enforced through (3f)–(3o), while (3p) ensures dual feasibility. Based on these conditions, the bilevel problem can be refor-mulated as the following single-level optimization problem: 
+
+χ =: {(1 , (2 b)–(2 k), (3) } (4) To linearize constraints (3f)–(3o), the Big-M method [21] is employed to reformulate the nonlinear complementary slack-ness conditions of the form xy = 0 as follows: 
+
+x ≤ M z, y ≤ M (1 − z), (5a) 
+
+x ≥ 0, y ≥ 0, z ∈ { 0, 1}. (5b) where M is a big number. Additionally, the leader’s objective function (1a) is nonlinear due to the multiplication of upper-and lower-level variables. This nonlinearity can be addressed using binary expansion, as follows: 
+
+P dc i,t = P max 
+
+> i
+
+2E − 1
+
+X
+
+> e∈E
+
+2eui,t,e , ∀i ∈ N i, t (6a) 
+
+bi,ϕ,t,e ≤ M u i,t,e , ∀i, ϕ, t, e (6b) 
+
+bi,ϕ,t,e ≥ − M u i,t,e , ∀i, ϕ, t, e (6c) 
+
+bi,ϕ,t,e ≤ λpi,ϕ,t + M (1 − ui,t,e ), ∀i, ϕ, t, e (6d) 
+
+bi,ϕ,t,e ≥ λpi,ϕ,t − M (1 − ui,t,e ), ∀i, ϕ, t, e (6e) 
+
+min X 
+
+> i∈N i
+
+X
+
+> t∈T
+
+X
+
+> ϕ∈Φ
+
+X
+
+> e∈E
+
+( P max 
+
+> i
+
+2E − 1 )2 ebi,ϕ,t,e ∆t (6f) The set of constraints in (6) presents a binary expansion-based linearization of the bilinear term involving the product of 
+
+λpi,ϕ,t (DLMP) and the decision variable P dc i,t . Constraints (6a) represent P dc i,t as a discretized value using binary expansion. The index e ∈ E = {0, 1, ..., E − 1} denotes the binary expansion level (or digit) used to discretize the continuous variable. The set E contains all binary indices employed in the approximation, and its cardinality E = |E| represents the total number of binary variables used for the expansion. The binary variables ui,t,e ∈ { 0, 1} indicate the activation of each discretization level, while the factor P max   
+
+> i
+> 2E−1
+
+defines the resolution of the approximation. To linearize the bilinear term λpi,ϕ,t P dc i,t ,an auxiliary variable bi,ϕ,t,e is introduced to represent the prod-uct λpi,ϕ,t ui,t,e . Constraints (6b)–(6e) enforce this relationship using a Big-M formulation. Specifically, when ui,t,e = 1,the variable bi,ϕ,t,e is forced to equal λpi,ϕ,t , whereas when 
+
+ui,t,e = 0 , it is restricted to zero. Finally, the original nonlinear objective is reformulated in (6f) by substituting the bilinear term with its linearized equivalent. The coefficients ( P max   
+
+> i
+> 2E−1
+
+)2 e ensure consistency with the binary representation of P dc i,t , while ∆t
+
+accounts for the time interval. Finally, the objective function in (1a) should be replaced by (6). This transformation converts the problem into a mixed-integer quadratic programming (MIQP) formulation. The proposed formulation provides a tractable optimization-based characterization of the data center–grid co-ordination problem under linearized unbalanced power-flow as-sumptions and discretized linearization of bilinear terms. Thus, the obtained solution should be interpreted as a benchmark or lower-bound characterization of the coordinated operation rather than a complete real-time implementation framework. Practical deployment would require additional considerations, including AC power-flow validation, uncertainty in workloads and network conditions, communication delays, market rules, and detailed data center operational constraints. IV. S IMULATION RESULTS 
+
+The simulation horizon covers 24 hours. All experiments are implemented in Python and solved using the Gurobi optimizer. The proposed framework is evaluated on the IEEE 37-bus distribution test system, with network data obtained from [22]. TABLE II: DG Parameters                          
+
+> DG Pmax (MW) Qmax (MVAR) a($/MW 2h) b($/MWh) DG1 31.0 0.0045 92 DG2 31.5 011 DG3 42.0 07DG4 31.5 0.0035 79
+
+Active and reactive loads are generated using uniform dis-tributions U [100 , 400] kW and U [50 , 200] kVAr, respectively. Bus voltage magnitudes are maintained within the range of 0.95–1.05 p.u. on a 4.8 kV base. Four DGs are connected to buses 799, 707, 730, and 736, with their parameters listed in Table II. Data center facilities are located at buses 703, 733, and 741, with power equally distributed across phases. The corresponding data center parameters are adopted from [11], with a data center power factor of 0.95, and ˜Qsi is 350 kVAR for each location. Fig. 2 illustrates the DLMP variation over time for different data center locations and phases. As expected, DLMP values differ across phases in an unbalanced three-phase network. For example, at bus 733 (Fig. 2(b)) during period 16, the DLMP for phase C is 0.066 $/kWh, whereas it increases to 0.148 $/kWh and 0.159 $/kWh for phases A and B, respectively. Furthermore, DLMPs vary across network nodes, indicating that data centers can reduce operating costs by selecting more economical locations. For instance, at Fig. 2(a) during period 14, the DLMP at bus 703 for phase A is 0.108 $/kWh, while it rises to 0.148 $/kWh and 0.271 $/kWh at buses 733 and 741, respectively, as shown in Fig. 2(b) and Fig. 2(c). Fig. 3 illustrates the data center power consumption across all periods for each phase. As observed, higher consumption occurs at bus 703 due to its lower DLMPs. For instance, at period 18, the data center power consumption (Pdc ) reaches 800 kW at bus 703, while it drops to 200 kW and 0.78 kW at buses 733 and 741, respectively. Voltage profiles at the data center buses over all time periods and phases are shown in Fig. 4 for two operating cases: without SVG support 
+
+(Qs = 0) and with SVG-based reactive power compensation 
+
+(Qs̸ = 0) . The comparison illustrates the impact of data center reactive power demand on voltage regulation in the unbalanced three-phase feeder. Without SVG support, the increased data center loading causes noticeable voltage degradation, with the most severe drop observed at bus 703 on phase C. As shown in Fig. 4(a), the voltage at this phase drops to 0.926 p.u. during period 15, which is below the acceptable lower limit of 0.95 p.u. After enabling SVG compensation, the voltage at the same bus, phase, and period increases to 0.973 p.u., indicating that local reactive power support effectively mitigates the voltage violation. Similar improvements are observed at buses 733 and 741, as shown in Fig. 4(b) and Fig. 4(c), respectively. The objective value with reactive compensation is $3708 for M = 400 . These results demonstrate that SVG support reduces voltage deviations across data center locations and helps maintain voltage magnitudes within the prescribed operating range. Reactive power compensation reduces phase-dependent voltage stress caused by high data center loading in the unbalanced feeder. Future work will study larger systems, sensitivity to power factor, and decomposition methods. (a) DLMP at bus 703 (b) DLMP at bus 733 
+
+(c) DLMP at bus 741 
+
+Fig. 2: DLMP at data center nodes for all phases 
+
+Fig. 3: Data center power consumption on different nodes 
+
+(a) Voltage at node 703 (b) Voltage at node 733 
+
+(c) Voltage at node 741 
+
+Fig. 4: Voltage at data center nodes for both cases: 1. with QS
+
+2. without QS
+
+V. C ONCLUSION 
+
+This paper presented a DLMP-based bilevel optimization framework for coordinating data center operation with an unbalanced three-phase distribution grid. The proposed model captures the interaction between the data center aggregator and the distribution system operator, where the aggregator schedules data center power demand in response to locational prices, while the grid determines DLMPs subject to network constraints. The simulation results on the IEEE 37-bus test feeder showed that the proposed framework can effectively capture phase-dependent DLMP variations, reveal the influence of data center siting on operating cost, and demonstrate the impact of data center loading on bus voltages. In addition, the incorporation of SVG reactive power support was shown to significantly improve voltage profiles and mitigate voltage drops caused by high data center demand. REFERENCES [1] https://www.imarcgroup.com/data-center-rack-market. [2] E. Masanet, A. Shehabi, N. Lei, S. Smith, and J. Koomey, “Recalibrating global data center energy-use estimates,” Science , vol. 367, no. 6481, pp. 984–986, 2020. [3] L. Liu, X. Shen, Z. Chen, Q. Sun, and R. Wennersten, “Optimal energy management of data center micro-grid considering computing workloads shift,” IEEE Access , vol. 12, pp. 102 061–102 075, 2024. [4] D. T. Anh Nguyen, J. Cheng, N. Trieu, and D. T. Nguyen, “Optimal workload allocation for distributed edge clouds with renewable energy and battery storage,” in 2024 International Conference on Computing, Networking and Communications (ICNC) , 2024, pp. 700–705. [5] Z. Ding, S. Chen, Y. Sun, Y. Wang, X. Wei, J. Shu, and P. Dehghanian, “Multi-time-scale joint optimization of data center market transactions and computing resource allocation,” IEEE Trans. Ind. Appl. , 2025. [6] P. Wang, Y. Cao, and Z. Ding, “Flexible multi-energy scheduling scheme for data center to facilitate wind power integration,” Ieee Access , vol. 8, pp. 88 876–88 891, 2020. [7] T. Nisha, D. T. Nguyen, and V. K. Bhargava, “A bilevel programming framework for joint edge resource management and pricing,” IEEE Internet of Things Journal , vol. 9, no. 18, pp. 17 280–17 291, 2022. [8] H. Wang, J. Huang, X. Lin, and H. Mohsenian-Rad, “Proactive demand response for data centers: A win-win solution,” IEEE Trans. Smart Grid ,vol. 7, no. 3, pp. 1584–1596, 2015. [9] Y. Wang, X. Lin, and M. Pedram, “A stackelberg game-based optimization framework of the smart grid with distributed pv power generations and data centers,” IEEE Trans. Energy Convers. , vol. 29, no. 4, pp. 978–987, 2014. [10] Z. Wu, L. Chen, J. Wang, M. Zhou, G. Li, and Q. Xia, “Incentivizing the spatiotemporal flexibility of data centers toward power system coor-dination,” IEEE Trans. Netw. Sci. Eng. , vol. 10, no. 3, pp. 1766–1778, 2023. [11] Z. Yang, A. Trivedi, M. Ni, H. Liu, and D. Srinivasan, “Distribution locational marginal pricing based equilibrium optimization strategy for data center park with spatial-temporal demand-side resources,” Journal of Modern Power Systems and Clean Energy , vol. 11, no. 6, pp. 1959– 1970, 2023. [12] P. P. Gyang, P. Chakraborty, L. Meegahapola, and X. Yu, “Dynamic modeling of a data center for power system stability studies,” IEEE Trans. Power Syst. , 2025. [13] S. M. Ali, M. Jawad, M. U. S. Khan, K. Bilal, J. Glower, S. C. Smith, S. U. Khan, K. Li, and A. Y. Zomaya, “An ancillary services model for data centers and power systems,” IEEE Trans. Cloud Comput. , vol. 8, no. 4, pp. 1176–1188, 2017. [14] B. Aksanli, A. S. Akyurek, and T. Rosing, “Minimizing the effects of data centers on microgrid stability,” in 2015 Sixth International Green and Sustainable Computing Conference (IGSC) . IEEE, 2015, pp. 1–9. [15] W. Wang and N. Yu, “Phase balancing in power distribution network with data center,” ACM SIGMETRICS Performance Evaluation Review ,vol. 45, no. 2, pp. 64–69, 2017. [16] S. Liu, Z. Lin, J. Li, F. Wen, Y. Ding, Q. Wang, F. Lu, and L. Yang, “Bi-level optimal placement model of phase switch devices for mitigating three-phase unbalance in low-voltage areas,” IEEE Trans. Power Syst. ,vol. 37, no. 4, pp. 3149–3152, 2022. [17] W. Pinthurat, T. Surinkaew, and B. Hredzak, “Simultaneous voltage regulation and unbalance compensation in distribution systems with an information-driven learning approach,” IEEE Trans. Industr. Inform. ,vol. 20, no. 4, pp. 5888–5898, 2023. [18] C. Jiang, C.-L. Tseng, Y. Wang, Z. Lan, F. Wen, F. Chen, and L. Liang, “Optimal pricing strategy for data center considering demand response and renewable energy source accommodation,” Journal of Modern Power Systems and Clean Energy , vol. 11, no. 1, pp. 345–354, 2021. [19] J. Wan, X. Gui, R. Zhang, and L. Fu, “Joint cooling and server control in data centers: A cross-layer framework for holistic energy minimization,” 
+
+IEEE Syst. J. , vol. 12, no. 3, pp. 2461–2472, 2017. [20] T. Li, M. Zhang, Z. Hu, X. Wang, Y. Zhou, and M. Yan, “Distributed cooperative scheduling for distribution network and smart charging hubs driven by unbalanced distribution locational marginal price,” Applied Energy , vol. 401, p. 126668, 2025. [21] D. T. Nguyen and L. B. Le, “Risk-constrained profit maximization for microgrid aggregators with demand response,” IEEE Transactions on Smart Grid , vol. 6, no. 1, pp. 135–146, 2015. [22] https://site.ieee.org/pes-testfeeders/resources/.

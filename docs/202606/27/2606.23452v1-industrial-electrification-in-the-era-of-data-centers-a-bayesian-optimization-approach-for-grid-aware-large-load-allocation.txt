@@ -1,0 +1,559 @@
+Title: Industrial electrification in the era of data centers: A Bayesian Optimization approach for grid-aware large load allocation
+
+URL Source: https://arxiv.org/pdf/2606.23452v1
+
+Published Time: Tue, 23 Jun 2026 03:35:27 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Industrial Electrification in the era of data centers: A Bayesian Optimization approach for grid-aware large load allocation 
+
+Jiyong Lee a, Erhan Kutanoglu b, Michael Baldea a,c , Ilias Mitrai a, ∗
+
+> aMcKetta Department of Chemical Engineering, The University of Texas at Austin, Austin, TX 78712, United States
+> bWalker Department of Mechanical Engineering, The University of Texas at Austin, Austin, TX 78712, United States
+> cOden Institute for Computational Engineering and Sciences, The University of Texas at Austin, Austin, TX 78712, United States
+
+Abstract 
+
+Large loads from industrial electrification and data centers are reshaping the planning and operation of the power grid. Identifying optimal large load siting decisions while accounting for transmission congestion is key to reducing expansion cost and operational risks. In this paper, we propose a leader-follower bilevel optimization framework to identify optimal large load allocation strategies. The leader determines the allocation of large loads, while the followers determine grid expansion cost and transmission utilization. This modeling approach explicitly integrates strategic planning with detailed short-term operational decisions. Moreover, we develop a Bayesian Optimization approach to e ffi ciently solve the bilevel optimization problem by treating the followers as a black box. We use the framework to study large-scale load allocation from electrified oil refineries and data centers on a synthetic power grid that resembles key characteristics of the Texas (ERCOT) system. The results show that these large loads compete for electricity, and under high-load scenarios, data center demand is distributed across the entire grid, avoiding regions with high demand from industrial electrification. 
+
+Keywords: Large loads, Industrial electrification, Data centers, Grid operation, Bayesian optimization 
+
+1. Introduction 
+
+The rapid growth of large loads from data centers and indus-trial electrification is reshaping the planning and operation of power systems. Data centers are key infrastructures for deploy-ing artificial intelligence at scale, and are projected to account for 6.7% to 12% of the total U.S. electricity demand in 2028 [1]. In parallel, process electrification is emerging as a vital pathway to improve energy e ffi ciency and reduce emissions in the manufacturing sector [2]. This simultaneous electrification race will require significant grid expansion on short time hori-zons and will a ff ect grid operations due to the time lag between demand realization and grid expansion [3]. An approach to reduce expansion costs while ensuring reli-able grid operation is to co-optimize grid expansion and large-load allocation decisions [4, 5]. Existing frameworks rely on representative days to capture grid operation. Although this modeling approach leads to tractable problems, it does not ac-count for extreme-demand days and hours. This limitation is particularly important when considering large loads from data centers and manufacturing. Data centers can adjust their power consumption over short time scales [6], whereas manufacturing processes are typically subject to much slower dynamics [2]. The use of representative days for grid expansion and large-load allocation may fail to capture extreme load situations and their e ff ect on grid reliability and stability.   
+
+> ∗Corresponding author
+> Email address: imitrai@che.utexas.edu (Ilias Mitrai)
+
+In this paper, we propose using transmission congestion metrics, computed from detailed optimal power flow calcula-tions, and expansion cost to guide large-load allocation deci-sions (see Fig. 1). First, we formulate the power grid expan-sion and large load allocation problem as a bilevel optimization problem with one leader, the large load consumers, and two fol-lowers determining grid expansion and operation. Second, we develop a Bayesian Optimization approach to e ffi ciently solve the bilevel problem by treating the followers as a black box. As a case study, we use the proposed framework to identify the optimal allocation of data center load for a given electrification target in a synthetic power grid that resembles key characteris-tics of the Texas power grid (ERCOT) system. The results show that industrial electrification and data centers directly compete for access to electricity. Under high demand, the optimal data center allocation is geographically distributed to reduce expan-sion cost and improve grid operation. 
+
+2. Bilevel optimization framework 
+
+We consider a power grid with N buses, NI power genera-tion technologies, and Nl transmission lines. We seek to iden-tify optimal large-load allocation decisions that minimize ex-pansion costs and improve transmission congestion. We assume that the demand from electrified manufacturing is known both in terms of magnitude and spatial distribution. This assumption is driven by the fixed physical location of existing manufactur-ing facilities. Therefore, we seek to identify the optimal allo-cation of large loads from data centers across geographical re-
+
+> arXiv:2606.23452v1 [eess.SY] 22 Jun 2026
+
+Fig. 1: A proposed bilevel optimization formulation and Bayesian Optimization approach for grid-operation-aware large load allocation. 
+
+gions to minimize expansion costs and transmission congestion. We model this decision-making problem as a leader-follower bilevel optimization problem. The leader determines the allocation of the large loads x
+
+across regions, which can correspond to individual buses, coun-ties, or weather regions. We define R as the set of regions over which the large loads must be allocated, and xr ∈ [0 , 1] as the fraction of the data center demand allocated in region r. The summation of these variables is equal to one enforced via the constraint Pr∈R xr = 1. We assume that the total data center demand is known and equal to DDC total .The problem has two followers: one determining the grid expansion decisions y∗ 
+
+> 1
+
+such that grid expansion cost F1(x, y∗
+
+> 1
+
+)is minimized. For a given demand allocation x and optimal grid expansion y∗
+
+> 1
+
+, the second follower computes optimal hourly power dispatch over the entire year y∗ 
+
+> 2
+
+which minimizes operat-ing cost F2(x, y∗
+
+> 1
+
+, y2). These optimal decisions are used to com-pute the leader’s objective, which accounts for grid expansion 
+
+αF1(x, y∗
+
+> 1
+
+), with α being a weighting factor, and transmission congestion score G(y∗
+
+> 1
+
+, y∗
+
+> 2
+
+). Overall, the bilevel problem has the following structure min  
+
+> x∈X
+
+αF1(x, y∗
+
+> 1
+
+) + G(y∗
+
+> 1
+
+, y∗
+
+> 2
+
+)s.t. y∗ 
+
+> 1
+
+∈ arg min 
+
+> y1∈Y 1
+
+F1(x, y1)
+
+y∗ 
+
+> 2
+
+∈ arg min 
+
+> y2∈Y 2
+
+F2(x, y∗
+
+> 1
+
+, y2).
+
+(1) 
+
+2.1. Follower 1 problem - Grid capacity expansion 
+
+For a given large load allocation x, first, the power grid must be expanded. We use a single-period capacity expansion model [7] that takes as input demand from the residential sector and large loads, the existing grid topology, and associated costs, and identifies optimal expansion investments to minimize capi-tal and operating costs. We define E as the set of counties where the electrified man-ufacturing facilities are located, N as the set of buses, I as the set of power generation technologies, D as the set of repre-sentative days, H as the set of hours in a day, and T as the target year for which the system is designed. We assume that the grid can expand only existing assets to avoid introducing binary variables and to improve the tractability of the proposed approach. Investment decisions account for generation capacity tech-nology i at bus n, Cgen  
+
+> ni
+
+∈ [0 , ¯Cgen ], transmission between buses, 
+
+Ctrans  
+
+> nn ′
+
+∈ [0 , ¯Ctrans ], and storage for each bus Cstor  
+
+> ∈
+
+[0 , ¯Cstor ]. The model also includes variables related to power dispatch. Specif-ically, we define pgen  
+
+> nidh
+
+as the power generated at bus n using technology i at hour h and representative day d, ptrans  
+
+> nn ′dh
+
+as the power transmitted between two buses, pcurt ,gen  
+
+> nidh
+
+as the curtail-ment of generation with technology i, pDC  
+
+> ndh
+
+as the nodal load to satisfy data center demand, pEM  
+
+> ndh
+
+as the nodal load used to satisfy demand from electrified manufacturing, pcurt ,dem  
+
+> ndh
+
+as the curtail-ment of demand, pdisch  
+
+> ndh
+
+as the power discharged from storage, and pcharge  
+
+> ndh
+
+as the power charging the storage. The node-level power balance at bus n, day d, and hour h is 
+
+X
+
+> i∈I (n)
+
+pgen  
+
+> nidh
+
+− pcurt ,gen 
+
+> nidh
+
+ −
+
+X
+
+> n′∈N (n)
+
+ptrans  
+
+> nn ′dh
+
++ pdisch  
+
+> ndh
+
+− pcharge 
+
+> ndh
+
+= Dbase  
+
+> ndh
+
++ pDC  
+
+> ndh
+
++ pEM  
+
+> ndh
+
+− pcurt ,dem  
+
+> ndh
+
+,
+
+(2) where ptrans  
+
+> nn ′dh
+
+= S base (θndh − θn′dh )/Xnn ′ is the power transmitted, 
+
+Dbase  
+
+> ndh
+
+is the base load at bus n, day d, and hour h, θntdh ∈ [−π, π ]is the voltage angle in radians, the system base power S base is 2100 MVA, and Xnn ′ is the line reactance. The data center and electrified manufacturing loads are satisfied via the following equations 
+
+X
+
+> n∈N r
+
+pDC  
+
+> ndh
+
+= DDC  
+
+> rdh
+
+∀r ∈ R , d ∈ D , h ∈ H , (3) 
+
+X
+
+> n∈N e
+
+pEM  
+
+> ndh
+
+= DEM  
+
+> edh
+
+∀e ∈ E , d ∈ D , h ∈ H , (4) where DDC  
+
+> rdh
+
+and DEM  
+
+> edh
+
+are data center and electrified manufac-turing load applied on region r and county e, respectively, on representative day d, hour h. The data center demand for each region r is equal to 
+
+DDC  
+
+> rdh
+
+= xr DDC total /(|D||H| ) ∀r ∈ R , (5) and is determined by the leader. We assume that total data cen-ter load is evenly distributed across all days and hours of the year. However, the capacity expansion model determines how to allocate demand across buses within a region. The power generated, transmitted, and stored for each hour 
+
+h and representative day d is bounded by the installed capacity, i.e., pgen  
+
+> nidh
+
+≤ Cgen ni , |ptrans 
+
+> nn ′dh
+
+| ≤ Ctrans  
+
+> nn ′
+
+, pcharge  
+
+> ndh
+
+≤ Cstor  
+
+> n
+
+, pdich  
+
+> ndh
+
+≤ Cstor  
+
+> n
+
+.Finally, we include constraints related to storage, which we omit due to space limitations (see [3]). The objective function accounts for capital and operating costs and is linear in the de-cision variables. We omit the presentation here due to space limitations (see [3] for a detailed description). The optimal so-lution of this problem is denoted as y∗
+
+> 1
+
+.
+
+2.2. Follower 2 problem - DC Optimal power flow 
+
+The second follower, for a fixed data center demand alloca-tion and grid expansion, solves a DC-optimal power flow model to compute the hourly power dispatch decisions for the entire year. This model is similar to the capacity expansion model presented above, but the capacities are fixed and the decision horizon is the full year with 365 days, i.e., we do not use repre-sentative days, and the objective only accounts for the operating cost. We denote the optimal power transmission decisions from this model as ˆ ptrans  
+
+> nn ′dh
+
+with d ∈ { 1, . . . , 365 }, and the optimal so-lution vector as y∗
+
+> 2
+
+.
+
+2.3. Objective of the Leader 
+
+The leader’s objective is the sum of the grid expansion cost and the transmission congestion score. The capacity expansion cost is equal to the optimal objective function value of the first follower, denoted as F1(x, y∗
+
+> 1
+
+). To quantify the utilization rate of each transmission line at each operational time, the transmis-sion utilization rate is defined as 
+
+utrans  
+
+> nn ′dh
+
+= | ˆptrans 
+
+> nn ′dh
+
+|/Ctrans  
+
+> nn ′
+
+, (6) where ˆ ptrans  
+
+> nn ′dh
+
+is obtained from the optimal solution of the sec-ond follower and Ctrans  
+
+> nn ′
+
+is obtained from the optimal solution of the first follower. Note that the transmission lines are assumed to be bidirectional, so we calculate the absolute magnitude of power flow. The average grid-wide transmission utilization rate is equal to ¯utrans grid = 1
+
+Nl × 365 × |H| 
+
+X
+
+> (n,n′)∈L
+> 365
+
+X
+
+> d=1
+
+X
+
+> h∈H
+
+utrans 
+
+> nn ′dh
+
+, (7) where the L is the set of transmission lines. This metric mea-sures the network’s average grid-wide transmission load during the year. We also compute the frequency with which the power transmitted between two buses over the capacity is greater than or equal to 70% and 95% as follows 
+
+ρ70% grid = 1
+
+Nl × 365 × |H| 
+
+X
+
+> (n,n′)∈L
+
+X
+
+> d∈D
+
+X
+
+> h∈H
+
+I utrans  
+
+> nn ′dh
+
+≥ 0.70  , (8) 
+
+ρ95% grid = 1
+
+Nl × 365 × |H| 
+
+X
+
+> (n,n′)∈L
+
+X
+
+> d∈D
+
+X
+
+> h∈H
+
+I utrans  
+
+> nn ′dh
+
+≥ 0.95  , (9) where I(·) is an indicator function that equals one when the con-dition is true and zero otherwise. Finally, we combine these three utilization and congestion-related metrics into a transmis-sion congestion score, which is defined as 
+
+G = λ1 ¯utrans grid + λ2ρ70% grid + λ3ρ95% grid , (10) where λ1, λ 2, and λ3 are weights. Overall, the objective of the leader is equal to αF1(x, y∗
+
+> 1
+
+) + G(y∗
+
+> 1
+
+, y∗
+
+> 2
+
+). The resulting prob-lem is a nonlinear discrete bilevel optimization problem, due to constraints 7, 8, 9, with linear lower-level problems. 
+
+3. Bayesian Optimization solution approach 
+
+The solution of the bilevel problem presented above is chal-lenging due to the presence of the indicator functions, which make the objective nonsmooth. Although the problem admits an exact reformulation as a single- level problem using the KKT optimality conditions for the linear lower-level problems, the resulting problem will be a large-scale discrete optimization problem. To solve the bilevel problem, we exploit its under-lying structure by noting that if the large-load allocation deci-sions are fixed, the objective can be evaluated after solving the lower-level problems and computing the transmission conges-tion score. Motivated by this structure, we treat the lower-level problems as a black box and use Bayesian Optimization (BO) to identify the optimal allocation of the large loads. BO uses a Gaussian Process (GP) m to approximate the objective function αF1(x, y∗
+
+> 1
+
+) + G(y∗
+
+> 1
+
+, y∗
+
+> 2
+
+). A GP is a distribu-tion over functions defined as m(x) ∼ GP (μ(·), k(·, ·)), where 
+
+μ(·) is the mean function, k(·, ·) is the covariance kernel, and 
+
+x = {xr}r∈R . To navigate the large load allocation design space, we use the logarithmic expected improvement as the acquisi-tion function. The proposed approach alternates between sug-gesting new large load allocations, x, and solving the capacity expansion and DC-OPF models to obtain y∗ 
+
+> 1
+
+and y∗ 
+
+> 2
+
+and com-pute αF1(x, y∗
+
+> 1
+
+) + G(y∗
+
+> 1
+
+, y∗
+
+> 2
+
+). The BO approach is implemented in BoTorch [8], the capacity expansion and DC-OPF models are implemented in Pyomo [9]. 3Fig. 2: Comparison of transmission utilization and frequency of transmission congestion for equal and optimal distribution of data center load obtained by solving the full-year DC-OPF model. Faint line graphs represent hourly raw data, and bold line graphs represent daily averaged trends. 
+
+Table 1: Load scenarios considered in the study. DC refers to Data Center; EOR refers to Electrified Oil Refining. The base case scenario is marked with an asterisk (*).                                                    
+
+> Load Scenario Annual Electricity Demand [TWh] DC EOR Base DC EOR Total
+> low 25% 846.99 95.38 42.82 985.19 moderate 25% 846.99 190.75 42.82 1080.57 high 25% 846.99 381.51 42.82 1271.32 low 50% 846.99 95.38 85.65 1028.01 moderate* 50%* 846.99 190.75 85.65 1123.39 high 50% 846.99 381.51 85.65 1314.14 low 100% 846.99 95.38 171.29 1113.66 moderate 100% 846.99 190.75 171.29 1209.04 high 100% 846.99 381.51 171.29 1399.79
+
+4. Case study 
+
+In this section, we use the proposed approach to identify optimal allocations of data center loads for a given reference grid and industrial electrification strategy. The grid, based on the Texas ERCOT network, is adapted from [3], [10], and has 123 buses, 151 generators across six generation technologies (coal, natural gas, nuclear, wind, solar, and hydro), 173 bidi-rectional transmission lines (345 kV), and initially zero storage capacity. Other operational and economic parameters can be found in [7, 3]. We consider 2031 the target year ( T = 2031) and evaluate grid expansion and operation under the specified load growth scenario. Given that we do not explicitly consider the construction time of grid assets, which can be an impor-tant factor in guiding investment policy [3], we impose an up-per limit of 1GW on newly invested generation, transmission, and storage capacity, i.e., ¯Cgen = ¯Ctrans = ¯Cstor = 1GW. This upper bound acts as a proxy for construction time limitations by preventing unrealistically large capacity investments within the single grid capacity expansion problem. The weight con-stants for the transmission congestion score in Eq. 10 are equal to λ1 = 1, λ2 = 5, and λ3 = 10, and α = 10 −11 . For BO and each demand scenario, we use 16 initial demand allocations and allow 84 iterations (100 evaluations in total). The first point is fixed as the uniform allocation, i.e., xr = 1/|R| , and the remain-ing 15 initial points are sampled from a Dirichlet distribution over the feasible space of allocations. The single-year capacity expansion problem has approxi-mately 203 × 10 3 constraints and 128 × 10 3 variables, while the full-year DC-OPF model has approximately 11 .8 × 10 6 con-straints and 9 .3 × 10 6 variables. All instances are solved using Gurobi v13.0.2 with the barrier method on an Intel Xeon CPU Max 9480. For the base case scenario (DC: moderate, EOR: 450%), the average time per BO iteration is 715 seconds, and the total solution time for 100 iterations is 16 hours. 
+
+4.1. Load growth scenarios 
+
+The grid must satisfy three types of loads: base, data center, and electrified oil refining (EM) demand, which are computed as follows: 
+
+Dbase  
+
+> ndh
+
+= Dbase ,0 
+
+> ndh
+
++ ∆ Dbase 
+
+DDC  
+
+> rdh
+
+= xDC r DDC total 
+
+DEM  
+
+> edh
+
+= ψEM e (ϕ/η elec )QM.
+
+(11) For the base load, Dbase ,0 
+
+> ndh
+
+is the initial base load profile obtained from [10] at bus n day d and hour h, ∆Dbase is the increase in base demand between the current year t0 and target year T .This increase is computed using the initial and projected annual base demand. We assume that the increase in base demand is distributed equally across all buses, days, and hours. For data center load, the total demand, DDC total , is calculated using the annual peak load projection with a load factor of 90% [3]. Finally, for the demand from electrified manufacturing, we use publicly available data to obtain the heat demand from oil refineries per county in Texas, QM, for conventional boilers (100 - 400 oC) and process heating ( ≥ 400 oC) [11]. We define ϕ
+
+as the fraction of the heat demand that is electrified in the target year. We also define ηelec as the Joule-heating e ffi ciency, which is assumed to be 97%. For both large loads, we assume that the hourly load profile is constant throughout the year. A detailed explanation of modeling the base and large load electricity de-mands can be found at [3]. Based on these available data, we consider nine load growth scenarios. For data center load, we use ERCOT’s 2031 projec-tion [12] as the moderate scenario. We then define the low and 
+
+high data center load scenarios with 50% and 200% of the mod-erate scenario, respectively. For the electrified manufacturing, we consider three scenarios with electrification ratio ( ϕ) equal to 25%, 50%, and 100%. For every scenario, we assume the base load remains constant at the projected 2031 value from the ERCOT report [12]. The resulting nine load scenarios are pre-sented in Table 1. We define the base case scenario as the com-bination of the moderate data center load scenario and the 50% 
+
+electrification scenario. Code implementation can be found on GitHub [13]. 
+
+5. Results 
+
+We first analyze the base case scenario and compare the results between equal and optimal data center load allocation. First, we find that BO improves the leader’s objective primar-ily by reducing the transmission congestion score ( G) rather than the expansion and operation cost ( αF1). From Table 2, the optimal allocation does not assign data center demand to the coast and west weather regions, decreasing the leader’s ob-jective from 3.0083 to 2.7428. The capacity expansion cost remains the same for both allocations, i.e., the new installed capacity is the same. The transmission congestion ( G) score   
+
+> Table 2: Base case scenario results: data center load allocation to di ff erent weather zones and Bayesian optimization observations.
+
+Equal Optimal 
+
+xDC COAS T 12.50% 0.00% 
+
+xDC EAS T 12.50% 19.12% 
+
+xDC FWES T 12.50% 7.22% 
+
+xDC NCENT 12.50% 22.87% 
+
+xDC NORT H 12.50% 19.33% 
+
+xDC S CENT 12.50% 21.41% 
+
+xDC S OUT H 12.50% 10.05% 
+
+xDC WES T 12.50% 0.00% 
+
+αF1 1.6169 1.6168 
+
+G 1.3914 1.1259 
+
+Z = αF1 + G 3.0083 2.7428  
+
+> Fig. 3: Optimal data center load allocation across weather regions for multiple load scenarios.
+
+reduces from 1.3914 to 1.1259. Specifically, the average grid-level transmission utilization rate decreases by 1.82% point (from 38.53% to 36.71%), the frequency of line-hour exceeding 70% decreases by 2.59% point (from 13.40% to 10.81%), and the frequency of line-hour exceeding 95% decreases by 1.18% point (from 3.36% to 2.18%). The results also show that the optimal allocation leads to lower grid-wide transmission utilization and less congestion (see Fig. 2). For both allocation strategies, the average grid-wide transmission utilization rates (¯ utrans ) range from 28% to 54%. However, the average value of the equal distribution is 38.53%, while for the optimal distribution, it is 36.71%. Frequencies of line-hour congestion at 70% and 95% utilization are both reduced under the optimal distribution allocation. The largest relative improvement is in the severe congestion metric with 95% of utilization ( ρ95% grid ). The average and maximum ρ95% grid val-ues of equal distribution are 3.36% and 17.92%, while those of optimal distribution are 2.18% and 16.76%. Finally, we analyze the allocation of data center loads for 5the di ff erent load scenarios presented in Table 1. From Fig. 3, we observe that for a fixed electrification ratio, an increase in data center demand leads to a more spatially distributed alloca-tion. Under low data center and 25% electrified loads, data cen-ter load is assigned to the east, north, and coast regions. How-ever, as the data center load increases, the allocation becomes more distributed across north, ncent, south, scent, fwest, east, and coast. This suggests that concentrating data center load in limited regions becomes less favorable as the total large load magnitude increases. Moreover, the electrification ratio of oil refineries directly aff ects the allocation of data center loads. Specifically, we find that data center load allocation to the coast region becomes neg-ligible once the electrification ratio exceeds 25%. Since the oil refining industry in Texas is mostly concentrated in the coast region, the optimal allocation avoids placing data center loads in this region to reduce capacity expansion costs and improve transmission congestion. This result suggests that the capacity expansion model with representative days may miss full-year operational grid stress patterns. The full-year DC-OPF model captures these temporal grid congestion e ff ects and informs the allocation of large loads. 
+
+6. Conclusions 
+
+In this paper, we consider the design of large load alloca-tion policies that account for detailed transmission-congestion-related performance and capacity expansion costs. We propose a bilevel optimization framework to identify optimal grid ex-pansion and allocation of large loads such that grid expansion cost and transmission congestion are optimized. We develop a Bayesian Optimization approach to e ffi ciently solve the result-ing bilevel problem. An application to a synthetic power grid under large loads from data centers and electrified oil refining shows that the proposed approach identifies large load alloca-tions that reduce grid congestion without increasing expansion costs. 
+
+7. Acknowledgements 
+
+Financial support from the Energy Institute at The Univer-sity of Texas at Austin is gratefully acknowledged. 
+
+References 
+
+[1] A. Shehabi, S. J. Smith, A. Hubbard, A. Newkirk, N. Lei, M. A. B. Siddik, B. Holecek, J. Koomey, E. Masanet, D. Sartor, 2024 United States data center energy usage report, Lawrence Berkeley National LaboratoryLBNL-2001637 (2024). [2] M. Baldea, E. E. Endler, E. Hale, C. T. Maravelias, M. Barolo, I. Harjunkoski, M. Mercangoz, S. L. Shah, M. Soroush, B. R. Young, et al., Transforming the pro-cess industries through electrification: Challenges and op-portunities, Ind. Eng. Chem. Res. 64 (34) (2025) 16466– 16478. [3] J. Lee, M. Agustin, J. Langsdorf, E. Kutanoglu, M. Baldea, I. Mitrai, Grid capacity expansion under data centers and electrified manufacturing large loads, arXiv preprint arXiv:2605.29053 (2026). [4] Z. Shao, N. Yu, D. Wong, Stochastic long-term joint de-carbonization planning for power systems and data cen-ters: A case study in pjm, International Journal of Electri-cal Power & Energy Systems 173 (2025) 111377. [5] M. Abdelhady, E. Iakovou, E. N. Pistikopoulos, Optimal energy portfolio investment strategies for data centers un-der deep market uncertainty, Applied Energy 410 (2026) 127510. [6] F. R. Dogar, T. Karagiannis, H. Ballani, A. Rowstron, Decentralized task-aware scheduling for data center net-works, ACM SIGCOMM Computer Communication Re-view 44 (4) (2014) 431–442. [7] J. Lee, E. Kutanoglu, M. Baldea, I. Mitrai, E ff ect of data center and electrified manufacturing demand on power grid expansion, Procedia CIRPIn press (2026). [8] M. Balandat, B. Karrer, D. Jiang, S. Daulton, B. Letham, A. G. Wilson, E. Bakshy, Botorch: A framework for e ffi -cient monte-carlo bayesian optimization, Adv. Neural Inf. Process. Syst. 33 (2020) 21524–21538. [9] W. E. Hart, C. D. Laird, J.-P. Watson, D. L. Woodru ff ,G. A. Hackebeil, B. L. Nicholson, J. D. Siirola, et al., Pyomo-optimization modeling in python, Vol. 67, Springer, 2017. [10] J. Lu, X. Li, H. Li, T. Chegini, C. Gamarra, Y. E. Yang, M. Cook, G. Dillingham, A synthetic texas power sys-tem with time-series weather-dependent spatiotemporal profiles, Sustainable Energy, Grids and Networks (2025) 101774. [11] C. McMillan, M. Ruth, Industrial process heat demand characterization, Technical report, National Renewable Energy Laboratory (2018). [12] Electric Reliability Council of Texas (ERCOT), 2025 er-cot system planning: Long-term hourly peak demand and energy forecast, Technical report (Apr. 2025). [13] J. Lee, E. Kutanoglu, M. Baldea, I. Mitrai, Bilevel opti-mization framework for grid-aware large load allocation, gitHub repository (2026). URL https://github.com/PSE-Lab/Bilevel-Opt imization-Framework-for-Grid-aware-Large-L oad-Allocation 
+
+6

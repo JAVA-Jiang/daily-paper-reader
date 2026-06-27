@@ -1,0 +1,260 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-27T20:01:21.673104+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.25082v1",
+      "source": "arxiv",
+      "title": "Energy Efficient Scheduling of AI/ML Workloads on Multi Instance GPUs with Dynamic Repartitioning",
+      "abstract": "Increasing demand from AI/ML workloads is exacerbating the rising energy consumption of data centers. Recent advances in hardware such as NVIDIA's Multi Instance GPUs (MIGs) offer improvements in flexibility and computational power and the opportunity for data centers to manage incoming jobs in energy-efficient ways, while maintaining acceptable performance. The challenge in achieving this multi-objective in a MIG environment through job scheduling is multi-faceted. Firstly, for a given MIG configuration, one seeks an easy-to-implement scheduling algorithm which selects a job from the queue as well as decides on which slice in the configuration the job runs. Secondly, for the identified scheduling algorithm, a particular MIG configuration may not always be suitable (as the workload fluctuates) and may need to be repartitioned. We tackle both problems using simulations and reinforcement learning (RL). We present a dynamic repartitioning scheduling framework for a single MIG as a solution to a multi-objective heterogeneous machine scheduling problem with preemption. In particular, we compare four scheduling algorithms and identify a promising one. Then, we employ reinforcement learning to perform dynamic repartitioning over a day. Furthermore, using a diurnal workload pattern based on real-world data center traces, we demonstrate the superiority of our dynamic repartitioning algorithm over twice-daily repartitioning ($26\\%$), static partitioning ($31\\%$) and no partitioning at all ($68\\%$) according to a multi-objective function of energy consumption and tardiness. Our results indicate specific preferred configurations at different times of the day under different queue conditions, suggesting a policy for predictive and automatic reconfiguration.",
+      "authors": [
+        "Ellie Lipe",
+        "Neel Karia",
+        "Connor Espenshade",
+        "Clifford Stein",
+        "Asser Tantawi",
+        "Olivier Tardieu"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-06-23T18:41:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.25082v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "proposes energy-efficient scheduling for AI/ML workloads on GPUs in data centers",
+      "llm_evidence_cn": "提出数据中心GPU上的AI/ML工作负载节能调度方法",
+      "llm_evidence": "提出数据中心GPU上的AI/ML工作负载节能调度方法",
+      "canonical_evidence": "提出数据中心GPU上的AI/ML工作负载节能调度方法",
+      "llm_tldr_en": "Addresses energy-efficient scheduling of AI/ML workloads on Multi Instance GPUs with dynamic repartitioning to reduce data center energy consumption.",
+      "llm_tldr_cn": "该论文针对数据中心AI/ML工作负载能耗攀升的问题，提出在NVIDIA MIG环境下结合动态分区的高效调度算法。通过优化作业分配和分区配置，在保证性能的同时显著降低能耗，为数据中心节能调度提供了实用方案。",
+      "llm_tldr": "该论文针对数据中心AI/ML工作负载能耗攀升的问题，提出在NVIDIA MIG环境下结合动态分区的高效调度算法。通过优化作业分配和分区配置，在保证性能的同时显著降低能耗，为数据中心节能调度提供了实用方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.25098v1",
+      "source": "arxiv",
+      "title": "Power-Flexible AI Data Centers: A New Paradigm for Grid-Responsive Compute",
+      "abstract": "The rapid expansion of artificial intelligence (AI) infrastructure is driving unprecedented growth in electricity demand from data centers. Traditional power-system planning treats large computing facilities as inflexible peak loads, leading to costly infrastructure upgrades and long delays in grid interconnection. Recent work has shown that AI clusters can reduce electricity consumption during peak demand through software-based workload orchestration. This article explores how modern GPU-based AI data centers can operate as grid-interactive assets that respond dynamically to power system conditions. We describe an architecture integrating grid signals, workload scheduling, and power telemetry for fine-grained cluster power control. Experimental results from a real-world deployment on a 130 kW GPU cluster demonstrate multiple forms of flexibility, including rapid load reduction, sustained curtailment, and carbon-aware operation while preserving service levels for priority jobs. We further demonstrate performance-aware load shifting across geographically distributed clusters, enabling workloads to migrate toward regions with lower grid stress. Together, these capabilities transform AI infrastructure from static electricity consumers into flexible resources that support grid reliability, accelerate interconnection, and improve computing sustainability.",
+      "authors": [
+        "Chris Williams",
+        "Philip Colangelo",
+        "Ayse Coskun",
+        "Ethan Levine",
+        "Andy Neale",
+        "Ciaran Roberts",
+        "Shayan Sengupta",
+        "Nikhil Shirolkar",
+        "Varun Sivaram",
+        "Sarah Soares",
+        "Ethan Tiao",
+        "Scott Underwood",
+        "Daniel Wilson",
+        "Frank Sharp",
+        "Luke Wainwright",
+        "Harry Petty",
+        "Scott Wallace",
+        "Brandon Records"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.AI",
+        "cs.PF",
+        "eess.SY"
+      ],
+      "published": "2026-06-23T19:13:19+00:00",
+      "link": "https://arxiv.org/pdf/2606.25098v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "grid-responsive data centers with workload scheduling",
+      "llm_evidence_cn": "电网响应的数据中心与负载调度",
+      "llm_evidence": "电网响应的数据中心与负载调度",
+      "canonical_evidence": "电网响应的数据中心与负载调度",
+      "llm_tldr_en": "This article proposes an architecture for AI data centers to operate as grid-interactive assets, integrating grid signals and workload scheduling for dynamic power control.",
+      "llm_tldr_cn": "人工智能数据中心电力需求激增，传统规划将其视为刚性负荷。本文提出一种架构，使GPU集群能够作为电网交互资源，通过软件负载编排响应电网条件。集成电网信号、负载调度和功率遥测，实现细粒度集群功率控制。实验表明可有效降低峰值用电。",
+      "llm_tldr": "人工智能数据中心电力需求激增，传统规划将其视为刚性负荷。本文提出一种架构，使GPU集群能够作为电网交互资源，通过软件负载编排响应电网条件。集成电网信号、负载调度和功率遥测，实现细粒度集群功率控制。实验表明可有效降低峰值用电。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.25356v1",
+      "source": "arxiv",
+      "title": "Representation Matters: An Empirical Study of Program Representations for LLM Vulnerability Reasoning",
+      "abstract": "Large Language Models (LLMs) are increasingly used for automated vulnerability detection, but it remains unclear how program structure and semantics should be represented for LLM-based reasoning. Most prompting-based approaches provide raw source code, implicitly assuming that more source-level context gives the model better evidence. This paper challenges that assumption through RepBench, an empirical benchmark comparing raw source code with static-analysis-based program representations. RepBench converts real-world C/C++ vulnerability testcases into multiple representations: raw source, Abstract Syntax Trees (ASTs), Control-Flow Graphs (CFGs), Program Dependence Graphs (PDGs), their combinations, and an auxiliary track of enriched PDGs (ePDGs). Using a curated PrimeVul-derived corpus of 107 Joern-based testcases across five CWE categories, we evaluate ten representation variants under a fixed Chain-of-Thought and structured-output protocol, plus 19 additional ePDG cases generated through VulChecker/Hector. Representation choice substantially affects LLM vulnerability reasoning. The strongest variant, AST+PDG, achieves 83.2% accuracy, compared with 53.5% for raw source. At the family level, graph-only prompts outperform both source-only and source-plus-graph prompts while requiring far less prompt overhead. These results reveal a context dilution effect: adding raw source code to compact structural graph evidence can degrade reasoning by making vulnerability-relevant evidence less salient. Overall, our findings show that carefully selected structural representations offer a better accuracy-overhead tradeoff than simply giving LLMs more raw input, and suggest that static analysis can serve as an effective prompt-construction layer for security-focused LLM reasoning.",
+      "authors": [
+        "Andrew Stoltman",
+        "Johnathan Tang",
+        "Haipeng Cai"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.SE"
+      ],
+      "published": "2026-06-24T03:43:42+00:00",
+      "link": "https://arxiv.org/pdf/2606.25356v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Empirical benchmark comparing program representations, likely includes source code",
+      "llm_evidence_cn": "比较程序表示的实证基准，可能包含源代码",
+      "llm_evidence": "比较程序表示的实证基准，可能包含源代码",
+      "canonical_evidence": "比较程序表示的实证基准，可能包含源代码",
+      "llm_tldr_en": "RepBench benchmark compares raw source code with static-analysis-based program representations for LLM vulnerability reasoning, revealing that representation choice impacts performance.",
+      "llm_tldr_cn": "针对LLM漏洞推理中程序表示方式不明确的问题，本文提出了RepBench基准，系统比较了原始源代码与AST、CFG、PDG等静态分析表示的效果。实验发现，合适的程序表示能显著提升LLM的漏洞检测能力，为未来研究提供了重要参照。",
+      "llm_tldr": "针对LLM漏洞推理中程序表示方式不明确的问题，本文提出了RepBench基准，系统比较了原始源代码与AST、CFG、PDG等静态分析表示的效果。实验发现，合适的程序表示能显著提升LLM的漏洞检测能力，为未来研究提供了重要参照。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.25388v1",
+      "source": "arxiv",
+      "title": "TabClean: Reusable LLM-Synthesized Programs for Tabular Data Cleaning",
+      "abstract": "Reliable analytics and machine-learning pipelines depend on clean tabular data, yet production tables often contain missing values, typographical errors, inconsistent formats, violated dependencies, unit mismatches, and ambiguous categorical values. Existing cleaning systems make different trade-offs. Constraint-based systems need experts to specify rules. Learning-based systems need labels or retraining. Recent LLM-based cleaners reduce setup effort, but many call an LLM on rows, cells, or repeated workflow steps, so their cost grows with table size and with every recurring batch.   We present TabClean, a model-training-free system that compiles LLM reasoning into reusable guarded cleaning programs. Given a dirty table and a small annotated development set, TabClean profiles table evidence, diagnoses repair mechanisms, synthesizes executable Python transformations, validates candidates with cell-level feedback, and commits the best program for reuse on schema-compatible batches. The key abstraction is an evidence-backed guarded repair clause. A deterministic transformation may fire only when its dirty pattern, target-negative condition, evidence support, and scope constraints are satisfied. Across six benchmarks, TabClean achieves high precision, improves F1 over representative rule-based, learning-based, and LLM-based baselines on five datasets, and substantially reduces recurring runtime and API cost by replacing repeated LLM inference with deterministic program execution.",
+      "authors": [
+        "Yibo Wang",
+        "Riteng Zhang",
+        "Yinghao He",
+        "Yongye Su",
+        "Bharat Bhargava",
+        "Chunwei Liu"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB"
+      ],
+      "published": "2026-06-24T04:35:35+00:00",
+      "link": "https://arxiv.org/pdf/2606.25388v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides reusable LLM-synthesized cleaning programs",
+      "llm_evidence_cn": "提供可复用的LLM合成清理程序",
+      "llm_evidence": "提供可复用的LLM合成清理程序",
+      "canonical_evidence": "提供可复用的LLM合成清理程序",
+      "llm_tldr_en": "TabClean compiles LLM reasoning into reusable guarded cleaning programs for tabular data, likely providing source code.",
+      "llm_tldr_cn": "TabClean系统将LLM推理编译为可重用的带保护清理程序，用于表格数据清洗。它不需要模型训练，只需少量标注样本，生成可复用的代码程序，从而降低清洗成本。实验表明TabClean在多种脏数据场景下优于现有方法，并且生成的程序可独立运行。这项工作提供了实际可用的源代码，符合用户对含代码论文的需求。",
+      "llm_tldr": "TabClean系统将LLM推理编译为可重用的带保护清理程序，用于表格数据清洗。它不需要模型训练，只需少量标注样本，生成可复用的代码程序，从而降低清洗成本。实验表明TabClean在多种脏数据场景下优于现有方法，并且生成的程序可独立运行。这项工作提供了实际可用的源代码，符合用户对含代码论文的需求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.26328v1",
+      "source": "arxiv",
+      "title": "A Bilevel Framework for Data Center-Grid Coordination with DLMPs in Unbalanced Three-Phase Distribution Systems",
+      "abstract": "This paper proposes a grid-aware coordination framework between data centers and distribution grids using a DLMP-based bilevel optimization model. The data center aggregator (DCA) determines active power demand in response to distribution locational marginal prices (DLMPs), while the distribution system operator (DSO) solves a network-constrained optimal power flow problem to determine DLMPs in an unbalanced three-phase system. The model incorporates both active and reactive power consumption of data centers to evaluate their impacts on voltage regulation and phase imbalance. To mitigate adverse network effects, two operating cases are analyzed: without reactive power compensation and with static var generator (SVG)-based compensation. The proposed approach is validated on the IEEE 37-bus unbalanced distribution test system. Simulation results show that DLMP-based coordination captures economically efficient data center operation, and phase- and location-dependent network conditions, while SVG-based compensation improves voltage profiles and reduces phase unbalance.",
+      "authors": [
+        "Arash Baharvandi",
+        "Duong Tung Nguyen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-06-24T19:14:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.26328v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "data center-grid coordination",
+      "llm_evidence_cn": "数据中心与电网协调",
+      "llm_evidence": "数据中心与电网协调",
+      "canonical_evidence": "数据中心与电网协调",
+      "llm_tldr_en": "This paper proposes a bilevel optimization framework for coordinating data center power demand with distribution grid using DLMPs, considering unbalanced three-phase systems and reactive power compensation.",
+      "llm_tldr_cn": "针对数据中心与配电网协调问题，本文提出基于分布节点边际价格（DLMP）的双层优化模型。数据中心的主动功率响应DLMP，配电系统运营商求解最优潮流。模型考虑三相不平衡和电压调节，通过有无无功补偿两种工况分析，有效评估了数据中心对电网的影响。",
+      "llm_tldr": "针对数据中心与配电网协调问题，本文提出基于分布节点边际价格（DLMP）的双层优化模型。数据中心的主动功率响应DLMP，配电系统运营商求解最优潮流。模型考虑三相不平衡和电压调节，通过有无无功补偿两种工况分析，有效评估了数据中心对电网的影响。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.23452v1",
+      "source": "arxiv",
+      "title": "Industrial electrification in the era of data centers: A Bayesian Optimization approach for grid-aware large load allocation",
+      "abstract": "Large loads from industrial electrification and data centers are reshaping the planning and operation of the power grid. Identifying optimal large load siting decisions while accounting for transmission congestion is key to reducing expansion cost and operational risks. In this paper, we propose a leader-follower bilevel optimization framework to identify optimal large load allocation strategies. The leader determines the allocation of large loads, while the followers determine grid expansion cost and transmission utilization. This modeling approach explicitly integrates strategic planning with detailed short-term operational decisions. Moreover, we develop a Bayesian Optimization approach to efficiently solve the bilevel optimization problem by treating the followers as a black box. We use the framework to study large-scale load allocation from electrified oil refineries and data centers on a synthetic power grid that resembles key characteristics of the Texas (ERCOT) system. The results show that these large loads compete for electricity, and under high-load scenarios, data center demand is distributed across the entire grid, avoiding regions with high demand from industrial electrification.",
+      "authors": [
+        "Jiyong Lee",
+        "Erhan Kutanoglu",
+        "Michael Baldea",
+        "and Ilias Mitrai"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-06-22T15:04:30+00:00",
+      "link": "https://arxiv.org/pdf/2606.23452v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "addresses load allocation in data centers and power grid, relevant to scheduling",
+      "llm_evidence_cn": "研究数据中心和电网中的大负荷分配问题，与任务调度相关",
+      "llm_evidence": "研究数据中心和电网中的大负荷分配问题，与任务调度相关",
+      "canonical_evidence": "研究数据中心和电网中的大负荷分配问题，与任务调度相关",
+      "llm_tldr_en": "Proposes a bilevel optimization framework and Bayesian Optimization for grid-aware large load allocation in data centers, addressing transmission congestion and expansion costs.",
+      "llm_tldr_cn": "该论文针对工业电气化和数据中心带来的电网规划挑战，提出了领导者-追随者双层优化框架，并利用贝叶斯优化高效求解大负荷分配策略。该方法综合考虑了电网扩展成本和输电线路拥塞，为数据中心选址和负荷调度提供了优化方案，有助于降低运营风险和成本。",
+      "llm_tldr": "该论文针对工业电气化和数据中心带来的电网规划挑战，提出了领导者-追随者双层优化框架，并利用贝叶斯优化高效求解大负荷分配策略。该方法综合考虑了电网扩展成本和输电线路拥塞，为数据中心选址和负荷调度提供了优化方案，有助于降低运营风险和成本。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
