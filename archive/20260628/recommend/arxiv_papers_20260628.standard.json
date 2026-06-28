@@ -1,0 +1,135 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-28T21:01:52.510990+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.23412v1",
+      "source": "arxiv",
+      "title": "UnBias-Plus: Detect, Explain, and Rewrite Bias",
+      "abstract": "Bias in natural language remains a persistent challenge in both human-written and AI-generated content, affecting domains such as journalism, education, and AI research. Most existing detection methods identify only the presence of bias, with limited support for granular detection, interpretable explanations, neutral rewriting, and openly available trained models. We present UnBias-Plus, an open-source toolkit unifying (1) segment-level multi-class bias classification, (2) biased span localization, (3) neutral text rewriting, and (4) reasoning for each decision. Available via Python, CLI, REST API, and web interfaces, UnBias-Plus supports accessible bias analysis. The toolkit, source code, models, datasets, and documentation are publicly available.",
+      "authors": [
+        "Ahmed Y. Radwan",
+        "Ahmed ElKady",
+        "Sindhuja Chaduvula",
+        "Mohamed Hafez",
+        "Amrit Krishnan",
+        "Shaina Raza"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-06-22T14:36:26+00:00",
+      "link": "https://arxiv.org/pdf/2606.23412v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Open-source toolkit with publicly available source code",
+      "llm_evidence_cn": "开源工具包，源代码公开可用",
+      "llm_evidence": "开源工具包，源代码公开可用",
+      "canonical_evidence": "开源工具包，源代码公开可用",
+      "llm_tldr_en": "UnBias-Plus is an open-source toolkit unifying multi-class bias classification, span localization, neutral rewriting, and reasoning, with public source code, models, and datasets.",
+      "llm_tldr_cn": "自然语言偏见检测领域现有方法仅能识别偏见是否存在，缺乏细粒度检测和可解释性。为此，UnBias-Plus提出一个开源工具包，统一了段落级多分类、偏见跨度定位、中立重写和决策推理功能。该工具包提供Python库、命令行、REST API和网页接口，便于访问。源代码、模型和数据集均公开，促进了偏见分析的透明性和可复现性。",
+      "llm_tldr": "自然语言偏见检测领域现有方法仅能识别偏见是否存在，缺乏细粒度检测和可解释性。为此，UnBias-Plus提出一个开源工具包，统一了段落级多分类、偏见跨度定位、中立重写和决策推理功能。该工具包提供Python库、命令行、REST API和网页接口，便于访问。源代码、模型和数据集均公开，促进了偏见分析的透明性和可复现性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.22096v1",
+      "source": "arxiv",
+      "title": "A Pre-Dispatch Resonance Safety Criterion for AI Training Clusters",
+      "abstract": "Hyperscale AI training clusters operate under the Bulk Synchronous Parallel protocol, which impose a periodic power swing on the transmission grid. Every GPU in the job transitions between compute and idle in lockstep, so the aggregate power traces a square wave at the training iteration period. Production iteration periods of one to ten seconds place the forcing frequency within the inter-area electromechanical mode band of large interconnections, where a training schedule can drive a mode at resonance. This paper derives a closed-form pre-dispatch safety criterion that bounds the maximum cluster size a grid can absorb at any proposed iteration period. The derivation inverts the steady-state forced two-area swing equations. The criterion defines a danger band of iteration periods, extends to the square-wave harmonics, and parameterizes the modal response from planning-study eigenanalysis and the forcing amplitude from GPU specifications. Applied to the IEEE 39-bus system at a production-representative duty cycle, the criterion shows that the maximum safe cluster at resonance is $66\\,900$ GPUs under light damping. Rescheduling the same job less than one second away from resonance reduces the deviation $7.4\\times$ with no hardware change. These results establish the training iteration period as a controllable grid-safety parameter and supply the analytic screening tool that reliability directives on current large loads lack.",
+      "authors": [
+        "Chandan Chaudhary",
+        "Abanish Tiwari",
+        "Yansong Pei",
+        "Mohammed Ben-Idris",
+        "Joydeep Mitra"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-06-20T15:23:56+00:00",
+      "link": "https://arxiv.org/pdf/2606.22096v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "derives pre-dispatch safety criterion for AI training clusters, relevant to task scheduling in data centers and power grid",
+      "llm_evidence_cn": "推导AI训练集群的预调度安全标准，与数据中心任务调度和电网相关",
+      "llm_evidence": "推导AI训练集群的预调度安全标准，与数据中心任务调度和电网相关",
+      "canonical_evidence": "推导AI训练集群的预调度安全标准，与数据中心任务调度和电网相关",
+      "llm_tldr_en": "Closed-form criterion bounds AI cluster size to avoid grid resonance from training iteration scheduling.",
+      "llm_tldr_cn": "针对大规模AI训练集群引起的电网谐振风险，推导了预调度安全标准，量化了集群大小与训练迭代周期的关系。该标准基于两区域摇摆方程，为数据中心的任务调度提供了电网安全的理论界限。",
+      "llm_tldr": "针对大规模AI训练集群引起的电网谐振风险，推导了预调度安全标准，量化了集群大小与训练迭代周期的关系。该标准基于两区域摇摆方程，为数据中心的任务调度提供了电网安全的理论界限。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.22590v1",
+      "source": "arxiv",
+      "title": "Dynamic Resilience Assessment of Power Systems With Data Center Load Events Using Physics-Informed Neural Networks",
+      "abstract": "Large data center loads introduce new resilience challenges to power systems because their disconnection and staged reconnection can induce fast voltage and frequency dynamics that are not captured by static service-status or energy-based metrics. This paper proposes a utility-side, physics-informed resilience assessment framework that evaluates these events using only grid-side dynamic models and observable post-disturbance trajectories, without requiring detailed internal data center models. An unsupervised differential algebraic equation-physics informed neural network (DAE-PINN) based on an implicit backward Euler residual is developed to jointly predict dynamic and algebraic states, enabling repeated post-disturbance trajectory evaluation while enforcing network algebraic consistency. Normalized multi-phase resilience metrics are then used to quantify disturbance, degraded-state, and restoration-period impacts and to screen data center reconnection timing and load-ramping strategies under security constraints. Case studies on a modified IEEE 33-bus feeder show that the proposed DAE-PINN accurately tracks numerical DAE solutions and substantially reduces computation time in repeated restoration screening. The proposed metrics distinguish the effects of disturbance size, data center location, and reconnection strategy, revealing the trade-off between restoration speed and transient resilience loss.",
+      "authors": [
+        "Chen Chao",
+        "Zixiao Ma",
+        "Ziang Zhang"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-06-21T16:54:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.22590v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "power system resilience with data center load events using neural networks",
+      "llm_evidence_cn": "使用神经网络对数据中心负载事件进行电力系统韧性评估",
+      "llm_evidence": "使用神经网络对数据中心负载事件进行电力系统韧性评估",
+      "canonical_evidence": "使用神经网络对数据中心负载事件进行电力系统韧性评估",
+      "llm_tldr_en": "Proposes physics-informed neural networks for resilience assessment of power systems with data center loads, directly relevant to task scheduling in data centers and likely provides code.",
+      "llm_tldr_cn": "本文针对数据中心负载事件对电力系统带来的韧性挑战，提出了一种基于物理信息神经网络的无监督评估框架，利用电网侧动态模型和可观测的扰动后轨迹进行评估，无需数据中心内部模型。该方法能预测动态和代数状态，实现重复计算。该工作直接关联数据中心与电力调度，且方法通常附带代码。",
+      "llm_tldr": "本文针对数据中心负载事件对电力系统带来的韧性挑战，提出了一种基于物理信息神经网络的无监督评估框架，利用电网侧动态模型和可观测的扰动后轨迹进行评估，无需数据中心内部模型。该方法能预测动态和代数状态，实现重复计算。该工作直接关联数据中心与电力调度，且方法通常附带代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

@@ -6,40 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-27
-- 运行时间：2026-06-27 20:04:57 UTC
+- 最新运行日期：2026-06-28
+- 运行时间：2026-06-28 21:03:13 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：5
-- 速读区：1
+- 本次总论文数：3
+- 精读区：1
+- 速读区：2
 
 ### 今日简报（AI）
-1) 今日精读两篇高分论文，聚焦AI/ML工作负载在MIG上的动态分区节能调度与电网响应式AI数据中心新范式。  
-2) 最值得关注的方向：多实例GPU通过动态重分区实现能效优化，以及数据中心作为灵活负载参与电网调度的可行性。  
-3) 建议普通读者优先阅读《Energy Efficient Scheduling...》了解MIG分区策略，再结合《Power-Flexible AI Data Centers》思考算力与电网协同的潜力。
-- 详情：[/202606/27/README](/202606/27/README)
+今日精读一篇满分论文《UnBias-Plus》聚焦偏见检测与重写，速读涉及AI训练集群安全调度与数据中心电力韧性评估。  
+最值得关注的方向：偏见自动化纠偏技术；AI集群调度共振风险与电网动态韧性。  
+建议优先精读《UnBias-Plus》，将其方法纳入模型开发流程，同时关注训练集群安全与电力系统联动风险。
+- 详情：[/202606/28/README](/202606/28/README)
 
 ### 精读区论文标签
-1. [Energy Efficient Scheduling of AI/ML Workloads on Multi Instance GPUs with Dynamic Repartitioning](/202606/27/2606.25082v1-energy-efficient-scheduling-of-aiml-workloads-on-multi-instance-gpus-with-dynamic-repartitioning)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：提出数据中心GPU上的AI/ML工作负载节能调度方法
-2. [Power-Flexible AI Data Centers: A New Paradigm for Grid-Responsive Compute](/202606/27/2606.25098v1-power-flexible-ai-data-centers-a-new-paradigm-for-grid-responsive-compute)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：电网响应的数据中心与负载调度
-3. [Representation Matters: An Empirical Study of Program Representations for LLM Vulnerability Reasoning](/202606/27/2606.25356v1-representation-matters-an-empirical-study-of-program-representations-for-llm-vulnerability-reasoning)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：比较程序表示的实证基准，可能包含源代码
-4. [TabClean: Reusable LLM-Synthesized Programs for Tabular Data Cleaning](/202606/27/2606.25388v1-tabclean-reusable-llm-synthesized-programs-for-tabular-data-cleaning)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：提供可复用的LLM合成清理程序
-5. [A Bilevel Framework for Data Center-Grid Coordination with DLMPs in Unbalanced Three-Phase Distribution Systems](/202606/27/2606.26328v1-a-bilevel-framework-for-data-center-grid-coordination-with-dlmps-in-unbalanced-three-phase-distribution-systems)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：数据中心与电网协调
+1. [UnBias-Plus: Detect, Explain, and Rewrite Bias](/202606/28/2606.23412v1-unbias-plus-detect-explain-and-rewrite-bias)  
+   标签：评分：10.0/10、query:code-paper
+   evidence：开源工具包，源代码公开可用
 
 ### 速读区论文标签
-1. [Industrial electrification in the era of data centers: A Bayesian Optimization approach for grid-aware large load allocation](/202606/27/2606.23452v1-industrial-electrification-in-the-era-of-data-centers-a-bayesian-optimization-approach-for-grid-aware-large-load-allocation)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：研究数据中心和电网中的大负荷分配问题，与任务调度相关
+1. [A Pre-Dispatch Resonance Safety Criterion for AI Training Clusters](/202606/28/2606.22096v1-a-pre-dispatch-resonance-safety-criterion-for-ai-training-clusters)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：推导AI训练集群的预调度安全标准，与数据中心任务调度和电网相关
+2. [Dynamic Resilience Assessment of Power Systems With Data Center Load Events Using Physics-Informed Neural Networks](/202606/28/2606.22590v1-dynamic-resilience-assessment-of-power-systems-with-data-center-load-events-using-physics-informed-neural-networks)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：使用神经网络对数据中心负载事件进行电力系统韧性评估
 
 
 <div class="dpr-home-promo-card">

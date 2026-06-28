@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-28",
+  "date": "2026-06-28",
+  "generated_at": "2026-06-28T21:03:20",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/28/2606.23412v1-unbias-plus-detect-explain-and-rewrite-bias",
+      "section": "deep",
+      "title_en": "UnBias-Plus: Detect, Explain, and Rewrite Bias",
+      "authors": "Ahmed Y. Radwan, Ahmed ElKady, Sindhuja Chaduvula, Mohamed Hafez, Amrit Krishnan, Shaina Raza",
+      "date": "2026-06-22",
+      "pdf": "https://arxiv.org/pdf/2606.23412v1",
+      "score": "10.0",
+      "evidence": "开源工具包，源代码公开可用",
+      "tldr": "自然语言中的偏见问题在新闻、教育和AI研究中持续存在。现有检测方法仅识别偏见存在，缺乏细粒度分类、可解释解释和中性重写。UnBias-Plus是一个开源工具包，统一了段级多类偏见分类、有偏跨度定位、中性文本重写和决策推理。通过Python、CLI、REST API和Web界面提供，支持可访问的偏见分析。",
+      "tags": "query:code-paper",
+      "abstract_en": "Bias in natural language remains a persistent challenge in both human-written and AI-generated content, affecting domains such as journalism, education, and AI research. Most existing detection methods identify only the presence of bias, with limited support for granular detection, interpretable explanations, neutral rewriting, and openly available trained models. We present UnBias-Plus, an open-source toolkit unifying (1) segment-level multi-class bias classification, (2) biased span localization, (3) neutral text rewriting, and (4) reasoning for each decision. Available via Python, CLI, REST API, and web interfaces, UnBias-Plus supports accessible bias analysis. The toolkit, source code, models, datasets, and documentation are publicly available.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/28/2606.22096v1-a-pre-dispatch-resonance-safety-criterion-for-ai-training-clusters",
+      "section": "quick",
+      "title_en": "A Pre-Dispatch Resonance Safety Criterion for AI Training Clusters",
+      "authors": "Chandan Chaudhary, Abanish Tiwari, Yansong Pei, Mohammed Ben-Idris, Joydeep Mitra",
+      "date": "2026-06-20",
+      "pdf": "https://arxiv.org/pdf/2606.22096v1",
+      "score": "7.0",
+      "evidence": "推导AI训练集群的预调度安全标准，与数据中心任务调度和电网相关",
+      "tldr": "超大规模AI训练集群在BSP协议下产生周期性功率波动，周期1-10秒可能激发电网区域间机电模式共振。本文推导出预调度安全准则，通过逆解稳态强迫两区域摇摆方程，定义危险周期带并考虑方波谐波。在IEEE 39节点系统上，共振时最大安全集群为66,900 GPU（轻阻尼），重新调度远离共振可减少7.4倍偏差。该准则将训练迭代周期作为可控电网安全参数，为大型负载调度提供分析工具。",
+      "tags": "query:code-paper",
+      "abstract_en": "Hyperscale AI training clusters operate under the Bulk Synchronous Parallel protocol, which impose a periodic power swing on the transmission grid. Every GPU in the job transitions between compute and idle in lockstep, so the aggregate power traces a square wave at the training iteration period. Production iteration periods of one to ten seconds place the forcing frequency within the inter-area electromechanical mode band of large interconnections, where a training schedule can drive a mode at resonance. This paper derives a closed-form pre-dispatch safety criterion that bounds the maximum cluster size a grid can absorb at any proposed iteration period. The derivation inverts the steady-state forced two-area swing equations. The criterion defines a danger band of iteration periods, extends to the square-wave harmonics, and parameterizes the modal response from planning-study eigenanalysis and the forcing amplitude from GPU specifications. Applied to the IEEE 39-bus system at a production-representative duty cycle, the criterion shows that the maximum safe cluster at resonance is $66\\,900$ GPUs under light damping. Rescheduling the same job less than one second away from resonance reduces the deviation $7.4\\times$ with no hardware change. These results establish the training iteration period as a controllable grid-safety parameter and supply the analytic screening tool that reliability directives on current large loads lack.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/28/2606.22590v1-dynamic-resilience-assessment-of-power-systems-with-data-center-load-events-using-physics-informed-neural-networks",
+      "section": "quick",
+      "title_en": "Dynamic Resilience Assessment of Power Systems With Data Center Load Events Using Physics-Informed Neural Networks",
+      "authors": "Chen Chao, Zixiao Ma, Ziang Zhang",
+      "date": "2026-06-21",
+      "pdf": "https://arxiv.org/pdf/2606.22590v1",
+      "score": "7.0",
+      "evidence": "使用神经网络对数据中心负载事件进行电力系统韧性评估",
+      "tldr": "大型数据中心负载的断开与分级恢复会引发快速电压频率动态，现有静态指标无法评估。本文提出基于物理信息神经网络的电网侧韧性评估框架，利用DAE-PINN联合预测动态与代数状态，实现重复轨迹评估并保证网络代数一致性。案例表明方法准确追踪DAE解，大幅缩减恢复筛选时间。指标区分扰动大小、位置和恢复策略影响，揭示恢复速度与暂态韧性损失的权衡。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large data center loads introduce new resilience challenges to power systems because their disconnection and staged reconnection can induce fast voltage and frequency dynamics that are not captured by static service-status or energy-based metrics. This paper proposes a utility-side, physics-informed resilience assessment framework that evaluates these events using only grid-side dynamic models and observable post-disturbance trajectories, without requiring detailed internal data center models. An unsupervised differential algebraic equation-physics informed neural network (DAE-PINN) based on an implicit backward Euler residual is developed to jointly predict dynamic and algebraic states, enabling repeated post-disturbance trajectory evaluation while enforcing network algebraic consistency. Normalized multi-phase resilience metrics are then used to quantify disturbance, degraded-state, and restoration-period impacts and to screen data center reconnection timing and load-ramping strategies under security constraints. Case studies on a modified IEEE 33-bus feeder show that the proposed DAE-PINN accurately tracks numerical DAE solutions and substantially reduces computation time in repeated restoration screening. The proposed metrics distinguish the effects of disturbance size, data center location, and reconnection strategy, revealing the trade-off between restoration speed and transient resilience loss.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

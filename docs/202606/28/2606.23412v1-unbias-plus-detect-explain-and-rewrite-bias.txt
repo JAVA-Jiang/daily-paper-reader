@@ -1,0 +1,92 @@
+Title: UnBias-Plus: Detect, Explain, and Rewrite Bias
+
+URL Source: https://arxiv.org/pdf/2606.23412v1
+
+Published Time: Tue, 23 Jun 2026 03:41:27 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+Title / name of your software 
+
+UnBias-Plus : Detect, Explain, and Rewrite Bias 
+
+Names of authors / main developers (incl. affiliations, addresses, email) 
+
+Ahmed Y. Radwan 1, Ahmed ElKady 1, Sindhuja Chaduvula 2, Mohamed Hafez 1, Amrit Krishnan 1,Shaina Raza 1,∗
+
+{ahmed.radwan, ahmed.elkady, mohamed.hafez, amritk, shaina.raza }@vectorinstitute.ai 
+
+> 1
+
+Vector Institute for Artificial Intelligence, Toronto, Canada; 2Independent Researcher 
+
+> ∗
+
+Corresponding author 
+
+Abstract 
+
+Bias in natural language remains a persistent challenge in both human-written and AI-generated content, affecting domains such as journalism, education, and AI research. Most existing detection methods identify only the presence of bias, with limited support for granular detection, interpretable explanations, neutral rewriting, and openly available trained models. We present UnBias-Plus , an open-source toolkit unifying (1) segment-level multi-class bias classification, (2) biased span localization, (3) neutral text rewriting, and (4) reasoning for each decision. Available via Python, CLI, REST API, and web interfaces, UnBias-Plus supports accessible bias analysis. The toolkit, source code, models, datasets, and documentation are publicly available. 
+
+Keywords 
+
+Bias detection; Debiasing; NLP; LLMs; Responsible AI; Benign Language Generation 
+
+Code metadata Nr. Code metadata description Please fill in this column 
+
+C1 Current code version v0.1.6 C2 Permanent link to code/repository used for this code version https://github.com/VectorInstitute/unbias-plus/tree/ 626f908 C3 Permanent link to Reproducible Cap-sule —C4 Legal Code License Vector Institute License. The software may be accessed and used by Academic Entities, Sponsors, and Part-ners of the Vector Institute under the terms provided in 
+
+LICENSE.md in the repository. C5 Code versioning system used git C6 Software code languages, tools, and services used Python, JavaScript, GitHub, Hugging Face, FastAPI C7 Compilation requirements, operating environments & dependencies Python ≥3.10, <3.12; GPU with CUDA 12.4 recom-mended for model inference and fine-tuning; CPU exe-cution supported but slower C8 If available Link to developer documen-tation/manual Documentation: https://vectorinstitute.github.io/ unbias-plus/. Release version: https://github.com/ VectorInstitute/unbias-plus/releases/tag/v0.1.6 C9 Support email for questions shaina.raza@vectorinstitute.ai 
+
+1. Introduction 
+
+Bias in natural language can influence how people and groups are represented, interpreted, and treated across human-written and AI-generated content [1]. Earlier text-bias research commonly framed the problem as binary or multi-class classification tasks, including sentence-level bias detection, span-level identification, and neutral rewriting from annotated examples [1]. Generative AI broadens this challenge because outputs are open-ended, context-dependent, and shaped by the prompt and intended use. Commercial moderation APIs [3] and LLM 1    
+
+> arXiv:2606.23412v1 [cs.CL] 22 Jun 2026 Text Input Prompt
+> Assembly Generation Parse
+> JSON
+> Compute Offsets Attach Context Output Validation
+
+Figure 1: Pipeline architecture of UnBias-Plus. Input text flows through prompt construction, LLM inference, JSON parsing, offset computation, and result assembly. guardrails [2] can flag content against predefined safety policies or risk taxonomies, but are generally designed for broad safety enforcement rather than detailed bias analysis. Moreover, many widely used moderation solutions are proprietary, while open alternatives often focus on safety classification rather than bias characterization and remediation. There remains a need for open, reusable software that identifies bias at a granular, span level. We present UnBias-Plus (UnBias +), an open-source Python toolkit for fine-grained bias analysis and rewriting. The toolkit provides fine-tuned models trained on a purpose-built annotated dataset and supports reproducible end-to-end workflows for bias detection, explanation, and neutral rewriting. It supports segment-level bias localization, multi-class bias-type classification, severity estimation, reasoning for each detected seg-ment, and neutral rewriting of biased spans. The toolkit provides structured outputs through a Python package, command-line interface, REST API, and web interface, enabling integration into research workflows and text-processing applications. The current release supports fine-tuned models from the Qwen3 family [8], including Qwen3-8B and Qwen3.5-4B [4], and is adaptable to any instruction-tuned model. 
+
+2. Software description 
+
+UnBias-Plus implements a multi-stage bias review pipeline (Figure 1). Given input text, the system prompts a fine-tuned language model to produce a structured analysis. The analysis includes whether bias is present, relevant spans with character-level offsets, bias types, severity scores, explanations, and suggested neutral re-placements. For each detected segment, the output includes the original phrase, bias type, severity, explanation, and replacement, alongside a full neutral rewrite for holistic comparison. Results can be displayed in the web interface (Figure 2), printed via the command line, or exported as JSON for annotation, evaluation, dataset construction, and downstream model retraining. 
+
+3. Example usage and validation 
+
+Usage examples for the command-line interface, Python API, REST API, and web interface are provided in the documentation. To validate our model, we evaluate the released models on text outside the training distribution and whether the outputs support the intended bias review workflow. We evaluated the released models on an out of distribution test set from BABE [7], which is news media dataset. We took a stratified sample containing 175 biased and 175 unbiased samples. GPT-4o-mini was used as a judge on a 0–5 scale, alongside automatic metrics including recall at biased words, ROUGE-L, length ratio, hallucination rate, and duplicate rate. The prompts for the judge metrics are given in our codebase. Results in Table 1 show a trade-off between bias detection/preservation and segment-level editing precision. Our fine-tuned Qwen3-8B UnBias-Plus achieves stronger bias reduction, higher relevance, stronger preservation of unbiased samples, and lower hallucination rate. The fine-tuned Qwen3.5-4B UnBias-Plus, however, improves rewrite and segment-level behaviour, with higher global rewrite quality, higher recall at biased words, stronger segment replacement quality, and zero duplicate rate. These results support the design of UnBias-Plus as a con-figurable toolkit: users can select a model variant depending on whether their workflow prioritizes conservative bias review, unbiased-text preservation, or more aggressive segment-level localization. 2Table 1: Unbias-Plus evaluation. ↑ = higher is better, ↓ = lower is better, ≈1.0 = closest to 1.0 is best.                                                 
+
+> Biased Samples Unbiased Samples Segment Level Model Bias red. % ↑
+> Bias red. mean ↑Relev. ↑Global rew. ↑
+> ROUGE -L ↑
+> Len. ratio ≈1Corr. ID mean ↑
+> Corr. ID med. ↑
+> Unnec. rew. ↑
+> Unnec. med. ↑
+> Recall words ↑
+> Seg. qual. ↑
+> Halluc. rate ↓
+> Dupl. rate ↓
+> Qwen3.5-4B UnBias +57.5 1.91 4.09 3.15 0.71 1.00 3.44 2.0 3.97 3.0 0.85 3.88 5.3 0.0
+> Qwen3-8B UnBias +60.6 1.94 4.18 3.08 0.72 0.99 4.16 5.0 4.44 5.0 0.71 3.58 3.6 0.7
+> Metrics: Bias red. %/mean = bias removed (frac./raw); Relev. = semantic fidelity (1–5); Global rew. = rewrite quality (1–5); ROUGE-L = lexical overlap (0–1); Len. ratio = rewrite/orig. length; Corr. ID = correct unbiased detection (1–5); Unnec. rew. = avoids needless edits (1–5); Recall words = biased-word coverage (0–1); Seg. qual. = segment edit quality (1–5); Halluc./Dupl. = fabricated/repeated content (%).
+
+4. Impact 
+
+UnBias-Plus supports both technical and non-technical users through a unified workflow for bias detection, explanation, and neutral rewriting. It can be accessed through programmatic interfaces and an interactive web application, enabling integration into research, development, and practitioner-facing review processes. The impact of UnBias-Plus spans research, industry, and society. From a research perspective, it provides a unified framework for bias detection, classification, explanation, and debiasing, together with associated models, code, and datasets that support reproducible development of fairness-aware language systems. In industry, it can be applied to domains such as journalism, content moderation, and decision-support systems to identify potentially biased language and improve transparency. More broadly, UnBias-Plus can promote equitable information dissemination and support fairer communication by reducing the propagation of biased language in public-facing systems. 
+
+5. Limitations and Future Development 
+
+UnBias-Plus should be used as a bias review assistant rather than as a final authority on neutrality or fairness. Bias is context-dependent: the same phrase may be interpreted differently across domains, communities, and cultural settings. For this reason, the toolkit is designed to support human-in-the-loop review, where model outputs can be inspected, contested, and revised before use in editorial, research, or decision-support workflows. From a practical perspective, the amount of context that can be processed depends on the selected model and available hardware. While the released 4B and 8B variants make the toolkit easier to deploy, smaller models may still miss subtle framing patterns or produce incomplete reasoning for complex articles. Domain sensitivity is another limitation. In order to prepare it for a custom domain, it needs retraining the models, for which we have provided the code already. Future development will focus on expanding domain coverage, improving multilingual support, and inte-grating additional model backends like multimodals [6, 5] . We also plan to extend the broader UnBias-Plus framework beyond text toward image and multimodal analysis, where bias, framing, and manipulation can appear across visual as well as linguistic content. To support this extensibility, the project releases the dataset, software pipeline, and training recipes so that users can adapt the toolkit to new models, domains, and deploy-ment settings. 
+
+6. Acknowledgment 
+
+Resources were provided in part by the Province of Ontario and the Government of Canada through CIFAR and Vector Institute sponsors (http://www.vectorinstitute.ai/#partners), and by the European Union Horizon Europe programme under the AIXPERT project (Grant No. 101214389). We thank Orli Namian, Natalie Richard, Marcie De Cesare, Kylie Williams and Aravind Narayanan for their valuable support to the UnBias-Plus project. 3References 
+
+[1] Isabel O. Gallegos, Ryan A. Rossi, Joe Barrow, Md Mehrab Tanjim, Sungchul Kim, Franck Dernoncourt, Tong Yu, Ruiyi Chang, and Nesreen K. Ahmed. Bias and fairness in large language models: A survey. 
+
+Computational Linguistics , 50(3):1097–1179, 2024. [2] Hakan Inan, Kartikeya Upasani, Jianfeng Chi, Rashi Rungta, Krithika Iyer, Yuning Mao, Michael Tontchev, Qing Hu, Brian Fuller, Davide Testuggine, et al. Llama guard: Llm-based input-output safeguard for human-ai conversations. arXiv preprint arXiv:2312.06674 , 2023. [3] OpenAI. Moderation. https://developers.openai.com/api/docs/guides/moderation, 2026. OpenAI API Documentation. Accessed: June 19, 2026. [4] Qwen Team. Qwen3.5: Towards native multimodal agents, February 2026. [5] Ahmed Y Radwan, Christos Emmanouilidis, Hina Tabassum, Deval Pandya, and Shaina Raza. Sonic-o1: A real-world benchmark for evaluating multimodal large language models on audio-video understanding. 
+
+arXiv preprint arXiv:2601.21666 , 2026. [6] Shaina Raza, Aravind Narayanan, Vahid Reza Khazaie, Ashmal Vayani, Ahmed Y Radwan, Mukund S Chettiar, Amandeep Singh, Mubarak Shah, and Deval Pandya. Humanibench: A human-centric framework for large multimodal models evaluation. arXiv preprint arXiv:2505.11454 , 2025. [7] Timo Spinde, Manuel Plank, Jan-David Krieger, Terry Ruas, Bela Gipp, and Akiko Aizawa. Neural media bias detection using distant supervision with BABE - bias annotations by experts. In Marie-Francine Moens, Xuanjing Huang, Lucia Specia, and Scott Wen-tau Yih, editors, Findings of the Association for Computational Linguistics: EMNLP 2021 , pages 1166–1177, Punta Cana, Dominican Republic, November 2021. Association for Computational Linguistics. [8] An Yang et al. Qwen3 technical report. arXiv preprint arXiv:2505.09388 , 2025. 4Figure 2: The web demo interface of UnBias-Plus allows users to input text, highlights biased segments with severity colour-coding, displays per-segment bias types and reasoning, and generates a full neutral rewrite. 5
