@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-29",
+  "date": "2026-06-29",
+  "generated_at": "2026-06-29T20:35:00",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/29/2606.23197v1-the-everest-dataset-for-secure-software-engineering",
+      "section": "deep",
+      "title_en": "The EVerest Dataset for Secure Software Engineering",
+      "authors": "Sophie Corallo, Debora Grupp, Dominik Fuchß, Jan Keim, Frederik Reiche, Tobias Hey, Anne Koziolek",
+      "date": "2026-06-22",
+      "pdf": "https://arxiv.org/pdf/2606.23197v1",
+      "score": "9.0",
+      "evidence": "提供包含源代码的开源数据集，用于电动汽车充电站安全工程",
+      "tldr": "现有软件安全数据集缺乏覆盖需求、架构和代码的细粒度安全标注。本文基于电动汽车充电站开源软件栈EVerest，构建了包含84条安全需求、1445个安全元素、架构模型、代码和文档的多工件数据集。在数据集构建过程中发现并报告了一个真实安全弱点（CWE-1295）。该数据集支持安全需求分类、命名实体识别、架构追踪链接和代码级安全验证等研究。",
+      "tags": "query:code-paper",
+      "abstract_en": "End-to-end security verification, from requirements through architecture to code, requires datasets that span all three artifact types with fine-grained security labels. No existing dataset provides this combination. We present the EVerest dataset, a multi-artifact resource based on EVerest, an industry-driven open-source software stack for electric vehicle charging stations. The dataset includes 84 manually elicited security requirements annotated with security objectives, 1,445 fine-grained security elements (components, entities, data, data flows, states, etc.), acceptance windows, coreferences, and architectural trace links, as well as the EVerest software architecture model, source code, and natural language documentation. It enables research on security requirements classification, named entity recognition, architectural trace linking, and design-time or code-level security verification. During dataset creation, a real security weakness (CWE-1295) was identified, disclosed to the project maintainers, and subsequently fixed. The dataset is publicly available. A short video is available at https://youtu.be/pnn1uqpomvQ.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/29/2606.27416v1-glite-arf-verifier-driven-research-with-parallel-llm-coding-agents",
+      "section": "deep",
+      "title_en": "Glite ARF: Verifier-Driven Research with Parallel LLM Coding Agents",
+      "authors": "Vassili Philippov, Pavel Katunin, Dmitry Andreev, Igor Ostanin, Anton Nikolaev",
+      "date": "2026-06-25",
+      "pdf": "https://arxiv.org/pdf/2606.27416v1",
+      "score": "9.0",
+      "evidence": "提供开源Python框架，用于可重复研究的LLM编码智能体",
+      "tldr": "LLM编码代理直接执行实验易导致不可复现的错误累积。为此提出Glite ARF框架，采用人类研究者、编码代理与确定性验证脚本的三角色结构，实现验证者驱动研究。在BEA 2026词汇难度任务中，以12个并行代理和$450成本运行273个任务，封闭与开放赛道RMSE分别降低29.9%和35.9%，并自动检测并纠正了4个目标泄露特征集。框架开销仅约1%墙钟时间，保障大规模研究可审计与可复现。",
+      "tags": "query:code-paper",
+      "abstract_en": "LLM coding agents make it tempting to automate empirical research by delegating experiments to them directly, but naive delegation does not scale to large projects: low-rate instruction lapses compound into broken, irreproducible artefacts. To address this problem, we present Glite ARF, an open-source Python framework for running many LLM coding agents in parallel on a research repository without sacrificing reproducibility or auditability. The framework defines a three-role stack: a human researcher chooses which hypotheses to test, coding agents (Claude Code, Codex CLI) implement individual tasks under a fixed structure, and deterministic Python verifier scripts enforce task isolation, immutability of completed work, a corrections overlay, and a materialised project overview. We call this verifier-driven research: the rules of the research process live in code that fails loudly when violated, not in prose that agents are merely asked to follow. Using Glite ARF, we developed our submission to the BEA 2026 vocabulary-difficulty shared task, placing first in the closed track and second in the open track on all three target languages (Spanish, German, Mandarin) and reducing the official baseline RMSE by 29.9% (closed) and 35.9% (open). The campaign comprised 273 tracked tasks (146 experiment runs) across 129 feature sets, run by up to twelve parallel agents orchestrated from a single laptop - with some model training on rented A100s - at approximately \\$450 in LLM API spend (\\$498 total third-party cost), and structured per-fold provenance let us catch and strip four target-leaking feature sets, correcting an implausible 0.609 RMSE to 0.802. Across three campaigns in three domains, the framework's structural machinery adds only about 1% of wall-clock time. Framework and a public demo project accompany this paper.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/29/2606.25098v1-power-flexible-ai-data-centers-a-new-paradigm-for-grid-responsive-compute",
+      "section": "quick",
+      "title_en": "Power-Flexible AI Data Centers: A New Paradigm for Grid-Responsive Compute",
+      "authors": "Chris Williams, Philip Colangelo, Ayse Coskun, Ethan Levine, Andy Neale, Ciaran Roberts, Shayan Sengupta, Nikhil Shirolkar, Varun Sivaram, Sarah Soares, Ethan Tiao, Scott Underwood, Daniel Wilson, Frank Sharp, Luke Wainwright, Harry Petty, Scott Wallace, Brandon Records",
+      "date": "2026-06-23",
+      "pdf": "https://arxiv.org/pdf/2606.25098v1",
+      "score": "6.0",
+      "evidence": "针对数据中心的工作负载调度以实现电网响应",
+      "tldr": "AI数据中心电力需求激增，传统视为刚性负荷导致高成本和并网延迟。本文通过软件工作流编排，集成电网信号与功率遥测，使GPU集群实现细粒度功率控制。在130kW集群上验证了快速负载削减、持续缩减及碳感知运行，并支持跨地理负载迁移。该方法将AI设施转变为灵活资源，提升电网可靠性并加速互联。",
+      "tags": "query:code-paper",
+      "abstract_en": "The rapid expansion of artificial intelligence (AI) infrastructure is driving unprecedented growth in electricity demand from data centers. Traditional power-system planning treats large computing facilities as inflexible peak loads, leading to costly infrastructure upgrades and long delays in grid interconnection. Recent work has shown that AI clusters can reduce electricity consumption during peak demand through software-based workload orchestration. This article explores how modern GPU-based AI data centers can operate as grid-interactive assets that respond dynamically to power system conditions. We describe an architecture integrating grid signals, workload scheduling, and power telemetry for fine-grained cluster power control. Experimental results from a real-world deployment on a 130 kW GPU cluster demonstrate multiple forms of flexibility, including rapid load reduction, sustained curtailment, and carbon-aware operation while preserving service levels for priority jobs. We further demonstrate performance-aware load shifting across geographically distributed clusters, enabling workloads to migrate toward regions with lower grid stress. Together, these capabilities transform AI infrastructure from static electricity consumers into flexible resources that support grid reliability, accelerate interconnection, and improve computing sustainability.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/29/2606.27742v1-kg2cypher-data-centric-pipeline-for-building-enterprise-text-to-cypher-systems",
+      "section": "quick",
+      "title_en": "KG2Cypher: Data-Centric Pipeline for Building Enterprise Text-to-Cypher Systems",
+      "authors": "Minjun Choi, Yerin Kim, Junghyuk Seo, Sujin Mo, Hyemin Lee, Youngjoong Ko",
+      "date": "2026-06-26",
+      "pdf": "https://arxiv.org/pdf/2606.27742v1",
+      "score": "6.0",
+      "evidence": "提出构建Text-to-Cypher系统的数据流管道，通常有开源代码",
+      "tldr": "企业知识图谱的自然语言接口构建成本高昂。KG2Cypher提出数据驱动的流水线，从现有图谱生成可执行Cypher查询，再借助大语言模型生成对应自然语言问题，经LLM裁判和人工验证后形成候选感知的SFT数据。在韩语企业场景中，LoRA微调将广播节目查询的执行结果F1从0.806提升至0.950，公司查询从0.70提升至0.92。在11类设置下达到95.2%精确匹配和0.964执行结果F1，证明了其有效性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Enterprise Knowledge Graphs (KGs) are increasingly used for internal search, analytics, and question answering, but building natural-language interfaces for private enterprise graphs remains costly. We present KG2Cypher, a data-centric pipeline for building enterprise text-to-Cypher systems from existing KGs. KG2Cypher first constructs an executable Cypher query from observed graph facts and then uses LLMs to generate its associated natural-language question. The resulting Text-Cypher pairs are validated with an LLM judge and human validation, and are converted into candidate-aware SFT data. The trained generator is served with class-conditioned schema prompting, entity retrieval, and LoRA-based inference. We evaluate KG2Cypher in Korean enterprise settings, where short search-style queries and schema paraphrases make language grounding difficult. LoRA SFT improves execution-result F1 from 0.806 to 0.950 on broadcast-program queries and from 0.70 to 0.92 on company queries. In an 11-class setting, KG2Cypher achieves 95.2% exact match, 99.9% execution rate, and 0.964 execution-result F1.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,194 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-29T20:32:50.256918+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.23197v1",
+      "source": "arxiv",
+      "title": "The EVerest Dataset for Secure Software Engineering",
+      "abstract": "End-to-end security verification, from requirements through architecture to code, requires datasets that span all three artifact types with fine-grained security labels. No existing dataset provides this combination. We present the EVerest dataset, a multi-artifact resource based on EVerest, an industry-driven open-source software stack for electric vehicle charging stations. The dataset includes 84 manually elicited security requirements annotated with security objectives, 1,445 fine-grained security elements (components, entities, data, data flows, states, etc.), acceptance windows, coreferences, and architectural trace links, as well as the EVerest software architecture model, source code, and natural language documentation. It enables research on security requirements classification, named entity recognition, architectural trace linking, and design-time or code-level security verification. During dataset creation, a real security weakness (CWE-1295) was identified, disclosed to the project maintainers, and subsequently fixed. The dataset is publicly available. A short video is available at https://youtu.be/pnn1uqpomvQ.",
+      "authors": [
+        "Sophie Corallo",
+        "Debora Grupp",
+        "Dominik Fuchß",
+        "Jan Keim",
+        "Frederik Reiche",
+        "Tobias Hey",
+        "Anne Koziolek"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.CR"
+      ],
+      "published": "2026-06-22T11:44:58+00:00",
+      "link": "https://arxiv.org/pdf/2606.23197v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "provides open-source dataset with source code for EV charging stations, includes security requirements and code",
+      "llm_evidence_cn": "提供包含源代码的开源数据集，用于电动汽车充电站安全工程",
+      "llm_evidence": "提供包含源代码的开源数据集，用于电动汽车充电站安全工程",
+      "canonical_evidence": "提供包含源代码的开源数据集，用于电动汽车充电站安全工程",
+      "llm_tldr_en": "Presents EVerest, a multi-artifact dataset with 84 security requirements, 1445 fine-grained security elements, and full source code for EV charging stations, enabling end-to-end security verification research.",
+      "llm_tldr_cn": "现有数据集缺乏同时包含需求、架构和代码的安全标注。本文基于工业级开源电动汽车充电站软件栈EVerest构建多工件数据集，包含84条手动获取的安全需求、1445个细粒度安全元素以及完整的软件架构模型和源代码。该数据集支持从需求到代码端到端的安全验证研究，为安全工程提供宝贵的公开资源。",
+      "llm_tldr": "现有数据集缺乏同时包含需求、架构和代码的安全标注。本文基于工业级开源电动汽车充电站软件栈EVerest构建多工件数据集，包含84条手动获取的安全需求、1445个细粒度安全元素以及完整的软件架构模型和源代码。该数据集支持从需求到代码端到端的安全验证研究，为安全工程提供宝贵的公开资源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.27416v1",
+      "source": "arxiv",
+      "title": "Glite ARF: Verifier-Driven Research with Parallel LLM Coding Agents",
+      "abstract": "LLM coding agents make it tempting to automate empirical research by delegating experiments to them directly, but naive delegation does not scale to large projects: low-rate instruction lapses compound into broken, irreproducible artefacts. To address this problem, we present Glite ARF, an open-source Python framework for running many LLM coding agents in parallel on a research repository without sacrificing reproducibility or auditability. The framework defines a three-role stack: a human researcher chooses which hypotheses to test, coding agents (Claude Code, Codex CLI) implement individual tasks under a fixed structure, and deterministic Python verifier scripts enforce task isolation, immutability of completed work, a corrections overlay, and a materialised project overview. We call this verifier-driven research: the rules of the research process live in code that fails loudly when violated, not in prose that agents are merely asked to follow. Using Glite ARF, we developed our submission to the BEA 2026 vocabulary-difficulty shared task, placing first in the closed track and second in the open track on all three target languages (Spanish, German, Mandarin) and reducing the official baseline RMSE by 29.9% (closed) and 35.9% (open). The campaign comprised 273 tracked tasks (146 experiment runs) across 129 feature sets, run by up to twelve parallel agents orchestrated from a single laptop - with some model training on rented A100s - at approximately \\$450 in LLM API spend (\\$498 total third-party cost), and structured per-fold provenance let us catch and strip four target-leaking feature sets, correcting an implausible 0.609 RMSE to 0.802. Across three campaigns in three domains, the framework's structural machinery adds only about 1% of wall-clock time. Framework and a public demo project accompany this paper.",
+      "authors": [
+        "Vassili Philippov",
+        "Pavel Katunin",
+        "Dmitry Andreev",
+        "Igor Ostanin",
+        "Anton Nikolaev"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.SE"
+      ],
+      "published": "2026-06-25T17:52:26+00:00",
+      "link": "https://arxiv.org/pdf/2606.27416v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python framework for reproducible research with LLM coding agents",
+      "llm_evidence_cn": "提供开源Python框架，用于可重复研究的LLM编码智能体",
+      "llm_evidence": "提供开源Python框架，用于可重复研究的LLM编码智能体",
+      "canonical_evidence": "提供开源Python框架，用于可重复研究的LLM编码智能体",
+      "llm_tldr_en": "Glite ARF is an open-source Python framework that runs multiple LLM coding agents in parallel on research repositories, ensuring reproducibility and auditability through deterministic verifier scripts.",
+      "llm_tldr_cn": "Glite ARF是一个开源Python框架，能够在研究仓库上并行运行多个LLM编码智能体，同时保证可重复性和可审计性。它通过确定性验证器脚本强制执行任务隔离、工作不可变性和修正覆盖层，解决了大规模自动化实验中的指令失误累积问题。该框架支持多种编码智能体（如Claude Code、Codex CLI），并将人类研究者置于假设选择者角色，确保研究的可控性。",
+      "llm_tldr": "Glite ARF是一个开源Python框架，能够在研究仓库上并行运行多个LLM编码智能体，同时保证可重复性和可审计性。它通过确定性验证器脚本强制执行任务隔离、工作不可变性和修正覆盖层，解决了大规模自动化实验中的指令失误累积问题。该框架支持多种编码智能体（如Claude Code、Codex CLI），并将人类研究者置于假设选择者角色，确保研究的可控性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.25098v1",
+      "source": "arxiv",
+      "title": "Power-Flexible AI Data Centers: A New Paradigm for Grid-Responsive Compute",
+      "abstract": "The rapid expansion of artificial intelligence (AI) infrastructure is driving unprecedented growth in electricity demand from data centers. Traditional power-system planning treats large computing facilities as inflexible peak loads, leading to costly infrastructure upgrades and long delays in grid interconnection. Recent work has shown that AI clusters can reduce electricity consumption during peak demand through software-based workload orchestration. This article explores how modern GPU-based AI data centers can operate as grid-interactive assets that respond dynamically to power system conditions. We describe an architecture integrating grid signals, workload scheduling, and power telemetry for fine-grained cluster power control. Experimental results from a real-world deployment on a 130 kW GPU cluster demonstrate multiple forms of flexibility, including rapid load reduction, sustained curtailment, and carbon-aware operation while preserving service levels for priority jobs. We further demonstrate performance-aware load shifting across geographically distributed clusters, enabling workloads to migrate toward regions with lower grid stress. Together, these capabilities transform AI infrastructure from static electricity consumers into flexible resources that support grid reliability, accelerate interconnection, and improve computing sustainability.",
+      "authors": [
+        "Chris Williams",
+        "Philip Colangelo",
+        "Ayse Coskun",
+        "Ethan Levine",
+        "Andy Neale",
+        "Ciaran Roberts",
+        "Shayan Sengupta",
+        "Nikhil Shirolkar",
+        "Varun Sivaram",
+        "Sarah Soares",
+        "Ethan Tiao",
+        "Scott Underwood",
+        "Daniel Wilson",
+        "Frank Sharp",
+        "Luke Wainwright",
+        "Harry Petty",
+        "Scott Wallace",
+        "Brandon Records"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.AI",
+        "cs.PF",
+        "eess.SY"
+      ],
+      "published": "2026-06-23T19:13:19+00:00",
+      "link": "https://arxiv.org/pdf/2606.25098v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "addresses workload scheduling in data centers for grid responsiveness",
+      "llm_evidence_cn": "针对数据中心的工作负载调度以实现电网响应",
+      "llm_evidence": "针对数据中心的工作负载调度以实现电网响应",
+      "canonical_evidence": "针对数据中心的工作负载调度以实现电网响应",
+      "llm_tldr_en": "Proposes architecture for AI data centers as grid-interactive assets, integrating workload scheduling for power flexibility.",
+      "llm_tldr_cn": "该文提出将AI数据中心作为电网交互资源的架构，通过软件工作负载编排降低峰值用电。架构整合电网信号、任务调度和功率遥测实现精细化的集群功率控制，实验表明可有效缓解电网拥塞并加快并网速度。",
+      "llm_tldr": "该文提出将AI数据中心作为电网交互资源的架构，通过软件工作负载编排降低峰值用电。架构整合电网信号、任务调度和功率遥测实现精细化的集群功率控制，实验表明可有效缓解电网拥塞并加快并网速度。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.27742v1",
+      "source": "arxiv",
+      "title": "KG2Cypher: Data-Centric Pipeline for Building Enterprise Text-to-Cypher Systems",
+      "abstract": "Enterprise Knowledge Graphs (KGs) are increasingly used for internal search, analytics, and question answering, but building natural-language interfaces for private enterprise graphs remains costly. We present KG2Cypher, a data-centric pipeline for building enterprise text-to-Cypher systems from existing KGs. KG2Cypher first constructs an executable Cypher query from observed graph facts and then uses LLMs to generate its associated natural-language question. The resulting Text-Cypher pairs are validated with an LLM judge and human validation, and are converted into candidate-aware SFT data. The trained generator is served with class-conditioned schema prompting, entity retrieval, and LoRA-based inference. We evaluate KG2Cypher in Korean enterprise settings, where short search-style queries and schema paraphrases make language grounding difficult. LoRA SFT improves execution-result F1 from 0.806 to 0.950 on broadcast-program queries and from 0.70 to 0.92 on company queries. In an 11-class setting, KG2Cypher achieves 95.2% exact match, 99.9% execution rate, and 0.964 execution-result F1.",
+      "authors": [
+        "Minjun Choi",
+        "Yerin Kim",
+        "Junghyuk Seo",
+        "Sujin Mo",
+        "Hyemin Lee",
+        "Youngjoong Ko"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-06-26T05:41:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.27742v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Proposes a pipeline system that likely comes with code",
+      "llm_evidence_cn": "提出构建Text-to-Cypher系统的数据流管道，通常有开源代码",
+      "llm_evidence": "提出构建Text-to-Cypher系统的数据流管道，通常有开源代码",
+      "canonical_evidence": "提出构建Text-to-Cypher系统的数据流管道，通常有开源代码",
+      "llm_tldr_en": "KG2Cypher is a data-centric pipeline for building enterprise text-to-Cypher systems using LLMs, with validated training data and serving infrastructure.",
+      "llm_tldr_cn": "该论文提出KG2Cypher数据驱动流水线，用于从现有知识图谱构建企业级Text-to-Cypher系统。利用LLM生成问题-查询对并验证，支持高效推理。系统通常开源，可复现。",
+      "llm_tldr": "该论文提出KG2Cypher数据驱动流水线，用于从现有知识图谱构建企业级Text-to-Cypher系统。利用LLM生成问题-查询对并验证，支持高效推理。系统通常开源，可复现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

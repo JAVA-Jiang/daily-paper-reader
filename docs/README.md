@@ -6,31 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-28
-- 运行时间：2026-06-28 21:03:13 UTC
+- 最新运行日期：2026-06-29
+- 运行时间：2026-06-29 20:34:54 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：1
+- 本次总论文数：4
+- 精读区：2
 - 速读区：2
 
 ### 今日简报（AI）
-今日精读一篇满分论文《UnBias-Plus》聚焦偏见检测与重写，速读涉及AI训练集群安全调度与数据中心电力韧性评估。  
-最值得关注的方向：偏见自动化纠偏技术；AI集群调度共振风险与电网动态韧性。  
-建议优先精读《UnBias-Plus》，将其方法纳入模型开发流程，同时关注训练集群安全与电力系统联动风险。
-- 详情：[/202606/28/README](/202606/28/README)
+今日精读两篇高分论文，速读两篇电力灵活数据中心与企业级文本转查询系统。最值得关注的是《EVerest》数据集（9.0）和《Glite ARF》并行LLM编码助手（9.0）。建议后续重点深挖安全软件工程与LLM Agent的实践结合。
+- 详情：[/202606/29/README](/202606/29/README)
 
 ### 精读区论文标签
-1. [UnBias-Plus: Detect, Explain, and Rewrite Bias](/202606/28/2606.23412v1-unbias-plus-detect-explain-and-rewrite-bias)  
-   标签：评分：10.0/10、query:code-paper
-   evidence：开源工具包，源代码公开可用
+1. [The EVerest Dataset for Secure Software Engineering](/202606/29/2606.23197v1-the-everest-dataset-for-secure-software-engineering)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：提供包含源代码的开源数据集，用于电动汽车充电站安全工程
+2. [Glite ARF: Verifier-Driven Research with Parallel LLM Coding Agents](/202606/29/2606.27416v1-glite-arf-verifier-driven-research-with-parallel-llm-coding-agents)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：提供开源Python框架，用于可重复研究的LLM编码智能体
 
 ### 速读区论文标签
-1. [A Pre-Dispatch Resonance Safety Criterion for AI Training Clusters](/202606/28/2606.22096v1-a-pre-dispatch-resonance-safety-criterion-for-ai-training-clusters)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：推导AI训练集群的预调度安全标准，与数据中心任务调度和电网相关
-2. [Dynamic Resilience Assessment of Power Systems With Data Center Load Events Using Physics-Informed Neural Networks](/202606/28/2606.22590v1-dynamic-resilience-assessment-of-power-systems-with-data-center-load-events-using-physics-informed-neural-networks)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：使用神经网络对数据中心负载事件进行电力系统韧性评估
+1. [Power-Flexible AI Data Centers: A New Paradigm for Grid-Responsive Compute](/202606/29/2606.25098v1-power-flexible-ai-data-centers-a-new-paradigm-for-grid-responsive-compute)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：针对数据中心的工作负载调度以实现电网响应
+2. [KG2Cypher: Data-Centric Pipeline for Building Enterprise Text-to-Cypher Systems](/202606/29/2606.27742v1-kg2cypher-data-centric-pipeline-for-building-enterprise-text-to-cypher-systems)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：提出构建Text-to-Cypher系统的数据流管道，通常有开源代码
 
 
 <div class="dpr-home-promo-card">
