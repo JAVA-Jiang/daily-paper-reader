@@ -1,0 +1,252 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-30T21:52:42.610162+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2606.30062v1",
+      "source": "arxiv",
+      "title": "Little Brains, Big Feats: Exploring Compact Language Models",
+      "abstract": "While large language models have been dominating the research landscape recently, small language models remain highly relevant across various domains; yet, they receive far less attention. In this study, we investigate how smaller language models perform during the generation stage within a Retrieval-Augmented Generation (RAG) system. To benchmark these models effectively, we utilised both open-source and proprietary datasets covering diverse subject areas and question types. Our findings demonstrate that a RAG system with small language models can be executed directly on-device without requiring any GPU hardware within a reasonable time. The experimental code and links to the supplementary materials can be accessed through the GitHub repository: https://github.com/SibNN/SLM-RAG-EVAL.",
+      "authors": [
+        "Dari Baturova",
+        "Elena Bruches",
+        "Ivan Chernov",
+        "Roman Derunets",
+        "Arsenii Fomin",
+        "Andrey Kostin"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-06-29T09:55:01+00:00",
+      "link": "https://arxiv.org/pdf/2606.30062v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Provides GitHub repository link for experimental code",
+      "llm_evidence_cn": "提供了实验代码的GitHub仓库链接",
+      "llm_evidence": "提供了实验代码的GitHub仓库链接",
+      "canonical_evidence": "提供了实验代码的GitHub仓库链接",
+      "llm_tldr_en": "This paper investigates compact language models in RAG systems. Using diverse datasets, it shows on-device GPU-free execution with reasonable time. Code and supplementary materials are released on GitHub for reproducibility.",
+      "llm_tldr_cn": "当前大型语言模型主导研究，但小模型在设备端部署具有潜力。本文研究小型语言模型在检索增强生成(RAG)系统中的表现，使用开源和专有数据集进行评测。结果表明，小模型RAG系统可在无GPU的设备上合理时间内运行。论文提供了完整的实验代码和补充材料，位于GitHub仓库，支持复现。",
+      "llm_tldr": "当前大型语言模型主导研究，但小模型在设备端部署具有潜力。本文研究小型语言模型在检索增强生成(RAG)系统中的表现，使用开源和专有数据集进行评测。结果表明，小模型RAG系统可在无GPU的设备上合理时间内运行。论文提供了完整的实验代码和补充材料，位于GitHub仓库，支持复现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.30610v1",
+      "source": "arxiv",
+      "title": "PyMETA: A Benchmark Dataset for Hierarchical Student Code Error Classification with Python-Interpreter-Based Labels",
+      "abstract": "With the advancement of Large Language Models (LLMs), code error detection has extended beyond traditional IDE diagnostics to context-sensitive debugging in educational scenarios. However, existing approaches lack large-scale datasets, multi-error analysis, and unified error taxonomies. To address this, we introduce PyMETA, a large-scale Python code error classification dataset of 48,646 student submissions, with single-error labels for all samples and a diagnostic subset of 97 expert-annotated multi-error samples. The dataset uses a three-level hierarchical taxonomy, from a binary error/no-error split down to 14 fine-grained error types grounded in Python's official exception hierarchy. We evaluate multi-level classification tasks on two finetuned models and four LLMs with prompting, comparing their classification performance and runtime cost. For multi-error prompting, the best model, Gemini 2.5 Pro, achieves 81.8% macro F1 under the \"contains\" criterion. We observe that: 1) prompted LLMs still underperform finetuned smaller models; 2) models exhibit significant disparities across error types; 3) most LLMs over-classify code as Logic Error, with GPT-3.5 showing the highest Logic Error Overprediction Rate and Gemini 2.5 Pro the lowest. Our work establishes a data foundation and provides insights for LLM-based code error research.",
+      "authors": [
+        "Chuyue Li",
+        "Ziqi Tang",
+        "Jingyi Wang",
+        "Yu Wu",
+        "Kazuma Hashimoto",
+        "Lingyu Gao"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-29T17:45:36+00:00",
+      "link": "https://arxiv.org/pdf/2606.30610v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides a large-scale dataset and code for student code error classification",
+      "llm_evidence_cn": "提供了学生代码错误分类的大规模数据集和代码",
+      "llm_evidence": "提供了学生代码错误分类的大规模数据集和代码",
+      "canonical_evidence": "提供了学生代码错误分类的大规模数据集和代码",
+      "llm_tldr_en": "PyMETA is a large-scale benchmark dataset for hierarchical Python code error classification with 48,646 submissions, providing code and data for reproducibility.",
+      "llm_tldr_cn": "现有代码错误检测方法缺乏大规模数据集和统一错误分类体系。本文提出PyMETA，一个包含48,646份学生提交的Python代码错误分类数据集，采用三层层级分类法，从二元错误检测到14种细粒度错误类型。实验表明该数据集可支持多错误分析和可复现研究。该工作为代码错误分类研究提供了标准化的基准和开源资源。",
+      "llm_tldr": "现有代码错误检测方法缺乏大规模数据集和统一错误分类体系。本文提出PyMETA，一个包含48,646份学生提交的Python代码错误分类数据集，采用三层层级分类法，从二元错误检测到14种细粒度错误类型。实验表明该数据集可支持多错误分析和可复现研究。该工作为代码错误分类研究提供了标准化的基准和开源资源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.23495v1",
+      "source": "arxiv",
+      "title": "Ensuring Open Source Integrity: The Intersection of Copy-Based Reuse and License Compliance",
+      "abstract": "As other creative work, source code is protected by copyright. The owner can license the work, e.g., to permit copy and other kinds of use, and even start legal proceeding against license violators. However, source code can be reused in subtle ways, e.g., via copying without explicit package manager dependencies, making it hard to reason about potential license noncompliance. Using the World of Code infrastructure approximating the entirety of open source software, in this paper we create a copy-based code reuse network mapping direct copying across projects, and use it to quantify the extent of potential license noncompliance across the entire open source ecosystem. In addition, we estimate regression models to understand whether code copying is affected by the origin project's license, and, if so, how it varies with other project characteristics. We find that code in repositories with permissive licenses, such as MIT and Apache, shows higher likelihood of reuse across programming languages. In contrast, copyleft licenses, like the GPL, exhibit mixed effects. Public domain licenses, despite their aim of allowing unrestricted use, are associated with lower likelihood of copy-based reuse. A widespread potential license noncompliance appears to accompany copy-based reuse, with 39.4% of project combinations at potential noncompliance risk, particularly when licenses are unclear or absent. Our findings reveal that only 2.43% of reuse detected through the copy-based network was discoverable via dependency analysis, highlighting the limitations of existing dependency-tracking tools in capturing copy-based reuse.",
+      "authors": [
+        "Mahmoud Jahanshahi",
+        "Bogdan Vasilescu",
+        "Audris Mockus"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-22T15:44:06+00:00",
+      "link": "https://arxiv.org/pdf/2606.23495v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "open source software integrity and license compliance",
+      "llm_evidence_cn": "开源软件完整性与合规分析",
+      "llm_evidence": "开源软件完整性与合规分析",
+      "canonical_evidence": "开源软件完整性与合规分析",
+      "llm_tldr_en": "Constructs a copy-based code reuse network across the entire open source ecosystem to quantify potential license noncompliance.",
+      "llm_tldr_cn": "开源代码的复制重用可能导致许可证违规，但缺乏大规模量化方法。本文利用World of Code基础设施构建了一个跨项目的复制重用网络，量化了整个开源生态中潜在的许可证不合规程度。回归模型进一步揭示了影响合规性的关键因素，为开源许可证合规治理提供了数据支持。",
+      "llm_tldr": "开源代码的复制重用可能导致许可证违规，但缺乏大规模量化方法。本文利用World of Code基础设施构建了一个跨项目的复制重用网络，量化了整个开源生态中潜在的许可证不合规程度。回归模型进一步揭示了影响合规性的关键因素，为开源许可证合规治理提供了数据支持。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.29746v1",
+      "source": "arxiv",
+      "title": "DEEPMED Search: An Open-Source Agentic Platform for Medical Deep Research with Introspective Verification",
+      "abstract": "Navigating the deluge of heterogeneous medical data, from academic literature (PubMed) to clinical guidelines (Web) and private knowledge bases, remains a critical bottleneck for evidence-based medicine. While commercial black-box tools lack transparency, standard open-source RAG implementations frequently suffer from reasoning drift when handling complex, long-tail queries. We present DEEPMED Search, a fully open-source, agentic platform designed for transparent medical deep research. Built on a high-performance Next.js architecture, DEEPMED Search features a source-adaptive router that autonomously dispatches sub-queries to PubMed, web search, or local graph-based knowledge bases based on information density. Crucially, the platform integrates an introspective verification module, powered by a causal-consistent multi-agent debate framework, to validate retrieved evidence against diagnostic logic before synthesis. To demonstrate its robustness, we showcase DEEPMED Search's ability to autonomously decompose high-difficulty rare disease queries, filter out confounding noise, and generate structured, citation-backed research reports in minutes. By open-sourcing this software, we provide the community with a robust infrastructure to democratize access to trustworthy, glass-box medical reasoning in research and prototyping settings.",
+      "authors": [
+        "Maolin Liu",
+        "Fanyu Xu",
+        "Ruoqing Xu",
+        "Jiahang Zhang",
+        "Hao Wang",
+        "Rui Wang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-06-29T03:42:48+00:00",
+      "link": "https://arxiv.org/pdf/2606.29746v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "open-source platform for medical research",
+      "llm_evidence_cn": "开源医学研究平台",
+      "llm_evidence": "开源医学研究平台",
+      "canonical_evidence": "开源医学研究平台",
+      "llm_tldr_en": "DEEPMED Search is a fully open-source agentic platform for transparent medical deep research, featuring a source-adaptive router for sub-query dispatch.",
+      "llm_tldr_cn": "针对医学深度研究中数据异构和商业工具不透明的问题，本文提出DEEPMED Search，一个完全开源的多智能体平台。它通过源自适应路由器将子查询分发到PubMed、网络或本地知识库，并引入内省验证机制。该平台在多个医学基准上展示了透明性和可靠性，为可复现的医学深度研究提供了基础。",
+      "llm_tldr": "针对医学深度研究中数据异构和商业工具不透明的问题，本文提出DEEPMED Search，一个完全开源的多智能体平台。它通过源自适应路由器将子查询分发到PubMed、网络或本地知识库，并引入内省验证机制。该平台在多个医学基准上展示了透明性和可靠性，为可复现的医学深度研究提供了基础。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.23877v1",
+      "source": "arxiv",
+      "title": "JupOtter: Cell-Level Bug Detection in Jupyter Notebooks",
+      "abstract": "Jupyter Notebooks are an increasingly popular coding environment used across many domains, especially in Python-based data science and scientific computing. Originally used for prototyping and interactive exploration, notebooks are increasingly used to develop more complex programs, leading to a rapid rise in buggy notebooks on platforms like GitHub. To address this trend, we present JupOtter, a bug detection system designed specifically for Jupyter Notebooks. JupOtter features three novel contributions: (1) a notebook-specific tokenization strategy that preserves cell structure, (2) a cell-level bug prediction technique, and (3) a new labeled dataset, OtterDataset, containing over 21,000 notebooks annotated for fine-grained cell-level bug detection. JupOtter achieves cell-level bug detection F1 scores that surpass static analyzers and large language models in two out of three evaluation datasets.",
+      "authors": [
+        "Lukas Ottenhof",
+        "Thibaud Lutellier"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-06-22T19:23:59+00:00",
+      "link": "https://arxiv.org/pdf/2606.23877v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "introduces JupOtter and OtterDataset for cell-level bug detection in notebooks, likely with source code",
+      "llm_evidence_cn": "提出了JupOtter及其用于笔记本单元格级错误检测的数据集OtterDataset，可能伴随源码",
+      "llm_evidence": "提出了JupOtter及其用于笔记本单元格级错误检测的数据集OtterDataset，可能伴随源码",
+      "canonical_evidence": "提出了JupOtter及其用于笔记本单元格级错误检测的数据集OtterDataset，可能伴随源码",
+      "llm_tldr_en": "JupOtter is a bug detection system for Jupyter Notebooks with a novel tokenization strategy and cell-level prediction, releasing the OtterDataset of over 21,000 annotated notebooks.",
+      "llm_tldr_cn": "针对Jupyter Notebook中错误快速增长的问题，本文提出JupOtter系统，采用保留单元格结构的标记化策略和单元格级错误预测技术，并发布包含21,000多个注释笔记本的OtterDataset。实验显示JupOtter在检测笔记本错误方面表现优异，为数据科学生态提供了实用工具。",
+      "llm_tldr": "针对Jupyter Notebook中错误快速增长的问题，本文提出JupOtter系统，采用保留单元格结构的标记化策略和单元格级错误预测技术，并发布包含21,000多个注释笔记本的OtterDataset。实验显示JupOtter在检测笔记本错误方面表现优异，为数据科学生态提供了实用工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.27401v1",
+      "source": "arxiv",
+      "title": "Recall Before Rerank: Benchmarking Deep Learning Models for Large-Scale Code-to-Code Retrieval",
+      "abstract": "Semantic code search and clone detection are essential for software development, maintenance, and reuse. This paper evaluates the effectiveness, efficiency, and scalability of contemporary deep learning models for first-stage recall in large-scale code-to-code search engines. Benchmarking across multiple programming languages and datasets reveals critical limits in the precision and scalability of these models on Terabyte-scale source-code collections. We present LLM-based code normalisation and query-rewriting schemes that yield significant gains in precision for lower-performing models. Our results question the sustainability of resource-constrained deployment and the assumed robustness of current code-specialised LLMs across datasets. We conclude with actionable insights for building scalable, efficient code-retrieval systems.",
+      "authors": [
+        "Leonardo Venuta",
+        "Francesco Tosoni",
+        "Paolo Ferragina"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.CL",
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-06-24T13:41:36+00:00",
+      "link": "https://arxiv.org/pdf/2606.27401v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "benchmarks deep learning models for code-to-code retrieval with code normalisation and query rewriting schemes",
+      "llm_evidence_cn": "对代码到代码检索的深度学习模型进行基准测试，包含代码标准化与查询重写方案",
+      "llm_evidence": "对代码到代码检索的深度学习模型进行基准测试，包含代码标准化与查询重写方案",
+      "canonical_evidence": "对代码到代码检索的深度学习模型进行基准测试，包含代码标准化与查询重写方案",
+      "llm_tldr_en": "This paper benchmarks deep learning models for large-scale code-to-code retrieval, proposing LLM-based code normalisation and query rewriting to improve recall precision.",
+      "llm_tldr_cn": "针对大规模代码搜索场景中深度学习模型的可扩展性问题，本文对现有模型进行基准测试，揭示其在TB级代码库上的精度瓶颈，并提出基于LLM的代码标准化和查询重写方案，显著提升低性能模型的召回率。研究结果对代码搜索系统的实际部署具有指导意义。",
+      "llm_tldr": "针对大规模代码搜索场景中深度学习模型的可扩展性问题，本文对现有模型进行基准测试，揭示其在TB级代码库上的精度瓶颈，并提出基于LLM的代码标准化和查询重写方案，显著提升低性能模型的召回率。研究结果对代码搜索系统的实际部署具有指导意义。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

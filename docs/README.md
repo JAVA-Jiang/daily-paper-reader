@@ -6,32 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-29
-- 运行时间：2026-06-29 20:34:54 UTC
+- 最新运行日期：2026-06-30
+- 运行时间：2026-06-30 21:56:16 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：6
 - 精读区：2
-- 速读区：2
+- 速读区：4
 
 ### 今日简报（AI）
-今日精读两篇高分论文，速读两篇电力灵活数据中心与企业级文本转查询系统。最值得关注的是《EVerest》数据集（9.0）和《Glite ARF》并行LLM编码助手（9.0）。建议后续重点深挖安全软件工程与LLM Agent的实践结合。
-- 详情：[/202606/29/README](/202606/29/README)
+今日精选6篇论文，重点关注小语言模型与学生代码错误分类。小语言模型展示了紧凑模型的大能力，PyMETA提供了层次化学生代码错误分类基准。建议深入阅读精读论文，并关注Jupyter笔记本细胞级bug检测与代码检索的速读内容。
+- 详情：[/202606/30/README](/202606/30/README)
 
 ### 精读区论文标签
-1. [The EVerest Dataset for Secure Software Engineering](/202606/29/2606.23197v1-the-everest-dataset-for-secure-software-engineering)  
+1. [Little Brains, Big Feats: Exploring Compact Language Models](/202606/30/2606.30062v1-little-brains-big-feats-exploring-compact-language-models)  
    标签：评分：9.0/10、query:code-paper
-   evidence：提供包含源代码的开源数据集，用于电动汽车充电站安全工程
-2. [Glite ARF: Verifier-Driven Research with Parallel LLM Coding Agents](/202606/29/2606.27416v1-glite-arf-verifier-driven-research-with-parallel-llm-coding-agents)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：提供开源Python框架，用于可重复研究的LLM编码智能体
+   evidence：提供了实验代码的GitHub仓库链接
+2. [PyMETA: A Benchmark Dataset for Hierarchical Student Code Error Classification with Python-Interpreter-Based Labels](/202606/30/2606.30610v1-pymeta-a-benchmark-dataset-for-hierarchical-student-code-error-classification-with-python-interpreter-based-labels)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：提供了学生代码错误分类的大规模数据集和代码
 
 ### 速读区论文标签
-1. [Power-Flexible AI Data Centers: A New Paradigm for Grid-Responsive Compute](/202606/29/2606.25098v1-power-flexible-ai-data-centers-a-new-paradigm-for-grid-responsive-compute)  
+1. [Ensuring Open Source Integrity: The Intersection of Copy-Based Reuse and License Compliance](/202606/30/2606.23495v1-ensuring-open-source-integrity-the-intersection-of-copy-based-reuse-and-license-compliance)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：开源软件完整性与合规分析
+2. [JupOtter: Cell-Level Bug Detection in Jupyter Notebooks](/202606/30/2606.23877v1-jupotter-cell-level-bug-detection-in-jupyter-notebooks)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提出了JupOtter及其用于笔记本单元格级错误检测的数据集OtterDataset，可能伴随源码
+3. [Recall Before Rerank: Benchmarking Deep Learning Models for Large-Scale Code-to-Code Retrieval](/202606/30/2606.27401v1-recall-before-rerank-benchmarking-deep-learning-models-for-large-scale-code-to-code-retrieval)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：对代码到代码检索的深度学习模型进行基准测试，包含代码标准化与查询重写方案
+4. [DEEPMED Search: An Open-Source Agentic Platform for Medical Deep Research with Introspective Verification](/202606/30/2606.29746v1-deepmed-search-an-open-source-agentic-platform-for-medical-deep-research-with-introspective-verification)  
    标签：评分：6.0/10、query:code-paper
-   evidence：针对数据中心的工作负载调度以实现电网响应
-2. [KG2Cypher: Data-Centric Pipeline for Building Enterprise Text-to-Cypher Systems](/202606/29/2606.27742v1-kg2cypher-data-centric-pipeline-for-building-enterprise-text-to-cypher-systems)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提出构建Text-to-Cypher系统的数据流管道，通常有开源代码
+   evidence：开源医学研究平台
 
 
 <div class="dpr-home-promo-card">

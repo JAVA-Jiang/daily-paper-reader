@@ -1,0 +1,249 @@
+Title: Recall Before Rerank: Benchmarking Deep Learning Models for Large-Scale Code-to-Code Retrieval
+
+URL Source: https://arxiv.org/pdf/2606.27401v1
+
+Published Time: Mon, 29 Jun 2026 00:00:54 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Recall Before Rerank: Benchmarking Deep Learning Models for Large-Scale Code-to-Code Retrieval 
+
+Leonardo Venuta 1[0009 −0007 −0328 −4001] , Francesco Tosoni 1[0000 −0001 −8457 −3866] ,and Paolo Ferragina 1[0000 −0003 −1353 −360 X]
+
+Sant’Anna School of Advanced Studies, Pisa, Italy 
+
+{Leonardo.Venuta, Francesco.Tosoni, Paolo.Ferragina}@santannapisa.it https://www.santannapisa.it/ 
+
+Abstract. Semantic code search and clone detection are essential for software development, maintenance, and reuse. This paper evaluates the effectiveness, efficiency, and scalability of contemporary deep learning models for first-stage recall in large-scale code-to-code search engines. Benchmarking across multiple programming languages and datasets re-veals critical limits in the precision and scalability of these models on Terabyte-scale source-code collections. We present LLM-based code nor-malisation and query-rewriting schemes that yield significant gains in precision for lower-performing models. Our results question the sustain-ability of resource-constrained deployment and the assumed robustness of current code-specialised LLMs across datasets. We conclude with ac-tionable insights for building scalable, efficient code-retrieval systems. 
+
+Keywords: Semantic code search · Code embeddings · Two-stage re-trieval · Benchmark · Query rewriting 
+
+1 Introduction 
+
+As software repositories grow to unprecedented scale (the Software Heritage (SWH) archive [1] held over 2 petabytes across 421 million projects as of Jan-uary 2026 [29]), much of the code developers write already exists elsewhere or is semantically redundant. Code search, which retrieves relevant snippets from natural-language or code queries, has thus become indispensable to software de-velopment and maintenance, underpinning code completion, synthesis, traceabil-ity, and vulnerability detection. A fundamental tension separates the accuracy of semantic deep learning (DL) models, which incur steep inference costs [11], from the speed of classical IR metrics (BM25 [18, §11.4.3][7, §3.2.1], TF-IDF [18, §6.2.2][7, §3.1.6], and Jaccard [18, §19.6]), which deliver millisecond inference but rely on surface-level keyword matching. Large-scale, end-to-end retrieval systems typically resolve this trade-off through a two-stage recall-then-rerank paradigm: a lightweight embedding model first narrows the corpus C to a small candidate set, after which a high-accuracy cross-encoder reranks each ⟨q, c i⟩ pair to sur-face the snippets most similar to q. TOSS [11] formalised this architecture as  
+
+> arXiv:2606.27401v1 [cs.SE] 24 Jun 2026 2L. Venuta et al.
+
+a baseline for code-to-code search. The pipeline hinges on first-stage recall, its principal bottleneck: any relevant snippet missed here cannot be recovered by even the most sophisticated index or reranker. 
+
+Our Contribution. Despite its centrality, the recall stage lacks a systematic anal-ysis of its state of the art. We close this gap with the first large-scale empirical study of DL model selection for code-to-code search, evaluating 17 diverse trans-formers across 4 datasets and 5 programming languages. The study yields three contributions: 1. A large-scale benchmark of 17 encoder and decoder models, drawn from prior work [11,22] and forward snowballing, spanning diverse architectures, param-eter scales, and training paradigms. We measure efficacy (Precision@ k [18, §8.3], NDCG [18, §8.4]) and efficiency (KB/sec throughput) across 4 datasets, 5 languages, and 300k+ code snippets. The benchmark has spanned 920 ex-perimental runs ( 644 retrieval runs: 23 models × 14 dataset × 2 distance metrics; plus 276 rewriting runs: 23 models × 3 datasets × 4 variants), thus requiring ∼403 GPU hours, reflecting the scale of the evaluation. Un-doubtedly, the first study at this scale, and the first to apply the MultiPL-E dataset [4] to code-to-code retrieval. 2. Empirical findings across five languages (Python, Java, JavaScript, C++, and C#) and four varied datasets that reveal a quality–scalability dichotomy. On retrieval quality alone, Qwen3 Embedding and CodeXEmbed lead across languages and datasets, with specialised embedders surpassing far larger general-purpose LLMs; yet these gains entail prohibitive computational costs at scale. Lightweight models recover an order-of-magnitude throughput gain but sacrifice precision steeply (up to 80 points on xCodeEval), underscoring the need for task- and resource-specific model selection. This throughput gap between lightweight encoders (e.g., StarEncoder) and large language models impedes the adoption of LLM-embedding indexes on medium-sized datasets by small- and medium-sized enterprises (SMEs) and academic researchers. 3. A code-rewriting analysis showing LLM-based style normalisation lifts recall by up to 29% for weaker, style-sensitive models (e.g., Code Llama), whereas top performers stay robust to variations in style, comments, and identifiers. Our results confirm that model selection must be task- and context-specific, requiring a careful balance between throughput, accuracy, and language special-isation. Further, they reinforce the conclusion that a hybrid two-stage pipeline: combining a fast, compact encoder for candidate retrieval with a powerful LLM for reranking, remains the most effective architecture [11]. An additional take-away from our investigation is that, despite the availability of numerous general-purpose and code-specific embedding models in the literature, a universally op-timal solution has yet to emerge, even for widely used programming languages such as Python, Java, JavaScript, C++, and C#. In particular, when practical scalability requirements are taken into account and GPU resources are limited (as in most academic scenarios), achieving higher throughput often entails a substantial loss of retrieval precision, which in turn leads to serious limitations Candidate Recall in Large-Scale Code-to-Code Retrieval 3
+
+in the design of effective code retrieval systems. These findings (with implemen-tation released at anonymous.4open.science/r/benchmark_private-7D0E) high-light the need for further research and large-scale empirical validation to better understand the trade-offs between efficiency, accuracy, and language-specific per-formance in those settings. For a more comprehensive discussion of actionable guidelines and future research directions, we refer readers to Section 8. Data storage           
+
+> def fn(x): return x*2 [’def’, ’fn’, ...] tensor([0.11, -0.18, ...])
+> Code indexing
+> 123
+> def double(n)... Ûdef double(n): return n+n [’def’, ’double’, ...] tensor([0.18, -0.19, ...]) Code search
+> 1’ 2’ 3’
+> Code tokeniser
+> Code encoder
+> Code embeddings index
+> 4
+> 4’
+> k
+> Similar code snippets
+> 5
+
+Fig. 1: End-to-end top-k code retrieval architecture. Offline stages (1–4) build a DL-based embedding index; online ones (1’–4’) search it to retrieve the k snippets most similar to query q. To isolate model performance from lossy-compression effects, we compute ground-truth nearest neighbours via sequential scans. 
+
+2 Background 
+
+Deep learning has markedly advanced semantic code search for both language-to-code and code-to-code retrieval. Generation Augmented Retrieval (GAR) [15], e.g., rewrites queries before they reach the vector index. Classical IR meth-ods (BM25 [18, §11.4.3][7, §3.2.1], TF-IDF [18, §6.2.2][7, §3.1.6], Jaccard [18, §19.6]) deliver millisecond-scale inference but match only at the surface, capping their accuracy. Neural bi-encoders, instead, map queries and snippets indepen-dently into a shared vector space [11], letting precomputed embeddings be in-dexed for efficient ANN search 1. Cross-encoders process query–candidate pairs jointly, trading scalability for higher accuracy. This split motivates the two-stage recall-then-rerank paradigm (TOSS [11]): a lightweight bi-encoder (optionally augmented with BM25) first narrows the candidate pool, then a cross-encoder reranks the subset into the final results. Any snippet missed during recall can-not be recovered downstream. Existing benchmarks paint only a partial pic-ture. TOSS [11] evaluated CodeBERT [6] and GraphCodeBERT [8] on Python CodeSearchNet [12]; a broader study [22] benchmarked 19 models across 13 tasks, finding UniXcoder [9] and GraphCodeBERT best on POJ-104, a C-only dataset. Both omit newer architectures (CodeSage-V2 [36], CodeXEmbed [16], Nomic Embed [23], Code Llama [28], Qwen [35]), cover at most two datasets per language, and disregard throughput. Embedding models are sensitive to su-perficial style variations too [15,10], which bears on plagiarism detection and vulnerability analysis. 4 L. Venuta et al. 
+
+3 Problem Statement and Research Questions 
+
+Given a codebase C and a query snippet q, the code search problem retrieves the top-k snippets from C most semantically similar to q. Following TOSS [11], we focus on the first-stage recall function R(q, C), which must be effective (high recall across diverse queries and languages) and efficient (scalable to massive code archives). Our primary research questions are as follows: RQ 1: How effective are contemporary code embedding models at first-stage recall, and which architectural factors (encoder type, size, pre-training data) most shape performance? RQ 2: What throughput and infrastructure bottlenecks dominate when deploying these models over very large code-snippet collections? RQ 3: To what extent do semantics-preserving transformations (variable renaming, comment insertion and deletion) affect retrieval efficacy, and which rewriting strategies are most promising? We address RQ 1 in Sections 4 to 6, evaluating 17 models across 4 datasets and 5 programming languages using Precision@ k [18, §8.3] and NDCG [18, §8.4]. For RQ 2, we show in Section 6 that embedding rate is scale-critical (e.g., Big-CloneBench’s 6M methods [32]), making IR methods or lossy embedding com-pression [19,25][7, §13.7] more practical for large corpora. For RQ 3 in Section 7, we examine LLM- and rule-based rewriting applied to queries and/or codebase. 
+
+4 Model Selection 
+
+We collated models from prior benchmarks [11,22] and used forward snowballing on Google Scholar (keywords: ‘code embedding’, ‘code retrieval’, ‘code search’, ‘bi-encoder’). This yielded 17 models (125M to 30B parameters), selected on four criteria: (i) architectural paradigm : bi-encoders (e.g., CodeRankEmbed [30]), encoder-decoders (e.g., CodeT5 [33]), and decoder-only LLMs in embedding mode (e.g., Code Llama [28], Qwen3 [35]); (ii) model scale : favouring the base variant of each family; (iii) provenance : open-source weights, code-specialised training, and varied organisational origins; and (iv) prior performance : from [22] we kept models exceeding 85% accuracy (PLBART, CoTexT, CodeT5, SPT-Code, UniXcoder, CodeBERT, GraphCodeBERT), discarding DOBF, SynCoBERT, and TreeBERT due to unavailable weights. We excluded classical IR baselines (BM25, TF-IDF, Jaccard). As [11] establishes, deep learning consistently out-performs rule-based matching for code-to-code retrieval, where semantic simi-larity requires deeper analysis than surface lexical overlap. Choosing optimal IR metrics to augment neural embeddings is orthogonal to first-stage recall and belongs to later reranking analyses [11]. Table 1 reports each model’s release year; target (T): embedding/retrieval (E) or generic (G); architecture (A): en-coder (E), decoder-only (D), or encoder-decoder (E/D); language support: Java and Python (J/P), JavaScript (JS), C++ and C# (C); parameter count (#P); Candidate Recall in Large-Scale Code-to-Code Retrieval 5                                                                                                                                                                                      
+
+> Group Model YTAJ/P JS C#P Dim. KB/s Early Bimodal Encoders CodeBERT [6] ’20 GE•••125M 768 105 G-CodeBERT [8] ’21 GE•••125M 768 125 CoTexT [26] ’21 GE/D ••220M 768 116 SPT-Code [21] ’21 GE••262M 768 165 Unified Encoder-Decoders PLBART [2] ’21 GE/D •140M 768 98 CodeT5 [33] ’21 GE/D •••220M 768 69 770M 21 UniXcoder [9] ’22 GE/D •••125M 768 107 CodeT5+ [34] ’23 GE/D •••110M 768 128 220M 1024 129 Code Embedders StarEncoder [17] ’23 EE•••125M 768 140 CodeXEmbed [16] ’23 EE•••400M 1024 28 2B 7CodeSage-V2 [36] ’23 EE•••356M 2048 45 1.3B 15 CR-Embed [30] ’24 EE••137M 768 67 Nomic E.C. [23] ’25 EE••7B 3584 2Code Decoder-Only LLMs Granite Code [20] ’24 GD•••3B 2560 98B 1Code Llama [28] ’24 GD•••7B 4096 2Qwen3 Coder [35] ’25 GD•••30B 2048 3Qwen3 Emb. [37] ’25 GD•••600M 1024 74 8B 4096 9
+
+Table 1: Selected models, grouped by architecture, and group-sorted by year (Y). embedding dimension; inference throughput. Early encoders (2020–2023) uni-formly produce 768-dimensional embeddings (110M–262M parameters). Code-specialised embedders (2023–2024) continue to grow beyond 1024 dimensions, with Nomic Embed Code as an outlier at 7B parameters and 3584 dimensions. Decoder-only models (2024–2025) show the largest and most varied dimensions, marking a paradigm shift in embedding architecture. The table groups models into four families: early bimodal encoders (MLM/denoising, often using AST or NL-PL data); unified encoder-decoders; code-specialised embedders (contrastive learning, Matryoshka representations); and general code LLMs adapted for re-trieval. By spanning architectures, our benchmark offers comprehensive insight into the efficacy and efficiency of modern code embeddings. 6 L. Venuta et al.                                            
+
+> Dataset Ja Py Cp Cs Js kMin Avg Max #queries #targets
+> BCB [31] •50 50 95.7 264 2 156 12 490 CNet [27] •••50 299 299 299 750 224 250 MplE [4] ••••20 20 42.7 50 258 17 885 XCE [13] •••••50 50 82.1 100 672 58 667
+
+Table 2: For each dataset, we show the included language (Ja: Java, Py: Python, Cp: C++, Cs: C#, Js: JavaScript), the number of positive snippets per query (Min/Avg/Max), and the total number of queries and target snippets. 
+
+5 Dataset Selection 
+
+We evaluate all selected models on four established datasets across 5 program-ming languages, chosen for their language coverage, prevalence in recent litera-ture, and availability of ground truth. Table 2 reports total code snippets in the query and target sets across all considered languages. To gauge retrieval quality, the cutoff k never exceeds the number of relevant answers per query; queries with fewer than k relevant snippets are discarded. We exclude extremely large-scale codebases like CodeSearchNet [12] due to prohibitive embedding generation costs: [15] estimated that embedding its 1,005,474 queries would take over two months. CodeSearchNet also focuses on natural-language code retrieval, which lies outside our scope. 
+
+BigCloneBench (BCB) v2. We use BCB v2 [31] as a rigorous, large-scale, man-ually validated Java benchmark. A code-clone pair is a triple (f1, f 2, ϕ ), where 
+
+f1 and f2 are method-level snippets and ϕ specifies one of four clone types [3]: (i) Type-1 (48,116 pairs): syntactically exact clones differing only in whitespace, layout, and comments; (ii) Type-2 (4,234 pairs): lexical clones extending Type-1 with variations in identifier names and literal values; (iii) Type-3 (109,446 pairs): structural clones extending Type-2 with statement-level additions or deletions; and (iv) Type-4 (8,450,204 pairs): syntactically dissimilar snippets implement-ing identical functionality. These labels assess how embedding models handle rising syntactic and structural variance. We exclude Type-4 clones due to docu-mented ground-truth reliability issues, specifically a high false-positive rate [14]. We frame clone detection as a search task. For each clone type, snippets of that type form a separate target corpus. Every distinct function in at least one clone relationship of that type serves as a query. For query q, a candidate snippet c
+
+is a true positive iff the pair ⟨q, c ⟩ is explicitly labelled as a clone of that type. The target set comprises all functions appearing in at least one clone pair of that type, either as q or c. As noted, we discarded queries with fewer than k clones. Candidate Recall in Large-Scale Code-to-Code Retrieval 7
+
+CodeNet. To evaluate multi-language retrieval using functional correctness as ground truth, we use IBM’s CodeNet dataset 1. Following the authors’ curation (retaining only accepted submissions and removing near-duplicates), all solutions to a problem are functionally equivalent. We derive a retrieval benchmark for C++, Java, and Python, selecting 250 problems per language, each with exactly 300 accepted solutions. We sample uniformly to balance CodeNet’s dense solu-tion sets, avoiding skew from disproportionate submission pools while keeping a consistent candidate space across languages. For each problem, one submission is chosen at random as the query; the remaining 299 equivalent solutions form the ground truth, while all solutions from the other 249 problems act as negatives. 
+
+MultiPL-E. MultiPL-E 2 was originally designed to port unit-test-driven code-generation benchmarks to new languages. We leverage its HumanEval transla-tion component to construct a multi-language retrieval benchmark grounded in functional equivalence. MultiPL-E is widely used to evaluate LLM code-generation capabilities [35,20,28]. We evaluate retrieval across Java, C#, C++, and JavaScript, using candidate solutions generated by StarCoder2 [17]. The original HumanEval benchmark contains 164 problems, each with at most 50 candidate solutions. We select one accepted solution per problem at random as the query q, while the candidate space comprises all translations within the same target language. A retrieved snippet c is a true positive iff it stems from the same HumanEval problem as q and passes all associated unit tests, testing a model’s ability to discriminate functionally correct implementations from incor-rect ones. We use a smaller threshold k = 20 here (instead of k = 50 ) to ensure enough queries contain at least k positive snippets. 
+
+xCodeEval. Prior work validates xCodeEval for language- and code-to-code re-trieval, proving it remains challenging even for models like GPT-3.5 Turbo [13]. Each problem includes both positive (accepted) and negative (incorrect) solu-tions. We selected snippets in C++, C#, Java, JavaScript, and Python, discard-ing the negatives and treating accepted solutions as target sets. We designate the official “reference” solutions as queries, so that the number of queries equals the number of unique problems per language. The candidate space for a language comprises all its accepted solutions. A retrieved snippet c is a true positive iff 
+
+it shares the same problem ID as query q.
+
+6 Model evaluation 
+
+Experimental Setup. We benchmark all models on an NVIDIA DGX Spark AI workstation [24] dedicated exclusively to our experiments. It features an NVIDIA Blackwell GPU (GB10 Grace Blackwell Superchip) and 128 GB of unified LPDDR5x memory. The AI software stack includes CUDA 13, PyTorch 2.12.0, and cuDNN 9.19. For precise latency, we use Python’s time.perf_counter()                                                                                                                                                                                                                                                                                                                                                            
+
+> 1https://github.com/IBM/Project_CodeNet
+> 2https://huggingface.co/datasets/nuprl/MultiPL-E 8L. Venuta et al. Language Py Java JS C++ C# Dataset
+> CNet
+> XCE
+> BCB2
+> BCB3
+> CNet
+> MplE
+> XCE
+> MplE
+> XCE
+> MplE
+> CNet
+> XCE
+> MplE
+> XCE
+> C.BERT b28 15 98 55 980 575 20 75 8571 9GraphC.Bert b41 21 98 66 18 85 784 24 85 12 781 13 CoTexT b46 23 98 60 36 84 15 86 35 88 21 11 84 23 SPT-Code b49 27 98 57 34 84 15 87 31 90 21 14 84 21 Code T5+ EO 54 27 98 38 35 92 11 95 31 94 12 593 14 b39 19 98 60 21 83 10 88 26 89 16 983 15 UniXcoder b63 36 98 46 50 88 18 92 48 95 22 16 90 29 PLBART b35 19 98 56 20 83 778 20 84 11 979 12 Code T5 b45 24 98 70 25 85 11 84 31 88 17 981 22 770M 56 35 98 66 38 87 16 89 36 92 25 13 88 26 StarEnc. s46 25 98 65 21 86 987 33 88 17 11 81 19 C.RankE. s80 58 98 38 70 94 34 98 66 98 33 19 94 47 C.Sage-V2 b93 81 98 33 88 96 64 99 93 99 71 54 95 81 1.3B 94 82 98 33 89 97 73 99 97 99 75 62 94 82 CodeXE. b94 80 98 42 91 93 79 94 84 97 88 72 93 85 2B 98 93 98 29 94 96 79 98 99 99 99 94 95 92 Nomic E.C. s95 83 98 37 86 96 60 99 87 99 87 72 95 76 Granite C. 3B 43 24 98 52 19 84 10 87 31 89 17 12 87 19 8B 38 19 98 50 17 84 885 28 88 14 985 17 C. Llama 7B 44 24 98 53 22 85 10 90 37 91 18 13 88 17 Qwen3 C. 30B 52 24 98 51 19 80 884 35 86 17 11 83 19 Qwen3 E. 600M 97 80 98 36 97 96 93 100 77 99 98 92 95 90 8B 99 91 98 38 99 96 98 99 87 99 100 98 96 98
+
+Table 3: Precision over the datasets BigCloneBench Type-2 (BCB2) and Type-3 (BCB3), CodeNet (CNet), MultiPL-E (MplE), XCodeEval (XCE). Models within each group of Table 1 are sorted by parameter count. and enclose each inference within torch.cuda.synchronize() barriers, so times reflect the completion of all GPU kernels by preventing CPU-GPU asynchrony. To mitigate initialisation overhead, we perform 20 warm-up runs per model. 
+
+Methodology. For each snippet ci ∈ C from the datasets of Section 5, we vectorise it in vi via each model from Section 4. To isolate embedding quality from indexing artefacts, we bypass ANN techniques in favour of exact retrieval [7, §3.1] via se-quential scanning. Though recent work [5] reports that models trained on diverse objectives can be sensitive to particular distance functions, in our experiments, cosine similarity consistently matched or marginally beat Euclidean distance across all configurations; we thus report only cosine similarity in Table 3. This establishes an absolute-precision baseline, letting us use the Relative Distance Error (RDE) to quantify subsequent indexing loss; we defer an end-to-end recall-then-rerank analysis to future work. For each query q (Section 5), we (i) compute the cosine similarity with each target embedding vi as SC (q, v i) = q·vi 
+
+> ∥q∥∥ vi∥
+
+; (ii) sort the results in descending order; and (iii) retrieve the top-k candidates to Candidate Recall in Large-Scale Code-to-Code Retrieval 9
+
+compute precision and NDCG. Precision@ k (P@ k) measures the proportion of relevant results among the top-k retrieved candidates, averaged over all queries. NDCG@ k [18, §8.4] assesses ranking quality by weighting the position of those relevant results. We set k = 50 for all datasets except MultiPL-E, where k = 20 
+
+accommodates its smaller pool of ground-truth examples (cf. Section 5). Ex-periments with smaller thresholds ( k ∈ { 1, 10 , 20 }) yielded consistent relative rankings, so we report only the larger k to maximise candidate coverage for a downstream reranker. Our NDCG evaluation (not tabulated, for brevity) cor-relates strongly with precision (Table 3), confirming that relevant candidates consistently occupy the top positions in recall. This bodes well for future fu-sion architectures, in which ensembling several models could yield high-quality candidates even at low k.
+
+Quality of the embeddings. Our analysis of Table 3 (limited to the tabulated P@k for brevity, as NDCG behaves similarly) reveals a pronounced dichotomy that undercuts the notion of a single “best” model. In fact, we observe a strict trade-off: state-of-the-art retrieval quality is attainable across diverse datasets, but only at the cost of severe scalability; conversely, viable scalability on massive codebases demands substantial sacrifices in precision. On retrieval quality alone, regardless of computational cost, a distinct top tier emerges across languages: Qwen3 Embedding, Nomic Embed, CodeXEmbed, CodeSage-V2, and, to a lesser extent, CodeRankEmbed. For Python (first two columns of Table 3), Qwen3 Embedding, CodeXEmbed, Nomic, and CodeSage dominate. On CodeNet, they achieve near-perfect P@50 scores (90–100%), led by Qwen3 Embedding and closely followed by CodeXEm-bed, Nomic, and CodeSage. On xCodeEval, the scores dip slightly, with CodeX-Embed (80-93%) edging ahead of Qwen3 Embedding (80-91%). For Java (the next five columns of Table 3), all models achieve 98% on BCB Type-2; we do not tabulate Type-1, as all models achieve 100%. Elsewhere, the top models shine on CodeNet (Qwen3 Embedding >95%, CodeXEmbed 90–95%, CodeSage/Nomic 85–90%, CodeRank trailing at 70%) and MultiPL-E (all 90–97%), yet show a surprising weakness on BCB Type-3, where precision plummets to 29–42%, below even the lightweight models. On xCodeEval, Qwen3 Embedding dominates (>90%), ahead of CodeXEmbed (80%), CodeSage/Nomic (60–75%), and CodeRank (30–40%). For JavaScript, top performers achieve on MultiPL-E P@20 ≥ 94%. Differ-ences surface on the harder xCodeEval, where CodeSage and CodeXEmbed lead (97–99%), followed by Nomic and Qwen3 Embedding (87%), with CodeRank struggling at 66%. For C++, MultiPL-E results for top performers are near-perfect (97–100%). On CodeNet, Qwen3 Embedding and CodeXEmbed dominate (99–100%), ahead of Nomic (87%), CodeSage (75%), and CodeRank (33%). On xCodeEval the gap widens: Qwen (98%) and CodeXEmbed (94%) clearly outperform Nomic (72%), CodeSage (54–62%). For C# (last two columns of Table 3), MultiPL-E performance stays uni-formly strong ( ≥ 93 %). On xCodeEval, Qwen3 Embedding and CodeXEmbed 10 L. Venuta et al. 20 40 60 80 100 120 140 
+
+> 55
+> 60
+> 65
+> 70
+> 75
+> Throughput (KB/s)
+> P@50
+> CodeT5-770M
+> CodeT5-b
+> CoTexT
+> GraphC.Bert
+> CodeT5+-b
+> StarEnc.
+
+Fig. 2: Throughput vs. P@50 over BigCloneBench (Type-3). The dashed line is the Pareto-optimal curve; the top-right corner is best. again lead (>90%), with CodeSage (82%) and Nomic (76%) behind and CodeR-ank last (47%). 
+
+Inference efficiency of the models. Our throughput analysis (Table 1, rightmost column) reveals a stark efficiency gap between small and large embedding mod-els. We measure throughput in kilobytes (KB) of raw source code processed per second (before tokenisation) on a single GPU, using a 10 MB ( ≈9,400 functions) workload from BigCloneBench. The discrepancy is severe: lightweight encoders like StarEncoder exceed 100 KB/s with sub-10 ms latency, whereas Qwen3 Coder is roughly 47 × slower. This gap carries prohibitive scalability costs: a back-of-the-envelope calculation shows that indexing a terabyte-scale corpus of billions of code entities, such as Stack-Edu 3, would take several months on a single GPU with StarEncoder against years with Qwen3 Coder, a severe barrier for researchers and SMEs short of a well-equipped data centre. 
+
+On the quality-vs-throughput trade-off. Lightweight models, such as SPT-Code, CodeT5, StarEncoder, UniXcoder, GraphCodeBERT, and CoTexT, deliver ac-ceptable baseline quality while processing code far faster. They do show dataset sensitivities: notably, they hold a clear edge on Java BCB Type-3, scoring 46– 70% (CodeT5 leading), often outperforming the heavier “top tier”. They also per-form solidly on MultiPL-E across languages, generally between 80% and 90%. Their limits show on complex logic benchmarks. On xCodeEval, a recognised hard case, performance collapses to roughly 30% or below across all languages. On CodeNet, they fare a little better but stay modest: generally below 50% for Python and often 20–40% for Java and C++. UniXcoder outperforms the other fast models in specific cases, namely CodeNet Python (63%), xCodeEval Python (36%), CodeNet Java (50%), and xCodeEval JS (48%), but cannot match their surprising strength on BCB Type-3. As noted above, these figures expose a severe engineering bottleneck for pro-duction systems. State-of-the-art recall with models like Qwen demands an im-mense GPU footprint. Switching to lighter models yields roughly a 10 × through- 
+
+> 3
+
+https://huggingface.co/datasets/HuggingFaceTB/stack-edu Candidate Recall in Large-Scale Code-to-Code Retrieval 11 def f(a,b): if b==0: return a return f(b,a%b) 
+
+> Original Code (OG)
+> # This function calculates the greatest common divisor (GCD) of two numbers ’a’ and ’b’ def calculate gcd(a, b): # If ’b’ is 0, then ’a’ is the GCD because any number divided by 0 is itself. if b == 0: return a # Otherwise, we recursively call the function with ’b’ as the new first parameter # and the remainder of ’a’ divided by ’b’ as the second parameter. else: return calculate gcd(b, a % b)
+> Qwen2.5-Coder
+> base model
+> R1
+> Removing
+> comments
+> def calculate gcd(a, b): if b == 0: return a else: return calculate gcd(b, a % b)
+> R2
+> Renaming
+> # This function calculates the greatest common divisor (GCD) of two numbers ’a’ and ’b’ def calculate gcd(v1, v2): # If ’b’ is 0, then ’a’ is the GCD because any number divided by 0 is itself. if v2 == 0: return v1 # Otherwise, we recursively call the function with ’b’ as the new first parameter # and the remainder of ’a’ divided by ’b’ as the second parameter. else: return calculate gcd(v2, v1 % v2)
+> R3
+> R1 + R2
+> def calculate gcd(v1, v2): if v2 == 0: return v1 else: return calculate gcd(v2, v1 % v2)
+> CodeNet
+> Java/Python — 149k candidates, 4 variants each
+> 1
+> 2
+> 3
+
+Fig. 3: Rewriting scheme for variations OG, LLM, R1, R2, R3 (see Section 7). put gain, opening the door to feasible codebase indexing, but at a steep qualita-tive cost: P@ k drops are manageable on simpler tasks like MultiPL-E (only 10–15 points), yet the degradation is severe in real-world settings, with P@50 falling by 30–60 points on CodeNet and up to 80 points on xCodeEval. Crucially, high throughput need not compromise accuracy. Figure 2 plots throughput against P@50 for the top models in Table 3, showing that CodeT5-b, GraphCodeBERT, and StarEncoder strike the optimal precision–throughput balance on the Pareto frontier. Across most datasets and languages (omitted from Figure 2 for space), Qwen3-Embedder-600M consistently dominates this trade-off; its relatively low dimensionality (1024) further ensures faster distance computations and smaller index footprints. 
+
+7 Code Rewriting 
+
+[10,15] show that coding style, comments, and structure influence code retrieval. MultiPL-E [4], e.g., notes that models are sensitive to prompt design and com-ment style, though type annotations do not affect Python performance. Using the diversity of our four datasets (see Table 2), we apply CodeNet to analyse how rewriting affects models across a wide range of performance, avoiding the “floor” and “ceiling” effects of extreme benchmarks. We evaluate four rewrit-ing approaches for Java and Python, representative statically and dynamically typed languages, using CodeXEmbed, Code Llama, and Nomic Embed to cap-ture diverse behavioural trends (Table 3). We apply the following four code transformations with the Qwen2.5-Coder-7B-Instruct model before computing the embeddings: 
+
+LLM: Prompting Qwen2.5-Coder-7B-Instruct: “ Can you please rewrite this code, adding only explanatory comments and using a cleaner programming style? ”
+
+R1: LLM-rewriting, then removing all comments and docstrings. 
+
+R2: LLM-rewriting, then renaming identifiers as v1, v 2, . . . by appearance order. 
+
+R3: LLM-rewriting, then both R1 and R2. Figure 3 illustrates the pipeline, and Figure 4 presents a selection of results for 3 models and 2 languages in 5 × 5 matrices, where OG denotes original 12 L. Venuta et al. (a) Java, CodeXEmbed                                                                                                 
+
+> OG LLM R1 R2 R3
+> OG
+> LLM
+> R1
+> R2
+> R3
+> Query
+> 87 84 76 88 75
+> 87 92 82 87 72
+> 59 59 72 60 73
+> 89 86 78 89 77
+> 56 52 69 57 73
+> Candidate
+> (b) Java, Code Llama
+> OG LLM R1 R2 R3
+> 20 610 22 10
+> 11 48 18 12 6
+> 13 12 23 15 19
+> 23 912 32 12
+> 13 319 14 23
+> Candidate
+> (c) Python, Nomic Embed
+> OG LLM R1 R2 R3
+> 96 94 85 96 88
+> 94 94 92 94 90
+> 88 90 86 88 89
+> 95 94 87 95 89
+> 85 81 72 85 89
+> Candidate
+> (d) Python, Code Llama
+> OG LLM R1 R2 R3
+> 44 711 42 24
+> 10 73 59 805
+> 13 54 62 14 12
+> 49 10 13 56 29
+> 27 416 30 53
+> Candidate
+> 0
+> 25
+> 50
+> 75
+> 100
+> Score
+
+Fig. 4: Query performance (P@50) for different rewriting techniques over Java and Python, and three embedding models. Rows refer to query-transformation strategies, and columns refer to codebase transformation strategies. code and serves as the baseline, and LLM, R1, R2, and R3 are the four trans-formations above. Each heatmap cell reports performance for a given model and language, with query-transformation strategies on the rows (Query) and codebase-transformation strategies on the columns (Candidate). The top-left cell (OG–OG) reports the baseline from Section 6. 
+
+Results. In Java (Figure 4 a, b), LLM-based transformation of both queries and codebase yields significant accuracy gains (cell LLM–LLM). For the top-performing CodeXEmbed, P@50 improves from 87% (OG–OG) to 92% (LLM– LLM); for the weaker Code Llama, it jumps from 20% to 48% (+28%). This contrasts with claims that Generation-Augmented Retrieval (GAR) is ineffec-tive [15], suggesting instead that style consistency eases retrieval. Query-only rewriting in Java (leftmost column of each matrix in Figure 4 a, b) yields neg-ligible gains. Yet when the same transformation is applied to both query and codebase (the main diagonal), the LLM approach consistently outperforms R2, particularly for weaker models, underscoring the importance of comment style in Java retrieval. Python results (Figure 4 c, d) follow a similar pattern. For Nomic Embed, LLM-based transformations of both codebase and queries yield a modest -2% change; for Code Llama, they yield a +29% gain (from 44% to 73%). Overall, LLM-based rewriting is effective in both languages, though the nuances differ. Comments are a consistent signal in Java, as shown by the sharp drop under R1 (-15%, from 87% to 72%), yet they are less critical for top-tier models in Python. The gap between LLM and R1 reinforces findings that retrievers of-ten rely on textual features rather than deep semantics [10]. R3 performs worst; as noted in [10], normalising all textual features disrupts the lexical correlations (docstrings, function/variable names) that models capture during training. Even so, for Code Llama (Figure 4 b), R3 still beats the baseline. Our key finding is that LLM-based stylistic normalisation acts as a performance equaliser: it pro-vides substantial gains for weaker models while offering diminishing returns for stronger ones. This suggests that advanced models may implicitly perform ro-bust normalisation, whereas simpler models benefit significantly from explicit preprocessing, a vital consideration for cost-sensitive deployments. Candidate Recall in Large-Scale Code-to-Code Retrieval 13 
+
+8 Actionable Guidelines and Future Roadmap 
+
+Building on our recall-stage evaluation, future research should investigate end-to-end pipeline cost dynamics. We intend to test whether pairing lightweight embedding models with complex re-rankers optimises efficiency relative to stan-dalone massive models. To support large-scale deployment, we will examine how variations in embedding distributions affect the efficacy of indexing structures and explore lossy-compression techniques, such as vector quantisation and knowl-edge distillation, to reduce storage costs for massive code corpora. The key take-aways are threefold: (i) no recall model is universally superior; instead, a Pareto frontier is set by the task, language, clone type, and hardware budget; (ii) domain specialisation and contrastive objectives dominate raw scale, so the optimal ar-chitecture pairs a compact recall model with a powerful re-ranker; (iii) the time to index terabyte-scale corpora is the primary barrier to scalable semantic code search, making compression and hybrid retrieval essential research directions to make those objectives affordable to GPU-limited academia and SMEs. 
+
+To System Designers. The smallest viable model should be deployed in lieu of the largest available one for the initial recall stage. As two-stage retrieval requires cheap recall and accommodates more expensive re-ranking [11], in-dex dimensionality and throughput (KB/s) must serve as the primary budget constraints. Qwen3-Embedding-600M, e.g., achieves near-optimal quality (93 on Java xCodeEval and 98 on C++ CodeNet) while operating at 74 KB/s ( ∼ 10 ×
+
+faster than 2B- and 8B-parameter alternatives) with only 1024 dimensions. A 7B-parameter, 3584-dimensional embedder instead introduces penalties: embedding latency, large storage requirements, and slow vector comparisons. Source-code style normalisation should be used to optimise costs rather than only enhance ac-curacy. Preprocessing code via a cheap LLM rewrite can raise a weaker encoder’s performance by 28–29 points, substituting model capacity with preprocessing in cost-sensitive deployments. Yet, normalisation must preserve functional identity; aggressive transformations that strip all comments and rename variables degrade precision. Designers must also align models with the target programming lan-guage and clone type. CodeRankEmbed, e.g., performs poorly on C++ and C# (19 and 47, respectively), as it lacks specific training for these languages (Table 1). Finally, if the target workload involves near-miss clone detection, a cheap, lexical-sensitive encoder often outperforms a state-of-the-art semantic embedder. Models should never be selected on a single benchmark. 
+
+To Model Architects. Our findings show that training objectives confront scale more effectively than parameter expansion. Comparing Qwen3-Embedding-600M with Qwen3-Coder-30B illustrates this: the former is 1/50th the size yet signif-icantly outperforms the latter (97 vs 52 on Python CodeNet, 93 vs 8 on Java xCodeEval). Generative code LLMs are Pareto-dominated: they are both slow (1–9 KB/s) and inaccurate. Contrastive retrieval training is thus the critical architectural lever, whereas using decoder-only generative models in embedding 14 L. Venuta et al. 
+
+mode proves counterproductive. Architects must also account for the BCB Type-3 inversion, where lightweight encoders outperform state-of-the-art semantic em-bedders on gapped clones: one explanation is that robust semantic models over-normalise representations, discarding the lexical signals needed to detect Type-3 clones; this aligns with our finding that powerful models perform implicit normal-isation. Models should be evaluated across the full Type-1 to Type-3 spectrum rather than focusing only on functional equivalence. Robustness to style varia-tions distinguishes superior models: top-performing embedders remain invariant under style, comment, and identifier perturbations, whereas weaker models show performance swings of up to 30 points. We recommend incorporating rewrite-based data augmentation during training to enforce this style invariance. 
+
+For Future Benchmarks. As for reports, computational efficiency alongside ef-ficacy makes the quality–throughput Pareto curve a primary evaluation met-ric. Prior studies often omit throughput, leading to the misleading assumption that larger models are inherently superior. Benchmarks must also avoid satu-rating datasets. MultiPL-E scores, e.g., cluster between 94% and 100% across most models, with negligible discriminative power due to a severe ceiling effect, though datasets like xCodeEval separate model capabilities. Evaluations should decouple model and index quality. Using brute-force exact nearest-neighbour search to establish a ground truth, followed by Relative Distance Error (RDE) to quantify index loss, is methodologically superior to “black-box” end-to-end ANN evaluations. Data contamination must be addressed rigorously as a threat to va-lidity. As contemporary models may have ingested common benchmarks during pre-training, authors should treat training-data opacity as a formal threat and analyse cross-dataset performance fluctuations to infer exposure to datasets. 
+
+References    
+
+> 1. Abramatic, J., Cosmo, R.D., Zacchiroli, S.: Building the universal archive of source code. Commun. ACM 61 (10) (2018) 2. Ahmad, W., et al.: Unified pre-training for program understanding and generation. In: NAACL-HLT (2021) 3. Bellon, S., et al.: Comparison and evaluation of clone detection tools. IEEE Trans. Software Eng. 33 (9) (2007) 4. Cassano, F., et al.: Multipl-e: A scalable and extensible approach to benchmarking neural code generation (2022) 5. Chen, T., et al.: Reveal hidden pitfalls and navigate next generation of vector similarity search from task-centric views: [experiments & analysis]. Proc. ACM Manag. Data 4(1) (Apr 2026) 6. Feng, Z., et al.: CodeBERT: A pre-trained model for programming and natural languages. In: Proc. Findings ACL EMNLP (2020) 7. Grainger, T., Turnbull, D., Irwin, M.: AI-Powered Search (2024) 8. Guo, D., et al.: GraphCodeBERT: Pre-training code representations with data flow. In: Proc. ICLR (2021) 9. Guo, D., et al.: UniXcoder: Unified cross-modal pre-training for code representa-tion. In: Proc. ACL (2022)
+
+Candidate Recall in Large-Scale Code-to-Code Retrieval 15 10. Gupta, D., et al.: SACL: Understanding and combating textual bias in code re-trieval with semantic-augmented reranking and localization. In: Proc. Findings EMNLP (2025) 11. Hu, F., et al.: Revisiting code search in a two-stage paradigm. In: Proc. WSDM (2023) 12. Husain, H., et al.: Codesearchnet challenge: Evaluating the state of semantic code search (2020) 13. Khan, M.A.M., et al.: xcodeeval: A large scale multilingual multitask benchmark for code understanding, generation, translation and retrieval (2023) 14. Krinke, J., Ragkhitwetsagul, C.: Bigclonebench considered harmful for machine learning. In: Proc. IWSC (2022) 15. Li, H., Zhou, X., Shen, Z.: Rewriting the code: A simple method for large language model augmented code search. In: Proc. ACL (2024) 16. Liu, Y., et al.: CodeXEmbed: A generalist embedding model family for multilingual and multi-task code retrieval. In: Second Conference on Language Modeling (2025) 17. Lozhkov, A., et al.: Starcoder 2 and the stack v2: The next generation (2024) 18. Manning, C.D., Raghavan, P., Schütze, H.: Introduction to Information Retrieval. Cambridge University Press (2008) 19. Menghani, G.: Efficient deep learning: A survey on making deep learning models smaller, faster, and better. ACM Comput. Surv. 55 (12) (2023) 20. Mishra, M., et al.: Granite code models: A family of open foundation models for code intelligence (2024) 21. Niu, C., et al.: Spt-code: sequence-to-sequence pre-training for learning source code representations. In: Proc. ICSE (2022) 22. Niu, C., et al.: An empirical comparison of pre-trained models of source code. In: Proc. ICSE (2023) 23. Nussbaum, Z., et al.: Nomic embed: Training a reproducible long context text embedder. TMLR (2025) 24. NVIDIA Corporation: Nvidia dgx spark datasheet. Tech. rep. (2025) 25. Park, D., et al.: A survey on binary and ternary neural networks and their realiza-tion in compute-in-memory for edge intelligence. IEEE Internet Things J. (2026) 26. Phan, L., et al.: CoTexT: Multi-task learning with code-text transformer. In: Proc. NLP4Prog (Aug 2021) 27. Puri, R., et al.: Codenet: A large-scale ai for code dataset for learning a diversity of coding tasks. In: Proc. NeurIPS Datasets Benchmarks. vol. 1 (2021) 28. Rozière, B., et al.: Code llama: Open foundation models for code (2024) 29. Software Heritage: Software heritage activity report: 2025. Tech. rep. (Jan 2026) 30. Suresh, T., et al.: CoRNStack: High-quality contrastive data for better code re-trieval and reranking. In: Proc. ICLR (2025) 31. Svajlenko, J., Roy, C.K.: Bigcloneeval: A clone detection tool evaluation framework with bigclonebench. In: Proc. ICSME (2016) 32. Svajlenko, J., et al.: Towards a big data curated benchmark of inter-project code clones. In: Proc. ICSME (2014) 33. Wang, Y., et al.: CodeT5: Identifier-aware unified pre-trained encoder-decoder models for code understanding and generation. In: Proc. EMNLP (2021) 34. Wang, Y., et al.: CodeT5+: Open code large language models for code understand-ing and generation. In: Proc. EMNLP (2023) 35. Yang, A., et al.: Qwen3 technical report (2025) 36. Zhang, D., et al.: Code representation learning at scale (2024) 37. Zhang, Y., et al.: Qwen3 embedding: Advancing text embedding and reranking through foundation models (2025)
