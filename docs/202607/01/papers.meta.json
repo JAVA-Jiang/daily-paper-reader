@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-01",
+  "date": "2026-07-01",
+  "generated_at": "2026-07-01T21:44:37",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/01/2606.28815v1-categorizing-mathematical-concepts-with-llm-voting-ensembles-in-mathswitch",
+      "section": "quick",
+      "title_en": "Categorizing Mathematical Concepts with LLM Voting Ensembles in Mathswitch",
+      "authors": "Katja Berčič, Slobodan Stanojevikj",
+      "date": "2026-06-27",
+      "pdf": "https://arxiv.org/pdf/2606.28815v1",
+      "score": "7.0",
+      "evidence": "开源项目提供代码用于概念分类",
+      "tldr": "Mathswitch项目从Wikidata等来源导入数学概念，但数据存在非数学项和歧义项等噪声。本文采用LLM投票集成分类器自动过滤噪声，在已知MathWorld标识的Wikidata项上评估，发现集成分类有效；移除数据库标识后分类变化，且LLM与MathWorld的分歧可分为退化描述、狭隘范围偏差、编辑范围不匹配三类。研究表明该集成方法可用于自动分类，并为后续改进提供方向。",
+      "tags": "query:code-paper",
+      "abstract_en": "Mathswitch is an open-source project that imports mathematical concept records from sources such as Wikidata, Wikipedia, MathWorld, Encyclopedia of Mathematics, nLab, ProofWiki, and Agda-Unimath, and links records that refer to the same concept. It does not reorganize or redefine the imported content; each source retains its own structure. The current focus is on importing concept data from Wikidata and the resources it links to, with plans to expand to further sources and better concept linking. Because the concept set is approximated through queries over Wikidata's collaboratively edited graph, the imported data is noisy: some items are non-mathematical, while others are ambiguous. In this paper, we test whether a voting ensemble of LLM judges can filter this noise. We evaluate it on Wikidata items with known MathWorld identifiers as a positive control, and examine how classification changes when database identifiers are removed from context. We then inspect the cases where the judges disagree with MathWorld and group these disagreements into three categories (degenerate descriptions, narrow scope bias, and editorial-scope mismatches) that suggest different remediation strategies.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/01/2606.31206v1-featx-editing-software-by-editing-features-for-repository-level-code-evolution",
+      "section": "quick",
+      "title_en": "FeatX: Editing Software by Editing Features for Repository-Level Code Evolution",
+      "authors": "Xutian Li, Yifeng Zhu, Xianlin Zhao, Yanzhen Zou, Lu Zhang, Bing Xie",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2606.31206v1",
+      "score": "7.0",
+      "evidence": "提供开源代码的仓库级代码演化工具",
+      "tldr": "当前大语言模型用于仓库级代码演化时，交互以代码为中心，用户需手动管理上下文与迭代提示。FeatX提供特征级编辑：自动提取仓库的层次化史诗-特性结构及显式特性-代码映射，通过三阶段演化代理将特性编辑翻译为代码补丁，流程通过四个协调面板展示。在38个真实特性编辑提交上的回放实验与用户研究中，FeatX有效降低认知负荷，函数级修改定位F1较基线提升42.6%，且总API成本仅0.07美元。该工具与数据集已公开，验证了特征驱动代码演化策略的实用性与高效性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large language models (LLMs) are increasingly used for software evolution, yet most interaction paradigms remain code-centric and require manual context management and prompt iteration. We present FeatX, a feature-oriented tool for editing software by editing features. Given an existing repository, FeatX extracts a hierarchical epic-feature structure with explicit feature-to-code mappings, then invokes a three-stage Evolution Agent to translate feature edits into code patches. The workflow is exposed through four coordinated panels. Across a controlled user study and replay experiments on 38 real-world feature-editing commits, FeatX significantly reduces cognitive load and improves usability compared with vanilla ChatGPT. It also achieves a 42.6\\% relative improvement in function-level modification localization F1 over strong LLM baselines, at substantially lower cost (\\$0.07 in total). The tool and collected dataset are available at https://github.com/a496263365/FeatX/tree/demo, with a demonstration video at https://youtu.be/OZqKZ4Ii-yM.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
