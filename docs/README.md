@@ -6,29 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-01
-- 运行时间：2026-07-01 21:44:30 UTC
+- 最新运行日期：2026-07-02
+- 运行时间：2026-07-02 20:56:04 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：3
 - 精读区：0
-- 速读区：2
+- 速读区：3
 
 ### 今日简报（AI）
-今日聚焦2篇7分研究：LLM投票集成分类数学概念与特征编辑驱动代码演化。  
-值得关注LLM投票集成在数学分类中的有效性，以及FeatX通过编辑特征简化仓库级代码演化的新思路。  
-建议尝试将LLM集成方法拓展至其他分类任务，或借助特征编辑实践项目重构。
-- 详情：[/202607/01/README](/202607/01/README)
+今日共速读3篇论文，涵盖代码上下文挖掘、多模态技能提取与仓库兼容性修复。  
+最值得关注的是《CoCoMUT》中自动化数据集生成方法，以及《RepoRescue》对LLM Agent全仓库兼容性修复的实证分析。  
+建议优先精读CoCoMUT的核心技术，并关注其与RepoRescue互补的代码理解应用场景。
+- 详情：[/202607/02/README](/202607/02/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Categorizing Mathematical Concepts with LLM Voting Ensembles in Mathswitch](/202607/01/2606.28815v1-categorizing-mathematical-concepts-with-llm-voting-ensembles-in-mathswitch)  
+1. [CoCoMUT: A Tool for Code-Context Mining and Automated Dataset Generation](/202607/02/2606.31971v1-cocomut-a-tool-for-code-context-mining-and-automated-dataset-generation)  
    标签：评分：7.0/10、query:code-paper
-   evidence：开源项目提供代码用于概念分类
-2. [FeatX: Editing Software by Editing Features for Repository-Level Code Evolution](/202607/01/2606.31206v1-featx-editing-software-by-editing-features-for-repository-level-code-evolution)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：提供开源代码的仓库级代码演化工具
+   evidence：代码上下文挖掘工具，提供开源实现
+2. [RESOURCE2SKILL: Distilling Executable Agent Skills from Human-Created Multimodal Resources](/202607/02/2606.29538v1-resource2skill-distilling-executable-agent-skills-from-human-created-multimodal-resources)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：从多模态资源蒸馏可执行技能，可能开源
+3. [RepoRescue: An Empirical Study of LLM Agents on Whole-Repository Compatibility Rescue](/202607/02/2607.01213v1-reporescue-an-empirical-study-of-llm-agents-on-whole-repository-compatibility-rescue)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：关于开源仓库兼容性修复的实证研究，可能提供代码
 
 
 <div class="dpr-home-promo-card">
