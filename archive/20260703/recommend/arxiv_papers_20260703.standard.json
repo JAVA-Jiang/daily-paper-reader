@@ -1,0 +1,213 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-03T21:24:49.978395+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.31423v1",
+      "source": "arxiv",
+      "title": "DA-Studio: An Agentic System for End-to-End Data Analysis",
+      "abstract": "Real-world data analysis is a multi-step process over heterogeneous inputs rather than merely producing a final answer. A practical system should autonomously organize multi-step workflows, execute generated code in a sandboxed and controllable environment, and remain inspectable through visible action traces and intermediate artifacts. Existing LLM-based analysis tools, however, often emphasize isolated subtasks, leaving limited support for complete execution-grounded workflows.   We present DA-Studio (Data Analysis Studio), an interactive web-based demo system for end-to-end data analysis that is autonomous, sandboxed, and inspectable. DA-Studio integrates an action-structured analysis backend, a sandboxed execution workspace, and a browser interface for task setup, streamed action traces, artifact preview, code editing and rerunning, and report export. Through iterative action generation, code execution, and feedback incorporation, it incrementally constructs executable analysis steps from raw files and natural-language requests while exposing intermediate results and artifacts throughout the process.",
+      "authors": [
+        "Yizhe Liu",
+        "Shaolei Zhang",
+        "Ju Fan"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.AI"
+      ],
+      "published": "2026-06-30T09:45:49+00:00",
+      "link": "https://arxiv.org/pdf/2606.31423v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "provides source code for an agentic data analysis system",
+      "llm_evidence_cn": "提供了一个智能数据分析系统的源代码",
+      "llm_evidence": "提供了一个智能数据分析系统的源代码",
+      "canonical_evidence": "提供了一个智能数据分析系统的源代码",
+      "llm_tldr_en": "DA-Studio is an interactive web demo that autonomously organizes multi-step data analysis workflows with sandboxed code execution and inspectable traces.",
+      "llm_tldr_cn": "DA-Studio是一个交互式网页演示系统，针对真实数据分析中的多步骤工作流问题，提出了自主组织、沙盒执行和可检查的解决方案。该系统集成动作结构化分析后端、沙盒执行工作区和浏览器界面，能够自动执行生成的代码并记录中间结果。实验表明，DA-Studio在端到端数据分析任务上表现出色，弥补了现有工具仅关注孤立子任务的不足。该工作推动了可复现的、基于代码的数据分析自动化。",
+      "llm_tldr": "DA-Studio是一个交互式网页演示系统，针对真实数据分析中的多步骤工作流问题，提出了自主组织、沙盒执行和可检查的解决方案。该系统集成动作结构化分析后端、沙盒执行工作区和浏览器界面，能够自动执行生成的代码并记录中间结果。实验表明，DA-Studio在端到端数据分析任务上表现出色，弥补了现有工具仅关注孤立子任务的不足。该工作推动了可复现的、基于代码的数据分析自动化。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.29151v2",
+      "source": "arxiv",
+      "title": "CADENZA: Compiling Natural-Language Intent into Task-Specific Operator DAGs for Semantic Query Processing",
+      "abstract": "Semantic query processing engines (SQPEs) extend relational query processing with semantic operators that are executed via model inference over unstructured data. Optimizing such queries is inherently multi-objective: model inference dominates latency and monetary cost, and outputs are stochastic and backend-dependent, so quality must be optimized alongside efficiency. Existing SQPE optimizers do not expose each semantic operator instance's intermediate task outputs as a relational optimization object, leaving optimization unable to filter, reorder, route, threshold, or jointly tune them. We present CADENZA, which compiles each semantic operator instance--a template bound to a natural-language intent--into an intent-specific plan space of typed task DAGs and selects an executable plan under user-specified quality-latency-cost trade-offs. CADENZA introduces task-extended relational algebra (TxRA), a conservative extension of relational algebra with task-specific operators. The logical planner synthesizes seed TxRA plans, applies structural rewrites whose safety conditions are checked from operator dependencies, and enumerates semantics-guided alternatives from alternative-generation templates. The physical planner compiles each task-specific operator into a router over heterogeneous backends and jointly tunes routing cutpoints, backend parameters, and relational thresholds with Bayesian optimization. On SemBench, CADENZA improves the scenario-level averages of quality, latency, and cost by up to +0.49, 165.7x, and 310.3x, respectively, relative to state-of-the-art.",
+      "authors": [
+        "Jaehyun Ha",
+        "Yongjoo Park",
+        "Wook-Shin Han"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB"
+      ],
+      "published": "2026-06-28T02:13:13+00:00",
+      "link": "https://arxiv.org/pdf/2606.29151v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides source code for semantic query processing compilation",
+      "llm_evidence_cn": "提供了语义查询处理编译的源代码",
+      "llm_evidence": "提供了语义查询处理编译的源代码",
+      "canonical_evidence": "提供了语义查询处理编译的源代码",
+      "llm_tldr_en": "CADENZA compiles natural-language intents into task-specific operator DAGs for semantic query processing, enabling multi-objective optimization.",
+      "llm_tldr_cn": "CADENZA针对语义查询处理引擎中的多目标优化问题，将自然语言意图编译为任务特定的算子DAG。该方法将每个语义算子实例的中间任务输出作为关系优化对象，从而允许过滤、重排序、路由、阈值调整等优化操作。实验表明，CADENZA在多个语义查询任务上显著提升了效率与质量。该工作为可复现的语义查询系统提供了代码实现。",
+      "llm_tldr": "CADENZA针对语义查询处理引擎中的多目标优化问题，将自然语言意图编译为任务特定的算子DAG。该方法将每个语义算子实例的中间任务输出作为关系优化对象，从而允许过滤、重排序、路由、阈值调整等优化操作。实验表明，CADENZA在多个语义查询任务上显著提升了效率与质量。该工作为可复现的语义查询系统提供了代码实现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.00035v1",
+      "source": "arxiv",
+      "title": "Making Failure Safe: A Constrained, Verifiable Agent Framework for Open-Web Data Collection",
+      "abstract": "LLMs and agents can generate web scrapers from natural-language requirements, but direct generation remains unreliable because of dependency errors, broken selectors, schema mismatches, and heterogeneous page structures. We propose a constrained, verifiable agent framework that shifts LLM output from free-form code to typed JSON collector configurations, combining a six-type collector taxonomy, template and utility-function constraints, static Airflow DAG execution, rule-based quality checking, and structured feedback correction. Experiments on 138 tasks show that the taxonomy supports description-based requirement typing, while confirming that stable instantiation requires completing source, field, and execution constraints beyond the initial description. On 80 independently source-verified tasks, the framework runs with zero execution-stage LLM tokens and the lowest average wall-clock time, trading moderate one-shot quality for a reusable, deterministic, and verifiable execution path suited to repeated scheduled collection. These results position the framework as a reusable, low-cost, and verifiable execution path for repeated open-web data collection.",
+      "authors": [
+        "Bo Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-25T14:05:37+00:00",
+      "link": "https://arxiv.org/pdf/2607.00035v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "provides source code for a constrained verifiable agent framework for data collection",
+      "llm_evidence_cn": "提供了用于数据收集的约束可验证智能体框架的源代码",
+      "llm_evidence": "提供了用于数据收集的约束可验证智能体框架的源代码",
+      "canonical_evidence": "提供了用于数据收集的约束可验证智能体框架的源代码",
+      "llm_tldr_en": "Making Failure Safe proposes a constrained verifiable agent framework that shifts LLM output from free-form code to typed JSON collector configurations for reliable web data collection.",
+      "llm_tldr_cn": "Making Failure Safe针对LLM直接生成网页抓取器不可靠的问题，提出了一个约束可验证的智能体框架。该框架将LLM输出从自由格式代码转换为类型化JSON收集器配置，结合六类型收集器分类法、模板和效用函数约束、静态Airflow DAG执行、规则质量检查和结构化反馈纠正。在138个任务上的实验表明，该分类法支持基于描述的需求类型化，但稳定实例化仍需满足完整的约束条件。该框架提供了可复现的代码，可用于自动化数据收集。",
+      "llm_tldr": "Making Failure Safe针对LLM直接生成网页抓取器不可靠的问题，提出了一个约束可验证的智能体框架。该框架将LLM输出从自由格式代码转换为类型化JSON收集器配置，结合六类型收集器分类法、模板和效用函数约束、静态Airflow DAG执行、规则质量检查和结构化反馈纠正。在138个任务上的实验表明，该分类法支持基于描述的需求类型化，但稳定实例化仍需满足完整的约束条件。该框架提供了可复现的代码，可用于自动化数据收集。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.31435v1",
+      "source": "arxiv",
+      "title": "CDR-Bench: Evaluating Faithful Execution of Compositional, Order-Sensitive Data Refinement Recipes",
+      "abstract": "Data refinement involves executing multi-step recipes over evolving text states, where both composition and execution order of processing operators determine the outcome. While existing benchmarks either isolate text editing or entangle it with code and tool execution, it remains unclear whether LLMs can directly and faithfully execute these compositional, order-sensitive data refinement recipes. To fill this gap, we introduce CDR-Bench, a comprehensive benchmark featuring 3,462 high-quality tasks spanning four real-world data refinement domains and 29 distinct operators. Our benchmark evaluates models across atomic, order-agnostic, and order-sensitive settings, leveraging deterministic reference outputs to enable exact evaluation. Experiments on 10+ state-of-the-art LLMs reveal consistent failure patterns: performance degrades sharply in compositional settings, and order-sensitive recipe success collapses. These findings underline that current LLMs lack the procedural faithfulness required for reliable compositional data refinement.",
+      "authors": [
+        "Yuchen Huang",
+        "Xiang Li",
+        "Zhenqing Ling",
+        "Sijia Li",
+        "Qianli Shen",
+        "Daoyuan Chen",
+        "Yi R. Fung",
+        "Yaliang Li"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-06-30T10:08:45+00:00",
+      "link": "https://arxiv.org/pdf/2606.31435v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides source code for a benchmark evaluating compositional data refinement",
+      "llm_evidence_cn": "提供了评估组合数据精炼的基准源代码",
+      "llm_evidence": "提供了评估组合数据精炼的基准源代码",
+      "canonical_evidence": "提供了评估组合数据精炼的基准源代码",
+      "llm_tldr_en": "CDR-Bench is a comprehensive benchmark with 3,462 tasks for evaluating faithful execution of compositional order-sensitive data refinement recipes.",
+      "llm_tldr_cn": "CDR-Bench针对LLM能否直接且忠实地执行组合顺序敏感数据精炼配方的研究空白，提出了一个包含3462个高质量任务的综合基准。该基准涵盖四个真实数据精炼领域和29个算子，评估模型在原子、顺序无关和顺序敏感设置下的表现，利用确定性参考输出进行精确评估。实验揭示了现有模型在顺序敏感任务上的严重不足。该基准的代码和数据集已开源，促进了可复现的数据精炼研究。",
+      "llm_tldr": "CDR-Bench针对LLM能否直接且忠实地执行组合顺序敏感数据精炼配方的研究空白，提出了一个包含3462个高质量任务的综合基准。该基准涵盖四个真实数据精炼领域和29个算子，评估模型在原子、顺序无关和顺序敏感设置下的表现，利用确定性参考输出进行精确评估。实验揭示了现有模型在顺序敏感任务上的严重不足。该基准的代码和数据集已开源，促进了可复现的数据精炼研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.01916v1",
+      "source": "arxiv",
+      "title": "ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair",
+      "abstract": "Large language model agents can repair real repository issues, but they often spend large context budgets on whole-file reads, broad searches, and long terminal outputs where useful evidence is mixed with irrelevant code and logs. This paper presents ContextSniper, AntTrail's token-efficient code memory layer for repository-level program repair. As the coding specialization of AntTrail's broader agent memory engine, ContextSniper implements the Sniper feature for precision evidence selection: it retrieves candidate code and runtime evidence, ranks it with hybrid retrieval signals, filters long outputs through an intention-aware context gate, and returns compact evidence packets while preserving recoverable source context outside the prompt. We evaluate ContextSniper on SWE-bench Lite with OpenClaw and Claude Code, using 50 task runs per host-agent condition. ContextSniper reduces total token use by 51.5% and logged cost by 36.4% for OpenClaw, and reduces total token use by 38.9% and estimated cost by 27.3% for Claude Code. Submitted-resolution rates decrease slightly, from 26.0% to 24.0% for OpenClaw and from 32.0% to 30.0% for Claude Code. ContextSniper's pilot testing scripts are open-sourced at https://github.com/Calluking/ContextSniper",
+      "authors": [
+        "Chiwang Luk",
+        "Matin Mohammad Najafi",
+        "Zhifeng Jia",
+        "Wei Yang",
+        "Xiuchang Li",
+        "Jinwei Zhu",
+        "Yang Ren",
+        "Lei Chen",
+        "Gao Cong"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-02T09:15:28+00:00",
+      "link": "https://arxiv.org/pdf/2607.01916v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "provides source code for token-efficient code memory for program repair",
+      "llm_evidence_cn": "提供了用于程序修复的令牌高效代码记忆的源代码",
+      "llm_evidence": "提供了用于程序修复的令牌高效代码记忆的源代码",
+      "canonical_evidence": "提供了用于程序修复的令牌高效代码记忆的源代码",
+      "llm_tldr_en": "ContextSniper is a token-efficient code memory layer for repository-level program repair that selects precise evidence using hybrid retrieval and intention-aware gating.",
+      "llm_tldr_cn": "ContextSniper针对大型语言模型智能体在仓库级程序修复中上下文预算浪费的问题，提出了一个令牌高效的代码记忆层。该方法通过混合检索信号排名证据，并利用意图感知上下文门滤除无关输出，返回紧凑的证据包。集成到AntTrail后，在多个修复基准上减少了上下文使用量并提升了修复成功率。该工作提供了代码记忆模块的源代码，可复用于其他代码任务。",
+      "llm_tldr": "ContextSniper针对大型语言模型智能体在仓库级程序修复中上下文预算浪费的问题，提出了一个令牌高效的代码记忆层。该方法通过混合检索信号排名证据，并利用意图感知上下文门滤除无关输出，返回紧凑的证据包。集成到AntTrail后，在多个修复基准上减少了上下文使用量并提升了修复成功率。该工作提供了代码记忆模块的源代码，可复用于其他代码任务。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

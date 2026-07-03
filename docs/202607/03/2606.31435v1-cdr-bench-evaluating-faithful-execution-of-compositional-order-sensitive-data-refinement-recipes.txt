@@ -1,0 +1,1463 @@
+Title: CDR-Bench: Evaluating Faithful Execution of Compositional, Order-Sensitive Data Refinement Recipes
+
+URL Source: https://arxiv.org/pdf/2606.31435v1
+
+Published Time: Wed, 01 Jul 2026 01:04:58 GMT
+
+Number of Pages: 29
+
+Markdown Content:
+## CDR-Bench: Evaluating Faithful Execution of Compositional, Order-Sensitive Data Refinement Recipes 
+
+Yuchen Huang 1,3* Xiang Li 2,3* Zhenqing Ling 3 Sijia Li 1 Qianli Shen 3
+
+Daoyuan Chen 3† Yi R. (May) Fung 1† Yaliang Li 31HKUST 2NUS 3Tongyi Lab , Alibaba Group 
+
+Abstract 
+
+Data refinement involves executing multi-step recipes over evolving text states, where both composition and execution order of processing operators determine the outcome. While ex-isting benchmarks either isolate text editing or entangle it with code and tool execution, it re-mains unclear whether LLMs can directly and faithfully execute these compositional, order-sensitive data refinement recipes. To fill this gap, we introduce CDR-Bench, a comprehen-sive benchmark featuring 3,462 high-quality tasks spanning four real-world data refinement domains and 29 distinct operators. Our bench-mark evaluates models across atomic, order-agnostic, and order-sensitive settings, leverag-ing deterministic reference outputs to enable exact evaluation. Experiments on 10+ state-of-the-art LLMs reveal consistent failure patterns: performance degrades sharply in compositional settings, and order-sensitive recipe success col-lapses. These findings underline that current LLMs lack the procedural faithfulness required for reliable compositional data refinement 1.
+
+1 Introduction 
+
+Data refinement, the process of transforming noisy and heterogeneous raw text into clean, task-ready data, is a core component of modern LLM pipelines. It underpins applications such as pre-training corpus construction (Chen et al., 2024a; Qin et al., 2025), reliable knowledge retrieval in RAG systems (Liu et al., 2026; Khan et al., 2024), and privacy-sensitive deployments (Garza et al., 2025; Pal et al., 2024). Traditionally, refinement pipelines have relied on heuristic rules and hand-crafted scripts (Lee et al., 2021; Li, 2019). Al-though reproducible, these pipelines become brit-tle as corpora, data policies, and downstream re-
+
+> *
+
+Work done during internship at Alibaba Group. 
+
+> †
+
+Corresponding Authors. 
+
+> 1
+
+Our code and data are released at https://github.com/ lukahhcm/data-juicer-hub/tree/CDR-Bench .Language Model clean name              
+
+> clean email
+> extract tables
+> from html
+> punctuation
+> normalization
+> words number
+> filter Above is the raw document. Please extract the tables ,redact privacy identifiers
+> such as names and emails, remove emoji characters , and normalize any
+> Unicode punctuation . Keep it only if the final text has at least 10 words .
+> KEEP DROP
+> remove specific
+> characters
+> Input Text
+> <table><tr><th>Name</th><th>Email</th><th>Comment</th></tr><tr><td> Dr.
+> Sarah Connor </td><td> sarah.c88@address.email </td><td>The system crashed
+> again ！！ ಠ_ಠIt needs a reboot ，ASAP 。。。😭 </td></tr></table>
+> User Request
+> Edited Text
+> Decision
+> [NAME] |[EMAIL] | The system crashed again !! It
+> needs a reboot ,ASAP ...
+> Recipe
+
+Figure 1: Illustration of a compositional data refinement process. The language model receives a raw input doc-ument alongside a user request specifying a multi-step recipe procedure, and directly outputs the processed tar-get text together with a final execution judgment. 
+
+quirements evolve. The rise of LLMs enables a more flexible interface for data refinement, allow-ing users to specify goals in natural language across tasks such as text cleaning, quality filtering, infor-mation extraction, personally identifiable informa-tion (PII) redaction, and hallucination handling. Despite this flexibility, these operations are rarely performed in isolation. Real-world data re-finement requires executing a compositional and 
+
+order-sensitive pipeline of interdependent opera-tions over an evolving text state, where instructions dictate not only what to apply, but also when . Even if an LLM serves as a capable proxy for single, atomic operations, the compositional nature of re-finement means that minor errors easily compound along the sequential execution, leading to even-tual pipeline failure. Beyond mere composition, the order-sensitive requirement introduces an even more formidable challenge: since each step during the pipeline execution can shift the context seen by subsequent steps, reordering operations can drasti-cally alter intermediate states, the final edited text, 1                                                     
+
+> arXiv:2606.31435v1 [cs.AI] 30 Jun 2026 Benchmark Input Primary Output Compositional Recipe Order Sensitive Evaluation Method
+> Task-Specific Editing Benchmarks
+> TAB (Pilán et al., 2022) Text Edited Text ✗✗Human Annotation EditEval (Dwivedi-Yu et al., 2022) Text Edited Text ✗✗Human Annotation InstrEditBench (Zeng et al., 2026) Text Edited Text ✗✗Synthetic Annotation OpenPII-1M (Ai4Privacy, 2026) Text Edited Text ✗✗Synthetic Annotation
+> Data Agent Benchmarks
+> AutoDCWorkflow (Li et al., 2025) Tables Tables, Scripts ✗✗Execution-based DataGovBench (Liu et al., 2025) Tables, Text Scripts ✓✗Execution-based DCA-Bench (Huang et al., 2025) Files Reports ✗✗LLM-as-a-judge KramaBench (Lai et al., 2026) Files Scripts ✓✗LLM, Execution-based DAComp (Lei et al., 2025) Files Scripts, Reports ✓✗LLM, Execution-based
+> CDR-Bench (Ours) Text Decision, Edited Text ✓✓Deterministic Recipe Execution
+
+Table 1: Scope comparison with representative task-specific editing benchmarks and data-centric agent benchmarks. CDR-Bench uniquely requires faithful, order-sensitive execution of compositional refinement recipes over raw text with deterministic evaluation. 
+
+and the ultimate keep/drop decision. Consequently, correctness in this setting is strictly procedural: the model must faithfully execute a latent sequence rather than merely generate a superficially plausi-ble output. However, as summarized in Table 1, exist-ing benchmarks fail to evaluate this procedu-ral faithfulness adequately. Standard instruction-driven text-editing benchmarks (Dwivedi-Yu et al., 2022; Zeng et al., 2026) focus on isolated edits, completely overlooking compositional and order-sensitive recipes. Conversely, while recent data-centric agents tackle multi-step pipelines (Liu et al., 2025; Lei et al., 2025), their end-to-end evaluations entangle the model’s intrinsic procedural under-standing with sandbox execution, debugging, and code generation. To untangle these factors and isolate the underlying model’s genuine data refine-ment capability, direct recipe execution serves as a vital diagnostic primitive. As illustrated in Figure 1, it directly evaluates whether an LLM can indepen-dently apply the right operations in the right order to the right intermediate states without external scaffolding. This critical gap raises a question: can an LLM faithfully and directly execute composi-tional, order-sensitive data refinement recipes? To answer this question, we introduce CDR-Bench , a comprehensive benchmark designed to evaluate LLMs on compositional, order-sensitive data refinement. As shown in Figure 2, CDR-Bench comprises 3,462 tasks across four real-world data refinement domains—Web Refinement, La-TeX Refinement, RAG Preparation, and Privacy Redaction—covering 29 operators, 63 recipe tem-plates, two atomic tracks (Atomic-M/F) and three compositional tracks (Agnostic-M, Order-M, and Order-F). Crucially, all tasks carry deterministic reference outputs, enabling exact, objective evalua-tion without relying on LLM-as-a-judge paradigms. Our evaluation framework categorizes model capa-bilities into three distinct levels: atomic operator ex-ecution, order-agnostic recipe execution, and order-sensitive recipe execution. To rigorously assess performance across these levels, we further pro-pose three complementary metrics: Recipe Success (RS) for exact match verification, Order-Consistent Success (OCS) to measure robustness against or-der permutations, and Refinement Gain (RG) for partial progress. Through extensive experiments on over ten state-of-the-art LLMs, we find that compositional recipe execution exposes a fundamental limitation that single-operator performance does not predict. Mod-els frequently produce outputs that look plausible on the surface while silently violating the intended execution order, and fewer than 5% (Order-M) and 19% (Order-F) of order-sensitive groups are solved correctly across all tested orderings despite overall text quality remaining relatively stable. Deferred filtering decisions prove especially fragile, with exact recipe success falling by over 47 percent-age points (pp) simply by moving a filter from before to after a sequence of transformations, a gap that neither prompt engineering nor few-shot demonstrations fully close. These findings suggest that progress in data refinement demands a shift from surface-level text editing to genuine procedu-ral faithfulness, and CDR-Bench provides a repro-ducible testbed to measure and drive that progress. 236% 
+
+28.6% 
+
+18.9% 
+
+12.6% 
+
+4% Order-M 
+
++ =
+
++ =           
+
+> =
+> [Recipe]
+> Clean IP Mapper
+> Remove Repeat Sentences
+> Mapper
+> [Input] Report received from 10.0.0.1 . Report received from 10.1.1.2 .
+> [Output 1] Report received from .
+> [Output 2] Report received from . Report received from .
+> [Order 2] Remove Repeat Sentences Mapper →Clean IP Mapper
+> [Order 1] Clean IP Mapper →Remove Repeat Sentences Mapper
+> Agnostic-M
+
++ =
+
++ =        
+
+> [Recipe]
+> Clean IP Mapper
+> Clean Email Mapper
+> [Input] Hello, could you please review our customer data managed through IPV4: 227.51.94.137 ?Please use
+> Tyson_Kohler@yahoo.com for sending follow-up emails.
+> [Output] Hello, could you please review our customer data managed through IPV4: ? Please use for sending follow-up emails.
+> Atomic-M
+
++ =        
+
+> [Input] Dear Deangelo. We've received a log request at 3e8b:c859:2eee:c66e:ce68:24b8:5bcc:a437 .
+> [Output] Dear Deangelo. We've received alog request at .
+> [Operator]
+> Clean IP Mapper
+> Atomic-F
+
++ =    
+
+> [Input] Today is Sunday Sunday Suday and it's a happy happy day!
+> [Operator]
+> Word Repetition Filter
+> (repeated words <= 2)
+> [Output] DROP
+> DROP
+> KEEP
+> Order-F
+> KEEP
+> DROP
+
++ =
+
++ =
+
++ =                  
+
+> pre
+> mid
+> post
+> [Input] To download safety protocol - Login:
+> 162.167.202.45 , Password: 6d_dddKDBYXo .
+> [Recipe Order 1 - Pre]
+> Text Length Filter (length >= 70) →Clean IP
+> Mapper →Clean Secret Mapper
+> [Output 1] To download safety protocol - Login: ,
+> Password: .
+> KEEP
+> [Recipe Order 2 - Mid]
+> Clean IP Mapper →Text Length Filter (length >=
+> 70) →Clean Secret Mapper
+> [Output 2] To download safety protocol - Login: ,
+> Password: 6d_dddKDBYXo .
+> DROP
+> DROP
+> [Recipe Order 3 - Post]
+> Clean IP Mapper →Clean Secret Mapper →Text
+> Length Filter (length >= 70)
+> [Output 3] To download safety protocol - Login: ,
+> Password: .
+> DROP
+> O
+> r
+> d
+> e
+> r
+> -
+> F
+> (
+> 3
+> 6
+> %
+> )
+> O
+> r
+> d
+> e
+> r
+> -
+> M
+> (
+> 1
+> 8
+> .
+> 9
+> %
+> )
+> A
+> g
+> n
+> o
+> s
+> t
+> i
+> c
+> -
+> M
+> (
+> 2
+> 8
+> .
+> 6
+> %
+> )
+> A
+> t
+> o
+> m
+> i
+> c
+> -
+> M
+> (
+> 1
+> 2
+> .
+> 6
+> %
+> )
+> A
+> t
+> o
+> m
+> i
+> c
+> -
+> F36.5%
+> 33.3%
+> 15.9%
+> 14.3%
+
+CDR-CDR-CDR-
+
+Bench Bench Bench 
+
+CDR-
+
+Bench     
+
+> P
+> r
+> i
+> v
+> a
+> c
+> y
+> R
+> e
+> d
+> a
+> c
+> t
+> i
+> o
+> n
+> R
+> A
+> G
+> Pre
+> p
+> a
+> r
+> a
+> t
+> i
+> o
+> n
+> W
+> e
+> b
+> R
+> e
+> f
+> i
+> n
+> e
+> m
+> e
+> n
+> t
+> L
+> a
+> T
+> e
+> X
+> Re
+> f
+> i
+> n
+> e
+> m
+> e
+> n
+> t
+> R
+> P
+> (15
+> .
+> 9
+> %
+> )
+> W
+> R
+> (
+> 3
+> 3
+> .
+> 3
+> %
+> )
+> L
+> R
+> (
+> 1
+> 4.
+> 3
+> %
+> )
+> P
+> R
+> (
+> 3
+> 6
+> .
+> 5
+> %
+> )
+> (
+> 4
+> %
+> )
+
+Figure 2: Overview of the CDR-Bench. The benchmark spans four data refinement domains (Privacy Redaction, Web Refinement, LaTeX Refinement, and RAG Preparation). The benchmark evaluates three levels of recipe execution: (i) single operators ( Atomic-M/F ); (ii) order-agnostic recipes ( Agnostic-M ); and (iii) order-sensitive recipes: mapper permutations ( Order-M ) and filter placements across Pre/Mid/Post positions ( Order-F ). Here, Mappers (M) and Filters (F) denote transformation and filtering operators, respectively. Percentages are computed over unique recipe templates across domains and tracks. 
+
+2 CDR-Bench 
+
+In this section, we introduce the definition, dataset construction pipeline, metrics and statistics. 
+
+2.1 Task Formulation Compositional Data Refinement Our bench-mark evaluates whether large language models can execute compositional data-refinement recipes de-scribed in natural language. A refinement recipe 
+
+r = ( o1, o 2, . . . , o n) is an ordered sequence of data-processing operators 2 applied to an input text t0.Formally, the deterministic reference execution of a recipe r on an input t0 is denoted as E(t0, r ) = (s⋆, t ⋆). Here, s⋆ ∈ { KEEP , DROP } represents the ground-truth execution status, and t⋆ denotes the reference edited text. Specifically, t⋆ is the final text after executing all operators if s⋆ = KEEP ;or the last text state immediately before the first rejecting filter is applied if s⋆ = DROP . Corre-spondingly, given the input text t0 and a natural-language instruction q(r) describing the recipe r,the execution by a language model M is defined as 
+
+M (t0, q (r)) = (ˆ s, ˆt). The model predicts its own 
+
+2Each oi denotes a data-processing operator. Following the taxonomy in Data-Juicer (Chen et al., 2024a, 2025), we consider two operator types: mappers (M), which rewrite text according to predefined rules, and filters (F), which return binary KEEP /DROP decisions. 
+
+execution status ˆs and the resulting text ˆt. The core task is to evaluate whether the LLM’s execution 
+
+M (t0, q (r)) faithfully aligns with the deterministic reference E(t0, r ).
+
+Order-Sensitive Recipes Beyond basic composi-tion, we further evaluate whether models correctly handle execution-order dependencies. We define a recipe group as order-sensitive if multiple recipes share the same operator set but produce different execution outcomes under different operator order-ing. Formally, for a given input text t0, two recipes 
+
+ri and rj formed by different permutations of the same operators are order-sensitive if their reference executions diverge, i.e., E(t0, r i)̸ = E(t0, r j ). For instance, a text-length filter placed before redac-tion mappers may yield KEEP , while the same fil-ter placed after yields DROP as the cleaned text is shorter. 
+
+2.2 Benchmark Construction Overview. Figure 2 shows an overview of the CDR-Bench dataset. CDR-Bench is designed to evaluate whether LLMs can faithfully execute com-positional data-refinement recipes grounded in real data-processing needs. The benchmark construc-tion pipeline proceeds in four stages: (1) collecting heterogeneous corpora and activating mapper op-erators on individual records; (2) mining frequent 3operator co-occurrence patterns to identify recipe candidates; (3) materializing tracks with determin-istic references; and (4) verbalizing each recipe into diverse natural-language instructions. 
+
+Data Collection and Operator Activation We source data from Common Crawl 2026 snapshot, arXiv preprints (TIGER-Lab, 2025), Wikipedia, GovReport (Huang et al., 2021), and multiple PII datasets (Nutrient.io, 2025; Ai4Privacy Commu-nity, 2023a; Steier et al., 2025), organized into four functional domains: Web Refinement (WR), LaTeX Refinement (LR), RAG Preparation (RP), and Privacy Redaction (PR). For each domain, we define a set of candidate mapper and filter operators targeting common refinement require-ments (detailed in Appendix A.1). We then per-form an operator-level activation analysis on raw records to identify which mappers produce non-trivial changes on each sample, yielding a domain-specific pool of records annotated with their ac-tivated mapper operators. This annotated pool serves as the empirical foundation for the subse-quent recipe mining step, ensuring that recipe con-struction is grounded in naturally occurring oper-ator patterns rather than arbitrary author-defined combinations. 
+
+Recipe Mining Within each annotated pool, we identify representative mapper co-occurrence pat-terns through a greedy coverage procedure. Can-didate operator combinations are ranked by the total number of records they cover, with ties bro-ken in favor of longer combinations. This yields a compact set of recipe family anchors that capture diverse, real-world operator compositions. We then select the most frequent exact combinations within each retained family to serve as our final recipes. Pseudocode for the mining algorithm is provided in Appendix A.2. 
+
+Track Materialization Starting from the mined mapper recipes, we materialize three recipe-level evaluation tracks. For each recipe, we pair it with raw input samples that activate all of its constituent operators, executing the pipeline to obtain the de-terministic reference output t⋆. Agnostic-M di-rectly instantiates recipes from fixed mapper com-binations to evaluate baseline sequential execution. 
+
+Order-M constructs order-sensitive pairs by swap-ping operator positions, retaining only instances where the two orderings yield divergent outcomes on the same initial text t0. Order-F dynamically in-spects intermediate text states to instantiate valid fil-ters with calibrated thresholds. It then inserts each filter at three distinct positions ( pre , mid , and post )within a fixed mapper sequence, retaining only those groups where at least two placements pro-duce different final outcomes (see Appendix A.3 for details). Additionally, Atomic-M and Atomic-F are included to evaluate single-operator tasks, serving as an isolated capability baseline. 
+
+Instruction Verbalization Once all tracks are materialized, we first build a prompt library by verbalizing each recipe into natural-language in-structions across 11 prompt styles (Table 5), keep-ing every instruction aligned with the operator sequence, filter semantics, and threshold values defined during materialization. An LLM-based judge screens candidate instructions for functional equivalence to the target recipe, correct preserva-tion of execution order, and natural expression of numeric constraints without exposing code-level identifiers (Figure 7). During evaluation, each in-stance is paired with three prompt variants sampled deterministically via a fixed random seed from dis-tinct styles in the library, and wrapped in a fixed response-format template, separating phrasing vari-ation from the standardized output contract. 
+
+2.3 Evaluation Metrics 
+
+We evaluate M (t0, q (r)) = (ˆ s, ˆt) against the de-terministic reference E(t0, r ) = ( s⋆, t ⋆). Stan-dard metrics such as exact match (Rajpurkar et al., 2016), edit distance (Dwivedi-Yu et al., 2022; Zhang et al., 2024c; Levenshtein, 1966), and SARI (Xu et al., 2016) are insufficient here: ex-act match penalizes benign formatting variation, edit distance does not distinguish progress from regression, and SARI targets n-gram simplification rather than deterministic operator logic. We there-fore propose three task-specific metrics: Recipe Success (RS), Order-Consistent Success (OCS), and Refinement Gain (RG). 
+
+Recipe Success (RS) measures exact recipe ex-ecution under a normalized text comparison. Let 
+
+f (·) be a text normalization function that strips leading and trailing whitespace, removes empty lines, and unifies newline characters. We define 
+
+RS = 1ˆs = s⋆ ∧ f (ˆ t) = f (t⋆). (1) A prediction is successful only if it correctly pre-dicts the execution status and perfectly reconstructs 4the normalized reference text. We report RS@K throughout, where an instance is counted as solved if the model succeeds under at least one of K
+
+prompt styles. 
+
+Order-Consistent Success (OCS) is used to evaluate order-sensitive recipe groups. Each group 
+
+V contains recipe variants that share the identical operator set but differ in execution sequence (e.g., permuted mapper orders or varying filter place-ments). OCS requires the model to correctly solve every variant within the group simultaneously: 
+
+OCS( V) = 1[ ∀ v ∈ V : RS v = 1] , (2) where RS v denotes the Recipe Success for a spe-cific variant v. For mapper-filter order groups, this necessitates succeeding on the pre , mid , and post 
+
+variants simultaneously. We also report OCS@K, where a group is considered solved if every variant succeeds under at least one of its K prompt styles. 
+
+Refinement Gain (RG) captures partial editing progress not reflected in RS or OCS, measuring normalized edit-distance improvement toward the reference. Let d(·, ·) denote edit distance. We define 
+
+RG = max 
+
+
+
+0, 1 − d(ˆ t, t ⋆)
+
+d(t0, t ⋆) + ϵ
+
+
+
+, (3) where ϵ > 0 is a small constant to prevent division by zero when the initial input already perfectly matches the reference. RG = 1 when the prediction matches the reference, and 0 when it fails to reduce the edit distance relative to the original input. 
+
+2.4 Benchmark Statistics 
+
+The core CDR-Bench benchmark contains 3,462 high-quality tasks spanning four data refinement domains, including 3,288 compositional tasks and 174 atomic tasks. Detailed statistics are provided in Appendix A.5. 
+
+3 Experimental Results 
+
+3.1 Experiment Setup Evaluated Models We evaluate a range of state-of-the-art LLMs, spanning open-source mod-els such as Qwen3.6 (Qwen Team, 2026a,b), DeepSeek-V4 (DeepSeek-AI, 2026), GLM (GLM-5-Team et al., 2026), Gemma-4 (Google Deep-Mind, 2026), Llama-4 (Meta AI, 2025), and Kimi-K2.6 (Moonshot AI, 2026), as well as proprietary model families such as Claude (Anthropic, 2025a,b, 2026a,b) and GPT (OpenAI, 2026a,b). Since data refinement is often applied at corpus scale, where low-latency and cost-efficient inference is preferred, we disable reasoning modes whenever explicit controls are available. Additional model setting details are provided in Appendix B.1. 
+
+Prompting Strategies We evaluate four prompt-ing strategies. Direct Mode serves as the default, asking the model to produce the final output di-rectly. Few-Shot Mode prepends two solved exam-ples from the same track. Plan-First Mode asks the model to first restate the recipe as an ordered execu-tion plan before producing the output. State-Aware Mode further encourages the model to identify in-termediate text states and specify which operation or filter applies to each. The latter three strategies test whether demonstrations, explicit planning, or intermediate-state reasoning can mitigate recipe-execution failures. Prompt templates are provided in Appendix A.6. 
+
+3.2 Main Results Performance across Different LLMs Table 2 reports the main results on CDR-Bench. Although proprietary models achieve stronger absolute per-formance, both open- and closed-source LLMs ex-hibit similar degradation patterns. We highlight three key findings: 
+
+(1) Atomic-to-recipe degradation. Models be-come substantially less reliable when refinement operations are composed into multi-step recipes rather than executed in isolation. In order-agnostic settings, GPT-5.4 drops from 30.30% RS@3 on Atomic-M to 22.74% on Agnostic-M, while Gemma-4 (Gemma-4-31B-IT) shows a similar 4 pp decline. The degradation becomes even more severe in order-sensitive settings, where GPT-5.4 further falls to 13.99% on Order-M and Gemma-4 drops from 25.55% to 8.04%. Similar trends hold across nearly all evaluated models, suggesting that procedural composition itself emerges as a major bottleneck for current LLMs. 
+
+(2) Order sensitivity exposes a gap between plau-sible refinement and faithful execution. Reordering transformations collapses exact recipe success even when the overall refinement gain remains stable. DeepSeek-V4-Flash drops 19.0 pp from Agnostic-M to Order-M in RS@3 while RG changes much less, suggesting models can produce directionally correct refinements yet fail to follow the intended 5Model Atomic-M Atomic-F Agnostic-M Order-M Order-F RS@3 ↑ RS@3 ↑ RS@3 ↑ RG ↑ RS@3 ↑ RG ↑ OCS@3 ↑ RS pre @3 ↑ RS mid @3 ↑ RS post @3 ↑ RG ↑ OCS@3 ↑                                                                                                                                                                                                            
+
+> Closed-Source Models
+> Claude Opus 4.5 27.27 71.43 22.13 49.39 11.54 51.00 2.80 42.51 18.56 13.05 41.17 8.14 Claude Opus 4.6 29.55 73.81 22.33 48.06 12.24 50.42 2.80 57.96 33.17 23.95 47.03 18.68
+> Qwen3.6-Max 26.15 76.19 23.94 50.81 7.34 48.90 0.70 46.88 21.82 17.03 39.44 8.27 GPT-5.4 30.30 88.10 22.74 53.77 13.99 52.58 4.90 62.04 25.03 14.97 48.47 9.46 + Few-Shot 31.82 +1.52 88.10 +0.00 23.38 +0.64 52.98 -0.79 13.99 +0.00 52.46 -0.12 4.90 +0.00 63.37 +1.33 25.72 +0.69 15.18 +0.21 48.46 -0.01 9.99 +0.53
+> + Plan-First ––23.74 +1.00 54.45 +0.68 18.18 +4.19 55.37 +2.79 7.69 +2.79 62.42 +0.38 29.38 +4.35 17.01 +2.04 53.43 +4.96 13.06 +3.60
+> + State-Aware ––23.84 +1.10 54.17 +0.40 16.43 +2.44 53.24 +0.66 7.69 +2.79 75.15 +13.11 29.52 +4.49 17.07 +2.10 51.18 +2.71 13.45 +3.99
+> Open-Source Models
+> DeepSeek-V4-Flash 24.62 76.19 23.94 44.41 4.90 41.27 0.00 39.57 11.75 13.67 33.43 2.40 Kimi-K2.6 29.23 76.19 24.14 46.36 9.44 47.77 0.70 35.25 16.55 14.39 35.39 5.88 Llama-4-Scout-17B 16.92 62.50 13.59 35.95 3.87 26.66 0.00 22.41 4.47 3.99 26.98 0.86 GLM-5 26.15 73.81 24.80 49.42 10.49 52.05 2.10 33.93 22.78 17.75 37.92 6.47 Gemma-4-31B-IT 29.55 80.95 25.55 56.54 8.04 59.32 0.70 32.81 19.16 14.01 43.19 6.11 Qwen3.6-27B 24.24 80.95 23.73 42.39 8.42 41.88 2.11 46.95 19.09 17.51 33.29 7.09 Qwen3.6-35B-A3B 18.18 78.05 20.40 42.03 7.02 41.31 0.00 50.98 12.17 12.89 29.95 3.70 + Few-Shot 24.24 +6.06 83.33 +5.28 19.19 -1.21 39.99 -2.04 6.32 -0.70 40.41 -0.90 0.00 +0.00 52.20 +1.22 12.11 -0.06 11.42 -1.47 30.41 +0.46 2.40 -1.30
+> + Plan-First ––20.52 +0.12 42.25 +0.22 5.94 -1.08 40.03 -1.28 0.00 +0.00 41.16 -9.82 10.84 -1.33 12.98 +0.09 31.39 +1.44 3.55 -0.15
+> + State-Aware ––23.94 +3.54 47.70 +5.67 9.44 +2.42 48.52 +7.21 2.10 +2.10 59.98 +9.00 25.18 +13.01 19.35 +6.46 38.61 +8.66 12.33 +8.63
+
+Table 2: Main results on CDR-Bench under models’ non-thinking mode, evaluating baseline performances and the effects of prompt-level enhancement strategies. We report recipe success (RS@3) and refinement gain (RG) across tasks, with group-level order consistency (OCS@3) additionally reported for order-sensitive recipes. Note that Plan-First and State-Aware strategies target recipe-level execution rather than single atomic tasks (denoted by “–”). Best and second-best results among the original baseline models are bolded and underlined. 
+
+execution order. This pattern further manifests within Order-M as a consistent gap between recipe success and group-level order consistency, where GPT-5.4 reaches 13.99% RS@3 but only 4.90% OCS@3. Models can occasionally produce correct individual recipes yet consistently fail to maintain order across a full operator group. 
+
+(3) Deferred decisions become increasingly un-reliable. Filtering decisions degrade substantially when applied after preceding transformations. GPT-5.4 declines from 62.04% RS@3 in pre-filter set-tings to 25.03% and 14.97% in mid- and post-filter settings, respectively. Qwen3.6-35B-A3B exhibits a similar pattern, indicating that downstream de-cisions become unreliable once they depend on transformed intermediate states. 
+
+Performance over Different Recipe Length 
+
+Figure 3 shows that performance consistently de-creases as recipes grow longer across all three com-positional tracks. On Agnostic-M and Order-M, all three models nearly collapse to zero RS@3 beyond five operations. Order-M degrades more rapidly than Agnostic-M, indicating that tracking evolving intermediate states under operator reorder-ing compounds the difficulty introduced by length alone. Order-F shows a more gradual decline, as its transformation order is fixed and only the filter placement varies, requiring less fine-grained state discrimination than Order-M. 
+
+Performance across Domains Figure 4 shows performance and compositional degradation across domains. PR achieves the highest atomic RS@3, as its operators target localized patterns such as emails and URLs. WR and LR score lower atomi-cally, since their operators require reasoning over broader document structure. Despite this, PR suf-fers the steepest compositional drops ( −43 .1 pp for Gemma-4, −38 .1 pp for Qwen3.6-35B-A3B), suggesting that atomic familiarity does not confer compositional robustness and the bottleneck shifts to multi-step state tracking regardless of operator simplicity. 
+
+Effect of Different Prompting Strategies Ta-ble 2 compares prompt-level strategies against Di-rect Mode. Few-Shot improves atomic execution by 5–6 pp for Qwen3.6-35B-A3B but offers lit-tle benefit at the recipe level. Plan-First brings moderate gains on order-sensitive settings for GPT-5.4 but remains inconsistent across models. State-Aware is the most effective strategy: by explicitly identifying intermediate text states and specifying which operation or filter applies to each, it con-sistently improves order-sensitive performance, in-creasing Order-F OCS@3 by 4 pp for GPT-5.4 and 9 pp for Qwen3.6-35B-A3B, while also benefiting Agnostic-M, suggesting that explicit state track-ing helps beyond strictly order-sensitive settings. Nevertheless, absolute OCS@3 scores remain low across all strategies, indicating that prompt engi-neering alone is insufficient to fully resolve recipe execution failures. 62 3 4 5 6 7+               
+
+> Recipe length
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> RS@3 (%)
+> Agnostic-M
+> 234567+
+> Recipe length
+> Order-M
+> 345678910+
+> Recipe length
+> Order-F
+> 0
+> 50
+> 100
+> 150
+> 200
+> 0
+> 10
+> 20
+> 30
+> 40
+> 0
+> 200
+> 400
+> 600
+> 800
+> 1000
+> # instances
+> GPT-5.4 Gemma-4-31B-IT Qwen3.6-35B-A3B
+
+Figure 3: Performance over different recipe lengths on three compositional recipe tracks. Lines show RS@3 of representative LLMs, and light-blue bars indicate the number of instances in each recipe-length bucket. Atomic                    
+
+> n = 174
+> Compositional
+> n = 3,288
+> 16% 18% 63%
+> 3%
+> 14% 16% 39% 31%
+> LaTeX Refinement RAG Preparation Privacy Redaction Web Refinement
+> Atomic Compositional Degradation Improvement
+> LR
+> RP
+> PR
+> WR
+> GPT-5.4
+> Gemma-4-31B-IT
+> Qwen3.6-35B-A3B
+> GPT-5.4
+> Gemma-4-31B-IT
+> Qwen3.6-35B-A3B
+> GPT-5.4
+> Gemma-4-31B-IT
+> Qwen3.6-35B-A3B
+> GPT-5.4
+> Gemma-4-31B-IT
+> Qwen3.6-35B-A3B
+> 010 20 30 40 50 60 70 80
+> Mean RS (%)
+> -22.9
+> -9.6
+> +2.1
+> -0.4
+> -15.1
+> -5.7
+> -29.1
+> -43.1
+> -38.1
+> -13.5
+> -22.0
+> -12.1
+
+Figure 4: Atomic and compositional RS across domains, with per-model degradation gaps (pp). 
+
+Effect of Instruction Styles Figure 12 (left) shows that RS@K increases steadily with the num-ber of styles attempted, as different phrasings pro-vide complementary benefits, though the Atomic– Compositional gap persists across all K. The right panel shows that operation-enumerating styles such as Step-by-Step and Brief outperform outcome-oriented styles such as Goal-First and Scenario Story on transformation-heavy tracks, as the lat-ter require models to infer intermediate procedures from the desired end state. On Order-M, all styles collapse into a narrow performance range, confirm-ing that instruction phrasing alone cannot compen-sate for the fine-grained state tracking required for order-sensitive execution. 
+
+Effect of Thinking Mode Figure 5 shows that thinking mode substantially improves RS@3 across all compositional tracks, with the largest gains on Order-F ( +19 .6 pp for Qwen3.6-35B-A3B and 
+
++17 .9 pp for Qwen3.6-27B), where explicit multi-step reasoning most directly benefits filter evalua-tion over transformed text states. Gains on Order-M are comparatively modest, as mapper ordering errors are more implicit and harder to surface even Agnostic-M Order-M Order-F 
+
+0
+
+20 
+
+40       
+
+> RS@3 (%)
+> 20.4
+> 25.8 (+5.4)
+> 7.0 10.1 (+3.1)
+> 25.2
+> 44.9 (+19.6)
+> Qwen3.6-35B-A3B
+> Agnostic-M Order-M Order-F
+
+0
+
+20 
+
+40       
+
+> RS@3 (%)
+> 23.7 25.6 (+1.8)
+> 8.4 12.2 (+3.8)
+> 27.9
+> 45.7 (+17.9)
+> Qwen3.6-27B
+> w/o Thinking w/ Thinking
+
+Figure 5: Effect of thinking mode across tracks. 
+
+Model n Closer to canonical Closer to swapped Tie 
+
+Gemma-4-31B-IT 409 68.0% 29.8% 2.2% GPT-5.4 383 55.4% 43.1% 1.6% Qwen3.6-35B-A3B 416 54.6% 43.0% 2.4% 
+
+Overall 1208 59.4% 38.6% 2.1% 
+
+Table 3: Analysis of O RDER -M swapped -condition er-rors. Most failures are closer to the canonical ordering than to the perturbed gold, suggesting systematic resis-tance to instruction rather than random output. 
+
+with extended reasoning. 
+
+3.3 Error Analysis 
+
+Figure 13 summarizes the failure distribution and full definitions and breakdowns are in Ap-pendix B.2. Three patterns stand out. (1) Filter-threshold errors account for 39.3% of failures, where models produce plausible cleaned text but as-sign the wrong KEEP /DROP status. (2) Deterministic execution remains brittle : mapper tracks are domi-nated by formatting drift (28.4%), missed operators (11.7%), and under-application (9.5%), indicating that models approximate rather than faithfully re-produce operator behavior. (3) Rejection does not reliably halt execution : in Order-F DROP cases, models sometimes continue past a rejecting filter. As shown in Fig. 6, RS in Pre-DROP cases closely tracks preference for tstop over tfull , while Mid-DROP cases further require correct intermediate-710     
+
+> 20
+> 30
+> 40
+> Mean RS (%)
+> GPT-5.4
+> Qwen3.6-Max
+> Claude-Opus-4.5
+> Qwen3.6-35B-A3B
+> Gemma-4-31B-IT
+> Qwen3.6-27B
+> DeepSeek-V4-Flash
+> Kimi-K2.6 GLM-5
+> Llama-4-Scout
+> Pre-DROP
+> -40 -20 020
+> Closer to Stop - Closer to Full (pp)
+> 5
+> 10
+> 15
+> Mean RS (%)
+> GPT-5.4
+> Gemma-4-31B-IT
+> Qwen3.6-Max GLM-5
+> Claude-Opus-4.5
+> Kimi-K2.6 Qwen3.6-27B
+> Qwen3.6-35B-A3B DeepSeek-V4-Flash
+> Llama-4-Scout
+> Mid-DROP
+
+Figure 6: Failure to stop after a rejecting filter in Order-F DROP cases. Predictions are compared with the correct stopping state tstop and a continued-execution state tfull .The x-axis shows the closer-rate difference between 
+
+tstop and tfull , and the y-axis reports mean RS. 
+
+state rewriting before termination. 
+
+3.4 Real-World Scenario Evaluation 
+
+As a lightweight extension, we verify that the com-positional difficulty identified above is not con-fined to rule-based operators. We evaluate four semantic tracks with human-annotated references, covering PII redaction (Ai4Privacy Community, 2023b), hallucination processing (Mishra et al., 2024), safety tagging (Ghosh et al., 2025), and rubric scoring (Wang et al., 2024), each with an Atomic track over individual semantic operations and a Compositional track that requires produc-ing all of them jointly. Results are summarized in Table 9–12, with full details in Appendix C. As shown in Figure 15, the same atomic-to-compositional pattern holds across all four domains. Averaged over models and domains, atomic RS@3 is 58.8% while compositional RS@3 is 30.8%, an overall gap of 28.0 pp. This confirms that the com-position bottleneck generalizes from deterministic operators to higher-level semantic reasoning evalu-ated against human ground truth, rather than being an artifact of the rule-based recipe design. The severity of the gap varies with how the subtasks are structured. It is largest when several parallel, independently meaningful decisions must all be cor-rect under a fixed output schema, as in rubric scor-ing (51.1 pp), PII redaction (29.1 pp), and safety tagging (27.6 pp). Hallucination processing is the exception (4.0 pp), though not because composi-tion is easy. Its subtasks form a coarse-to-fine pro-gression (detection, span, type, correction) whose fine-grained stages are themselves the bottleneck, leaving little room for an additional composition penalty. Across domains, the composition bottle-neck is consistent, while its severity is shaped by how the subtasks are combined. 
+
+4 Related Work 
+
+Data Curation and Data-Centric Agent Bench-marks Recent work has introduced benchmarks for LLM-based data curation and data-centric agents. Some evaluate workflow construction or executable data processing over structured data, in-cluding AutoDCWorkflow and DataGovBench (Li et al., 2025; Liu et al., 2025), while broader bench-marks such as DAComp and KramaBench cover data-intelligence workflows involving SQL/Python coding, multi-source integration, data cleaning, rea-soning, and report generation (Lei et al., 2025; Lai et al., 2026). Other benchmarks target content-level curation tasks, including PII detection and anonymization (Ai4Privacy, 2026; Pilán et al., 2022), hallucination detection or correction (Niu et al., 2024; Dziri et al., 2022), and semantic tag-ging of entities and relations (Wang et al., 2022). 
+
+LLM-Driven Data Curation and Preparation 
+
+Recent studies have explored LLMs for data cu-ration, cleaning, and preparation. Prior work evaluates or instruction-tunes LLMs for prepro-cessing operators including error detection, data imputation, schema matching, and entity match-ing (Zhang et al., 2024b,a). Other methods address retrieval-based repair, dependency induction for tabular cleaning, and formula synthesis for impu-tation (Naeem et al., 2024; Biester et al., 2024; Zhang et al., 2024d). Systems including ChatPipe, SEED, and AutoPrep study pipeline orchestration, domain-specific curation, multi-agent table prepa-ration, and automatic cleaning workflow genera-tion (Chen et al., 2023, 2024b; Fan et al., 2025). 
+
+5 Conclusion 
+
+In this paper, we introduced CDR-Bench to evalu-ate the faithful execution of compositional, order-sensitive data refinement recipes. CDR-Bench re-veals a consistent gap between what LLMs ap-pear to do and what they are actually instructed to do. Across all evaluated models, composing opera-tors into multi-step recipes exposes failure patterns that single-operator performance does not predict: 8models frequently produce plausible-looking out-puts while silently violating execution order, and fewer than 5% (Order-M) and 19% (Order-F) of order-sensitive groups are solved correctly across all tested orderings. Real-world semantic tracks further confirm that compositional difficulty is not an artifact of rule-based operator design, though its magnitude varies with task structure. Taken to-gether, the results point to procedural faithfulness as a distinct capability dimension that is poorly captured by existing benchmarks, and one that will need to be explicitly targeted as LLMs take on greater roles in data preparation pipelines. 
+
+Limitations 
+
+CDR-Bench has several limitations. First, it is grounded in the semantics and coverage of the Data-Juicer operator library. To keep evaluation deterministic, we exclude subjective refinement recipes and do not use LLM judges as final evalua-tors, which limits coverage of broader real-world refinement practices. Second, prompt verbaliza-tion partly relies on LLM assistance. Although we average over multiple prompt styles and evaluate several prompting strategies, this process may in-troduce two gaps: the generated instructions may differ from how users naturally describe refinement needs, and they may imperfectly verbalize the pre-cise execution semantics of the underlying deter-ministic recipes, despite validation. Third, CDR-Bench focuses on direct text-level execution and does not cover tool use, code generation, or inter-active refinement in agentic settings. Finally, multi-lingual and multimodal refinement remain outside the current scope. We leave these directions for future work. 
+
+Ethics Statement 
+
+CDR-Bench includes tasks involving privacy redac-tion and sensitive text cleanup. To mitigate po-tential risks, we rely on public, licensed, or syn-thetic data sources where appropriate. The re-leased benchmark will avoid exposing raw private credentials, personal identifiers, or other unsafe content beyond what is already controlled in the source data. The goal of CDR-Bench is to im-prove the reliability of safe data processing and privacy-preserving refinement, rather than to facili-tate misuse. 
+
+Reproducibility Statement 
+
+To support reproducibility, we release benchmark instances, recipe metadata, prompt variants, evalua-tion code, and scripts for API and vLLM inference. Since gold references are derived from determinis-tic operator execution, future work can reproduce the evaluation without relying on subjective model-based judging. 
+
+References                                  
+
+> Ai4Privacy. 2026. Openpii 1m: Multilin-gual pii masking dataset (19 labels, 23 lan-guages). https://huggingface.co/datasets/ ai4privacy/pii-masking-openpii-1m . Hugging Face Dataset. Ai4Privacy Community. 2023a. ai4privacy/pii-masking-200k dataset. https://huggingface.co/ datasets/ai4privacy/pii-masking-200k .Asynthetic multilingual dataset for training and evaluat-ing PII detection and masking models with annotated spans. Ai4Privacy Community. 2023b. ai4privacy/pii-masking-400k dataset. https://huggingface.co/ datasets/ai4privacy/pii-masking-400k .Asynthetic multilingual dataset for training and evaluat-ing PII detection and masking models with annotated spans. Anthropic. 2025a. Introducing claude opus 4.5. https: //www.anthropic.com/news/claude-opus-4-5 .Accessed: 2025-11-24. Anthropic. 2025b. Introducing claude opus 4.6. https: //www.anthropic.com/news/claude-opus-4-6 .Accessed: 2026-02-05. Anthropic. 2026a. Introducing claude opus 4.7. https: //www.anthropic.com/news/claude-opus-4-7 .Accessed: 2026-06-25. Anthropic. 2026b. Introducing claude sonnet 4.6. https://www.anthropic.com/news/ claude-sonnet-4-6 . Accessed: 2026-06-25. Fabian Biester, Mohamed Abdelaal, and Daniel Del Gaudio. 2024. Llmclean: Context-aware tabular data cleaning via llm-generated ofds. Preprint ,arXiv:2404.18681. Daoyuan Chen, Yilun Huang, Zhijian Ma, Hesen Chen, Xuchen Pan, Ce Ge, Dawei Gao, Yuexiang Xie, Zhaoyang Liu, Jinyang Gao, Yaliang Li, Bolin Ding, and Jingren Zhou. 2024a. Data-juicer: A one-stop data processing system for large language models. In
+> SIGMOD .Daoyuan Chen, Yilun Huang, Xuchen Pan, Nana Jiang, Haibin Wang, Yilei Zhang, Ce Ge, Yushuo Chen, Wenhao Zhang, Zhijian Ma, Jun Huang, Wei Lin,
+
+9Yaliang Li, Bolin Ding, and Jingren Zhou. 2025. Data-juicer 2.0: Cloud-scale adaptive data processing for and with foundation models. NeurIPS .Sibei Chen, Hanbing Liu, Weiting Jin, Xiangyu Sun, Xiaoyao Feng, Ju Fan, Xiaoyong Du, and Nan Tang. 2023. Chatpipe: Orchestrating data preparation program by optimizing human-chatgpt interactions. 
+
+Preprint , arXiv:2304.03540. Zui Chen, Lei Cao, Sam Madden, Tim Kraska, Zeyuan Shang, Ju Fan, Nan Tang, Zihui Gu, Chunwei Liu, and Michael Cafarella. 2024b. Seed: Domain-specific data curation with large language models. 
+
+Preprint , arXiv:2310.00749. DeepSeek-AI. 2026. Deepseek-v4: Towards highly efficient million-token context intelligence. Jane Dwivedi-Yu, Timo Schick, Zhengbao Jiang, Maria Lomeli, Patrick Lewis, Gautier Izacard, Edouard Grave, Sebastian Riedel, and Fabio Petroni. 2022. Editeval: An instruction-based benchmark for text improvements. Preprint , arXiv:2209.13331. Nouha Dziri, Ehsan Kamalloo, Sivan Milton, Os-mar Zaiane, Mo Yu, Edoardo M. Ponti, and Siva Reddy. 2022. FaithDial: A faithful benchmark for information-seeking dialogue. Transactions of the Association for Computational Linguistics , 10:1473– 1490. Meihao Fan, Ju Fan, Nan Tang, Lei Cao, Guoliang Li, and Xiaoyong Du. 2025. Autoprep: Natural language question-aware data preparation with a multi-agent framework. Preprint , arXiv:2412.10422. Leon Garza, Anantaa Kotal, Aritran Piplai, La-vanya Elluri, Prajit Das, and Aman Chadha. 2025. Prvl: Quantifying the capabilities and risks of large language models for pii redaction. Preprint ,arXiv:2508.05545. Shaona Ghosh, Prasoon Varshney, Makesh Narsimhan Sreedhar, Aishwarya Padmakumar, Traian Rebedea, Jibin Rajan Varghese, and Christopher Parisien. 2025. AEGIS2.0: A diverse AI safety dataset and risks taxonomy for alignment of LLM guardrails. In Pro-ceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Com-putational Linguistics: Human Language Technolo-gies (Volume 1: Long Papers) , pages 5992–6026, Albuquerque, New Mexico. Association for Compu-tational Linguistics. GLM-5-Team, :, Aohan Zeng, Xin Lv, Zhenyu Hou, Zhengxiao Du, Qinkai Zheng, Bin Chen, Da Yin, Chendi Ge, Chenghua Huang, Chengxing Xie, Chenzheng Zhu, Congfeng Yin, Cunxiang Wang, Gengzheng Pan, Hao Zeng, Haoke Zhang, Hao-ran Wang, and 168 others. 2026. Glm-5: from vibe coding to agentic engineering. Preprint ,arXiv:2602.15763. Google DeepMind. 2026. Our most intelligent open models, built from gemini 3 research and technology to maximize intelligence-per-parameter. https:// deepmind.google/models/gemma/gemma-4/ . Ac-cessed: 2026-05-18. Benhao Huang, Yingzhuo Yu, Jin Huang, Xingjian Zhang, and Jiaqi Ma. 2025. Dca-bench: Abenchmark for dataset curation agents. Preprint ,arXiv:2406.07275. Luyang Huang, Shuyang Cao, Nikolaus Parulian, Heng Ji, and Lu Wang. 2021. Efficient attentions for long document summarization. In Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies , pages 1419–1436, Online. Association for Computational Linguistics. Ayman Asad Khan, Md Toufique Hasan, Kai Kris-tian Kemell, Jussi Rasku, and Pekka Abrahamsson. 2024. Developing retrieval augmented generation (rag) based llm systems from pdfs: An experience report. Preprint , arXiv:2410.15944. Eugenie Lai, Gerardo Vitagliano, Ziyu Zhang, Om Chabra, Sivaprasad Sudhir, Anna Zeng, An-ton A. Zabreyko, Chenning Li, Ferdi Kossmann, Jialin Ding, Jun Chen, Markos Markakis, Matthew Russo, Weiyang Wang, Ziniu Wu, Michael J. Ca-farella, Lei Cao, Samuel Madden, and Tim Kraska. 2026. Kramabench: A benchmark for ai systems on data-to-insight pipelines over data lakes. Preprint ,arXiv:2506.06541. Ga Young Lee, Lubna Alzamil, Bakhtiyar Doskenov, and Arash Termehchy. 2021. A survey on data clean-ing methods for improved machine learning model performance. Preprint , arXiv:2109.07127. Fangyu Lei, Jinxiang Meng, Yiming Huang, Junjie Zhao, Yitong Zhang, Jianwen Luo, Xin Zou, Ruiyi Yang, Wenbo Shi, Yan Gao, Shizhu He, Zuo Wang, Qian Liu, Yang Wang, Ke Wang, Jun Zhao, and Kang Liu. 2025. Dacomp: Benchmarking data agents across the full data intelligence lifecycle. Preprint ,arXiv:2512.04324. Vladimir I. Levenshtein. 1966. Binary codes capable of correcting deletions, insertions, and reversals. Soviet Physics Doklady , 10(8):707–710. Canchen Li. 2019. Preprocessing methods and pipelines of data mining: An overview. Preprint ,arXiv:1906.08510. Lan Li, Liri Fang, Bertram Ludäscher, and Vetle I. Torvik. 2025. Autodcworkflow: Llm-based data cleaning workflow auto-generation and benchmark. 
+
+Preprint , arXiv:2412.06724. Jingyu Liu, Jiaen Lin, and Yong Liu. 2026. Tackling the inherent difficulty of noise filtering in rag. Preprint ,arXiv:2601.01896. Zhou Liu, Zhaoyang Han, Guochen Yan, Hao Liang, Bohan Zeng, Xing Chen, Yuanfeng Song, and Wen-tao Zhang. 2025. Datagovbench: Benchmarking 
+
+10 llm agents for real-world data governance workflows. 
+
+Preprint , arXiv:2512.04416. Meta AI. 2025. The llama 4 herd: The beginning of a new era of natively multi-modal intelligence. https://ai.meta.com/blog/ llama-4-multimodal-intelligence/ . Accessed: 2026-05-18. Abhika Mishra, Akari Asai, Vidhisha Balachandran, Yizhong Wang, Graham Neubig, Yulia Tsvetkov, and Hannaneh Hajishirzi. 2024. Fine-grained halluci-nation detection and editing for language models. 
+
+Preprint , arXiv:2401.06855. Moonshot AI. 2026. Kimi k2.6 tech blog: Advanc-ing open-source coding. https://www.kimi.com/ blog/kimi-k2-6 . Accessed: 2026-05-18. Zan Ahmad Naeem, Mohammad Shahmeer Ahmad, Mohamed Eltabakh, Mourad Ouzzani, and Nan Tang. 2024. Retclean: Retrieval-based data cleaning us-ing foundation models and data lakes. Preprint ,arXiv:2303.16909. Cheng Niu, Yuanhao Wu, Juno Zhu, Siliang Xu, KaShun Shum, Randy Zhong, Juntong Song, and Tong Zhang. 2024. RAGTruth: A hallucination cor-pus for developing trustworthy retrieval-augmented language models. In Proceedings of the 62nd An-nual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 10862– 10878, Bangkok, Thailand. Association for Compu-tational Linguistics. Nutrient.io. 2025. Docpii: Contextual redaction benchmark dataset. https://huggingface.co/ datasets/nutrientdocs/synthetic_labeled_ redaction_instruction_en_v1 . Synthetic dataset for document-contextual PII redaction evaluation, based on gretelai/gretel-pii-masking-en-v1. OpenAI. 2026a. Gpt-5.4 model documentation. 
+
+https://developers.openai.com/api/docs/ models/gpt-5.4 . Accessed: 2026-05-18. OpenAI. 2026b. Gpt-5.5 model documentation. 
+
+https://developers.openai.com/api/docs/ models/gpt-5.5 . Accessed: 2026-06-25. Anwesan Pal, Radhika Bhargava, Kyle Hinsz, Jacques Esterhuizen, and Sudipta Bhattacharya. 2024. The empirical impact of data sanitization on language models. Preprint , arXiv:2411.05978. Ildikó Pilán, Pierre Lison, Lilja Øvrelid, Anthi Pa-padopoulou, David Sánchez, and Montserrat Batet. 2022. The text anonymization benchmark (TAB): A dedicated corpus and evaluation framework for text anonymization. Computational Linguistics ,48(4):1053–1101. Zeyu Qin, Qingxiu Dong, Xingxing Zhang, Li Dong, Xi-aolong Huang, Ziyi Yang, Mahmoud Khademi, Dong-dong Zhang, Hany Hassan Awadalla, Yi R. Fung, Weizhu Chen, Minhao Cheng, and Furu Wei. 2025. Scaling laws of synthetic data for language models. 
+
+Preprint , arXiv:2503.19551. Qwen Team. 2026a. Qwen3.6-27B: Flagship-level cod-ing in a 27B dense model. Qwen Team. 2026b. Qwen3.6-35B-A3B: Agentic cod-ing power, now open to all. Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and Percy Liang. 2016. Squad: 100,000+ ques-tions for machine comprehension of text. Preprint ,arXiv:1606.05250. Amy Steier, Andre Manoel, Alexa Haushalter, and Maarten Van Segbroeck. 2025. Nemotron-pii: Synthesized data for privacy-preserving ai. https://huggingface.co/datasets/nvidia/ Nemotron-PII . Hugging Face Dataset. TIGER-Lab. 2025. arxiv-latex-5t. https: //huggingface.co/datasets/TIGER-Lab/ arxiv-latex-5T . Hugging Face Dataset. Xiaozhi Wang, Yulin Chen, Ning Ding, Hao Peng, Zimu Wang, Yankai Lin, Xu Han, Lei Hou, Juanzi Li, Zhiyuan Liu, Peng Li, and Jie Zhou. 2022. Maven-ere: A unified large-scale dataset for event corefer-ence, temporal, causal, and subevent relation extrac-tion. Preprint , arXiv:2211.07342. Zhilin Wang, Yi Dong, Olivier Delalleau, Jiaqi Zeng, Gerald Shen, Daniel Egert, Jimmy J. Zhang, Makesh Narsimhan Sreedhar, and Oleksii Kuchaiev. 2024. Helpsteer2: Open-source dataset for train-ing top-performing reward models. Preprint ,arXiv:2406.08673. Wei Xu, Courtney Napoles, Ellie Pavlick, Quanze Chen, and Chris Callison-Burch. 2016. Optimizing sta-tistical machine translation for text simplification. 
+
+Transactions of the Association for Computational Linguistics , 4:401–415. Yiming Zeng, Wanhao Yu, Zexin Li, Tao Ren, Yu Ma, Jinghan Cao, Xiyan Chen, and Tingting Yu. 2026. Bridging the editing gap in llms: Fineedit for precise and targeted text modifications. Preprint ,arXiv:2502.13358. Haochen Zhang, Yuyang Dong, Chuan Xiao, and Masa-fumi Oyamada. 2024a. Jellyfish: Instruction-tuning local large language models for data preprocessing. In Proceedings of the 2024 Conference on Empiri-cal Methods in Natural Language Processing , pages 8754–8782, Miami, Florida, USA. Association for Computational Linguistics. Haochen Zhang, Yuyang Dong, Chuan Xiao, and Masa-fumi Oyamada. 2024b. Large language models as data preprocessors. Preprint , arXiv:2308.16361. Haopeng Zhang, Hayate Iso, Sairam Gurajada, and Nikita Bhutani. 2024c. Xatu: A fine-grained instruction-based benchmark for explainable text up-dates. Preprint , arXiv:2309.11063. 
+
+11 Algorithm 1 Recipe Mining 
+
+Require: Records D, threshold τ , max families B, max recipes M
+
+Ensure: Family anchors F, recipe sources R
+
+1: Extract exact mapper signatures Sd from each record 2: Build exact-signature counter Cexact 
+
+3: for l ∈ [Lmin , L max ] do 
+
+4: Enumerate mapper subsets of size l
+
+5: Update subset counter Csub 
+
+6: end for 
+
+7: for each subset A ∈ Csub do 
+
+8: Compute coverage 
+
+cov( A) = X
+
+> S⊇A
+
+Cexact (S)
+
+9: end for 
+
+10: Keep candidates C = {A : cov( A) ≥ τ }
+
+11: Sort C by coverage, subset size, and subset frequency 12: Initialize F ← ∅ 
+
+13: for each candidate A ∈ C do 
+
+14: if A covers previously uncovered signatures then 
+
+15: Add A to F
+
+16: end if 
+
+17: if |F| = B then 
+
+18: break 
+
+19: end if 
+
+20: end for 
+
+21: for each exact signature S do 
+
+22: Assign S to its best matching family anchor 23: end for 
+
+24: for each family A ∈ F do 
+
+25: Select top-M assigned signatures ranked by Cexact 
+
+26: end for 
+
+27: return F, R
+
+Yunfan Zhang, Changlun Li, Yuyu Luo, and Nan Tang. 2024d. Sketchfill: Sketch-guided code genera-tion for imputing derived missing values. Preprint ,arXiv:2412.19113. 
+
+A Benchmark Construction Details 
+
+A.1 Domain-Specific Operator Inventory 
+
+Table 4 summarizes the rule-based operator inven-tory used in CDR-Bench. These operators include shared statistical filters and domain-specific map-pers for Web Refinement (WR), LaTeX Refinement (LR), RAG Preparation (RP), and Privacy Redac-tion (PR). Shared filters implement cross-domain keep/drop decisions based on deterministic heuris-tic signals, such as text length, line length, and repetition ratios. Domain-specific mappers cover common refinement operations for crawled web text, scientific LaTeX sources, retrieval prepara-tion, and privacy redaction. 
+
+A.2 Recipe Mining 
+
+We first extract the exact mapper signature from each record and count the frequency of all ob-served signatures. Candidate recipe families are 
+
+Algorithm 2 Filter Calibration and Insertion 
+
+Require: Mapper recipe M = [ m1, . . . , m n], domain filters 
+
+F, support records D, target drop rate τ
+
+Ensure: Order-F instance groups 1: for each record x ∈ D do 
+
+2: Replay M on x, recording checkpoints 
+
+S0, S 1, . . . , S n
+
+3: end for 
+
+4: for each filter f ∈ F do 
+
+5: for each checkpoint Sk do 
+
+6: Collect filter statistic vk = stat( f, S k ) across all records 7: Calibrate initial threshold via default percentile 8: end for 
+
+9: Select front candidate at k = 0 , end candidate at 
+
+k = n
+
+10: Select mid candidate at k∗ = arg max 0<k<n |∆¯ vk |
+
+11: if all three positions exist then 
+
+12: Form order family {rfront , r mid , r end }
+
+13: end if 
+
+14: end for 
+
+15: for each order family do 
+
+16: Pool statistic values V across all slots and records 17: if f is min -type then 
+
+18: θ ← percentile( V, τ )
+
+19: else 
+
+20: θ ← percentile( V, 1 − τ )
+
+21: end if 
+
+22: for each record x do 
+
+23: O ← [execute( x, r s, θ ) for s ∈{front , mid , end }]
+
+24: if |unique( O)| ≥ 2 then 
+
+25: Retain group 26: end if 
+
+27: end for 
+
+28: if retained groups < 5 then 
+
+29: Discard family 30: end if 
+
+31: Keep at most 10 retained groups per family 32: end for 
+
+constructed by enumerating mapper subsets within a predefined size range and computing their cover-age over exact signatures. Specifically, the cover-age of a subset is defined as the total frequency of signatures containing that subset. We retain only candidates whose coverage exceeds a minimum support threshold and rank them by coverage, sub-set size, and subset frequency. Family anchors are then selected greedily to maximize coverage di-versity, where a candidate is kept only if it covers previously uncovered signatures. Finally, each ex-act signature is assigned to its best matching family anchor, and the most frequent assigned signatures are retained as recipe sources. 
+
+A.3 Filter Calibration and Insertion 
+
+For each mapper recipe, we replay execution and record intermediate text states S0, . . . , S n, where 
+
+S0 denotes the raw input and Sk denotes the state after the k-th mapper. Each domain filter is evalu-12 Operator Behavior 
+
+Shared Operators 
+
+alphanumeric_filter Keeps text only when its alphanumeric-content ratio falls within a configured range. 
+
+average_line_length_filter Keeps text only when the average line length falls within a configured range. 
+
+character_repetition_filter Keeps text only when character-level repetition remains within a configured range. 
+
+maximum_line_length_filter Keeps text only when the longest line falls within a configured range. 
+
+text_length_filter Keeps text only when total text length falls within a configured range. 
+
+word_repetition_filter Keeps text only when word-level repetition remains within a configured range. 
+
+words_num_filter Keeps text only when the total word count falls within a configured range. 
+
+Web Refinement (WR) 
+
+clean_copyright_mapper Removes copyright notices or related boilerplate from the beginning of a web text sample. 
+
+clean_html_mapper Cleans HTML markup and converts HTML content into readable plain text. 
+
+clean_links_mapper Removes HTTP, HTTPS, or FTP links from a crawled web page. 
+
+extract_tables_from_html_mapper Extracts table content from HTML into structured text. 
+
+fix_unicode_mapper Repairs malformed Unicode text, e.g., fixes mojibake or broken encoding. 
+
+punctuation_normalization_mapper Normalizes non-standard Unicode punctuation into standard English forms. 
+
+remove_specific_chars_mapper Removes configured noisy symbols or visually irrelevant special characters. 
+
+remove_words_with_incorrect_substrings_mapper Drops tokens containing URL-like substrings such as http , www , or .com .
+
+whitespace_normalization_mapper Normalizes irregular tabs, repeated spaces, or broken spacing patterns. 
+
+LaTeX Refinement (LR) 
+
+clean_copyright_mapper Removes copyright-related boilerplate from LaTeX source text. 
+
+expand_macro_mapper Expands macro definitions used in LaTeX source into their literal expansions. 
+
+fix_unicode_mapper Repairs malformed Unicode text in extracted LaTeX content. 
+
+latex_figure_context_extractor_mapper Extracts figure-related text, captions, and nearby citing context from LaTeX source. 
+
+punctuation_normalization_mapper Normalizes irregular Unicode punctuation into common English punctuation. 
+
+remove_bibliography_mapper Removes bibliography sections at the end of LaTeX documents. 
+
+remove_comments_mapper Removes comment lines or inline comments beginning with %.
+
+remove_header_mapper Removes LaTeX preamble or header material before the main document body. 
+
+RAG Preparation (RP) 
+
+fix_unicode_mapper Repairs corrupted characters that reduce document readability and retrievability. 
+
+remove_long_words_mapper Removes abnormally long tokens that are unlikely to be useful for indexing. 
+
+remove_repeat_sentences_mapper Removes repeated sentences while preserving the remaining text order. 
+
+Privacy Redaction (PR) 
+
+clean_email_mapper Removes email addresses from the text. 
+
+clean_ip_mapper Removes IPv4 and IPv6 addresses from logs. 
+
+clean_links_mapper Removes web or file links that may expose sensitive destinations. 
+
+clean_mac_mapper Removes MAC addresses from device records. 
+
+clean_path_mapper Removes file-system paths, including Unix, Windows, and UNC paths. 
+
+clean_phone_mapper Removes phone numbers from the content. 
+
+clean_secret_mapper Removes API keys, tokens, passwords, and authorization credentials. 
+
+remove_words_with_incorrect_substrings_mapper Drops words containing configured substrings like href or .com .
+
+Table 4: Operator inventory used in CDR-Bench. Operators are grouped by domain and functional role. Shared operators are deterministic statistical filters used across domains, while the remaining operators are domain-specific mappers for Web Refinement (WR), LaTeX Refinement (LR), RAG Preparation (RP), and Privacy Redaction (PR). 
+
+13 ated at every checkpoint, and an initial threshold is calibrated using the 20 th percentile for min-type filters and the 80 th percentile for max-type filters. Rather than using a fixed midpoint, the mid position is selected as the checkpoint whose filter statistic exhibits the largest deviation from the preceding checkpoint mean, i.e., k⋆ = arg max 0<k<n |∆¯ vk|.During benchmark instantiation, a unified threshold 
+
+θ is recalibrated by pooling statistic values across all three positions and selecting the percentile cor-responding to the target drop rate ( τ = 0 .5 by default). An instance group is retained only if at least two of the three recipe variants produce differ-ent execution outcomes. Families with fewer than five retained groups are discarded. 
+
+A.4 Recipe Verbalization Styles 
+
+To evaluate whether models execute the underlying recipe rather than overfitting to a single instruction wording, we verbalize each recipe using multiple user-facing styles. Table 5 defines each style and provides representative examples. The styles vary the discourse form of the request, such as concise commands, casual requests, policy-like rules, and downstream use-case framing, while preserving the same operator sequence, execution order, and filtering semantics. 
+
+A.5 Benchmark Statistics 
+
+We provide detailed statistics of CDR-Bench below. Table 6 summarizes the overall task composition, input length distribution, recipe coverage, and in-struction statistics. Table 7 breaks down task and recipe coverage by domain, using the same domain names as in the main text: Web Refinement (WR), LaTeX Refinement (LR), RAG Preparation (RP), and Privacy Redaction (PR). 
+
+A.6 Prompt Templates 
+
+We present the LLM judge prompt used for instruc-tion validation (Figure 7) and the four evaluation prompt templates (Figures 8-11). 
+
+A.7 Our Position 
+
+Existing works primarily evaluate either code-driven data workflows over structured tables or isolated content-level curation tasks. CDR-Bench instead targets direct recipe execution for composi-tional, order-sensitive refinement over unstructured text with deterministic references, isolating recipe execution from coding, tool-call, and environment interaction. 
+
+B Experiment Details 
+
+B.1 Hyperparameters 
+
+All models are evaluated with temperature set to 
+
+0 and a maximum output length of 32 ,768 tokens in non-thinking mode. We use a unified output schema across all models, requiring a status field in { KEEP , DROP } and a clean_text field. For RS@3 and OCS@3, each recipe is evaluated un-der three verbalization styles, and an instance is considered solved if any of the three prompts suc-ceeds. Closed-source models are accessed through the DashScope API, while open-source models are deployed on 8 NVIDIA A100 GPUs. 
+
+B.2 Failure Mode 
+
+To better understand where models fail beyond aggregate recipe-success scores, we conduct an error analysis over representative model outputs. We assign each failed prediction to one primary failure mode according to the taxonomy in Ta-ble 8, separating status-level failures such as in-correct KEEP /DROP decisions from text-level execu-tion failures such as skipped operators, incomplete cleanup, excessive deletion, order violations, for-matting drift, and semantic rewriting. When mul-tiple symptoms appear in the same prediction, we assign the most causally dominant error type, pri-oritizing status errors before text-level deviations. Figure 13 summarizes the resulting distribution across models and tracks, with the left panel re-porting track-level failure rates and the right panels showing failure mode composition per model. 
+
+Filter-threshold errors. The dominant failure type (39.3%) across all models. Models frequently produce well-formed cleaned text but misjudge the 
+
+KEEP /DROP outcome, suggesting that exact numeri-cal or statistical filtering criteria are harder to apply than the text transformations themselves. 
+
+Mapper execution failures. On transformation-heavy tracks, formatting drift (28.4%) is the lead-ing error, followed by missed operators (11.7%) and under-application (9.5%). Together these indi-cate that models tend to approximate the requested cleanup rather than reproduce deterministic opera-tor behavior exactly. Over-application and seman-tic rewrites appear less frequently but reflect a dis-tinct failure mode where models modify content beyond what the recipe specifies. We further ana-lyze O RDER -M errors by measuring edit distance 14 Style Definition Example 
+
+Brief A short, compact instruction that keeps all neces-sary behavior while minimizing wording. Remove private identifiers and unsafe links, normalize the remaining text, then keep only sanitized samples whose special-character share is below 15%. Casual Chat A casual chat-style request that sounds like a real user asking for help while still being complete enough to execute. Hey, could you help me clean up these source files? I need the LaTeX comments and references removed, the macros expanded, and then please keep only sources with at least 300 words left. Data-First The raw data appears before the concrete instruc-tion, so the task request is weighted toward the end of the prompt. Above is the raw document. Please remove links and contact information, normalize spacing, and then keep the document only if its final text has at least 500 characters. Exclusion-Based A request centered on what must not remain in the output, useful for cleaning and filtering recipes. When processing this report, make sure the final result contains no dis-claimers, table residue, or lines longer than 180 characters. After that, judge whether it is suitable for retrieval. Goal-First A prose description that emphasizes the intended final state rather than a numbered procedure. The goal is to make these help documents clean enough for a support index, with links removed, repeated template sentences cleaned up, spacing made consistent, and only documents with no more than 20% repeated words retained. Peer Handoff A natural teammate-to-teammate handoff written in practical workplace language. Could you take these LaTeX sources, remove the comments and bibliogra-phy, expand the simple macros, and then keep only sources whose final text length is at least 1,000 characters? Policy Rule A formal processing requirement that reads like a data handling policy, not code. Before release, the text must not contain emails, IP addresses, file paths, credentials, or long secret-like tokens; after sanitization, retain it only if the result still has at least 100 words. QC Filter A request that sounds like data quality screening, emphasizing retention criteria and rejection con-ditions. Quality-check this page after cleaning away links and noisy HTML. Keep it only if the remaining text has at least 50 words and looks usable as corpus content. Scenario Story A scenario-style request that first explains the messy data situation and then asks for the needed processing. I have raw crawl pages with markup, navigation links, and messy whites-pace. Please turn them into clean readable text and keep only pages whose alphanumeric content makes up at least 60% of the final text. Step-by-Step A direct command that lists the required opera-tions explicitly and in order. Please clean this web page by removing the HTML, stripping links, normal-izing the whitespace, and then keep it only if the cleaned text has at least 100 characters. Use-Case Framing A task framed around a downstream use case such as retrieval, indexing, release, compliance, or cor-pus construction. For downstream retrieval, process these reports so that disclaimers, table residue, and abnormal long lines are removed, then keep only reports whose longest remaining line is no more than 200 characters. 
+
+Table 5: Prompt styles for recipe verbalization. After a data refinement recipe and its deterministic Data-Juicer reference are fixed, we instantiate the same recipe under multiple user-facing styles. These styles vary the surface form and discourse context of the request while preserving the operator sequence, execution order, and filtering semantics. 
+
+15 Judge Prompt for Instruction Validation 
+
+You are a strict benchmark prompt judge. You will be given: - The internal recipe definition and filter parameters. - The operator code/doc evidence. - One candidate user-facing prompt. Judge whether the prompt is faithful to what the recipe actually does. Mandatory keep conditions: 1. Functional equivalence: the prompt requests the same transformation and filtering behavior. 2. Order correctness: the requested order matches the internal recipe order. 3. No code leakage: the prompt does not mention operator names, parameter names, YAML, Python, hidden code, or implementation internals. 4. Threshold grounding: if the recipe has filter parameters, all active numeric thresholds must appear as natural user-facing constraints, not vague words like "long enough" or "too repetitive". 5. Wrapper compatibility: the user requirement can be safely combined with a fixed benchmark wrapper that separately supplies raw input text and the JSON output contract. Also score: - user_naturalness: does it sound like a plausible user request? - threshold_grounding: are thresholds/conditions expressed naturally and correctly? - clarity: is the request clear and executable? - style_distinctiveness: does this candidate sound distinct from a generic template for the same style? Return JSON only: {"verdict": "keep" or "reject", "must_pass": { "functional_equivalence": true, "order_correct": true, "no_code_leakage": true, "thresholds_grounded": true, "wrapper_compatible": true }, "scores": { "user_naturalness": 1-5, "threshold_grounding": 1-5, "clarity": 1-5, "style_distinctiveness": 1-5 }, "issues": ["..."], "summary": "one short sentence" }
+
+Figure 7: The LLM judge prompt used to validate candidate user instructions before they enter the final recipe-level prompt pool. 
+
+Direct Execution Prompt (shared wrapper) 
+
+Task: {user_requirement} Raw input text: <input>{input_text}</input> Return tagged output only. Use exactly this format: {output_hint} Rules: - status must be KEEP or DROP inside <status>...</status>. - Put the output text inside <clean_text>...</clean_text>. - If status is KEEP, clean_text must be the final refined text. - If status is DROP, clean_text must be the text state at the point where the sample is rejected. - Preserve backslashes exactly as plain text; do not JSON-escape them. - Do not output markdown, code fences, or explanations. 
+
+Figure 8: Direct Mode prompt, which also serves as the shared wrapper for Few-Shot, Plan-First, and State-Aware modes (Figures 9–11). 
+
+16 Few-Shot — examples prepended before the shared wrapper (Figure 8) 
+
+Example 1 Task: {example_1_user_requirement} Raw input text: <input>{example_1_input_text}</input> Correct output: <status>{example_1_reference_status}</status><clean_text>{example_1_reference_text}</ clean_text> Example 2 Task: {example_2_user_requirement} Raw input text: <input>{example_2_input_text}</input> Correct output: <status>{example_2_reference_status}</status><clean_text>{example_2_reference_text}</ clean_text> 
+
+Figure 9: Few-Shot Mode: two solved examples from the same track are inserted in the shared wrapper. The shared wrapper (Figure 8) follows unchanged. 
+
+Plan-First — analysis instruction appended to {user_requirement} 
+
+Before cleaning the text, first write a short analysis block in <analyze>...</analyze>. Use that block to restate the requested procedure as a concise standardized execution recipe. List the steps in order. For each step, say what to do and include the relevant rule or threshold when there is one. Example analysis format: <analyze> Step 1: Remove repeated sentences. Step 2: Normalize whitespace. Step 3: Apply the word repetition filter with ratio <= 0.2, and drop the text if it fails. </analyze> Then execute the procedure on the text. If a filter rejects the sample, stop at the rejection point and return DROP. 
+
+Figure 10: Plan-First Mode: this analysis instruction is appended to {user_requirement} in the shared wrapper (Figure 8), asking the model to restate the recipe as an ordered execution plan before producing output. 
+
+17 State-Aware — analysis instruction appended to {user_requirement} 
+
+Before cleaning the text, first write a short analysis block in <analyze>...</analyze>. Use that block to identify the intermediate text states that matter for correctness. You may refer to them with names such as S0, S1, and S2. Only text-changing steps should create a new state, while filter steps should be described as operating on the relevant existing state. Focus on which operation or filter should be applied to which state, especially when order matters. Example analysis format: <analyze> A useful state view is S0 = raw text and S1 = text after repeated-sentence removal. The key risk is applying the repetition filter on S0 instead of S1; this filter should be evaluated on S1 because the cleanup step changes the statistics. </analyze> In that analysis: - refer only to the states or transitions most likely to change the result if used incorrectly ;- emphasize the specific state where an important filter or operation must be applied; - do not analyze every step if most steps are unambiguous. Then apply the intended procedure to the text. If a filter rejects the sample, stop at the last valid state and return DROP. 
+
+Figure 11: State-Aware Mode: this analysis instruction is appended to {user_requirement} in the shared wrapper (Figure 8), asking the model to identify intermediate text states before executing the recipe. 1 2 3 4 5 6 7 8 9 10 
+
+# prompt styles (K) 
+
+0
+
+10 
+
+20 
+
+30 
+
+40 
+
+50 
+
+> RS@K (%)
+> Atomic
+> Compositional
+
+Atomic-M 
+
+Atomic-F 
+
+Agnostic-M 
+
+Order-M 
+
+Order-F                                             
+
+> Brief
+> Casual Chat
+> Data-First
+> Exclusion-Based
+> Goal-First
+> Peer Handoff
+> Policy Rule
+> QC Filter
+> Scenario Story
+> Step-by-Step
+> Use-Case Framing
+> 27.5 73.8 28.4 9.0 17.9
+> 26.5 78.6 25.2 8.1 19.0
+> 24.2 78.6 24.4 8.8 16.4
+> 21.7 69.4 25.7 8.2 18.7
+> 21.4 66.7 24.5 8.8 15.6
+> 25.8 76.2 26.3 7.7 17.8
+> 22.7 76.2 27.7 7.8 18.3
+> 23.7 73.8 24.3 9.2 18.0
+> 16.7 58.3 12.1 2.5 17.5
+> 31.0 72.2 27.6 7.8 18.2
+> 23.5 73.8 25.1 7.8 18.7
+> Low
+> High
+> Mean RS (%)
+
+Figure 12: RS@K curves by task family (left) and mean RS across tracks and prompt styles (right). Gemma-4-31B-IT           
+
+> GPT-5.4
+> Qwen3.6-35B-A3B
+> Atomic-M
+> Atomic-F
+> Agnostic-M
+> Order-M
+> Order-F
+> 74.2 72.0 84.1
+> 23.8 23.8 38.1
+> 76.3 80.7 83.1
+> 92.3 89.9 95.5
+> 82.2 75.0 87.7
+
+(a) Track failure rate (%) 
+
+> 20
+> 40
+> 60
+> 80
+> 100
+> 42%
+> 31%
+> 11%
+> 8%
+> 3% 3%
+> 2%
+> (b) Gemma-4-31B-IT
+> 32%
+> 35%
+> 11%
+> 9%
+> 7%
+> 3%
+> 2%
+> (c) GPT-5.4
+> 43%
+> 20%
+> 13%
+> 12%
+> 5% 4% 3%
+> (d) Qwen3.6-35B-A3B
+> Filter Threshold
+> Formatting Drift
+> Missed Operator
+> Under-application
+> Over-application
+> Instr. Misread
+> Other
+
+Figure 13: Failure mode analysis across representative models. (a) Track-level failure rates for Gemma-4-31B-IT, GPT-5.4, and Qwen3.6-35B-A3B, computed per prediction without cross-style aggregation. (b)–(d) Per-model failure mode distributions over failed predictions. 
+
+18 Statistics Value Total Tasks                    
+
+> Total Tasks 3462 (100%) Atomic Mapper Tasks 132 (3.8%) Atomic Filter Tasks 42 (1.2%) Order-Agnostic Mapper Tasks 497 (14.4%) Mapper-Order Sensitivity Tasks 286 (8.3%) Filter-Order Sensitivity Tasks 2505 (72.4%)
+> Input Text
+> Avg. Input Length (chars) 2704.0 Median Input Length (chars) 650.0 Min / Max Input Length (chars) 27 / 9997 Short / Medium / Long Inputs 2398 / 664 / 400
+> Recipe Coverage
+> Active Operators Covered 29 Recipe Family Anchors 16 Final Executable Recipe Templates 63 Materialized Executable Variants 616 Avg. Recipe Length Per Instance 4.23
+> Task Instruction
+> Avg. Prompt Variants Per Sample 10.4 Median Prompt Variants Per Sample 11.0 Avg. Instruction Words 46.1 Median Instruction Words 44.0
+
+Table 6: Overall statistics of CDR-Bench. Family an-chors are mined from operator co-occurrence patterns, executable recipe templates are selected from these fam-ilies, and materialized variants count distinct executable operator sequences after order and filter-position instan-tiation.                   
+
+> Domain Tasks Family Anchors Recipes
+> LaTeX Refinement (LR) 500 29RAG Preparation (RP) 521 310 Privacy Redaction (PR) 1304 523 Web Refinement (WR) 1137 621 Total 3462 16 63
+
+Table 7: Domain-level task and recipe coverage of CDR-Bench. Family Anchors denotes the mined recipe-family anchors obtained from operator co-occurrence patterns; Recipes denotes the final executable recipe templates selected from these families and materialized into evaluation instances. 
+
+Failure Mode Definition 
+
+Filter Threshold Error Incorrect KEEP /DROP decision under a filter criterion. Missed Operator One or more required opera-tors are skipped; output remains close to input. Under-application Cleanup is partial; residual arti-facts remain. Over-application Valid content is removed or modified beyond the recipe. Wrong Order Operators are applied in an or-der inconsistent with the recipe. Formatting Drift Output is close to reference but differs in deterministic surface formatting. Semantic Rewrite Model paraphrases or rewrites content instead of executing the recipe. Instruction Misread Model misunderstands or ig-nores a recipe constraint. Format / Parse Error Output cannot be parsed into the required schema. 
+
+Table 8: Failure-mode taxonomy and definitions. 
+
+from each incorrect model output to both the canon-ical (original) gold and the perturbed (swapped) gold, to determine whether failures reflect random generation or systematic order confusion. As shown in Table 3, 59.4% of errors are closer to the canonical gold than to the required swapped ordering, suggesting that models revert to a fa-miliar argument structure rather than following the specified permutation. The effect is strongest in Gemma-4-31B-IT (68.0%), while GPT-5.4 and Qwen3.6-35B-A3B are more balanced, indicating partial instruction-following that nonetheless fails to align all relational slots correctly. 
+
+Stopping behavior in DROP cases. Figure 6 analyzes Order-F DROP cases, where a rejecting filter should halt execution. In Pre-DROP cases, mean RS is nearly monotonically aligned with whether predictions are closer to tstop than tfull ,confirming that the primary error is continuing execution after rejection. GPT-5.4 achieves the highest RS together with the strongest preference for tstop . Smaller models such as Qwen3.6-35B-A3B obtain lower overall RS but remain relatively close to tstop , showing stronger stopping behav-ior than their overall execution performance would suggest. Mid-DROP cases impose an additional requirement: models must correctly rewrite the in-termediate text state before terminating, making 19 rewriting quality a further bottleneck for smaller open models. Gemma-4-31B-IT stands out among similarly sized models with relatively high RS and stronger stopping behavior, reflecting both better intermediate-state rewriting and more reliable early termination. 
+
+C Real-Scenario Evaluation Details 
+
+C.1 Motivation and Design 
+
+The main evaluation tracks rely on rule-based Data-Juicer operators, which provide determinis-tic references but naturally invite the question of whether the observed trends extend beyond oper-ator replay. To complement the main benchmark, we therefore evaluate four semantic-extension do-mains grounded in realistic data-processing sce-narios. The goal is not to recreate CDR-Bench in a second form, but to test whether its central ob-servations remain relevant in settings with human annotations, higher-level semantic judgments, and less explicitly procedural task definitions. These tracks differ from the main evaluation in three key respects. (1) Their operations correspond to semantic tasks such as entity recognition, hallu-cination handling, semantic category tagging, and scoring under semantic rubrics, rather than deter-ministic rule execution. (2) Ground truth comes from human-annotated datasets rather than opera-tor replay. (3) The tasks involve higher-level se-mantic reasoning that is only weakly exercised in rule-based tracks. We therefore treat this section as a targeted real-world scenario study that comple-ments, rather than replaces, the main benchmark. Note that the model pool in this section differs slightly from the main benchmark. Since this ex-tension is designed to test whether the atomic-to-compositional trend generalizes, rather than to com-pare models head-to-head, we evaluate a refreshed set of more recent models. The persistence of the same gap under a newer and stronger model pool further indicates that the bottleneck is not an arti-fact of any particular model generation. 
+
+C.2 Semantic Domains 
+
+For each semantic domain, we construct an Atomic 
+
+track that evaluates individual semantic operations and a Compositional track that requires combining the corresponding operations in a single output. Un-less otherwise specified, we report the same RS@3 convention used in the main benchmark. Each in-stance is prompted with three fixed styles: direct, imperative checklist, and application context. A prediction is counted as successful if any of the three prompted outputs matches the reference un-der the task-specific scorer. For text-producing tasks, such as PII redaction and hallucination correction, we use normalized exact match over the required output text. For structured-output tasks, such as rubric scoring and safety tagging, we require exact matching of the requested JSON fields. Atomic scores are com-puted separately for each semantic subtask and then macro-averaged within a domain. Compositional scores are computed on the paired full-output task. We define the composition gap uniformly as 
+
+Gap = RS@3 atom − RS@3 comp . (4) This mirrors the main benchmark’s atomic-to-compositional comparison while keeping each se-mantic operation equally weighted within its do-main. 
+
+PII Semantic Redaction We use the AI4Privacy PII masking dataset 3 (Ai4Privacy Community, 2023b). We select 500 English samples with at least two distinct PII category groups through strat-ified sampling. We aggregate the original PII labels into five semantic groups: person (names, user-names), location (cities, streets, zip codes), con-tact (emails, phone numbers), identification (ID cards, bank accounts, tax IDs), and temporal (dates of birth and other time-related sensitive fields in the dataset grouping). The Atomic track evalu-ates redaction for each group in isolation using 
+
+[LABEL_N] placeholders, while the Compositional 
+
+track requires redacting all present groups simulta-neously. Ground truth is the programmatic redac-tion output derived from dataset annotations. 
+
+Hallucination Detection and Correction We use a balanced subset adapted from FAVA (Mishra et al., 2024) with 300 samples. The dataset pro-vides LLM-generated text annotated with halluci-nation spans and corrections across several types, including entity errors, relation errors, subjective injections, contradictions, inventions, and unverifi-able claims. The Atomic track decomposes hallu-cination processing into four subtasks: (1) Detec-tion , which determines whether the text contains 
+
+> 3We use AI4Privacy only as an evaluation benchmark for non-commercial academic research. We sample a subset from the publicly available Hugging Face release and use it exclu-sively for experiments in this paper. We do not redistribute the original dataset or any derivative data release.
+
+20 hallucinations; (2) Span Extraction , which iden-tifies hallucinated spans; (3) Type Classification ,which classifies the hallucination types present; and (4) Correction , which produces corrected text with hallucinated content removed or replaced. The 
+
+Compositional track requires executing the full processing pipeline in a single pass. We evaluate structured fields with exact JSON-field matching and correction outputs with normalized text exact match. 
+
+Safety Tagging We use Aegis-AI-Content-Safety-Dataset-2.0 (Ghosh et al., 2025), a content-safety moderation dataset with user prompts, assis-tant responses, binary safety labels, and violated-category annotations. We sample 300 prompt-response pairs from the test split after filtering to examples with both prompt and response labels, balancing the sample as evenly as possible across observed prompt-response label pairs. The Atomic 
+
+track decomposes safety tagging into three sub-tasks: (1) Prompt Label , which classifies the user prompt as safe or unsafe ; (2) Response Label ,which classifies the assistant response as safe or 
+
+unsafe ; and (3) Violated Categories , which identi-fies the relevant safety-risk categories. The Com-positional track requires producing all three fields jointly in one JSON object, testing whether models can compose related moderation decisions into a consistent structured output. 
+
+Rubric Scoring We use HelpSteer2 (Wang et al., 2024), a response-quality dataset of prompt-response pairs annotated along five rubric dimen-sions: helpfulness , correctness , coherence , com-plexity , and verbosity . Each dimension is labeled on a 0–4 ordinal scale. We sample 300 prompt-response pairs from the validation split with a fixed random seed. The Atomic track evaluates one rubric dimension at a time, requiring the model to output a JSON object containing only the re-quested score. The Compositional track requires predicting all five rubric scores jointly in a single JSON object. 
+
+C.3 Results and Analysis 
+
+Tables 9–12 and Figure 14 report the full results of the semantic extension. Across all four domains, models are markedly more reliable on isolated se-mantic operations than on the corresponding com-positional task: averaged over models and domains, compositional RS@3 falls to 30.8% against an atomic average of 58.8%.                                                                                         
+
+> Model Cont. Loc. Temp. Ident. Person Avg Comp Gap Claude 4.7 Opus 90.1 70.6 83.8 63.2 71.9 75.9 50.6 25.3 Claude 4.6 Sonnet 84.6 68.3 74.4 57.1 68.1 70.5 47.2 23.3 Qwen3.6-Max 94.5 65.4 86.9 66.1 79.7 78.5 51.0 27.5 GPT-5.5 89.7 67.6 76.9 66.1 57.7 71.6 51.8 19.8 DeepSeek-V4-Flash 92.9 62.7 77.5 49.6 63.8 69.3 39.4 29.9 Kimi-K2.6 91.3 65.0 83.8 59.3 59.5 71.8 34.2 37.6 GLM-5 94.1 60.8 80.0 64.3 73.7 74.6 39.0 35.6 Gemma-4 88.1 62.7 84.4 62.9 77.2 75.1 45.8 29.3 Qwen3.6-27B 83.8 55.9 71.2 59.6 51.6 64.4 40.2 24.2 Qwen3.6-35B-A3B 85.0 50.3 73.8 63.2 46.8 63.8 25.0 38.8
+
+Table 9: Full results on the PII semantic domain (RS@3 %). Atomic subtasks: Contact (Cont.), Location (Loc.), Temporal (Temp.), Identification (Ident.), and Person. Avg is the macro-average across atomic subtasks. Comp is the compositional task. Gap is Avg − Comp.                                                                              
+
+> Model Detect. Span. Type. Correct. Avg Comp Gap Claude 4.7 Opus 42.7 12.3 20.3 29.0 26.1 24.7 1.4 Claude 4.6 Sonnet 41.3 17.3 14.3 29.7 25.7 24.7 1.0 Qwen3.6-Max 43.0 22.7 33.0 35.3 33.5 27.7 5.8 GPT-5.5 40.3 15.3 21.7 21.0 24.6 21.0 3.6 DeepSeek-V4-Flash 53.7 33.3 32.0 48.0 41.8 36.3 5.4 Kimi-K2.6 44.7 12.7 22.7 45.0 31.2 23.3 7.9 GLM-5 47.7 32.0 31.7 37.0 37.1 29.0 8.1 Gemma-4 43.7 26.0 37.3 29.7 34.2 29.3 4.8 Qwen3.6-27B 51.0 26.7 40.3 32.7 37.7 35.0 2.7 Qwen3.6-35B-A3B 51.7 20.0 33.7 38.3 35.9 37.0 −1.1
+
+Table 10: Full results on the hallucination semantic do-main (RS@3 %). Atomic subtasks: Detection (Detect.), Span extraction (Span.), Type classification (Type.), and Correction (Correct.). Avg is the macro-average across atomic subtasks. Comp uses the mixed structured-text schema requiring detection, spans, types, and corrected text in one output. Gap is Avg − Comp. 
+
+PII redaction. Contact information is the easiest atomic group across models, whereas identifica-tion, location, and person fields are consistently the hardest, reflecting the greater contextual reasoning they require. Composition then imposes a clear ad-ditional cost, with gaps ranging from 19.8 to 38.8 percentage points: strong per-group redaction does not guarantee that a model can satisfy all groups simultaneously in one exact output. This mirrors the transformation setting of the main benchmark, where a model must apply several localized edits while preserving all unaffected content verbatim. 
+
+Hallucination processing. Unlike the other do-mains, whose atomic subtasks are largely paral-lel, hallucination processing decomposes into a sequence of increasingly fine-grained operations: detecting whether an error is present (coarsest), lo-calizing the offending span, classifying its type, and producing a correction (finest). The subtask scores follow this granularity ordering, with de-tection as the ceiling and span localization, type classification, and correction all markedly lower. The compositional score still falls below the atomic 21 Contact 
+
+> Location
+> Temporal
+> Ident.
+> Person
+
+Claude Opus-4.7 
+
+Claude Sonnet-4.6 
+
+Qwen3.6 Max 
+
+GPT-5.5 
+
+DeepSeek V4-Flash 
+
+Kimi K2.6 
+
+GLM-5 
+
+Gemma-4 
+
+Qwen3.6 27B 
+
+Qwen3.6 35B-A3B                                         
+
+> 90.1 70.6 83.8 63.2 71.9
+> 84.6 68.3 74.4 57.1 68.1
+> 94.5 65.4 86.9 66.1 79.7
+> 89.7 67.6 76.9 66.1 57.7
+> 92.9 62.7 77.5 49.6 63.8
+> 91.3 65.0 83.8 59.3 59.5
+> 94.1 60.8 80.0 64.3 73.7
+> 88.1 62.7 84.4 62.9 77.2
+> 83.8 55.9 71.2 59.6 51.6
+> 85.0 50.3 73.8 63.2 46.8
+
+PII redaction  
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100 RS@3 (%) Detect
+> Span
+> Type
+> Correct
+
+Claude Opus-4.7 
+
+Claude Sonnet-4.6 
+
+Qwen3.6 Max 
+
+GPT-5.5 
+
+DeepSeek V4-Flash 
+
+Kimi K2.6 
+
+GLM-5 
+
+Gemma-4 
+
+Qwen3.6 27B 
+
+Qwen3.6 35B-A3B                               
+
+> 42.7 12.3 20.3 29.0
+> 41.3 17.3 14.3 29.7
+> 43.0 22.7 33.0 35.3
+> 40.3 15.3 21.7 21.0
+> 53.7 33.3 32.0 48.0
+> 44.7 12.7 22.7 45.0
+> 47.7 32.0 31.7 37.0
+> 43.7 26.0 37.3 29.7
+> 51.0 26.7 40.3 32.7
+> 51.7 20.0 33.7 38.3
+
+Hallucination  
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100 RS@3 (%) Prompt
+> Response
+> Categories
+
+Claude Opus-4.7 
+
+Claude Sonnet-4.6 
+
+Qwen3.6 Max 
+
+GPT-5.5 
+
+DeepSeek V4-Flash 
+
+Kimi K2.6 
+
+GLM-5 
+
+Gemma-4 
+
+Qwen3.6 27B 
+
+Qwen3.6 35B-A3B                     
+
+> 84.0 89.0 58.0
+> 83.7 87.3 54.0
+> 88.0 86.3 57.7
+> 86.7 74.3 55.0
+> 89.7 82.3 56.3
+> 80.0 85.3 57.3
+> 86.0 85.3 55.3
+> 83.0 83.7 50.7
+> 88.0 91.7 58.3
+> 88.3 87.3 54.7
+
+Safety tagging  
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100 RS@3 (%) Help.
+> Correct.
+> Coher.
+> Complex.
+> Verb.
+
+Claude Opus-4.7 
+
+Claude Sonnet-4.6 
+
+Qwen3.6 Max 
+
+GPT-5.5 
+
+DeepSeek V4-Flash 
+
+Kimi K2.6 
+
+GLM-5 
+
+Gemma-4 
+
+Qwen3.6 27B 
+
+Qwen3.6 35B-A3B                                         
+
+> 33.0 36.7 64.0 62.0 60.7
+> 35.0 34.0 49.3 52.7 42.7
+> 53.7 51.0 71.0 60.0 72.0
+> 39.3 44.0 68.7 55.0 44.0
+> 57.0 58.3 78.7 69.3 60.3
+> 38.3 51.3 59.3 72.3 38.0
+> 48.7 54.0 75.7 38.0 27.3
+> 49.0 48.7 72.3 38.7 68.0
+> 53.0 52.0 74.3 71.7 61.0
+> 53.7 56.7 66.0 76.0 63.3
+
+Rubric scoring  
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100 RS@3 (%)
+
+Figure 14: Atomic subtask RS@3 heatmaps for the four semantic domains. The heatmaps show that atomic difficulty is itself structured: PII varies by entity group, hallucination follows a coarse-to-fine hierarchy, rubric scoring varies by judgment dimension, and safety tagging separates easier binary labels from harder violated-category prediction. 
+
+Model Prom. Resp. Cate. Avg Comp Gap Claude 4.7 Opus 84.0 89.0 58.0 77.0 48.0 29.0 Claude 4.6 Sonnet 83.7 87.3 54.0 75.0 46.0 29.0 Qwen3.6-Max 88.0 86.3 57.7 77.3 45.0 32.3 GPT-5.5 86.7 74.3 55.0 72.0 46.0 26.0 DeepSeek-V4-Flash 89.7 82.3 56.3 76.1 49.0 27.1 Kimi-K2.6 80.0 85.3 57.3 74.2 49.3 24.9 GLM-5 86.0 85.3 55.3 75.6 50.3 25.2 Gemma-4 83.0 83.7 50.7 72.4 44.7 27.8 Qwen3.6-27B 88.0 91.7 58.3 79.3 52.7 26.7 Qwen3.6-35B-A3B 88.3 87.3 54.7 76.8 48.3 28.4 
+
+Table 11: Full results on the safety-tagging semantic domain (RS@3 %). Atomic subtasks: prompt-label clas-sification (Prom.), response-label classification (Resp.), and violated-category tagging (Cate.). Avg is the macro-average across atomic subtasks. Comp requires all three fields in one JSON object. Gap is Avg − Comp. 
+
+average for nearly all models, but the additional gap is comparatively small ( −1.1 to 8.1 pp): because the fine-grained subtasks are already hard, combin-ing them adds little on top of an already low base. The dominant difficulty in this domain is thus the 
+
+Model Help. Correct. Coher. Complex. Verb. Avg Comp Gap Claude 4.7 Opus 33.0 36.7 64.0 62.0 60.7 51.3 7.7 43.6 Claude 4.6 Sonnet 35.0 34.0 49.3 52.7 42.7 42.7 2.7 40.1 Qwen3.6-Max 53.7 51.0 71.0 60.0 72.0 61.5 6.3 55.2 GPT-5.5 39.3 44.0 68.7 55.0 44.0 50.2 5.7 44.5 DeepSeek-V4-Flash 57.0 58.3 78.7 69.3 60.3 64.7 4.0 60.7 Kimi-K2.6 38.3 51.3 59.3 72.3 38.0 51.9 1.3 50.5 GLM-5 48.7 54.0 75.7 38.0 27.3 48.7 2.3 46.4 Gemma-4 49.0 48.7 72.3 38.7 68.0 55.3 5.3 50.0 Qwen3.6-27B 53.0 52.0 74.3 71.7 61.0 62.4 3.7 58.7 Qwen3.6-35B-A3B 53.7 56.7 66.0 76.0 63.3 63.1 2.0 61.1 
+
+Table 12: Full results on the rubric-scoring semantic do-main (RS@3 %). Atomic subtasks correspond to Help-Steer2 dimensions: Helpfulness (Help.), Correctness (Correct.), Coherence (Coher.), Complexity (Complex.), and Verbosity (Verb.). Avg is the macro-average across atomic subtasks. Comp requires all five scores in one JSON object. Gap is Avg − Comp. 
+
+fine-grained processing itself rather than the act of merging outputs. 
+
+Safety tagging. Binary safety labels are far easier than fine-grained category tagging. Prompt- and response-label classification frequently exceeds 80%, whereas violated-category tagging is the clear 22 0 10 20 30 40 50 60 70 80 
+
+> RS@3 (%)
+> PII
+> Halluc.
+> Safety
+> Rubric
+> Overall
+> +29.1
+> +4.0
+> +27.6
+> +51.1
+> +28.0
+> Atomic Avg
+> Compositional
+> Gap (pp)
+
+Figure 15: Atomic-to-compositional performance drop across the four semantic domains. Blue points show Atomic Avg RS@3 macro-averaged over atomic sub-tasks and models, gray points show Compositional RS@3, and orange labels report the gap. 
+
+bottleneck, and the compositional task requiring all three fields jointly yields gaps of 24.9 to 32.3 percentage points. Failures here are not about dis-tinguishing safe from unsafe content, but about pro-ducing a complete, internally consistent annotation that also names the correct risk categories. 
+
+Rubric scoring. Rubric scoring shows by far the largest atomic-to-compositional degradation, with gaps of 40.1 to 61.1 percentage points. Several systems reach atomic averages above 60% on in-dividual HelpSteer2 dimensions, with coherence and complexity being the easiest, yet all-dimension scoring nearly collapses, with compositional scores in the low single digits. Notably, the degrada-tion tends to be largest for the models that are strongest atomically, indicating a structural rather than knowledge-based bottleneck: a model may assign any single ordinal score correctly, but exact success requires all five judgments to be simultane-ously correct within one JSON object. 
+
+Domain-dependent composition mechanisms. 
+
+Taken together, these results show that semantic composition is not a single, uniform phenomenon, but reflects how the underlying subtasks are struc-tured. PII redaction and safety tagging degrade because several parallel local constraints must be satisfied at once. Rubric scoring exhibits a stronger structured-output effect, in which exact agreement on all fields is far harder than scoring one dimen-sion in isolation, so much so that higher atomic competence is associated with a larger composi-tional collapse. Hallucination processing instead spans a coarse-to-fine range of subtasks (detection 
+
+→ span → type → correction), where the diffi-culty is concentrated in the fine-grained operations and composition adds only a small further penalty. Compositional failure is thus driven not merely by the number of operations, but by whether the subtasks are parallel or vary in granularity, by the output schema, and by the granularity of the seman-tic judgments being combined. 
+
+C.4 Key Findings 
+
+• Semantic composition exposes a broad relia-bility gap beyond the main synthetic tracks. 
+
+Across the four semantic domains, models are consistently better at isolated semantic operations than at the corresponding composed task. Av-eraged over models and domains, Atomic Avg RS@3 is 58.8%, while Compositional RS@3 is 30.8%, giving an overall semantic composition gap of 28.0 percentage points. This indicates that the core CDR-Bench observation extends to adapted real-world semantic tasks. • The gap is governed by task structure rather than domain label alone. Large gaps appear when success requires several independently meaningful decisions to be correct in one final output, as in PII redaction, safety tagging, and especially rubric scoring. In contrast, hallucina-tion processing has a much smaller additional gap because the hardest atomic operations are already fine-grained diagnosis and correction. • Exact structured composition is especially brittle. Rubric scoring and safety tagging show that models can often make individual judgments, but fail when several fields must be jointly cor-rect under a fixed output schema. This suggests that semantic competence on single labels or di-mensions does not directly translate into reliable multi-field annotation. • Atomic performance alone can overstate de-ployable capability. Several domains contain atomic subtasks with high RS@3, yet their com-positional scores remain much lower. Reporting only isolated operations would therefore obscure the practical failure mode that appears when a model must satisfy all requirements simultane-ously. Overall, the semantic extension supports the same central message as the main benchmark: reliable data refinement requires not only recognizing indi-vidual operations, but executing all required opera-tions jointly under a strict output contract. 23 C.5 Prompt Templates 
+
+We use three prompt styles per semantic-extension task ( direct , imperative checklist , and application context ), with the direct style used as the default example in this appendix. The styles differ only in presentation: for a fixed instance, they preserve the same requested operation, input fields, and out-put schema. All prompts share a common system instruction that asks the model to follow the re-quested refinement or labeling operation exactly and to return only the specified output format. For tagged-text tasks, including PII redaction and hallucination correction, the model returns 
+
+<status> and <clean_text> fields. For structured tasks, including hallucination detection, hallucina-tion span extraction, hallucination type classifica-tion, rubric scoring, and safety tagging, the model returns a JSON object with the requested fields. Rubric-scoring prompts define the HelpSteer2 di-mensions in the prompt and require integer scores on the 0–4 scale. Safety-tagging prompts list the Aegis safety categories and require prompt_label ,
+
+response_label , and/or violated_categories 
+
+depending on whether the task is atomic or com-positional. Representative prompt wrappers and domain examples are shown in Figure 16–20. 24 System Prompt (shared) 
+
+You are a careful data refinement engine. Follow the user request exactly. Return only the required output. Do not explain your reasoning. 
+
+User Prompt Wrapper (text tasks: PII redaction, Hallu correction) 
+
+Task: {user_requirement} Raw input text: <input> {input_text} </input> Return tagged output only. Use exactly this format: <status>KEEP</status><clean_text>...</clean_text> Rules: - status must be KEEP. - Put the processed text inside <clean_text>...</clean_text>. - Do not output markdown, code fences, or explanations. 
+
+User Prompt Wrapper (structured JSON tasks: hallucination diagnosis, rubric scoring, safety tagging) 
+
+Task: {user_requirement} Input text: <input> {input_text} </input> Return only the JSON output. Do not wrap in code fences or add explanations. 
+
+Figure 16: Shared system prompt and user prompt wrappers for all semantic-extension domain evaluations. 
+
+25 PII Atomic — user_requirement (example: contact group, direct style) 
+
+You are a data refinement engine. Apply the following PII redaction steps to the input text in order. Step 1: Identify and replace all contact information (email addresses, telephone numbers) with placeholders. Use the format [LABEL_N] where LABEL is the original entity type (one of: EMAIL, TELEPHONENUM) and N is a counter starting from 1 for each label type. Leave all other text unchanged. Return the result in the format: <status>KEEP</status><clean_text>...</clean_text> 
+
+PII Compositional — user_requirement (example: 4 groups, direct style) 
+
+You are a data refinement engine. Apply the following PII redaction steps to the input text in order. Step 1: Identify and replace all contact information (email addresses, telephone numbers) with placeholders. Use the format [LABEL_N] where LABEL is the original entity type (one of: EMAIL, TELEPHONENUM) and N is a counter starting from 1 for each label type. Leave all other text unchanged. Step 2: Identify and replace all identification numbers (ID cards, bank accounts, social security, tax IDs, driver licenses, credit cards) with placeholders. Use the format [LABEL_N] where LABEL is the original entity type (one of: IDCARDNUM, ACCOUNTNUM, SOCIALNUM, TAXNUM, DRIVERLICENSENUM, CREDITCARDNUMBER) and N is a counter starting from 1 for each label type. Leave all other text unchanged. Step 3: Identify and replace all location information (cities, street addresses, building numbers, zip codes) with placeholders. ... Step 4: Identify and replace all person names and usernames (given names, surnames, usernames) with placeholders. ... Return the result in the format: <status>KEEP</status><clean_text>...</clean_text> 
+
+Figure 17: PII redaction prompt templates. Atomic shows a single-group instruction; compositional enumerates all present groups as ordered steps. The direct style is shown. 
+
+26 Hallu Atomic: Detection — user_requirement (direct style) 
+
+Inspect the given text and determine whether it contains any hallucinated, fabricated, or factually unsupported content. Return a JSON object with exactly these keys: {"has_hallucination": true/false, "hallucination_count": N}. 
+
+Hallu Atomic: Span Extraction — user_requirement (direct style) 
+
+Identify all hallucinated text spans in the given text. For each span, extract the exact text that is hallucinated and its hallucination type. Return a JSON object: {"spans": [{"text": "...", "type": "..."}]}. 
+
+Hallu Atomic: Type Classification — user_requirement (direct style) 
+
+Classify the hallucination types present in the given text. Possible types: entity, relation, subjective, contradictory, invented, unverifiable, fictional, format, other. Return a JSON object: {"types": ["type1", "type2", ...]}. 
+
+Hallu Atomic: Correction — user_requirement (direct style) 
+
+Correct all hallucinated content in the given text. If the text contains NO hallucinations, copy the input text exactly as corrected_text without rephrasing, rewording, or reformatting it. If hallucinations are present, remove fabricated, contradictory, or unverifiable statements and replace incorrect information with accurate corrections where available. Preserve all factual content unchanged. Return exactly a JSON object: {"corrected_text": "..."} 
+
+Hallu Compositional — user_requirement (direct style) 
+
+You are a hallucination analysis and correction engine. Analyze the given text and return one JSON object with exactly these keys: {"has_hallucination": true/false, "hallucination_count": N, "spans": [{"text": "...", "type": "..."}], "types": ["..."], "corrected_text": "..."}. First detect whether hallucinations are present, then extract every hallucinated span with its type, then list the unique hallucination types, then produce corrected_text. If no hallucinations are present, use false, 0, empty arrays, and copy the input text exactly as corrected_text. 
+
+Figure 18: Hallucination prompt templates. Atomic decomposes into four independently evaluated sub-tasks: detection, span extraction, type classification, and correction. Compositional requires the full pipeline in a single JSON output containing detection fields, hallucinated spans, hallucination types, and corrected text. The direct 
+
+style is shown. 
+
+27 Safety Atomic: Prompt Label — user_requirement (direct style) 
+
+Classify the requested Aegis safety field: prompt_label. Labels: safe or unsafe. Use unsafe when the prompt or response violates one or more Aegis categories. Categories: Needs Caution, Hate/Identity Hate, Sexual, Suicide and Self Harm, Violence, Guns/Illegal Weapons, Threat, PII/Privacy, Sexual Minor, Criminal Planning/Confessions, Harassment, Controlled/Regulated Substances, Profanity. Return exactly this JSON shape: {"prompt_label": "safe or unsafe"}. 
+
+Safety Atomic: Response Label — user_requirement (direct style) 
+
+Classify the requested Aegis safety field: response_label. Labels: safe or unsafe. Use unsafe when the prompt or response violates one or more Aegis categories. Categories: Needs Caution, Hate/Identity Hate, Sexual, Suicide and Self Harm, Violence, Guns/Illegal Weapons, Threat, PII/Privacy, Sexual Minor, Criminal Planning/Confessions, Harassment, Controlled/Regulated Substances, Profanity. Return exactly this JSON shape: {"response_label": "safe or unsafe"}. 
+
+Safety Atomic: Violated Categories — user_requirement (direct style) 
+
+Classify the requested Aegis safety field: violated_categories. Labels: safe or unsafe. Use unsafe when the prompt or response violates one or more Aegis categories. Categories: Needs Caution, Hate/Identity Hate, Sexual, Suicide and Self Harm, Violence, Guns/Illegal Weapons, Threat, PII/Privacy, Sexual Minor, Criminal Planning/Confessions, Harassment, Controlled/Regulated Substances, Profanity. Return exactly this JSON shape: {"violated_categories": ["category names"]}. 
+
+Safety Compositional — user_requirement (direct style) 
+
+Classify the Aegis safety labels for the user prompt and assistant response. Labels: safe or unsafe. Use unsafe when the prompt or response violates one or more Aegis categories. Categories: Needs Caution, Hate/Identity Hate, Sexual, Suicide and Self Harm, Violence, Guns/Illegal Weapons, Threat, PII/Privacy, Sexual Minor, Criminal Planning/Confessions, Harassment, Controlled/Regulated Substances, Profanity. Return exactly this JSON shape: {"prompt_label": "safe or unsafe", "response_label": "safe or unsafe", "violated_categories": ["category names"]}. 
+
+Figure 19: Safety tagging prompt templates. Atomic tasks classify one Aegis field at a time, while the compositional task requires prompt label, response label, and violated categories in one JSON object. The direct style is shown. 
+
+28 Rubric Atomic: Helpfulness — user_requirement (direct style) 
+
+Score the assistant response for helpfulness. In HelpSteer2, helpfulness means overall helpfulness of the response to the prompt. Use the 0-4 rubric scale. Return exactly this JSON shape: {"helpfulness": "integer 0-4"}. 
+
+Rubric Atomic: Correctness — user_requirement (direct style) 
+
+Score the assistant response for correctness. In HelpSteer2, correctness means whether the response includes pertinent facts without errors. Use the 0-4 rubric scale. Return exactly this JSON shape: {"correctness": "integer 0-4"}. 
+
+Rubric Atomic: Coherence — user_requirement (direct style) 
+
+Score the assistant response for coherence. In HelpSteer2, coherence means consistency and clarity of expression. Use the 0-4 rubric scale. Return exactly this JSON shape: {"coherence": "integer 0-4"}. 
+
+Rubric Atomic: Complexity — user_requirement (direct style) 
+
+Score the assistant response for complexity. In HelpSteer2, complexity means intellectual depth required to write the response. Use the 0-4 rubric scale. Return exactly this JSON shape: {"complexity": "integer 0-4"}. 
+
+Rubric Atomic: Verbosity — user_requirement (direct style) 
+
+Score the assistant response for verbosity. In HelpSteer2, verbosity means amount of detail included relative to what the prompt asks for. Use the 0-4 rubric scale. Return exactly this JSON shape: {"verbosity": "integer 0-4"}. 
+
+Rubric Compositional — user_requirement (direct style) 
+
+Score the assistant response on all HelpSteer2 rubric dimensions. Definitions: helpfulness: overall helpfulness of the response to the prompt; correctness: whether the response includes pertinent facts without errors; coherence: consistency and clarity of expression; complexity: intellectual depth required to write the response; verbosity: amount of detail included relative to what the prompt asks for. Return exactly this JSON shape: {"helpfulness": "integer 0-4", "correctness": "integer 0-4", "coherence": "integer 0-4", "complexity": "integer 0-4", "verbosity": "integer 0-4"}. 
+
+Figure 20: Rubric scoring prompt templates. Atomic tasks score one HelpSteer2 dimension at a time, while the compositional task requires all five rubric scores in one JSON object. The direct style is shown. 
+
+29

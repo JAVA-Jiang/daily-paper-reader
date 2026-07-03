@@ -6,32 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-02
-- 运行时间：2026-07-02 20:56:04 UTC
+- 最新运行日期：2026-07-03
+- 运行时间：2026-07-03 21:27:47 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：5
 - 精读区：0
-- 速读区：3
+- 速读区：5
 
 ### 今日简报（AI）
-今日共速读3篇论文，涵盖代码上下文挖掘、多模态技能提取与仓库兼容性修复。  
-最值得关注的是《CoCoMUT》中自动化数据集生成方法，以及《RepoRescue》对LLM Agent全仓库兼容性修复的实证分析。  
-建议优先精读CoCoMUT的核心技术，并关注其与RepoRescue互补的代码理解应用场景。
-- 详情：[/202607/02/README](/202607/02/README)
+1) 今日速读5篇论文，聚焦数据分析智能体、安全数据采集与仓库级代码修复三大方向，均获7.0分。
+2) 最值关注《DA‑Studio》的端到端数据分析系统与《ContextSniper》的仓库级程序修复方法。
+3) 普通读者可优先阅读《DA‑Studio》和《ContextSniper》，了解智能体在数据任务与代码修复中的实用设计。
+- 详情：[/202607/03/README](/202607/03/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [CoCoMUT: A Tool for Code-Context Mining and Automated Dataset Generation](/202607/02/2606.31971v1-cocomut-a-tool-for-code-context-mining-and-automated-dataset-generation)  
+1. [DA-Studio: An Agentic System for End-to-End Data Analysis](/202607/03/2606.31423v1-da-studio-an-agentic-system-for-end-to-end-data-analysis)  
    标签：评分：7.0/10、query:code-paper
-   evidence：代码上下文挖掘工具，提供开源实现
-2. [RESOURCE2SKILL: Distilling Executable Agent Skills from Human-Created Multimodal Resources](/202607/02/2606.29538v1-resource2skill-distilling-executable-agent-skills-from-human-created-multimodal-resources)  
+   evidence：提供了一个智能数据分析系统的源代码
+2. [Making Failure Safe: A Constrained, Verifiable Agent Framework for Open-Web Data Collection](/202607/03/2607.00035v1-making-failure-safe-a-constrained-verifiable-agent-framework-for-open-web-data-collection)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提供了用于数据收集的约束可验证智能体框架的源代码
+3. [ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair](/202607/03/2607.01916v1-contextsniper-anttrails-token-efficient-code-memory-for-repository-level-program-repair)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提供了用于程序修复的令牌高效代码记忆的源代码
+4. [CADENZA: Compiling Natural-Language Intent into Task-Specific Operator DAGs for Semantic Query Processing](/202607/03/2606.29151v2-cadenza-compiling-natural-language-intent-into-task-specific-operator-dags-for-semantic-query-processing)  
    标签：评分：6.0/10、query:code-paper
-   evidence：从多模态资源蒸馏可执行技能，可能开源
-3. [RepoRescue: An Empirical Study of LLM Agents on Whole-Repository Compatibility Rescue](/202607/02/2607.01213v1-reporescue-an-empirical-study-of-llm-agents-on-whole-repository-compatibility-rescue)  
+   evidence：提供了语义查询处理编译的源代码
+5. [CDR-Bench: Evaluating Faithful Execution of Compositional, Order-Sensitive Data Refinement Recipes](/202607/03/2606.31435v1-cdr-bench-evaluating-faithful-execution-of-compositional-order-sensitive-data-refinement-recipes)  
    标签：评分：6.0/10、query:code-paper
-   evidence：关于开源仓库兼容性修复的实证研究，可能提供代码
+   evidence：提供了评估组合数据精炼的基准源代码
 
 
 <div class="dpr-home-promo-card">
