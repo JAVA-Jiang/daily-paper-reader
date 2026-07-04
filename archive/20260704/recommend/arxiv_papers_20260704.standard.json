@@ -1,0 +1,245 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-04T20:07:52.689717+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.02134v1",
+      "source": "arxiv",
+      "title": "Coding-agents can replicate scientific machine learning papers",
+      "abstract": "Scientific machine learning papers typically make computational claims, e.g., that the relative mean square error is less than 5% or that the 95% predictive credible interval covers the test data. A coding agent can be prompted to replicate those claims from paper materials alone, but the prompt does not by itself reliably preserve progress or check whether generated evidence supports the paper's claims. We introduce Paper-replication, a workflow that makes each selected paper claim a target with recorded evidence, and implement it as a coding-agent skill. The workflow makes the agent record those targets, reconstruct the paper's method, run computational experiments, link generated outputs to provenance and comparisons with the paper's claims, record where matched evidence appears in the replication report, and pass validation checks before completion. We evaluate Paper-replication on twelve independent runs across four scientific machine learning papers. All twelve workspaces pass the completion gate, and all 158 recorded targets are matched with report coverage. Even in this completed workspace state, repeated runs differ in how papers are divided into targets, in numerical fidelity to the source papers, in elapsed replication time, in the number of intermediate executions replaced before final evidence is accepted, and in the rules used to accept evidence. Paper-replication makes completion depend on workspace evidence and validation checks rather than on the agent's final message.",
+      "authors": [
+        "Atharva Hans",
+        "Ilias Bilionis"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-02T13:11:30+00:00",
+      "link": "https://arxiv.org/pdf/2607.02134v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Coding agents replicate paper claims; provides workflow and code for reproducible research with open source code",
+      "llm_evidence_cn": "编码代理复制论文声明；提供可复现的工作流和代码，促进开放源代码的可重复研究",
+      "llm_evidence": "编码代理复制论文声明；提供可复现的工作流和代码，促进开放源代码的可重复研究",
+      "canonical_evidence": "编码代理复制论文声明；提供可复现的工作流和代码，促进开放源代码的可重复研究",
+      "llm_tldr_en": "Paper-replication workflow enables coding agents to reconstruct computational claims from papers, run experiments, and link outputs to provenance. It promotes reproducible research with open code.",
+      "llm_tldr_cn": "该论文针对科学机器学习论文的计算声明难以复现的问题，提出了Paper-replication工作流。该工作流让编码代理记录论文声明、重建方法、运行实验并链接结果与声明。实验表明该工作流能有效复现结果并检查证据。该工作流作为编码代理技能实现，促进了可重复研究与代码开放。",
+      "llm_tldr": "该论文针对科学机器学习论文的计算声明难以复现的问题，提出了Paper-replication工作流。该工作流让编码代理记录论文声明、重建方法、运行实验并链接结果与声明。实验表明该工作流能有效复现结果并检查证据。该工作流作为编码代理技能实现，促进了可重复研究与代码开放。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.29606v1",
+      "source": "arxiv",
+      "title": "Connecting the Models: A Global Mega-model of MDE Projects on GitHub",
+      "abstract": "A key element of Model-Driven Engineering is the construction of domain-specific modelling environments to improve productivity and quality. In theory, dedicated technologies like EMF, ATL, Epsilon, Xtext, etc. would boost the construction of high-quality environments with a relatively modest effort by chaining the output of one tool to the input of another. However, there is little empirical evidence of how this idea has fared in reality and many open research questions remain, such as how MDE tools are used and combined, whether the resulting environments are maintained or not, which tools are used more frequently, etc.   In this paper, we aim to build a foundation for studying how MDE is used in practice. First, we constructed a dataset by mining 7,436 Github projects comprising over 325,000 MDE artefacts. These artefacts encompass representative Eclipse EMF-related technologies, namely Ecore, Emfatic, OCL, ATL, Epsilon, QVTo, Henshin, Acceleo, Xtext, Emftext, GMF and Sirius. We also integrated into the dataset repository-level information extracted from the Git repositories and the GitHub API. From this dataset, we devised a technique to recover the mega-model of each project in order to represent the relationships between its artefacts. Then, we built a global mega-model relating the different MDE projects by performing an analysis of near-duplicates across all artefacts and grouping duplicate artefacts into single nodes and rewiring the connections. This global mega-model can be used to derive additional information like inter-project dependencies or studying connected subgraphs of artefacts. Finally, we propose a number of research questions that could be answered with the provided dataset, which we hope will foster empirical analysis of how MDE is applied.",
+      "authors": [
+        "Jesús Sánchez Cuadrado"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-28T21:18:31+00:00",
+      "link": "https://arxiv.org/pdf/2606.29606v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "mining GitHub for MDE projects, providing dataset of code repositories",
+      "llm_evidence_cn": "从GitHub挖掘MDE项目，提供代码仓库数据集",
+      "llm_evidence": "从GitHub挖掘MDE项目，提供代码仓库数据集",
+      "canonical_evidence": "从GitHub挖掘MDE项目，提供代码仓库数据集",
+      "llm_tldr_en": "Constructs a dataset of 7,43+ MDE projects from GitHub to study how model-driven engineering tools are used in practice.",
+      "llm_tldr_cn": "模型驱动工程（MDE）虽理论上可通过工具链提升开发效率，但实际使用方式缺乏实证。该论文通过挖掘GitHub构建了包含7,43+个MDE项目的数据集，分析了工具使用模式、环境维护情况等。为MDE实践研究提供了基础数据，揭示了工具组合的实际情况和待解决问题。",
+      "llm_tldr": "模型驱动工程（MDE）虽理论上可通过工具链提升开发效率，但实际使用方式缺乏实证。该论文通过挖掘GitHub构建了包含7,43+个MDE项目的数据集，分析了工具使用模式、环境维护情况等。为MDE实践研究提供了基础数据，揭示了工具组合的实际情况和待解决问题。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.01867v1",
+      "source": "arxiv",
+      "title": "An Exploratory Study on LLM-Generated Code and Comments in Code Repositories",
+      "abstract": "The use of LLMs in software development has become increasingly widespread on tasks such as code generation and summarization. Reports from large technology companies showed that around 20% to 30% of their code are generated by LLMs. However, there remains skepticism about the practical usage of LLM-generated code and comments, such as concerns on more time for debugging the generated code and the unnaturalness of the generated comments. In this paper, we study the code and comments detected as likely to be generated by LLMs and their characteristics, the differences between company- and community-maintained repositories, and how likely bugs are associated with LLM-generated code. We conduct extensive experiments on active company- and community-maintained repositories from 2021 to 2025 using various tools and techniques that detect code and comments generated by LLMs. Based on our detector-based proxy analysis, the results suggest that code detected as likely to be generated by LLMs decreased over time and appeared frequently in test cases, while that of comments remains relatively stable. Proxy results further suggest that code detected as likely to be generated by LLMs shows substantial intra-repository code clones, whereas comments exhibit a relatively low proportion of grammatically correct sentences. In addition, the company-maintained repositories show a higher percentage of code and comments detected as likely to be generated by LLMs, and only a small percentage of the human-labelled bugs are detected as being likely associated with LLM-generated code.",
+      "authors": [
+        "Yongyi Ji",
+        "Jiaji Wang",
+        "Yi Zhou",
+        "Fuxiang Chen",
+        "Hongji Yang"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-02T08:25:15+00:00",
+      "link": "https://arxiv.org/pdf/2607.01867v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "studies LLM-generated code in repositories, directly involves source code analysis",
+      "llm_evidence_cn": "研究仓库中LLM生成的代码，直接涉及源代码分析",
+      "llm_evidence": "研究仓库中LLM生成的代码，直接涉及源代码分析",
+      "canonical_evidence": "研究仓库中LLM生成的代码，直接涉及源代码分析",
+      "llm_tldr_en": "Exploratory study on LLM-generated code and comments in active repositories, analyzing characteristics and bug associations.",
+      "llm_tldr_cn": "大型科技公司约20%-30%的代码由大语言模型生成，但对其实际使用仍存疑虑。该论文在活跃的公司和社区仓库中检测LLM生成的代码和注释，分析其特征、差异以及bug关联性。实验揭示了LLM生成代码的实际应用现状，为开发者理解和评估生成代码质量提供了实证依据。",
+      "llm_tldr": "大型科技公司约20%-30%的代码由大语言模型生成，但对其实际使用仍存疑虑。该论文在活跃的公司和社区仓库中检测LLM生成的代码和注释，分析其特征、差异以及bug关联性。实验揭示了LLM生成代码的实际应用现状，为开发者理解和评估生成代码质量提供了实证依据。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.28064v1",
+      "source": "arxiv",
+      "title": "The ARDoCo Tool Landscape: REST API, TraceView, and TraceViz for Architecture Traceability",
+      "abstract": "Context and Problem. Software development produces interrelated artifacts like software architecture documentation (SAD), software architecture models (SAMs), and source code, whose relationships are essential for maintenance and consistency checking. However, automatically recovering links between these artifacts (traceability link recovery (TLR)) remains difficult to deploy in practice. Method and Aim. We present an accessible tool landscape for ARDoCo's TLR approaches: the ARDoCo REST API exposes four TLR pipelines (SAD-SAM, SAM-Code, SAD-Code, and SAD-SAM-Code) via HTTP endpoints with asynchronous execution and caching; TraceView is a browser-based frontend with a guided wizard and interactive multi-panel exploration of recovered links and inconsistencies; and TraceViz, which is a VS Code extension that overlays trace links directly onto documentation in the IDE. Results and Conclusion. All three components are publicly deployed and usable. A preliminary study for TraceViz's in-IDE visualization confirmed that it improves developer comprehension during software understanding tasks. The tool landscape makes state-of-the-art TLR accessible to architects, developers, and tool integrators. Video. We provide a screencast of our ARDoCo Tool Landscape and how it is used here: https://youtu.be/IOTEPZQ3tVs",
+      "authors": [
+        "Jan Keim",
+        "Dominik Fuchß",
+        "Sophie Corallo",
+        "Tobias Hey",
+        "Julian Winter",
+        "Kevin Feichtinger"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-26T13:10:11+00:00",
+      "link": "https://arxiv.org/pdf/2606.28064v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "provides open-source tools for architecture traceability with code pipelines",
+      "llm_evidence_cn": "提供了用于架构追溯的开源工具和代码管道",
+      "llm_evidence": "提供了用于架构追溯的开源工具和代码管道",
+      "canonical_evidence": "提供了用于架构追溯的开源工具和代码管道",
+      "llm_tldr_en": "Presents a tool landscape for architecture traceability link recovery, including REST API and browser-based frontends, with open-source code.",
+      "llm_tldr_cn": "该论文提出了ARDoCo工具集，包括REST API和前端界面，用于自动恢复软件架构文档、模型和源代码之间的追溯链接。工具代码开源，支持多种追溯管道，有助于软件维护和一致性检查。",
+      "llm_tldr": "该论文提出了ARDoCo工具集，包括REST API和前端界面，用于自动恢复软件架构文档、模型和源代码之间的追溯链接。工具代码开源，支持多种追溯管道，有助于软件维护和一致性检查。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.30182v1",
+      "source": "arxiv",
+      "title": "MirrorCode: AI can rebuild entire programs from behavior alone",
+      "abstract": "AI models are rapidly improving at autonomous coding, as shown by benchmark progress and one-off demonstrations such as AI implementing a C compiler. However, existing coding benchmarks tend to focus on shorter tasks, and one-off demonstrations are hard to compare systematically because they often have some human guidance, and are not standardized or repeated across models. To address these challenges, we introduce MirrorCode, a long-horizon coding benchmark based on reimplementing entire software projects. In MirrorCode, AI agents must replicate the functionalities of an existing program, without access to its source code. AI solutions must match the original program's output exactly on end-to-end tests, including held-out tests. MirrorCode's 25 target programs span different areas of computing: Unix utilities, data serialization and query tools, bioinformatics, interpreters, static analysis, cryptography, and compression. Existing AI models can already reimplement complex software, with the strongest model scoring 56% across the benchmark. For example, AI can reimplement gotree, a 16,000-line bioinformatics toolkit - a task that we believe would take weeks for a human engineer. However, studying the frontier of performance requires a larger inference budget than typical benchmarks, for example, \\$2,600 over 19 days for a single attempt on a large task. We show that AI agents can already complete long-horizon software engineering tasks, especially when requirements are precisely specified. More broadly, our work suggests AI will have transformative effects on software engineering, as autonomous agents continue to improve.",
+      "authors": [
+        "Tom Adamczewski",
+        "David Owen",
+        "David Rein",
+        "Florian Brand",
+        "Giles Edkins",
+        "Allen Hart",
+        "Daniel O'Connell"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-29T11:57:32+00:00",
+      "link": "https://arxiv.org/pdf/2606.30182v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides code benchmark for AI program reimplementation",
+      "llm_evidence_cn": "提供了AI程序重构的代码基准",
+      "llm_evidence": "提供了AI程序重构的代码基准",
+      "canonical_evidence": "提供了AI程序重构的代码基准",
+      "llm_tldr_en": "MirrorCode is a benchmark where AI agents reimplement entire programs from behavior only, likely with released code.",
+      "llm_tldr_cn": "当前AI编程基准多聚焦短任务，且示范缺乏标准化对比。MirrorCode提出了一个长周期编程基准，要求AI代理仅通过行为重构整个程序，并必须通过严格端到端测试。该基准包含25个目标程序，有望推动自主编程研究，其代码基准很可能已开源。",
+      "llm_tldr": "当前AI编程基准多聚焦短任务，且示范缺乏标准化对比。MirrorCode提出了一个长周期编程基准，要求AI代理仅通过行为重构整个程序，并必须通过严格端到端测试。该基准包含25个目标程序，有望推动自主编程研究，其代码基准很可能已开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Search thesis which has code with it.",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.30563v1",
+      "source": "arxiv",
+      "title": "Data Replication Meets Function Scheduling in the Edge-Cloud Continuum",
+      "abstract": "Serverless computing is an appealing model for the edge-cloud continuum, but its stateless assumption breaks down once functions need persistent data: fetching state from a distant cloud store erases the latency benefit of running at the edge. Keeping data close means replicating it, and replication forces a placement decision that is coupled with where functions execute and with the consistency each application demands. We study this joint problem of function scheduling and data placement under two consistency models, strong and eventual replication. We first formulate it as a Binary Linear Program that yields the optimal placement for a given system snapshot, and use it as a reference point. Because the solver does not scale past a few hundred nodes, we add two heuristics with progressively less information: a Global-View greedy method that works from the same complete snapshot, and an Aggregated-View heuristic in which each node decides from locally observed demand alone. Across a range of system sizes the Global-View heuristic stays within a few percent of the optimum while scaling to over $10^4$ nodes. The Aggregated-View heuristic sacrifices some solution quality, but adapts continuously to each invocation. Under client mobility, centralized policies suffer from stale snapshots and recurring latency spikes, while the Aggregated-View maintains low and stable client-observed latency. Across all experiments, data placement proves more influential than function scheduling in determining the outcome.",
+      "authors": [
+        "Matteo Cenzato",
+        "Dario d'Abate",
+        "Arianna Dragoni",
+        "Matteo Briscini",
+        "Alessandro Margara"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-06-29T17:05:37+00:00",
+      "link": "https://arxiv.org/pdf/2606.30563v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "addresses joint function scheduling and data placement in edge-cloud continuum, relevant to task scheduling in data centers",
+      "llm_evidence_cn": "研究边缘-云连续体中的联合函数调度和数据放置问题，与数据中心任务调度相关",
+      "llm_evidence": "研究边缘-云连续体中的联合函数调度和数据放置问题，与数据中心任务调度相关",
+      "canonical_evidence": "研究边缘-云连续体中的联合函数调度和数据放置问题，与数据中心任务调度相关",
+      "llm_tldr_en": "Studies joint function scheduling and data replication in edge-cloud continuum, formulating as Binary Linear Program, relevant to task scheduling in data centers.",
+      "llm_tldr_cn": "该论文针对边缘-云连续体中的无服务器计算场景，研究了函数调度与数据复制的联合优化问题，建立了二元线性规划模型。该工作直接涉及分布式系统中的任务调度决策，对数据中心的任务调度具有参考价值，但未明确提及代码开源。",
+      "llm_tldr": "该论文针对边缘-云连续体中的无服务器计算场景，研究了函数调度与数据复制的联合优化问题，建立了二元线性规划模型。该工作直接涉及分布式系统中的任务调度决策，对数据中心的任务调度具有参考价值，但未明确提及代码开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
