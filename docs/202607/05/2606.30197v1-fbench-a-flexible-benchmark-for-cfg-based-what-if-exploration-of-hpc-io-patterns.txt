@@ -1,0 +1,367 @@
+Title: FBench: A Flexible Benchmark for CFG-Based What-If Exploration of HPC I/O Patterns
+
+URL Source: https://arxiv.org/pdf/2606.30197v1
+
+Published Time: Tue, 30 Jun 2026 02:37:25 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+> *correspondence: zhu@uni-mainz.de
+
+# FB ench : A F lexible Benchmark for CFG-B ased 
+
+# What -I f Exploration of HPC I /O P atterns 
+
+Preprint 
+
+Zhaobin Zhu ID 1∗
+
+, Chen Wang ID 2, Kathryn Mohror ID 3, and Sarah Neuwirth ID 11Johannes Gutenberg University Mainz, Germany 
+
+> 2
+
+Nanyang Technological University, Singapore 
+
+> 3
+
+Lawrence Livermore National Laboratory, USA 
+
+## Abstract 
+
+The I /O performance of large-scale HPC applications depends on a complex interplay of access patterns, middleware optimizations, and file system configurations. To systematically explore these e ff ects without repeatedly rerunning full applications, we introduce FBench, a flexible and code-transparent benchmarking tool for what-if analysis and I /O performance exploration. FBench leverages context-free grammars (CFGs) derived from Recorder traces to either generate simplified global configuration files for benchmark execution or replay I/O patterns on-the-fly without additional preprocessing. It supports both POSIX and MPI-IO interfaces and allows users to inject optimization hints via JSON configuration files, enabling rapid experimentation with I /Osettings without code changes. Our evaluation shows that FBench accurately reproduces I /O behavior for both synthetic and real workloads, capturing access patterns and performance trends across diverse optimizations and file system settings. For IOR and HACC-IO, FBench closely matches scaling behavior and sensitivity to Lustre striping parameters. For FLASH Sedov, it reveals that collective I /O on Lustre can yield up to 30 × lower write bandwidth than independent I /O, largely independent of striping, and that switching to a burst bu ff er file system increases non-collective write bandwidth by about 1 .5× without additional tuning. The evaluation with LAMMPS shows that FBench can significantly reduce the time required for what-if analyses and, with simple tuning, enable improvements of up to 8 ×.
+
+## 1 Introduction 
+
+In the exascale era, HPC systems with hundreds of thousands to millions of processors and increasingly heterogeneous storage architectures pose significant challenges for application scalability. I/O performance is a major contributor, as I /Otime can quickly become a limiting bottleneck [ 1, 2, 3, 4 , 5 ]. Modern supercomputers rely on multi-tier storage architectures, ranging from flash-based burst bu ff ers to disk and archival tiers, along with specialized data management libraries [ 6, 7, 8 ], checkpointing mechanisms [ 9, 10 , 4 ], and tailored file systems [ 11 , 12 , 13 ]. As a result, application performance depends sensitively on three factors: the application’s access pattern, I /Olibrary and middleware optimizations, and the configuration of the underlying file system [14, 15, 16]. As I /O operations pass from high-level libraries through middleware to the parallel file system, the process quickly becomes complex. Interactions among these layers extend I /Obehavior far beyond simple read and write operations, making it di ffi cult to pinpoint where optimizations are most e ff ective and how each layer can be tuned to overcome bottlenecks. Understanding I /O behavior, especially e ff ects that emerge only at scale, requires detailed event traces [ 17 ]. For this purpose, applications are instrumented with tracing and profiling tools [1, 18 , 19 ], which capture more fine-grained I /O access behavior and expose potential ine ffi ciencies. However, these tools focus less on performance measurement and do not provide a controlled environment for evaluating tuning parameters or exploring various I /O optimization strategies in practice. Tools such as DXTExplorer [ 15 ], Drishti [ 16 ], and IOSIG [ 20 ] can identify bottlenecks and suggest optimizations, but they o ff er no mechanism for evaluating these suggestions at the application level. Direct evaluation with real-world applications is both time-and resource-consuming, particularly when large codes must be repeatedly instrumented and executed for each configuration. What-if analysis is an essential approach to enable developers to study the performance impact of individual I /O design choices in isolation, without repeatedly modifying the source code and rerunning the full application. It allows alternative access patterns and tunable parameters to be explored quickly and systematically, and their impact to be assessed in a reproducible way. Unfortunately, existing tools lack a flexible and e ffi cient way to translate profiling insights into measurable performance improvements without substantial overhead. To avoid the cost of full application runs, benchmark-based what-if analyses are commonly used [ 21 ], but existing benchmarks are often either too specific or too generic and thus fail to capture realistic I /Opatterns. Hence, time-consuming and error-prone application-specific I /O kernels often need to be derived manually [ 22 ]. As a consequence, the gap between profiling and e ff ective perfor-mance optimization remains largely unaddressed. On the one hand, it would improve the understanding of how I /O patterns influence performance. On the other hand, it would allow the impact of tunable parameters to be evaluated e ffi ciently. In this work, we propose a flexible benchmark called FBench ,which can either interpret CFG-based traces on the fly or generate a configuration file from them to replay the I /Oworkload. Since both tunable parameters and fine-grained access patterns can be specified through the configuration file without requiring code changes to the original application, FBench provides an e ff ective way to perform what-if analyses 
+
+> arXiv:2606.30197v1 [cs.DC] 29 Jun 2026
+
+Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 2and e ffi ciently explore the performance impact of di ff erent I /Opatterns. Our key contributions are as follows: 
+
+• CFG-based I /O Pattern Modeling : We use CFGs as an accurate and comprehensive representation of application I /O patterns. Our approach captures the essential characteristics of complex I /O access behavior in large-scale scientific applications. 
+
+• Accurate Performance Reproduction : We establish two ways to replicate an application’s I /O behavior. The first uses a simplified configuration file derived from the CFG to o ff er a global view. The second replays the full CFG on-the-fly, without pre-processing. Together, these approaches allow FBench to e ffi ciently evaluate system I /O behavior while preserving perfor-mance fidelity comparable to the original application. 
+
+• Application-agnostic What-if Analysis : We introduce a methodology for identifying and applying I /Ooptimization opportunities without domain knowledge or source code modifications, enabling pattern-level transformations rather than low-level code changes. By isolating I /O behavior, FBench enables fast what-if analysis and rapid exploration of optimizations. 
+
+## 2 Background and Related Work 
+
+2.1 CFG-based Pattern Representation 
+
+A Context-Free Grammar is a formal notation for expressing recursive definitions of languages and is commonly used to define the syntax of programming languages. In its simplest form, a CFG can be viewed as a system of rule substitutions. Mathematically, CFG is defined as a 4-tuple [23]: 
+
+G = (V, T, P, S ),
+
+which consists of the following components: 
+
+• Terminals ( T ): A finite set of symbols that appear in the actual strings of the language. 
+
+• Variables / Non-Terminals ( V): A finite set of sym-bols representing syntactic categories, with V ∩ T = ∅.
+
+• Start Symbol ( S ): A distinguished variable S ∈ V that represents the language being defined. 
+
+• Productions ( P): A finite set of rules. Each production has the form A → α, where A ∈ V and α is a sequence of terminals and /or non-terminals. As an example, consider the grammar S → 0 | 0S | 1S .
+
+In this case, the set of non-terminals is V = {S }, and the set of terminals is T = {0, 1}. The production rules are 
+
+P = { S → 0, S → 0S , S → 1S } and the start symbol is S ,which is also the only non-terminal. A key advantage of CFGs is their ability to represent traces as structured languages with nesting, repetition, and dependencies. Recurring patterns nat-urally become grammar rules, enabling structural compression that reduces storage while preserving semantic information. This makes CFGs well suited for capturing large-scale HPC execution traces, where repetitive patterns are common. Modern tracing tools such as Siesta [ 24 ], OmniscIO [ 25 ], Recorder [ 26 ], and Pilgrim [ 27 ] therefore employ CFG-based encodings to effi ciently manage massive trace volumes. In this work, we use Recorder because it captures all function calls across targeted I/O stack layers and records complete parameter sets for each call. Such comprehensive logging produces large numbers of events, especially at scale. Recorder addresses this using CFGs combined with Call Signature Tables (CSTs), which map unique function signatures to terminal symbols.  
+
+> Table 1: Example of a CFG rule and CST symbols.
+
+CFG CST 
+
+S → a b a: pwrite(fd, buf, 10, 0); 
+
+b: pwrite(fd, buf, 10, 10); 
+
+As shown in Table 1, the CFG serves as a formal grammar with production rules that represent recurring calling patterns, while the CST functions as a hash table linking unique call signatures with terminal symbols. Recorder constructs CFGs online us-ing the Sequitur algorithm, which is linear in the number of processed symbols [ 26 ]. Because HPC I /O patterns often re-peat frequently over time, CFG and CSTs based compression provides a compact, lossless representation of application I /Obehavior suitable for both analysis and replay. 
+
+2.2 Modeling and Emulating Application I /O Behavior 
+
+Benchmarks and proxy applications are commonly used to evalu-ate I /O performance in HPC systems. However, developing these tools to accurately capture the application behavior requires sub-stantial domain expertise, and many existing approaches struggle to balance fidelity, flexibility, and scalability. While synthetic benchmarks provide controlled parameter variation, proxy ap-plications aim to emulate higher-level I /O semantics, serving as a bridge between low-level stress testing and full application execution. A common approach among I /O benchmarks, such as FLASH-IO [ 28 ] and HACC-IO [ 29 ], is to manually extract key I /Okernels from large-scale real-world applications. Both bench-marks focus primarily on checkpoint and restart operations, with FLASH-IO emphasizing write performance and HACC-IO ex-tending this by supporting both read and write phases. This method e ff ectively captures the I /O behavior of those specific applications, including their file sizes, checkpoint frequencies, and access patterns, but it lacks the flexibility to represent the broader variety of I /O behaviors and multi-phase workflows found across diverse scientific workloads. IOR [ 30 ], on the other hand, is a widely used synthetic, parameterized I /O bench-mark. It addresses several limitations of I /O kernels, such as limited configurability and missing support for parallel libraries, by allowing users to vary access modes, transfer sizes, and in-terfaces. However, realistic application behavior is still di ffi cult to reproduce with IOR, since real workloads typically consist of mixtures of di ff erent access patterns and file types, often interleaved over time, that cannot be captured by a single param-eterized configuration. Dickson et al. [ 21 ] propose reproducing workloads through lightweight characterization by collecting I /O statistics with Dar-shan [ 31 ] and configuring the MACSio [ 32 ] proxy accordingly. While this avoids rerunning the full application, characterization alone cannot capture complex access patterns, and MACSio’s re-liance on high-level libraries limits its ability to represent diverse Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 3
+
+> I. I /O Tracing
+> Full Application
+> Recorder Library
+> Per Rank Traces
+> II. Trace Filtering
+> Post-processing (VIZ, 2Text, DXT Explorer ...)
+> Filtered Per Rank Traces
+> CFG Filter
+> III. What-if Analysis
+> Optimization Hints
+> Benchmark Configuration File
+> FBench
+> Auto Tuner
+> Insights
+
+Figure 1: FBench workflow overview. 
+
+workloads accurately. Behzad et al. [ 5 ] use an early version of Recorder to intercept high-level I /O calls, aggregate per-process traces, and automatically generate compact SPMD code. This approach primarily targets HDF5 and does not generalize to other I /O interfaces. Moreover, modifying or exploring alterna-tive access patterns requires regenerating code or changing the original application, limiting its usefulness for what-if analysis. Skel [ 22 ] generates skeletal I /O applications using ADIOS [ 33 ], with behavior defined via an external XML file. In contrast, our approach requires no manual configuration or external library: running the application is su ffi cient to obtain the CFG needed to reproduce its I /O workload. Snyder et al. [ 34 ] present an abstrac-tion layer for trace-based, synthetic, and characterization-based workload modeling and compare their trade-o ff s. Their trace-based method, however, models only POSIX-level behavior and treats MPI largely as synchronization, preventing accurate re-production of MPI-IO workloads. Additionally, the abstraction layer cannot generate workloads by itself and depends on exter-nal mechanisms for workload generation. Luo et al. [ 35 ] extend ScalaIOTrace [ 36 ] to extrapolate MPI I /O traces across scales and replay them in parallel while preserving per-rank semantics. However, the focus remains on reproducing original behavior, and any change to I /O patterns requires collecting new traces. Moreover, the availability of a standalone replay tool is unclear. Together, these eff orts reveal a persistent gap: existing benchmarks are too rigid to express realistic multi-phase I /Obehaviors, while proxy applications and trace-based replayers are limited by dependence on prior characterization, fixed access patterns, or external libraries. None of these approaches support flexible exploration of alternative I /O strategies without new tracing, reconfiguration, or manual intervention. This motivates the need for a more general, application-agnostic methodology capable of reproducing and varying I /O behavior with minimal developer e ff ort, enabling systematic what-if analysis across storage configurations. 
+
+## 3 The Flexible Benchmark – FB ench 
+
+3.1 Overview 
+
+Figure 1 illustrates the FBench workflow, consisting of three phases: (1) I /O tracing, (2) trace filtering, and (3) what-if analy-sis. Together, they provide a structured process for investigating, benchmarking, and exploring I /O performance optimizations in large-scale parallel applications. 
+
+3.1.1 I/O Tracing Phase 
+
+In the first phase, the target application is executed while instru-mented or pre-loaded with the Recorder library. Unlike other characterization and tracing tools, Recorder intercepts all I /Ocalls across relevant layers and generates a per-rank trace in the form of a CFG, thereby preserving the structural relationships between operations. These traces capture detailed I /O behavior, including file paths, o ff sets, transfer sizes, timestamps, and call depth. With a runtime overhead of only 3% [ 26 ], Recorder provides a favorable balance between trace detail and perfor-mance impact, making it practical for use in production-scale runs. Although comprehensive, raw traces often contain many low-impact operations, such as open calls without subsequent access, tiny metadata-related reads and writes, unused temporary files, extra stat or seek calls, or alignment-related transfers, that stem from internal library behavior rather than the intended application pattern, which should not be interpreted as part of the real application pattern.  
+
+> 1
+
+for ( int i = 0; i < m ; i ++) { 
+
+> 2
+
+pwrite ( fd , buf , size , offset ) ;  
+
+> 3
+
+}
+
+Listing 1: Identical pwrite() calls resulting in distinct symbols in the CFG. 
+
+3.1.2 Filtering Phase 
+
+The second phase optionally filters or groups per-rank I /O oper-ations. Filtering allows users to retain only operations relevant to performance analysis and discard incidental events. Since Recorder encodes each function call, including its arguments, as a unique CFG symbol, even semantically similar operations with di ff erent o ff sets or paths are represented as distinct symbols, as shown in Listing 1 and Table 1. Grouping such symbols or re-moving irrelevant ones reduces the CFG size and highlights the essential I /O behavior. The resulting filtered CFG remains valid inputs to post-processing tools such as Recorder-Viz, Drishti, and DXT-Explorer, thus often reduces post-processing time by decreasing the amount of data to interpret. 
+
+3.1.3 What-If Analysis Phase 
+
+The third phase enables exploration of alternative I /O config-urations or system behaviors without rerunning the original application. FBench supports two execution modes: replaying I/O directly from the per-rank traces (raw or filtered) or using a benchmark configuration file, which can be written manually or automatically generated from the traces. In both cases, FBench interprets the trace or configuration and executes controlled benchmark runs, producing detailed performance metrics such as per-file bandwidth and aggregate throughput. By default, FBench replays the actual I /O operations (call depth 1) when an application directly uses the native MPI-IO or POSIX interface. Since high-level I /O libraries ultimately translate their requests into MPI-IO or POSIX operations, their I /Obehavior can also be reproduced by replaying the corresponding lower-level calls. Based on benchmark results, optimization hints, such as bu ff er sizes, MPI-IO aggregation settings, or POSIX-level parameters, can be inserted into the configuration file. This creates an iterative feedback loop in which updated Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 4              
+
+> 1. Per-Rank Traces (Local View)
+> Rank 0:open(f 1)write(f 1,s 1)write(f 1,s 2)open(f 2)read(f 2,s 1)close(f 2)close(f 1)
+> Rank 1:open(f 1)write(f 1,s 1)write(f 1,s 2)open(f 2)read(f 2,s 1)close(f 2)close(f 1)
+
+...                                                
+
+> Rank n−1:open(f 1)write(f 1,s 1)write(f 1,s 2)open(f 2)read(f 2,s 1)close(f 2)close(f 1)
+> Chunk Transfer Size
+> Process for Building a Global View 1. Group by transfer size, operation, file, rank
+> 2. Merge within open-close session
+> 3. Group by access type (shared vs. per-process)
+> 4. Merge by open-close session repeats
+> k×f1:write r0... rn−1(f 1,s 1)×N ... write r0... rn−1(f 1,s 2)×M ... k×f2:read r0... rn−1(f 2,s 1)×N ...
+> 2. Global View
+> "file_configs": [{"file_names": [ "/path/to/shared/f1" ], "total_repeats": 1, /* k=1*/ "method": "write", "hints": {}, "chunks": [{"transfer_size": 1mb, /* s1=1mb, N=1*/ "ranks": [{ "rank": 0, "repetitions": 1 }, { "rank": 1, "repetitions": 1 } ... ]}, {"transfer_size": 2mb, /* s2=2mb, M=1*/ "ranks": [{ "rank": 0, "repetitions": 1 }, { "rank": 1, "repetitions": 1 } ... "file_names": [ "/path/to/shared/f2" ], ...
+> 3. FBench Configuration
+
+Figure 2: Transformation of per-rank traces into a structured FBench configuration via a global view. In this example, two files ( f1 and f2 ) are accessed as shared files, generating two configuration entries that involve all ranks. The first entry describes write operations to f1 and contains two chunks corresponding to di ff erent transfer sizes: s1 and s2 . For each transfer size, the configuration aggregates how often the operation is executed across all ranks, resulting in a global view of write r0... rn−1 (f1, s1) × N and write r0... rn−1 (f1, s2) × M. Since f1 is accessed only once, the total repeat count k is set to 1 accordingly. Similar to the first entry, the second entry represents read operations from f2 , following the same structure but containing only a single chunk. 
+
+configurations are benchmarked until the desired performance characteristics are achieved. Because this workflow requires no modification of application code, FBench complements external what-if or autotuning tools such as Drishti and IOSIG: the optimization suggestions from these tools can be evaluated directly using FBench without rerunning the full application. FBench does not tune applications automatically. Instead, it provides an e ffi cient environment for exploring potential opti-mizations and obtaining accurate performance estimates without executing the complete, time-consuming application workflow. To preserve predictive accuracy, FBench can insert synthetic delays during on-the-fly replay to approximate the temporal behavior of the original workload. In addition, the generated configuration file o ff ers a transparent and structured view of the underlying I /O pattern, helping users understand how the application issues requests, identify ine ffi ciencies in the access sequence, and reason about potential performance bottlenecks. 
+
+3.2 Simplified I /O Pattern Reconstruction (Global View) 
+
+As shown in Figure 2, FBench generates the configuration file from per-rank traces via a simplified global view. The construction of the global view follows steps analogous to CFG reconstruction, in which symbols and rules are merged. It consists of four main steps. First, all I /O operations are grouped by transfer size, operation type, file, and rank. Each unique combination becomes a configuration symbol. Second, configurations belonging to the same open-close session are merged, e ff ectively combining repeated behavior within a session. Third, the resulting entries are grouped by access type, distinguishing shared-file from file-per-process I/Oacross di ff erent ranks and forming the chunk list for each configuration entry. Finally, configurations are merged based on the number of open-close sessions to determine the total number of repetitions for each configuration, yielding a compact, structured representation of the application’s I /O behavior. By reducing a workload to summary quantities such as trans-ferred volume and sustained bandwidth, the global view dis-cards all temporal structure, including operation ordering, in-terleaving, and timing. This abstraction su ffi ces for aggregate per-file throughput questions, as in steady checkpoint or dump phases and ior style microbenchmarking, where ranks behave near-identically and I /O phases are e ff ectively temporally in-dependent. Once temporal behavior itself becomes the object of analysis, this assumption no longer holds, and operation ordering, inter-operation gaps, burst structure, and collective load imbalance can no longer be recovered from global-view traces by construction. The temporal analysis presented above is exactly such a case. Consequently, for workloads with tight inter-process dependencies or highly asymmetric access patterns, the on-the-fly replay mode (Section 3.3) preserves full per-rank fidelity where the global view cannot. Based on these assumptions, the total data volume D for a given file operation is computed as the sum over all chunks, where each chunk aggregates contributions from all participating ranks, multiplied by the total number of repetitions: 
+
+D = Rtotal ·
+
+X
+
+> c∈chunks
+
+X
+
+> r∈ranks( c)
+
+ nr,c · sc
+
+
+
+where Rtotal is the number of open-close repetitions, nr,c is the number of repetitions performed by rank r for chunk c, and sc is the transfer size of chunk c.From a complexity perspective, constructing the global configu-ration requires linear preprocessing. Let R denote the number of ranks, N the number of I /O records per rank, and S the number of distinct open–close sessions. Processing and classifying the per-rank traces costs O(R · N), and grouping sessions across ranks (for shared files, file-per-process I /O, and iteration-wise aggregation) adds O(S ). Thus, the total preprocessing cost Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 5
+
+Algorithm 1 Time and Bandwidth Calculation 
+
+1: for each iteration, configuration do 
+
+2: ts ← ∞ , te ← 03: for each repeat do 
+
+4: if rank participates then 
+
+5: open file 6: if first repeat then ts ← min( ts, MPI_Wtime() )7: end if 
+
+8: end if 
+
+9: perform I /O10: if rank participates then 
+
+11: if last repeat then te ← max( te, MPI_Wtime() )12: end if 
+
+13: close file 14: end if 
+
+15: end for 
+
+16: bw = bytes /(max r te − min r ts)17: end for 
+
+is O(R · N + S ), while executing the aggregated workload is proportional to the number of sessions, i.e., O(S ). To keep FBench generic and flexible, and to enable the injection of hints and modification of access patterns for existing appli-cations, FBench uses a JSON-formatted configuration for both benchmark execution and what-if analysis. FBench can automat-ically generate such configuration files directly from the global view representation, allowing users to reproduce or explore application I /O behavior without modifying the original code. A separate file_config entry is created for each accessed file and operation type. Each configuration specifies which file is accessed, how often the operation is performed, and which ranks participate. The optional hints field specifies optimization parameters, which are described in detail in Section 3.4. The 
+
+file_names entry lists the output file paths. For shared-file I/O this list contains a single path, while for file-per-process I/O it includes one path per process. The total_repeats field defines how many open–close sessions are executed. Each session represents a complete I /O cycle in which the file is opened, the specified operations are performed, and the file is then closed again. The method field specifies the type of I /Ooperation. The chunks array defines the access pattern: each chunk represents a data block with a given transfer size, and the 
+
+ranks list indicates which MPI ranks perform the writes and how many repetitions they execute. As a result, the transforma-tion from per-rank traces to the global view enables a compact, repetition-based representation of application I /O behavior. Given the global view, the execution time can be determined by Algorithm 1, which computes the e ff ective runtime of each configuration based on the earliest file-open time and the latest file-close time across all participating ranks. Each rank locally tracks its first timestamp ts and last timestamp te over all repeats. After a configuration completes, a global reduction computes the earliest start time Ts and the latest end time Te across ranks. The bandwidth is then computed by dividing the total amount of transferred data by the global I /O duration Te − Ts. This measurement approach captures rank skew, variations in open and close times, and synchronization delays, and avoids the underestimation that occurs with per-rank timing, providing an accurate end-to-end throughput for the entire benchmark run. 
+
+> Rank 0
+> CFG 0
+> open(fd00)
+> replay
+> write(fd00)
+> ...
+> close(fd00)
+> MPI_File_open(fh)
+> MPI_File_*_all(fh)
+> ...
+> MPI_File_close(fh)
+> open(fd01)
+> Rank 1
+> CFG 1
+> MPI_File_open(fh)
+> replay
+> MPI_File_*_all(fh)
+> ...
+> MPI_File_close(fh)
+> open(fd10)
+> write(fd10)
+> ...
+> close(fd10)
+> Rank n−1
+> CFG n−1
+> open(fdn0)
+> replay
+> write(fdn0)
+> ...
+> close(fdn0)
+> MPI_File_open(fh)
+> MPI_File_*_all(fh)
+> ...
+> MPI_File_close(fh)
+> open(fdn1)
+
+# . . . 
+
+Figure 3: On-the-fly replay global synchronization using MPI-IO collective ops. 
+
+3.3 On-the-Fly Replay (Local View) 
+
+Beyond the configuration-based approach, FBench also provides an on-the-fly mode that replays I /O behavior directly from the per-rank traces. As each local CFG is read by the corresponding participating rank, every recorded event is immediately translated into a corresponding I /O operation, using the original arguments such as size, o ff set, and flags. This avoids decompressing or aggregating traces into a configuration file and enables a fine-grained reconstruction of the application’s behav-ior. Each rank processes only its own trace, executing operations in the recorded order. With R ranks and N records per rank, the replay cost is O(R · N), eliminating the preprocessing overhead of O(R · N + S ) required by the global configuration approach. For pure POSIX I /O, there is no global temporal order-ing between ranks, so replay proceeds independently on each process. In contrast, for MPI-IO the on-the-fly mode preserves synchronization semantics through collective operations such as MPI_File_open , MPI_File_close , and 
+
+MPI_File_read /write_*_all , as shown in Figure 3. Recorder encodes MPI file handles as globally unique integers, enabling FBench to match collective calls across all participating ranks and execute them consistently and in a coordinated manner. Compared to the simplified global view, the on-the-fly approach also replays additional file-access operations, including seeking, pointer updates, and o ff set-based reads and writes. Incorporating these operations allows FBench to reconstruct each rank’s exact access pattern and maintain correct file state throughout execu-tion, which significantly improves the accuracy of fine-grained performance reproduction. Since the set of participating ranks for a collective operation can be inferred directly from the glob-ally encoded handles, no explicit creation of sub-communicators is required, further reducing implementation and setup overhead. Temporal behavior can also be preserved when needed. For analyses where timing is important (e.g., frequency- or runtime-based studies), omitting delays between I /O events would distort the original timing structure, leading to unrealistic load bursts and skewed latency measurements. During on-the-fly replay, FBench can insert inter-event delay. By default, the time di ff erence between the end of event e1 and the start of event 
+
+e2 is computed from the trace and applied immediately before Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 6              
+
+> MPI-IO Tunables
+> "optimization_params": {"use_collective": 1, "cb_block_size": 1024, "cb_nodes": 2, ...
+> POSIX Tunables
+> "optimization_params": {"use_direct": 0, "disable_readahead": 0, "preallocate": {...}, ...
+> FBench Configuration
+> "file_config": {"file_name": "/.../file", "total_repeats": 10, "method": "write" "hints": {/*injected*/}, "chunks": [...] ... }
+> inject
+> inject
+
+Figure 4: Injection of MPI-IO and POSIX optimization parameters into the FBench configuration, enabling backend-specific tuning without code changes. 
+
+executing e2. This maintains a realistic execution timeline while still enabling controlled benchmarking. 
+
+3.4 Passing Optimization Hints 
+
+To enable what-if analysis without changing application code, FBench allows optimization parameters and I /O patterns to be modified at replay time. As shown in Figure 4, FBench uses a JSON configuration file as input, access patterns and hints can be edited easily and in a human-readable way. This lets researchers and operators experiment with alternative storage and MPI-IO setups by changing a single configuration artifact rather than rebuilding or instrumenting the full application. Optimization parameters can be specified for both POSIX I /Oand MPI-IO. These hints allow the replay engine to control file-system behavior, bu ff ering strategies, and access optimizations without modifying the underlying system, enabling di ff erent performance scenarios to be evaluated in a controlled and re-producible way. Due to the separation of the replay engine and the injection of tunables, FBench can be easily extended with further optimization parameters. On the POSIX level, hints influence how standard file op-erations are handled at the system level. Settings such as 
+
+use_direct and disable_readahead control page-cache and read-ahead behavior, exposing the application’s raw access pat-tern. preallocate reserves file space up front to reduce frag-mentation, while file-system-specific options, such as disabling 
+
+atime updates, relaxing lock handling, and configuring stripe size and stripe count, directly a ff ect metadata overhead and parallelism. MPI-IO parameters control ROMIO’s internal optimizations. Specifying the expected access pattern and enabling or dis-abling collective I/O determines whether ROMIO issues independent operations or applies its two-phase I /O algo-rithm. Parameters such as cb_block_size , cb_buffer_size ,and cb_nodes shape collective bu ff ering, while options like 
+
+romio_cb_read/write and data-sieving settings determine how ROMIO merges and reorganizes individual requests. Bu ff er sizes for independent reads and writes define how much tem-porary memory ROMIO may use for noncontiguous access pat-terns. In addition, file-system-specific options analogous to the POSIX hints can be passed through the MPI-IO configuration, allowing di ff erent striping configurations and I /O strategies to be evaluated directly during MPI-IO replay. 
+
+Table 2: Software used for the evaluation. 
+
+Tool Version Tool Version 
+
+Recorder 3.0.0 IOR 4.1.0 +dev HACC-IO 1.0 FLASH 1.0 Lustre 2.15.7_2.llnl UnifyFS 2.0 MVAPICH2 2.3.7 LAMMPS Stable_2Aug2023 
+
+## 4 Evaluation 
+
+4.1 Experimental Setup 
+
+All experiments were carried out on the Corona system at LLNL [ 37 ]. The machine has 121 compute nodes, each with an AMD EPYC 7002 processor (48 cores, 256 GB DRAM). It relies on a Lustre file system, an InfiniBand HDR network, and the Slurm /Flux scheduler. Lustre uses progressive striping by default, meaning that files smaller than 64 GB may be dis-tributed across up to 16 OSTs, while larger files are spread over all available OSTs. The stripe size is 1 MB by default, and the system operates in RAID0 mode. Table 2 summarizes the used software. To evaluate FBench with the most common I /O patterns of tra-ditional HPC workloads, we selected IOR, HACC-IO, FLASH, and LAMMPS as reference applications. IOR generates syn-thetic workloads with well-controlled access patterns, HACC-IO represents more realistic application-level I /O behavior, and both FLASH and LAMMPS serve as full production applications. By design, FBench preserves cache e ff ects in its default con-figuration, since the resulting measurements reflect the per-formance users encounter in practice. Caching is therefore enabled throughout the evaluation. When isolation from the cache hierarchy is desired, however, these e ff ects can be eliminated through O_DIRECT , explicit cache eviction via 
+
+posix_fadvise(POSIX_FADV_DONTNEED) , and readback re-ordering that separates the write and read phases. Write fidelity is ensured by issuing fsync /MPI_File_sync on close, with every replay executed on freshly created files. 
+
+4.2 IOR (Validation and Scalability) 
+
+To assess the accuracy of FBench in reproducing IOR’s I /O char-acteristics from CFGs, we first instrumented and executed IOR with Recorder. The extracted CFGs were then used as input to FBench to generate the global view, i.e., to derive configuration files and drive the benchmark execution. We ran IOR with both POSIX and MPI-IO across 1, 2, 4, 8, 16, and 32 nodes, using 32 processes per node. Each process used a fixed block size of 256 MB and a transfer size of 2 MB, resulting at the largest scale in a total file size of roughly 264 GB. The benchmarks covered sequential read and write patterns in two modes for the POSIX interface: File-Per-Process (FPP) and Single-Shared-File (SSF). For MPI-IO, we evaluated both collective and non-collective access for shared files. For each configuration, two runs with 10 iterations each were performed, yielding 20 samples per configuration. The goal is to compare the scaling behavior and bandwidth di ff erences between IOR and FBench under identical settings. As shown in Figure 5, FBench and IOR exhibit very similar scal-ing trends. For MPI-IO independent access, read performance Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 7    
+
+> (a) MPI-IO Interface (b) POSIX Interface
+> Figure 5: Scaling comparison of FBench and IOR up to 1,024 tasks on 32 nodes: As can be seen, the bandwidth increases steadily with the number of nodes across all access patterns, and both tools follow nearly identical trends.
+
+increases steadily and exceeds 2,000 GB /s at 32 nodes, which is dominated by caching e ff ects, with a deviation of 6.86%. Write bandwidth follows the same trend, rising to around 30 GB /s with a deviation of 2.4%. Collective I /O is even more stable: read operations deviate by only 1.23%, reaching about 25 GB /s at the largest scale, while collective writes peak at roughly 4.2 GB /swith a deviation of 1.51%. For the POSIX SSF pattern, read bandwidth spans several orders of magnitude and reaches multi-thousand GB /s at 32 nodes, again driven largely by caching, with a deviation of 6.5%. Write bandwidth climbs to around 30 GB /s and di ff ers by less than 1%. In the FPP pattern, variance is higher but the overall trend remains clear: both tools deliver increasing peak values with growing node counts. Reads surpass 300 GB /s at the largest scale with a deviation of 1.46%, while writes reach about 60 GB /sand deviate by less than 1%. Overall, FBench reproduces IOR’s scaling characteristics closely. While absolute peak values may diverge slightly, both tools scale almost identically across inter-faces and access patterns, even in caching-dominated regions. 
+
+4.3 HACC-IO (Pattern Validation) 
+
+To demonstrate FBench’s ability to reproduce realistic appli-cation I /O patterns, beyond the fixed-size operations of IOR, we used the HACC-IO benchmark. Figure 6 shows HACC-IO’s I/O pattern on 480 ranks, each handling one million particles. It uses a file-per-process pattern: each rank writes its own checkpoint file and later reads it back during the restart phase, resulting in 480 files per cycle. Examining the sequence for a single rank reveals that the first open-close session performs no actual data I /O. Data is written only in subsequent sessions using blocks of 20, 24, 40, and 80 MB. The read phase uses the same set of chunk sizes, but the order di ff ers from the write  
+
+> Figure 6: I/O access pattern of HACC-IO on 480 ranks (10 nodes), with more than one million particles per rank.
+
+sequence. Reads are shorter and more fragmented, consisting of many small operations placed closely together. In the first read open–close session, only the 24 MB chunk is accessed, while the remaining chunks are read in a subsequent session. This irregular pattern cannot be expressed easily with IOR, which motivates dedicated I /O kernels. In contrast, FBench can reproduce such patterns even via the simplified configuration file. For our experiments, HACC-IO was executed through the POSIX interface and instrumented with Recorder on 10 compute nodes, each running 48 processes and handling one million particles per process. FBench was then run at the same scale, using the trace files to replicate the observed I /O behavior. Since our analysis focuses on the POSIX interface, we performed a targeted what-if study to examine how specific tunable parame-Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 8  
+
+> Figure 7: Bandwidth distribution (FBench) by striping factor, strip-ing unit, and enabled readahead for read and write checkpoint files. Mean and ±95% confidence intervals are highlighted in red. Read performance slightly decreases, while write performance increases with higher striping factors.
+
+ters a ff ect I /O bandwidth. We varied Lustre striping parameters, striping factor up to 16 and striping unit up to 4 MB, which deter-mine how data is distributed across storage targets and influence throughput and contention. Because HACC-IO immediately reads the checkpoint file after writing it, we also varied POSIX-level controls, specifically whether readahead is enabled, which allows the written data to remain cached in the page cache. Figure 7 shows that average read speeds range from approxi-mately 350 to 510 GB /s, and the distributions are stable across all striping factors. This suggests that performance is dominated by memory and page-cache e ff ects rather than by the underlying disks, explaining why additional I /O-level optimizations provide little benefit. There is no clear winner among stripe units, and enabled versus disabled readahead yields almost identical distributions. With striping factors of 2 and 4, all stripe units show a slight decrease in read bandwidth. For higher striping factors such as 8 and 16, the bandwidth drops significantly. This points to the dip being tied to the stripe count rather than the stripe size. Because paired box plots overlap significantly for all configurations, readahead does not visibly separate the distributions. In contrast, write performance exhibits a clearer scaling trend. Bandwidth increases with the striping factor from roughly 33-36 GB /s at factor 1 to over 50 GB /s at factors 8 and 16. Distributions at higher striping factors also become more consistent, with tighter boxes and fewer extreme outliers. Di ff erences between stripe units remain minor. Because FBench results showed that readahead has little impact and HACC-IO cannot toggle it without code changes, we disabled readahead tuning for the HACC-IO runs. Figure 8 shows the HACC-IO bandwidths when applying the selected Lustre striping configurations. The results match the synthetic what-if analysis, with some deviations in scale and variability. HACC-IO reaches slightly higher peak read bandwidths, but    
+
+> Figure 8: Bandwidth distribution (HACC-IO) by striping factor and striping unit for read and write checkpoint files. Mean and ±95% confidence interval are highlighted in red. Read performance decreases while write performance increases with higher striping factors. This trend is consistent with Fig. 7.
+
+the dip already reappears starting at a striping factor of 2 and becomes very pronounced at 8 and 16. All stripe units follow the same pattern with strong overlap and no clear winner, indicating once again that stripe count, not stripe size, dominates. Write bandwidth also scales with the striping factor in the original HACC-IO runs. Throughput increases toward factors 8 and 16, while di ff erences between the striping units remain small. Thus, write performance is also primarily driven by the stripe count, with the unit size playing only a secondary role. In summary, the what-if analysis with FBench closely reflects the behavior of the original HACC-IO benchmark. Read perfor-mance shows the same insensitivity to stripe unit and the same dips at intermediate striping factors, while write performance scales in the same way with the stripe count. Although the origi-nal benchmark exhibits slightly less variability, the trends and bottlenecks align well. 
+
+4.4 FLASH 
+
+To evaluate FBench on a real-world large-scale application and conduct a meaningful what-if analysis, we used FLASH Sedov as the target workload. FLASH [ 38 ] is a widely used astrophysics and high-energy-density simulation framework designed for large parallel systems. It o ff ers adaptive mesh refinement, modular physics components, and a well-defined I/O mechanism [ 39 ]. Depending on the configuration and selected physics modules, FLASH generates a regular, periodic I/O pattern consisting of checkpoint files that capture the full simulation state and smaller plot files for analysis and visualization. Instead of using a reduced I /O kernel, we use the Sedov setup, which models a strong spherical blast wave in a uniform medium [ 40 ]. This scenario is part of the standard FLASH distribution and produces synchronized write bursts, making it a suitable workload for storage-system tuning studies. We ran the Sedov experiments on 20 nodes with 40 cores each. Since later evaluations involve applying UnifyFS [ 11 ], which also require resources, we kept the same node layout for all FLASH runs. Each execution produced 21 checkpoint files (each 1193 MB) and 9 plot files (each 100 MB), all written collectively as is standard for FLASH. Because FLASH was compiled with the parallel HDF5 interface, which relies on MPI-IO, we pre-loaded the application with Recorder to record Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 9 
+
+> Figure 9: Mean bandwidth (FBench) when writing checkpoint files for various collective bu ff er sizes, block sizes, and number of nodes with
+> ±95% confidence interval. Collective bu ff ering shows only a minor impact on bandwidth.
+
+MPI-IO calls. From the collected traces, we extracted the global I/O pattern and used the resulting configuration file to drive FBench. Since the pattern is identical for each file type, we limited the what-if analysis to one checkpoint file and one plot file, each executed for 20 iterations with collective I /O enabled. We first evaluated di ff erent collective bu ff ering parameters via MPI-IO hints injected into FBench at runtime. We varied the collective bu ff er size, the collective bu ff ering block size, and the number of aggregators while keeping Lustre striping fixed (stripe size 0.5 MB, stripe count 4). Figure 9 shows the resulting write bandwidths for bu ff er sizes of 4, 8, and 16 MB, block sizes of 1 and 2 MB, and 1, 2, 4, or 8 aggregators. Across all configurations, bandwidth remains within a narrow range of roughly 340-400 MB /s, indicating limited tuning headroom from MPI-IO collective bu ff ering for this workload. Varying the number of aggregators has minimal e ff ect, and neither increasing the block size nor enlarging the bu ff er size yields systematic improvements. In fact, larger bu ff ers (16 MB) tend to produce slightly lower and more variable performance than 4 or 8 MB, suggesting that the underlying access pattern does not benefit significantly from additional aggregation. In the next step, we studied the e ff ect of Lustre striping settings. Figure 10 shows a pronounced performance gap between col-lective and independent I /O. Collective I /O yields consistently lower bandwidth across all configurations, independent of the stripe unit or striping factor. In the default configuration with collective I /O enabled, performance drops sharply, and many setups cluster below 200 MB /s on the log-scaled axis. Increasing the stripe unit further degrades collective I /O, indicating that the collective access pattern interacts poorly with wider stripes on Lustre. Averaged results confirm this trend: collective I /O achieves only about 180 MB /s on average, while independent I /O reaches roughly 5.2 GB /s. Switching from collective to independent I /Othus improves performance by a factor of around 30 ×, showing that the access mode, rather than striping, dominates overall behavior. During the what-if analysis, we also tested disabling Lustre range locking in FBench, but this unexpectedly degraded performance. With newer Lustre version, range locking can only       
+
+> Figure 10: Bandwidth distribution (FBench) by striping factor for write checkpoint files (mean and ±95% confidence interval in red). Independent I /O consistently achieves higher bandwidth than collective I/O (gray background).
+> (a) FBench (b) FLASH
+> Figure 11: Comparison of write bandwidth on UnifyFS: FBench and FLASH exhibit similar performance for independent I /O. FLASH con-firms the observation that collective I /O performs significantly worse than independent I /O.
+
+be disabled in combination with direct I /O, which significantly reduces bandwidth. Since FBench uses the same mechanism for disabling Lustre locking as IOR, IOR would encounter the same issue. Finally, we applied FBench to analyze how UnifyFS handles the FLASH workload under di ff erent chunk-size configurations (Figure 11(a)). A clear performance gap between checkpoint and plot files emerges. Checkpoint write bandwidth remains high across all chunk sizes, typically between 7 and 10 GB /swith moderate variation. The only notable deviation occurs at a 512 kB chunk size, which shows a slight reduction. Plot-file performance is substantially lower (around 0.7-1.0 GB /s) with a much narrower spread, primarily due to the smaller file sizes. Compared to Lustre, the improvement is evident: without any additional tuning, moving from Lustre to UnifyFS increases average independent-write bandwidth from roughly 5.2 GB /s to about 8 GB /s, an improvement factor of approximately 1 .5×.Figure 11(b) shows bandwidth derived from the original FLASH runs, which aligns well with the FBench measurements. For independent writes, checkpoint bandwidth remains around 8-Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 10 10 GB /s across all UnifyFS chunk sizes, while plot-file band-width stays in the 0.7-1.0 GB /s range. This indicates that, de-spite using a simplified configuration-based pattern, FBench accurately reflects FLASH behavior on UnifyFS for both file types. The results also reinforce the earlier observation that collective I /O consistently underperforms: both checkpoint and plot-file bandwidth drop significantly when collective writes are used, mirroring the trend observed on Lustre in Figure 10. 
+
+4.5 LAMMPS 
+
+LAMMPS [ 41 ] is a classical molecular dynamics code designed for high-e ffi ciency execution on parallel computers. While the 
+
+melt simulation of LAMMPS typically demonstrates the tran-sition of a crystal lattice to a liquid phase, in this work it is used to demonstrate that FBench can significantly reduce time during what-if analysis. For this, LAMMPS is running on 10 nodes with 40 processes each, the simulation handles 864 mil-lion atoms over 300 timesteps. Via the MPI-IO interface, the simulation performs four collective writes to a shared dump file, with each process contributing approximately 75 MB (subject to slight per-process variation) and yielding a total dump size of 124 GB. A deferred flush issued when the file is closed adds a fifth write phase. Since we want to mimic the I /O behavior of LAMMPS, the original simulation is executed once with the Recorder to obtain traces and thereby generate the configuration file. To obtain the runtime, both LAMMPS and FBench are executed 10 times each. The results reveal a substantial di ff erence in execution time for a simulation with only 300 timesteps. While LAMMPS requires on average 566.5 s, FBench reproduces the I /O workload in 101.8 s on average. For both measurements, the variance is low. This di ff erence is expected because the runtime of a full scien-tific application such as LAMMPS depends on multiple factors, including computation, inter-process communication, and other runtime overheads in addition to I /O. FBench, in contrast, iso-lates and reproduces only the I /O behavior of the application. By eliminating the computational and communication components, FBench requires only about 18% of the original runtime to repro-duce the same I /O workload, therefore significantly accelerating I/O-focused studies and enabling faster what-if analyses. Since the I /O patterns of LAMMPS dumps and FLASH’s checkpoints are similar, i.e., many processes writing to a single file, we apply also UnifyFS as an optimization. The key di ff erence is that LAMMPS writes to the same file at each interval, whereas FLASH typically writes separate checkpoint files. For the what-if analysis, we evaluate the parameters 
+
+chunk_size , which defines the size of the data blocks used for log-based writes, and shmem_size , which specifies the maximum amount of data bu ff ered in shared memory before being flushed to the underlying storage system. Table 3 shows for a shared memory size of 256 MB a clear di ff er-ence between the two chunk sizes. While 1 MB chunks achieve a write throughput of about 2.9 GiB /s, the performance with 4 MB chunks drops to around 2.3 GiB /s on average. With 512 MB of shared memory, both chunk sizes reach the highest measured per-formance of about 2.96 GiB /s. At 1 GB of shared memory, per-formance decreases slightly to around 2.92 GiB /s, but remains stable. Thus, the results indicate that the chunk size should not be chosen too large when the available shared memory is small.  
+
+> Table 3: Avg. bandwidth and runtime per configuration
+
+Chunk Size Shared Memory Size Avg. Bandwidth 
+
+1 M 256 M 2886 MiB /s1 M 512 M 2967 MiB /s1 M 1 G 2924 MiB /s4 M 256 M 2315 MiB /s4 M 512 M 2967 MiB /s4 M 1 G 2913 MiB /sAs LAMMPS does not provide direct I /O metrics, its perfor-mance is assessed using the wall time summary reported for the output step, reflecting the time spent writing dump files. The re-sults show a clear gap between tuned and baseline performance. With UnifyFS, the average output time is around 8.4–8.7 s, while the Lustre baseline ranges from 64.7 s to 67.9 s. Part of this per-formance gap stems from collective I /O behavior: by default, the aggregator count is coupled to the file system’s striping count. In combination with the specific write patterns of LAMMPS, this limits aggregation to only 8 processes even when more nodes are available. Consequently, a mechanism intended to improve I /Oeffi ciency can instead become a scalability bottleneck. Doubling the aggregator count alone reduces the average output time by roughly 20 s, and with more comprehensive tuning via UnifyFS, an overall output time improvement of roughly 8 × is achievable. In addition to the bandwidth measurements above, the optional inter-I /O-delay mechanism is also evaluated using LAMMPS. These delays are disabled for bandwidth measurements, so that sustained throughput excludes replayed idle time, and enabled whenever faithful temporal reproduction is the objective. The evaluation spans three weak-scaling points (80, 160, and 400 ranks, corresponding to 2N, 4N, and 10N). The recorded trace exhibits five periodic I /O bursts (four data dumps and a single flush at close) overlaid on a scale-invariant compute cadence of roughly 137-139 s, while the I /O-active fraction of the timeline grows from 13.3% to 19.6% as the rank count increases. With delays enabled, on-the-fly replay preserves the original operation order and reconstructs each idle interval by sleeping for the recorded gap between the completion of one operation and the start of the next. This reproduces all five bursts and matches the inter-burst gaps to within 1-4% at every scale ( +2.6/ + 1.1% at 2N, +1.8/+1.2% at 4N, and +4.3/+1.8% at 10N). The complete open-to-close timeline deviates by only −2% at 2N, rising to 
+
++18% at 10N. Because the recorded gaps constitute 80-87% of this timeline and are reproduced accurately, the residual error is attributable chiefly to the application’s deferred flush, which is serialized at close. 
+
+## 5 Conclusion 
+
+We presented FBench, a flexible benchmark for systematic what-if analysis and I /O performance exploration in HPC. By leveraging CFGs derived from Recorder traces, FBench can either generate simplified global configuration files or replay I /Opatterns on-the-fly, supports both POSIX and MPI-IO interfaces, and allows optimization hints to be injected via a JSON configuration, enabling fast experimentation without modifying or rerunning the original application. Our evaluation shows that FBench accurately reproduces I /O behavior across synthetic and real workloads. For IOR, it closely matches scaling trends across node counts, interfaces, and access patterns. For HACC-IO, it Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 11 captures the irregular file-per-process pattern and reproduces performance trends under varying Lustre striping settings. For FLASH Sedov, it reveals that collective I /O on Lustre achieves up to 30 × lower write bandwidth than independent I/O, largely independent of striping, and that switching from Lustre to UnifyFS improves non-collective write bandwidth by about 1 .5× without additional tuning. For LAMMPS, FBench significantly reduces what-if analysis time and enables simple tuning that can reveal up to an 8 × improvement. Future work includes extending FBench to support additional higher-level I /O libraries, as Recorder already operates at this level, making the inclusion of HDF5, netCDF, and PnetCDF a natural next step. We also plan to quantitatively evaluate timing fidelity, for example via the Wasserstein distance between inter-operation gap distributions, and to develop mechanisms for scaling I /O patterns across di ff erent rank counts to enable cross-scale performance extrapolation. Finally, since this work focuses on classical scientific applications with regular checkpoint-restart behavior, we aim to evaluate FBench against more irregular and non-periodic workloads to assess its generality. Overall, FBench provides a scalable, application-agnostic framework that bridges detailed I /O tracing and actionable performance tuning in HPC environments. 
+
+## Acknowledgments 
+
+The authors gratefully acknowledge the computing time pro-vided on the HPC systems at Lawrence Livermore National Laboratory. This work was performed under the auspices of the U.S. Department of Energy by Lawrence Livermore National Laboratory under Contract No. LLNL-CONF-2014268. 
+
+## References 
+
+[1] Philip Carns, Julian Kunkel, Kathryn Mohror, and Martin Schulz. Understanding i /o behavior in scientific and data-intensive computing (dagstuhl seminar 21332). Dagstuhl reports , 11(7):16–75, 2021. [2] Samuel Lang, Philip Carns, Robert Latham, Robert Ross, Kevin Harms, and William Allcock. I /o performance chal-lenges at leadership scale. In Proceedings of the Confer-ence on High Performance Computing Networking, Stor-age and Analysis , pages 1–12, 2009. [3] Ning Liu, Jason Cope, Philip Carns, Christopher Carothers, Robert Ross, Gary Grider, Adam Crume, and Carlos Maltzahn. On the role of burst bu ff ers in leadership-class storage systems. In 2012 IEEE 28th Symposium on Mass Storage Systems and Technologies (MSST) , pages 1–11. IEEE, 2012. [4] Teng Wang, Sarp Oral, Yandong Wang, Brad Settlemyer, Scott Atchley, and Weikuan Yu. Burstmem: A high-performance burst bu ff er system for scientific applications. In 2014 IEEE International Conference on Big Data (Big Data) , pages 71–79. IEEE, 2014. [5] Babak Behzad, Hoang-Vu Dang, Farah Hariri, Weizhe Zhang, and Marc Snir. Automatic generation of i /o kernels for hpc applications. In 2014 9th Parallel Data Storage Workshop , pages 31–36. IEEE, 2014. [6] Mike Folk, Gerd Heber, Quincey Koziol, Elena Pourmal, and Dana Robinson. An overview of the hdf5 technol-ogy suite and its applications. In Proceedings of the EDBT /ICDT 2011 workshop on array databases , 2011. [7] Russ Rew and Glenn Davis. Netcdf: an interface for scien-tific data access. IEEE computer graphics and applications ,10(4), 1990. [8] Jianwei Li, Wei-keng Liao, Alok Choudhary, Robert Ross, Rajeev Thakur, William Gropp, Rob Latham, Andrew Siegel, Brad Gallagher, and Michael Zingale. Parallel netcdf: A high-performance scientific i /o interface. In 
+
+Proceedings of the 2003 ACM /IEEE conference on Super-computing , page 39, 2003. [9] Kento Sato, Kathryn Mohror, Adam Moody, Todd Gam-blin, Bronis R De Supinski, Naoya Maruyama, and Satoshi Matsuoka. A user-level infiniband-based file system and checkpoint strategy for burst bu ff ers. In 2014 14th IEEE /ACM International Symposium on Cluster, Cloud and Grid Computing , pages 21–30. IEEE, 2014. [10] Teng Wang, Sarp Oral, Michael Pritchard, Bin Wang, and Weikuan Yu. Trio: Burst bu ff er based i /o orchestration. In 
+
+2015 IEEE International Conference on Cluster Comput-ing , pages 194–203. IEEE, 2015. [11] Michael J Brim, Adam T Moody, Seung-Hwan Lim, Ross Miller, Swen Boehm, Cameron Stanavige, Kathryn M Mohror, and Sarp Oral. Unifyfs: A user-level shared file system for unified access to distributed local storage. In 
+
+2023 IEEE International Parallel and Distributed Process-ing Symposium (IPDPS) , 2023. [12] Chen Wang. Parallel File System with Tunable Consistency .PhD thesis, University of Illinois at Urbana-Champaign, 2022. [13] John Bent, Garth Gibson, Gary Grider, Ben McClelland, Paul Nowoczynski, James Nunez, Milo Polte, and Meghan Wingate. Plfs: a checkpoint filesystem for parallel appli-cations. In Proceedings of the Conference on High Per-formance Computing Networking, Storage and Analysis ,pages 1–12, 2009. [14] Jean Luca Bez, Suren Byna, and Shadi Ibrahim. I /o access patterns in hpc applications: A 360-degree survey. ACM Computing Surveys , 56(2):1–41, 2023. [15] Jean Luca Bez, Houjun Tang, Bing Xie, David Williams-Young, Rob Latham, Rob Ross, Sarp Oral, and Suren Byna. I/o bottleneck detection and tuning: Connecting the dots using interactive log analysis. In 2021 IEEE /ACM Sixth International Parallel Data Systems Workshop (PDSW) ,2021. [16] Jean Luca Bez, Hammad Ather, and Suren Byna. Drishti: Guiding end-users in the i /o optimization journey. In 2022 IEEE /ACM International Parallel Data Systems Workshop (PDSW) , pages 1–6. IEEE, 2022. [17] Kathryn Mohror and Karen L Karavanic. Evaluating similarity-based trace reduction techniques for scalable performance analysis. In Proceedings of the conference on high performance computing networking, storage and analysis , pages 1–12, 2009. Preprint – FB ench : A F lexible Benchmark for CFG-B ased What -I f Exploration of HPC I /O P atterns 12 [18] Chen Wang, Jinghan Sun, Marc Snir, Kathryn Mohror, and Elsa Gonsiorowski. Recorder 2.0: E ffi cient parallel i/o tracing and analysis. In 2020 IEEE International Par-allel and Distributed Processing Symposium Workshops (IPDPSW) , pages 1–8. IEEE, 2020. [19] Sarah Neuwirth and Arnab K Paul. Parallel i /o evaluation techniques and emerging hpc workloads: A perspective. In 2021 IEEE International Conference on Cluster Com-puting (CLUSTER) , pages 671–679, 2021. [20] Yanlong Yin, Surendra Byna, Huaiming Song, Xian-He Sun, and Rajeev Thakur. Boosting application-specific par-allel i /o optimization using iosig. In 2012 12th IEEE /ACM International Symposium on Cluster, Cloud and Grid Com-puting (ccgrid 2012) , pages 196–203. IEEE, 2012. [21] James Dickson, Steven Wright, Satheesh Maheswaran, Andy Herdman, Mark C Miller, and Stephen Jarvis. Repli-cating hpc i /o workloads with proxy applications. In 2016 1st Joint International Workshop on Parallel Data Storage and data Intensive Scalable Computing Systems (PDSW-DISCS) , 2016. [22] Jeremy Logan, Scott Klasky, Jay Lofstead, Hasan Abbasi, Stephane Ethier, Ray Grout, Seung-Hoe Ku, Qing Liu, Xiaosong Ma, Manish Parashar, et al. Skel: generative software for producing skeletal i /o applications. In 2011 IEEE Seventh International Conference on e-Science Work-shops , pages 191–198. IEEE, 2011. [23] John E Hopcroft, Rajeev Motwani, and Je ff rey D Ullman. Introduction to automata theory, languages, and computa-tion. Acm Sigact News , 32(1):60–65, 2001. [24] Jiyu Luo, Tao Yan, Qingguo Xu, Jingwei Sun, and Guangzhong Sun. Siesta: Synthesizing proxy applications for mpi programs. In 2024 IEEE International Conference on Cluster Computing (CLUSTER) , pages 14–26. IEEE, 2024. [25] Matthieu Dorier, Shadi Ibrahim, Gabriel Antoniu, and Rob Ross. Omnisc’io: A grammar-based approach to spatial and temporal i /o patterns prediction. In SC’14: Proceed-ings of the International Conference for High Performance Computing, Networking, Storage and Analysis , 2014. [26] Chen Wang, Izzet Yildirim, Hariharan Devarajan, Kathryn Mohror, and Marc Snir. Recorder: Comprehensive parallel i/o tracing and analysis. arXiv preprint arXiv:2501.04654 ,2025. [27] Chen Wang, Pavan Balaji, and Marc Snir. Pilgrim: scalable and (near) lossless mpi tracing. In Proceedings of the In-ternational Conference for High Performance Computing, Networking, Storage and Analysis , 2021. [28] Michael Zingale. FLASH I/O Benchmark Rou-tine. https://www.ucolick.org/~zingale/flash_ benchmark_io/ . Accessed: 2025-11-26. [29] Glenn K. Lockwood. HACC-IO Repository. https: //github.com/glennklockwood/hacc-io , 2012. Ac-cessed: 2025-11-17. [30] hpc /ior. Ior and mdtest parallel i /o benchmark repository. 
+
+https://github.com/hpc/ior , 2024. Accessed: 2025-11-17. [31] Darshan Development Team. Darshan — scalable hpc i/o characterization framework. https://github.com/ darshan-hpc/darshan . Accessed: 2025-11-30. [32] Mark C Miller. Design & implementation of macsio. Tech-nical report, Lawrence Livermore National Laboratory (LLNL), Livermore, CA (United States), 2015. [33] Oak Ridge Leadership Computing Facility. Adios. https: //www.olcf.ornl.gov/center-projects/adios/ ,2024. Accessed: 2024-12-04. [34] Shane Snyder, Philip Carns, Robert Latham, Misbah Mubarak, Robert Ross, Christopher Carothers, Babak Be-hzad, Huong Vu Thanh Luu, Surendra Byna, and Prabhat. Techniques for modeling large-scale hpc i /o workloads. In 
+
+Proceedings of the 6th International Workshop on Perfor-mance Modeling, Benchmarking, and Simulation of High Performance Computing Systems , pages 1–11, 2015. [35] Xiaoqing Luo, Frank Mueller, Philip Carns, Jonathan Jenkins, Robert Latham, Robert Ross, and Shane Sny-der. Scalaioextrap: Elastic i /o tracing and extrapolation. In 
+
+2017 IEEE International Parallel and Distributed Process-ing Symposium (IPDPS) , pages 585–594. IEEE, 2017. [36] Xiaoqing Luo, Frank Mueller, Philip Carns, John Jenkins, Robert Latham, Robert Ross, and Shane Snyder. Hpc i /otrace extrapolation. In Proceedings of the 4th Workshop on Extreme Scale Programming Tools , pages 1–6, 2015. [37] LLNL. Corona Compute Platform. https://hpc.llnl. gov/hardware/compute-platforms/corona , 2025. Accessed: 2025-07-03. [38] flash x.org. Flash-x: A multiphysics scientific software system. https://flash-x.org , 2024. Accessed: 2025-11-17. [39] Anshu Dubey, Klaus Weide, Jared O’Neal, Akash Dhruv, Sean Couch, J. Austin Harris, Tom Klosterman, Rajeev Jain, Johann Rudi, Bronson Messer, Michael Pajkos, Jared Carlson, Ran Chu, Mohamed Wahib, Saurabh Chawd-hary, Paul M. Ricker, Dongwook Lee, Katie Antypas, Katherine M. Riley, Christopher Daley, Murali Ganap-athy, Francis X. Timmes, Dean M. Townsley, Marcos Vanella, John Bachan, Paul M. Rich, Shravan Kumar, Eirik Endeve, W. Raphael Hix, Anthony Mezzacappa, and Thomas Papatheodore. Flash-x: A multiphysics simula-tion software instrument. SoftwareX , 19:101168, 2022. ISSN 2352-7110. doi: https: // doi.org /10.1016 /j.softx.2022. 101168. URL https://www.sciencedirect.com/ science/article/pii/S2352711022001030 .[40] Leonid Ivanovich Sedov. Similarity and dimensional meth-ods in mechanics . CRC press, 2018. [41] Steven J Plimpton, Axel Kohlmeyer, Aidan P Thompson, Stan G Moore, and Richard Berger. Lammps: large-scale atomic /molecular massively parallel simulator. Zenodo ,2007.

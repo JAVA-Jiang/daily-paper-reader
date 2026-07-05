@@ -1,0 +1,178 @@
+Title: How Far Do On-Prem Open LLMs Get on Text-to-SQL? A Cross-Family Size x Technique Frontier on BIRD
+
+URL Source: https://arxiv.org/pdf/2606.29733v1
+
+Published Time: Tue, 30 Jun 2026 01:38:43 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# How Far Do On–Prem Open LLMs Get on Text–to–SQL? A Cross–Family Size ×Technique Frontier on BIRD 
+
+Vladimir Beskorovainyi 
+
+Besk Tech | Moscow Institute of Physics and Technology (MIPT) 
+
+admin@besk.tech | https://vladimir.besk.tech | ORCID: 0009–0004–7005–6242 
+
+Preprint — June 30, 2026 
+
+Abstract 
+
+Organizations that cannot send data to a cloud API increasingly ask a practical question: how good is Text–to–SQL if the model must run on–premises on open weights, and which of the popular accuracy “recipes” are worth their compute? We answer with an honest, fully reproducible benchmark on the BIRD development split ( n = 1534 , Execution Accuracy), evaluating three open model families across two generations — Qwen2.5–Coder (7B/14B/32B), CodeLlama–Instruct (7B/13B/34B), and Llama–3.x (8B, 70B) — under one matched protocol, with a model–agnostic recipe ablated component by component (schema linking, self–correction, self–consistency) and all differences tested with the paired McNemar test. Four findings stand out. (i) Generation matters more than raw size, and the recipe is family–robust : Qwen2.5– Coder dominates the older CodeLlama at matched size ( 39 .1 vs 20 .9 at 7B), but a modern non–Qwen model (Llama–3.3–70B, 49 .2 on a matched serving) is competitive, so CodeLlama’s weakness reflects its 2023 generation , not “non–Qwen = weak”. (ii) Self–correction is a robust, near–free win : significant on all three families at sizes with room to improve (e.g. p < 10 −10 
+
+on CodeLlama–7B and Llama–3.1–8B; the gain shrinks for the strongest models). (iii) Schema linking does not help — and a stronger linker does not rescue it : lexical linking significantly 
+
+hurts on Qwen and Llama, and a retrieval/embedding linker with 96 .5% gold–table recall is statistically indistinguishable from no linking ( p ≥ 0.55 ), ruling out the “weak lexical strawman” objection across three families and two generations. (iv) Self–consistency is poor value (+0 .13 
+
+pp for ∼5× tokens, p = 0 .86 ). We report real per–stage cost ($/1k queries from wall–clock, not a token proxy) and release all code, predictions, and summaries. Code: https://github.com/ beskvladimir-create/nl2sql-onprem-bench (Zenodo DOI 10.5281/zenodo.20952794 ). 
+
+Keywords: Text–to–SQL; NL2SQL; BIRD; open–weight LLMs; on–premises inference; schema linking; self–consistency; reproducibility. 
+
+# 1 Introduction 
+
+Text–to–SQL is among the most directly useful enterprise applications of large language models (LLMs), yet the strongest published results rely on frontier cloud APIs that many organizations cannot use for reasons of data residency, privacy, and cost. For these users the question is not “what is the state of the art?” but “how good is Text–to–SQL on our own GPUs , on open weights, and which accuracy tricks are worth paying for?” We answer empirically and honestly. We benchmark two open families — Qwen2.5–Coder [ 3]and CodeLlama [ 4] — each across a ∼5× size range, on the BIRD development split [ 1], served 1
+
+> arXiv:2606.29733v1 [cs.CL] 29 Jun 2026
+
+on–premises with vLLM [ 6 ], ablating a widely used, model–agnostic recipe one component at a time: schema linking, self–correction, and self–consistency [ 7]. We report Execution Accuracy with its real compute cost and test every claim with the paired McNemar test [13]; negative results are included in full. We organize the study around four research questions: 
+
+RQ1 How do accuracy gains compare across model size and across model family on–prem? 
+
+RQ2 Which recipe components improve accuracy, and do the gains generalize across families ?
+
+RQ3 Does schema linking help if we replace a lexical linker with a stronger retrieval/embedding one? 
+
+RQ4 Where do configurations sit on the accuracy– cost frontier in real terms? 
+
+Contributions. 
+
+1. A matched, reproducible on–prem benchmark of two open LLM families on BIRD across a ∼5×
+
+size range, with significance testing and real cost. 2. Clear, partly contrarian findings: family dominates size; self–correction generalizes; schema linking does not help even with a high–recall embedding linker ; self–consistency is poor value. 3. A full release — harness, configs, per–example predictions, per–stage summaries — so every number can be regenerated. 
+
+# 2 Related Work 
+
+Benchmarks. Spider [ 2 ] established cross–database Text–to–SQL; BIRD [ 1] raised difficulty with larger, dirtier databases, external knowledge, and an execution metric, and is far from solved. We use BIRD dev and its official Execution Accuracy (EX). 
+
+Recipes. A standard fine–tuning–free toolkit improves LLM Text–to–SQL: schema linking prunes the schema to relevant tables/columns [ 9 ]; decomposition and multi–step prompting [ 10 ]; self– correction / self–debugging [ 11 ]; and self–consistency [ 7], building on chain–of–thought [ 8 ]. These are usually reported on cloud models; their value on small on–prem models, across families, and at real cost is reported less often. 
+
+Open and on–prem models. Code–specialized open models [ 3, 4 ] with efficient serving [ 6 ] make private Text–to–SQL feasible. Our contribution is not a new method but a careful, reproducible measurement — across two families, with significance and cost — of what these ingredients deliver on–prem. 
+
+# 3 Setup 
+
+Data and metric. We evaluate on the full BIRD dev split ( n = 1534 ). EX counts a prediction correct iff executing it returns the gold result set. The BIRD databases are obtained from the BIRD authors and are not redistributed. 2Table 1: Execution Accuracy (%) on BIRD dev ( n = 1534 ), on–prem, greedy. Sizes grouped as small / mid / large ( 7/13 –14 /32 –34 B). Family Stage small mid large Qwen2.5–Coder base 39 .05 47 .39 50 .39 
+
++ self–correct 42 .50 48 .70 51 .63 
+
+schema–link (lexical) 39 .31 45 .37 48 .83 
+
+CodeLlama base 20 .93 21 .64 24 .51 
+
++ self–correct 23 .99 23 .01 27 .12 
+
+schema–link (lexical) 22 .23 20 .60 23 .79 
+
+Models and serving. Three families: Qwen2.5–Coder–Instruct (7B/14B/32B) and CodeLlama– Instruct (7B/13B/34B), served on–premises in fp16 through an OpenAI–compatible vLLM endpoint; and Llama–3.x [ 5 ] (Llama–3.1–8B, Llama–3.3–70B), added to separate family from generation 
+
+(CodeLlama is 2023; Qwen2.5–Coder and Llama–3.x are 2024). Decoding is greedy (temperature 
+
+0) at concurrency 64 ; smaller fp16 models ran on an L40S–class 46 GB GPU and the 32B/34B on an A100–80GB. The Llama family and the embedding linker for Qwen–32B were evaluated on a matched FP8 API serving (DeepInfra); those blocks are quantization–depressed in absolute level and are used only for relative comparisons (never mixed with the fp16 headline). Decoding, prompts, evaluation, and the split are identical across models (a matched protocol). 
+
+Recipe and ablation. On top of base single–call generation we ablate: schema linking (a lexical pruner, and a stronger embedding retriever — table embeddings from all–MiniLM–L6–v2 [ 12 ], top– 
+
+k= 6 tables by cosine, k chosen for ≥ 95% gold–table recall); self–correction (the model revises its draft); and self–consistency (m=5 candidates at temperature 0.6, combined by an execution–guided majority vote). Only self–consistency samples; every other stage is greedy. 
+
+Significance and cost. Configurations are scored on the same examples, so differences are paired ;we use the exact McNemar test [ 13 ] on per–example correctness rather than an unpaired interval (±2.5 pp at n= 1534 ). Cost is reported as real $/1k queries from per–stage wall–clock time at a representative $1.8/GPU–hr, not a token proxy. 
+
+# 4 Results 
+
+4.1 RQ1: generation matters more than raw size 
+
+Table 1 and Figure 1 give the on–prem (fp16) frontier. Qwen2.5–Coder shows clear but diminishing 
+
+size returns: base EX 39 .05 → 47 .39 → 50 .39 (+8 .34 then only +3 .00 pp). CodeLlama is both far weaker and nearly flat with size ( 20 .93 → 21 .64 → 24 .51 ; the 13B point is within noise of 7B). The two–family gap dwarfs the size effect ( ∼18 pp at 7B), but a fair reading must control for model 
+
+generation : CodeLlama is a 2023 release, Qwen2.5–Coder a 2024 one. We address this directly below. 
+
+Isolating generation: a modern third family. To separate family from generation we add Llama–3.x (2024) on the matched FP8 serving (Table 2, Figure 2). A modern non–Qwen model is strong: Llama–3.3–70B base reaches 49 .2% on this serving, far above CodeLlama–34B ( 24 .5% 
+
+3Figure 1: Two–family size frontier. The family gap ( ∼18 pp) exceeds the size effect; CodeLlama barely scales on BIRD. Table 2: Modern third family (Llama–3.x, 2024) on the matched FP8 API serving (relative comparison only; Qwen–32B base = 37 .55 on this serving for reference). Model (FP8 API) base + self–correct schema–link (lexical) Llama–3.1–8B 32 .92 36 .57 31 .16 
+
+Llama–3.3–70B 49 .22 50 .26 45 .57 
+
+on–prem) and competitive with Qwen–32B ( 37 .6% on the same FP8 serving). The large CodeLlama gap therefore reflects model generation , not “non–Qwen = weak”. The headline RQ1 message is thus: generation (and the family/recipe choices that come with it) matters more than raw size — a 2024 model at modest size beats a 2023 model at 34 B — while within a family size returns diminish. 
+
+4.2 RQ2: self–correction generalizes 
+
+Self–correction helps on all three families and is statistically significant wherever the model is capable enough to act on feedback (Table 3): +3 .06 pp on CodeLlama–7B ( p = 2 ×10 −11 ), +3 .65 on Llama–3.1–8B ( p = 6 ×10 −11 ), +2 .61 on CodeLlama–34B, and +1 .24 to +3 .45 on Qwen. The gain shrinks for the strongest models (Llama–3.3–70B +1 .04 , p = 0 .08 ; Qwen–32B +1 .24 ), as expected — a revision pass helps most where there is more to fix. A cheap self–correction pass is thus a robust, near–free win across families, not a Qwen artifact, and never hurt in our runs. 
+
+4.3 RQ3: a stronger schema linker still does not help 
+
+The most common objection to “schema linking hurts” is that we used a weak lexical pruner. We therefore added an embedding retriever (all–MiniLM–L6–v2, top– 6 tables) tuned to 96 .5% gold–table recall (vs 94 .0% lexical) and re–ran the comparison (Figure 3). It does not help: on CodeLlama–34B (on–prem fp16) the embedding linker is statistically indistinguishable from both the lexical linker 4Figure 2: The recipe replicates on a modern non–Qwen family: on Llama–3.x, self–correction helps and lexical schema linking significantly hurts (70B link p = 1 .4 × 10 −6). (p = 0 .55 ) and no linking; on Qwen2.5–Coder–32B, evaluated on a matched FP8 API serving (see Limitations), base/lexical/embedding are all within noise ( p ≥ 0.09 ). Higher table recall did not translate into accuracy: on BIRD’s relatively narrow schemas the prompt is rarely the bottleneck, and pruning risks dropping needed tables. The “schema linking is dominated” result is therefore 
+
+not an artifact of a weak baseline. 
+
+4.4 RQ4: the real cost frontier 
+
+Accuracy without cost misleads an operator who pays per GPU–second. Table 4 gives real $/1k– queries (from wall–clock) for CodeLlama–34B, and Figure 4 plots EX against tokens for the full Qwen–32B ablation. Self–correction roughly doubles per–query time ($0.12 →$0.22 / 1k for CodeLlama–34B) for its significant gain, whereas self–consistency on Qwen costs ∼5× the tokens and tail latency (p95 10 .6 → 50 .0 s) for a non–significant +0 .13 pp. 
+
+# 5 Discussion 
+
+Why generation beats size. BIRD errors at these scales are dominated by reasoning over external knowledge and join structure; a stronger, more recent pretraining recipe helps far more than scaling an older one — a 2024 model at modest size beats a 2023 model at 34 B, while within a family size returns diminish. Practitioners should choose a strong, recent model first and size second. 
+
+Why linking does not help even at high recall. Lexical and embedding linking both trade table recall for a shorter prompt. On BIRD’s narrow schemas the prompt is rarely the bottleneck, so even a 96 .5% –recall retriever offers no accuracy gain and risks removing a needed table; the token saving is small. The lesson is scoped, not universal: revisit linking for genuinely wide schemas. 5Table 3: Paired exact McNemar tests on per–example correctness (BIRD dev). Comparison ∆ (pp) p
+
+CodeLlama–7B: base → +self–correct +3 .06 2 × 10 −11 
+
+CodeLlama–34B: base → +self–correct +2 .61 4.2 × 10 −9
+
+Qwen–32B: base → +self–correct +1 .24 0.0013 
+
+Llama–3.1–8B: base → +self–correct +3 .65 6 × 10 −11 
+
+Llama–3.3–70B: base → +self–correct +1 .04 0.08 (n.s.) Qwen–32B: base → schema–link (lexical) −1.56 0.035 
+
+Llama–3.1–8B: base → schema–link (lexical) −1.76 0.03 
+
+Llama–3.3–70B: base → schema–link (lexical) −3.65 1.4 × 10 −6
+
+CodeLlama–34B: base → schema–link (lexical) −0.72 0.29 (n.s.) CodeLlama–34B: lexical → embedding link −0.45 0.55 (n.s.) Qwen–32B: +self–correct → +self–consistency +0 .13 0.86 (n.s.) Table 4: Real per–stage cost, CodeLlama–34B on BIRD dev, at $1.8/GPU–hr. Stage wall (s) $/1k–queries base 376 0.123 
+
++ self–correct 658 0.215 
+
+schema–link (lexical) 372 0.121 
+
++ self–correct 692 0.225 
+
+embedding link 412 0.134 
+
+Positioning vs. published numbers. Our protocol is deliberately minimal — zero–shot, single greedy call, no in–context examples, no fine–tuning — so the base EX should land below systems that add reasoning, retrieval, or fine–tuning, confirming the harness is sound rather than weak. Our best on–prem base (Qwen2.5–Coder–32B, 50 .4% ) sits just below strong general–purpose single models on the BIRD dev leaderboard (e.g. Gemini 2.0 Flash ≈ 57% [14 ]) and well below method– enhanced systems that add reasoning or reinforcement learning (e.g. Arctic–Text2SQL–R1–32B at 71 .8% , and 70 .0% at 14B [ 15 ]). The gap to these systems is the intended price of a minimal, reproducible, single–call on–prem baseline — our contribution is the controlled comparison of cheap recipe components across families, not a leaderboard entry. (We also note that BIRD labels contain documented annotation errors [ 16 ], so small absolute differences should be read with care — another reason we rely on paired significance rather than raw deltas.) 
+
+Practical recommendation. For private Text–to–SQL on BIRD–class schemas: pick a strong, 
+
+recent family, serve a mid–to–large size, add self–correction, and skip both schema linking and self–consistency. This is the cheapest configuration that clears the bar. 
+
+# 6 Limitations 
+
+(i) Recency confound (addressed). CodeLlama (2023) predates Qwen2.5–Coder and Llama– 3.x (2024); to separate generation from family we added the modern Llama–3.x family (Sec. 2), which is competitive on a matched serving and on which the recipe trends replicate, so the large CodeLlama gap is attributable to generation. A same–generation code –specialized family (e.g. 6Figure 3: Lexical vs. embedding schema linking. Despite 96 .5% gold–table recall, the embedding linker does not significantly beat no–linking on either family. DeepSeek–Coder–V2) on fp16 would tighten the absolute size–vs–family comparison further. (ii) The Llama family and the Qwen–32B embedding comparison ran on a quantized FP8 API endpoint (re–serving fp16 on–prem was not cost–justified); those blocks are ∼13 pp below our fp16 level, are reported only on their own matched serving, and support relative claims only — each of which is corroborated on–prem (e.g. linking is dominated on CodeLlama–34B fp16). (iii) BIRD dev only; Spider and wide–schema enterprise databases may behave differently (we expect linking to help on wide schemas). (iv) A single zero–shot prompt template; prompt sensitivity is not measured. (v) Self–consistency was run in full on Qwen–32B; given its poor value there and CodeLlama’s low accuracy (an uninformative vote), we did not extend it. 
+
+# 7 Reproducibility 
+
+The harness, configuration files, the exact prompt templates (src/nl2sql_bench/pipeline.py ), the schema serializer and embedding linker, per–example predictions ( results/*.jsonl ), per–stage summaries ( results/*.summary.json ), and the upgrade tables are released. Each summary records the exact model checkpoint and serving details (fp16 vLLM on–prem, or the FP8 API endpoint for the relative–only blocks). Runs are greedy (temperature 0) except the self–consistency stage ( m= 5,temperature 0.6); decoding, prompts, and evaluation are identical across models. 
+
+Data and code availability. All code and result artifacts are available on GitHub ( https:// github.com/beskvladimir-create/nl2sql-onprem-bench ) and archived on Zenodo (DOI 10.5281/zenodo.2095 
+
+MIT license). The BIRD dataset is third–party and is obtained from its authors under their terms (https://bird-bench.github.io/ ); it is not redistributed here. 
+
+Competing interests. The author declares no competing interests. 7Figure 4: Cost–accuracy frontier (Qwen2.5–Coder–32B). Self–correct is the sweet spot; self– consistency buys +0 .13 pp (n.s.) for ∼5× tokens. 
+
+Funding. This research received no external funding; on–prem runs used rented GPUs at the author’s own expense. 
+
+# 8 Conclusion 
+
+Asked how far on–prem open LLMs get on Text–to–SQL, the honest BIRD answer is: pick a strong, recent model, serve a mid–to–large size, add a cheap self–correction pass, and skip the rest. Generation matters more than raw size; self–correction generalizes across three families and is significant; schema linking does not help even with a high–recall embedding retriever; and self–consistency is not worth its cost. All claims are tested and reproducible. The natural next steps — more families and a wide–schema benchmark — fit the released harness. 
+
+# References 
+
+[1] J. Li et al., Can LLM Already Serve as a Database Interface? A Big Bench for Large–Scale Database Grounded Text–to–SQLs (BIRD) , NeurIPS Datasets and Benchmarks, 2023. [2] T. Yu et al., Spider: A Large–Scale Human–Labeled Dataset for Complex and Cross–Domain Semantic Parsing and Text–to–SQL , EMNLP, 2018. [3] B. Hui et al., Qwen2.5–Coder Technical Report , arXiv:2409.12186, 2024. [4] B. Rozière et al., Code Llama: Open Foundation Models for Code , arXiv:2308.12950, 2023. [5] A. Grattafiori et al. (Llama Team), The Llama 3 Herd of Models , arXiv:2407.21783, 2024. [6] W. Kwon et al., Efficient Memory Management for Large Language Model Serving with Page-dAttention (vLLM) , SOSP, 2023. 8[7] X. Wang et al., Self–Consistency Improves Chain of Thought Reasoning in Language Models ,ICLR, 2023. [8] J. Wei et al., Chain–of–Thought Prompting Elicits Reasoning in Large Language Models , NeurIPS, 2022. [9] H. Li et al., RESDSQL: Decoupling Schema Linking and Skeleton Parsing for Text–to–SQL ,AAAI, 2023. [10] M. Pourreza and D. Rafiei, DIN–SQL: Decomposed In–Context Learning of Text–to–SQL with Self–Correction , NeurIPS, 2023. [11] X. Chen et al., Teaching Large Language Models to Self–Debug , ICLR, 2024. [12] N. Reimers and I. Gurevych, Sentence–BERT: Sentence Embeddings using Siamese BERT– Networks , EMNLP, 2019. [13] Q. McNemar, Note on the sampling error of the difference between correlated proportions or percentages , Psychometrika, 12(2):153–157, 1947. [14] BIRD–SQL (dev) benchmark leaderboard, accessed 2026. https://bird-bench.github.io/ .[15] Snowflake AI Research, Arctic–Text2SQL–R1: Smaller Models, Smarter SQL ,technical report/blog, 2025. https://www.snowflake.com/en/blog/engineering/ arctic-text2sql-r1-sql-generation-benchmark/ .[16] B. Jin et al., Pervasive Annotation Errors Break Text–to–SQL Benchmarks and Leaderboards ,VLDB, 2026. 9

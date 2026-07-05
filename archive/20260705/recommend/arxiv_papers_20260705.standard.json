@@ -1,0 +1,131 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-05T20:40:02.722798+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.28618v1",
+      "source": "arxiv",
+      "title": "Evaluating LLMs on Java Code Snippet Adaptation Using a Mutation-Injection Framework",
+      "abstract": "Background: Developers frequently reuse code by copying fragments and adapting them to fit new contexts. Existing benchmarks for evaluating large language models (LLMs) on code adaptation either rely on explicit step-by-step instructions, cover only narrow change types such as variable wiring, or operate exclusively at function-level granularity. It remains unknown how well LLMs can adapt code fragments without explicit edit guidance when the required changes are varied and controlled.   Objective: We investigate instruction-free code snippet adaptation in which an LLM must adapt a code fragment to fit its target context without any explicit edit guidance. We study three dimensions: which adaptation types are hardest (RQ1), how performance scales with adaptation complexity (RQ2), and how much surrounding context the model needs (RQ3).   Method: We will construct a dataset of Java code fragments from open-source repositories with strong test coverage and apply a taxonomy of adaptation operators, derived from empirical findings on how developers adapt copied code, using a mutation-injection framework. Working at the code fragment level and controlling the injected changes lets us know exactly what adaptations the model must perform. The unmutated fragment serves as a plausible reference for the changes the model needs to make. LLMs will be evaluated on instruction-free adaptation tasks across three context granularity levels. Correctness will be measured primarily via test-suite re-insertion, complemented by mutation-level inspection.",
+      "authors": [
+        "Ali Aman",
+        "Muhammad Asaduzzaman",
+        "Shaowei Wang",
+        "Chanchal K. Roy"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-06-26T21:34:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.28618v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "evaluates LLM code adaptation with mutation-injection framework, likely open-source",
+      "llm_evidence_cn": "利用突变注入框架评估LLM代码适应，可能开源",
+      "llm_evidence": "利用突变注入框架评估LLM代码适应，可能开源",
+      "canonical_evidence": "利用突变注入框架评估LLM代码适应，可能开源",
+      "llm_tldr_en": "Evaluates LLMs on instruction-free Java code snippet adaptation using a mutation-injection framework that generates varied edit types.",
+      "llm_tldr_cn": "本文研究LLM在无明确编辑指导下的代码片段适应能力。通过突变注入框架生成多种编辑类型，评估LLM的适应性能。发现哪些编辑类型最难（RQ1），以及LLM在适应中的表现模式。",
+      "llm_tldr": "本文研究LLM在无明确编辑指导下的代码片段适应能力。通过突变注入框架生成多种编辑类型，评估LLM的适应性能。发现哪些编辑类型最难（RQ1），以及LLM在适应中的表现模式。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.29733v1",
+      "source": "arxiv",
+      "title": "How Far Do On-Prem Open LLMs Get on Text-to-SQL? A Cross-Family Size x Technique Frontier on BIRD",
+      "abstract": "Organizations that cannot send data to a cloud API increasingly ask: how good is Text-to-SQL if the model must run on-premises on open weights, and which popular accuracy \"recipes\" are worth their compute? We answer with an honest, fully reproducible benchmark on the BIRD development split (n=1534, Execution Accuracy), evaluating three open model families across two generations -- Qwen2.5-Coder (7B/14B/32B), CodeLlama-Instruct (7B/13B/34B), and Llama-3.x (8B, 70B) -- under one matched protocol, ablating a model-agnostic recipe (schema linking, self-correction, self-consistency) component by component, with every difference tested by the paired McNemar test. Four findings stand out. (i) Generation matters more than raw size, and the recipe is family-robust: Qwen2.5-Coder dominates the older CodeLlama at matched size (39.1 vs 20.9 at 7B), but a modern non-Qwen model (Llama-3.3-70B, 49.2 on a matched serving) is competitive, so CodeLlama's weakness reflects its 2023 generation, not \"non-Qwen = weak\". (ii) Self-correction is a robust, near-free win, significant on all three families where there is room to improve. (iii) Schema linking does not help, and a stronger linker does not rescue it: a retrieval/embedding linker with 96.5% gold-table recall is statistically indistinguishable from no linking, ruling out the \"weak lexical strawman\" objection across three families. (iv) Self-consistency is poor value (+0.13 pp for ~5x tokens, not significant). We report real per-stage cost ($/1k queries) and release all code, predictions, and summaries; archived code and data: https://doi.org/10.5281/zenodo.20952794",
+      "authors": [
+        "Vladimir Beskorovainyi"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.DB",
+        "cs.LG"
+      ],
+      "published": "2026-06-29T03:15:38+00:00",
+      "link": "https://arxiv.org/pdf/2606.29733v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "fully reproducible benchmark suggests code availability",
+      "llm_evidence_cn": "完全可复现的基准测试暗示代码可用",
+      "llm_evidence": "完全可复现的基准测试暗示代码可用",
+      "canonical_evidence": "完全可复现的基准测试暗示代码可用",
+      "llm_tldr_en": "A fully reproducible benchmark evaluating open LLMs on text-to-SQL, likely with accompanying code for replication.",
+      "llm_tldr_cn": "该论文在BIRD数据集上全面评估了开源大模型的Text-to-SQL能力，通过消融实验分析各技术组件的贡献，并采用McNemar检验确保统计显著性。研究强调了模型代际比参数规模更重要，为选择本地部署模型提供了实用指南。尽管没有明确提供代码，但完全可复现的基准设计意味着代码可能公开可获取。",
+      "llm_tldr": "该论文在BIRD数据集上全面评估了开源大模型的Text-to-SQL能力，通过消融实验分析各技术组件的贡献，并采用McNemar检验确保统计显著性。研究强调了模型代际比参数规模更重要，为选择本地部署模型提供了实用指南。尽管没有明确提供代码，但完全可复现的基准设计意味着代码可能公开可获取。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.30197v1",
+      "source": "arxiv",
+      "title": "FBench: A Flexible Benchmark for CFG-Based What-If Exploration of HPC I/O Patterns",
+      "abstract": "The I/O performance of large-scale HPC applications depends on a complex interplay of access patterns, middleware optimizations, and file system configurations. To systematically explore these effects without repeatedly rerunning full applications, we introduce FBench, a flexible and code-transparent benchmarking tool for what-if analysis and I/O performance exploration. FBench leverages context-free grammars (CFGs) derived from Recorder traces to either generate simplified global configuration files for benchmark execution or replay I/O patterns on-the-fly without additional preprocessing. It supports both POSIX and MPI-IO interfaces and allows users to inject optimization hints via JSON configuration files, enabling rapid experimentation with I/O settings without code changes. Our evaluation shows that FBench accurately reproduces I/O behavior for both synthetic and real workloads, capturing access patterns and performance trends across diverse optimizations and file system settings. For IOR and HACC-IO, FBench closely matches scaling behavior and sensitivity to Lustre striping parameters. For FLASH Sedov, it reveals that collective I/O on Lustre can yield up to 30x lower write bandwidth than independent I/O, largely independent of striping, and that switching to a burst buffer file system increases non-collective write bandwidth by about 1.5x without additional tuning. The evaluation with LAMMPS shows that FBench can significantly reduce the time required for what-if analyses and, with simple tuning, enable improvements of up to 8x.",
+      "authors": [
+        "Zhaobin Zhu",
+        "Chen Wang",
+        "Kathryn Mohror",
+        "Sarah Neuwirth"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.PF"
+      ],
+      "published": "2026-06-29T12:13:37+00:00",
+      "link": "https://arxiv.org/pdf/2606.30197v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "code-transparent benchmarking tool with open-source potential",
+      "llm_evidence_cn": "代码透明的基准测试工具，可能开源",
+      "llm_evidence": "代码透明的基准测试工具，可能开源",
+      "canonical_evidence": "代码透明的基准测试工具，可能开源",
+      "llm_tldr_en": "FBench is a flexible, code-transparent benchmarking tool for HPC I/O what-if analysis, using CFGs to generate or replay I/O patterns.",
+      "llm_tldr_cn": "FBench是一个灵活且代码透明的HPC I/O基准测试工具，通过上下文无关文法从Recorder跟踪中生成全局配置文件或实时重放I/O模式。它支持POSIX和MPI-IO接口，用户可通过JSON注入优化提示，实现快速实验。",
+      "llm_tldr": "FBench是一个灵活且代码透明的HPC I/O基准测试工具，通过上下文无关文法从Recorder跟踪中生成全局配置文件或实时重放I/O模式。它支持POSIX和MPI-IO接口，用户可通过JSON注入优化提示，实现快速实验。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

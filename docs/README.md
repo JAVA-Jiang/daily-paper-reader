@@ -6,40 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-04
-- 运行时间：2026-07-04 20:12:09 UTC
+- 最新运行日期：2026-07-05
+- 运行时间：2026-07-05 20:41:15 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：3
+- 本次总论文数：3
+- 精读区：0
 - 速读区：3
 
 ### 今日简报（AI）
-1) 今日6篇论文聚焦AI编码智能体复现论文、MDE模型连接、架构追溯及边缘-云数据调度等前沿方向。
-2) 最值得关注：9.0高分的《Coding-agents》展示AI自主复现科学论文，以及8.0分的《Connecting the Models》揭示全球MDE项目图谱。
-3) 建议优先精读这两篇高分论文，了解AI编码智能体的最新突破及模型工程生态全景。
-- 详情：[/202607/04/README](/202607/04/README)
+今日速读3篇论文，聚焦LLM在Java代码适配、Text-to-SQL性能及HPC I/O模式探索。  
+最值得关注的是利用突变注入框架评估LLM代码自适应能力的研究，以及本地开源LLM在跨家族、跨技术规模下对BIRD数据集的表现。  
+建议普通读者优先阅读这两篇，了解当前LLM在代码生成与数据库查询领域的实际能力与局限性。
+- 详情：[/202607/05/README](/202607/05/README)
 
 ### 精读区论文标签
-1. [Coding-agents can replicate scientific machine learning papers](/202607/04/2607.02134v1-coding-agents-can-replicate-scientific-machine-learning-papers)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：编码代理复制论文声明；提供可复现的工作流和代码，促进开放源代码的可重复研究
-2. [Connecting the Models: A Global Mega-model of MDE Projects on GitHub](/202607/04/2606.29606v1-connecting-the-models-a-global-mega-model-of-mde-projects-on-github)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：从GitHub挖掘MDE项目，提供代码仓库数据集
-3. [An Exploratory Study on LLM-Generated Code and Comments in Code Repositories](/202607/04/2607.01867v1-an-exploratory-study-on-llm-generated-code-and-comments-in-code-repositories)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：研究仓库中LLM生成的代码，直接涉及源代码分析
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [The ARDoCo Tool Landscape: REST API, TraceView, and TraceViz for Architecture Traceability](/202607/04/2606.28064v1-the-ardoco-tool-landscape-rest-api-traceview-and-traceviz-for-architecture-traceability)  
+1. [Evaluating LLMs on Java Code Snippet Adaptation Using a Mutation-Injection Framework](/202607/05/2606.28618v1-evaluating-llms-on-java-code-snippet-adaptation-using-a-mutation-injection-framework)  
    标签：评分：7.0/10、query:code-paper
-   evidence：提供了用于架构追溯的开源工具和代码管道
-2. [Data Replication Meets Function Scheduling in the Edge-Cloud Continuum](/202607/04/2606.30563v1-data-replication-meets-function-scheduling-in-the-edge-cloud-continuum)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：研究边缘-云连续体中的联合函数调度和数据放置问题，与数据中心任务调度相关
-3. [MirrorCode: AI can rebuild entire programs from behavior alone](/202607/04/2606.30182v1-mirrorcode-ai-can-rebuild-entire-programs-from-behavior-alone)  
+   evidence：利用突变注入框架评估LLM代码适应，可能开源
+2. [How Far Do On-Prem Open LLMs Get on Text-to-SQL? A Cross-Family Size x Technique Frontier on BIRD](/202607/05/2606.29733v1-how-far-do-on-prem-open-llms-get-on-text-to-sql-a-cross-family-size-x-technique-frontier-on-bird)  
    标签：评分：6.0/10、query:code-paper
-   evidence：提供了AI程序重构的代码基准
+   evidence：完全可复现的基准测试暗示代码可用
+3. [FBench: A Flexible Benchmark for CFG-Based What-If Exploration of HPC I/O Patterns](/202607/05/2606.30197v1-fbench-a-flexible-benchmark-for-cfg-based-what-if-exploration-of-hpc-io-patterns)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：代码透明的基准测试工具，可能开源
 
 
 <div class="dpr-home-promo-card">
