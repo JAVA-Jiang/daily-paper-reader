@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-06",
+  "date": "2026-07-06",
+  "generated_at": "2026-07-06T21:35:12",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/06/2607.01425v1-agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases",
+      "section": "quick",
+      "title_en": "Agent4cs: A Multi-agent System for Code Summarization in Large Hierarchical Codebases",
+      "authors": "Yongjian Tang, Ezgi Sarikayak, Doruk Tuncel, Jie M. Zhang, Thomas Runkler",
+      "date": "2026-07-01",
+      "pdf": "https://arxiv.org/pdf/2607.01425v1",
+      "score": "6.0",
+      "evidence": "多智能体代码摘要框架可能提供源代码",
+      "tldr": "针对大型代码库因层次结构复杂、文档缺失导致的总结困难，现有方法常将代码视为扁平文本，忽略其内部依赖。Agent4cs提出多智能体自底向上总结框架，包含总结、关键词提取和质量保证三个智能体协同工作。在7个前沿模型上，该方法相比结构提示基线，全层级语义一致性平均提升8%，关键词覆盖率提升高达38%。该工作展示了利用层次信息提升代码总结质量的有效性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Understanding large, complex codebases, especially those with obfuscated structures and incomplete documentation, remains a significant challenge. Existing code summarization solutions often rely on a single language model or coding assistant like Claude Code, and treat source code as flat text, underutilizing the rich interdependencies and hierarchical information within a repository. To address these shortcomings, we propose Agent4cs - a multi-agent framework that summarizes large codebases in a bottom-up fashion, where a summarization agent focuses on producing robust summaries; a keyword-extraction agent proactively identifies critical information from subfolders; and a quality-assurance agent iteratively refines the outputs for readability, coherence, and completeness. Evaluated on 7 frontier models, Agent4cs improves semantic consistency across all folder levels by average 8% compared to two structured prompting baselines with code segments. Furthermore, extensive evaluation on real-world datasets demonstrates up to 38% gains in normalized keyword coverage rate over the same baselines.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-06 <!--dpr-date:20260706-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/06/2607.01425v1-agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases" data-sidebar-item="{&quot;title&quot;: &quot;Agent4cs: A Multi-agent System for Code Summarization in Large Hierarchical Codebases&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.01425v1-agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;多智能体代码摘要框架可能提供源代码&quot;}">Agent4cs: A Multi-agent System for Code Summarization in Large Hierarchical Codebases</a>
   * 2026-07-05 <!--dpr-date:20260705-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/05/2606.28618v1-evaluating-llms-on-java-code-snippet-adaptation-using-a-mutation-injection-framework" data-sidebar-item="{&quot;title&quot;: &quot;Evaluating LLMs on Java Code Snippet Adaptation Using a Mutation-Injection Framework&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.28618v1-evaluating-llms-on-java-code-snippet-adaptation-using-a-mutation-injection-framework&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;利用突变注入框架评估LLM代码适应，可能开源&quot;}">Evaluating LLMs on Java Code Snippet Adaptation Using a Mutation-Injection Framework</a>
