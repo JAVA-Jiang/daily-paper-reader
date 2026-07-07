@@ -1,0 +1,54 @@
+{
+  "label": "2026-07-07",
+  "date": "2026-07-07",
+  "generated_at": "2026-07-07T21:14:08",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202607/07/2607.01916v2-contextsniper-anttrails-token-efficient-code-memory-for-repository-level-program-repair",
+      "section": "deep",
+      "title_en": "ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair",
+      "authors": "Chiwang Luk, Matin Mohammad Najafi, Zhifeng Jia, Wei Yang, Xiuchang Li, Jinwei Zhu, Yang Ren, Lei Chen, Gao Cong",
+      "date": "2026-07-02",
+      "pdf": "https://arxiv.org/pdf/2607.01916v2",
+      "score": "9.0",
+      "evidence": "明确提供代码仓库（AntTrail at gitcode.com）",
+      "tldr": "仓库级程序修复中，大模型代理常因全文件读取和宽泛搜索浪费上下文预算。ContextSniper通过三级抽象索引、混合排序和意图感知门控，精准选择证据并压缩输出。在SWE-bench Lite上，令牌使用减少51.5%，成本降低36.4%，修复率不变。该方法有效降低开销并保持修复质量。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large language model agents can repair real repository issues, but they often spend large context budgets on whole-file reads, broad searches, and long terminal outputs where useful evidence is mixed with irrelevant code and logs. This paper presents ContextSniper, AntTrail's code-repair module for precision evidence selection in repository-level program repair, part of AntTrail's broader agent-memory engine. AntTrail is available at https://gitcode.com/datagallery/AntTrail. ContextSniper indexes code and action memory as three abstract levels, retrieves candidates with a hybrid ranker, filters long tool output through an intention-aware context gate, and returns compact evidence packets while keeping full source recoverable on demand. In a matched 50-task-per-condition comparison on SWE-bench Lite (same tasks, baseline vs.\\ ContextSniper), ContextSniper reduces total token use by 51.5% and logged cost by 36.4% for OpenClaw, and by 38.9% and 27.3% for Claude Code, with submitted-resolution rates essentially unchanged in both host-agent settings. In a separate five-task comparison, ContextSniper beats existing memory- and RAG-style integrations on token efficiency. These results suggest ContextSniper can substantially cut token and cost overhead for repository-level repair agents without a measurable loss in repair quality. The evaluation harness for this study is available at https://gitcode.com/lukchiwang/ContextSniper.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/07/2607.04564v1-large-load-demand-flexibility-as-virtual-storage",
+      "section": "deep",
+      "title_en": "Large-Load Demand Flexibility as Virtual Storage",
+      "authors": "Chandan Chaudhary, Mohammed Ben-Idris, Joydeep Mitra",
+      "date": "2026-07-06",
+      "pdf": "https://arxiv.org/pdf/2607.04564v1",
+      "score": "9.0",
+      "evidence": "超大规模数据中心的负载灵活性用于电力系统调度",
+      "tldr": "大型工业负载与电池储能的调度模型不兼容，导致联合灵活性价值无法发挥。本文提出虚拟存储等价性，将大负载的功率限值与能量窗口约束映射为虚拟储能设备模型。在IEEE RTS-GMLC测试中，虚拟存储实现了联合采购的主要节约，且与电池储能节约可叠加。该工作建立了负载与储能的统一调度框架，显著降低计算复杂度并揭示协同价值。",
+      "tags": "query:code-paper",
+      "abstract_en": "Water electrolysis plants, hyperscale data centers, and aluminum potlines represent gigawatts of demand-side flexibility for bulk power system balancing, operational planning, and procurement services. Such loads are scheduled through per-interval power bounds and horizon energy windows, whereas co-located battery energy storage systems (BESS) operate under state-of-charge dynamics. The two formulations share no common mathematical structure, and the joint procurement value of co-located loads and storage goes unrealized as a result. This paper establishes the connection between the two formulations through a virtual storage (VS) equivalence. Every feasible large-load trajectory under power-bound and energy-window constraints is a valid charge trajectory of a VS device that operates at unity accounting efficiency in the grid power balance. Production and service-level costs lie outside this abstraction and enter the dispatch through curtailment opportunity costs. For a portfolio co-located with a BESS, aggregation reduces the constraint count from O(NT) to O(T) and yields a co-dispatch price for both resources. Validation on the IEEE RTS-GMLC with three representative load classes shows that virtual storage delivers the dominant share of joint procurement savings. In the tested case, savings are additive because the two resources dispatch to non-overlapping intervals, and the curtailment shadow price tracks the peak-price band onset rather than the daily peak price.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/07/2607.03324v1-hierarchical-multi-agent-reinforcement-learning-for-carbon-aware-ai-data-centers-in-power-distribution-systems",
+      "section": "deep",
+      "title_en": "Hierarchical Multi-Agent Reinforcement Learning for Carbon-Aware AI Data Centers in Power Distribution Systems",
+      "authors": "Hyunsoo Lee, Panggah Prabawa, Dae-Hyun Choi, Joongheon Kim",
+      "date": "2026-07-03",
+      "pdf": "https://arxiv.org/pdf/2607.03324v1",
+      "score": "8.0",
+      "evidence": "碳感知AI数据中心、工作负载管理、配电系统",
+      "tldr": "AI数据中心能耗飙升带来巨大碳排放。本文提出分层碳感知多智能体强化学习框架，由全局工作负载管理智能体和多个本地AIDC智能体组成，采用多智能体Transformer训练。工作负载管理器根据节点碳强度空间分配作业，本地智能体通过时间迁移训练作业、空间分配GPU块及调整冷却温度实现经济低碳运行。在IEEE 33节点系统上验证了方法的有效性，显著降低碳排放并保障配电系统低碳运行。",
+      "tags": "query:code-paper",
+      "abstract_en": "Eco-friendly energy management for artificial intelligence data centers (AIDCs) is crucial because of the significant increase in energy consumption-induced carbon emissions from AIDCs resulting from the rapid expansion of AI applications. This paper proposes a hierarchical carbon-aware multi-agent reinforcement learning (CA-MARL) framework for robust and efficient operations of AIDCs under uncertainties while ensuring low-carbon operation of power distribution systems. The framework comprises a workload manager (WM) agent and multiple local AIDC agents trained using a multi-agent transformer method, corresponding to a global AIDC aggregator and a local AIDC operator, respectively. Leveraging AIDC operation data along with nodal carbon intensity (NCI) calculated from the carbon emission flow-integrated distribution system operator problem, the WM agent spatially allocates AI training and inference jobs among all AIDCs. Based on the jobs allocated from the WM agent and NCI information, each AIDC agent schedules economical and eco-friendly operations of the AIDC by performing the following tasks: i) temporal shifting of training jobs, ii) spatial allocation of training graphics processing unit (GPU) blocks and inference GPUs within the AIDC, and iii) control of the supply air temperature of the cooling system. The effectiveness of the proposed framework was assessed using an IEEE 33-node power distribution system.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

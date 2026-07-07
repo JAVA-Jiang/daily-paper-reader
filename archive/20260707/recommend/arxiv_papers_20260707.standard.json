@@ -1,0 +1,133 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-07T21:12:07.541393+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2607.01916v2",
+      "source": "arxiv",
+      "title": "ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair",
+      "abstract": "Large language model agents can repair real repository issues, but they often spend large context budgets on whole-file reads, broad searches, and long terminal outputs where useful evidence is mixed with irrelevant code and logs. This paper presents ContextSniper, AntTrail's code-repair module for precision evidence selection in repository-level program repair, part of AntTrail's broader agent-memory engine. AntTrail is available at https://gitcode.com/datagallery/AntTrail. ContextSniper indexes code and action memory as three abstract levels, retrieves candidates with a hybrid ranker, filters long tool output through an intention-aware context gate, and returns compact evidence packets while keeping full source recoverable on demand. In a matched 50-task-per-condition comparison on SWE-bench Lite (same tasks, baseline vs.\\ ContextSniper), ContextSniper reduces total token use by 51.5% and logged cost by 36.4% for OpenClaw, and by 38.9% and 27.3% for Claude Code, with submitted-resolution rates essentially unchanged in both host-agent settings. In a separate five-task comparison, ContextSniper beats existing memory- and RAG-style integrations on token efficiency. These results suggest ContextSniper can substantially cut token and cost overhead for repository-level repair agents without a measurable loss in repair quality. The evaluation harness for this study is available at https://gitcode.com/lukchiwang/ContextSniper.",
+      "authors": [
+        "Chiwang Luk",
+        "Matin Mohammad Najafi",
+        "Zhifeng Jia",
+        "Wei Yang",
+        "Xiuchang Li",
+        "Jinwei Zhu",
+        "Yang Ren",
+        "Lei Chen",
+        "Gao Cong"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-02T09:15:28+00:00",
+      "link": "https://arxiv.org/pdf/2607.01916v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "explicitly provides code repository (AntTrail at gitcode.com)",
+      "llm_evidence_cn": "明确提供代码仓库（AntTrail at gitcode.com）",
+      "llm_evidence": "明确提供代码仓库（AntTrail at gitcode.com）",
+      "canonical_evidence": "明确提供代码仓库（AntTrail at gitcode.com）",
+      "llm_tldr_en": "ContextSniper presents a token-efficient code memory module for repository-level program repair, with the full AntTrail codebase available at a public repository.",
+      "llm_tldr_cn": "本文提出ContextSniper，一种用于仓库级程序修复的令牌高效代码记忆模块，作为AntTrail智能体记忆引擎的一部分。该方法通过三层抽象索引、混合排序器和意图感知上下文门来精准选择证据，减少上下文消耗。实验表明其能有效提高修复效率。完整代码库已在https://gitcode.com/datagallery/AntTrail开源。",
+      "llm_tldr": "本文提出ContextSniper，一种用于仓库级程序修复的令牌高效代码记忆模块，作为AntTrail智能体记忆引擎的一部分。该方法通过三层抽象索引、混合排序器和意图感知上下文门来精准选择证据，减少上下文消耗。实验表明其能有效提高修复效率。完整代码库已在https://gitcode.com/datagallery/AntTrail开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.04564v1",
+      "source": "arxiv",
+      "title": "Large-Load Demand Flexibility as Virtual Storage",
+      "abstract": "Water electrolysis plants, hyperscale data centers, and aluminum potlines represent gigawatts of demand-side flexibility for bulk power system balancing, operational planning, and procurement services. Such loads are scheduled through per-interval power bounds and horizon energy windows, whereas co-located battery energy storage systems (BESS) operate under state-of-charge dynamics. The two formulations share no common mathematical structure, and the joint procurement value of co-located loads and storage goes unrealized as a result. This paper establishes the connection between the two formulations through a virtual storage (VS) equivalence. Every feasible large-load trajectory under power-bound and energy-window constraints is a valid charge trajectory of a VS device that operates at unity accounting efficiency in the grid power balance. Production and service-level costs lie outside this abstraction and enter the dispatch through curtailment opportunity costs. For a portfolio co-located with a BESS, aggregation reduces the constraint count from O(NT) to O(T) and yields a co-dispatch price for both resources. Validation on the IEEE RTS-GMLC with three representative load classes shows that virtual storage delivers the dominant share of joint procurement savings. In the tested case, savings are additive because the two resources dispatch to non-overlapping intervals, and the curtailment shadow price tracks the peak-price band onset rather than the daily peak price.",
+      "authors": [
+        "Chandan Chaudhary",
+        "Mohammed Ben-Idris",
+        "Joydeep Mitra"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-06T00:31:55+00:00",
+      "link": "https://arxiv.org/pdf/2607.04564v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "large-load demand flexibility in hyperscale data centers for power system scheduling",
+      "llm_evidence_cn": "超大规模数据中心的负载灵活性用于电力系统调度",
+      "llm_evidence": "超大规模数据中心的负载灵活性用于电力系统调度",
+      "canonical_evidence": "超大规模数据中心的负载灵活性用于电力系统调度",
+      "llm_tldr_en": "Establishes virtual storage equivalence for large-load scheduling in power grids and data centers, enabling joint procurement of flexibility and storage.",
+      "llm_tldr_cn": "该论文针对超大规模数据中心等大负荷的电力调度问题，提出虚拟存储等价方法，将负荷调度约束转化为虚拟电池模型，从而统一负荷与电池储能系统的数学表述。实验表明该方法可释放协同采购价值，对数据中心电能调度和电网灵活性具有直接指导意义，高度匹配用户关于电网、电力调度和数据中心的要求。",
+      "llm_tldr": "该论文针对超大规模数据中心等大负荷的电力调度问题，提出虚拟存储等价方法，将负荷调度约束转化为虚拟电池模型，从而统一负荷与电池储能系统的数学表述。实验表明该方法可释放协同采购价值，对数据中心电能调度和电网灵活性具有直接指导意义，高度匹配用户关于电网、电力调度和数据中心的要求。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.03324v1",
+      "source": "arxiv",
+      "title": "Hierarchical Multi-Agent Reinforcement Learning for Carbon-Aware AI Data Centers in Power Distribution Systems",
+      "abstract": "Eco-friendly energy management for artificial intelligence data centers (AIDCs) is crucial because of the significant increase in energy consumption-induced carbon emissions from AIDCs resulting from the rapid expansion of AI applications. This paper proposes a hierarchical carbon-aware multi-agent reinforcement learning (CA-MARL) framework for robust and efficient operations of AIDCs under uncertainties while ensuring low-carbon operation of power distribution systems. The framework comprises a workload manager (WM) agent and multiple local AIDC agents trained using a multi-agent transformer method, corresponding to a global AIDC aggregator and a local AIDC operator, respectively. Leveraging AIDC operation data along with nodal carbon intensity (NCI) calculated from the carbon emission flow-integrated distribution system operator problem, the WM agent spatially allocates AI training and inference jobs among all AIDCs. Based on the jobs allocated from the WM agent and NCI information, each AIDC agent schedules economical and eco-friendly operations of the AIDC by performing the following tasks: i) temporal shifting of training jobs, ii) spatial allocation of training graphics processing unit (GPU) blocks and inference GPUs within the AIDC, and iii) control of the supply air temperature of the cooling system. The effectiveness of the proposed framework was assessed using an IEEE 33-node power distribution system.",
+      "authors": [
+        "Hyunsoo Lee",
+        "Panggah Prabawa",
+        "Dae-Hyun Choi",
+        "Joongheon Kim"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.AI"
+      ],
+      "published": "2026-07-03T13:41:00+00:00",
+      "link": "https://arxiv.org/pdf/2607.03324v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "carbon-aware AI data centers, workload management, power distribution systems",
+      "llm_evidence_cn": "碳感知AI数据中心、工作负载管理、配电系统",
+      "llm_evidence": "碳感知AI数据中心、工作负载管理、配电系统",
+      "canonical_evidence": "碳感知AI数据中心、工作负载管理、配电系统",
+      "llm_tldr_en": "Proposes hierarchical multi-agent RL for carbon-aware operation of AI data centers in power distribution systems, achieving low-carbon goals under uncertainty.",
+      "llm_tldr_cn": "现有AI数据中心能耗巨大，导致碳排放问题。本文提出一种分层碳感知多智能体强化学习框架，包含工作负载管理器代理和多个本地AIDC代理，通过多智能体transformer方法训练，实现对AI数据中心在配电系统中鲁棒且高效的低碳运行。实验利用AIDC运行数据验证了框架的有效性，显著降低了碳排放。该工作为数据中心绿色调度提供了可扩展的解决方案。",
+      "llm_tldr": "现有AI数据中心能耗巨大，导致碳排放问题。本文提出一种分层碳感知多智能体强化学习框架，包含工作负载管理器代理和多个本地AIDC代理，通过多智能体transformer方法训练，实现对AI数据中心在配电系统中鲁棒且高效的低碳运行。实验利用AIDC运行数据验证了框架的有效性，显著降低了碳排放。该工作为数据中心绿色调度提供了可扩展的解决方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

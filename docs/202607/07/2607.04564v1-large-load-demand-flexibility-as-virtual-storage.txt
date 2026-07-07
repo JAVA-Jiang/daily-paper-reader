@@ -1,0 +1,395 @@
+Title: Large-Load Demand Flexibility as Virtual Storage
+
+URL Source: https://arxiv.org/pdf/2607.04564v1
+
+Published Time: Tue, 07 Jul 2026 02:38:53 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Large-Load Demand Flexibility as Virtual Storage 
+
+Chandan Chaudhary, Student Member, IEEE ,Mohammed Benidris, Senior Member, IEEE , and Joydeep Mitra, Fellow, IEEE 
+
+Electrical and Computer Engineering, Michigan State University, East Lansing, MI 48824, USA Emails: chaud152@msu.edu, benidris@msu.edu, and mitraj@msu.edu 
+
+Abstract —Water electrolysis plants, hyperscale data centers, and aluminum potlines represent gigawatts of demand-side flex-ibility for bulk power system balancing, operational planning, and procurement services. Such loads are scheduled through per-interval power bounds and horizon energy windows, whereas co-located battery energy storage systems (BESS) operate under state-of-charge dynamics. The two formulations share no com-mon mathematical structure, and the joint procurement value of co-located loads and storage goes unrealized as a result. This paper establishes the connection between the two formulations through a virtual storage (VS) equivalence. Every feasible large-load trajectory under power-bound and energy-window con-straints is a valid charge trajectory of a VS device that operates at unity accounting efficiency in the grid power balance. Production and service-level costs lie outside this abstraction and enter the dispatch through curtailment opportunity costs. For a portfolio co-located with a BESS, aggregation reduces the constraint count from O(N T ) to O(T ) and yields a co-dispatch price for both resources. Validation on the IEEE RTS-GMLC with three representative load classes shows that virtual storage delivers the dominant share of joint procurement savings. In the tested case, savings are additive because the two resources dispatch to non-overlapping intervals, and the curtailment shadow price tracks the peak-price band onset rather than the daily peak price. 
+
+Index Terms —demand flexibility, energy storage, large loads, virtual storage, co-dispatch, operational planning, RTS-GMLC 
+
+I. I NTRODUCTION 
+
+The growth of distributed energy resources (DER) and the changing role of dispatchable synchronous generation are reshaping the mix of resources used for balancing and ancil-lary services in bulk power systems [1], [2]. Battery energy storage systems (BESS) and large flexible industrial loads have emerged as the two principal responses to the resulting adequacy and flexibility gap. However, these resources are scheduled through structurally different formulations. Large flexible loads are managed through per-interval power bounds and horizon energy windows within day-ahead market-clearing and resource-adequacy models, while BESS are operated through state-of-charge dynamics [3]. The two formulations are incompatible and do not admit a unified dispatch, so significant system value goes unrealized. The joint operation of BESS and large flexible loads, particularly at the transmission level, remains an open problem. Research on grid-scale storage has concentrated on opti-mizing charge and discharge decisions against uncertain DER output. On the demand side, flexibility models for residen-tial, commercial, and industrial loads have been surveyed in [4]. The aggregate flexibility of thermostatically controlled loads can be represented as a convex polytope in power-time space [5], and this result extends to a polymatroid characterization for large populations [6]. Flexibility envelopes have also been proposed as a planning tool that integrates supply-side and demand-side contributions [7]. However, none of these works establishes a formal equivalence between large-load curtailment trajectories and storage charge trajectories, nor do they provide a unified formulation to dispatch flexible loads jointly with co-located BESS. Large industrial and commercial loads occupy a position in this landscape that neither strand of prior literature addresses. Water electrolysis plants adjust power within seconds. Adaily hydrogen production target sets their minimum energy floor [8], [9]. Hyperscale data centers can shed 5–10% of rated load within 15 minutes. The actual curtailment depth depends on workload type and service-level constraints [10], [11]. Aluminum potlines have provided balancing services for decades, and bidding strategies for energy and reserve auctions are well established [12]. What these loads share, and what prior work has not formalized, is a curtailment cycle that structurally mirrors the charging phase of a BESS. At each interval, energy is withheld from the industrial process and the cumulative flexibility budget decreases monotonically with no energy-conversion loss. Large-load growth has well-documented resource adequacy consequences. Spatial correlation among large loads such as AI data centers inflates aggregate load variance, contracts planning margins, and amplifies tail risk nonlinearly [13]– [15]. Large loads with significant flexibility must therefore be dispatched jointly with co-located storage to extract their full grid value. The mathematical formulation to achieve this in a unified form does not yet exist. The practical consequences of this structural gap take two forms. First, planning and scheduling models that co-locate large loads with BESS cannot form a unified linear program without a mathematical bridge between the two formula-tions [16]. Second, market mechanisms that clear load flexibil-ity and storage through sequential, resource-specific processes assign independent shadow prices to each resource class. This sequential structure prevents joint intertemporal optimization and may create incentives for strategic capacity withholding by storage operators [17]–[19]. The joint formulation proposed in this paper removes this incentive in principle, though formal analysis of strategic behavior is left for future work. This paper establishes the mathematical connection that enables coordinated operation of large flexible loads and co-located BESS in day-ahead scheduling and planning contexts. The main contributions are as follows. 1) The curtailment feasibility set of any large flexible load with a positive process floor, a rated power ceiling, and a horizon energy window is identical to the charge-trajectory set of a virtual storage (VS) device with pa-rameters derived from the load’s physical bounds. Unlike a BESS, VS is a charge-only construct. 2) For a portfolio of N large loads co-located with a BESS, a Minkowski-sum aggregate representation reduces the load-side constraint count from O(N T ) to O(T ), inde-
+
+> arXiv:2607.04564v1 [eess.SY] 6 Jul 2026
+
+pendent of portfolio size. A single linear program jointly optimizes VS and BESS dispatch, and its optimality conditions yield a co-dispatch price for both resources. 3) The method is evaluated on the IEEE RTS-GMLC [20] with three large-load classes. Procurement savings, effi-ciency advantage, and constraint reduction are quantified relative to sequential dispatch. The remainder of this paper is organized as follows. Sec-tion II defines the large-load scheduling structure and co-located BESS model. Section III establishes the VS equiv-alence, portfolio aggregation result, and joint co-dispatch formulation. Section IV presents the numerical evaluation on the IEEE RTS-GMLC. Section V concludes the paper. II. L ARGE LOAD FLEXIBILITY AND MODELING 
+
+Large flexible loads share a common scheduling structure in which power is bounded between a strictly positive process floor and a rated ceiling, with a horizon energy window as the sole intertemporal coupling. This section formalizes that structure. 
+
+A. Physical Structure of Large Flexible Loads 
+
+Three features distinguish large flexible loads from classical demand response. First, power must remain above a strictly positive process floor. The industrial or computational process cannot halt without physical damage or service failure. Sec-ond, total energy over the horizon must satisfy a minimum throughput requirement tied to the facility’s production com-mitment. Third, consumption is freely adjustable within the admissible power range. The horizon energy requirement is the sole intertemporal coupling. This assumption isolates the common structure needed for the VS mapping established in the methodology section. 
+
+B. Power Bounds and Energy Window 
+
+Let the planning horizon consist of T intervals given by 
+
+T = {1, . . . , T }, each of duration ∆t hours. The power consumption of a large flexible load at interval t is pt in megawatts. At every interval, the load must operate between its process floor p > 0 and its rated power ¯p:
+
+p ≤ pt ≤ ¯p, ∀ t ∈ T . (1) 
+
+p is the minimum stable production load for an elec-trolyzer [8], [21], [22], the thermal-balance floor for an alu-minum potline [12], and the service-availability floor for a data center [10]. Over the full horizon, the total energy consumed must satisfy the energy window constraint 
+
+Emin ≤
+
+> T
+
+X
+
+> t=1
+
+pt ∆t ≤ Emax , (2) where Emin is the minimum throughput requirement and Emax 
+
+is an upper consumption bound. The energy window is feasible if and only if 
+
+Emin ≤ T ¯p ∆t, Emax ≥ T p ∆t, Emin ≤ Emax .
+
+(3) Throughout, T p ∆t ≤ Emin , so the throughput floor ex-ceeds the minimum achievable consumption and the lower energy bound is nonredundant. Emin translates a production target into an energy equivalent and Emax is a contractual consumption ceiling [11], [21]. The constraint in (2) is the only coupling across intervals in the base model. The load feasibility set is 
+
+FL =  p ∈ RT : (1) and (2) hold . (4) 
+
+C. Deviation Variable and Curtailment Energy Bounds 
+
+The operator-relevant quantity is the deviation from rated consumption. With the reference set at rated power ¯p at every interval, the curtailment at interval t is 
+
+δt = ¯ p − pt ≥ 0. (5) In the nodal active-power balance, a verified load reduction of 
+
+δt MW is equivalent to an injection of δt MW at the same bus. The flexibility depth ∆P = ¯ p − p gives 0 ≤ δt ≤ ∆P at every interval. Substituting pt = ¯ p−δt into (2) converts the energy window into a curtailment energy bound: 
+
+D ≤
+
+> T
+
+X
+
+> t=1
+
+δt ∆t ≤ ¯D, (6) where the curtailment energy bounds are 
+
+¯D = T ¯p∆t − Emin , (7) 
+
+D = max 0, T ¯p∆t − Emax . (8) 
+
+¯D is the maximum total curtailment without violating the throughput commitment. D ≥ 0 is the minimum curtailment when the load cannot operate at rated power for the full horizon. The deviation feasibility set is 
+
+Fδ =  δ ∈ RT : 0 ≤ δt ≤ ∆P ∀t, D ≤ 1⊤δ ∆t ≤ ¯D .
+
+(9) From (1) and (2), the mapping δt = ¯ p − pt is one-to-one between FL and Fδ . Every feasible load trajectory corre-sponds to exactly one curtailment trajectory, and vice versa. The base model captures pure curtailment. The variable δt
+
+represents a reduction in consumption below rated draw, not a shift to later intervals. The lower bound Emin enforces a minimum throughput, so any curtailed energy must still be consumed before the horizon ends. For loads where the timing of recovery matters, the technology-specific extensions apply. 
+
+D. Battery Energy Storage System 
+
+A co-located BESS is characterized by charge power utc,discharge power utd, and state of charge et MWh at the end of interval t. The state of charge evolves as 
+
+et = et−1 + ηc∆t u tc − ∆tηd utd, (10) where ηc, η d ∈ (0 , 1] are the charge and discharge efficiencies, with ηcηd < 1 assumed throughout. The physical limits are 
+
+0 ≤ utc ≤ ¯u, 0 ≤ utd ≤ ¯u, ∀ t ∈ T , (11) 
+
+e ≤ et ≤ ¯e, ∀ t = 0 , . . . , T, e0 = eT = e0, (12) where ¯u is the inverter power rating, [e, ¯e] is the usable SOC window, and e0 is the initial and terminal state of charge. E. Technology-Specific Extensions 
+
+The base model in (1)–(9) captures the dominant intertem-poral coupling for large flexible loads. Three technology-specific constraints extend this base when fidelity requires it. 
+
+Electrolyzers fit the base model well. Power adjusts within seconds, and the daily hydrogen production target maps di-rectly to Emin . The main extension is a hot-standby mode that consumes approximately 2% of rated power with no hydrogen production. The energy window then applies only to production-mode intervals [21]. 
+
+Data centers fit the base model under delay-tolerant work-loads and within cooling and service-level bounds. Load shedding of 5–10% within 15 minutes is not universal. This flexibility depth depends on workload type, service-level agreements, and cooling headroom [10], [11]. Coincident-peak and demand charges are captured through an interval power cap rather than through Emax .
+
+Aluminum potlines provide an approximate fit. The rolling thermal-energy constraint, which requires sufficient energy over every successive τl-hour sub-window, is stricter than the single-horizon window in (2) [12]. The base model is a conservative lower bound on potline flexibility. The case study uses the base model for the potline and treats the rolling constraint as a direction for future refinement. III. V IRTUAL STORAGE EQUIVALENCE AND CO-D ISPATCH 
+
+A. The Virtual Storage Device 
+
+The curtailment trajectory δ has a property that is struc-turally fundamental: since δt ≥ 0 at every interval, the cumulative curtailment energy from the start of the horizon through interval t,
+
+st =
+
+> t
+
+X 
+
+> τ=1
+
+δτ ∆t, (13) is nondecreasing. It starts at zero, rises as curtailments accu-mulate, and ends at the total curtailment energy sT ∈ [D, ¯D].This is the trajectory of a charge-only accounting device. Curtailment draws down the load’s finite flexibility budget monotonically, with no discharge. Because the sequence is nondecreasing, the terminal value sT ≤ ¯D implies every intermediate value also satisfies st ≤ ¯D, so intermediate ca-pacity bounds are automatically satisfied. The virtual storage (VS) device is defined by this charge-only trajectory, with initial state s0 = 0 , power rating ∆P , capacity CVS = ¯D,minimum terminal energy D, and unity accounting efficiency. Its feasibility set is 
+
+FVS =
+
+
+
+(δ, s)
+
+st =
+
+> t
+
+X 
+
+> τ=1
+
+δτ ∆t, ∀ t ∈ T ,
+
+0 ≤ δt ≤ ∆P, ∀ t ∈ T ,
+
+0 ≤ st ≤ ¯D, ∀ t ∈ T ,D ≤ sT ≤ ¯D
+
+
+
+. (14) 
+
+Virtual Storage Equivalence: In the base scheduling abstrac-tion, the projection of FVS onto the deviation coordinates co-incides exactly with Fδ . The set of all curtailment trajectories consistent with the base model is identical to the set of charge trajectories of the VS device. The argument follows directly from the monotonicity ob-servation above. Any δ ∈ F δ produces a nondecreasing s
+
+satisfying st ≤ sT ≤ ¯D and sT ∈ [D, ¯D], so (δ, s) ∈ F VS .Conversely, any (δ, s) ∈ F VS has sT = 1⊤δ ∆t ∈ [D, ¯D]
+
+and power bounds satisfied by definition, so δ ∈ F δ . The equivalence is exact within the base model and requires no approximation. The unity efficiency is an accounting convention of the base model, not a statement about physical recovery dynamics or economic cost. In the grid power balance, one megawatt of verified load reduction reduces net demand by exactly one megawatt. No electrochemical conversion step is involved. This does not mean curtailment is free. Production penalties, SLA violations, thermal recovery requirements, and rebound effects are real costs that lie outside the base abstraction. These effects are representable through calibrated energy-window pa-rameters, curtailment opportunity costs, or technology-specific dynamic constraints. By contrast, physical storage converts electrical energy through a two-way electrochemical cycle with round-trip losses. VS is a charge-only budget that cannot inject energy back into the load process. 
+
+B. Aggregate Flexibility for a Portfolio of Loads 
+
+For a portfolio of N large flexible loads with individual deviation sets Fδ,i parametrized by (∆ Pi, D i, ¯Di), the aggre-gate flexibility is the Minkowski sum Fagg = LNi=1 Fδ,i . The additive aggregate parameters 
+
+∆Pagg = X
+
+> i
+
+∆Pi, Dagg = X
+
+> i
+
+Di, ¯Dagg = X
+
+> i
+
+¯Di
+
+(15) define the outer set Fouter = {δ : 0 ≤ δt ≤ ∆Pagg , D agg ≤
+
+1⊤δ ∆t ≤ ¯Dagg }.
+
+Aggregation: Fagg ⊆ F outer . If the loads satisfy the propor-tionality condition Di/(∆ Pi∆t) = α and ¯Di/(∆ Pi∆t) = β
+
+for all i, then Fagg = Fouter . Under this sufficient condition, the proportional allocation δti = (∆ Pi/∆Pagg ) δt 
+
+> agg
+
+is individ-ually feasible for every load i.Aggregation is exact when all loads share the same normal-ized flexibility profile. Each load allocates the same fraction of its flexibility to minimum throughput and maximum cur-tailment. When profiles differ, the outer set overstates what the portfolio can simultaneously deliver, and Fouter is a strict outer approximation. Any aggregate dispatch must then pass a disaggregation feasibility check before individual curtailment targets are assigned. When disaggregation is infeasible, the operator may solve a second-stage disaggregation-constrained LP to find the nearest feasible individual schedule, or may restrict the aggregate bounds to the tighter inner approximation before scheduling. 
+
+C. Joint Co-Dispatch Formulation 
+
+With the aggregate VS representation in place, the joint scheduling problem for N large loads and one co-located BESS over horizon T is formulated as a single linear program. Let ct denote the locational marginal price and qt ≥ 0 the curtailment opportunity cost at interval t. The total grid pro-curement is the rated load ¯ptot = P 
+
+> i
+
+¯pi reduced by aggregate curtailment and BESS net injection. The cost-minimization problem is 
+
+min     
+
+> δagg ,uc,ud,e
+> T
+
+X
+
+> t=1
+
+h
+
+ct ¯ptot −δt 
+
+> agg
+
+−utd +utc
+
++qtδt
+
+> agg
+
+i
+
+∆t, (16) subject to the aggregate load constraint δagg ∈ F outer , which by (15) requires 
+
+0 ≤ δt 
+
+> agg
+
+≤ ∆Pagg ∀t, Dagg ≤ 1⊤δagg ∆t ≤ ¯Dagg ,
+
+(17) and the BESS constraints (10)–(12). Curtailment and BESS discharge both reduce grid procurement, but their dispatch priority depends on the curtailment opportunity cost, BESS round-trip losses, and binding power or energy constraints. When qt = 0 and prices are positive, VS is preferred over BESS at the same interval in identical conditions, since it carries no conversion penalty. 
+
+Constraint Reduction: Replacing the disaggregated load constraints with the aggregate outer representation reduces the load-flexibility block from 2N T + 2 N constraints to 2T + 2 .This reduction is exact under the proportionality condition, and otherwise yields a tractable outer approximation requiring ex-post disaggregation validation. Each load i contributes 2T interval power-bound and two energy-window constraints, giving 2N T +2 N = O(N T ) load-side constraints. The aggregate outer set (17) replaces these with 2T + 2 = O(T ) constraints. The N -dependence disap-pears after the one-time summation in (15). This reduction applies to the load-side block. The BESS constraints (10)– (12) are O(T ) independently, so the co-dispatch LP is O(T )
+
+overall. The formulation in (16) is a joint optimization. The flexible loads and BESS share a single objective function, and all constraints are enforced simultaneously. This contrasts with sequential dispatch, in which load-only and BESS-only prob-lems are each solved independently against fixed exogenous prices. The dual variables of (17) give the marginal value of the portfolio curtailment budget. These dual values are computed jointly with the BESS intertemporal constraints and yield a single value-based price for both resources [17], [18]. Under this formulation, curtailment would be compensated at λ ¯D ,the shadow price of the aggregate energy budget, analogous to a capacity settlement price. Full market mechanism design is outside the scope of this paper. IV. C ASE STUDY 
+
+This section evaluates the VS co-dispatch method on the IEEE RTS-GMLC test system. Procurement cost savings, efficiency advantage, and constraint reduction are quantified across four scheduling scenarios over a 14-day summer study period. LMPs are treated as exogenous day-ahead price sig-nals. Dispatch quantities do not feed back into market-clearing, consistent with the price-taking assumption. 
+
+A. Test System and Load Placement 
+
+The IEEE RTS-GMLC [20] is a 73-bus, 3-area synthetic transmission system with 158 generating units, 120 branches, 8,550 MW of dispatchable conventional and hydroelectric installed capacity, and 5,224 MW of DER capacity spanning wind, utility-scale solar PV, distributed rooftop PV, and con-centrating solar power. Bus locations are placed nominally in the southwestern United States and are not intended to repre-sent actual infrastructure [20]. Day-ahead locational marginal prices are drawn from the PLEXOS allTX production-cost solution distributed with the dataset. A PEM electrolyzer rated at 200 MW is placed at bus 118 (Area 1), a hyperscale data center rated at 250 MW at bus 218 (Area 2), and an aluminum potline rated at 300 MW at bus 318 (Area 3), each at its area’s highest-load bus (333 MW base peak). This placement co-locates each load with adequate transmission capacity. The inter-area portfolio fails the proportionality condition by design, which activates the outer-approximation disaggregation path described in the methodology section. A BESS rated at 200 MW / 400 MWh is placed at bus 118. This single-site configuration is repre-sentative of co-located large-load and storage deployments. The BESS parameters are ηc = ηd = 0 .95 (ηrt = 0 .9025 )and initial and terminal SOC e0 = 200 MWh. Extending to one BESS per load bus is a direction for future work. The scheduling horizon is T = 24 hourly intervals with opportunity cost qt = 0. Table I gives the virtual storage parameters derived via (7)–(8). Electrolyzer parameters follow [8], [21], [22]. Data-center flexibility depth follows [10], [11]. Potline parameters follow [12]. The numerical values represent design-point choices within ranges reported in these sources.                               
+
+> TABLE I VS P ARAMETERS (24-H OUR HORIZON )Load Bus ¯p∆PD¯D
+> (MW) (MW) (MWh) (MWh) PEM Electrolyzer 118 200 180 240 1,200 Data Center 218 250 150 600 1,800 Aluminum Potline 318 300 45 360 720
+> Aggregate —750 375 1,200 3,720
+
+All three linear programs, including load-only ( T vari-ables, 2 inequality constraints), BESS-only ( 3T variables, 
+
+T + 1 equality constraints), and co-dispatch ( 4T variables, 2 inequality and T + 1 equality constraints), are solved with HiGHS v1.7 [23] via scipy.optimize.linprog 
+
+(SciPy 1.13, method ‘highs’ ) in Python 3.12. All LP in-stances terminate with the dual simplex in under 25 iterations, with negligible wall-clock time ( < 1 ms per LP on a standard workstation). 
+
+B. LMP Structure and Study Period 
+
+The portfolio LMP is ct = (200 λt 
+
+> 118
+
++ 250 λt 
+
+> 218
+
++300 λt
+
+> 318
+
+)/750 . The 14-day study window (July 5–18, 2020) covers 336 hours with prices ranging from $0 to $111.59/MWh. Approximately 15% of hours carry zero LMPs due to midday solar oversupply. Peak prices exceed $80/MWh on five days in the window and reach $111.59/MWh on July 14 and 16. The reference day for the single-day analysis is July 5, a standard summer day with a three-hour zero-price solar window (hours 6–8) and an evening peak of $31.73/MWh at hour 19. This day is representative of the price structure that drives VS value throughout the study window. 
+
+C. Dispatch Analysis: July 5 Reference Day 
+
+Table II reports costs and procurement cost savings for the four scenarios. The load-only and BESS-only scenarios 0 4 8 12 16 20 
+
+> Hour of day
+> 400
+> 500
+> 600
+> 700
+> Net load (MW)
+> (b) Load-Only (VS only)
+> Rated load
+> Net load (MW)
+> LMP ($/MWh)
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> LMP ($/MWh)
+
+(a) Load-Only (VS only) 0 4 8 12 16 20  
+
+> Hour of day
+> 600
+> 700
+> 800
+> 900
+> Net load (MW)
+> (c) BESS-Only
+> Rated load
+> Net load (MW)
+> BESS discharge
+> BESS charge
+> LMP ($/MWh)
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> LMP ($/MWh)
+
+(b) BESS-Only 0 4 8 12 16 20  
+
+> Hour of day
+> 200
+> 400
+> 600
+> 800
+> Net load (MW)
+> (d) Co-Dispatch (VS+BESS)
+> Rated load
+> Net load (MW)
+> BESS discharge
+> BESS charge
+> LMP ($/MWh)
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> LMP ($/MWh)
+
+(c) Co-Dispatch (VS + BESS) Fig. 1. Net load (MW) and LMP ($/MWh) for three scheduling scenarios, July 5. BESS charge/discharge intervals are shaded in (b) and (c). 
+
+constitute sequential dispatch. Each resource is optimized independently with fixed exogenous prices. The co-dispatch scenario jointly optimizes both resources in a single LP. The load-only and co-dispatch scenarios operate on the aggregate VS outer representation. Individual load setpoints are not computed because the disaggregation LP is infeasible for the selected parameters. Fig. 1 shows the hourly net load trajectories overlaid on the LMP. Load-Only concentrates all 3,720 MWh of curtailment over the ten peak-price hours (13–22) and reduces net load by up to 375 MW during the evening ramp. BESS-Only charges at zero-price hours 6– 8 and discharges 180–200 MW at the peak. Co-Dispatch superimposes both resources. Curtailment and BESS discharge coincide at hours 18–19 to achieve the maximum procurement reduction. 
+
+TABLE II SCHEDULING RESULTS , J ULY 5, 2020 (B ASELINE : $376,650/ DAY )Scenario Daily Cost ($) Savings ($) Savings (%) Baseline 376,650 — —Load-Only (VS) 275,473 101,177 26.86 BESS-Only 365,252 11,398 3.03 Co-Dispatch 264,075 112,575 29.89 
+
+In the tested case, VS and BESS procurement cost savings are additive, as shown in Table II. The two assets serve non-overlapping price-interval roles. VS concentrates curtailment during peak-price hours while the BESS exploits the zero-to-peak spread, so neither crowds out the other in the LP. This additivity is not guaranteed in general. Nonzero curtailment cost, network constraints, or a different BESS size would alter the dispatch structure and could create resource competition. Three quantitative findings follow. First, co-dispatch achieves a 29.89% procurement cost reduction against 3.03% for BESS-Only. Flexible loads are the dominant value source under zero opportunity cost. Second, the VS efficiency ad-vantage is 362.7 MWh/day. This equals the (1 − ηrt ) round-trip loss on the full 3,720 MWh curtailment budget. Third, portfolio aggregation reduces the load-side block from 150 (O(N T )) to 50 ( O(T )) constraints, a factor of N = 3.Disaggregation is infeasible on July 5. These results assume zero curtailment opportunity cost; with nonzero cost, VS and BESS contributions would shift and the VS advantage would narrow. 
+
+D. 14-Day Study Summary 
+
+Fig. 2 shows daily procurement cost savings across the study period. Table III reports aggregate statistics. Co-dispatch procurement cost savings total $1,850,094 over 14 days against a baseline of $5,475,478, a mean reduction of 33.9%. On every day the LP exhausts the full 3,720 MWh curtailment budget, and the shadow price λ ¯D remains in the range $21– $26/MWh regardless of whether the daily peak price is $30 or $112/MWh. This stability reflects that λ ¯D tracks the curtailment-onset hour rather than the daily price peak. This range applies to the selected 14-day summer window. Stabil-ity across other seasons, load mixes, and price distributions remains to be studied. Disaggregation is infeasible on all 14 days. The outer approximation is therefore binding across the full study window. 
+
+TABLE III 14-D AY AGGREGATE RESULTS (J ULY 5–18, 2020) Metric Load-Only BESS-Only Co-Dispatch Total savings ($) 1,626,691 223,403 1,850,094 Mean daily savings (%) 29.84 4.06 33.90 Min / Max daily savings (%) 23.24 / 38.30 1.01 / 7.85 24.24 / 46.16 Efficiency advantage (MWh/day) – – 362.7 
+
+λ ¯D range ($/MWh) – – 21.12–26.32 Disaggregation feasible – N/A Never (14/14) 07-05 
+
+> 07-06
+> 07-07
+> 07-08
+> 07-09
+> 07-10
+> 07-11
+> 07-12
+> 07-13
+> 07-14
+> 07-15
+> 07-16
+> 07-17
+> 07-18
+> 0
+> 25
+> 50
+> 75
+> 100
+> 125
+> 150
+> 175
+> 200
+> Daily procurement cost
+> savings (K$/day)
+> Cost Savings by Scenario — All 14 Days
+> Load-Only (VS)
+> BESS-Only
+> Co-Dispatch
+
+Fig. 2. Daily procurement cost savings by scenario, July 5–18. 
+
+E. Discussion 
+
+Three structural implications follow from the case study. 
+
+The virtual storage budget is set by industrial production economics, not by grid investment. BESS capacity is a capital decision priced in $/kWh. A potline’s or electrolyzer’s flexi-bility budget is set by its production contract. The load must consume a minimum energy over the horizon regardless, so the room between the throughput floor and rated draw is flexibility the industrial process has already paid for. This is why the aggregate VS budget exceeds the 400 MWh BESS by nearly an order of magnitude. As green hydrogen and hyperscale compute expand the installed base, the VS resource base grows at no additional grid capital cost. This growth complements physical storage investment. 
+
+The shadow price of the curtailment budget is a candidate settlement signal. λ ¯D equals the LMP at the curtailment-onset hour, not the daily peak price. Because the VS exhausts its budget on every study day, λ ¯D reflects the systematic afternoon peak-band structure. A curtailment contract priced at λ ¯D would be self-triggering on any standard summer day. No spike forecast is required. This differs from a peak-price-indexed signal, which transfers spike-day risk to the load operator. The $21–$26/MWh band observed in the 14-day study window on days with peaks up to $111/MWh illustrates this property. Formal settlement mechanism design and broader empirical validation are outside the scope of this paper. 
+
+Disaggregation infeasibility is diagnostic information about portfolio composition, not a failure of the approach. The outer approximation Fouter is a strict superset of the true aggregate feasibility set Fagg precisely because the three loads have structurally dissimilar flexibility signatures. A portfolio in which all loads share the same normalized energy windows would satisfy the proportionality condition, collapse the outer approximation to an exact representation, and eliminate the disaggregation LP entirely. The case study therefore identifies a portfolio design criterion. Matching normalized flexibility signatures across constituent loads tightens the aggregate ap-proximation. This criterion is actionable, since electrolyzer and potline energy-window parameters are governed by production contracts that an operator can negotiate toward proportionality. Although the exogenous nodal LMPs reflect marginal con-gestion conditions from the underlying market solution, the present co-dispatch model does not feed VS and BESS deci-sions back into network flows. The reported savings therefore represent price-taking economic value rather than a network-constrained feasibility result. A network-constrained extension will embed the co-dispatch LP within a DC optimal power flow. V. C ONCLUSION 
+
+This paper has established that the curtailment feasibility set of any large flexible load under power-bound and energy-window constraints is identical to the charge-trajectory set of a VS device. This equivalence reduces joint large-load and BESS co-dispatch to a single LP with load-side constraints that scale with the horizon length independently of portfolio size. On the IEEE RTS-GMLC, co-dispatch outperformed BESS-alone dispatch on procurement cost. VS delivered the larger share of savings because it carries no round-trip conversion loss. The curtailment shadow price remained stable over the study period and tracked the peak-price band onset rather than the daily peak price. This property makes it a candidate signal for day-ahead curtailment settlement. VS capacity derives entirely from production commitments that industrial operators already hold, so no additional grid capital investment is required. These results assumed zero curtailment opportunity cost and exogenous LMPs. The savings therefore quantified price-taking economic value rather than endogenous network-constrained dispatch value. ACKNOWLEDGMENT 
+
+The authors acknowledge the support of the MSU Research Foundation. REFERENCES 
+
+[1] North American Electric Reliability Corporation (NERC), “Essential reliability services task force – measures framework report,” NERC, Tech. Rep., 2015. [2] NERC, “Fast frequency response concepts and bulk power system reliability needs,” NERC Inverter-Based Resource Performance Task Force, Tech. Rep., 2020. [3] A. Ulbig and G. Andersson, “Analyzing operational flexibility of electric power systems,” International Journal of Electrical Power & Energy Systems , vol. 72, pp. 155–164, 2015. [4] P. Siano, “Demand response and smart grids—A survey,” Renewable and Sustain-able Energy Reviews , vol. 30, pp. 461–478, 2014. [5] H. Hao, B. M. Sanandaji, K. Poolla, and T. L. Vincent, “Aggregate flexibility of thermostatically controlled loads,” IEEE Transactions on Power Systems , vol. 30, no. 1, pp. 189–198, 2014. [6] L. Zhao, W. Zhang, H. Hao, and K. Kalsi, “A geometric approach to aggregate flexibility modeling of thermostatically controlled loads,” IEEE Transactions on Power Systems , vol. 32, no. 6, pp. 4721–4731, 2017. [7] H. Nosair and F. Bouffard, “Flexibility envelopes for power system operational planning,” IEEE Transactions on Sustainable Energy , vol. 6, no. 3, pp. 800–809, 2015. [8] L. Allidières, A. Brisse, P. Millet, S. Valentin, and M. Zeller, “On the ability of PEM water electrolysers to provide power grid services,” International Journal of Hydrogen Energy , vol. 44, no. 20, pp. 9690–9700, 2019. [9] A. E. Samani, A. D’Amicis, J. D. M. De Kooning, D. Bozalakov, P. Silva, and L. Vandevelde, “Grid balancing with a large-scale electrolyser providing primary reserve,” IET Renewable Power Generation , vol. 14, no. 16, pp. 3070–3078, 2020. [10] A. Wierman, Z. Liu, I. Liu, and H. Mohsenian-Rad, “Opportunities and challenges for data center demand response,” in Proc. International Green Computing Con-ference (IGCC) , 2014, pp. 1–10. [11] Z. Liu, A. Wierman, Y. Chen, B. Razon, and N. Chen, “Data center demand response: Avoiding the coincident peak via workload shifting and local generation,” 
+
+Performance Evaluation , vol. 70, no. 10, pp. 770–791, 2013. [12] X. Zhang and G. Hug, “Bidding strategy in energy and spinning reserve markets for aluminum smelters’ demand response,” in Proc. IEEE Power & Energy Society Innovative Smart Grid Technologies (ISGT) , 2015, pp. 1–5. [13] C. Chaudhary, A. Abdelkader, M. Ben-Idris, and J. Mitra, “Resource adequacy risk in correlated large loads,” in 2026 19th International Conference on Probabilistic Methods Applied to Power Systems (PMAPS) , Salt Lake City, UT, USA, Sep. 2026. [14] C. Chaudhary, A. Abdelkader, Y. Pei, M. Benidris, and J. Mitra, “Spatial load correlation in AI data-center-dominated power systems,” in 2026 IEEE Power & Energy Society General Meeting (PES GM) , Montréal, QC, Canada, Jul. 2026. [15] C. Chaudhary, M. Murillo, M. Ben-Idris, J. Mitra, D. Pandit, and A. Bera, “Modal analysis of spatial load correlation in AI data center-dominated power systems,” in 2026 IEEE 8th International Conference on Smart Energy Systems and Technologies (SEST) , Ciudad Real, Spain, Sep. 2026. [16] A. Papavasiliou and S. S. Oren, “Large-scale integration of deferrable demand and renewable energy sources,” IEEE Transactions on Power Systems , vol. 29, no. 1, pp. 489–499, 2014. [17] F. Rahimi and A. Ipakchi, “Using a transactive energy framework: Providing grid services from smart buildings,” IEEE Electrification Magazine , vol. 4, no. 4, pp. 23–29, 2016. [18] K. Kok and S. Widergren, “A society of devices: Integrating intelligent distributed resources with transactive energy,” IEEE Power and Energy Magazine , vol. 14, no. 3, pp. 34–45, 2016. [19] Y. Ye, D. Papadaskalopoulos, R. Moreira, and G. Strbac, “Strategic capacity withholding by energy storage in electricity markets,” in 2017 IEEE Manchester PowerTech , 2017, pp. 1–6. [20] C. Barrows, A. Bloom, A. Ehlen, J. Ikäheimo, J. Jorgenson, D. Krishnamurthy, J. Lau, B. McBennett, M. O’Connell, E. Preston, A. Staid, G. Stephen, and J.-P. Watson, “The IEEE reliability test system: A proposed 2019 update,” IEEE Transactions on Power Systems , vol. 34, no. 3, pp. 1984–1993, 2019. [21] G. Matute, J. M. Yusta, and L. C. Correas, “Techno-economic modelling of water electrolysers in the range of several MW to provide grid services while generating hydrogen for different applications: A case study in Spain applied to mobility with FCEVs,” International Journal of Hydrogen Energy , vol. 44, no. 33, pp. 17 431– 17 442, 2019. [22] S. Niroula, C. Chaudhary, A. Subedi, and B. S. Thapa, “Parametric modelling and optimization of alkaline electrolyzer for the production of green hydrogen,” IOP Conference Series: Materials Science and Engineering , vol. 1279, p. 012005, 2023. [23] Q. Huangfu and J. A. J. Hall, “Parallelizing the dual revised simplex method,” 
+
+Mathematical Programming Computation , vol. 10, pp. 119–142, 2018.

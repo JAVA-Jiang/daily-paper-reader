@@ -6,26 +6,30 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-06
-- 运行时间：2026-07-06 21:35:03 UTC
+- 最新运行日期：2026-07-07
+- 运行时间：2026-07-07 21:14:00 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：0
-- 速读区：1
+- 本次总论文数：3
+- 精读区：3
+- 速读区：0
 
 ### 今日简报（AI）
-1) 今日速读了一篇使用多智能体系统为大型层次化代码库生成摘要的论文（评分6.0）。  
-2) 重点方向：多智能体协作解决代码摘要，但当前效果仅为中等。  
-3) 建议关注该方法的后续优化，或对比其他代码摘要技术。
-- 详情：[/202607/06/README](/202607/06/README)
+今日精读两篇高分论文：ContextSniper 针对仓库级代码修复提出 token 高效记忆方案，Large-Load Demand Flexibility 揭示大负荷需求灵活性可充当虚拟储能。最值得关注的方向是代码修复的效率提升与负荷灵活性在能源系统中的应用。建议普通读者通过这两篇论文了解如何用 token 压缩优化代码补全、以及利用负荷侧资源模拟储能的经济潜力。
+- 详情：[/202607/07/README](/202607/07/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair](/202607/07/2607.01916v2-contextsniper-anttrails-token-efficient-code-memory-for-repository-level-program-repair)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：明确提供代码仓库（AntTrail at gitcode.com）
+2. [Large-Load Demand Flexibility as Virtual Storage](/202607/07/2607.04564v1-large-load-demand-flexibility-as-virtual-storage)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：超大规模数据中心的负载灵活性用于电力系统调度
+3. [Hierarchical Multi-Agent Reinforcement Learning for Carbon-Aware AI Data Centers in Power Distribution Systems](/202607/07/2607.03324v1-hierarchical-multi-agent-reinforcement-learning-for-carbon-aware-ai-data-centers-in-power-distribution-systems)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：碳感知AI数据中心、工作负载管理、配电系统
 
 ### 速读区论文标签
-1. [Agent4cs: A Multi-agent System for Code Summarization in Large Hierarchical Codebases](/202607/06/2607.01425v1-agent4cs-a-multi-agent-system-for-code-summarization-in-large-hierarchical-codebases)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：多智能体代码摘要框架可能提供源代码
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
