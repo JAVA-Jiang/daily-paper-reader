@@ -6,30 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-07
-- 运行时间：2026-07-07 21:14:00 UTC
+- 最新运行日期：2026-07-08
+- 运行时间：2026-07-08 21:08:14 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：3
-- 速读区：0
+- 本次总论文数：4
+- 精读区：2
+- 速读区：2
 
 ### 今日简报（AI）
-今日精读两篇高分论文：ContextSniper 针对仓库级代码修复提出 token 高效记忆方案，Large-Load Demand Flexibility 揭示大负荷需求灵活性可充当虚拟储能。最值得关注的方向是代码修复的效率提升与负荷灵活性在能源系统中的应用。建议普通读者通过这两篇论文了解如何用 token 压缩优化代码补全、以及利用负荷侧资源模拟储能的经济潜力。
-- 详情：[/202607/07/README](/202607/07/README)
+今日精选2篇8分论文，涉及自动化验证工具Spot教学与信息安全数据流分析框架xDECAF。  
+最值得关注方向：Spot的LTL/ω-automata教程和xDECAF的扩展性设计，兼顾理论教学与实用安全分析。  
+建议优先阅读这两篇精读论文，掌握其核心方法，可提升自动化验证与安全建模能力。
+- 详情：[/202607/08/README](/202607/08/README)
 
 ### 精读区论文标签
-1. [ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair](/202607/07/2607.01916v2-contextsniper-anttrails-token-efficient-code-memory-for-repository-level-program-repair)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：明确提供代码仓库（AntTrail at gitcode.com）
-2. [Large-Load Demand Flexibility as Virtual Storage](/202607/07/2607.04564v1-large-load-demand-flexibility-as-virtual-storage)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：超大规模数据中心的负载灵活性用于电力系统调度
-3. [Hierarchical Multi-Agent Reinforcement Learning for Carbon-Aware AI Data Centers in Power Distribution Systems](/202607/07/2607.03324v1-hierarchical-multi-agent-reinforcement-learning-for-carbon-aware-ai-data-centers-in-power-distribution-systems)  
+1. [Teaching LTL and ω-automata with Spot](/202607/08/2607.05907v1-teaching-ltl-and--automata-with-spot)  
    标签：评分：8.0/10、query:code-paper
-   evidence：碳感知AI数据中心、工作负载管理、配电系统
+   evidence：开源库，提供Python接口和可视化
+2. [xDECAF: An Extensible Data Flow Diagram Analysis Framework for Information Security](/202607/08/2607.05913v1-xdecaf-an-extensible-data-flow-diagram-analysis-framework-for-information-security)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：开源工具和数据集，用于数据流分析
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [RuBench: A Repository-Level Agentic Coding Benchmark with Natively Authored Russian Task Specifications](/202607/08/2607.06411v1-rubench-a-repository-level-agentic-coding-benchmark-with-natively-authored-russian-task-specifications)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提供含源代码的基准测试
+2. [Hierarchical Multi-Agent Reinforcement Learning for Carbon-Aware AI Data Centers in Power Distribution Systems](/202607/08/2607.03324v2-hierarchical-multi-agent-reinforcement-learning-for-carbon-aware-ai-data-centers-in-power-distribution-systems)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：数据中心任务调度，碳感知多智能体强化学习
 
 
 <div class="dpr-home-promo-card">

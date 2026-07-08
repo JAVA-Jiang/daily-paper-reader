@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-08",
+  "date": "2026-07-08",
+  "generated_at": "2026-07-08T21:08:21",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/08/2607.05907v1-teaching-ltl-and--automata-with-spot",
+      "section": "deep",
+      "title_en": "Teaching LTL and ω-automata with Spot",
+      "authors": "Alexandre Duret-Lutz",
+      "date": "2026-07-07",
+      "pdf": "https://arxiv.org/pdf/2607.05907v1",
+      "score": "8.0",
+      "evidence": "开源库，提供Python接口和可视化",
+      "tldr": "线性时序逻辑(LTL)和ω-自动机是形式化验证的核心概念，但学生难以直观理解公式与自动机之间的语义联系。Spot库虽常用于研究后端，但其丰富的可视化能力和Python接口使其成为理想的教学平台。通过交互式演示和可视化，学生可以直接观察LTL公式对应的自动机结构，从而加深对时序逻辑语义的理解。该工作展示了Spot在教学中的潜力，为形式化方法课程提供了有效工具。",
+      "tags": "query:code-paper",
+      "abstract_en": "Spot is a mature, open-source C++/Python library and toolset for Linear Temporal Logic (LTL) and $ω$-automata manipulation. While Spot is routinely used as a research and verification back-end, its rich visualization capabilities and Python interface also make it an attractive platform for \\emph{teaching} the connections between temporal logic formulas and the $ω$-automata that give them their semantics.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/08/2607.05913v1-xdecaf-an-extensible-data-flow-diagram-analysis-framework-for-information-security",
+      "section": "deep",
+      "title_en": "xDECAF: An Extensible Data Flow Diagram Analysis Framework for Information Security",
+      "authors": "Benjamin Arp, Felix Schwickerath, Alexander Vogt, Tom Hüller, Nils Niehues, Nicolas Boltz",
+      "date": "2026-07-07",
+      "pdf": "https://arxiv.org/pdf/2607.05913v1",
+      "score": "8.0",
+      "evidence": "开源工具和数据集，用于数据流分析",
+      "tldr": "针对信息安全架构级数据流分析缺乏可扩展工具的现状，xDECAF提出了一个结合扩展数据流图元模型（带标签的流和节点）与领域特定约束语言的框架。它提供了基于浏览器的编辑器与分析引擎，支持灵活的流操作和约束定义。论文发布了包含20多个示例模型及文档化约束的公开数据集，已被多个研究项目采用。该工具显著降低了数据流安全分析的门槛，促进了社区协作与复用。",
+      "tags": "query:code-paper",
+      "abstract_en": "xDECAF is an extensible tool for architecture-based data flow analysis with a focus on information security. It combines an extended data flow diagram metamodel of labeled flows and nodes, a domain-specific constraint language with different flow operations, and a browser-based editor backed by an analysis engine. In this paper, we present the xDECAF tool library and a curated catalog of over 20 example models with documented constraints and expected violations, intended as a reusable dataset for the community. The tool has already been adopted by several research lines, providing concrete evidence of its utility. The tool, dataset, and a hosted online editor are publicly available.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/08/2607.06411v1-rubench-a-repository-level-agentic-coding-benchmark-with-natively-authored-russian-task-specifications",
+      "section": "quick",
+      "title_en": "RuBench: A Repository-Level Agentic Coding Benchmark with Natively Authored Russian Task Specifications",
+      "authors": "Evgeny Shilov",
+      "date": "2026-07-07",
+      "pdf": "https://arxiv.org/pdf/2607.06411v1",
+      "score": "7.0",
+      "evidence": "提供含源代码的基准测试",
+      "tldr": "现有仓库级智能体基准均使用英文任务，不符合开发者用母语描述需求的实际场景。RuBench 1.0从5个开源仓库的修复提交中挖掘25个原生俄语任务，由回归测试评判，并评估多种产品配置。最佳配置解决78.7%任务，但发现产品静默替换模型（20%任务），表明测量的是产品而非模型。该基准填补了母语任务评估空白，并揭示了产品级评测的陷阱。",
+      "tags": "query:code-paper",
+      "abstract_en": "Developers increasingly delegate real maintenance work to product-grade coding agents, and many state tasks in their native language, in the style of a customer request rather than a curated English issue. Existing repository-level agentic benchmarks do not measure this setting: their task statements are English by design. We introduce RuBench 1.0, a benchmark of 25 tasks mined from recent fix commits in five live open-source repositories (aiohttp, aiogram, Laravel, NestJS, Fastify; Python, PHP, TypeScript, JavaScript), where each task is specified natively in Russian -- written from scratch in the style of an actual customer request, not translated -- and judged by the upstream maintainer's regression tests, which we withhold from release. All 25 fix commits postdate the training-data cutoffs of every evaluated model, giving a contamination argument that holds task-by-task. We evaluate deployed product configurations (CLI agent + model + reasoning effort) -- Claude Code with Opus 4.8, Sonnet 5, and Haiku 4.5, and Codex CLI with GPT-5.5 -- with three independent runs each, reporting pass@1 with task-level confidence intervals, paired comparisons, dollar cost, and token usage. The best configuration resolves 78.7% of tasks; at N=25 only the gaps to the weakest model are statistically resolvable, which we state explicitly. Auditing full trajectories of a fifth, hors-concours configuration (Claude Code + Fable 5, July 2, 2026 release), we caught the product silently substituting the model: on 5 of 25 tasks (20%) an official safeguard fallback re-routed routine HTTP-protocol fixes to Opus 4.8 -- direct, reproducible evidence that the deployed product, not the model, is the unit actually measured. We release task statements, metadata, full agent trajectories, and diffs; grading oracles are withheld, with a SHA-256 manifest committed at publication time.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/08/2607.03324v2-hierarchical-multi-agent-reinforcement-learning-for-carbon-aware-ai-data-centers-in-power-distribution-systems",
+      "section": "quick",
+      "title_en": "Hierarchical Multi-Agent Reinforcement Learning for Carbon-Aware AI Data Centers in Power Distribution Systems",
+      "authors": "Hyunsoo Lee, Panggah Prabawa, Dae-Hyun Choi, Joongheon Kim",
+      "date": "2026-07-03",
+      "pdf": "https://arxiv.org/pdf/2607.03324v2",
+      "score": "6.0",
+      "evidence": "数据中心任务调度，碳感知多智能体强化学习",
+      "tldr": "AI数据中心能耗激增带来高碳排放，低碳运行管理至关重要。本文提出层次化碳感知多智能体强化学习框架，全局负载管理器根据节点碳强度分配任务，本地智能体通过时间迁移和GPU调度实现细粒度低碳控制。在IEEE 33节点系统上验证，该方法有效降低碳排放并提升运行效率。为电力系统中AI数据中心的低碳鲁棒运行提供了新方案。",
+      "tags": "query:code-paper",
+      "abstract_en": "Eco-friendly energy management for artificial intelligence data centers (AIDCs) is crucial because of the significant increase in energy consumption-induced carbon emissions from AIDCs resulting from the rapid expansion of AI applications. This paper proposes a hierarchical carbon-aware multi-agent reinforcement learning (CA-MARL) framework for robust and efficient operations of AIDCs under uncertainties while ensuring low-carbon operation of power distribution systems. The framework comprises a workload manager (WM) agent and multiple local AIDC agents trained using a multi-agent transformer method, corresponding to a global AIDC aggregator and a local AIDC operator, respectively. Leveraging AIDC operation data along with nodal carbon intensity (NCI) calculated from the carbon emission flow-integrated distribution system operator problem, the WM agent spatially allocates AI training and inference jobs among all AIDCs. Based on the jobs allocated from the WM agent and NCI information, each AIDC agent schedules economical and eco-friendly operations of the AIDC by performing the following tasks: i) temporal shifting of training jobs, ii) spatial allocation of training graphics processing unit (GPU) blocks and inference GPUs within the AIDC, and iii) control of the supply air temperature of the cooling system. The effectiveness of the proposed framework was assessed using an IEEE 33-node power distribution system.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
