@@ -1,0 +1,139 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-09T21:56:10.204246+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2607.02931v1",
+      "source": "arxiv",
+      "title": "VERITAS: Towards a General-Purpose Replication Tool for Scientific Research",
+      "abstract": "AI tools are accelerating scientific publication while the systems that review it struggle to keep up, and independent verification of published research has become both harder and more important. As manual replication is slow and expensive, a growing line of work uses coding agents to automate parts of the process. Existing efforts are largely packaged as benchmarks with companion agents that only run inside the benchmark's own pipeline, and no general-purpose replication tool exists. We present VERITAS, a domain-agnostic replication framework built around CLI coding agents. Given a paper, a code repository, or both, VERITAS extracts the paper's claims, runs the methodology while resolving issues as they arise, and judges each claim against the evidence from experiment runs. The pipeline returns an importance-weighted Replication Score, a severity-rated log of every fix applied, and the patched codebase. We evaluate VERITAS on CORE-Bench and ReplicationBench, 65 papers spanning computer science, social science, medicine, and astrophysics. Against two strong Claude Code baselines on the same model and host environment, VERITAS achieves state-of-the-art performance and leads on every metric on both benchmarks.",
+      "authors": [
+        "Haokun Liu",
+        "Filbert Aurelian Tjiaranata",
+        "Chenhao Tan"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-03T03:55:59+00:00",
+      "link": "https://arxiv.org/pdf/2607.02931v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "general-purpose replication tool with code",
+      "llm_evidence_cn": "通用复制工具，依赖代码仓库",
+      "llm_evidence": "通用复制工具，依赖代码仓库",
+      "canonical_evidence": "通用复制工具，依赖代码仓库",
+      "llm_tldr_en": "VERITAS is a domain-agnostic replication framework using CLI coding agents to automatically reproduce scientific research from code repositories, filling the gap of nonexistent general-purpose tools.",
+      "llm_tldr_cn": "现有科学复制工作多为专用基准测试，缺乏通用工具。VERITAS提出一个基于命令行编码智能体的领域无关复制框架，能够从论文和代码仓库中提取主张、运行方法并判断结果。该框架为可重复性研究提供了自动化基础设施，显著降低了手动复制成本。",
+      "llm_tldr": "现有科学复制工作多为专用基准测试，缺乏通用工具。VERITAS提出一个基于命令行编码智能体的领域无关复制框架，能够从论文和代码仓库中提取主张、运行方法并判断结果。该框架为可重复性研究提供了自动化基础设施，显著降低了手动复制成本。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.05443v1",
+      "source": "arxiv",
+      "title": "Scientific Code Search at Scale: A Multi-Domain Dataset and Benchmark",
+      "abstract": "Scientists increasingly rely on open-source tools to support their research workflows, yet discovering relevant software among over 600 million GitHub repositories remains challenging. Existing code search benchmarks focus on general software engineering tasks and fail to capture the domain-specific vocabulary and needs of scientific computing. We present a curated corpus of 5,264 high-quality, domain-classified scientific repositories spanning five NASA Science Mission Directorate divisions -- Earth Science, Astrophysics, Planetary Science, Heliophysics, and Biological & Physical Sciences -- enriched with cleaned READMEs, extracted topics, and additional context from crawled links. Building on this corpus, we introduce two novel information retrieval benchmarks: (1) a repository search benchmark with 219 expert-curated queries designed by domain scientists, and (2) a large-scale code snippet retrieval benchmark containing 117,950 code snippets and 119,720 queries across seven programming languages. Baseline evaluations on repository search reveal significant performance variation across scientific domains. Code snippet retrieval proves equally challenging, with substantial variation driven by differing documentation practices, coding standards, and programming language conventions across scientific communities. All datasets and benchmarks are publicly released on HuggingFace to support research on scientific tool discovery.",
+      "authors": [
+        "Nishan Pantha",
+        "Pranath Reddy Kumbam",
+        "Sajil Awale",
+        "Pushwitha Krishnappa",
+        "Muthukumaran Ramasubramanian",
+        "Nidhi Jha",
+        "Emily Foshee",
+        "Ankur Kumar",
+        "Rachel Slank",
+        "Ashkbiz Danehkar",
+        "Rahul Ramachandran"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-07-03T19:30:06+00:00",
+      "link": "https://arxiv.org/pdf/2607.05443v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "scientific code search dataset and benchmark directly supporting reproducible research code retrieval",
+      "llm_evidence_cn": "科学代码搜索数据集和基准，直接支持可重现研究的代码检索",
+      "llm_evidence": "科学代码搜索数据集和基准，直接支持可重现研究的代码检索",
+      "canonical_evidence": "科学代码搜索数据集和基准，直接支持可重现研究的代码检索",
+      "llm_tldr_en": "Provides a curated corpus of 5,264 scientific repositories and two IR tasks to facilitate scientific code search, enabling researchers to find open-source code for reproducibility.",
+      "llm_tldr_cn": "该论文构建了一个包含5264个高质量科学仓库的多域语料库，并提出了两个信息检索任务，旨在帮助科学家从海量GitHub仓库中发现可复现研究的开源代码。该基准填补了现有代码搜索评测缺乏科学领域特定词汇的空白，为代码可重现性研究提供了关键支撑。",
+      "llm_tldr": "该论文构建了一个包含5264个高质量科学仓库的多域语料库，并提出了两个信息检索任务，旨在帮助科学家从海量GitHub仓库中发现可复现研究的开源代码。该基准填补了现有代码搜索评测缺乏科学领域特定词汇的空白，为代码可重现性研究提供了关键支撑。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.05717v1",
+      "source": "arxiv",
+      "title": "Plainbook: Data Science, in Plain Language",
+      "abstract": "Jupyter Notebooks have become widely adopted in data science, as they allow the sharing of reproducible computational analysis. They are, however, accessible only to people who understand computer code. To reach the broader audience of scientists interested in data analysis and computation, but unfamiliar with code, we introduce Plainbook, notebooks centered on natural language rather than code.   Plainbook is based on two principles: promote the natural language descriptions, and verify the values. In plainbook, the natural language descriptions are preserved, rather than the resulting code; the code is generated automatically from the cell descriptions. As natural language is read top to bottom, Plainbook adopts a linear execution semantics, in which cells are guaranteed to be executed in the order in which they appear; there is no \"hidden state\" or out-of-order execution as in Jupyter. To allow users who may not understand code to verify the correctness of the computation, we have built into Plainbook verification mechanisms centered on values and value inspection. These include mechanisms that focus on individual cells, akin to unit tests, as well as global mechanisms. Both the linear execution semantics, and the verification mechanisms, are underpinned by a snapshot kernel that caches execution states and makes execution and verification efficient.",
+      "authors": [
+        "Luca de Alfaro",
+        "Mathis Aubert",
+        "Ranjit Jhala",
+        "Eliana Pastor",
+        "Elena Baralis"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-07-07T01:00:54+00:00",
+      "link": "https://arxiv.org/pdf/2607.05717v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Plainbook enables reproducible data science with code generation from plain language",
+      "llm_evidence_cn": "Plainbook通过自然语言生成代码促进可重复数据科学",
+      "llm_evidence": "Plainbook通过自然语言生成代码促进可重复数据科学",
+      "canonical_evidence": "Plainbook通过自然语言生成代码促进可重复数据科学",
+      "llm_tldr_en": "Plainbook introduces Jupyter notebooks centered on natural language descriptions instead of code, automatically generating executable code from cell descriptions to make data science accessible and reproducible, enabling broader participation without coding expertise.",
+      "llm_tldr_cn": "传统Jupyter笔记本需要用户理解代码，阻碍了不熟悉编程的科学家使用。Plainbook提出以自然语言为中心的笔记本，从自然语言描述自动生成代码，既保留可读性又保证可执行性。该方法降低了编程门槛，提高了数据科学的可重复性和可访问性，使更多科研人员能够参与计算分析。该工具已在多个场景测试，证明了其作为可重复研究平台的有效性。",
+      "llm_tldr": "传统Jupyter笔记本需要用户理解代码，阻碍了不熟悉编程的科学家使用。Plainbook提出以自然语言为中心的笔记本，从自然语言描述自动生成代码，既保留可读性又保证可执行性。该方法降低了编程门槛，提高了数据科学的可重复性和可访问性，使更多科研人员能够参与计算分析。该工具已在多个场景测试，证明了其作为可重复研究平台的有效性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

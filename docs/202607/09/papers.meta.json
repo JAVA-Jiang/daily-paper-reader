@@ -1,0 +1,54 @@
+{
+  "label": "2026-07-09",
+  "date": "2026-07-09",
+  "generated_at": "2026-07-09T21:58:58",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202607/09/2607.02931v1-veritas-towards-a-general-purpose-replication-tool-for-scientific-research",
+      "section": "deep",
+      "title_en": "VERITAS: Towards a General-Purpose Replication Tool for Scientific Research",
+      "authors": "Haokun Liu, Filbert Aurelian Tjiaranata, Chenhao Tan",
+      "date": "2026-07-03",
+      "pdf": "https://arxiv.org/pdf/2607.02931v1",
+      "score": "8.0",
+      "evidence": "通用复制工具，依赖代码仓库",
+      "tldr": "科学出版加速但验证困难，手动复制昂贵且低效。VERITAS基于CLI编码代理，自动提取论文主张、运行方法并修复问题，输出加权复制分数。在覆盖计算机科学、社会科学等领域的65篇论文上，所有指标超越Claude Code基线。首个领域无关通用复制工具，显著提升可重复性。",
+      "tags": "query:code-paper",
+      "abstract_en": "AI tools are accelerating scientific publication while the systems that review it struggle to keep up, and independent verification of published research has become both harder and more important. As manual replication is slow and expensive, a growing line of work uses coding agents to automate parts of the process. Existing efforts are largely packaged as benchmarks with companion agents that only run inside the benchmark's own pipeline, and no general-purpose replication tool exists. We present VERITAS, a domain-agnostic replication framework built around CLI coding agents. Given a paper, a code repository, or both, VERITAS extracts the paper's claims, runs the methodology while resolving issues as they arise, and judges each claim against the evidence from experiment runs. The pipeline returns an importance-weighted Replication Score, a severity-rated log of every fix applied, and the patched codebase. We evaluate VERITAS on CORE-Bench and ReplicationBench, 65 papers spanning computer science, social science, medicine, and astrophysics. Against two strong Claude Code baselines on the same model and host environment, VERITAS achieves state-of-the-art performance and leads on every metric on both benchmarks.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/09/2607.05443v1-scientific-code-search-at-scale-a-multi-domain-dataset-and-benchmark",
+      "section": "deep",
+      "title_en": "Scientific Code Search at Scale: A Multi-Domain Dataset and Benchmark",
+      "authors": "Nishan Pantha, Pranath Reddy Kumbam, Sajil Awale, Pushwitha Krishnappa, Muthukumaran Ramasubramanian, Nidhi Jha, Emily Foshee, Ankur Kumar, Rachel Slank, Ashkbiz Danehkar, Rahul Ramachandran",
+      "date": "2026-07-03",
+      "pdf": "https://arxiv.org/pdf/2607.05443v1",
+      "score": "8.0",
+      "evidence": "科学代码搜索数据集和基准，直接支持可重现研究的代码检索",
+      "tldr": "科学家依赖开源工具但很难从海量仓库中找到相关代码。现有基准缺乏科学领域特异性。我们构建了涵盖NASA五个科学领域的5264个高质量仓库，并创建仓库搜索（219个专家查询）和代码片段检索（117950个片段/119720个查询）两个基准。实验显示跨领域和编程语言的搜索性能差异显著。数据集和基准已公开。",
+      "tags": "query:code-paper",
+      "abstract_en": "Scientists increasingly rely on open-source tools to support their research workflows, yet discovering relevant software among over 600 million GitHub repositories remains challenging. Existing code search benchmarks focus on general software engineering tasks and fail to capture the domain-specific vocabulary and needs of scientific computing. We present a curated corpus of 5,264 high-quality, domain-classified scientific repositories spanning five NASA Science Mission Directorate divisions -- Earth Science, Astrophysics, Planetary Science, Heliophysics, and Biological & Physical Sciences -- enriched with cleaned READMEs, extracted topics, and additional context from crawled links. Building on this corpus, we introduce two novel information retrieval benchmarks: (1) a repository search benchmark with 219 expert-curated queries designed by domain scientists, and (2) a large-scale code snippet retrieval benchmark containing 117,950 code snippets and 119,720 queries across seven programming languages. Baseline evaluations on repository search reveal significant performance variation across scientific domains. Code snippet retrieval proves equally challenging, with substantial variation driven by differing documentation practices, coding standards, and programming language conventions across scientific communities. All datasets and benchmarks are publicly released on HuggingFace to support research on scientific tool discovery.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/09/2607.05717v1-plainbook-data-science-in-plain-language",
+      "section": "deep",
+      "title_en": "Plainbook: Data Science, in Plain Language",
+      "authors": "Luca de Alfaro, Mathis Aubert, Ranjit Jhala, Eliana Pastor, Elena Baralis",
+      "date": "2026-07-07",
+      "pdf": "https://arxiv.org/pdf/2607.05717v1",
+      "score": "8.0",
+      "evidence": "Plainbook通过自然语言生成代码促进可重复数据科学",
+      "tldr": "Jupyter Notebooks 在数据科学中广泛使用，但仅限懂代码的用户。Plainbook 以自然语言为中心，自动从描述生成代码，采用线性执行避免隐藏状态，并内置基于值的验证机制和快照内核确保计算正确高效。",
+      "tags": "query:code-paper",
+      "abstract_en": "Jupyter Notebooks have become widely adopted in data science, as they allow the sharing of reproducible computational analysis. They are, however, accessible only to people who understand computer code. To reach the broader audience of scientists interested in data analysis and computation, but unfamiliar with code, we introduce Plainbook, notebooks centered on natural language rather than code.   Plainbook is based on two principles: promote the natural language descriptions, and verify the values. In plainbook, the natural language descriptions are preserved, rather than the resulting code; the code is generated automatically from the cell descriptions. As natural language is read top to bottom, Plainbook adopts a linear execution semantics, in which cells are guaranteed to be executed in the order in which they appear; there is no \"hidden state\" or out-of-order execution as in Jupyter. To allow users who may not understand code to verify the correctness of the computation, we have built into Plainbook verification mechanisms centered on values and value inspection. These include mechanisms that focus on individual cells, akin to unit tests, as well as global mechanisms. Both the linear execution semantics, and the verification mechanisms, are underpinned by a snapshot kernel that caches execution states and makes execution and verification efficient.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
