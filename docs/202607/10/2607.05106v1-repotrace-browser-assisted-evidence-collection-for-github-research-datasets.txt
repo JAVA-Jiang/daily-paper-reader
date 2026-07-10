@@ -1,0 +1,168 @@
+Title: RepoTrace: Browser-Assisted Evidence Collection for GitHub Research Datasets
+
+URL Source: https://arxiv.org/pdf/2607.05106v1
+
+Published Time: Tue, 07 Jul 2026 03:38:40 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# RepoTrace: Browser-Assisted Evidence Collection for GitHub Research Datasets 
+
+# Xue Yao 
+
+Monash University Melbourne, Australia xyao0028@student.monash.edu 
+
+# Zehua Zhang 
+
+Monash University Melbourne, Australia zzha0610@student.monash.edu 
+
+# Jiatong Liu 
+
+Monash University Melbourne, Australia jliu0455@student.monash.edu 
+
+# Yongqiang Tian 
+
+Monash University Melbourne, Australia yongqiang.tian@monash.edu 
+
+## Abstract 
+
+Empirical software engineering studies frequently build datasets from GitHub issues and pull requests. In many projects, researchers inspect pages in a browser, copy selected fields into spreadsheets, keep side notes in separate documents, and later run scripts to normalize or export the data. This workflow is flexible, but the page evidence, the research codes, and the rationale behind each decision end up spread across tabs and files, which leaves provenance, update tracking, and multi-reviewer labeling hard to audit. RepoTrace is a browser-assisted research tool that collects GitHub issue and pull-request evidence into a local SQLite-backed workspace. It combines a Chrome side-panel extension, an Express backend, and a React dashboard to capture page snapshots, comments, labels, notes, screening and labeling decisions, refresh history, and scoped exports, keeping the source evidence and the research interpreta-tion linked together. A validation pass collected and checked 20 Matplotlib issues across two study projects. The resulting dataset preserves 22 snap-shots, 38 comments, 20 research notes, 98 annotations, 20 screening reviews, 20 fix-evidence entries, and 4 simulated unresolved consen-sus conflicts. The results show that RepoTrace can support a com-plete local evidence-collection workflow for manually constructed GitHub issue and pull-request datasets. 
+
+## CCS Concepts 
+
+• Software and its engineering → Software testing and debug-ging ; • Information systems → Web applications .
+
+## Keywords 
+
+empirical software engineering, GitHub mining, research datasets, evidence collection, issue tracking 
+
+ACM Reference Format: 
+
+Xue Yao, Zehua Zhang, Jiatong Liu, and Yongqiang Tian. 2026. RepoTrace: Browser-Assisted Evidence Collection for GitHub Research Datasets. In 
+
+Proceedings of Proceedings of the 35th ACM SIGSOFT International Symposium on Software Testing and Analysis (ISSTA ’26). ACM, New York, NY, USA, 5 pages. 
+
+> ISSTA ’26, Oakland, CA, USA
+> 2026.
+
+## 1 Introduction 
+
+Many empirical software engineering studies begin the same way: researchers identify relevant GitHub issues or pull requests, inspect their discussion, decide whether each belongs in the study, and assign research labels. In practice this workflow is iterative and evidence-heavy. Researchers read issue bodies, comments, linked pull requests, patches, tests, and maintainer labels, and they must revisit records as those records evolve. They also need to record why a record was included or excluded, which evidence supports each label, and where reviewers disagree. Such needs are common in mining software repositories research, which routinely draws on the evolving socio-technical evidence that GitHub records, such as pull-based development traces and contribution-evaluation signals [6, 9, 11]. Two common workflows address this task, and each leaves a gap. Spreadsheet-based coding is lightweight and flexible: a row can hold a URL, a few labels, and a note. With enough discipline a researcher can also paste screenshots or archive pages by hand, so the limitation is not that any single field is impossible to store. The difficulty is keeping the page evidence, the evolving research codes, and the record of why a decision was made linked together and queryable as the study progresses, rather than scattered across tabs, files, and ad-hoc columns. At the other extreme, mining scripts collect structured data at scale but are typically disconnected from the manual reading and qualitative coding that such datasets depend on, and they discard the rendered page context a reviewer later wants to re-examine. The result is a gap between the source artifact, the researcher’s evolving interpretation, and the exported dataset used in a paper. RepoTrace addresses this gap with a local research workbench for browser-first GitHub data collection, aimed at researchers and students who construct issue and pull-request datasets manually or semi-manually. The tool keeps researcher judgment auditable rather than replacing it, storing the evidence and the labels together. RepoTrace therefore treats a GitHub issue or pull request as both a source document and a changing research object, storing the browser-collected snapshot, extracted metadata, research labels, notes, review decisions, and refresh history in one local workspace. This design follows prior warnings that mined repository data must be interpreted with care, because repository traces may omit context or encode process assumptions [1, 9].  
+
+> arXiv:2607.05106v1 [cs.SE] 6 Jul 2026 ISSTA ’26, October 03–09, 2026, Oakland, CA, USA Xue Yao, Zehua Zhang, Jiatong Liu, and Yongqiang Tian
+
+RepoTrace combines a Chrome side panel, a SQLite-backed back-end, a React dashboard, scoped JSON exports, project backup, and refresh tracking around five productivity-oriented capabilities: 
+
+• Evidence capture. The side panel collects selected page fields, comments, labels, snapshots, and provenance while a researcher reads a GitHub page, so the original evidence stays next to each coding decision and there is less copy-and-paste work. 
+
+• Project-scoped organization. Each project keeps source meta-data separate from research labels, notes, screening decisions, linked artifacts, and fix evidence, which makes exploratory col-lections and final datasets easier to maintain. 
+
+• Review and labeling workflow. A single dashboard lets re-searchers filter records, inspect evidence, assign labels, check data quality, and surface disagreements without switching between browser tabs, spreadsheets, and notes. 
+
+• Refresh and audit history. Refresh checks reveal whether col-lected records changed after initial inspection and preserve an audit trail of later updates, so stale evidence is caught before export. 
+
+• Export and backup. Scoped exports produce one record, a fil-tered dataset, or a complete project backup for paper analysis, collaborator review, and artifact sharing. We demonstrate RepoTrace on a self-collected dataset of 20 
+
+matplotlib/matplotlib issues organized into two study projects, spanning backend/rendering defects and regression/compatibility evidence. The walkthrough exercises the full workflow—collection, screening, labeling, consensus review, refresh, and scoped export— and shows that the tool preserves the page snapshots, comments, GitHub labels, research labels, notes, and rationales that the coding decisions depend on. RepoTrace is released as a reproducible source artifact with seeded demo data and an automated test suite. The demonstration video is available. 
+
+## 2 Background and Related Work 
+
+RepoTrace sits between two classes of existing tools. Repository-mining frameworks collect GitHub data at scale: GHTorrent mir-rors GitHub’s event stream into a queryable dataset [ 5], PyDriller offers a Python API over commit and change history [ 10 ], and the GitHub REST and GraphQL APIs provide similar structured access [ 4]. These tools excel at breadth, but they return normal-ized records rather than the rendered page a reviewer reads, and they are decoupled from the manual screening and qualitative coding that researcher-curated datasets rely on. Qualitative data-analysis tools such as MAXQDA, ATLAS.ti, and NVivo support code books, multi-rater coding, and inter-rater agreement, but they are document-centric and GitHub-unaware: they do not detect issue or pull-request pages, extract their source metadata, or track when the underlying artifact changes after coding. Researchers therefore bridge the two with spreadsheets and ad-hoc scripts, recreating the very provenance gap that prior mining-methodology work cautions against [1, 9]. RepoTrace targets this middle ground. Rather than mining at scale or coding generic documents, it couples browser-based evi-dence capture that preserves the rendered page with study-specific labeling, screening, refresh tracking, and an audit trail in a single lo-cal workspace. Its scope is manual, qualitative dataset construction, where the live evidence, the evolving codes, and the rationale for each decision need to stay linked together throughout the study. 
+
+## 3 Tool Design and Workflow 
+
+RepoTrace is organized around dataset projects. A project repre-sents a single study, such as a bug or backend-behavior dataset for a specific repository, and every collected record belongs to one project, letting researchers keep exploratory collections, final datasets, and demo data apart. As summarized in Figure 1, the nor-mal workflow follows five steps: open a GitHub issue or pull request, collect evidence in the side panel, review and label the record in the dashboard, refresh or audit it when needed, and export a JSON dataset or project backup. The subsections below describe each step in turn, following the path of a record from the browser to an exported dataset. Open GitHub 
+
+> issue or pull request
+> Collect Evidence
+> in side panel
+> Save to Project
+> local workspace
+> Review Record
+> label and audit
+> Export Dataset
+> JSON or backup
+> refresh when needed
+
+Figure 1: RepoTrace user workflow, from browser-based col-lection through dashboard review and labeling, refresh and audit, to scoped export and backup. 
+
+## 3.1 Collection from GitHub Pages 
+
+The Chrome extension detects supported GitHub issue and pull-request pages. In the side panel, the researcher inspects the detected repository, record number, title, URL, and duplicate status for the current project, then chooses which visible attributes to preserve, such as title, body text, labels, state, timestamps, comments, and the raw snapshot. Before saving the record to the local backend, the side panel can also attach a current-page note, research labels, a screening decision, fix evidence, and manually linked artifacts. Browser extraction is the primary collection path. Optional GitHub API support can enrich or refresh records, but the work-flow requires no token, which keeps RepoTrace usable in local classroom and artifact-review settings. Browser-first collection also preserves discussion context that API responses may normalize or omit, including visible timeline text, inline links, and page-specific evidence. Issue discussions and bug reports often contain the re-production steps, expected and observed behavior, environment details, and follow-up clarification needed to judge the quality of a record [8, 12]. 
+
+## 3.2 Research Dashboard 
+
+The dashboard provides project visibility, record search, queue cards, filters, record details, research-label management, notes, an-notations, fix evidence, linked artifacts, consensus state, quality checks, audit logs, and refresh history. The main research filters operate over source labels, research labels, reviewers, inclusion RepoTrace: Browser-Assisted Evidence Collection for GitHub Research Datasets ISSTA ’26, October 03–09, 2026, Oakland, CA, USA 
+
+decisions, fix status, fix strategy, linked artifacts, and evidence com-pleteness, while workflow queue cards surface records that need a second review, consensus, taxonomy backfill, update review, or refresh. Record details are organized into three views. The evidence view shows collected source fields, snapshots, comments, timeline text, and provenance; the research view shows notes, labels, screening rationale, fix evidence, consensus candidates, and backfill decisions; and the log view shows audit and change history. 
+
+## 3.3 Research Labels and Taxonomy Evolution 
+
+RepoTrace distinguishes GitHub labels from research labels. GitHub labels are source metadata maintained by the project, such as bug ,
+
+Documentation , or status: needs clarification . Research la-bels are study-specific codes created by the researchers, such as symptom, component, evidence source, fix status, confidence, or fix strategy. The two play different roles: a maintainer label is evidence about how the project classified an issue, whereas a research label is an analytical decision made under the study protocol. Research-label categories can evolve during analysis. When a user adds a new category or label, RepoTrace records a taxonomy-change entry and queues backfill review for older records that may need reconsideration, preventing silent relabeling and keeping the historical coding process auditable. For multi-reviewer coding, RepoTrace stores the labeler, confidence, rationale, and status of each annotation, and surfaces records with conflicting labels un-der the same category for consensus review. These disagreement records can later support standard inter-rater reliability and agree-ment checks when a study protocol requires quantitative reliability reporting [3, 7]. 
+
+## 3.4 Exports for Research Use 
+
+RepoTrace distinguishes three export scopes. A single-record export creates a reviewable evidence package for one record. A filtered-record export captures the current dashboard result set, the most natural artifact for analysis after applying project, repository, label, or workflow filters. A project backup exports a complete project for restoration or artifact sharing. Keeping these scopes distinct avoids conflating a full database backup with a research dataset or a single-case evidence package. 
+
+## 3.5 Refresh and Change Tracking 
+
+GitHub records are not static. After a researcher first collects a page, maintainers may close the issue, add labels, edit the description, or post new comments. RepoTrace therefore provides a single-record refresh and a project-level Check Updates action; a project-level run summarizes changed, unchanged, and failed records. When changes are detected, RepoTrace stores a new snapshot, records change-log entries, and marks the record as needing update re-view. This behavior follows the tool’s local-first scope: it does not continuously synchronize with GitHub, but it gives researchers an explicit checkpoint before exporting or submitting a dataset. The optional API refresh path uses GitHub’s documented REST API as an enrichment channel rather than as the sole source of study evidence [4]. 
+
+## 4 Implementation 
+
+RepoTrace is implemented as a single TypeScript project with four parts. The extension is a Manifest V3 Chrome extension with content-script extraction and a side-panel UI. The backend is an Express application backed by SQLite through better-sqlite3 .The dashboard is a React application built with Vite. A set of shared TypeScript types defines records, snapshots, comments, labels, an-notations, notes, reviews, exports, and backups, giving the exten-sion, backend, and dashboard one common contract. Figure 2 shows how these components fit together: the extension extracts evidence from GitHub pages and sends it to the Express backend, which persists records in SQLite and serves the React dashboard used for review, labeling, and export. Chrome Extension 
+
+> content script + side panel
+
+React Dashboard 
+
+> review, labels, filters, export
+
+Express Backend 
+
+> REST API and workflow logic
+
+SQLite Database 
+
+> projects, records, snapshots, labels, logs, backups
+> HTTP requests
+> persistent local storage
+
+Shared TypeScript Types 
+
+> common record, API, and export contracts shared by all components
+
+Figure 2: RepoTrace system architecture: a Chrome extension feeds browser-extracted evidence to an Express backend over a SQLite store, which serves a React dashboard for review, labeling, and export. 
+
+The SQLite schema comprises roughly twenty tables covering projects, users, records, snapshots, comments, research-label cate-gories and labels, annotations, notes, linked artifacts, fix evidence, record reviews, taxonomy and backfill state, consensus labels, update-check runs and change logs, quality checks, audit logs, and prove-nance. It enforces a project-scoped duplicate key over repository owner, repository name, record type, and number. The storage layer emphasizes provenance and repeatability. Each collected record can hold multiple snapshots, and a snapshot con-tains raw text, optional raw HTML, normalized JSON, source method, capture time, and field provenance. The record itself stores stable identity fields: project, repository owner, repository name, record type, number, title, state, collector, collection time, refresh time, and update time. The project-scoped uniqueness constraint warns about duplicates without preventing the same GitHub issue from being studied in different projects. ISSTA ’26, October 03–09, 2026, Oakland, CA, USA Xue Yao, Zehua Zhang, Jiatong Liu, and Yongqiang Tian 
+
+Table 1: RepoTrace implementation components.       
+
+> Component Responsibility Chrome extension Detects GitHub issue and pull-request pages, extracts visible evidence, and drives side-panel collection. Express backend Serves the collection, review, refresh, export, backup, and analysis APIs over local storage. SQLite database Stores projects, records, snapshots, comments, labels, notes, reviews, audit logs, and update history. React dashboard Supports project management, filtering, labeling, consensus review, quality checks, and export. Shared types Define the TypeScript contracts shared by the extension, backend, dashboard, tests, and export schema.
+
+All of these tables are included in JSON exports and project backups, so that a reviewer can inspect not only the final labels but also the evidence and intermediate decisions that produced them. The fix-evidence fields in particular are motivated by the long-running use of issue, change, and fix-link evidence in software evolution studies [2]. 
+
+## 5 Usage Demonstration 
+
+This section demonstrates RepoTrace on a self-collected dataset rather than reporting a controlled user study. We collected 20 is-sues from matplotlib/matplotlib across two RepoTrace projects. The first, Matplotlib Backend and Rendering Issue Evidence Study ,focuses on backend behavior, rendering defects, documentation rendering problems, animation behavior, maintenance discussions, and installation/security warnings. The second, Matplotlib Regres-sion and Compatibility Evidence Study , focuses on regression and compatibility evidence; here we additionally inject four synthetic multi-reviewer conflicts to exercise the consensus workflow. These conflicts are not observations of real reviewer disagreement and serve only to drive the dashboard’s conflict-surfacing path. The demonstration is not intended to measure GitHub collaboration behavior broadly, but it exercises the kinds of social and technical information that prior GitHub studies draw on [6, 11]. For each record, we verified that RepoTrace preserved the GitHub URL, title, state, labels, issue body, captured comments, stored snap-shot, screening rationale, note, fix evidence, and research annota-tions. Across the two projects, the validation notes report 20 records, 22 stored snapshots, 38 captured comments, 20 research notes, 98 research annotations, 20 screening reviews, 20 fix-evidence entries, and the four injected unresolved consensus conflicts; the artifact package includes the detailed record-by-record notes. The results in Table 2 indicate that RepoTrace can preserve the main artifacts needed for a manually coded GitHub issue-labeling study. The backend/rendering project demonstrates the linear work-flow of collection, screening, labeling, and evidence capture, while the regression/compatibility project demonstrates that the dash-board can surface disagreement cases, such as conflicting symptom 
+
+Table 2: Validation dataset summary.                            
+
+> Measure Backend Regression Total Records 10 10 20 Snapshots 12 10 22 Captured comments 21 17 38 Research notes 10 10 20 Research annotations 60 38 98 Screening reviews 10 10 20 Fix-evidence entries 10 10 20 Consensus conflicts 044
+
+or component labels, without overwriting either reviewer’s anno-tation. The automated test suite comprises 37 passing tests covering extension URL detection and extraction fixtures, attribute selection, database initialization, backend collection and refresh APIs, dupli-cate handling, scoped exports, project backup, consensus and dis-agreement workflows, audit logs, and dashboard rendering. Among these are scoped export checks for single-record and filtered-record exports, and backup round-trip checks confirming that records, snapshots, comments, notes, annotations, and provenance are pre-served. 
+
+## 6 Tool Availability 
+
+RepoTrace is open-sourced. The source code is publicly hosted at https://github.com/t3-research/RepoTrace, with an archived, citable snapshot at https://doi.org/10.5281/zenodo.20954131, and a demonstration screencast is available at https://youtu.be /ZEaeAzb2UkQ. The artifact bundles the full source, setup and reproducibility instructions, the automated test suite, seeded demo data, and validation notes. The artifact runs locally and requires only Node.js, npm, SQLite, and a Chromium-based browser such as Chrome. After npm install ,a user can seed the demonstration database ( npm run db:seed-demo ), run the automated test suite ( npm test ), and build the dashboard and extension ( npm run build ). The reproducibility instructions further cover API checks, project backup import/export, update checks, and JSON export inspection, and reproduce the validation dataset reported in Section 5. 
+
+## 7 Conclusion 
+
+RepoTrace demonstrates a browser-assisted workflow for construct-ing auditable GitHub research datasets. By storing page evidence, source metadata, research labels, notes, review decisions, refresh history, and exportable provenance in a single local workspace, the tool makes manual empirical data collection easier to inspect and reproduce. It supports the full local workflow—collection, labeling, refresh, consensus review, backup, and JSON export—and the 20-record Matplotlib validation shows that it can preserve both the source evidence and the research interpretation for later review. We plan to extend RepoTrace with CSV and analysis-table export, tighter navigation from labels to the exact page evidence, richer multi-reviewer workflows, and dataset versioning. Any optional AI assistance will be added only once the non-AI evidence workflow remains reliable. RepoTrace: Browser-Assisted Evidence Collection for GitHub Research Datasets ISSTA ’26, October 03–09, 2026, Oakland, CA, USA 
+
+## References 
+
+[1] Daniel Barros, Flavio Horita, Igor Wiese, and Kanan Silva. 2021. A Mining Software Repository Extended Cookbook: Lessons Learned from a Literature Review. arXiv:2110.04095. https://arxiv.org/abs/2110.04095 [2] Markus Borg, Oscar Svensson, Kristian Berg, and Daniel Hansson. 2019. SZZ Unleashed: An Open Implementation of the SZZ Algorithm – Featuring Exam-ple Usage in a Study of Just-In-Time Bug Prediction for the Jenkins Project. arXiv:1903.01742. https://arxiv.org/abs/1903.01742 [3] Jessica Díaz, Jorge Pérez, Carolina Gallardo, and Ángel González-Prieto. 2021. Applying Inter-Rater Reliability and Agreement in Grounded Theory Studies in Software Engineering. arXiv:2107.11449. https://arxiv.org/abs/2107.11449 [4] GitHub, Inc. 2026. GitHub REST API Documentation. https://docs.github.com/ en/rest. Accessed 2026-06-24. [5] Georgios Gousios. 2013. The GHTorrent Dataset and Tool Suite. In Proceedings of the 10th Working Conference on Mining Software Repositories (MSR 2013) . IEEE, 233–236. doi:10.1109/MSR.2013.6624034 [6] Georgios Gousios, Martin Pinzger, and Arie van Deursen. 2014. An Exploratory Study of the Pull-Based Software Development Model. In Proceedings of the 36th International Conference on Software Engineering (ICSE 2014) . ACM, 345–355. doi:10.1145/2568225.2568260 [7] Rashina Hoda. 2021. Socio-Technical Grounded Theory for Software Engineering. arXiv:2103.14235. https://arxiv.org/abs/2103.14235 [8] Joselito Júnior, Gláucya Boechat, and Ivan Machado. 2021. Label it be! A Large-Scale Study of Issue Labeling in Modern Open-Source Repositories. arXiv:2110.01328. https://arxiv.org/abs/2110.01328 [9] Eirini Kalliamvakou, Georgios Gousios, Kelly Blincoe, Leif Singer, Daniel M. German, and Daniela Damian. 2014. The Promises and Perils of Mining GitHub. In Proceedings of the 11th Working Conference on Mining Software Repositories (MSR 2014) . ACM, 92–101. doi:10.1145/2597073.2597074 [10] Davide Spadini, Maurício Aniche, and Alberto Bacchelli. 2018. PyDriller: Python Framework for Mining Software Repositories. In Proceedings of the 26th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE 2018) . ACM, 908–911. doi:10.1 145/3236024.3264598 [11] Jason Tsay, Laura Dabbish, and James Herbsleb. 2014. Influence of Social and Technical Factors for Evaluating Contribution in GitHub. In Proceedings of the 36th International Conference on Software Engineering (ICSE 2014) . ACM, 356–366. doi:10.1145/2568225.2568315 [12] Zhou Yang, Chenyu Wang, Jieke Shi, Thong Hoang, Pavneet Kochhar, Qinghua Lu, Zhenchang Xing, and David Lo. 2023. What Do Users Ask in Open-Source AI Repositories? An Empirical Study of GitHub Issues. arXiv:2303.09795. https: //arxiv.org/abs/2303.09795

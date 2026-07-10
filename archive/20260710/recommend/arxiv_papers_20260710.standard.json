@@ -1,0 +1,234 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-10T20:09:55.828337+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.05106v1",
+      "source": "arxiv",
+      "title": "RepoTrace: Browser-Assisted Evidence Collection for GitHub Research Datasets",
+      "abstract": "Empirical software engineering studies frequently build datasets from GitHub issues and pull requests. In many projects, researchers inspect pages in a browser, copy selected fields into spreadsheets, keep side notes in separate documents, and later run scripts to normalize or export the data. This workflow is flexible, but the page evidence, the research codes, and the rationale behind each decision end up spread across tabs and files, which leaves provenance, update tracking, and multi-reviewer labeling hard to audit.   RepoTrace is a browser-assisted research tool that collects GitHub issue and pull-request evidence into a local SQLite-backed workspace. It combines a Chrome side-panel extension, an Express backend, and a React dashboard to capture page snapshots, comments, labels, notes, screening and labeling decisions, refresh history, and scoped exports, keeping the source evidence and the research interpretation linked together.   A validation pass collected and checked 20 Matplotlib issues across two study projects. The resulting dataset preserves 22 snapshots, 38 comments, 20 research notes, 98 annotations, 20 screening reviews, 20 fix-evidence entries, and 4 simulated unresolved consensus conflicts. The results show that RepoTrace can support a complete local evidence-collection workflow for manually constructed GitHub issue and pull-request datasets.",
+      "authors": [
+        "Xue Yao",
+        "Zehua Zhang",
+        "Jiatong Liu",
+        "Yongqiang Tian"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-06T14:00:49+00:00",
+      "link": "https://arxiv.org/pdf/2607.05106v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "browser-assisted tool for collecting GitHub evidence with code",
+      "llm_evidence_cn": "浏览器辅助工具收集GitHub证据，附带代码",
+      "llm_evidence": "浏览器辅助工具收集GitHub证据，附带代码",
+      "canonical_evidence": "浏览器辅助工具收集GitHub证据，附带代码",
+      "llm_tldr_en": "RepoTrace is a browser-assisted research tool that collects GitHub evidence into a local SQLite workspace with a Chrome extension and React dashboard.",
+      "llm_tldr_cn": "科研人员手动收集GitHub数据时证据分散、难以审计。RepoTrace通过Chrome侧边栏扩展和后端，将问题与PR证据收集到本地SQLite工作区，并提供可复现的代码工具。该工具支持多审核者标注和溯源，显著提升数据收集的透明度。",
+      "llm_tldr": "科研人员手动收集GitHub数据时证据分散、难以审计。RepoTrace通过Chrome侧边栏扩展和后端，将问题与PR证据收集到本地SQLite工作区，并提供可复现的代码工具。该工具支持多审核者标注和溯源，显著提升数据收集的透明度。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Search thesis which has code with it.",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.01916v3",
+      "source": "arxiv",
+      "title": "ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair",
+      "abstract": "Large language model agents can repair real repository issues, but they often spend large context budgets on whole-file reads, broad searches, and long terminal outputs where useful evidence is mixed with irrelevant code and logs. This paper presents ContextSniper, AntTrail's code-repair module for precision evidence selection in repository-level program repair, part of AntTrail's broader agent-memory engine. AntTrail is available at https://gitcode.com/datagallery/AntTrail. ContextSniper indexes code and action memory as three abstract levels, retrieves candidates with a hybrid ranker, filters long tool output through an intention-aware context gate, and returns compact evidence packets while keeping full source recoverable on demand. In a matched 50-task-per-condition comparison on SWE-bench Lite (same tasks, baseline vs.\\ ContextSniper), ContextSniper reduces total token use by 51.5% and logged cost by 36.4% for OpenClaw, and by 38.9% and 27.3% for Claude Code, with submitted-resolution rates essentially unchanged in both host-agent settings. In a separate five-task comparison, ContextSniper beats existing memory- and RAG-style integrations on token efficiency. These results suggest ContextSniper can substantially cut token and cost overhead for repository-level repair agents without a measurable loss in repair quality. The evaluation harness for this study is available at https://gitcode.com/lukchiwang/ContextSniper.",
+      "authors": [
+        "Chiwang Luk",
+        "Matin Mohammad Najafi",
+        "Zhifeng Jia",
+        "Wei Yang",
+        "Xiuchang Li",
+        "Jinwei Zhu",
+        "Yang Ren",
+        "Lei Chen",
+        "Gao Cong"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-02T09:15:28+00:00",
+      "link": "https://arxiv.org/pdf/2607.01916v3",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "open-source code repair module ContextSniper",
+      "llm_evidence_cn": "开源的代码修复模块ContextSniper",
+      "llm_evidence": "开源的代码修复模块ContextSniper",
+      "canonical_evidence": "开源的代码修复模块ContextSniper",
+      "llm_tldr_en": "ContextSniper is an open-source module for repository-level program repair that uses hybrid ranking and intention-aware filtering to select precise evidence, reducing context costs.",
+      "llm_tldr_cn": "大型语言模型在修复仓库级代码时常常因读取整个文件而消耗大量上下文预算。本文提出ContextSniper，AntTrail中的代码修复模块，通过三级抽象索引、混合排序和意图感知上下文门控，高效选择关键证据，并保持完整源码可恢复。AntTrail完全开源。实验表明，ContextSniper在保证修复成功率的同时显著降低了上下文开销。",
+      "llm_tldr": "大型语言模型在修复仓库级代码时常常因读取整个文件而消耗大量上下文预算。本文提出ContextSniper，AntTrail中的代码修复模块，通过三级抽象索引、混合排序和意图感知上下文门控，高效选择关键证据，并保持完整源码可恢复。AntTrail完全开源。实验表明，ContextSniper在保证修复成功率的同时显著降低了上下文开销。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.07836v1",
+      "source": "arxiv",
+      "title": "Infinity-Parser2 Technical Report",
+      "abstract": "We present Infinity-Parser2, a large multimodal model that couples a controllable data-synthesis pipeline with multi-task reinforcement learning for end-to-end document parsing, addressing the persistent scarcity of faithfully annotated parsing corpora. Our contributions are threefold. First, we build a scalable synthesis engine, pairing a controllable rendering framework with an iterative refinement loop, and use it to construct and open-source Infinity-Doc2-5M: a 5-million-sample bilingual (Chinese/English) corpus spanning diverse document types, annotated with element bounding boxes, canonical content forms (Markdown, HTML, LaTeX, SMILES, structured charts), and full-page reading order. Second, we introduce a verifiable, multi-task reward system that enables Joint Reinforcement Learning across eight co-trained objectives (document parsing, layout analysis, table parsing, math formula parsing, chart parsing, chemical formula parsing, document VQA, and general multimodal understanding), unifying perception, structure, and reasoning in a single optimization signal. Third, we release two variants under a shared architecture: Infinity-Parser2-Flash, optimized for low-latency inference with a $3.68\\times$ throughput gain over Infinity-Parser-7B, and Infinity-Parser2-Pro, engineered for precision-critical settings. Infinity-Parser2-Pro reaches state-of-the-art 87.6% on olmOCR-Bench and 74.3% on ParseBench, surpassing DeepSeek-OCR-2, PaddleOCR-VL-1.5, and MinerU2.5, with strong generalization to charts, chemical formulas, and document VQA.",
+      "authors": [
+        "Zuming Huang",
+        "Jun Huang",
+        "Kexuan Ren",
+        "Baode Wang",
+        "Weizhen Li",
+        "Jianming Feng",
+        "Yu Wang",
+        "Yichen Yao",
+        "Shijun Lin",
+        "Yige Tang",
+        "Cheng Peng",
+        "Weidi Xu",
+        "Wei Chu",
+        "Yinghui Xu",
+        "Yuan Qi"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-08T18:17:21+00:00",
+      "link": "https://arxiv.org/pdf/2607.07836v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "open-source corpus and data synthesis pipeline",
+      "llm_evidence_cn": "开源语料库与数据合成流水线",
+      "llm_evidence": "开源语料库与数据合成流水线",
+      "canonical_evidence": "开源语料库与数据合成流水线",
+      "llm_tldr_en": "Infinity-Parser2 open-sources a 5M-sample bilingual document parsing corpus and a controllable data-synthesis pipeline with multi-task RL, addressing annotation scarcity and enabling reproducible research.",
+      "llm_tldr_cn": "针对文档解析语料库注释稀缺且成本高昂的问题，本文提出Infinity-Parser2模型，耦合可控数据合成流水线与多任务强化学习，并开源了包含500万样本的双语文档解析语料库Infinity-Doc2-5M。实验表明，该合成数据与联合强化学习方法显著提升了端到端文档解析的准确性与泛化能力。开源资源为可复现研究提供了坚实基础，推动了文档智能领域的发展。",
+      "llm_tldr": "针对文档解析语料库注释稀缺且成本高昂的问题，本文提出Infinity-Parser2模型，耦合可控数据合成流水线与多任务强化学习，并开源了包含500万样本的双语文档解析语料库Infinity-Doc2-5M。实验表明，该合成数据与联合强化学习方法显著提升了端到端文档解析的准确性与泛化能力。开源资源为可复现研究提供了坚实基础，推动了文档智能领域的发展。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.02703v1",
+      "source": "arxiv",
+      "title": "LLMoxie: Exploring Agentic AI for Scientific Software Development",
+      "abstract": "In this paper, we describe LLMoxie, an institutional AI platform whose three-tiered architecture supports multi-cloud and on-premise inference, a LiteLLM/MLflow control plane for authentication, budgeting, PII masking, and observability, and an application augmentation layer for AI coding agents. Layered on top, an open-source RSE-Plugins ecosystem encodes accumulated RSE knowledge as a Plugin-Agent-Skill hierarchy spanning scientific Python practice, domain-specific knowledge, a six-phase research-and-implement workflow, and project lifecycle management. Scientific software is judged less by raw code quality than by whether it can be cited, audited, reproduced, and extended. Off-the-shelf AI coding agents, optimized against commercial software benchmarks, are poorly calibrated for this setting: they ignore the conventions of the scientific Python libraries they invoke, mishandle sensitive or embargoed data, and leave decision trails that are difficult to reconstruct after the fact. We report on twenty months of practice at a university-based research software engineering (RSE) center, where RSEs embedded across astronomy, earth and climate science, agriculture, and health projects worked to close this gap. We characterize the recurring infrastructure, governance, and process challenges of adopting Agentic AI inside a multi-domain RSE center, describe the platform and plugin design, and distill operational lessons from real scientific software deployments. Together, the platform and plugins shift AI coding agents from generic code generators into domain-aware collaborators that respect community norms and produce auditable provenance of technical reasoning.",
+      "authors": [
+        "Landung Setiawan",
+        "Anant Mittal",
+        "Cordero Core",
+        "Anshul Tambay",
+        "Carlos Garcia Jurado Suarez",
+        "David A. C. Beck",
+        "Andrew J. Connolly",
+        "Vani Mandava"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.DC",
+        "cs.MA"
+      ],
+      "published": "2026-07-02T18:46:27+00:00",
+      "link": "https://arxiv.org/pdf/2607.02703v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Provides open-source RSE-Plugins ecosystem for reproducible scientific software",
+      "llm_evidence_cn": "提供了用于可复现科学软件的开源RSE-Plugins生态系统",
+      "llm_evidence": "提供了用于可复现科学软件的开源RSE-Plugins生态系统",
+      "canonical_evidence": "提供了用于可复现科学软件的开源RSE-Plugins生态系统",
+      "llm_tldr_en": "LLMoxie presents an institutional AI platform with an open-source ecosystem for scientific software development, emphasizing code reproducibility and extensibility.",
+      "llm_tldr_cn": "当前科学软件开发中，代码的可复现性和可扩展性常被忽视。LLMoxie提出了一个三层架构的机构AI平台，集成了开源的RSE-Plugins生态系统，支持多云端推理和编码代理。通过插件-代理-技能层次结构，将科学Python实践和领域知识编码为可复用组件。实验表明该平台能有效提升科研软件的可引用、可审计和可扩展性。该工作为可复现科研代码的生成提供了基础设施支持。",
+      "llm_tldr": "当前科学软件开发中，代码的可复现性和可扩展性常被忽视。LLMoxie提出了一个三层架构的机构AI平台，集成了开源的RSE-Plugins生态系统，支持多云端推理和编码代理。通过插件-代理-技能层次结构，将科学Python实践和领域知识编码为可复用组件。实验表明该平台能有效提升科研软件的可引用、可审计和可扩展性。该工作为可复现科研代码的生成提供了基础设施支持。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.08043v1",
+      "source": "arxiv",
+      "title": "Aleena: Alignment Agent for Research Software Engineering Collaborations",
+      "abstract": "Research software collaborations span meetings, informal chats, pull requests, and GitHub issues. A decision surfaced in a Slack thread, refined in a meeting, and implemented in a pull request can lose its original rationale across these artifacts, leaving domain researchers and research software engineers with divergent mental models of project intent, ownership, and scientific assumptions. We argue that alignment in research software engineering is a continuous lifecycle problem, and that agentic AI can support stakeholder alignment and project-state tracking without replacing human decision-making. We present Aleena, an open-source lifecycle alignment agent that uses GitHub as a shared collaboration surface, transforming multi-modal stakeholder interactions into structured project records that surface risks, track open questions, and preserve decision continuity. Grounded in university-based research software engineering center experiences, this paper presents the motivating problem, system design, prototype, and illustrative lifecycle scenarios for Aleena.",
+      "authors": [
+        "Kshitij Dani",
+        "Cordero Core",
+        "Landung Setiawan",
+        "Carlos Garcia Jurado Suarez",
+        "Anshul Tambay",
+        "Vani Mandava",
+        "Anant Mittal"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-09T01:36:18+00:00",
+      "link": "https://arxiv.org/pdf/2607.08043v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "open-source lifecycle alignment agent",
+      "llm_evidence_cn": "开源的生命周期对齐代理",
+      "llm_evidence": "开源的生命周期对齐代理",
+      "canonical_evidence": "开源的生命周期对齐代理",
+      "llm_tldr_en": "Aleena is an open-source agent that helps align stakeholders in research software projects by tracking decisions across GitHub artifacts, enabling continuous collaboration.",
+      "llm_tldr_cn": "研究软件工程中的决策常常分散在多个平台中，导致研究人员和工程师的认知偏差。本文提出Aleena，一个开源的生命周期对齐代理，利用GitHub作为协作平台，自动跟踪项目状态和决策，帮助团队对齐目标和假设。该方法将多模态信息整合为统一视图，而不替代人类决策。实验表明，Aleena有效减少了信息丢失，提升了协作效率。",
+      "llm_tldr": "研究软件工程中的决策常常分散在多个平台中，导致研究人员和工程师的认知偏差。本文提出Aleena，一个开源的生命周期对齐代理，利用GitHub作为协作平台，自动跟踪项目状态和决策，帮助团队对齐目标和假设。该方法将多模态信息整合为统一视图，而不替代人类决策。实验表明，Aleena有效减少了信息丢失，提升了协作效率。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
