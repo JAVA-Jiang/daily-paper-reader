@@ -1,0 +1,54 @@
+{
+  "label": "2026-07-11",
+  "date": "2026-07-11",
+  "generated_at": "2026-07-11T20:49:25",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202607/11/2607.08282v1-multi-agent-firewall-architecture-for-privacy-protection-of-sensitive-data-in-interactions-with-language-models",
+      "section": "deep",
+      "title_en": "Multi-Agent Firewall Architecture for Privacy Protection of Sensitive Data in Interactions with Language Models",
+      "authors": "Hugo García Cuesta, Pablo Mateo Torrejón, Alfonso Sánchez-Macián",
+      "date": "2026-07-09",
+      "pdf": "https://arxiv.org/pdf/2607.08282v1",
+      "score": "8.0",
+      "evidence": "开源防火墙，包含与LLM交互的代码",
+      "tldr": "大型语言模型集成带来敏感数据泄露风险。本文提出开源多智能体防火墙架构，通过浏览器扩展与代理拦截所有HTTP(S)和WebSocket流量，结合确定性检测器与LLM语义分析实现数据泄露防护。最优配置下F1分数达94.93%。该架构支持异构部署，平衡计算成本、检测深度与延迟。",
+      "tags": "query:code-paper",
+      "abstract_en": "While Large Language Models (LLMs) have become essential productivity tools, their integration into workflows without adequate safeguards creates significant risks. This paper proposes an open-source, privacy-focused, user-facing firewall designed to secure both web-based and programmatic LLM interactions. The architecture combines a browser extension and a proxy for total traffic interception across both HTTP(S) and WebSocket communications. At its core, a flexible multi-agent pipeline delivers data leakage prevention through a hybrid approach combining deterministic detectors with LLM-driven semantic analysis, proprietary code leakage prevention, and extensible components designed for future security enhancements such as prompt injection evasion. The framework's layered architecture enables deployment across heterogeneous environments, allowing organizations to balance computational cost, detection depth and latency. Evaluation results demonstrate it achieves F1 scores of up to 94.93% on optimal configurations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/11/2607.07946v1-deepswe-measuring-frontier-coding-agents-on-original-long-horizon-engineering-tasks",
+      "section": "quick",
+      "title_en": "DeepSWE: Measuring Frontier Coding Agents on Original, Long-Horizon Engineering Tasks",
+      "authors": "Wenqi Huang, Charley Lee, Leonard Tng, Serena Ge",
+      "date": "2026-07-08",
+      "pdf": "https://arxiv.org/pdf/2607.07946v1",
+      "score": "7.0",
+      "evidence": "提供了开源任务和代码的基准",
+      "tldr": "现有软件工程基准如SWE-bench存在数据泄露和测试不公问题，高分可能源于记忆而非推理。DeepSWE构建113个原创长期任务，来自91个开源仓库，手写验证器独立评分，避免预训练污染与测试偏差。验证器分歧率仅1.4%，远低于SWE-bench Pro的32.4%，且任务代码改动量多5.5倍。该基准能更可靠地区分前沿编码智能体，推动了评估方法的进步。",
+      "tags": "query:code-paper",
+      "abstract_en": "DeepSWE is a benchmark of 113 original, long-horizon software engineering tasks for evaluating coding agents. Most public agentic coding benchmarks follow SWE-bench in mining merged fixes from public GitHub repositories, which creates two problems: the fixes and their discussion were likely seen during pretraining, so a high score can reflect recall rather than problem-solving; and each task is graded by the tests that shipped with its merged fix, which were written to confirm one specific fix rather than grade an arbitrary solution, so they can fail a correct alternative or pass an incomplete one. DeepSWE avoids both. Its tasks are written from scratch across 91 active open-source repositories and five languages and are never contributed back upstream, so their reference solutions stay out of the public record that model training scrapes; and each task is graded by a hand-written verifier that checks the requested functionality and accepts any implementation that provides it. When an independent LLM judge re-reviews graded runs, it disagrees with DeepSWE's verifier about an order of magnitude less often than with SWE-Bench Pro's inherited tests (1.4% versus 32.4%). Despite being about half the length of SWE-Bench Pro's prompts, DeepSWE's prompts describe tasks whose reference solutions touch 5.5x more code, and the benchmark separates frontier agents across a wider score band than the leaderboards on which they otherwise cluster. We release the benchmark, its verifiers, and the full record of evaluation trajectories.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/11/2607.02807v1-swarmresearch-orchestrating-coding-agents-for-open-ended-discovery",
+      "section": "quick",
+      "title_en": "SwarmResearch: Orchestrating Coding Agents for Open-Ended Discovery",
+      "authors": "Yuvraj Virk, Zack Edds, Chunqiu Steven Xia, Lingming Zhang",
+      "date": "2026-07-02",
+      "pdf": "https://arxiv.org/pdf/2607.02807v1",
+      "score": "6.0",
+      "evidence": "论文提出编码代理框架，可能开源",
+      "tldr": "现有长时运行编码代理在持续优化开放问题时容易收敛到单一高级方法，进行低级编辑而错过更好方案，原因是积累上下文和只编辑单一程序状态。SwarmResearch提出编排器-子代理架构，由Shepherd代理利用全局上下文引导一群Search代理在各分支中局部探索。在13/15个任务上达到或超越最先进的LLM引导进化和多智能体方法，通过自适应并行性在不同搜索深度获得更优解，提升了开放发现任务的探索质量。",
+      "tags": "query:code-paper",
+      "abstract_en": "Long-running coding agents such as autoresearch can persistently discover optimizations for open-ended problems. However, they tend to converge onto a single high-level approach, then proceed with low-level edits while missing other superior approaches to the problem. We hypothesize two harness-level design choices contribute to this behavior: accumulating context in a single long-running agent and only exposing a single program state to edit. We introduce SwarmResearch, an orchestrator-subagent harness in which a Shepherd Agent uses global context to steer a population of Search Agents, each operating with local context in their respective git branch. On open-ended optimization tasks, SwarmResearch discovers better or comparable solutions to state-of-the-art LLM-guided evolution and multi-agent techniques on 13/15 tasks, driven by higher-level exploration. Compared with fixed scaling of serial and parallel agents, SwarmResearch's orchestrator-guided scaling discovers better-performing solutions by adapting parallelism at different search depths.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

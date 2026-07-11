@@ -1,0 +1,133 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-11T20:46:10.793735+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2607.08282v1",
+      "source": "arxiv",
+      "title": "Multi-Agent Firewall Architecture for Privacy Protection of Sensitive Data in Interactions with Language Models",
+      "abstract": "While Large Language Models (LLMs) have become essential productivity tools, their integration into workflows without adequate safeguards creates significant risks. This paper proposes an open-source, privacy-focused, user-facing firewall designed to secure both web-based and programmatic LLM interactions. The architecture combines a browser extension and a proxy for total traffic interception across both HTTP(S) and WebSocket communications. At its core, a flexible multi-agent pipeline delivers data leakage prevention through a hybrid approach combining deterministic detectors with LLM-driven semantic analysis, proprietary code leakage prevention, and extensible components designed for future security enhancements such as prompt injection evasion. The framework's layered architecture enables deployment across heterogeneous environments, allowing organizations to balance computational cost, detection depth and latency. Evaluation results demonstrate it achieves F1 scores of up to 94.93% on optimal configurations.",
+      "authors": [
+        "Hugo García Cuesta",
+        "Pablo Mateo Torrejón",
+        "Alfonso Sánchez-Macián"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-07-09T09:23:13+00:00",
+      "link": "https://arxiv.org/pdf/2607.08282v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source firewall with code for LLM interactions",
+      "llm_evidence_cn": "开源防火墙，包含与LLM交互的代码",
+      "llm_evidence": "开源防火墙，包含与LLM交互的代码",
+      "canonical_evidence": "开源防火墙，包含与LLM交互的代码",
+      "llm_tldr_en": "An open-source multi-agent firewall that intercepts LLM traffic to prevent data leakage, combining deterministic detectors and LLM analysis.",
+      "llm_tldr_cn": "该论文提出一个开源的多代理防火墙，通过浏览器扩展和代理拦截LLM流量，混合使用确定性检测器和LLM语义分析防止数据泄露。它明确宣称是开源的，提供了可复现的代码实现，但主题与电网/调度无关。",
+      "llm_tldr": "该论文提出一个开源的多代理防火墙，通过浏览器扩展和代理拦截LLM流量，混合使用确定性检测器和LLM语义分析防止数据泄露。它明确宣称是开源的，提供了可复现的代码实现，但主题与电网/调度无关。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.07946v1",
+      "source": "arxiv",
+      "title": "DeepSWE: Measuring Frontier Coding Agents on Original, Long-Horizon Engineering Tasks",
+      "abstract": "DeepSWE is a benchmark of 113 original, long-horizon software engineering tasks for evaluating coding agents. Most public agentic coding benchmarks follow SWE-bench in mining merged fixes from public GitHub repositories, which creates two problems: the fixes and their discussion were likely seen during pretraining, so a high score can reflect recall rather than problem-solving; and each task is graded by the tests that shipped with its merged fix, which were written to confirm one specific fix rather than grade an arbitrary solution, so they can fail a correct alternative or pass an incomplete one. DeepSWE avoids both. Its tasks are written from scratch across 91 active open-source repositories and five languages and are never contributed back upstream, so their reference solutions stay out of the public record that model training scrapes; and each task is graded by a hand-written verifier that checks the requested functionality and accepts any implementation that provides it. When an independent LLM judge re-reviews graded runs, it disagrees with DeepSWE's verifier about an order of magnitude less often than with SWE-Bench Pro's inherited tests (1.4% versus 32.4%). Despite being about half the length of SWE-Bench Pro's prompts, DeepSWE's prompts describe tasks whose reference solutions touch 5.5x more code, and the benchmark separates frontier agents across a wider score band than the leaderboards on which they otherwise cluster. We release the benchmark, its verifiers, and the full record of evaluation trajectories.",
+      "authors": [
+        "Wenqi Huang",
+        "Charley Lee",
+        "Leonard Tng",
+        "Serena Ge"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.LG"
+      ],
+      "published": "2026-07-08T21:45:34+00:00",
+      "link": "https://arxiv.org/pdf/2607.07946v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "provides benchmark with open-source tasks and code",
+      "llm_evidence_cn": "提供了开源任务和代码的基准",
+      "llm_evidence": "提供了开源任务和代码的基准",
+      "canonical_evidence": "提供了开源任务和代码的基准",
+      "llm_tldr_en": "DeepSWE presents a benchmark of original software engineering tasks for coding agents, ensuring tasks are unseen during pretraining and graded consistently.",
+      "llm_tldr_cn": "DeepSWE针对现有编码智能体基准测试中任务可能已被预训练数据泄露、评分不准确的问题，提出了包含113个原创长周期软件工程任务的基准。这些任务来自91个活跃开源仓库，确保未被包含在预训练数据中，并通过多角度评分避免单一点修正。实验表明，DeepSWE能更可靠地衡量编码智能体的真实问题解决能力，推动该领域更公平的评估。",
+      "llm_tldr": "DeepSWE针对现有编码智能体基准测试中任务可能已被预训练数据泄露、评分不准确的问题，提出了包含113个原创长周期软件工程任务的基准。这些任务来自91个活跃开源仓库，确保未被包含在预训练数据中，并通过多角度评分避免单一点修正。实验表明，DeepSWE能更可靠地衡量编码智能体的真实问题解决能力，推动该领域更公平的评估。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.02807v1",
+      "source": "arxiv",
+      "title": "SwarmResearch: Orchestrating Coding Agents for Open-Ended Discovery",
+      "abstract": "Long-running coding agents such as autoresearch can persistently discover optimizations for open-ended problems. However, they tend to converge onto a single high-level approach, then proceed with low-level edits while missing other superior approaches to the problem. We hypothesize two harness-level design choices contribute to this behavior: accumulating context in a single long-running agent and only exposing a single program state to edit. We introduce SwarmResearch, an orchestrator-subagent harness in which a Shepherd Agent uses global context to steer a population of Search Agents, each operating with local context in their respective git branch. On open-ended optimization tasks, SwarmResearch discovers better or comparable solutions to state-of-the-art LLM-guided evolution and multi-agent techniques on 13/15 tasks, driven by higher-level exploration. Compared with fixed scaling of serial and parallel agents, SwarmResearch's orchestrator-guided scaling discovers better-performing solutions by adapting parallelism at different search depths.",
+      "authors": [
+        "Yuvraj Virk",
+        "Zack Edds",
+        "Chunqiu Steven Xia",
+        "Lingming Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-02T22:47:35+00:00",
+      "link": "https://arxiv.org/pdf/2607.02807v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "paper proposes a coding agent framework, likely open-sourced",
+      "llm_evidence_cn": "论文提出编码代理框架，可能开源",
+      "llm_evidence": "论文提出编码代理框架，可能开源",
+      "canonical_evidence": "论文提出编码代理框架，可能开源",
+      "llm_tldr_en": "SwarmResearch orchestrates multiple coding agents for open-ended optimization, using Shepherd and Search agents in git branches.",
+      "llm_tldr_cn": "该论文提出SwarmResearch框架，通过牧羊人代理协调多个搜索代理，在各自git分支中并行探索优化方案，解决单代理收敛问题。实验表明其在开放优化任务上优于现有方法。该框架可能附带代码，但未显式声明。",
+      "llm_tldr": "该论文提出SwarmResearch框架，通过牧羊人代理协调多个搜索代理，在各自git分支中并行探索优化方案，解决单代理收敛问题。实验表明其在开放优化任务上优于现有方法。该框架可能附带代码，但未显式声明。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

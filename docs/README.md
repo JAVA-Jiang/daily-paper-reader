@@ -6,40 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-10
-- 运行时间：2026-07-10 20:12:54 UTC
+- 最新运行日期：2026-07-11
+- 运行时间：2026-07-11 20:49:19 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：0
-- 速读区：5
+- 本次总论文数：3
+- 精读区：1
+- 速读区：2
 
 ### 今日简报（AI）
-今日速读5篇论文，重点关注GitHub数据集证据收集和仓库级代码修复两大方向。
-
-最值得关注的是《RepoTrace》提出的浏览器辅助证据收集方法与《ContextSniper》的token高效代码记忆技术。
-
-建议读者优先精读上述两篇，以了解如何提升代码研究数据可信度及修复效率。
-- 详情：[/202607/10/README](/202607/10/README)
+今天推荐3篇论文，精读1篇提出多智能体防火墙保护语言模型隐私数据，速读2篇关注编码智能体长周期评测与开放式发现。最值得看的是精读论文的隐私保护架构和《DeepSWE》对前沿编码智能体的长周期任务评测。建议优先阅读精读论文以了解隐私保护方案，并关注编码智能体评测工具的实际应用。
+- 详情：[/202607/11/README](/202607/11/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Multi-Agent Firewall Architecture for Privacy Protection of Sensitive Data in Interactions with Language Models](/202607/11/2607.08282v1-multi-agent-firewall-architecture-for-privacy-protection-of-sensitive-data-in-interactions-with-language-models)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：开源防火墙，包含与LLM交互的代码
 
 ### 速读区论文标签
-1. [RepoTrace: Browser-Assisted Evidence Collection for GitHub Research Datasets](/202607/10/2607.05106v1-repotrace-browser-assisted-evidence-collection-for-github-research-datasets)  
+1. [DeepSWE: Measuring Frontier Coding Agents on Original, Long-Horizon Engineering Tasks](/202607/11/2607.07946v1-deepswe-measuring-frontier-coding-agents-on-original-long-horizon-engineering-tasks)  
    标签：评分：7.0/10、query:code-paper
-   evidence：浏览器辅助工具收集GitHub证据，附带代码
-2. [Infinity-Parser2 Technical Report](/202607/10/2607.07836v1-infinity-parser2-technical-report)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：开源语料库与数据合成流水线
-3. [ContextSniper: AntTrail's Token-Efficient Code Memory for Repository-Level Program Repair](/202607/10/2607.01916v3-contextsniper-anttrails-token-efficient-code-memory-for-repository-level-program-repair)  
+   evidence：提供了开源任务和代码的基准
+2. [SwarmResearch: Orchestrating Coding Agents for Open-Ended Discovery](/202607/11/2607.02807v1-swarmresearch-orchestrating-coding-agents-for-open-ended-discovery)  
    标签：评分：6.0/10、query:code-paper
-   evidence：开源的代码修复模块ContextSniper
-4. [LLMoxie: Exploring Agentic AI for Scientific Software Development](/202607/10/2607.02703v1-llmoxie-exploring-agentic-ai-for-scientific-software-development)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提供了用于可复现科学软件的开源RSE-Plugins生态系统
-5. [Aleena: Alignment Agent for Research Software Engineering Collaborations](/202607/10/2607.08043v1-aleena-alignment-agent-for-research-software-engineering-collaborations)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：开源的生命周期对齐代理
+   evidence：论文提出编码代理框架，可能开源
 
 
 <div class="dpr-home-promo-card">
