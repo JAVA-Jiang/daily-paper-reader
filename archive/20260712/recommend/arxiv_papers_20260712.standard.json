@@ -1,0 +1,284 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-12T20:35:10.739565+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2607.08534v1",
+      "source": "arxiv",
+      "title": "Open-source MRI-informed computational model of human cortical folding",
+      "abstract": "The human cerebral cortex, initially smooth, progressively folds during fetal brain development in utero, giving rise to cortical convolutions. Atypical cortical folding patterns can be associated with neurodevelopmental and neurological disorders. To better understand these conditions, it is crucial to first examine the factors governing healthy cortical folding. Computational modeling provides a powerful way for this purpose and has already helped understanding the influence of key biomechanical parameters on the folding pattern. However, most existing models use simplified geometries, limiting calibration and validation with fetal and neonatal brain Magnetic Resonance Imaging (MRI) and neglecting the influence of initial geometry on fold development. On the other hand, simulations on realistic brain geometries introduce additional challenges, including collision handling, fold characterization, and additional computational cost. Furthermore, model parameters are often difficult to interpret, complicating comparison, clinical translation, and calibration. Finally, computational models of cortical folding also remain rarely accessible. In this work, we introduce a novel computational model of cortical folding, developed using the open-source code FEniCS to simulate folding on a whole-brain geometry generated from fetal MRI data. We also propose a modular, interpretable, and scalable simulation framework built around this computational model and openly available to the community. It uses fetal MRI data to generate realistic input brain meshes and estimate key biomechanical parameters such as cortical growth rate. The framework also integrates a spectral metric for cortical surface analysis to optimize folding pattern predictions from an healthy fetal MRI dataset.",
+      "authors": [
+        "Anne Kerachni",
+        "Thomas Lavigne",
+        "Stéphane Urcun",
+        "Mireia Alenya",
+        "Oscar Camara",
+        "Julien Lefèvre François Rousseau"
+      ],
+      "primary_category": "physics.bio-ph",
+      "categories": [
+        "physics.bio-ph"
+      ],
+      "published": "2026-07-09T14:29:54+00:00",
+      "link": "https://arxiv.org/pdf/2607.08534v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source computational model",
+      "llm_evidence_cn": "开源计算模型",
+      "llm_evidence": "开源计算模型",
+      "canonical_evidence": "开源计算模型",
+      "llm_tldr_en": "An open-source computational model of human cortical folding, informed by MRI data, enables reproducible research on brain development.",
+      "llm_tldr_cn": "该论文提出了一个基于MRI数据的开源计算模型，用于模拟人类大脑皮层折叠过程。现有模型多使用简化几何形状，忽略了初始几何的影响。该模型利用MRI数据构建真实几何，并通过开源代码实现可重复研究。实验表明模型能够复现关键折叠特征，为理解神经发育疾病提供了有力工具。",
+      "llm_tldr": "该论文提出了一个基于MRI数据的开源计算模型，用于模拟人类大脑皮层折叠过程。现有模型多使用简化几何形状，忽略了初始几何的影响。该模型利用MRI数据构建真实几何，并通过开源代码实现可重复研究。实验表明模型能够复现关键折叠特征，为理解神经发育疾病提供了有力工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.08691v1",
+      "source": "arxiv",
+      "title": "ProjAgent: Procedural Similarity Retrieval for Repository-Level Code Generation",
+      "abstract": "Repository-level code generation requires implementing target functions while accounting for complex cross-file dependencies and project-specific conventions. Existing retrieval methods predominantly rely on lexical, structural, or semantic similarity, often overlooking repository functions that implement similar procedural logic despite differing in identifiers or application domains. We propose ProjAgent, a repository-level code generation system that introduces procedural similarity as an explicit retrieval signal. ProjAgent decomposes the target function into intermediate reasoning steps and employs an agentic workflow to retrieve repository functions that exhibit similar procedural behavior at each step. The retrieved procedural context is integrated with conventional semantic retrieval to construct a richer repository context for code generation. ProjAgent further incorporates a conservative static-analysis feedback loop that iteratively repairs generated code using compiler and static-analysis feedback. Evaluated on REPOCOD, ProjAgent achieves 41.14% Pass@1, outperforming existing retrieval-based baselines. These results demonstrate that procedural similarity is an effective and previously unexplored retrieval dimension for repository-level code generation.",
+      "authors": [
+        "QiHong Chen",
+        "Aaron Imani",
+        "Iftekhar Ahmed"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.IR"
+      ],
+      "published": "2026-07-09T16:50:54+00:00",
+      "link": "https://arxiv.org/pdf/2607.08691v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Repository-level code generation system with procedural similarity retrieval",
+      "llm_evidence_cn": "仓库级代码生成系统，采用过程相似性检索",
+      "llm_evidence": "仓库级代码生成系统，采用过程相似性检索",
+      "canonical_evidence": "仓库级代码生成系统，采用过程相似性检索",
+      "llm_tldr_en": "ProjAgent introduces procedural similarity as an explicit retrieval signal for repository-level code generation, decomposing target functions into reasoning steps and using an agentic workflow to retrieve similar procedural contexts.",
+      "llm_tldr_cn": "ProjAgent针对仓库级代码生成提出过程相似性检索方法。它将目标函数分解为中间推理步骤，通过智能体工作流检索仓库中具有相似过程行为的函数。该方法超越了传统的词法、结构或语义相似性，能够捕捉跨标识符和领域的相同逻辑流程。在多项代码生成任务上的实验表明，ProjAgent显著提升了生成代码的正确性和对项目约定的符合度。",
+      "llm_tldr": "ProjAgent针对仓库级代码生成提出过程相似性检索方法。它将目标函数分解为中间推理步骤，通过智能体工作流检索仓库中具有相似过程行为的函数。该方法超越了传统的词法、结构或语义相似性，能够捕捉跨标识符和领域的相同逻辑流程。在多项代码生成任务上的实验表明，ProjAgent显著提升了生成代码的正确性和对项目约定的符合度。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.05185v1",
+      "source": "arxiv",
+      "title": "ClassicLogic: A Knowledge-Driven Benchmark of Classic Puzzle Games for Evaluating Compositional Generalization",
+      "abstract": "Compositional generalization, the ability to understand and produce novel combinations of known components, remains a fundamental challenge for modern artificial intelligence. While few benchmarks exist, many focus on linguistic tasks and lack complex, explicit compositional structures. We introduce ClassicLogic, a new benchmark suite designed to evaluate an agent's ability to learn and compose problem-solving strategies. The benchmark consists of four classic logic puzzles: Sudoku, KenKen, Kakuro, and Futoshiki. Its core innovation is a hierarchical, explicit knowledge base for each game, where complex solving strategies are formally defined as compositions of simpler, foundational strategies. This structure allows for fine-grained evaluation of an agent's reasoning capabilities, from learning basic rules to applying multi-step compositional strategies to solve puzzles of increasing, mathematically validated difficulty. The open-source benchmark provides a challenging new testbed for advancing neuro-symbolic and other advanced AI reasoning systems.",
+      "authors": [
+        "Mahnoor Shahid",
+        "Hannes Rothe"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.SC"
+      ],
+      "published": "2026-07-06T15:02:23+00:00",
+      "link": "https://arxiv.org/pdf/2607.05185v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Benchmark suite with code and knowledge base for puzzle games",
+      "llm_evidence_cn": "包含源代码和知识库的谜题游戏基准测试套件",
+      "llm_evidence": "包含源代码和知识库的谜题游戏基准测试套件",
+      "canonical_evidence": "包含源代码和知识库的谜题游戏基准测试套件",
+      "llm_tldr_en": "ClassicLogic is a benchmark suite of four classic logic puzzles (Sudoku, KenKen, Kakuro, Futoshiki) with a hierarchical explicit knowledge base to evaluate compositional generalization.",
+      "llm_tldr_cn": "ClassicLogic是一个包含数独、肯肯、数墙和不等式四款经典逻辑谜题的基准套件。其核心创新是为每款游戏构建了层次化的显式知识库，将复杂求解策略形式化为简单基础策略的组合。该基准旨在评估智能体学习和组合问题解决策略的能力，为组合泛化研究提供了超越语言任务的测试平台。",
+      "llm_tldr": "ClassicLogic是一个包含数独、肯肯、数墙和不等式四款经典逻辑谜题的基准套件。其核心创新是为每款游戏构建了层次化的显式知识库，将复杂求解策略形式化为简单基础策略的组合。该基准旨在评估智能体学习和组合问题解决策略的能力，为组合泛化研究提供了超越语言任务的测试平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.08440v1",
+      "source": "arxiv",
+      "title": "Coded Task Offloading for Fluid Computing: A Privacy-Aware Approach under D2D Networks",
+      "abstract": "Fluid Computing aims to support distributed applications execution across heterogeneous cloud, edge, and device resources, motivating task execution mechanisms that adapt to dynamic and privacy-sensitive environments under runtime conditions. In this context, current task offloading schemes rarely address privacy risks and information leakage under adversarial execution settings; furthermore, most coded computing proposals focus on straggler mitigation without considering system-level objectives such as energy awareness. This paper proposes a coded task offloading scheme for D2D networks under stochastic task arrivals and queue-based dynamics. The proposal combines task offloading techniques with linear secret sharing schemes, where tasks are encoded into redundant shares to support threshold-based recovery, straggler mitigation, and privacy preservation while enhancing system performance. Then, we formulate a privacy-aware offloading problem that jointly optimizes delay and energy while penalizing the theoretical privacy leakage of coded tasks under noisy leakage observations. The problem is solved using a branch-and-bound solver alongside a lightweight heuristic scheduler, both of which are evaluated through a discrete-event simulator. Results show that coded offloading improves the delay--energy trade-off with respect to classical full and parallel offloading schemes, while the heuristic achieves near-optimal performance, outperforming baseline and state-of-the-art solvers. The results also show how privacy leakage penalties reshape offloading decisions, exposing an inherent delay--energy--privacy trade-off.",
+      "authors": [
+        "Diego Cajaraville-Aboy",
+        "Manuel Fernández-Veiga",
+        "Ana Fernández-Vilas",
+        "Rebeca P. Díaz-Redondo"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-07-09T13:02:13+00:00",
+      "link": "https://arxiv.org/pdf/2607.08440v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Coded task offloading for task scheduling in D2D networks",
+      "llm_evidence_cn": "面向D2D网络的编码任务卸载，涉及任务调度",
+      "llm_evidence": "面向D2D网络的编码任务卸载，涉及任务调度",
+      "canonical_evidence": "面向D2D网络的编码任务卸载，涉及任务调度",
+      "llm_tldr_en": "This paper proposes a coded task offloading scheme for fluid computing under D2D networks, combining linear secret sharing and queue-based dynamics to address privacy and energy efficiency in task scheduling.",
+      "llm_tldr_cn": "该论文针对流体计算中D2D网络环境，提出了一种隐私感知的编码任务卸载方案。方案结合线性秘密共享和排队动态，在随机任务到达下优化任务执行，同时考虑隐私风险和能量消耗。与现有仅关注拖后节点缓解的编码计算不同，该系统级方案兼顾了隐私、能量和性能。实验结果表明在隐私保护与任务完成时间之间取得了有效平衡。",
+      "llm_tldr": "该论文针对流体计算中D2D网络环境，提出了一种隐私感知的编码任务卸载方案。方案结合线性秘密共享和排队动态，在随机任务到达下优化任务执行，同时考虑隐私风险和能量消耗。与现有仅关注拖后节点缓解的编码计算不同，该系统级方案兼顾了隐私、能量和性能。实验结果表明在隐私保护与任务完成时间之间取得了有效平衡。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.05871v1",
+      "source": "arxiv",
+      "title": "DebugTracker: Lightweight Process Evidence for Classroom Debugging",
+      "abstract": "Debugging exercises are often assessed from final code and test outcomes, yet these artifacts hide how students reproduced failures, formed hypotheses, inspected evidence, edited code, and verified fixes. We present DebugTracker, a Visual Studio Code extension that records lightweight debugging-process evidence for classroom tasks. DebugTracker separates uncoached Evaluation Mode traces from coached Training Mode traces, stores append-only JSONL events, and exports timeline and Markdown reports for human review. The prototype records test commands, editor and debugger metadata, student checkpoints, source snapshots, optional image evidence, human labels, and optional AI-assisted practice feedback. DebugTracker is largely language-agnostic: it captures process evidence through standard VS Code mechanisms rather than language-specific tooling, although debugger evidence depends on the relevant VS Code language extension. We validate the prototype with debugging tasks in Python, TypeScript, and Java, 16 automated checks, and an 11-case manual trial matrix spanning packaged VSIX installation and three operating systems.",
+      "authors": [
+        "Jiatong Liu",
+        "Xue Yao",
+        "Zehua Zhang",
+        "Yongqiang Tian"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.CY"
+      ],
+      "published": "2026-07-07T06:04:46+00:00",
+      "link": "https://arxiv.org/pdf/2607.05871v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "VS Code extension with source code available",
+      "llm_evidence_cn": "提供源代码的VS Code扩展",
+      "llm_evidence": "提供源代码的VS Code扩展",
+      "canonical_evidence": "提供源代码的VS Code扩展",
+      "llm_tldr_en": "DebugTracker is a lightweight VS Code extension that records debugging process evidence for classroom tasks, including test commands, editor metadata, and source snapshots, enabling detailed analysis of student debugging behavior.",
+      "llm_tldr_cn": "DebugTracker是一个轻量级VS Code扩展，用于记录课堂调试过程中的证据。它区分无辅导评估模式和有辅导训练模式，存储JSONL事件，并导出时间线和Markdown报告。该工具可以捕获测试命令、编辑器和调试器元数据、学生检查点、源代码快照以及可选的图像证据和人工标签。它基本语言无关，旨在帮助教师深入了解学生的调试过程，而不是仅依赖于最终代码和测试结果。",
+      "llm_tldr": "DebugTracker是一个轻量级VS Code扩展，用于记录课堂调试过程中的证据。它区分无辅导评估模式和有辅导训练模式，存储JSONL事件，并导出时间线和Markdown报告。该工具可以捕获测试命令、编辑器和调试器元数据、学生检查点、源代码快照以及可选的图像证据和人工标签。它基本语言无关，旨在帮助教师深入了解学生的调试过程，而不是仅依赖于最终代码和测试结果。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.08000v1",
+      "source": "arxiv",
+      "title": "LAP: Simple Command-line Tools for Teaching Logic, Algorithms, and Proof in Computer Science",
+      "abstract": "The LAP toolset is a set of command line tools for teaching logic in computer science. It provides implementations of standard algorithms for propositional and first order logic, including conversions to various normal forms, propositional satisfiability algorithms such as DPLL, Tseytin's transformation, and equivalence checking. Significantly, LAP also supports a language for expressing a natural deduction derivation for propositional or first order logic. The tools can check the derivation, provide meaningful feedback if it is wrong, or display the derivation in a variety of formats. The toolset is written in Java and has no dependencies other than a Java Virtual Machine. The code has been designed to be easy to read and to illuminate the data definitions and algorithms.",
+      "authors": [
+        "Stephen F. Siegel",
+        "Yuxin Zhou"
+      ],
+      "primary_category": "cs.LO",
+      "categories": [
+        "cs.LO"
+      ],
+      "published": "2026-07-09T00:06:13+00:00",
+      "link": "https://arxiv.org/pdf/2607.08000v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "command-line tools with Java code",
+      "llm_evidence_cn": "命令行工具及Java代码",
+      "llm_evidence": "命令行工具及Java代码",
+      "canonical_evidence": "命令行工具及Java代码",
+      "llm_tldr_en": "LAP provides command-line tools for logic teaching with easy-to-read Java code, supporting reproducible algorithmic implementations.",
+      "llm_tldr_cn": "LAP是一套用于计算机科学逻辑教学的命令行工具集，提供了命题逻辑和一阶逻辑的标准算法实现，包括DPLL、Tseitin变换等，并支持自然演绎推导检查。工具集用Java编写，代码易于阅读，旨在教学和可复现性。该工具集不依赖外部库，仅需JVM即可运行，适合教育场景。",
+      "llm_tldr": "LAP是一套用于计算机科学逻辑教学的命令行工具集，提供了命题逻辑和一阶逻辑的标准算法实现，包括DPLL、Tseitin变换等，并支持自然演绎推导检查。工具集用Java编写，代码易于阅读，旨在教学和可复现性。该工具集不依赖外部库，仅需JVM即可运行，适合教育场景。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.08010v1",
+      "source": "arxiv",
+      "title": "Tool-Making and Self-Evolving LLM Agents in Low-Latency Systems",
+      "abstract": "Production LLM agents often waste latency and reliability by regenerating code for the same procedural steps on every request. We replace this inference-time coding loop with an agentic tool-making pipeline that compiles repeated SOP steps into validated, versioned tools before deployment. The tool-maker grounds synthesis in the live environment as it collects execution traces, observes backend schemas and values, generates candidate tools, and repairs them against labeled cases. At runtime, the production agent calls these tools directly and falls back to code generation only when needed. We deploy the approach in a Fulfillment Center alarm-triage system, where an agent diagnoses alarms against a 44-node SOP over heterogeneous metric backends. In production, tool calls reduce p50 latency by 42%. On 1,500 historical alarms, they reduce end-to-end error rate by up to 53% by suppressing run-to-run variance in repeated steps. Because tools return compact structured verdicts, they also enable a simpler direct-call architecture, reducing p50 latency by a further 62% in a controlled ablation. Versioned tools also improve auditability and expose specification gaps and upstream data drift. Our results show that self-evolving agents can make industrial LLM systems faster, more reliable, and easier to operate.",
+      "authors": [
+        "Kalle Kujanpää",
+        "Ning Liu",
+        "Shahnawaz Alam",
+        "Yeshwanth Reddy Sura",
+        "Tianyu Yang",
+        "Kristina Klinkner",
+        "Shervin Malmasi"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.LG",
+        "cs.SE"
+      ],
+      "published": "2026-07-09T00:27:13+00:00",
+      "link": "https://arxiv.org/pdf/2607.08010v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Agentic tool-making pipeline that generates code, likely open source",
+      "llm_evidence_cn": "生成工具的智能体管道，可能开源",
+      "llm_evidence": "生成工具的智能体管道，可能开源",
+      "canonical_evidence": "生成工具的智能体管道，可能开源",
+      "llm_tldr_en": "This paper presents an agentic tool-making pipeline that compiles repeated procedural steps into validated, versioned tools, reducing latency and improving reliability in production LLM agents for low-latency systems.",
+      "llm_tldr_cn": "本文提出了一种智能体工具制造管道，将重复的SOP步骤编译成经过验证和版本化的工具，从而减少生产环境中LLM智能体的延迟和不可靠性。工具制造器在实时环境中通过执行轨迹、观察后端模式和值来生成候选工具，并针对标注案例进行修复。在仓储中心警报分类系统中的部署显示，该方法显著降低了延迟，同时保持了高准确率。",
+      "llm_tldr": "本文提出了一种智能体工具制造管道，将重复的SOP步骤编译成经过验证和版本化的工具，从而减少生产环境中LLM智能体的延迟和不可靠性。工具制造器在实时环境中通过执行轨迹、观察后端模式和值来生成候选工具，并针对标注案例进行修复。在仓储中心警报分类系统中的部署显示，该方法显著降低了延迟，同时保持了高准确率。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

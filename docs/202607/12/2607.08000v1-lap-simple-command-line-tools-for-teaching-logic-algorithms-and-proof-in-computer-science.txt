@@ -1,0 +1,328 @@
+Title: LAP: Simple Command-line Tools for Teaching Logic, Algorithms, and Proof in Computer Science
+
+URL Source: https://arxiv.org/pdf/2607.08000v1
+
+Published Time: Fri, 10 Jul 2026 00:17:58 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+# LAP: Simple Command-line Tools for Teaching Logic, Algorithms, and Proof in Computer Science ∗
+
+Stephen F. Siegel 1 and Yuxin Zhou 2
+
+> 1
+
+Department of Computer & Information Sciences, University of Delaware, Newark DE 19716, USA, Email: siegel@udel.edu 
+
+> 2
+
+Department of Computer & Information Sciences, University of Delaware, Newark DE 19716, USA, Email: sobonlinemsn@live.com 
+
+July 10, 2026 
+
+Abstract 
+
+The LAP toolset is a set of command line tools for teaching logic in computer science. It provides implementations of standard algorithms for propositional and first order logic, includ-ing conversions to various normal forms, propositional satisfiability algorithms such as DPLL, Tseytin’s transformation, and equivalence checking. Significantly, LAP also supports a language for expressing a natural deduction derivation for propositional or first order logic. The tools can check the derivation, provide meaningful feedback if it is wrong, or display the derivation in a variety of formats. The toolset is written in Java and has no dependencies other than a Java Virtual Machine. The code has been designed to be easy to read and to illuminate the data definitions and algorithms. 
+
+# 1 Introduction 
+
+This paper describes certain educational software tools for teaching logic in computer science. This toolset is being developed as part of a curriculum, Logic, Algorithms, Proof (LAP), which will include a text and other material. It is intended for an advanced undergraduate or beginning grad-uate course, and currently covers propositional and first order logic from a computational point of view. The tools supplement the text by providing implementations of the algorithms described there, including conversion to various normal forms, Tseytin’s transformation 1, and boolean satisfi-ability algorithms such as DPLL 2. Most importantly, the tools support a language for expressing a natural deduction derivation, they can check that a derivation is correct or provide useful feedback when it is not, and can present the derivation in a variety of formats. The tools are written in Java and have a simple command-line interface. They are free, open source, and available at: https://github.com/verified-software-lab/lap .
+
+> ∗
+
+To appear at TEAL 2026: Tools for Educational Activities in Logic , a FLoC 2026 Workshop, July 25, 2026 
+
+> 1https://en.wikipedia.org/wiki/Tseytin_transformation
+> 2https://en.wikipedia.org/wiki/DPLL_algorithm
+
+1arXiv:2607.08000v1 [cs.LO] 9 Jul 2026 1.1 Context and Goals 
+
+There are many excellent educational tools for teaching logic and for checking derivations, including [1, 4–6]. How does LAP differ? We think the following combination of features is unique. First, it emphasizes logic from a computational point of view. One way it does this is through the LAP source code itself, which we intend for students to read. We have tried to make the code easily understandable and well-documented. We strive for simple, natural implementations that correspond to the pseudo-code in many texts, rather than highly optimized code. Using Java also helps, because it is familiar to many computer science students. 
+
+Formulas and derivations , two of the fundamental concepts in logic, are precise mathematical structures that are naturally represented as inductively defined data types. In this way they are similar to lists or trees or similar structures that are familiar to computer science students. Some presentations of logic elide this point, especially for derivations. In LAP, we emphasize it. The  
+
+> Formula
+
+and Derivation classes look like typical inductive data type definitions in Java. Algorithms manipulating these structures are recursive routines in which the structure of the code mirrors the structure of the definition, another familiar concept (cf. [3, §8.3]). An an example, Figure 1 shows the LAP method for converting a propositional formula to negation normal form. Moreover, derivations can be displayed using a variety of “views”, e.g., a simple nested tuple (consisting of a conclusion, rule, and list of subderivations), a tree, a linear or hierarchical format, or a Fitch diagram 3. Beginning students often mistakenly believe these are different proof systems, but LAP helps to clarify they are simply different ways of viewing the same underlying data structure. Computer science students are usually familiar with this distinction between data and view, which they may have seen in an introductory course (e.g., “world programs” in [3]) or from studying the Model-View-Controller design pattern. As mentioned above, LAP tools are command line tools. The input and output (from the terminal or files) consist of plain text. 4 This is appropriate for computer science students. For example, to construct a derivation, a user writes a text file using any editor they choose, then invokes lap check from the command line. If LAP finds an error in the derivation, it provides meaningful feedback. 5 The user then edits the file and tries again, and continues iterating in this way until the check succeeds. The process is similar to developing, say, a C program using an editor and a compiler from the shell. Our command line tools have several advantages. There are no dependencies on remote servers, web browsers, databases, GUIs, IDEs, or other frameworks (other than a Java Virtual Machine). A user can easily incorporate the tools into their own workflow by scripting. For example, a teacher could incorporate LAP into a script to grade student assignments. In a Unix-style shell, the tools can be easily combined in interesting ways. For example, LAP’s dpll command consumes a propositional formula in conjunctive normal form (CNF) and determines its satisfiability using the DPLL algorithm. LAP’s tseytin command converts an arbitrary propositional formula into an equisatisfiable formula in CNF. The two can be composed to check the satisfiability of an arbitrary propositional formula as follows:       
+
+> > lap tseytin -f '(p<->q) &!(q<->p)' | lap dpll -in false
+> 3https://en.wikipedia.org/wiki/Fitch_notation
+> 4The text may use Unicode characters, color, and other highlighting features supported by modern terminals. Especially in the case of derivations, this can render the products visually appealing and easier to comprehend.
+> 5The code that checks a derivation can also be enlightening for students. It emphasizes another fact that is often glossed over: for a proof system to be useful, there must be an effective procedure for checking that a candidate derivation is correct.
+
+2Figure 1: LAP source code excerpt: conversion to negation normal form. The LAP code has been carefully developed to be understandable and to illuminate the fundamental algorithmic ideas. Here, the output from tseytin is piped to the input of dpll . LAP reports the formula is unsatis-fiable. The command line tools are self-documenting using lap help ... . Option -v instructs LAP to produce not only the final result, but to show what is going on in an algorithm. For example, in DPLL, it displays the state of a depth-first search after each push, pop, or unit clause reduction. This helps a student understand the algorithm. Other options allow formulas or derivations to be read from a file, or specified as a command line argument, or read from terminal input. Finally, there are many variations in formalization, proof systems, notation and terminology across logic texts. For LAP, we have chosen to be consistent with the presentation in the book 
+
+Rigorous Software Development [2], a leading text on deductive program verification which also reviews necessary background in propositional and first order logic. LAP tools are therefore ideal for students who are using or will use this text. 6
+
+# 2 Basic Usage and Propositional Algorithms 
+
+In this section, we describe the basic propositional algorithms in LAP and how to access them through the command line interface. 
+
+> 6A new edition of [2] is scheduled to be published later this year.
+
+32.1 The help command 
+
+Basic command line usage is obtained by typing lap help :                                                                            
+
+> > lap help lap: Logic, Algorithms, Proof tool (language: Propositional Logic) Usage: lap <command> ... Commands: help -print usage information nnf - convert apropositional formula to negation normal form cnf - convert apropositional formula to conjunctive normal form dnf - convert apropositional formula to disjunctive normal form tseytin -convert apropositional formula to an equisatisfiable CNF formula dpll -apply the DPLL algorithm to a CNF formula sat - determine if apropositional formula is satisfiable valid -determine if apropositional formula is valid (a tautology) equiv -determine whether two propositional formulas are equivalent check -check anatural deduction derivation Type "lap help <command>" for detailed help on a specific command. Type "lap help formulas" for formula syntax. Type "lap help derivations" for derivation syntax. Insert "-lang <language>" after "help" to specify language. Languages: pl (default), fol.
+
+Currently, LAP supports two languages: propositional logic (PL) and first order logic (FOL). The default is PL, and the help commands show only information relevant to the selected lan-guage. This avoids inundating beginning students with too many unfamiliar concepts. A similar pedagogical practice is followed in the How to Design Programs (HtDP) curriculum [3]: students begin with a very limited programming language (BSL) and the programming environment reveals only that language. Students can move to the next language when they are ready, and then the environment reveals more. 
+
+2.2 Formula syntax 
+
+A LAP identifier is as in C or Java: an (upper- or lower-case) letter or underscore followed by any number of letters, digits, and underscores. A proposition can be represented by any identifier that is not a reserved word. Connectives and primitives can be represented in all of the following ways:               
+
+> NOT !¬AND &&& ∧OR ||| ∨IMPLIES -> →IFF <-> ↔false ⊥true ⊤
+
+Operator precedence, from highest to lowest, is: NOT , AND , OR , IMPLIES , IFF . All binary operators are right-associative. Of course, parentheses can be used to group subformulas. 42.3 Conversion commands 
+
+The commands nnf , cnf , dnf , and tseytin are similar in that each converts a given formula to a certain form. The usage of cnf is typical: 
+
+Usage: lap cnf <options> [<filename>] Description: Converts a propositional formula to an equivalent formula in conjunctive normal form. By default, the formula is read from a file, specified by <filename>. However, using options below, this can be changed to read from stdin or to specify the formula on the command line. Output is sent to stdout. Options: -in : read formula from stdin -f <string> : read the formula from <string> instead of a file -v : verbose output -plain : restrict output to plain text For formula syntax, type "lap help formulas". 
+
+For example: 
+
+> lap cnf -f '!(!p->!q)|r' (¬p∨r)∧(q∨r) 
+
+2.4 The dpll command 
+
+As explained above, dpll consumes a CNF formula and determines its satisfiability using the DPLL algorithm. Option -v reveals the algorithmic steps, and -model displays a satisfying model at the end if one exists (a model is identified with the set of propositions it assigns true ): 
+
+> lap dpll -v -model -f '(p|q)&!p' CNF formula: (p∨q)∧¬p CNF Structure: {[¬p], [p,q]} Push {[¬p], [p,q]}. Model = {} [UNIT] Setting p to false. Push {[q]}. Model = {} [UNIT] Setting q to true. Push {}. Model = {q} Satisfying model found! Pop. Pop. Pop. {q} 
+
+2.5 The sat command 
+
+Command sat determines satisfiability of any propositional formula, with option -alg used to spec-ify an algorithm. Algorithm brute uses “brute force,” iterating over all models over the propositions occurring in the formula: 5> lap sat -v -model -alg brute -f '(p|q)&!p' Formula: (p∨q)∧¬p Evaluating formula at model {}. Result: false Evaluating formula at model {p}. Result: false Evaluating formula at model {q}. Result: true {q} 
+
+Algorithm dpll combines Tseytin’s transformation with DPLL, as described above. The commands to determine if a formula is valid or if two formulas are equiv alent behave in the obvious way. 
+
+# 3 Natural Deduction for Propositional and First Order Logic 
+
+In this section we describe the LAP capability to check natural deduction derivations for both propositional and first order logic. 
+
+3.1 FOL Syntax 
+
+FOL formula syntax extends the PL formula syntax defined in Section 2.2. A formula may use variables, constants, function symbols (of arity at least 1), predicate symbols (of arity at least 0), and quantifiers. LAP does not enforce any convention regarding identifiers used for predicate or function sym-bols, variables, or constants. Any identifier that is not a reserved word can be used to represent any of those syntactic elements. To distinguish variables from constants, the user must declare the constants at the top of a derivation. Everything else about the first order vocabulary can be deduced from context: function and predicate symbols are always followed by parentheses, the arity is determined by the number of arguments, predicate applications only occur in a context where a formula is expected, and function applications in a context where a term is expected. The universal and existential quantifiers can be represented as follows:   
+
+> forall ∀exists ∃
+
+An example of a quantified formula is    
+
+> forall x . P(x) &Q(x)
+
+Note the dot ( .) after the variable ( x). The quantifiers have the lowest operator precedence, so the expression above denotes the same formula as  
+
+> forall x . (P(x) & Q(x))
+
+3.2 Derivations 
+
+LAP’s representation of a PL derivation is based on the following: 
+
+Definition 3.1. An NPL derivation is a triple D = ( s, R, (D1, . . . , Dn)) , written 
+
+(R) D1 · · · D n
+
+s ,
+
+6(Ax ) Γ, A ⊢ A (RAA ) Γ, ¬A ⊢ ⊥ 
+
+Γ ⊢ A
+
+(I→) Γ, A ⊢ BΓ ⊢ A → B (I¬) Γ, A ⊢ ⊥ 
+
+Γ ⊢ ¬ A
+
+(I∧) Γ ⊢ A Γ ⊢ BΓ ⊢ A ∧ B (I∨,i ) Γ ⊢ Ai
+
+Γ ⊢ A1 ∨ A2
+
+(i ∈ { 1, 2})(E→) Γ ⊢ A Γ ⊢ A → BΓ ⊢ B (E¬) Γ ⊢ A Γ ⊢ ¬ AΓ ⊢ B
+
+(E∧,i ) Γ ⊢ A1 ∧ A2
+
+Γ ⊢ Ai
+
+(i ∈ { 1, 2}) (E∨) Γ ⊢ A ∨ B Γ, A ⊢ C Γ, B ⊢ CΓ ⊢ C
+
+Figure 2: Inference Rules for NPL 
+
+(I∀) Γ ⊢ ϕ[y/x]
+
+Γ ⊢ ∀ x.ϕ 
+
+y is free for x in ϕ and 
+
+y does not occur free in Γ or ϕ
+
+(E∀) Γ ⊢ ∀ x.ϕ 
+
+Γ ⊢ ϕ[t/x] t is free for x in ϕ
+
+(I∃) Γ ⊢ ϕ[t/x]
+
+Γ ⊢ ∃ x.ϕ t is free for x in ϕ
+
+(E∃) Γ ⊢ ∃ x.ϕ Γ, ϕ [y/x] ⊢ θ
+
+Γ ⊢ θ
+
+y is free for x in ϕ and 
+
+y does not occur free in Γ, ϕ, or θ
+
+Figure 3: Additional rules for NFOL .where R ∈ RULES PL , s is a sequent (the conclusion of D), n is the number of premises of R, Di is a derivation with conclusion si (1 ≤ i ≤ n), and 
+
+(R) s1 · · · sn
+
+s
+
+is an instance of R. The Di are the immediate subderivations of D.The inference rules (RULES PL ) are given in Figure 2. An NFOL derivation is defined similarly, using instead RULES FOL , which contains the four additional rules shown in Figure 3. 
+
+3.3 LAP Derivation Syntax 
+
+To enable automated verification, we implement a concrete syntax that maps these formal con-structs to a machine-readable format. First, the sequent symbol is denoted |- or ⊢.The inference rules can be specified using any of the following: 7Ax IAND I& I∧ EAND1 E&1 E∧1 EAND2 E&2 E∧2 IOR1 I| I∨1 IOR2 I|2 I∨2 EOR E| E∨ IIMPLIES I-> I→ EIMPLIES E-> E→ INOT I! I¬ ENOT E! E¬ RAA Iforall IA I∀ Eforall EA E∀ Iexists IE I∃ Eexists EE E∃ 
+
+A derivation is expressed in a linear format, as a sequence of steps. Each step begins with a number, followed by a dot ( .). This is followed by a sequent: a comma-separated list of formulas, followed by the sequent symbol, followed by a formula. This is followed by the name of a rule in parentheses, e.g., (RAA) . If the rule has premises, this is followed by a comma-separated list of numbers, the line numbers of the premises. Finally, the step is terminated by a dot. As with formulas, white space is ignored. In summary, a step has the form:    
+
+> <number>. <sequent> (<rule>) <premises>.
+
+An example step is:   
+
+> 3. p, p->q |-q(E->)1,2.
+
+As mentioned above, an FOL derivation that uses constants requires that those constants first be declared. These are specified using the const keyword, followed by a comma-separated list of identifiers and a semicolon, e.g.:   
+
+> const a, b, c;
+
+Here is a complete example of an FOL derivation that is accepted by LAP:              
+
+> const c; 1. forall x. P(x) |- forall x. P(x) (Ax). 2. forall x. P(x) |- P(c) (Eforall)1. 3. forall x. P(x) |- exists y. P(y) (Iexists)2.
+
+Using Unicode characters, the same derivation could be written  
+
+> const c; 1. ∀x.P(x) ⊢ ∀x.P(x) (Ax). 2. ∀x.P(x) ⊢ P(c) (E∀)1. 3. ∀x.P(x) ⊢ ∃y.P(y) (I∃)2.
+
+Finally, the # character is used to start a comment that extends to the end of the line. 83.4 Output Formats 
+
+While the input format is currently restricted to the linear form described above, LAP has the ability to output the derivation in several different formats, or views :• tuple : the raw mathematical representation, using nested parentheses, based on Definition 3.1; • linear : the input format described above; • fitch : a Fitch diagram, which uses nested scopes to specify the context; • tree : a traditional mathematical layout with the root at the bottom, the second representation shown in Definition 3.1; and • hierarchy : an indented directory-style tree. While they can look quite different, all of these views are just different ways of displaying the same underlying mathematical object. To really emphasize this point, LAP has the ability to number the conclusions (or subderivations) in every view, using the same numbering scheme in all cases. This allows a user to see exactly how a particular node in the tree view, for example, corresponds to a line in the Fitch diagram. 
+
+3.5 Checking a Derivation 
+
+As the derivation is parsed, LAP constructs its internal representation, a derivation structure. Each time a new derivation instance is about to be created, a check occurs to ensure the rule of the derivation has been correctly applied, including the side conditions, if any. If the final (root) derivation is correct, the program will print true , and optionally output one or more views of this derivation. An example terminal interaction to check a valid derivation is shown in Figures 4 and 5. The  
+
+> -number
+
+option causes LAP to include numbers in the tuple, tree, and hierarchy views (numbers are always included in the linear and Fitch views). With this option, it is easy to see how each view represents the same structure, which in this case is essentially a tree with 7 nodes. Note that these figures are not screenshots, but text that can be easily copied and pasted. 
+
+3.6 Error Explanations 
+
+If any check fails, LAP will output false and optionally an error explanation. As an example, consider the following erroneous derivation:                       
+
+> 1. p|q |-p|q (Ax). 2. p|q,p |-p(Ax). 3. p|q,p |-q|p (IOR1)2. #erroneous application of IOR1! 4. p|q,q |-q(Ax). 5. p|q,q |-q|p (IOR1)4. 6. p|q |-q|p (EOR)1,3,5.
+
+Figure 6 shows the result of checking this derivation with LAP. The explanation states the exact step at which the error occurs. It shows that the user is trying to apply rule I ∨,1 and shows the user’s premise and conclusion. It then explains exactly why this is not a valid instance of the rule: the p should occur as the left argument of the or operator in the concluding formula q∨p , but 9> lap check -lang fol -view all -number quantifierdual.lap true (⑦ ∀x.¬P(x) ⊢ ¬∃x.P(x), I¬, ((⑥ ∀x.¬P(x),∃x.P(x) ⊢ ⊥, E∃, ((① ∀x.¬P(x),∃x.P(x) ⊢ ∃x.P(x), Ax, ()), (⑤ P(y),∀x.¬P(x),∃x.P(x) ⊢ ⊥, E¬, ( (② P(y),∀x.¬P(x),∃x.P(x) ⊢ P(y), Ax, ()), (④ P(y),∀x.¬P(x),∃x.P(x) ⊢ ¬P(y), E∀, ((③ P(y),∀x.¬P(x),∃x.P(x) ⊢ ∀x.¬P(x), Ax, ()))))))))) 1. ∀x.¬P(x),∃x.P(x) ⊢ ∃x.P(x) (Ax). 2. P(y),∀x.¬P(x),∃x.P(x) ⊢ P(y) (Ax). 3. P(y),∀x.¬P(x),∃x.P(x) ⊢ ∀x.¬P(x) (Ax). 4. P(y),∀x.¬P(x),∃x.P(x) ⊢ ¬P(y) (E∀)3. 5. P(y),∀x.¬P(x),∃x.P(x) ⊢ ⊥ (E¬)2,4. 6. ∀x.¬P(x),∃x.P(x) ⊢ ⊥ (E∃)1,5. 7. ∀x.¬P(x) ⊢ ¬∃x.P(x) (I¬)6. 7. ∀x.¬P(x) ⊢ ¬∃x.P(x) (I¬) 6. │ ∀x.¬P(x),∃x.P(x) ⊢ ⊥ (E∃) 1. │ │ ∀x.¬P(x),∃x.P(x) ⊢ ∃x.P(x) (Ax) 5. │ │ P(y),∀x.¬P(x),∃x.P(x) ⊢ ⊥ (E¬) 2. │ │ │ P(y),∀x.¬P(x),∃x.P(x) ⊢ P(y) (Ax) 4. │ │ │ P(y),∀x.¬P(x),∃x.P(x) ⊢ ¬P(y) (E∀) 3. │ │ │ │ P(y),∀x.¬P(x),∃x.P(x) ⊢ ∀x.¬P(x) (Ax) │ ∀x.¬P(x) ├─── │ │ ∃x.P(x) │ ├─── 1. │ │ ∃x.P(x) (Ax) │ │ │ P(y) │ │ ├─── 2. │ │ │ P(y) (Ax) 3. │ │ │ ∀x.¬P(x) (Ax) 4. │ │ │ ¬P(y) (E∀)3 5. │ │ │ ⊥ (E¬)2,4 6. │ │ ⊥ (E∃)1,5 7. │ ¬∃x.P(x) (I¬)6 
+
+Figure 4: Derivation of ∀x. ¬P (x) ⊢ ¬∃ x.P (x). With -view all , after checking the derivation and reporting it is correct, LAP also prints the derivation in 5 views: tuple, linear, hierarchy, fitch, and tree. The tree view is shown in Figure 5. 10 (Ax) ────────────────────────────────── ③ P(y),∀x.¬P(x),∃x.P(x) ⊢ ∀x.¬P(x) (Ax) ────────────────────────────── (E∀) ─────────────────────────────────────── ② P(y),∀x.¬P(x),∃x.P(x) ⊢ P(y) ④ P(y),∀x.¬P(x),∃x.P(x) ⊢ ¬P(y) (Ax) ──────────────────────────── (E¬) ───────────────────────────────────────────────────────────────────────────────── ① ∀x.¬P(x),∃x.P(x) ⊢ ∃x.P(x) ⑤ P(y),∀x.¬P(x),∃x.P(x) ⊢ ⊥(E∃) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── ⑥ ∀x.¬P(x),∃x.P(x) ⊢ ⊥ (I¬) ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── ⑦ ∀x.¬P(x) ⊢ ¬∃x.P(x) 
+
+Figure 5: Derivation of ∀x. ¬P (x) ⊢ ¬∃ x.P (x), tree view. 
+
+> lap check -lang pl -v badOr1.lap false Violation of rule I∨1 at step 3: Premise 1 : p∨q,p ⊢ p Conclusion : p∨q,p ⊢ q∨p The premise's succedent, p, should be the OR formula's left argument, q, but is not. Rule I∨1 ("introduce or 1"): Γ ⊢ A─────── Γ ⊢ A∨B Rule I∨1 says that if you know A, then you can conclude A∨B. The premise and the conclusion use the same context Γ. This rule has one premise. 
+
+Figure 6: The output of an example with I ∨,1 rule violation. instead the left argument is q. It then provides a specification and informal description of the rule, for reference. The user would then proceed to correct their derivation and re-run LAP. For another example of a violation, consider the candidate derivation 
+
+1. ∃x. P(x) ⊢ ∃x. P(x) (Ax). 2. ∃x. P(x), P(y) ⊢ P(y) (Ax). 3. ∃x. P(x) ⊢ P(y) (E∃)1,2. # erroneous application of E∃! 
+
+The output from LAP is shown in Figure 7. In this case, one of the side conditions of rule E ∃ is violated. 
+
+# 4 System Design and Future Work 
+
+LAP is composed of modules with clearly-defined interfaces. The directory structure of the LAP source code, which also reflects the submodule (or is-component-of ) relation, is shown, in part, in Figure 8. The uses relation has also been carefully constrained. For example, the submodules of pl 
+
+satisfy: syntax does not use any other module, semantics uses only syntax , nd uses only syntax ,and parse uses only syntax and nd . In particular, there are no cycles in that uses relation. The 
+
+pl and fol modules are completely independent, which results in some duplication, but also makes the pl module much easier to understand, especially for a beginning student. Together with thorough documentation, we think these architectural decisions make the code easy to understand, maintain, and extend. We hope this will encourage others to use and contribute 11 > lap check -lang fol -v badEexists1.lap false Violation of rule E∃ at step 3: Premise 1 : ∃x.P(x) ⊢ ∃x.P(x) Premise 2 : P(y),∃x.P(x) ⊢ P(y) Conclusion : ∃x.P(x) ⊢ P(y) This step violates Side condition 1 as y does occur free in the conclusion's succedent θ (P(y)) Rule E∃ ("eliminate exists") :Γ ⊢ ∃x φ Γ, φ[y/x] ⊢ θ───────────────────────── Γ ⊢ θSide condition 1: y must not occur free in Γ, φ, or θ; Side condition 2: y must be free for x in φ. 
+
+Figure 7: The output of an example with E ∃ side condition violation. to the project. For those interested in contributing, here are some ideas for future work: • For both propositional and first order logic: add some derived rules, and show how a derivation using them is transformed to one that does not. • Support first order logic with equality. • Explore some first order theories. • Add transformation to Herbrand and Skolem normal forms. • Support Herbrand models, and implement a semi-decision procedure for validity of first order formulas. • Add more languages, such as Hoare logic (for a simple programming language) and temporal logics. 
+
+Acknowledgments 
+
+This material is based upon work supported by the U.S. National Science Foundation under Award Number CCF-2446130, and by the U.S. Department of Energy, Office of Science, Advanced Scientific Computing Research (ASCR) Program, under Award Number DE-SC0025953. This report was prepared as an account of work sponsored by an agency of the United States Government. Neither the United States Government nor any agency thereof, nor any of their employees, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately owned rights. Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof. The views and opinions of authors expressed 12 LAP grammar...................................................... JavaCC grammars for each language 
+
+pl.jj fol.jj src LAP.java................................................................................ Main class 
+
+org.l4cs util TextUtil.java............. Abstractions for text highlighting, special symbols, etc. 
+
+pl................................................................ Propositional Logic module 
+
+syntax....................................... Syntactic elements for propositional logic 
+
+Formula.java ............... Inductive data structure representing a PL formula 
+
+False.java.................................................. The formula “false” ( ⊥)
+
+Proposition.java................... A proposition p, which is a kind of Formula 
+
+NotFormula.java.................................................................... ¬A
+
+BinaryFormula.java...................................... A ∧ B, A ∨ B, or A → B
+
+CnfConverter.java........................ Routines to convert a formula to CNF 
+
+DnfConverter.java........................ Routines to convert a formula to DNF 
+
+FormulaFactory.java ............. Methods for creating, manipulating formulas 
+
+semantics.................................... Semantic elements of propositional logic 
+
+Model.java.................... A model; assigns truth value to every proposition 
+
+RestrictedModel.java................................ A model with finite support 
+
+SATSolver.java............................ Abstract base class for all SAT solvers 
+
+BruteForceSATSolver.java.............. Implementation of SAT by brute force 
+
+CnfStruct.java....................... Structured representation of CNF formula 
+
+Clause.java........................... Structured representation of a CNF clause 
+
+CnfException.java ........................... Thrown when a CNF was expected 
+
+DPLLSATSolver.java....................... SAT solver based on DPLL algorithm 
+
+Semantics.java..................................................... Module interface 
+
+nd ............................................................. Natural Deduction module 
+
+Sequent.java..................................................................... Γ ⊢ ϕ
+
+Rule.java ........................................................... An inference rule 
+
+Violation.java......................... Object representing a violation of a Rule 
+
+Derivation.java............. Inductive data structure representing a derivation 
+
+Ax.java....................................................................... Rule (Ax) 
+
+· · · 
+
+TreePrinter.java........................... Prints a derivation using “tree” view 
+
+· · · 
+
+parse ....................................................... Parser generated by JavaCC 
+
+fol................................................................. First Order Logic module 
+
+cli.................................................................. Command Line Interface 
+
+test ........................................................................................ JUnit tests Figure 8: Directory structure of LAP source code. 13 herein do not necessarily state or reflect those of the United States Government or any agency thereof. 
+
+# References 
+
+[1] Colin Allen and Chris Menzel. The Logic Machine, interactive logic software for Logic Primer .Accessed 2026-04-26. URL: https://logic.ua.edu .[2] José Bacelar Almeida, Maria João Frade, Jorge Sousa Pinto, and Simão Melo de Sousa. Rigorous Software Development: An Introduction to Program Verification . Undergraduate Topics in Computer Science. Springer-Verlag, London, 2011. doi:10.1007/978-0-85729-018-2 .[3] Matthias Felleisen, Robert Bruce Findler, Matthew Flatt, and Shriram Krishnamurthi. How to Design Programs . Second edition, February 2026. URL: https://htdp.org/2026-2-25//Book/ index.html .[4] G. Leach-Krouse and J. Ehrlich. Welcome to Carnap.io: A formal logic framework for Haskell. Accessed 2026-04-26. URL: https://carnap.io .[5] Openproof Project. Language, proof and logic: Included software. Accessed 2026-04-26. URL: 
+
+> https://www.gradegrinder.net/Products/lpl-index.html
+
+.[6] Michael Rieppel. FitchFX proof constructor. Accessed 2026-04-26. URL: https://mrieppel. github.io/FitchFX/ .14

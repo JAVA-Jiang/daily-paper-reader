@@ -6,29 +6,41 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-11
-- 运行时间：2026-07-11 20:49:19 UTC
+- 最新运行日期：2026-07-12
+- 运行时间：2026-07-12 20:39:49 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：1
-- 速读区：2
+- 本次总论文数：7
+- 精读区：2
+- 速读区：5
 
 ### 今日简报（AI）
-今天推荐3篇论文，精读1篇提出多智能体防火墙保护语言模型隐私数据，速读2篇关注编码智能体长周期评测与开放式发现。最值得看的是精读论文的隐私保护架构和《DeepSWE》对前沿编码智能体的长周期任务评测。建议优先阅读精读论文以了解隐私保护方案，并关注编码智能体评测工具的实际应用。
-- 详情：[/202607/11/README](/202607/11/README)
+今日共收录7篇论文，精读2篇、速读5篇。值得关注精读论文《Open-source MRI-informed computational model of human cortical folding》与《ProjAgent: Procedural Similarity Retrieval for Repository-Level Code Generation》。建议优先阅读精读论文，速读中《LAP》等逻辑教学工具也值得浏览。
+- 详情：[/202607/12/README](/202607/12/README)
 
 ### 精读区论文标签
-1. [Multi-Agent Firewall Architecture for Privacy Protection of Sensitive Data in Interactions with Language Models](/202607/11/2607.08282v1-multi-agent-firewall-architecture-for-privacy-protection-of-sensitive-data-in-interactions-with-language-models)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：开源防火墙，包含与LLM交互的代码
+1. [Open-source MRI-informed computational model of human cortical folding](/202607/12/2607.08534v1-open-source-mri-informed-computational-model-of-human-cortical-folding)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：开源计算模型
+2. [ProjAgent: Procedural Similarity Retrieval for Repository-Level Code Generation](/202607/12/2607.08691v1-projagent-procedural-similarity-retrieval-for-repository-level-code-generation)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：仓库级代码生成系统，采用过程相似性检索
 
 ### 速读区论文标签
-1. [DeepSWE: Measuring Frontier Coding Agents on Original, Long-Horizon Engineering Tasks](/202607/11/2607.07946v1-deepswe-measuring-frontier-coding-agents-on-original-long-horizon-engineering-tasks)  
+1. [ClassicLogic: A Knowledge-Driven Benchmark of Classic Puzzle Games for Evaluating Compositional Generalization](/202607/12/2607.05185v1-classiclogic-a-knowledge-driven-benchmark-of-classic-puzzle-games-for-evaluating-compositional-generalization)  
    标签：评分：7.0/10、query:code-paper
-   evidence：提供了开源任务和代码的基准
-2. [SwarmResearch: Orchestrating Coding Agents for Open-Ended Discovery](/202607/11/2607.02807v1-swarmresearch-orchestrating-coding-agents-for-open-ended-discovery)  
+   evidence：包含源代码和知识库的谜题游戏基准测试套件
+2. [DebugTracker: Lightweight Process Evidence for Classroom Debugging](/202607/12/2607.05871v1-debugtracker-lightweight-process-evidence-for-classroom-debugging)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提供源代码的VS Code扩展
+3. [LAP: Simple Command-line Tools for Teaching Logic, Algorithms, and Proof in Computer Science](/202607/12/2607.08000v1-lap-simple-command-line-tools-for-teaching-logic-algorithms-and-proof-in-computer-science)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：命令行工具及Java代码
+4. [Tool-Making and Self-Evolving LLM Agents in Low-Latency Systems](/202607/12/2607.08010v1-tool-making-and-self-evolving-llm-agents-in-low-latency-systems)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：生成工具的智能体管道，可能开源
+5. [Coded Task Offloading for Fluid Computing: A Privacy-Aware Approach under D2D Networks](/202607/12/2607.08440v1-coded-task-offloading-for-fluid-computing-a-privacy-aware-approach-under-d2d-networks)  
    标签：评分：6.0/10、query:code-paper
-   evidence：论文提出编码代理框架，可能开源
+   evidence：面向D2D网络的编码任务卸载，涉及任务调度
 
 
 <div class="dpr-home-promo-card">
