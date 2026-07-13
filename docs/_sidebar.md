@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-13 <!--dpr-date:20260713-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/13/2607.09318v1-ecokube-simulating-carbon-aware-scheduling-policies-in-heterogeneous-edge-cloud-environments" data-sidebar-item="{&quot;title&quot;: &quot;EcoKube: Simulating Carbon-Aware Scheduling Policies in Heterogeneous Edge-Cloud Environments&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.09318v1-ecokube-simulating-carbon-aware-scheduling-policies-in-heterogeneous-edge-cloud-environments&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;提供边缘云环境下碳感知调度策略的仿真代码&quot;}">EcoKube: Simulating Carbon-Aware Scheduling Policies in Heterogeneous Edge-Cloud Environments</a>
   * 2026-07-12 <!--dpr-date:20260712-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/12/2607.08534v1-open-source-mri-informed-computational-model-of-human-cortical-folding" data-sidebar-item="{&quot;title&quot;: &quot;Open-source MRI-informed computational model of human cortical folding&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.08534v1-open-source-mri-informed-computational-model-of-human-cortical-folding&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;开源计算模型&quot;}">Open-source MRI-informed computational model of human cortical folding</a>

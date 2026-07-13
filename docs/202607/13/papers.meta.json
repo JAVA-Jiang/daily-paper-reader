@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-13",
+  "date": "2026-07-13",
+  "generated_at": "2026-07-13T20:38:12",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/13/2607.09318v1-ecokube-simulating-carbon-aware-scheduling-policies-in-heterogeneous-edge-cloud-environments",
+      "section": "quick",
+      "title_en": "EcoKube: Simulating Carbon-Aware Scheduling Policies in Heterogeneous Edge-Cloud Environments",
+      "authors": "Gonçalo Ferreira, Shashikant Ilager",
+      "date": "2026-07-10",
+      "pdf": "https://arxiv.org/pdf/2607.09318v1",
+      "score": "6.0",
+      "evidence": "提供边缘云环境下碳感知调度策略的仿真代码",
+      "tldr": "针对云和边缘计算能耗与碳排放快速增长的问题，现有碳感知调度研究缺乏统一可重复的评估框架。EcoKube构建了一个事件驱动的确定性模拟器，集成策略钩子和异构感知参考策略，用于评估异构边缘-云环境中的可持续性调度策略。通过合成批处理工作负载实验，将参考策略与Kubernetes默认调度器、KEIDS和TOPSIS/KCSS对比。该框架提供了部署前可重复比较可持续性策略的架构与实验基础。",
+      "tags": "query:code-paper",
+      "abstract_en": "Energy demand from cloud and edge computing is rising rapidly, with AI workloads further intensifying electricity use and associated carbon emissions. In hybrid edge-cloud settings, sustainability impact depends on time- and location-varying grid Carbon Intensity (CI), site Power Usage Effectiveness (PUE), and heterogeneous hardware characteristics. Existing carbon-aware work explores solutions such as temporal elasticity, spatio-temporal workload shifting, and carbon-aware placement across distributed sites. However, these solutions do not provide a consistent and reproducible workflow for evaluating sustainability-aware scheduling policies on heterogeneous, federated edge-cloud topologies. We present EcoKube: a configurable simulation framework for the reproducible evaluation of sustainability-aware scheduling policies in heterogeneous edge-cloud environments. The framework includes an event-driven deterministic simulator, policy hooks, and a heterogeneity-aware reference policy. We evaluate the framework with synthetic batch workloads, comparing the reference policy against the default Kubernetes scheduler, KEIDS, and TOPSIS/KCSS. The contribution is architectural and experimental: EcoKube provides a reproducible way to compare sustainability-aware policies before deployment.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-13T20:37:43.917454+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.09318v1",
+      "source": "arxiv",
+      "title": "EcoKube: Simulating Carbon-Aware Scheduling Policies in Heterogeneous Edge-Cloud Environments",
+      "abstract": "Energy demand from cloud and edge computing is rising rapidly, with AI workloads further intensifying electricity use and associated carbon emissions. In hybrid edge-cloud settings, sustainability impact depends on time- and location-varying grid Carbon Intensity (CI), site Power Usage Effectiveness (PUE), and heterogeneous hardware characteristics. Existing carbon-aware work explores solutions such as temporal elasticity, spatio-temporal workload shifting, and carbon-aware placement across distributed sites. However, these solutions do not provide a consistent and reproducible workflow for evaluating sustainability-aware scheduling policies on heterogeneous, federated edge-cloud topologies. We present EcoKube: a configurable simulation framework for the reproducible evaluation of sustainability-aware scheduling policies in heterogeneous edge-cloud environments. The framework includes an event-driven deterministic simulator, policy hooks, and a heterogeneity-aware reference policy. We evaluate the framework with synthetic batch workloads, comparing the reference policy against the default Kubernetes scheduler, KEIDS, and TOPSIS/KCSS. The contribution is architectural and experimental: EcoKube provides a reproducible way to compare sustainability-aware policies before deployment.",
+      "authors": [
+        "Gonçalo Ferreira",
+        "Shashikant Ilager"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-07-10T11:57:42+00:00",
+      "link": "https://arxiv.org/pdf/2607.09318v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "simulation code for carbon-aware scheduling policies in edge-cloud environments",
+      "llm_evidence_cn": "提供边缘云环境下碳感知调度策略的仿真代码",
+      "llm_evidence": "提供边缘云环境下碳感知调度策略的仿真代码",
+      "canonical_evidence": "提供边缘云环境下碳感知调度策略的仿真代码",
+      "llm_tldr_en": "EcoKube is a configurable simulator for evaluating sustainability-aware scheduling policies on heterogeneous edge-cloud topologies, addressing the lack of reproducible workflows for carbon-aware scheduling.",
+      "llm_tldr_cn": "现有碳感知调度研究缺乏一致且可复现的评估工作流。本文提出EcoKube，一个可配置的仿真器，用于在异构边缘云拓扑上评估可持续性感知调度策略。该仿真器考虑时间与位置变化的电网碳强度、站点能效和异构硬件特性，为调度策略的比较提供标准化平台。通过EcoKube，研究人员可以复现实验并公平对比不同碳感知方法。",
+      "llm_tldr": "现有碳感知调度研究缺乏一致且可复现的评估工作流。本文提出EcoKube，一个可配置的仿真器，用于在异构边缘云拓扑上评估可持续性感知调度策略。该仿真器考虑时间与位置变化的电网碳强度、站点能效和异构硬件特性，为调度策略的比较提供标准化平台。通过EcoKube，研究人员可以复现实验并公平对比不同碳感知方法。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
