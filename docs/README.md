@@ -6,24 +6,43 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-13
-- 运行时间：2026-07-13 20:38:05 UTC
+- 最新运行日期：2026-07-14
+- 运行时间：2026-07-14 21:24:28 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：0
-- 速读区：1
+- 本次总论文数：7
+- 精读区：5
+- 速读区：2
 
 ### 今日简报（AI）
-今日推荐一篇关于边缘-云异构环境下碳感知调度策略的模拟研究论文。该论文提出了EcoKube框架，可评估碳感知调度策略对绿色计算的影响，值得关注。建议后续可关注其实际应用效果与具体能耗优化案例。
-- 详情：[/202607/13/README](/202607/13/README)
+1) 今日精读5篇、速读2篇，聚焦可复现学术地图与大规模文本包含检测两大高分方向。
+2) 最值得关注：AcadGIS一键生成发表级地图（9.0/10），以及Robust Scalable Detection在大规模语料库中高效检测文本包含（9.0/10）。
+3) 建议优先了解AcadGIS开源包和文本包含的鲁棒检测方法，可快速提升学术制图与文本分析效率。
+- 详情：[/202607/14/README](/202607/14/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [AcadGIS: A Single-Import Python Package for Reproducible, Publication-Ready Academic Maps](/202607/14/2607.10017v1-acadgis-a-single-import-python-package-for-reproducible-publication-ready-academic-maps)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：开源Python包，用于可复现学术地图制作
+2. [Robust, Scalable Detection of Text Containment in Large Web-Crawled Corpora](/202607/14/2607.10020v1-robust-scalable-detection-of-text-containment-in-large-web-crawled-corpora)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：开源Python包，用于文本包含检测
+3. [CAFE: A Compound-AI Factorial Evaluation Framework](/202607/14/2607.10380v1-cafe-a-compound-ai-factorial-evaluation-framework)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：用于复合AI系统评估的开源平台，采用因子设计方案
+4. [Enhancing RAMOSE, a framework for implementing REST APIs and semantic-actionable outputs over data sources](/202607/14/2607.11218v1-enhancing-ramose-a-framework-for-implementing-rest-apis-and-semantic-actionable-outputs-over-data-sources)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：开源Python框架，提供源代码
+5. [Computing Tools for Translation-Invariant Total Orders](/202607/14/2607.11709v1-computing-tools-for-translation-invariant-total-orders)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：提供开源软件包TITO_Explore
 
 ### 速读区论文标签
-1. [EcoKube: Simulating Carbon-Aware Scheduling Policies in Heterogeneous Edge-Cloud Environments](/202607/13/2607.09318v1-ecokube-simulating-carbon-aware-scheduling-policies-in-heterogeneous-edge-cloud-environments)  
+1. [Evaluating Semantic and Quality-Aware Retrieval for Source Code Repositories](/202607/14/2607.09161v1-evaluating-semantic-and-quality-aware-retrieval-for-source-code-repositories)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：可复现的代码检索系统
+2. [Pareto-Optimal Scheduling in the Half-batch Multiserver-job Model](/202607/14/2607.08999v1-pareto-optimal-scheduling-in-the-half-batch-multiserver-job-model)  
    标签：评分：6.0/10、query:code-paper
-   evidence：提供边缘云环境下碳感知调度策略的仿真代码
+   evidence：多服务器作业模型中的调度，与数据中心任务调度相关
 
 
 <div class="dpr-home-promo-card">

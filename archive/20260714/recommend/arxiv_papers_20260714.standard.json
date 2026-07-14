@@ -1,0 +1,275 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-14T21:20:12.065079+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2607.10017v1",
+      "source": "arxiv",
+      "title": "AcadGIS: A Single-Import Python Package for Reproducible, Publication-Ready Academic Maps",
+      "abstract": "Academic and project maps are often produced through a fragmented workflow: researchers locate boundaries, manage shapefiles, join tabular data, assemble locator insets, add cartographic decorations, and export figures through desktop GIS or multi-package Python scripts. This creates an accessibility barrier for non-GIS users and a reproducibility problem when data sources, styling choices, and manual edits are not captured in executable form. We present AcadGIS, a free and open-source Python package that creates publication-oriented research maps from high-level commands under one namespace, import acadgis as agis. AcadGIS provides place-name boundary access, automated study-area locator layouts, thematic cartography, raster and vector layers, curated Earth-observation products, terrain and hydrology context, and configurable PNG, PDF, and SVG export without requiring desktop GIS expertise or hand-managed shapefiles. Its design combines one-import access to the scientific-Python stack, publication-oriented defaults with progressive control, local caching, source attribution, and figure specifications based on code, named data, and a pinned package version. Through three representative use cases, we demonstrate how common paper, thesis, and project maps can be expressed as compact, inspectable scripts. Source code: https://github.com/riponcm/AcadGIS.",
+      "authors": [
+        "Ripon Chandra Malo",
+        "Shatabdi Roy",
+        "Tong Qiu"
+      ],
+      "primary_category": "cs.MS",
+      "categories": [
+        "cs.MS",
+        "cs.GR"
+      ],
+      "published": "2026-07-10T22:40:33+00:00",
+      "link": "https://arxiv.org/pdf/2607.10017v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python package for reproducible academic maps",
+      "llm_evidence_cn": "开源Python包，用于可复现学术地图制作",
+      "llm_evidence": "开源Python包，用于可复现学术地图制作",
+      "canonical_evidence": "开源Python包，用于可复现学术地图制作",
+      "llm_tldr_en": "AcadGIS is an open-source Python package that creates publication-ready academic maps with a single import, automating boundary access, locator layouts, and thematic cartography for reproducibility.",
+      "llm_tldr_cn": "学术地图制作通常涉及多个地理信息系统工具和手动操作，流程碎片化且难以复现。本文提出AcadGIS，一个开源Python包，通过一个命名空间（import acadgis as agis）提供高级命令，自动完成地名边界获取、研究区定位布局、专题制图等功能。用户无需GIS背景即可生成出版级地图，且所有步骤均可脚本化，保证了制图流程的可复现性。AcadGIS降低了学术地图制作的门槛，促进了研究成果的清晰展示与复现。",
+      "llm_tldr": "学术地图制作通常涉及多个地理信息系统工具和手动操作，流程碎片化且难以复现。本文提出AcadGIS，一个开源Python包，通过一个命名空间（import acadgis as agis）提供高级命令，自动完成地名边界获取、研究区定位布局、专题制图等功能。用户无需GIS背景即可生成出版级地图，且所有步骤均可脚本化，保证了制图流程的可复现性。AcadGIS降低了学术地图制作的门槛，促进了研究成果的清晰展示与复现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.10020v1",
+      "source": "arxiv",
+      "title": "Robust, Scalable Detection of Text Containment in Large Web-Crawled Corpora",
+      "abstract": "We present FindMyText, an open-source Python package designed to efficiently assess whether a given text appears, in part or in full, within a text corpus. The tool builds on prior techniques for document fingerprinting, but extends them with a novel mechanism to explicitly capture sequences of matching fingerprints. By identifying such chains, the tool can more reliably detect near-verbatim copies of a given text rather than mere textual similarities. This makes FindMyText particularly suited for verifying the presence of copyrighted material in a corpus. Leveraging a distributed, disk-based indexing framework, the system scales to large web-crawled datasets. Using a new benchmark for evaluating text containment methods, we show that FindMyText outperforms alternative approaches across three datasets (ArXiv papers, Wikipedia, and generic web content).",
+      "authors": [
+        "Lars Henry Berge Olsen",
+        "Pierre Lison",
+        "Martin Jullum",
+        "Mark Anderson"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-07-10T22:46:11+00:00",
+      "link": "https://arxiv.org/pdf/2607.10020v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python package for text containment detection",
+      "llm_evidence_cn": "开源Python包，用于文本包含检测",
+      "llm_evidence": "开源Python包，用于文本包含检测",
+      "canonical_evidence": "开源Python包，用于文本包含检测",
+      "llm_tldr_en": "FindMyText is an open-source Python package for detecting text containment in large corpora, using fingerprint chains for near-verbatim detection; scales via distributed disk indexing.",
+      "llm_tldr_cn": "大规模语料中的文本包含检测是版权验证的关键步骤，但现有方法难以可靠识别近逐字拷贝。本文提出FindMyText，一个开源Python包，通过文档指纹和匹配指纹链机制，能够更准确地检测文本是否以逐字形式出现。结合分布式磁盘索引，系统可扩展到网络级语料。实验表明，FindMyText在新建基准上表现优于现有方法，为文本包含检测提供了高效可扩展的工具。",
+      "llm_tldr": "大规模语料中的文本包含检测是版权验证的关键步骤，但现有方法难以可靠识别近逐字拷贝。本文提出FindMyText，一个开源Python包，通过文档指纹和匹配指纹链机制，能够更准确地检测文本是否以逐字形式出现。结合分布式磁盘索引，系统可扩展到网络级语料。实验表明，FindMyText在新建基准上表现优于现有方法，为文本包含检测提供了高效可扩展的工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.10380v1",
+      "source": "arxiv",
+      "title": "CAFE: A Compound-AI Factorial Evaluation Framework",
+      "abstract": "We introduce CAFE (Compound-AI Factorial Evaluation), an open-source platform that brings design of experiments to the evaluation of compound AI systems (CAIS). Such systems expose many interchangeable choices - e.g. which retriever, model, or prompt - and practitioners rarely know which of them most affects answer quality. With CAFE, a practitioner registers each swappable component of a pipeline as a factor to build a factorial design over the chosen factors, run the resulting configurations, and score the answers on a shared rubric using a configurable LLM judge together with human raters. From these ratings it attributes answer-quality variance to the components and their interactions with mixed-effects models and reports effect sizes, significance, the best configuration, cost and latency trade-offs, and judge-human reliability. Whereas existing tools mostly either search for a good configuration or score outputs in isolation, CAFE also explains which component drives quality and whether an observed difference is significant. We validate CAFE on a retrieval-augmented question-answering (QA) pipeline over the HotpotQA benchmark dataset, where it recovers planted factor effects and stays calibrated under a permutation null. CAFE is released as a Python package and as a Web application.",
+      "authors": [
+        "Fabian Lukassen",
+        "Christoph Weisser",
+        "Thomas Kneib",
+        "Alexander Silbersdorff"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-07-11T16:17:46+00:00",
+      "link": "https://arxiv.org/pdf/2607.10380v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source platform for evaluating compound AI systems using factorial design",
+      "llm_evidence_cn": "用于复合AI系统评估的开源平台，采用因子设计方案",
+      "llm_evidence": "用于复合AI系统评估的开源平台，采用因子设计方案",
+      "canonical_evidence": "用于复合AI系统评估的开源平台，采用因子设计方案",
+      "llm_tldr_en": "CAFE is an open-source platform that applies design of experiments to evaluate compound AI systems, enabling practitioners to identify which components most affect answer quality via factorial experiments.",
+      "llm_tldr_cn": "复合AI系统包含众多可互换组件（如检索器、模型、提示词），但实践者难以判断哪个组件最关键。CAFE开源平台引入实验设计方法，允许用户对各个组件建立因子实验，自动运行配置并用LLM+人工评分分析方差。实验证明该方法能有效归因质量差异并找到最佳配置。CAFE为可复现的复合系统评估提供了标准化框架。",
+      "llm_tldr": "复合AI系统包含众多可互换组件（如检索器、模型、提示词），但实践者难以判断哪个组件最关键。CAFE开源平台引入实验设计方法，允许用户对各个组件建立因子实验，自动运行配置并用LLM+人工评分分析方差。实验证明该方法能有效归因质量差异并找到最佳配置。CAFE为可复现的复合系统评估提供了标准化框架。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.11218v1",
+      "source": "arxiv",
+      "title": "Enhancing RAMOSE, a framework for implementing REST APIs and semantic-actionable outputs over data sources",
+      "abstract": "Scholarly infrastructures increasingly expose their data through REST APIs that follow shared specifications, such as the Scientific Knowledge Graph - Interoperability Framework (SKG-IF), which defines a common data model, exchange format, and REST API for research information. Implementing such specifications over existing data sources, however, requires a development effort that many open infrastructures cannot afford. RAMOSE, the RESTful API Manager Over SPARQL Endpoints, is an open-source Python framework that reduces this effort by turning a declarative configuration file into a documented REST API over RDF triplestores. This article presents its second major version, which extends the tool with nine new requirements. The new features include query orchestration across multiple SPARQL endpoints and non-RDF sources, with joins across their results; pluggable output formats and request parameters; pagination and caching; OpenAPI export; and write operations, with authentication both of API consumers and towards protected endpoints. A built-in module packages the format and filters that SKG-IF prescribes, letting a provider expose a compliant endpoint only through configuration. A functional comparison with nine similar tools, grounded in reproducible tests, shows that only RAMOSE joins RDF and non-RDF results on arbitrary keys within one API operation. RAMOSE serves the OpenCitations REST APIs, which peaked at almost 38 million monthly requests between May 2025 and May 2026, and has been adopted by the GRAPHIA project to onboard data sources into its SKG-IF-based federation.",
+      "authors": [
+        "Arcangelo Massari",
+        "Sergei Slinkin",
+        "Ivan Heibi",
+        "Silvio Peroni"
+      ],
+      "primary_category": "cs.DL",
+      "categories": [
+        "cs.DL"
+      ],
+      "published": "2026-07-13T08:09:40+00:00",
+      "link": "https://arxiv.org/pdf/2607.11218v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python framework providing source code",
+      "llm_evidence_cn": "开源Python框架，提供源代码",
+      "llm_evidence": "开源Python框架，提供源代码",
+      "canonical_evidence": "开源Python框架，提供源代码",
+      "llm_tldr_en": "RAMOSE is an open-source Python framework that generates documented REST APIs from declarative config files, reducing development effort for scholarly infrastructures; the second version adds nine new features.",
+      "llm_tldr_cn": "学术基础设施日益需要遵循共享规范的REST API，但许多开源组织缺乏开发资源。本文提出的RAMOSE是一个开源Python框架，能将声明式配置文件自动转化为文档化的REST API，极大降低了实现成本。第二版新增了九项功能，进一步提升了框架的可用性和扩展性。该工作为学术数据互操作提供了低成本的技术方案。",
+      "llm_tldr": "学术基础设施日益需要遵循共享规范的REST API，但许多开源组织缺乏开发资源。本文提出的RAMOSE是一个开源Python框架，能将声明式配置文件自动转化为文档化的REST API，极大降低了实现成本。第二版新增了九项功能，进一步提升了框架的可用性和扩展性。该工作为学术数据互操作提供了低成本的技术方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.11709v1",
+      "source": "arxiv",
+      "title": "Computing Tools for Translation-Invariant Total Orders",
+      "abstract": "We introduce TITO_Explore, a software package for representing and computing with Translation-Invariant Total Orders (TITOs). We define a canonical window notation for TITOs and design and implement algorithms for several computational tasks involving them. The package normalizes the window notation of a given TITO into its canonical form, computes its inversion set, compares the weak order between two TITOs, and computes the join of two specified TITOs. Our weak order comparison algorithm operates by partitioning the inversion sets into disjoint subsets, thereby breaking down the comparison problem into evaluations of paired subsets. The join algorithm uses an edge-weighted directed graph to represent inversions and converts the problem of finding the join into a weighted path problem in the graph.",
+      "authors": [
+        "Yifan Jing",
+        "Emma Yicheng Lou",
+        "Shaotian Sun",
+        "Yuxuan Wu"
+      ],
+      "primary_category": "math.CO",
+      "categories": [
+        "math.CO"
+      ],
+      "published": "2026-07-13T15:37:31+00:00",
+      "link": "https://arxiv.org/pdf/2607.11709v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Provides a software package TITO_Explore as open source code",
+      "llm_evidence_cn": "提供开源软件包TITO_Explore",
+      "llm_evidence": "提供开源软件包TITO_Explore",
+      "canonical_evidence": "提供开源软件包TITO_Explore",
+      "llm_tldr_en": "Introduces TITO_Explore, a software package for representing and computing with Translation-Invariant Total Orders, including algorithms for normalization, inversion set computation, weak order comparison, and join.",
+      "llm_tldr_cn": "本文针对平移不变全序(TITO)的表示与计算问题，提出了TITO_Explore软件包。该软件包定义了规范窗口表示法，并实现了规范化、反演集计算、弱序比较和连接等算法。通过将反演集分区并利用边加权有向图，有效解决了比较和连接问题。该工作为TITO的理论研究与实际应用提供了可复现的计算工具。",
+      "llm_tldr": "本文针对平移不变全序(TITO)的表示与计算问题，提出了TITO_Explore软件包。该软件包定义了规范窗口表示法，并实现了规范化、反演集计算、弱序比较和连接等算法。通过将反演集分区并利用边加权有向图，有效解决了比较和连接问题。该工作为TITO的理论研究与实际应用提供了可复现的计算工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.09161v1",
+      "source": "arxiv",
+      "title": "Evaluating Semantic and Quality-Aware Retrieval for Source Code Repositories",
+      "abstract": "Keyword-based retrieval is limited for source-code repositories when queries are expressed in natural language or concern implementation intent and code quality rather than exact tokens. This study evaluates a prototype retrieval system that combines function-level fragmentation, text-and-code embeddings, ChromaDB vector storage, LLM-derived quality metadata, and four retrieval modes: semantic, quality-filtered, hybrid, and automatic routing. The concrete evaluation uses an educational C-code corpus. The full corpus contains 563 anonymized programmer identifiers and 8,951 C files; a reproducible 10% indexed sample contains 56 programmer identifiers, 847 files, and 3,839 fragments. Across 15 manually judged queries, semantic retrieval achieved nDCG@5 of 0.820, Success@5 of 0.800, and MRR of 0.644. The automatic router selected the expected mode for all 15 queries. In a small manual audit, LLM-derived quality scores were within one point of the manual assessment for 9 of 12 fragments. Within the reported query set, semantic retrieval was the strongest overall mode, while explicit quality metadata was most useful for explicitly quality-oriented queries.",
+      "authors": [
+        "Marek Horváth",
+        "Emília Pietriková"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-10T07:28:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.09161v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "reproducible code retrieval system",
+      "llm_evidence_cn": "可复现的代码检索系统",
+      "llm_evidence": "可复现的代码检索系统",
+      "canonical_evidence": "可复现的代码检索系统",
+      "llm_tldr_en": "Evaluates a semantic and quality-aware retrieval system for source code repositories with reproducible sample.",
+      "llm_tldr_cn": "该论文评估了一个结合语义与质量感知的源代码仓库检索原型系统。该系统采用函数级分解、文本与代码嵌入、ChromaDB向量存储和LLM质量元数据，提供四种检索模式。使用教育性C代码语料库，并抽取了可复现的10%样本进行评估。在15个手工查询上，语义检索达到了较好的nDCG值。贡献在于为代码仓库检索提供了可复现的评估。",
+      "llm_tldr": "该论文评估了一个结合语义与质量感知的源代码仓库检索原型系统。该系统采用函数级分解、文本与代码嵌入、ChromaDB向量存储和LLM质量元数据，提供四种检索模式。使用教育性C代码语料库，并抽取了可复现的10%样本进行评估。在15个手工查询上，语义检索达到了较好的nDCG值。贡献在于为代码仓库检索提供了可复现的评估。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.08999v1",
+      "source": "arxiv",
+      "title": "Pareto-Optimal Scheduling in the Half-batch Multiserver-job Model",
+      "abstract": "In large-scale computing systems, jobs often demand heterogeneous server allocations: large jobs that occupy a substantial fraction of the servers are of high importance and are thus latency-sensitive, while small jobs fill in the remaining capacity to maintain throughput. To model this dynamic, we introduce the half-batch multiserver-job (MSJ) framework, a queueing model in which large jobs arrive according to a Poisson process and require all servers simultaneously, while small jobs, each needing only one server, are always available.   We prove that, in the half-batch MSJ model, the Pareto frontier for large-job mean response time and small-job throughput admits a simple and exact characterization. It is generated by a family of convoy policies, under which the system serves small jobs until $k$ large jobs have arrived and then switches to serving large jobs, together with convex combinations of neighboring convoy policies. Our result is fully general and non-asymptotic, holding for every stable arrival rate $λ$, every number of servers $n$, and every large-job size distribution $S$.",
+      "authors": [
+        "Ziyuan Wang",
+        "Izzy Grosof"
+      ],
+      "primary_category": "cs.PF",
+      "categories": [
+        "cs.PF",
+        "math.PR"
+      ],
+      "published": "2026-07-10T00:01:51+00:00",
+      "link": "https://arxiv.org/pdf/2607.08999v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "scheduling in multiserver-job model relevant to data center task scheduling",
+      "llm_evidence_cn": "多服务器作业模型中的调度，与数据中心任务调度相关",
+      "llm_evidence": "多服务器作业模型中的调度，与数据中心任务调度相关",
+      "canonical_evidence": "多服务器作业模型中的调度，与数据中心任务调度相关",
+      "llm_tldr_en": "This paper introduces a queueing model for large-scale computing systems and characterizes the Pareto frontier for response time and throughput using convoy policies.",
+      "llm_tldr_cn": "针对大规模计算系统中的异构服务器分配问题，论文提出了半批多服务器作业（MSJ）模型，其中大型作业需要全部服务器，小型作业仅需一台。理论证明了在大型作业平均响应时间和小型作业吞吐量之间的帕累托边界，并由一组护卫策略生成。该工作为调度优化提供了精确的理论框架。",
+      "llm_tldr": "针对大规模计算系统中的异构服务器分配问题，论文提出了半批多服务器作业（MSJ）模型，其中大型作业需要全部服务器，小型作业仅需一台。理论证明了在大型作业平均响应时间和小型作业吞吐量之间的帕累托边界，并由一组护卫策略生成。该工作为调度优化提供了精确的理论框架。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
