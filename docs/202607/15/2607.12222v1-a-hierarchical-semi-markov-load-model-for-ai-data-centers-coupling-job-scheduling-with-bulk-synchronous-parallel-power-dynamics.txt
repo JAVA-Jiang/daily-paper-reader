@@ -1,0 +1,362 @@
+Title: A Hierarchical Semi-Markov Load Model for AI Data Centers Coupling Job Scheduling with Bulk-Synchronous-Parallel Power Dynamics
+
+URL Source: https://arxiv.org/pdf/2607.12222v1
+
+Published Time: Wed, 15 Jul 2026 12:00:20 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+A Hierarchical Semi-Markov Load Model for AI Data Centers Coupling Job Scheduling with Bulk-Synchronous-Parallel Power Dynamics 
+
+C. CHAUDHARY 1, A. BERA 2, C. NEWLUN 2, M. BENIDRIS 1, J. MITRA 11Michigan State University, East Lansing, MI 48824 
+
+> 2
+
+Sandia National Laboratories, Albuquerque, NM 87185 United States of America SUMMARY 
+
+AI data centers are emerging as a dominant new load class on the bulk power system, and their power dynamics differ fundamentally from those of conventional industrial loads. Within a single training job, the bulk-synchronous-parallel (BSP) algorithm drives every node through a cycle of dense computation, synchronization, and checkpoint writes, which produces power swings between thermal design power and near idle within seconds. Across the facility, train-ing jobs arrive, claim blocks of nodes for hours to days, and depart, so occupied-node counts fluctuate daily, weekly, and yearly. The facility-scale variability and the peak demand that sizes the grid interconnection are governed by this second, slower mechanism. A model that resolves only the within-job physics and treats the facility as a fixed population of busy nodes averages out the per-node swings and underestimates the peak-to-average ratio. This paper develops a hierarchical semi-Markov Data-Center (HSM-DC) load model that cou-ples two layers across two timescales. A job-scheduling layer generates training jobs through a non-homogeneous compound-Poisson arrival process shaped by diurnal, weekly, and seasonal patterns, assigns heavy-tailed node counts and durations, and places jobs on a finite node pool through a first-in-first-out scheduler. A within-job layer drives each occupied node with a five-state semi-Markov chain covering the phases of a BSP iteration, with state-dependent Ornstein-Uhlenbeck noise. Facility power follows from the fluctuating node occupancy and the per-node power, and the busy-node power, the idle floor, and the saturation ceiling are anchored to mea-sured node telemetry and to the straight-line facility-power-versus-utilization relationship of a whole-facility reference. Configured to the reference colocation facility at matched scale, the model reproduces the whole-facility mean power, standard deviation, and peak-to-average ratio across utilization with coefficients of determination of 0.9997, 0.92, and 0.82, respectively. It also reproduces the queued-job fraction to within one percentage point at high utilization. The operational con-clusion is direct: facility-scale variability and peak demand derive from the job-arrival and scheduling process, so interconnection planning must represent that process instead of scaling a node-level power profile. 
+
+KEYWORDS 
+
+AI data centers, AI workload profile, bulk-synchronous-parallel training, data center load model, job scheduling, peak-to-average ratio, semi-Markov load model. 
+
+chaud152@msu.edu arXiv:2607.12222v1 [eess.SY] 13 Jul 2026 1 INTRODUCTION 
+
+AI data centers exemplify a new class of large load whose demand pattern departs from the smooth, slowly varying profile of conventional large loads, such as steady industrial plants and other base-load facilities that do not exhibit the rapid, structured power swings addressed here, and interconnection and stability studies have not kept pace with this shift. United States data center consumption rose from roughly 76 TWh in 2018 to about 176 TWh in 2023, near 4.4% of national electricity use, and is projected to double or triple again before the end of the decade as generative-AI training and inference scale [1, 2]. At the campus level, this growth appears as hundred-megawatt interconnection requests that rival large industrial loads and, in some regions, exceed local transmission capacity. System operators have documented megawatt-scale load steps and the abrupt loss of more than a gigawatt of demand within seconds following a transmission fault [3]. This growth carries direct consequences for planning: interconnection studies size transmission and generation capacity from a load’s expected peak and its peak-to-average ratio (PAR), and resource-adequacy studies size the reserve margin from the aggregate variability many such loads present together. A load model that smooths over facility-scale variance therefore under-states both the PAR a fleet of AI data centers presents and the reserve margin planners must carry to serve it reliably. What makes an AI training facility difficult to model is that its power is structured, not smooth. A single training job runs on hundreds to thousands of accelerators (graphics processing units, GPUs) at once, and every accelerator must finish its share of the current step before any can start the next, because the step completes only once their results are combined, a requirement that imposes a repeating cycle known as bulk-synchronous-parallel (BSP) execution. All accelera-tors perform dense forward and backward computation at thermal design power, halt together at a synchronization barrier to combine results, then periodically pause to checkpoint to stor-age [4, 5]. Each cycle produces a power swing between near-peak and near-idle at a timescale of seconds, and because the barrier is global, thousands of accelerators swing together instead of averaging each other out. This within-job structure is the source of the fast power transients that threaten frequency response and power quality. A second mechanism shapes facility power one level above the individual job. A facility does not run a single job continuously, but instead runs a changing population of jobs that arrive, occupy blocks of nodes for hours to days, and depart [6, 7]. The number of occupied nodes rises through the working day, falls overnight, and varies across the week and the season, so the facility load carries a slow, large-amplitude modulation on top of the fast BSP transients. This slower, scheduling-driven modulation sets the facility-scale variance and the PAR that determine interconnection capacity and resource-adequacy risk. Probabilistic load models for AI data centers have addressed the two mechanisms separately, and each strand leaves a gap. A whole-facility measurement and simulation approach [6] sup-plies a discrete-event job scheduler and reproduces PAR above two at low utilization, but rep-resents each job as a black-box power trace, so it cannot expose the within-job phase struc-ture grid-stability studies require. A pattern-consistent dynamic load model [8] similarly vali-dates against facility measurements but uses a continuous utilization surrogate that omits BSP structure. On the within-job side, a wide-area oscillation study [9] models a training job as a two-phase semi-Markov chain with the number of concurrent jobs held fixed, so it carries no scheduling-driven facility variance. Closer to the scheduling side, a workload-composition study [7] models the scheduler in detail but reduces within-job power to statistical time-series templates fitted to past values, in place of a state machine. Taken together, none of these mod-els combines a multi-state semi-Markov chain for the within-job BSP cycle, a between-job scheduler that drives it, and validation of the resulting whole-facility statistics in one consistent model. Three gaps follow from this review. First, none of these models connects a multi-state within-job process to a job-arrival and scheduling process, so facility-scale variance has no physical generating mechanism and collapses when a node-level model is aggregated. Second, utilization is commonly treated as a fixed busy-node fraction and not as a fluctuating occupancy, which removes the dominant variance source by construction. Third, the within-job power model and the facility power model are seldom consistent representations of the same physics, so a model calibrated at one scale fails at the other. This paper closes these gaps with three contributions. First , it develops HSM-DC, a hierar-chical semi-Markov load model that couples a five-state semi-Markov within-job layer to a job-scheduling between-job layer, so that node dynamics and facility power derive from one consistent mechanism. Second , it calibrates the busy-node power, the idle floor, and the satura-tion ceiling to measured node telemetry and to the straight-line facility-power-versus-utilization relationship of a whole-facility reference, with no free fitting of the power levels. Third , it val-idates the model at facility scale against the reference across four utilization levels. The vali-dation reproduces the mean, standard deviation, PAR, autocorrelation, and queued-job fraction. The load model is presented in Section 2, validated in Section 3, and summarized in Section 4. 
+
+2 THE HSM-DC LOAD MODEL 
+
+This section develops the HSM-DC load model, which decomposes facility power into IT and non-IT components and couples a job-scheduling layer with a within-job semi-Markov layer to generate the IT load. An AI data center is not a homogeneous load. It is a collection of physically distinct subsystems, each with its own power factor and characteristic timescale [4, 10, 11]. The active power (in megawatts) at the grid-connection bus of facility i decomposes into the IT load and a non-IT base load, 
+
+Pi(t) = PIT ,i(t) + Pcool ,i(t) + Paux ,i, (1) where PIT ,i is the GPU and central processing unit (CPU) compute load, Pcool ,i is the cooling load of the air-handling units and the chiller plant, and Paux ,i is the quasi-static auxiliary load of uninterruptible power supplies, lighting, networking, and distribution losses, all in megawatts. Table 1 lists the component fractions, power factors, and timescales, which is why the decom-position matters: the cooling plant, buffered by thermal mass, responds far more slowly than the IT load. HSM-DC models the IT load in detail through the two-layer mechanism below and represents the slower non-IT load through the cooling-dynamics model presented at the end of this section.                    
+
+> Table 1: Facility load components: power fraction, power factor, and timescale [4, 10, 11].
+> Component Fraction PF Timescale
+> IT (GPU/CPU) 60% 0.995 0.1–30 s (BSP + scheduling) HVAC air-handling 15% 0.940 τ≈60 s Chiller plant 20% 0.950 τ≈120 s Auxiliary 5% 0.970 quasi-static
+
+The IT load is modeled by HSM-DC, a hierarchical model with two layers coupled through node occupancy. The job-scheduling layer (Layer 1) determines how many nodes are busy at each minute, and the within-job layer (Layer 2) determines how much power each busy node draws. The two layers separate cleanly by timescale. Layer 1 evolves over hours to days, set by job durations and the diurnal submission cycle, and Layer 2 evolves over seconds, set by the BSP iteration. At the one-minute facility resolution used for adequacy studies the within-job chain averages to a busy-node mean and facility variance is carried by Layer 1. At sub-minute resolution Layer 2 supplies the BSP transients required for stability analysis. Fig. 1 shows the architecture.          
+
+> Arrivals
+> λ(t)
+> Job size B,duration D
+> FIFO scheduler
+> Occupancy
+> Nbusy (t)
+> 5-state semi-Markov
+> OU noise
+> +ξ(t)
+> Busy power
+> Pbusy
+> LAYER 1 – Job scheduling (hours–days)
+> LAYER 2 – Within-job node power (seconds)
+> Facility power
+> Pfac (t) = Nbusy (t)Pbusy + ( Ntotal −Nbusy (t)) Pidle
+
+(a) (b) 
+
+Figure 1: HSM-DC architecture and within-job state transitions. (a) Layer 1 (top) sets the busy-node count N busy (t), Layer 2 (bottom) sets the per-node power P busy , and the two combine into the facility power. (b) Admissible transitions of the five-state semi-Markov chain. 
+
+2.1 Job-Scheduling Layer 
+
+Job submissions are non-stationary, rising after the start of the working day, peaking in the af-ternoon, and falling overnight [6]. The arrival-event intensity λ (t), in arrival events per minute, is the product of four unit-mean shaping factors about a base rate λ0, also in arrival events per minute, 
+
+λ (t) = λ0 φhod (t) φdow (t) φmoy (t) φseas (t), (2) where φhod is the hour-of-day multiplier with a deep overnight trough and a broad afternoon plateau, φdow is the day-of-week multiplier with weekday and weekend-evening emphasis, φmoy 
+
+is the month-of-year campaign multiplier, and φseas is a persistent annual sinusoid. The number of arrival events in minute t is Poisson with mean λ (t), and each event submits a batch of jobs, so the process is compound Poisson, which raises the variance of concurrent occupancy above the plain-Poisson level. Each job carries a node count B drawn from a heavy-tailed distribution on the power-of-two sup-port {1, . . . , 256 }, consistent with the parallel-workload characterization of rigid-job sizes [12]. Most jobs therefore claim only a few nodes, but unusually large jobs occur far more often than a bell-shaped distribution would predict. Job duration D, in hours, is drawn from a two-component lognormal mixture [13], 
+
+D ∼
+
+(Lognormal (μshort , σshort ), w.p. 1 − flong ,
+
+Lognormal (μlong , σlong ), w.p. flong , (3) clipped to a finite support. The short component, whose typical duration is near one hour, repre-sents fine-tuning, evaluation, and image-generation jobs that track the diurnal arrival swing and set the facility variance. The long component, a fraction flong of all jobs with typical duration near twelve hours, represents multi-day pre-training campaigns that hold nodes for long hori-zons and create the persistent low-frequency baseline responsible for the high autocorrelation of the measured occupancy. The mixture resolves a tension that neither a single short nor a single long distribution satisfies: short jobs alone produce variance without persistence, and long jobs alone produce persistence without variance. Jobs are placed on a pool of Ntotal nodes by a first-in-first-out (FIFO) scheduler [6]. A job starts at the first minute at or after its arrival at which the pool holds at least B free nodes, holds its nodes for its duration, and then releases them. A head-of-line job that cannot fit blocks later jobs. The occupied-node count is 
+
+Nbusy (t) = ∑
+
+> j∈R(t)
+
+B j, (4) where R(t) is the set of jobs running at minute t. Its variance decomposes by the random-sum identity, Var [Nbusy ] = E[J] Var [B] + Var [J] E[B]2, (5) where J is the number of concurrent jobs. The identity assumes that the node counts B j of the jobs running at a given minute are independent and identically distributed and independent of 
+
+J, an assumption that matches how HSM-DC draws job sizes: each job’s node count is sampled from the fixed size distribution introduced above without conditioning on its arrival time, its duration, or the number of other jobs running concurrently. The second term, the fluctuating concurrency, dominates and is the principal source of facility-power variance. The base rate λ0
+
+is not specified directly. It is calibrated by bisection to a target time-averaged node-occupancy fraction μavg = ( 1/Ntotal )( 1/T ) ∑t Nbusy (t) [6]. Utilization in this definition is node occupancy, not compute or power utilization, which is why a facility at full occupancy still draws only about 73% of its nameplate. 
+
+2.2 Within-Job Semi-Markov Layer 
+
+Each occupied node draws power from a semi-Markov process on the state space S =
+
+{PS , LC , BA , CI , AR }, the five power regimes of one BSP iteration. Each state corresponds to a distinct, physically recognizable phase of the training iteration, not to an abstract label: 1. Peak-Surge ( PS ). The node performs dense forward and backward computation at or near thermal design power, uninterrupted by inter-node communication. PS is the highest-power state of the cycle. 2. Light-Compute ( LC ). A node has finished its own share of the work early and waits for the other nodes, or briefly accumulates partial results before the next synchronization, at power above the reference level but below PS .3. Base ( BA ). BA is the brief housekeeping gap between training iterations and the reference power level for the other states (Table 2). 4. Checkpoint-Idle ( CI ). Model weights and optimizer state are written to persistent storage while the tensor cores idle, making CI the longest-duration low-power state. 5. AllReduce-Dip ( AR ). Every node in the job halts computation together to exchange gra-dients over the interconnect. Because every node hits this barrier at the same instant, AR 
+
+produces the sharpest, lowest power dip and is the principal source of the grid-facing tran-sient. Table 2 lists the power level, sojourn-time range (how long the node stays in that state before moving on), and noise fraction that parameterize each state. This five-state description is more detailed than the two-phase models used in prior facility-scale work [9]. The node power Pnode 
+
+in state s, in watts, is referenced to the busy-node mean Pbusy , also in watts, 
+
+Pnode (t) = Pbusy 
+
+ 1 + sgn (s) δs
+
+ + ξ (t), (6) where δs ∼ U(δ min  
+
+> s
+
+, δ max  
+
+> s
+
+) is the state power deviation drawn at each state entry and sgn (s) ∈{+1, 0, −1} sets whether that state sits above, at, or below the reference level. The term ξ (t)is a small residual that fluctuates randomly around zero and continually decays back toward it, an Ornstein-Uhlenbeck process, representing the sub-second power noise observed within each state, 
+
+dξ = −θIT ξ dt + σIT (s)Pbusy dW t ,
+
+with mean-reversion rate θIT = 0.8 s −1 governing how quickly the fluctuation decays. Table 2 lists the state parameterization, and Fig. 2 shows a simulated node trace. 
+
+Table 2: IT semi-Markov state parameterization.                                                                 
+
+> State Full Name BSP Phase IT Power Tmin –Tmax (s) sgn δrange σIT
+> PS Peak-Surge Forward/backward propaga-tion at thermal design power 1.38–1 .45 Pbusy 5–25 +1U(0.38 ,0.45 )3.5%
+> LC Light-Compute Pipeline bubbles and gradi-ent accumulation 1.08–1 .18 Pbusy 3–12 +1U(0.08 ,0.18 )2.5%
+> BA Base Inter-iteration gap, kernel dispatch and memory man-agement 1.00 Pbusy (ref) 2–8 001.0%
+> CI Checkpoint-Idle Model checkpoint write to persistent storage 0.30–0 .45 Pbusy 30–180 −1U(0.55 ,0.70 )1.5%
+> AR AllReduce-Dip Cross-node gradient syn-chronization via ring AllReduce 0.16–0 .20 Pbusy 2–15 −1U(0.80 ,0.84 )2.0%
+> IT Power is the deviation about the busy-node mean Pbusy , following Pnode =Pbusy (1+sgn (s)δs).
+
+Sojourn times are uniform on finite supports, a deliberate choice over a continuous-time Markov chain: an AllReduce cannot complete faster than the interconnect ring-reduce latency, and a checkpoint cannot complete before the storage bandwidth limit, so phase durations are bounded, which a finite-support uniform sojourn represents and an exponential sojourn does not. Only BSP-consistent transitions are admissible, as shown in Fig. 1b, with the embedded transition matrix shown alongside. 
+
+P =    
+
+> PS LC BA CI AR
+
+ 
+
+> PS
+
+0 0 0 0 1.000  
+
+> LC
+
+0.80 0 0 0 0.200  
+
+> BA
+
+0 0.70 0 0 0.300  
+
+> CI
+
+0 0.55 0.450 0 0 
+
+> AR
+
+0 0 0.995 0.005 0
+
+The zero entries enforce the same BSP admissi-bility mask shown in Fig. 1b. The canonical cy-cle is PS → AR → BA → LC → PS , with LC and  
+
+> BA
+
+each also branching directly to AR for an in-termediate synchronization. The nonzero prob-abilities are calibrated to BSP timing teleme-try [4, 5]. The AR → CI probability of 0.005 in particular sets a checkpoint roughly every 200 iterations. The embedded stationary vector is obtained by solving the balance equations together with the normalization constraint as a linear system, instead of through eigenvalue decompo-sition, which the near-periodic BSP cycle would make numerically unreliable by amplifying small rounding errors into large ones. The semi-Markov stationary probability weights the em-bedded probability by mean sojourn, and the state deviations are referenced so the stationary mean equals Pbusy .
+
+2.3 Coupling and Calibration 
+
+The two layers combine into the facility power Pfac . Busy nodes draw the semi-Markov busy power and unallocated nodes draw the idle power Pidle (in watts, on the same per-node basis as 
+
+Pbusy ), 
+
+Pfac (t) = Ntotal Pidle + Nbusy (t)  Pbusy − Pidle 
+
+, (7) clipped at a saturation ceiling Psat = ρsat Prated , where Prated is the facility nameplate power and 
+
+ρsat is a dimensionless fraction; Pfac , Psat , and Prated are reported in megawatts once the per-0 50 100 150 200 250 300 
+
+> Time (s)
+> 1000
+> 2000
+> 3000
+> Node power (W)
+
+Layer 2: within-job node power 
+
+> PS
+> LC
+> BA
+> CI
+> AR
+> Node TDP (3520 W)
+> Idle floor (420 W)
+> Busy mean (2491 W)
+
+Figure 2: Layer 2 within-job node power over five minutes. The chain swings between thermal design power ( PS ) and the idle floor ( AR , CI ), time-averaging to the busy-node mean. 
+
+node terms are summed over Ntotal nodes. The facility mean is therefore affine in occupancy, a straight-line relationship with intercept Ntotal Pidle and slope Pbusy − Pidle , matching the refer-ence’s mean-versus-utilization relationship. At sub-minute resolution the busy term is replaced by the explicit sum over occupied nodes of (6), restoring the BSP transients. The model is anchored to measured node power and the reference facility output, with no free fitting of the power levels. Table 3 lists the anchors. The node thermal design power and idle floor follow from the H100 SXM and EPYC 9554 measurements [6], the busy-node mean from the affine slope of the reference power against utilization, and the saturation fraction from the reference power plateau. 
+
+Table 3: Calibration anchors and sources. 
+
+Quantity Value Source 
+
+Node thermal design power 3520 W 4×H100 + 2 ×EPYC [6] Idle floor per node 420 W GPU+CPU idle [6] Busy-node mean 2491 W reference affine slope + idle Facility mean 1.2035 + 5.883 μavg MW reference fit, R2=1.0Saturation ceiling 73.3% of nameplate reference plateau 
+
+2.4 Non-IT Components and Cooling Dynamics 
+
+The cooling load is not a static fraction of the IT load. Instead, the cooling electrical power is a delayed, low-pass-filtered response to the IT load, not an instantaneous copy of it [3, 14]. This separation of timescales is the defining feature of the non-IT load. It filters the second-scale BSP and scheduling transients out of the cooling power, so the facility bus carries fast IT swings, a smooth lagged cooling load, and a constant auxiliary load. The cooling load is modeled as a first-order thermal-mass response of each cooling sub-system to the normalized IT load uIT (t) = PIT (t)/Prated IT , scaled by an ambient-temperature factor, 
+
+Pcool (t) = ∑
+
+> c∈{ HVAC ,Ch }
+
+αc γ(Tamb (h)) Lτc, θd [uIT ]( t) Prated , (8) where αHVAC and αCh are the nominal HVAC and chiller fractions (Table 1), Lτc,θd is a first-order lag of time constant τc and transport dead time θd , both in seconds, and γ is the dimension-less ambient-temperature multiplier. The HVAC time constant is shorter than the chiller time constant (Table 1), and a transport dead time θd = 90 s precedes the response. The temperature factor and the annual ambient profile are [14, 15] 
+
+γ(T ) = max 
+
+
+
+0.1, 1 + βT
+
+T − Tref 
+
+∆T
+
+
+
+, Tamb (h) = Tmean + ∆T cos 2π(h − hsummer )
+
+8760 , (9) with dimensionless cooling sensitivity βT = 0.25, reference temperature Tref = 15 ◦C, seasonal amplitude ∆T = 12 ◦C, annual mean Tmean = 12 ◦C, and summer peak hsummer = 4680 h. The lower bound 0.1 is the free-cooling floor below which the chiller is bypassed. The auxiliary load is Paux = αAux Prated with αAux = 0.05. Fig. 3 shows the resulting step response and one-day decomposition. Because the refer-ence whole-facility data is IT-only, the cooling-dynamics layer is grounded in the component fractions, time constants, and temperature sensitivity reported in the data-center load litera-ture [3, 14, 15] and is not fitted to the reference; its validation against metered cooling power is identified as future work. 0 200 400 600 
+
+> Time (s)
+> 2
+> 4
+> Power (MW)
+
+(a) Cooling response to IT step       
+
+> 04812 16 20 24
+> Hour of day
+> 0.0
+> 2.5
+> 5.0
+> 7.5
+> Power (MW)
+
+(b) One-day decomposition (60%)     
+
+> IT
+> HVAC ( = 60 s)
+> Chiller ( = 120 s)
+> Transport dead time
+> Auxiliary
+> Total
+> Figure 3: Non-IT cooling dynamics. Left: response to an IT step, showing the transport dead time and the HVAC and chiller time constants. Right: one-day decomposition at 60% utilization, where cooling lags the IT envelope while the IT load carries the fast variability.
+
+2.5 Spatial Load Correlation Across Facilities 
+
+AI data centers that share a workload-orchestration platform, a region, or a weather pattern do not draw power independently: coordinated scheduling synchronizes checkpoint and gradient-synchronization barriers across sites, shared ambient conditions align HVAC cycles, and com-mon transmission corridors couple converter dynamics, producing correlated load fluctuations that classical planning treats as independent [16]. This correlation is episodic, intensifying dur-ing coincident training campaigns and relaxing between them, as sliding-window modal anal-ysis of measured inter-bus coherence confirms [11]. HSM-DC’s job-scheduling process could introduce this dependence directly; the mechanism is not modeled here, but even moderate inter-facility synchronization is known to inflate aggregate variance beyond what independence-based diversity factors predict [17]. 
+
+3 VALIDATION 3.1 Facility-Scale Validation 
+
+The model is validated at the scale of the reference facility, 2840 nodes and 10 MW, against the whole-facility colocation profiles of Vercellino et al. [6]. Each configuration is simulated for one year at one-minute resolution at each of four target utilizations, and the output is compared to the reference at the same utilization. A single scalar cannot capture whether two year-long power records agree, because two records can share the same mean and still differ in their tails, their timing, or their minute-to-minute swings. A multi-axis battery of metrics is used instead: the 1-Wasserstein distance on the power marginal for level fidelity, PAR and high percentiles for the tail, the L2 distance between autocorrelation functions for temporal structure, and the ramp distribution for short-horizon variability [18]. The 1-Wasserstein distance is the average distance, in megawatts, that power values would have to move to reshape one distribution into the other; a value near zero indicates nearly identical distributions, and unlike the mean, it stays informative even when the two barely overlap. The autocorrelation function measures how strongly power at one time relates to power some lag earlier, so agreement across utilizations confirms the model reproduces the right persistence of high- and low-load periods as well as the right power levels. Table 4 reports the comparison. The mean is reproduced to within 20 kW at every utilization, with a coefficient of determination of 0.9997 across utilization. The standard deviation is re-produced with R2 = 0.92 and PAR with R2 = 0.82. The model also reproduces the queued-job fraction, 76.0% at 80% utilization against the reference 75.6%, and the monotonic decline of PAR with utilization. This decline is the operational signature of the facility: at low utilization, the mean is dominated by the idle floor while diurnal submission bursts still drive high peaks, but as utilization rises, the mean climbs toward the saturation ceiling and the ratio falls. 
+
+Table 4: HSM-DC versus the whole-facility reference at matched scale (2840 nodes, 10 MW). 
+
+Util. Mean (MW) Std (MW) PAR data model data model data model 20% 2.379 2.367 0.848 0.844 2.558 2.981 40% 3.557 3.563 1.591 1.457 2.063 1.987 60% 4.736 4.702 1.907 1.799 1.544 1.506 80% 5.908 5.882 1.776 1.627 1.239 1.204 
+
+R2(mean ) = 0.9997, R2(std ) = 0.92, R2(PAR ) = 0.82 
+
+The distributional and temporal agreement is shown side by side in Fig. 4. At each utilization the model reproduces the shape of the reference marginal, including the right-skewed body at low utilization and the saturation pile-up that grows as utilization rises, and the model autocorre-lation tracks the reference over lags of hours and decays slowly because the long-job component holds occupancy for extended horizons. Fig. 5 overlays one week of facility power at 60% uti-lization, where the model reproduces the diurnal cycle, the weekday-to-weekend variation, and the amplitude of the job-driven fluctuation. 2 4 6
+
+> Facility IT power (MW)
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> Density
+
+(a) Power distribution   
+
+> 0510
+> Lag (hours)
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> Autocorrelation
+
+(b) Autocorrelation 
+
+> 20% utilization
+> 40% utilization
+> 60% utilization
+> 80% utilization
+> DIPLOEE reference
+> HSM-DC model
+
+Figure 4: Facility power distribution (a) and autocorrelation (b) across four utilization levels, colored by utilization. 
+
+The load-duration and ramp behavior, which govern resource adequacy and reserve sizing, are reproduced in Fig. 6. The load-duration curves match across the full exceedance range at every utilization, including the high-load tail that drives loss-of-load risk, and the one-minute ramp distribution matches in both the bulk and the tail at every utilization. This agreement confirms that the model reproduces the short-horizon variability relevant to frequency response. 
+
+3.2 Independent Node-Level Validation 
+
+Because the facility validation above depends on a simulated whole-facility reference, the within-job layer admits an independent check against direct measurement. Elsayed et al. [19] report 50 Hz power telemetry of eight-GPU H100 nodes during Llama-8B training, on hardware Mon Tue Wed Thu Fri Sat Sun 
+
+> Day of week
+> 2.5
+> 5.0
+> 7.5
+> Facility IT power (MW)
+
+One-week facility power at 60% utilization  
+
+> DIPLOEE reference HSM-DC model
+
+Figure 5: One week of facility power at 60% utilization: HSM-DC against the reference, showing the diurnal cycle and job-driven variability. Dashed lines mark the annual means. 0 25 50 75 100      
+
+> Exceeded (%)
+> 2
+> 4
+> 6
+> Facility IT power (MW)  (a) Load-duration curves
+> 200 0200
+> Ramp (kW/min)
+> 10 5
+> 10 3
+> 10 1
+> Density (log)
+> (b) Ramp distribution
+> 20% utilization
+> 40% utilization
+> 60% utilization
+> 80% utilization
+> DIPLOEE reference
+> HSM-DC model
+
+Figure 6: Load-duration and ramp behavior across four utilization levels: (a) load-duration curves and (b) one-minute ramp distribution. 
+
+distinct from the four-GPU node used to calibrate HSM-DC. The comparison is made on a per-unit basis using the node thermal design power so that the eight-GPU and four-GPU nodes are commensurable. The question is whether the five-state chain reproduces the measured bimodal node power, not the absolute watts of a particular node. Fig. 7 shows the result. The measured trace exhibits exactly the bulk-synchronous-parallel signature the chain encodes: a sustained compute plateau near 87% of thermal design power punctuated by sharp dips to about 20% at the AllReduce barriers. The model reproduces the bimodal distribution, with a compute mode at 86.6% against the measured 82.5% and a low mode at the idle floor. The 1-Wasserstein distance between the two normalized distributions is 0.187. Two differences are physically interpretable. First, the model dips to 13% of thermal design power against the measured 25% because the model AllReduce state drops to the full idle floor. The measured node instead continues to draw power for background communication: memory-saving distributed-training software exchanges model parameters and optimizer state between nodes while gradients synchronize. Second, the model spends 32% of time in the low mode against the measured 12%, because it targets pre-training, in which AllReduce barriers are more frequent than in the measured fine-tuning run. Both differences are in the conservative direction for grid-stress assessment. The node-level agreement, on independent hardware and a measured, not simulated, trace, corroborates the within-job layer that the facility validation cannot isolate. 
+
+3.3 Limitations 
+
+This subsection bounds the validation results above with the discrepancies and scope constraints that qualify them. Two quantitative gaps remain in the facility-scale fit. First, the standard deviation runs about 8–9% below the reference at intermediate and high utilization, reflecting a marginally less bursty arrival process than the specific trace the reference uses. Second, PAR at 20% utilization runs high, 2.981 against 2.558, because the model predicts that a facility averaging 20% occupancy approaches saturation on its single most extreme day of the year, 0.0 0.5 1.0    
+
+> Node power (frac. of TDP)
+> 0
+> 5
+> 10
+> Density
+> compute sync/idle
+> (a) Power distribution
+> 020 40 60
+> Time (s)
+> 0.0
+> 0.5
+> 1.0
+> Power (frac. of TDP)  (b) Measured node trace
+> Elsayed 8-GPU (meas.)
+> HSM-DC Layer 2
+> Mean (active) Figure 7: Independent node-level validation. Left: bimodal node-power distribution, HSM-DC Layer 2 against the measured eight-GPU H100 node, in per-unit of node thermal design power. Right: a mea-sured 60 s node trace showing the compute plateau and the AllReduce dips that the five-state chain encodes.
+
+whereas the reference arrival trace peaks at 83% occupancy. Both discrepancies point the same way: the model is slightly conservative at low utilization and predicts higher peak demand, the safe direction for resource-adequacy and interconnection assessment. The validation is also bounded in scope. The reference facility power comes from a discrete-event simulation, not from metered grid data, so the comparison establishes consistency with a measurement-grounded reference and not with a physical facility. Separately, the cooling-dynamics layer is grounded in established parameters instead of being validated against metered non-IT power, and closing that gap is identified as future work. 
+
+4 CONCLUSION 
+
+This paper has developed HSM-DC, a hierarchical semi-Markov load model for AI data centers that couples a job-scheduling layer with a five-state semi-Markov within-job layer. Validated against a whole-facility reference across utilization, the model reproduced the mean, variabil-ity, PAR, autocorrelation, and queueing behavior of the reference facility. This agreement con-firms that the job-arrival and scheduling process, not the within-job power swing, is the origin of facility-scale variance and peak demand. Detailed facility- and node-level power teleme-try from operating AI data centers is rarely published, which limits direct validation against measured installations. Because HSM-DC is anchored to measured node hardware specifica-tions and the aggregate statistics of a reference facility, without being fit to a single proprietary dataset, it can generate realistic, statistically validated load scenarios in place of telemetry most utilities cannot obtain. This supports interconnection capacity studies for prospective campuses, resource-adequacy and reserve-margin analysis under correlated multi-facility growth, and sub-second dynamic-simulation studies of frequency response and protection coordination. Future work can close the gaps the validation section identifies against metered telemetry and extend the job queue to represent an inference-serving request process. 
+
+ACKNOWLEDGMENT 
+
+This article has been authored by employees of National Technology & Engineering Solu-tions of Sandia, LLC under Contract No. DE-NA0003525 with the U.S. Department of En-ergy (DOE). The employees own all right, title and interest in and to the article and is solely responsible for its contents. The United States Government retains and the publisher, by ac-cepting the article for publication, acknowledges that the United States Government retains a non-exclusive, paid-up, irrevocable, world-wide license to publish or reproduce the published form of this article or allow others to do so, for United States Government purposes. The DOE will provide public access to these results of federally sponsored research in accordance with the DOE Public Access Plan https://www.energy.gov/downloads/doe-public-access-plan. REFERENCES 
+
+[1] Y. Sheng, C. Zhang, Z. Zhu, H. Xu, J. Wen, R. Wang, J. Yang, Q. Wang, and S. Bu, “Power for AI data centers: Energy demand, grid impacts, challenges and perspectives,” Energies , vol. 19, no. 3, 2026. [2] A. Shehabi, A. Newkirk, S. J. Smith, A. Hubbard, N. Lei, M. A. B. Siddik, B. Holecek, J. Koomey, E. Masanet, and D. Sartor, “2024 United States Data Center Energy Usage Report,” Tech. Rep. LBNL-2001637, Lawrence Berkeley National Laboratory, Berkeley, CA, Dec. 2024. [3] North American Electric Reliability Corporation, “Characteristics and risks of emerging large loads: Large loads task force white paper,” tech. rep., NERC, July 2025. [4] E. Choukse, B. Warrier, S. Heath, L. Belmont, A. Zhao, H. A. Khan, B. Harry, M. Kappel, R. J. Hewett, K. Datta, et al. , “Power Stabilization for AI Training Datacenters,” arXiv preprint arXiv:2508.14318 , 2025. [5] S. Go, J. Park, S. More, H. Wu, I. Wang, A. Jezghani, T. Krishna, and D. Mahajan, “Characterizing the Efficiency of Distributed Training: A Power, Performance, and Thermal Perspective,” in Proc. 58th IEEE/ACM Int. Symp. Microarchitecture (MICRO) , pp. 626–642, 2025. [6] C. Vercellino, S. Willard, J. Campos, R. da Silva Pereira, A. Hull, E. Selensky, and F. Mueller, “Measurement of generative AI workload power profiles for whole-facility data center infrastruc-ture planning,” arXiv preprint arXiv:2604.07345 , 2026. [7] S. Majumder, M. Yu, and L. Xie, “Workload composition smooths aggregate power demand while sustaining short-horizon ramps in AI data centers,” Apr. 2026. Submitted April 12, 2026. [8] S. Lu, C. Xiao, and Y. Weng, “Dynamic load model for data centers with pattern-consistent cali-bration,” Feb. 2026. Submitted February 8, 2026. [9] M.-S. Ko and H. Zhu, “Wide-area power system oscillations from large-scale AI workloads,” IEEE Transactions on Power Systems , pp. 1–14, 2026. [10] C. Chaudhary, A. Abdelkader, M. Egan, E. Udren, M. Benidris, and J. Mitra, “Impact of data center load modeling on power system stability,” in Grid of the Future Symposium, CIGRE US , (Denver, CO, USA), Nov. 2025. [11] C. Chaudhary, M. Murillo, M. Benidris, J. Mitra, D. Pandit, and A. Bera, “Modal analysis of spatial load correlation in AI data center-dominated power systems,” in Proc. IEEE Int. Conf. Smart Energy Systems and Technologies (SEST) , 2026. [12] U. Lublin and D. G. Feitelson, “The workload on parallel supercomputers: Modeling the character-istics of rigid jobs,” Journal of Parallel and Distributed Computing , vol. 63, no. 11, pp. 1105–1122, 2003. [13] D. G. Feitelson, Workload Modeling for Computer Systems Performance Evaluation . Cambridge University Press, 2015. [14] S. Bessasparis, S. Ramirez, E. Zhao, Y. Zheng, K. Patel, and I. Riu, “Forecasting large loads in the age of AI and data centers,” white paper, Energy and Environmental Economics, Inc. (E3), Dec. 2025. [15] J. Sun, Z. Gao, D. Grant, K. Nawaz, P. Wang, C.-M. Yang, P. Boudreaux, S. Kowalski, and S. Huff, “Energy dataset of Frontier supercomputer for waste heat recovery,” Scientific Data , vol. 11, no. 1, p. 1077, 2024. [16] C. Chaudhary, A. Abdelkader, Y. Pei, M. Benidris, and J. Mitra, “Spatial load correlation in AI data-center-dominated power systems,” in 2026 IEEE Power & Energy Society General Meeting (PES GM) , (Montréal, QC, Canada), July 2026. [17] C. Chaudhary, A. Abdelkader, M. Benidris, and J. Mitra, “Resource adequacy risk in correlated large loads,” in Int. Conf. Probabilistic Methods Applied to Power Systems (PMAPS) , (Salt Lake City, UT, USA), 2026. [18] T. Gneiting and A. E. Raftery, “Strictly proper scoring rules, prediction, and estimation,” Journal of the American Statistical Association , vol. 102, no. 477, pp. 359–378, 2007. [19] A. A. E. Elsayed, A. A. Al-Obaidi, and H. E. Z. Farag, “Characterization of high-resolution AI data center training workloads on single and multiple GPU nodes,” Scientific Data , 2026. 3 June 2026.

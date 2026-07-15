@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-15",
+  "date": "2026-07-15",
+  "generated_at": "2026-07-15T21:16:32",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/15/2607.10653v2-open-source-python-tool-for-grid-converter-output-admittance-identification",
+      "section": "deep",
+      "title_en": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "authors": "Juho Määttä, Jarno Kukkola, Janne Seppänen, Marko Hinkkanen",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10653v2",
+      "score": "9.0",
+      "evidence": "用于电网变流器输出导纳识别的开源Python工具",
+      "tldr": "针对换流器驱动稳定性分析中依赖商业软件（MATLAB/PSCAD）的问题，本文开发了完全开源Python工具，基于正弦扫频信号注入方法从时域仿真识别频域输出导纳。工具内置GFM和GFL控制器解析模型用于验证，与PSCAD对比结果准确。该工具MIT开源，可配置性强，促进可重复性研究。",
+      "tags": "query:code-paper",
+      "abstract_en": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/15/2607.11423v1-tofu-a-white-box-token-efficient-agent-harness-for-researchers",
+      "section": "deep",
+      "title_en": "ToFu: A White-Box, Token-Efficient Agent Harness for Researchers",
+      "authors": "Junhao Ruan, Yuan Ge, Bei Li, Yongjing Yin, Yuchun Fan, Xin Chen, Jingang Wang, Chenglong Wang, Jingbo Zhu, Tong Xiao",
+      "date": "2026-07-13",
+      "pdf": "https://arxiv.org/pdf/2607.11423v1",
+      "score": "8.0",
+      "evidence": "以MIT许可证发布的开源智能体框架",
+      "tldr": "针对代理编码工具性能依赖LLM及其编排框架的问题，提出一个白盒、令牌高效的代理框架ToFu。该框架能读取代码、编辑文件、运行命令并集成开发工具。相比现有框架，ToFu实现了更高的令牌效率、更低成本和多语言能力，且MIT许可支持本地部署。它既可作为高效的研究助手，也可作为可检查、修改的白盒研究对象，在保持强基准性能的同时提供透明性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Agentic coding tools present new opportunities to transform research workflows. The performance of agent systems built depends on both large language models (LLMs) and the harness around LLMs, which is the orchestration code that determines an agent's behavior. We present ToFu, an agentic harness for researchers that reads your codebase, edits files, runs commands, and integrates with your development tools. ToFu plays a dual role in research. As a research assistant, it supports practical research workflows with superior token efficiency, lower cost, and multilingual capability compared with existing agentic harnesses. Its release under the MIT License further enables local deployment for privacy-sensitive users. As a research object, ToFu provides a white-box agentic harness that allows researchers to inspect, modify, and evaluate its orchestration logic, tool-use behavior, and harness design, while retaining strong benchmark performance and an application-level user experience.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/15/2607.11579v2-memexchange-utility-driven-distributed-memory-reallocation-for-multi-tenant-datacenters",
+      "section": "deep",
+      "title_en": "MemExchange: Utility-Driven Distributed Memory Reallocation for Multi-Tenant Datacenters",
+      "authors": "AmirHossein Seyri, Abhisek Pan, Balajee Vamanan",
+      "date": "2026-07-13",
+      "pdf": "https://arxiv.org/pdf/2607.11579v2",
+      "score": "8.0",
+      "evidence": "数据中心内存调度，提供代码",
+      "tldr": "针对数据中心内存过度配置导致利用率低的问题，MemExchange基于在线Miss Ratio Curve估计实现边际效用驱动的跨节点内存动态重分配，利用RDMA和MTC协议支持高效远程访问。在100节点CloudLab上，集群内存利用率提升13%，内存受限租户未命中率降低63%，远程访问开销比TCP方案低2.3倍。该系统将分散缓存整合为逻辑池，无需集中协调或租户共置，显著提升资源效率。",
+      "tags": "query:code-paper",
+      "abstract_en": "To handle unpredictable workloads, cloud providers typically over-provision memory to meet peak demand, resulting in substantial underutilization across datacenter clusters. At the same time, memory-constrained tenants may suffer elevated cache miss rates, even when idle capacity remains stranded elsewhere in the infrastructure. MemExchange is a cluster-wide, multi-tenant memory management system that dynamically right-sizes in-memory caching tenants according to workload demand. Leveraging marginal-utility-based allocation derived from online Miss Ratio Curve (MRC) estimation, MemExchange redistributes idle memory between tenants across physical nodes using RDMA. This approach transforms the dedicated caching memory scattered across servers into a logically aggregated pool, enabling cross-node memory exchange without centralized coordination or forced tenant co-location. To support efficient remote access, we design the MemExchange Tracker Communication (MTC) protocol, an application-layer mechanism that coordinates memory reallocation and enables one-sided RDMA operations without involving remote CPUs. We implement MemExchange in Memcached and evaluate it through microbenchmarks, medium and rack-scale deployments of up to 100 CloudLab servers. Our results show up to 2.3x lower remote-access overhead compared to TCP-based designs, a 13% increase in cluster-wide memory utilization at rack scale, and up to 63% reduction in miss rate for memory-constrained tenants under skewed workloads.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/15/2607.12222v1-a-hierarchical-semi-markov-load-model-for-ai-data-centers-coupling-job-scheduling-with-bulk-synchronous-parallel-power-dynamics",
+      "section": "quick",
+      "title_en": "A Hierarchical Semi-Markov Load Model for AI Data Centers Coupling Job Scheduling with Bulk-Synchronous-Parallel Power Dynamics",
+      "authors": "Chandan Chaudhary, Atri Bera, Cody Newlun, Mohammed Ben-Idris, Joydeep Mitra",
+      "date": "2026-07-13",
+      "pdf": "https://arxiv.org/pdf/2607.12222v1",
+      "score": "7.0",
+      "evidence": "直接针对数据中心的任务调度与负载建模",
+      "tldr": "AI数据中心负载具有作业内BSP秒级波动与设施级作业到达/离开的日周季节变化，现有模型忽略后者导致峰值比估计不准。本文提出分层半马尔可夫模型（HSM-DC），耦合作业调度层（非齐次复合泊松过程与重尾分布）和节点内BSP五态链，设施功率由节点数和节点功率合成。在参考设施上，模型准确匹配均值、分布和峰值比（拟合得分0.9997/0.92/0.82），排队作业份额误差≤1点。结果表明设施级波动源于作业调度，电网规划需建模该过程。",
+      "tags": "query:code-paper",
+      "abstract_en": "AI data centers are emerging as a dominant new load class with their power dynamics fundamentally from conventional industrial loads. Inside a training job, the bulk-synchronous-parallel algorithm moves each node through compute, sync, and checkpoint steps, which swings power between full load and near idle within seconds. Across the whole facility, jobs arrive, take blocks of nodes for hours to days, then leave, so the number of busy nodes changes daily, weekly, and yearly. This slower shift drives facility-wide swings and the peak demand that sets the size of the grid link. A model that looks only at within-job behavior, and treats the facility as a fixed set of busy nodes, smooths out these swings and misses the true peak-to-average ratio. This paper develops a hierarchical semi-Markov Data-Center (HSM-DC) load model that couples two layers across two timescales. A job-scheduling layer creates jobs through a non-homogeneous compound-Poisson process shaped by daily, weekly, and seasonal patterns, gives each job a heavy-tailed node count and length, and places jobs on a fixed pool of nodes on a first-come basis. A within-job layer moves each busy node through a five-state semi-Markov chain for the BSP steps, with state-based Ornstein-Uhlenbeck noise. Facility power comes from this changing node count and the per-node power, set to match measured node data and the facility's straight-line power-versus-load curve. Configured to the reference facility at the same scale, the model matches mean power, its spread, and the peak-to-average ratio across load levels, with fit scores of 0.9997, 0.92, and 0.82. It also matches the share of queued jobs to within one point at high load. Facility-wide swings and peak demand come from how jobs arrive and get scheduled, so grid planning must model that process, not just scale up a single node's power curve.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

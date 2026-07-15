@@ -1,0 +1,171 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-15T21:14:14.975655+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.10653v2",
+      "source": "arxiv",
+      "title": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "abstract": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "authors": [
+        "Juho Määttä",
+        "Jarno Kukkola",
+        "Janne Seppänen",
+        "Marko Hinkkanen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-12T08:39:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.10653v2",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python tool for grid converter admittance identification",
+      "llm_evidence_cn": "用于电网变流器输出导纳识别的开源Python工具",
+      "llm_evidence": "用于电网变流器输出导纳识别的开源Python工具",
+      "canonical_evidence": "用于电网变流器输出导纳识别的开源Python工具",
+      "llm_tldr_en": "Presents an open-source Python tool for grid converter output admittance identification, using steady-state signal injection and sinusoidal sweep; fully MIT-licensed and compares with commercial tools.",
+      "llm_tldr_cn": "针对电网变流器稳定性分析，现有工具依赖商业软件（MATLAB/PSCAD）。本文提出一个完全开源的Python导纳识别工具，基于稳态信号注入和正弦扫频，从时域仿真导出频域导纳。同时开发了电网成形和电网跟随控制的解析模型用于验证。实验表明，该工具结果与商业工具一致，且完全免费、可配置。该工作促进了电力电子研究的可复现性和可访问性。",
+      "llm_tldr": "针对电网变流器稳定性分析，现有工具依赖商业软件（MATLAB/PSCAD）。本文提出一个完全开源的Python导纳识别工具，基于稳态信号注入和正弦扫频，从时域仿真导出频域导纳。同时开发了电网成形和电网跟随控制的解析模型用于验证。实验表明，该工具结果与商业工具一致，且完全免费、可配置。该工作促进了电力电子研究的可复现性和可访问性。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.11423v1",
+      "source": "arxiv",
+      "title": "ToFu: A White-Box, Token-Efficient Agent Harness for Researchers",
+      "abstract": "Agentic coding tools present new opportunities to transform research workflows. The performance of agent systems built depends on both large language models (LLMs) and the harness around LLMs, which is the orchestration code that determines an agent's behavior. We present ToFu, an agentic harness for researchers that reads your codebase, edits files, runs commands, and integrates with your development tools. ToFu plays a dual role in research. As a research assistant, it supports practical research workflows with superior token efficiency, lower cost, and multilingual capability compared with existing agentic harnesses. Its release under the MIT License further enables local deployment for privacy-sensitive users. As a research object, ToFu provides a white-box agentic harness that allows researchers to inspect, modify, and evaluate its orchestration logic, tool-use behavior, and harness design, while retaining strong benchmark performance and an application-level user experience.",
+      "authors": [
+        "Junhao Ruan",
+        "Yuan Ge",
+        "Bei Li",
+        "Yongjing Yin",
+        "Yuchun Fan",
+        "Xin Chen",
+        "Jingang Wang",
+        "Chenglong Wang",
+        "Jingbo Zhu",
+        "Tong Xiao"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-07-13T11:26:06+00:00",
+      "link": "https://arxiv.org/pdf/2607.11423v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source agentic harness released under MIT License",
+      "llm_evidence_cn": "以MIT许可证发布的开源智能体框架",
+      "llm_evidence": "以MIT许可证发布的开源智能体框架",
+      "canonical_evidence": "以MIT许可证发布的开源智能体框架",
+      "llm_tldr_en": "ToFu is an open-source agentic harness for researchers that reads codebases, edits files, runs commands, and integrates with dev tools, offering superior token efficiency and multilingual support under MIT License.",
+      "llm_tldr_cn": "现有智能体工具在研究中存在令牌效率低和成本高的问题。本文提出ToFu，一个MIT许可的开源智能体框架，能读取代码库、编辑文件、运行命令并与开发工具集成。相比现有框架，ToFu在令牌效率、成本和多语言能力上表现更优，支持本地部署，既可作为研究助手，也可作为研究对象。",
+      "llm_tldr": "现有智能体工具在研究中存在令牌效率低和成本高的问题。本文提出ToFu，一个MIT许可的开源智能体框架，能读取代码库、编辑文件、运行命令并与开发工具集成。相比现有框架，ToFu在令牌效率、成本和多语言能力上表现更优，支持本地部署，既可作为研究助手，也可作为研究对象。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.11579v2",
+      "source": "arxiv",
+      "title": "MemExchange: Utility-Driven Distributed Memory Reallocation for Multi-Tenant Datacenters",
+      "abstract": "To handle unpredictable workloads, cloud providers typically over-provision memory to meet peak demand, resulting in substantial underutilization across datacenter clusters. At the same time, memory-constrained tenants may suffer elevated cache miss rates, even when idle capacity remains stranded elsewhere in the infrastructure. MemExchange is a cluster-wide, multi-tenant memory management system that dynamically right-sizes in-memory caching tenants according to workload demand. Leveraging marginal-utility-based allocation derived from online Miss Ratio Curve (MRC) estimation, MemExchange redistributes idle memory between tenants across physical nodes using RDMA. This approach transforms the dedicated caching memory scattered across servers into a logically aggregated pool, enabling cross-node memory exchange without centralized coordination or forced tenant co-location. To support efficient remote access, we design the MemExchange Tracker Communication (MTC) protocol, an application-layer mechanism that coordinates memory reallocation and enables one-sided RDMA operations without involving remote CPUs. We implement MemExchange in Memcached and evaluate it through microbenchmarks, medium and rack-scale deployments of up to 100 CloudLab servers. Our results show up to 2.3x lower remote-access overhead compared to TCP-based designs, a 13% increase in cluster-wide memory utilization at rack scale, and up to 63% reduction in miss rate for memory-constrained tenants under skewed workloads.",
+      "authors": [
+        "AmirHossein Seyri",
+        "Abhisek Pan",
+        "Balajee Vamanan"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-07-13T13:59:59+00:00",
+      "link": "https://arxiv.org/pdf/2607.11579v2",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "data center memory scheduling with code",
+      "llm_evidence_cn": "数据中心内存调度，提供代码",
+      "llm_evidence": "数据中心内存调度，提供代码",
+      "canonical_evidence": "数据中心内存调度，提供代码",
+      "llm_tldr_en": "MemExchange is a cluster-wide memory reallocation system for multi-tenant datacenters using RDMA and MRC estimation. It dynamically redistributes idle memory between tenants to improve utilization and reduce cache misses.",
+      "llm_tldr_cn": "针对云数据中心内存过度配置导致利用率低的问题，提出MemExchange系统，基于边际效用和在线缺失率曲线估计，通过RDMA在物理节点间动态重新分配空闲内存。实验表明该系统能有效提升内存利用率和减少缓存缺失。该方法适用于数据中心任务调度场景，且具备代码实现。",
+      "llm_tldr": "针对云数据中心内存过度配置导致利用率低的问题，提出MemExchange系统，基于边际效用和在线缺失率曲线估计，通过RDMA在物理节点间动态重新分配空闲内存。实验表明该系统能有效提升内存利用率和减少缓存缺失。该方法适用于数据中心任务调度场景，且具备代码实现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.12222v1",
+      "source": "arxiv",
+      "title": "A Hierarchical Semi-Markov Load Model for AI Data Centers Coupling Job Scheduling with Bulk-Synchronous-Parallel Power Dynamics",
+      "abstract": "AI data centers are emerging as a dominant new load class with their power dynamics fundamentally from conventional industrial loads. Inside a training job, the bulk-synchronous-parallel algorithm moves each node through compute, sync, and checkpoint steps, which swings power between full load and near idle within seconds. Across the whole facility, jobs arrive, take blocks of nodes for hours to days, then leave, so the number of busy nodes changes daily, weekly, and yearly. This slower shift drives facility-wide swings and the peak demand that sets the size of the grid link. A model that looks only at within-job behavior, and treats the facility as a fixed set of busy nodes, smooths out these swings and misses the true peak-to-average ratio. This paper develops a hierarchical semi-Markov Data-Center (HSM-DC) load model that couples two layers across two timescales. A job-scheduling layer creates jobs through a non-homogeneous compound-Poisson process shaped by daily, weekly, and seasonal patterns, gives each job a heavy-tailed node count and length, and places jobs on a fixed pool of nodes on a first-come basis. A within-job layer moves each busy node through a five-state semi-Markov chain for the BSP steps, with state-based Ornstein-Uhlenbeck noise. Facility power comes from this changing node count and the per-node power, set to match measured node data and the facility's straight-line power-versus-load curve. Configured to the reference facility at the same scale, the model matches mean power, its spread, and the peak-to-average ratio across load levels, with fit scores of 0.9997, 0.92, and 0.82. It also matches the share of queued jobs to within one point at high load. Facility-wide swings and peak demand come from how jobs arrive and get scheduled, so grid planning must model that process, not just scale up a single node's power curve.",
+      "authors": [
+        "Chandan Chaudhary",
+        "Atri Bera",
+        "Cody Newlun",
+        "Mohammed Ben-Idris",
+        "Joydeep Mitra"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-13T23:50:55+00:00",
+      "link": "https://arxiv.org/pdf/2607.12222v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Directly addresses task scheduling in data centers with a load model",
+      "llm_evidence_cn": "直接针对数据中心的任务调度与负载建模",
+      "llm_evidence": "直接针对数据中心的任务调度与负载建模",
+      "canonical_evidence": "直接针对数据中心的任务调度与负载建模",
+      "llm_tldr_en": "Proposes a hierarchical semi-Markov load model that couples job scheduling with bulk-synchronous-parallel power dynamics in AI data centers, capturing both intra-job and facility-wide power swings.",
+      "llm_tldr_cn": "针对AI数据中心独特的功率动态，现有模型未能同时考虑作业内部和设施整体的功率波动。本文提出层次半马尔可夫负载模型，将作业调度与块同步并行功率动态耦合，能够准确捕捉秒级到年级的功率摆动，对数据中心电网互联规划具有重要价值。",
+      "llm_tldr": "针对AI数据中心独特的功率动态，现有模型未能同时考虑作业内部和设施整体的功率波动。本文提出层次半马尔可夫负载模型，将作业调度与块同步并行功率动态耦合，能够准确捕捉秒级到年级的功率摆动，对数据中心电网互联规划具有重要价值。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
