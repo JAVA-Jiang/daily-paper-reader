@@ -1,0 +1,204 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-16T20:27:40.463777+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 4,
+    "deep_cap": 6,
+    "deep_selected": 4,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.10653v1",
+      "source": "arxiv",
+      "title": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "abstract": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "authors": [
+        "Juho Määttä",
+        "Jarno Kukkola",
+        "Janne Seppänen",
+        "Marko Hinkkanen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-12T08:39:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.10653v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python tool for grid converter admittance identification",
+      "llm_evidence_cn": "用于电网变流器输出导纳识别的开源Python工具",
+      "llm_evidence": "用于电网变流器输出导纳识别的开源Python工具",
+      "canonical_evidence": "用于电网变流器输出导纳识别的开源Python工具",
+      "llm_tldr_en": "This paper presents an open-source Python tool for identifying converter output admittance using sinusoidal sweep injection, built on an entirely open-source simulator stack, enabling reproducible power grid stability analysis.",
+      "llm_tldr_cn": "电网变流器驱动的稳定性分析依赖于变流器输出导纳的频率域识别，但现有工具依赖商业软件。该文开发了基于完全开源模拟器的Python识别工具，采用稳态正弦注入法从时域仿真提取频域导纳。工具针对电网形成和电网跟随控制开发了解析模型进行验证，结果与商业软件一致。该工具提升了电力系统研究的可重复性和可访问性。",
+      "llm_tldr": "电网变流器驱动的稳定性分析依赖于变流器输出导纳的频率域识别，但现有工具依赖商业软件。该文开发了基于完全开源模拟器的Python识别工具，采用稳态正弦注入法从时域仿真提取频域导纳。工具针对电网形成和电网跟随控制开发了解析模型进行验证，结果与商业软件一致。该工具提升了电力系统研究的可重复性和可访问性。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.10653v3",
+      "source": "arxiv",
+      "title": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "abstract": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "authors": [
+        "Juho Määttä",
+        "Jarno Kukkola",
+        "Janne Seppänen",
+        "Marko Hinkkanen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-12T08:39:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.10653v3",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source Python tool for grid converter admittance identification",
+      "llm_evidence_cn": "提供开源Python工具，用于电网变流器输出导纳辨识",
+      "llm_evidence": "提供开源Python工具，用于电网变流器输出导纳辨识",
+      "canonical_evidence": "提供开源Python工具，用于电网变流器输出导纳辨识",
+      "llm_tldr_en": "This paper presents an open-source Python tool for grid converter output admittance identification, using a completely open-source simulator and MIT-licensed stack, eliminating the need for commercial licenses.",
+      "llm_tldr_cn": "该论文提出了一种基于完全开源仿真器的Python辨识工具，用于电网变流器输出导纳的频率域分析。工具采用MIT许可协议，通过稳态信号注入和正弦扫描方法从时域仿真中推导频域导纳。针对构网型和跟网型控制分别建立了解析输出导纳模型以验证数值结果。与商业软件对比验证了工具的准确性，为电力系统稳定性研究提供了可复现的开源方案。",
+      "llm_tldr": "该论文提出了一种基于完全开源仿真器的Python辨识工具，用于电网变流器输出导纳的频率域分析。工具采用MIT许可协议，通过稳态信号注入和正弦扫描方法从时域仿真中推导频域导纳。针对构网型和跟网型控制分别建立了解析输出导纳模型以验证数值结果。与商业软件对比验证了工具的准确性，为电力系统稳定性研究提供了可复现的开源方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.11683v1",
+      "source": "arxiv",
+      "title": "RAGU: A Multi-Step GraphRAG Engine with a Compact Domain-Adapted LLM",
+      "abstract": "Graph retrieval-augmented generation (GraphRAG) enhances large language models with structured knowledge, yet existing systems construct knowledge graphs in a single extraction pass, producing noisy entities and brittle retrieval. RAGU, an open-source modular GraphRAG engine, addresses this by separating extraction from consolidation: entities and relations pass through two-stage typed extraction, DBSCAN-backed deduplication, LLM summarization, and Leiden community detection. A key insight motivates a compact extractor: the skills an in-pipeline LLM needs - comprehension, extraction, reasoning over context - are language skills that grow only weakly with model size, unlike factual world knowledge. Accordingly, we train Meno-Lite-0.1, a 7B model optimized for language skills, which outperforms Qwen2.5-32B on knowledge-graph construction (+12.5% relative harmonic mean) and matches it on English GraphRAG tasks. On GraphRAG-Bench (Medical), RAGU retrieves the most complete context at every factoid level (evidence recall up to 0.84 vs. $\\leq$0.76) and overtakes HippoRAG2 on synthesis tasks; on multi-hop factoid QA, the apparent HippoRAG2 advantage is shown to be largely an answer-format artifact. RAGU is installable via $\\texttt{pip install graph_ragu}$, runs on a single GPU, and is released under MIT. The source code is publicly available at https://github.com/RaguTeam/RAGU, and the Meno-Lite-0.1 model can be obtained from https://huggingface.co/bond005/meno-lite-0.1.",
+      "authors": [
+        "Mikhail Komarov",
+        "Ivan Bondarenko",
+        "Stanislav Shtuka",
+        "Oleg Sedukhin",
+        "Roman Shuvalov",
+        "Yana Dementyeva",
+        "Matvey Solovyov",
+        "Nikolay O. Nikitin"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-07-13T15:20:51+00:00",
+      "link": "https://arxiv.org/pdf/2607.11683v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source modular GraphRAG engine with compact domain-adapted LLM",
+      "llm_evidence_cn": "开源模块化GraphRAG引擎，包含紧凑领域自适应LLM",
+      "llm_evidence": "开源模块化GraphRAG引擎，包含紧凑领域自适应LLM",
+      "canonical_evidence": "开源模块化GraphRAG引擎，包含紧凑领域自适应LLM",
+      "llm_tldr_en": "RAGU is an open-source modular GraphRAG engine that separates extraction from consolidation, using a two-stage typed extraction and DBSCAN deduplication, and trains a compact 7B model Meno-Lite-0.1 for domain adaptation.",
+      "llm_tldr_cn": "该论文提出RAGU，一个开源模块化图检索增强生成引擎。采用两阶段类型化抽取和DBSCAN去重来构建知识图谱，克服了单次抽取带来的噪声和脆弱检索问题。训练了一个轻量级7B模型Meno-Lite-0.1，证明语言技能随模型大小增长微弱，因此紧凑模型即可胜任抽取任务。开源实现促进了可复现的研究。",
+      "llm_tldr": "该论文提出RAGU，一个开源模块化图检索增强生成引擎。采用两阶段类型化抽取和DBSCAN去重来构建知识图谱，克服了单次抽取带来的噪声和脆弱检索问题。训练了一个轻量级7B模型Meno-Lite-0.1，证明语言技能随模型大小增长微弱，因此紧凑模型即可胜任抽取任务。开源实现促进了可复现的研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.12611v1",
+      "source": "arxiv",
+      "title": "tidysynthesis: a Meta-Package for Synthetic Data Generation",
+      "abstract": "Synthetic data generation enables data curators to more easily share datasets that limits the potential for disclosive inferences about data subjects in confidential datasets. Generating synthetic data requires navigating numerous design choices; however, most existing open source software fails to provide common software infrastructure for making such design choices efficiently. In this paper, we introduce tidysynthesis, a meta-package for synthetic data generation that enables better interoperability between existing modeling frameworks and statistical data privacy methods. tidysynthesis allows users more flexibility to specify and iterate on synthetic data algorithms by providing a common syntax to easily create and modify synthetic data generation pipelines. We demonstrate the features and extensibility of tidysynthesis, as well as provide end-to-end examples for synthetic data generation using data from the American Community Survey",
+      "authors": [
+        "Aaron R. Williams",
+        "Jeremy Seeman",
+        "Gabriel Morrison"
+      ],
+      "primary_category": "stat.CO",
+      "categories": [
+        "stat.CO"
+      ],
+      "published": "2026-07-14T10:42:13+00:00",
+      "link": "https://arxiv.org/pdf/2607.12611v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open source meta-package for synthetic data generation",
+      "llm_evidence_cn": "用于合成数据生成的开源元包",
+      "llm_evidence": "用于合成数据生成的开源元包",
+      "canonical_evidence": "用于合成数据生成的开源元包",
+      "llm_tldr_en": "tidysynthesis is an open-source meta-package that provides a common syntax and infrastructure for composing synthetic data generation pipelines, improving interoperability and reducing design effort.",
+      "llm_tldr_cn": "合成数据生成是保护隐私的数据共享关键技术，但现有软件缺乏统一接口，导致设计效率低下。tidysynthesis元包通过提供通用语法和流水线构建器，实现了不同框架与隐私方法的互操作。用户可快速迭代合成算法，无需关注底层细节。该工作为合成数据领域提供了可复现的基础设施，促进了开放科学。",
+      "llm_tldr": "合成数据生成是保护隐私的数据共享关键技术，但现有软件缺乏统一接口，导致设计效率低下。tidysynthesis元包通过提供通用语法和流水线构建器，实现了不同框架与隐私方法的互操作。用户可快速迭代合成算法，无需关注底层细节。该工作为合成数据领域提供了可复现的基础设施，促进了开放科学。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.12524v1",
+      "source": "arxiv",
+      "title": "Open-Source Intelligence for Code Provenance and the Security Patterns that Separate Human and Large-Language-Model Implementations of Common Programming Tasks",
+      "abstract": "Developers now draw code from two very different sources, the accumulated human answers on sites such as Stack Overflow and the output of large language models. We ask two questions about that split. First, can the provenance of a code snippet be recovered from the code itself, and second, do the two sources differ in the security patterns they adopt for the same task. Using only open sources, a public gateway of open-weight language models and the public Stack Overflow API, we build a fully reproducible pipeline that collects real implementations of 31 security-sensitive programming tasks, among them OAuth with PKCE, JWT verification, password hashing, and SQL access, from 9 language models and from human answers, and scores every sample with deterministic security and style detectors. On 528 real samples we train a cross-validated classifier that recovers human versus model provenance with 93 percent accuracy against a 78 percent baseline, and a 7-way classifier that attributes a sample to the specific model that wrote it at 48 percent. We then report where the sources diverge on security, which patterns models adopt more often than the human corpus and which they inherit from it. Running the same tasks in Python, JavaScript, Go, and Java, we find the security divergence holds in every language while the provenance boundary is partly language-specific and does not transfer symmetrically between them. A vulnerability repair case study, in which models are handed insecure code and asked to fix it, finds a 77 percent repair rate across 21 seeds and 12 weakness classes, but a recurring partial-fix failure in which the model removes the insecure pattern without adding the correct defense. The pipeline is data driven, so any new task or language is added as a single specification entry, and a fail-closed checker re-derives every number in this paper from the stored data.",
+      "authors": [
+        "Mohammadreza Rashidi"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.SE"
+      ],
+      "published": "2026-07-14T08:59:42+00:00",
+      "link": "https://arxiv.org/pdf/2607.12524v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides fully reproducible pipeline for code provenance and security analysis",
+      "llm_evidence_cn": "提供了用于代码溯源和安全分析的可完全复现管道",
+      "llm_evidence": "提供了用于代码溯源和安全分析的可完全复现管道",
+      "canonical_evidence": "提供了用于代码溯源和安全分析的可完全复现管道",
+      "llm_tldr_en": "A fully reproducible pipeline collecting 31 security-sensitive programming task implementations to separate human and LLM code, using open-source intelligence.",
+      "llm_tldr_cn": "该论文利用开源情报构建了一个完全可复现的管道，收集了31个安全敏感编程任务的真实实现，用于区分人类和大型语言模型生成的代码，并分析其安全模式差异。管道完全依赖公开资源，包括开源模型和Stack Overflow API，确保了可复现性。实验揭示了两种来源在安全模式上的显著差异，为代码溯源和安全评估提供了新方法。",
+      "llm_tldr": "该论文利用开源情报构建了一个完全可复现的管道，收集了31个安全敏感编程任务的真实实现，用于区分人类和大型语言模型生成的代码，并分析其安全模式差异。管道完全依赖公开资源，包括开源模型和Stack Overflow API，确保了可复现性。实验揭示了两种来源在安全模式上的显著差异，为代码溯源和安全评估提供了新方法。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
