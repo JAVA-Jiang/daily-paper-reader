@@ -1,0 +1,168 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-17T20:23:11.082416+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.10653v1",
+      "source": "arxiv",
+      "title": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "abstract": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "authors": [
+        "Juho Määttä",
+        "Jarno Kukkola",
+        "Janne Seppänen",
+        "Marko Hinkkanen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-12T08:39:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.10653v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python tool for grid converter output admittance identification, relevant to power grid",
+      "llm_evidence_cn": "开源的电网变流器输出导纳识别Python工具",
+      "llm_evidence": "开源的电网变流器输出导纳识别Python工具",
+      "canonical_evidence": "开源的电网变流器输出导纳识别Python工具",
+      "llm_tldr_en": "This paper presents an open-source Python tool for identifying converter output admittance in power grids using sinusoidal injection, verified against commercial tools.",
+      "llm_tldr_cn": "电网变流器导纳识别是稳定性分析的关键，但现有工具依赖商业软件。本文提出一个完全开源的Python工具，采用正弦信号注入法从时域仿真中提取频域导纳，并开发了电网构型和跟随型控制的解析模型。与商业PSCAD工具的对比验证了精度。该工具以MIT许可开源，降低了电网稳定性研究的门槛。",
+      "llm_tldr": "电网变流器导纳识别是稳定性分析的关键，但现有工具依赖商业软件。本文提出一个完全开源的Python工具，采用正弦信号注入法从时域仿真中提取频域导纳，并开发了电网构型和跟随型控制的解析模型。与商业PSCAD工具的对比验证了精度。该工具以MIT许可开源，降低了电网稳定性研究的门槛。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.10020v2",
+      "source": "arxiv",
+      "title": "FindMyText: Robust, Scalable Detection of Text Containment in Large Web-Crawled Corpora",
+      "abstract": "We present FindMyText, an open-source Python package designed to efficiently assess whether a given text appears, in part or in full, within a text corpus. The tool builds on prior techniques for document fingerprinting, but extends them with a novel mechanism to explicitly capture sequences of matching fingerprints. By identifying such chains, the tool can more reliably detect near-verbatim copies of a given text rather than mere textual similarities. This makes FindMyText particularly suited for verifying the presence of copyrighted material in a corpus. Leveraging a distributed, disk-based indexing framework, the system scales to large web-crawled datasets. Using a new benchmark for evaluating text containment methods, we show that FindMyText outperforms alternative approaches across three datasets (ArXiv papers, Wikipedia, and generic web content).",
+      "authors": [
+        "Lars Henry Berge Olsen",
+        "Pierre Lison",
+        "Martin Jullum",
+        "Mark Anderson"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-07-10T22:46:11+00:00",
+      "link": "https://arxiv.org/pdf/2607.10020v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "open-source Python package with code",
+      "llm_evidence_cn": "开源Python包，提供代码",
+      "llm_evidence": "开源Python包，提供代码",
+      "canonical_evidence": "开源Python包，提供代码",
+      "llm_tldr_en": "FindMyText is an open-source Python package for scalable text containment detection using fingerprint chaining and distributed indexing",
+      "llm_tldr_cn": "本文提出FindMyText，一个开源的Python工具包，通过指纹链和分布式索引实现大规模语料中的文本包含检测。该工具在检测版权内容等场景中具有高可靠性。",
+      "llm_tldr": "本文提出FindMyText，一个开源的Python工具包，通过指纹链和分布式索引实现大规模语料中的文本包含检测。该工具在检测版权内容等场景中具有高可靠性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.13344v1",
+      "source": "arxiv",
+      "title": "EZSMT Version 3, Matured",
+      "abstract": "Constraint Answer Set Programming (CASP) is a hybrid reasoning paradigm that combines Answer Set Programming (ASP) with Constraint Processing and Satisfiability Modulo Theories (SMT), enabling powerful declarative encodings of complex combinatorial search problems. This paper presents the design and implementation of EZSMTV3, an extensible SMT-based CASP framework that advances the translational approach to CASP solving. Building upon the foundation of the EZSMT+ system, EZSMTV3 introduces a more expressive input language, supports optimization via weak constraints, and offers foundations for streamlined integration of new constraint types. Rather than implementing custom search procedures, EZSMTV3 leverages state-of-the-art SMT solvers, such as CVC5, YICES, and Z3 to perform reasoning. The paper provides benchmarking results comparing EZSMTV3 with its CASP peers such as CLINGCON, CLINGO[DL], and CLINGO[LP], while showcasing its ability to handle mixed-domain constraints involving both integers and reals. The system provides a robust platform for future extensions and theoretical exploration within the CASP domain.",
+      "authors": [
+        "Yuliya Lierler"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-15T00:07:15+00:00",
+      "link": "https://arxiv.org/pdf/2607.13344v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides framework with source code",
+      "llm_evidence_cn": "提供带有源代码的框架",
+      "llm_evidence": "提供带有源代码的框架",
+      "canonical_evidence": "提供带有源代码的框架",
+      "llm_tldr_en": "EZSMTV3 is an extensible SMT-based CASP framework that leverages state-of-the-art SMT solvers like CVC5 YICES and Z3 for reasoning offering open-source implementation",
+      "llm_tldr_cn": "本文提出EZSMTV3，一个基于SMT的约束回答集编程框架，利用CVC5、YICES、Z3等求解器进行推理，提供了开源的实现和扩展接口。该工作推动了组合优化问题的声明式求解。",
+      "llm_tldr": "本文提出EZSMTV3，一个基于SMT的约束回答集编程框架，利用CVC5、YICES、Z3等求解器进行推理，提供了开源的实现和扩展接口。该工作推动了组合优化问题的声明式求解。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.14234v1",
+      "source": "arxiv",
+      "title": "ICAConfPubs: A Dataset and User Interface for ICA Conference Papers (2003-2018)",
+      "abstract": "This paper presents a comprehensive dataset of past ICA (The International Communication Association) annual conference papers from 2003 to 2018, encompassing 27,466 papers, 21,038 authors, and 4,935 sessions. We made the dataset publicly available in both CSV and JSON formats. Additionally, we developed an API to facilitate programmatic access, and an intuitive user interface to enable users to navigate and explore the data more easily. The web application, API documentation, downloadable data, and reproducible code to obtain and process the data are available at https://ica.hongtaoh.com.",
+      "authors": [
+        "Hongtao Hao",
+        "Xinyue Chen",
+        "Jiye Sun",
+        "Yanling Zhao",
+        "Jing Zhang"
+      ],
+      "primary_category": "cs.DL",
+      "categories": [
+        "cs.DL",
+        "cs.IR"
+      ],
+      "published": "2026-07-15T18:00:46+00:00",
+      "link": "https://arxiv.org/pdf/2607.14234v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides open source code and data",
+      "llm_evidence_cn": "提供开源代码和数据",
+      "llm_evidence": "提供开源代码和数据",
+      "canonical_evidence": "提供开源代码和数据",
+      "llm_tldr_en": "ICAConfPubs dataset (27466 papers) with public CSV JSON API and reproducible code at https://ica.hongtaoh.com",
+      "llm_tldr_cn": "本文提供了ICA会议论文数据集（2003-2018年，共27466篇），以CSV和JSON格式公开，并开发了API和用户界面，所有处理代码可复现。为传播学研究提供了宝贵的数据资源。",
+      "llm_tldr": "本文提供了ICA会议论文数据集（2003-2018年，共27466篇），以CSV和JSON格式公开，并开发了API和用户界面，所有处理代码可复现。为传播学研究提供了宝贵的数据资源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

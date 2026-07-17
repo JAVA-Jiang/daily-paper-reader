@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-17",
+  "date": "2026-07-17",
+  "generated_at": "2026-07-17T20:25:58",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/17/2607.10653v1-open-source-python-tool-for-grid-converter-output-admittance-identification",
+      "section": "deep",
+      "title_en": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "authors": "Juho Määttä, Jarno Kukkola, Janne Seppänen, Marko Hinkkanen",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10653v1",
+      "score": "9.0",
+      "evidence": "开源的电网变流器输出导纳识别Python工具",
+      "tldr": "电网变流器驱动稳定性研究常基于输出导纳频域分析，但传统依赖商业软件。本文开发了完全开源的Python辨识工具，采用正弦扫频信号注入从时域仿真获得频域导纳，并通过构网型和跟网型控制器的解析模型验证精度。工具代码基于MIT许可，与PSCAD结果一致，提升了可配置性和可重复性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/17/2607.10020v2-findmytext-robust-scalable-detection-of-text-containment-in-large-web-crawled-corpora",
+      "section": "quick",
+      "title_en": "FindMyText: Robust, Scalable Detection of Text Containment in Large Web-Crawled Corpora",
+      "authors": "Lars Henry Berge Olsen, Pierre Lison, Martin Jullum, Mark Anderson",
+      "date": "2026-07-10",
+      "pdf": "https://arxiv.org/pdf/2607.10020v2",
+      "score": "6.0",
+      "evidence": "开源Python包，提供代码",
+      "tldr": "针对网页规模语料库中文本包含检测的需求，现有方法难以区分近似拷贝与一般文本相似性。FindMyText通过文档指纹匹配链机制准确捕获近逐字拷贝，并利用分布式磁盘索引实现大规模扩展。在ArXiv、维基百科和通用网页数据集上，该工具在检测性能上优于现有方法。其开源实现为验证版权内容存在性提供了可靠方案。",
+      "tags": "query:code-paper",
+      "abstract_en": "We present FindMyText, an open-source Python package designed to efficiently assess whether a given text appears, in part or in full, within a text corpus. The tool builds on prior techniques for document fingerprinting, but extends them with a novel mechanism to explicitly capture sequences of matching fingerprints. By identifying such chains, the tool can more reliably detect near-verbatim copies of a given text rather than mere textual similarities. This makes FindMyText particularly suited for verifying the presence of copyrighted material in a corpus. Leveraging a distributed, disk-based indexing framework, the system scales to large web-crawled datasets. Using a new benchmark for evaluating text containment methods, we show that FindMyText outperforms alternative approaches across three datasets (ArXiv papers, Wikipedia, and generic web content).",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/17/2607.13344v1-ezsmt-version-3-matured",
+      "section": "quick",
+      "title_en": "EZSMT Version 3, Matured",
+      "authors": "Yuliya Lierler",
+      "date": "2026-07-15",
+      "pdf": "https://arxiv.org/pdf/2607.13344v1",
+      "score": "6.0",
+      "evidence": "提供带有源代码的框架",
+      "tldr": "约束回答集编程结合了ASP与约束处理及SMT，用于复杂组合搜索问题。EZSMTV3作为可扩展的CASP框架，改进了输入语言表达力，支持弱约束优化，并利用CVC5、YICES、Z3等成熟SMT求解器，避免了自研搜索过程。实验表明，与CLINGCON、CLINGO[DL]等同类系统相比，它能高效处理整数与实数混合域约束，为CASP领域的扩展和理论研究提供了稳健基础。",
+      "tags": "query:code-paper",
+      "abstract_en": "Constraint Answer Set Programming (CASP) is a hybrid reasoning paradigm that combines Answer Set Programming (ASP) with Constraint Processing and Satisfiability Modulo Theories (SMT), enabling powerful declarative encodings of complex combinatorial search problems. This paper presents the design and implementation of EZSMTV3, an extensible SMT-based CASP framework that advances the translational approach to CASP solving. Building upon the foundation of the EZSMT+ system, EZSMTV3 introduces a more expressive input language, supports optimization via weak constraints, and offers foundations for streamlined integration of new constraint types. Rather than implementing custom search procedures, EZSMTV3 leverages state-of-the-art SMT solvers, such as CVC5, YICES, and Z3 to perform reasoning. The paper provides benchmarking results comparing EZSMTV3 with its CASP peers such as CLINGCON, CLINGO[DL], and CLINGO[LP], while showcasing its ability to handle mixed-domain constraints involving both integers and reals. The system provides a robust platform for future extensions and theoretical exploration within the CASP domain.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/17/2607.14234v1-icaconfpubs-a-dataset-and-user-interface-for-ica-conference-papers-2003-2018",
+      "section": "quick",
+      "title_en": "ICAConfPubs: A Dataset and User Interface for ICA Conference Papers (2003-2018)",
+      "authors": "Hongtao Hao, Xinyue Chen, Jiye Sun, Yanling Zhao, Jing Zhang",
+      "date": "2026-07-15",
+      "pdf": "https://arxiv.org/pdf/2607.14234v1",
+      "score": "6.0",
+      "evidence": "提供开源代码和数据",
+      "tldr": "国际传播协会（ICA）年度会议论文长期缺乏系统整理，限制了学科发展研究。我们构建了2003至2018年共27466篇论文、21038位作者和4935个分会场的完整数据集，以CSV和JSON格式公开。同时提供RESTful API和交互式Web界面，方便用户检索与探索。这一资源填补了ICA会议论文数据空白，为传播学学者提供重要支撑。",
+      "tags": "query:code-paper",
+      "abstract_en": "This paper presents a comprehensive dataset of past ICA (The International Communication Association) annual conference papers from 2003 to 2018, encompassing 27,466 papers, 21,038 authors, and 4,935 sessions. We made the dataset publicly available in both CSV and JSON formats. Additionally, we developed an API to facilitate programmatic access, and an intuitive user interface to enable users to navigate and explore the data more easily. The web application, API documentation, downloadable data, and reproducible code to obtain and process the data are available at https://ica.hongtaoh.com.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
