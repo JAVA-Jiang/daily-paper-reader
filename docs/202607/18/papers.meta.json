@@ -1,0 +1,54 @@
+{
+  "label": "2026-07-18",
+  "date": "2026-07-18",
+  "generated_at": "2026-07-18T20:13:04",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202607/18/2607.10653v1-open-source-python-tool-for-grid-converter-output-admittance-identification",
+      "section": "deep",
+      "title_en": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "authors": "Juho Määttä, Jarno Kukkola, Janne Seppänen, Marko Hinkkanen",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10653v1",
+      "score": "9.0",
+      "evidence": "开源Python工具用于电网变流器导纳辨识",
+      "tldr": "变流器输出导纳频域分析是研究电网稳定性的关键，但现有工具依赖商业软件如MATLAB或PSCAD，可重复性差。本文提出基于完全开源仿真的Python辨识工具，通过稳态正弦扫频信号注入从时域提取频域导纳。与PSCAD对比验证，所提方法准确支持构网型和跟网型控制，且完全开源、可配置，促进可重复研究。",
+      "tags": "query:code-paper",
+      "abstract_en": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/18/2607.10653v2-open-source-python-tool-for-grid-converter-output-admittance-identification",
+      "section": "deep",
+      "title_en": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "authors": "Juho Määttä, Jarno Kukkola, Janne Seppänen, Marko Hinkkanen",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10653v2",
+      "score": "9.0",
+      "evidence": "开源Python工具用于电网变流器导纳识别，满足含代码和电网相关的要求",
+      "tldr": "基于变流器输出导纳的频域分析是研究电力系统稳定性的关键。本文开发了完全开源的Python工具，采用稳态信号注入与正弦扫频法从时域仿真提取频域导纳。解析模型验证了构网型和跟网型控制的准确性，结果与商业PSCAD工具一致。该工具消除商业许可依赖，提升可配置性与可重复性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/18/2607.14412v1-assessing-risks-of-hydro-generator-shaft-fatigue-from-data-center-load-oscillations",
+      "section": "quick",
+      "title_en": "Assessing Risks of Hydro-Generator Shaft Fatigue from Data Center Load Oscillations",
+      "authors": "Kaustav Chatterjee, Meghana Ramesh, Shuchismita Biswas, Brett A. Ross, Antos C. Varghese, Sameer Nekkalapu, Slaven Kincic",
+      "date": "2026-07-15",
+      "pdf": "https://arxiv.org/pdf/2607.14412v1",
+      "score": "6.0",
+      "evidence": "数据中心负载振荡，水轮发电机疲劳风险，与电网和数据中心相关",
+      "tldr": "大型AI数据中心负载引起次同步振荡，可能激发水轮发电机轴扭转模态并导致疲劳。本文提出基于两质量轴模型的电磁暂态仿真框架，通过频率扫描和传递函数分析扭矩放大。结果表明，低惯量比和低阻尼会显著放大共振扭矩，Kaplan型机组比Francis型更敏感。基于S-N曲线和Goodman图的简化疲劳评估生成安全因子，为互联研究和监测提供实用指标。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large AI data center loads can introduce persistent sub-synchronous active-power oscillations that may impact nearby generators by exciting torsional modes and increasing shaft stress. This paper presents a model-based framework for evaluating hydro-generator shaft fatigue risk under oscillatory loading. An electromagnetic transient simulation model is developed using a two-mass turbine-generator shaft representation with parameters from real-world generation units and a configurable AI data center load. The risk assessment is performed in two stages. First, a network transfer function quantifies the propagation of load oscillations from the data center point of interconnection to the hydro-generator terminal. A plant transfer function then characterizes the resulting shaft torque amplification. A frequency-scan approach identifies resonance regions and evaluates torque amplification at individual forcing frequencies. Parametric studies show that amplification is strongly affected by generator-to-turbine inertia ratio and torsional damping. Lower inertia ratios shift torsional modes to lower frequencies and increase amplification, indicating that some Kaplan-type units may be more susceptible than comparable Francis or Pelton units. Reduced damping further increases resonant response and fatigue exposure. A simplified fatigue assessment based on S--N curves and the Goodman diagram relates simulated torque response to mechanical integrity. The resulting Goodman safety factor provides a practical metric for evaluating the impact of persistent AI data center oscillations on hydro-generator service life and supports interconnection studies, oscillation limits, and plant-level monitoring strategies.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

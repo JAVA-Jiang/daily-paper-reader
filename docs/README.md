@@ -6,32 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-17
-- 运行时间：2026-07-17 20:25:53 UTC
+- 最新运行日期：2026-07-18
+- 运行时间：2026-07-18 20:12:57 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：1
-- 速读区：3
+- 本次总论文数：3
+- 精读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日阅读4篇论文，精读1篇关于电网变流器输出导纳识别的开源Python工具。最值得关注的是《Open-Source Python Tool for Grid Converter Output Admittance Identification》，其提出了实用的开源工具，对电力电子领域调试很有帮助。建议对该领域感兴趣的读者深入研读该工具的实现方法，并可考虑将其应用于实验验证。
-- 详情：[/202607/17/README](/202607/17/README)
+今天重点精读了一篇9.0分的开源Python工具论文，并速读了一篇6.0分的水电机组疲劳风险分析。  
+最值得关注的是电网变流器输出导纳识别的开源工具实现，以及数据中心负荷振荡对水电机轴疲劳的潜在威胁。  
+建议优先复现开源工具代码，并关注数据中心负荷冲击对传统机组的长期安全影响。
+- 详情：[/202607/18/README](/202607/18/README)
 
 ### 精读区论文标签
-1. [Open-Source Python Tool for Grid Converter Output Admittance Identification](/202607/17/2607.10653v1-open-source-python-tool-for-grid-converter-output-admittance-identification)  
+1. [Open-Source Python Tool for Grid Converter Output Admittance Identification](/202607/18/2607.10653v1-open-source-python-tool-for-grid-converter-output-admittance-identification)  
    标签：评分：9.0/10、query:code-paper
-   evidence：开源的电网变流器输出导纳识别Python工具
+   evidence：开源Python工具用于电网变流器导纳辨识
+2. [Open-Source Python Tool for Grid Converter Output Admittance Identification](/202607/18/2607.10653v2-open-source-python-tool-for-grid-converter-output-admittance-identification)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：开源Python工具用于电网变流器导纳识别，满足含代码和电网相关的要求
 
 ### 速读区论文标签
-1. [FindMyText: Robust, Scalable Detection of Text Containment in Large Web-Crawled Corpora](/202607/17/2607.10020v2-findmytext-robust-scalable-detection-of-text-containment-in-large-web-crawled-corpora)  
+1. [Assessing Risks of Hydro-Generator Shaft Fatigue from Data Center Load Oscillations](/202607/18/2607.14412v1-assessing-risks-of-hydro-generator-shaft-fatigue-from-data-center-load-oscillations)  
    标签：评分：6.0/10、query:code-paper
-   evidence：开源Python包，提供代码
-2. [EZSMT Version 3, Matured](/202607/17/2607.13344v1-ezsmt-version-3-matured)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提供带有源代码的框架
-3. [ICAConfPubs: A Dataset and User Interface for ICA Conference Papers (2003-2018)](/202607/17/2607.14234v1-icaconfpubs-a-dataset-and-user-interface-for-ica-conference-papers-2003-2018)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：提供开源代码和数据
+   evidence：数据中心负载振荡，水轮发电机疲劳风险，与电网和数据中心相关
 
 
 <div class="dpr-home-promo-card">

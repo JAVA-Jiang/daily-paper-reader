@@ -1,0 +1,130 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-18T20:11:38.878274+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.10653v1",
+      "source": "arxiv",
+      "title": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "abstract": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "authors": [
+        "Juho Määttä",
+        "Jarno Kukkola",
+        "Janne Seppänen",
+        "Marko Hinkkanen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-12T08:39:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.10653v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python tool for grid converter admittance identification",
+      "llm_evidence_cn": "开源Python工具用于电网变流器导纳辨识",
+      "llm_evidence": "开源Python工具用于电网变流器导纳辨识",
+      "canonical_evidence": "开源Python工具用于电网变流器导纳辨识",
+      "llm_tldr_en": "This paper presents an open-source Python tool for identifying grid converter output admittance, built on a fully open-source simulator, eliminating commercial licenses, and validating against commercial tools.",
+      "llm_tldr_cn": "电网变流器的输出导纳辨识是研究变流器驱动稳定性的关键，但现有工具依赖商用许可证。本文提出一个完全基于开源仿真器的Python识别工具，采用正弦扫频注入法提取频域导纳，并针对构网型和跟网型变流器开发了解析模型进行验证。该工具与商用PSCAD结果对比一致，且配置更灵活，为电网稳定性研究提供了可复现的开源方案。",
+      "llm_tldr": "电网变流器的输出导纳辨识是研究变流器驱动稳定性的关键，但现有工具依赖商用许可证。本文提出一个完全基于开源仿真器的Python识别工具，采用正弦扫频注入法提取频域导纳，并针对构网型和跟网型变流器开发了解析模型进行验证。该工具与商用PSCAD结果对比一致，且配置更灵活，为电网稳定性研究提供了可复现的开源方案。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.10653v2",
+      "source": "arxiv",
+      "title": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "abstract": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "authors": [
+        "Juho Määttä",
+        "Jarno Kukkola",
+        "Janne Seppänen",
+        "Marko Hinkkanen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-12T08:39:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.10653v2",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source Python tool for power grid converter admittance identification, matching code and power grid requirement",
+      "llm_evidence_cn": "开源Python工具用于电网变流器导纳识别，满足含代码和电网相关的要求",
+      "llm_evidence": "开源Python工具用于电网变流器导纳识别，满足含代码和电网相关的要求",
+      "canonical_evidence": "开源Python工具用于电网变流器导纳识别，满足含代码和电网相关的要求",
+      "llm_tldr_en": "This paper presents an open-source Python tool for identifying grid converter output admittance using a sine-sweep method, eliminating commercial licenses and enabling reproducible research.",
+      "llm_tldr_cn": "论文针对电力系统中变流器输出导纳辨识依赖商用软件的问题，提出了一套完全基于开源Python的工具链。该工具通过稳态正弦注入扫描方法，从时域仿真中提取频域导纳，支持构网型和跟网型控制器的解析模型验证。实验结果表明，该工具结果与商业软件一致，且完全开源（MIT许可），无需商用许可证。这项工作促进了电网稳定性研究的可复现性和可配置性。",
+      "llm_tldr": "论文针对电力系统中变流器输出导纳辨识依赖商用软件的问题，提出了一套完全基于开源Python的工具链。该工具通过稳态正弦注入扫描方法，从时域仿真中提取频域导纳，支持构网型和跟网型控制器的解析模型验证。实验结果表明，该工具结果与商业软件一致，且完全开源（MIT许可），无需商用许可证。这项工作促进了电网稳定性研究的可复现性和可配置性。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.14412v1",
+      "source": "arxiv",
+      "title": "Assessing Risks of Hydro-Generator Shaft Fatigue from Data Center Load Oscillations",
+      "abstract": "Large AI data center loads can introduce persistent sub-synchronous active-power oscillations that may impact nearby generators by exciting torsional modes and increasing shaft stress. This paper presents a model-based framework for evaluating hydro-generator shaft fatigue risk under oscillatory loading. An electromagnetic transient simulation model is developed using a two-mass turbine-generator shaft representation with parameters from real-world generation units and a configurable AI data center load. The risk assessment is performed in two stages. First, a network transfer function quantifies the propagation of load oscillations from the data center point of interconnection to the hydro-generator terminal. A plant transfer function then characterizes the resulting shaft torque amplification. A frequency-scan approach identifies resonance regions and evaluates torque amplification at individual forcing frequencies. Parametric studies show that amplification is strongly affected by generator-to-turbine inertia ratio and torsional damping. Lower inertia ratios shift torsional modes to lower frequencies and increase amplification, indicating that some Kaplan-type units may be more susceptible than comparable Francis or Pelton units. Reduced damping further increases resonant response and fatigue exposure. A simplified fatigue assessment based on S--N curves and the Goodman diagram relates simulated torque response to mechanical integrity. The resulting Goodman safety factor provides a practical metric for evaluating the impact of persistent AI data center oscillations on hydro-generator service life and supports interconnection studies, oscillation limits, and plant-level monitoring strategies.",
+      "authors": [
+        "Kaustav Chatterjee",
+        "Meghana Ramesh",
+        "Shuchismita Biswas",
+        "Brett A. Ross",
+        "Antos C. Varghese",
+        "Sameer Nekkalapu",
+        "Slaven Kincic"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-15T23:03:57+00:00",
+      "link": "https://arxiv.org/pdf/2607.14412v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "data center load oscillations, hydro-generator fatigue risk, relevant to power grid and data centers",
+      "llm_evidence_cn": "数据中心负载振荡，水轮发电机疲劳风险，与电网和数据中心相关",
+      "llm_evidence": "数据中心负载振荡，水轮发电机疲劳风险，与电网和数据中心相关",
+      "canonical_evidence": "数据中心负载振荡，水轮发电机疲劳风险，与电网和数据中心相关",
+      "llm_tldr_en": "Presents a model-based framework to assess hydro-generator shaft fatigue risk from data center load oscillations, using EMTP simulations.",
+      "llm_tldr_cn": "该论文针对大型AI数据中心负载引起的次同步有功功率振荡对附近水轮发电机的影响，提出了一种基于模型的轴疲劳风险评估框架。采用电磁暂态仿真模型，分两阶段评估振荡传播与扭矩响应。工作为电网与数据中心交互提供了风险评估工具，但代码是否公开未明确。",
+      "llm_tldr": "该论文针对大型AI数据中心负载引起的次同步有功功率振荡对附近水轮发电机的影响，提出了一种基于模型的轴疲劳风险评估框架。采用电磁暂态仿真模型，分两阶段评估振荡传播与扭矩响应。工作为电网与数据中心交互提供了风险评估工具，但代码是否公开未明确。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
