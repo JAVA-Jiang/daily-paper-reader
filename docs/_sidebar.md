@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-19 <!--dpr-date:20260719-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/19/2607.12223v1-testminer-software-testing-analysis-for-github-repositories" data-sidebar-item="{&quot;title&quot;: &quot;TestMiner: Software Testing Analysis for GitHub Repositories&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.12223v1-testminer-software-testing-analysis-for-github-repositories&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;提供了开源的软件测试分析工具&quot;}">TestMiner: Software Testing Analysis for GitHub Repositories</a>
   * 2026-07-18 <!--dpr-date:20260718-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/18/2607.10653v1-open-source-python-tool-for-grid-converter-output-admittance-identification" data-sidebar-item="{&quot;title&quot;: &quot;Open-Source Python Tool for Grid Converter Output Admittance Identification&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.10653v1-open-source-python-tool-for-grid-converter-output-admittance-identification&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;开源Python工具用于电网变流器导纳辨识&quot;}">Open-Source Python Tool for Grid Converter Output Admittance Identification</a>

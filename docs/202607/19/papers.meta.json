@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-19",
+  "date": "2026-07-19",
+  "generated_at": "2026-07-19T20:40:17",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/19/2607.12223v1-testminer-software-testing-analysis-for-github-repositories",
+      "section": "quick",
+      "title_en": "TestMiner: Software Testing Analysis for GitHub Repositories",
+      "authors": "Andre Hora, José Miguel Rojas, Romain Robbes",
+      "date": "2026-07-13",
+      "pdf": "https://arxiv.org/pdf/2607.12223v1",
+      "score": "7.0",
+      "evidence": "提供了开源的软件测试分析工具",
+      "tldr": "软件系统测试实践因语言和生态系统而异，理解项目测试方式存在困难。本文提出TestMiner工具，用于分析GitHub仓库的测试统计、位置、跨版本指标及测试依赖。在本科软件测试课程中，50名学生使用该工具探索真实仓库，获得积极反馈。",
+      "tags": "query:code-paper",
+      "abstract_en": "Software systems have unique testing characteristics. Some projects can emphasize unit tests, while others may focus on end-to-end testing. Test organization may vary across ecosystems: in languages like Python and Java, tests are typically placed in dedicated folders, whereas Go and Rust projects commonly co-locate tests with source code. These distinctions make it harder to understand how a project approaches testing. In this paper, we present TestMiner, a tool for exploring software testing in GitHub repositories. TestMiner provides an overview of a project's testing practices, including test statistics, test location, test metrics across releases, and dependencies related to testing. We used TestMiner in an undergraduate Software Testing course, where 50 students explored the testing practices of real-world GitHub repositories. Overall, students expressed positive feedback regarding TestMiner. They were able to critically explore a variety of testing practices, including test organization, test evolution, test fixtures, mocking, and edge-case testing. TestMiner is available at: https://andrehora.github.io/testminer. Screencast: https://youtu.be/w1sBgLTq-7Y.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
