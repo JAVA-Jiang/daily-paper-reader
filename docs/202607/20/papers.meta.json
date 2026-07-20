@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-20",
+  "date": "2026-07-20",
+  "generated_at": "2026-07-20T21:27:59",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/20/2607.10653v2-open-source-python-tool-for-grid-converter-output-admittance-identification",
+      "section": "deep",
+      "title_en": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "authors": "Juho Määttä, Jarno Kukkola, Janne Seppänen, Marko Hinkkanen",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10653v2",
+      "score": "10.0",
+      "evidence": "开源的电网变流器输出导纳识别Python工具，与电网和调度相关",
+      "tldr": "基于变流器输出导纳的频域分析是研究电网稳定性的关键工具，但现有辨识方法依赖商业软件，成本高且可配置性差。本文开发了完全开源的Python工具，采用稳态信号注入与正弦扫描从时域仿真中提取频域导纳，并为构网型和跟网型控制建立解析模型验证结果。与商业PSCAD工具对比，该工具能准确辨识不同控制方法下的输出导纳。工具基于MIT许可开源，消除了商业许可依赖，提高了可复现性和可配置性。",
+      "tags": "query:code-paper",
+      "abstract_en": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/20/2607.10867v1-groupfunctionsjl-computing-individual-entries-of-the-irreducible-representations-of-the-unitary-group-ud",
+      "section": "deep",
+      "title_en": "GroupFunctions.jl: computing individual entries of the irreducible representations of the unitary group U(d)",
+      "authors": "David Amaro-Alcalá, Konrad Szymański",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10867v1",
+      "score": "9.0",
+      "evidence": "论文提供了GroupFunctions.jl Julia库的源代码",
+      "tldr": "酉群U(d)的不可约表示矩阵元在量子光学等应用中重要，但缺乏高效计算工具。GroupFunctions.jl是Julia库，基于Gelfand-Tsetlin模式枚举基，提供符号与数值计算单个群函数的能力，支持SU(2)特例退化为Wigner D函数。该库还可计算表示算符、从参数化构造酉矩阵、转换Gelfand-Tsetlin模式与占据数ket、计算Schur函数。它填补了计算空白，结果可导出至Mathematica。",
+      "tags": "query:code-paper",
+      "abstract_en": "GroupFunctions.jl is a Julia library for computing individual matrix elements of irreducible representations of U(d). These matrix elements, called group functions, can be evaluated symbolically or numerically. For SU(2), they reduce to the Wigner D-functions. The library computes these matrix elements in a carrier-space basis enumerated by Gelfand-Tsetlin patterns. It can also compute entire representation operators, construct input unitaries from parameterisations common in quantum optics, translate Gelfand-Tsetlin patterns into occupation-number kets, and compute the associated Schur functions. Results can be exported in a form compatible with Mathematica.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/20/2607.10628v1-anamnesis-an-open-source-platform-for-large-scale-backstory-conditioned-survey-simulation",
+      "section": "deep",
+      "title_en": "Anamnesis: An Open-Source Platform for Large-Scale Backstory-Conditioned Survey Simulation",
+      "authors": "Song-Ze Yu, Joseph Suh, Serina Chang, David M. Chan",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10628v1",
+      "score": "8.0",
+      "evidence": "开源平台，提供源代码用于调查模拟",
+      "tldr": "调查问卷预测试通常依赖真人被试，成本高且存在偏差。Anamnesis平台基于大型语言模型，通过结构化叙事背景故事（Anthology和Alterity框架）实现人口统计可控的虚拟人群模拟。在Pew政治类型学和生物医学议题以及纽约客标题比赛两个案例中，其生成的舆论分布比标准角色提示更贴近真实调查数据。该开源工具为非技术用户提供可复现的问卷压力测试替代方案。",
+      "tags": "query:code-paper",
+      "abstract_en": "We present Anamnesis, an interactive system for demographically controllable survey simulation using large language models. Open-source, and designed for non-technical users/researchers, Anamnesis enables the prototyping and stress-testing of survey instruments on virtual populations rather than real human subjects. The platform operationalizes the recently introduced Anthology and Alterity frameworks, which use structured narrative backstories to condition model responses, within a unified web interface. It supports open-ended generation, probabilistic demographic resampling, and multimodal (image and audio) surveys. We evaluate the system through two case studies: (1) replicating segments of Pew Research Center's American Trends Panel (ATP) on political typology and biomedical issues and (2) emulating human preference in the New Yorker Caption Contest. In both cases, Anamnesis produces opinion distributions that more closely match real-world survey data than standard persona-prompting baselines, offering a transparent, reproducible, and open-source alternative to proprietary simulation services.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/20/2607.10653v1-open-source-python-tool-for-grid-converter-output-admittance-identification",
+      "section": "quick",
+      "title_en": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "authors": "Juho Määttä, Jarno Kukkola, Janne Seppänen, Marko Hinkkanen",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10653v1",
+      "score": "7.0",
+      "evidence": "开源MIT许可的电网导纳识别Python工具",
+      "tldr": "变流器输出导纳频域分析是研究变流器驱动电网稳定性的关键工具。现有商业软件如MATLAB和PSCAD需要许可证且不易定制。本文提出并实现了基于纯开源模拟器的Python识别工具，通过向变流器注入正弦扫频信号，从时域仿真结果中提取频域导纳。为验证准确性，分别针对构网型（基于扰动观测器）和跟网型（基于锁相环）控制建立了解析输出导纳模型，并与商业PSCAD工具的结果进行对比，表明所提工具能够准确识别导纳。该工具采用MIT开源协议，提升了可配置性和研究可重复性，代码和示例已在线公开。",
+      "tags": "query:code-paper",
+      "abstract_en": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

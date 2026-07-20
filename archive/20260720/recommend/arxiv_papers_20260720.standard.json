@@ -1,0 +1,165 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-20T21:26:19.283651+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.10653v2",
+      "source": "arxiv",
+      "title": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "abstract": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "authors": [
+        "Juho Määttä",
+        "Jarno Kukkola",
+        "Janne Seppänen",
+        "Marko Hinkkanen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-12T08:39:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.10653v2",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "open-source Python tool for grid converter admittance identification, relevant to power grid and task scheduling",
+      "llm_evidence_cn": "开源的电网变流器输出导纳识别Python工具，与电网和调度相关",
+      "llm_evidence": "开源的电网变流器输出导纳识别Python工具，与电网和调度相关",
+      "canonical_evidence": "开源的电网变流器输出导纳识别Python工具，与电网和调度相关",
+      "llm_tldr_en": "This paper presents an open-source Python tool for grid converter output admittance identification, using sinusoidal sweep injection on a fully open-source simulator, with code available.",
+      "llm_tldr_cn": "该论文开发了一个基于开源仿真器的Python工具，用于电网变流器输出导纳识别，采用稳态正弦注入和扫频方法，避免了对商业许可证的依赖。通过与商业PSCAD对比验证了准确性，并提供了完整的开源代码，对电网稳定性分析具有重要意义。",
+      "llm_tldr": "该论文开发了一个基于开源仿真器的Python工具，用于电网变流器输出导纳识别，采用稳态正弦注入和扫频方法，避免了对商业许可证的依赖。通过与商业PSCAD对比验证了准确性，并提供了完整的开源代码，对电网稳定性分析具有重要意义。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.10867v1",
+      "source": "arxiv",
+      "title": "GroupFunctions.jl: computing individual entries of the irreducible representations of the unitary group U(d)",
+      "abstract": "GroupFunctions.jl is a Julia library for computing individual matrix elements of irreducible representations of U(d). These matrix elements, called group functions, can be evaluated symbolically or numerically. For SU(2), they reduce to the Wigner D-functions. The library computes these matrix elements in a carrier-space basis enumerated by Gelfand-Tsetlin patterns. It can also compute entire representation operators, construct input unitaries from parameterisations common in quantum optics, translate Gelfand-Tsetlin patterns into occupation-number kets, and compute the associated Schur functions. Results can be exported in a form compatible with Mathematica.",
+      "authors": [
+        "David Amaro-Alcalá",
+        "Konrad Szymański"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "cs.MS"
+      ],
+      "published": "2026-07-12T18:06:22+00:00",
+      "link": "https://arxiv.org/pdf/2607.10867v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "paper presents GroupFunctions.jl Julia library with open source code",
+      "llm_evidence_cn": "论文提供了GroupFunctions.jl Julia库的源代码",
+      "llm_evidence": "论文提供了GroupFunctions.jl Julia库的源代码",
+      "canonical_evidence": "论文提供了GroupFunctions.jl Julia库的源代码",
+      "llm_tldr_en": "GroupFunctions.jl is an open-source Julia library for computing irreducible representations of U(d), providing both symbolic and numeric evaluation.",
+      "llm_tldr_cn": "该论文介绍了GroupFunctions.jl，一个用于计算U(d)不可约表示矩阵元的Julia开源库。该库支持符号与数值计算，可处理SU(2)的Wigner D函数，并支持与Mathematica的导出兼容。作为直接提供源代码的工具型论文，它符合用户对含代码论文的需求。",
+      "llm_tldr": "该论文介绍了GroupFunctions.jl，一个用于计算U(d)不可约表示矩阵元的Julia开源库。该库支持符号与数值计算，可处理SU(2)的Wigner D函数，并支持与Mathematica的导出兼容。作为直接提供源代码的工具型论文，它符合用户对含代码论文的需求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.10628v1",
+      "source": "arxiv",
+      "title": "Anamnesis: An Open-Source Platform for Large-Scale Backstory-Conditioned Survey Simulation",
+      "abstract": "We present Anamnesis, an interactive system for demographically controllable survey simulation using large language models. Open-source, and designed for non-technical users/researchers, Anamnesis enables the prototyping and stress-testing of survey instruments on virtual populations rather than real human subjects. The platform operationalizes the recently introduced Anthology and Alterity frameworks, which use structured narrative backstories to condition model responses, within a unified web interface. It supports open-ended generation, probabilistic demographic resampling, and multimodal (image and audio) surveys. We evaluate the system through two case studies: (1) replicating segments of Pew Research Center's American Trends Panel (ATP) on political typology and biomedical issues and (2) emulating human preference in the New Yorker Caption Contest. In both cases, Anamnesis produces opinion distributions that more closely match real-world survey data than standard persona-prompting baselines, offering a transparent, reproducible, and open-source alternative to proprietary simulation services.",
+      "authors": [
+        "Song-Ze Yu",
+        "Joseph Suh",
+        "Serina Chang",
+        "David M. Chan"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-07-12T07:41:35+00:00",
+      "link": "https://arxiv.org/pdf/2607.10628v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source platform for survey simulation, provides source code",
+      "llm_evidence_cn": "开源平台，提供源代码用于调查模拟",
+      "llm_evidence": "开源平台，提供源代码用于调查模拟",
+      "canonical_evidence": "开源平台，提供源代码用于调查模拟",
+      "llm_tldr_en": "Anamnesis is an open-source platform for demographically controllable survey simulation using LLMs, enabling researchers to prototype surveys on virtual populations.",
+      "llm_tldr_cn": "本文提出Anamnesis，一个开源的大规模背故事条件调查模拟平台。它利用LLM生成虚拟受访者回答，支持人口统计控制、多模态调查和概率重采样。平台开源且面向非技术用户，可帮助研究人员在真实人群投放前测试调查工具。案例研究显示能复现真实调查趋势，降低调查开发成本。",
+      "llm_tldr": "本文提出Anamnesis，一个开源的大规模背故事条件调查模拟平台。它利用LLM生成虚拟受访者回答，支持人口统计控制、多模态调查和概率重采样。平台开源且面向非技术用户，可帮助研究人员在真实人群投放前测试调查工具。案例研究显示能复现真实调查趋势，降低调查开发成本。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.10653v1",
+      "source": "arxiv",
+      "title": "Open-Source Python Tool for Grid Converter Output Admittance Identification",
+      "abstract": "Frequency-domain analysis based on converter output admittance is a key tool for studying converter-driven stability in power grids. This paper presents a Python-based identification tool built on a completely open-source simulator, eliminating the need for commercial licenses such as MATLAB or PSCAD and improving configurability through an MIT-licensed stack. The identification method uses steady-state signal injection with a sinusoidal sweep, deriving frequency-domain admittance from time-domain simulations. Analytical output-admittance models are developed for both grid-forming (disturbance-observer-based) and grid-following (phase-locked-loop-based) control to verify the numerical results. The tool's results are compared against a commercial PSCAD-based alternative, demonstrating accurate admittance identification across control methods. Code and examples are available online to support reproducibility.",
+      "authors": [
+        "Juho Määttä",
+        "Jarno Kukkola",
+        "Janne Seppänen",
+        "Marko Hinkkanen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-07-12T08:39:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.10653v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Open-source Python tool for power grid admittance identification with MIT license",
+      "llm_evidence_cn": "开源MIT许可的电网导纳识别Python工具",
+      "llm_evidence": "开源MIT许可的电网导纳识别Python工具",
+      "canonical_evidence": "开源MIT许可的电网导纳识别Python工具",
+      "llm_tldr_en": "Presents a Python-based open-source tool for identifying converter output admittance in power grids, using steady-state signal injection and time-domain simulation, verified against commercial tools.",
+      "llm_tldr_cn": "该工作针对电力系统中变换器驱动稳定性分析需求，提出了一套基于Python的开源导纳识别工具。该工具依托完全开源仿真器，采用稳态信号注入与正弦扫频方法，从时域仿真中提取频域导纳，避免了商业软件许可限制。通过与商用仿真结果对比验证了工具的准确性，为电网稳定性研究提供了可配置、可复现的开源方案。",
+      "llm_tldr": "该工作针对电力系统中变换器驱动稳定性分析需求，提出了一套基于Python的开源导纳识别工具。该工具依托完全开源仿真器，采用稳态信号注入与正弦扫频方法，从时域仿真中提取频域导纳，避免了商业软件许可限制。通过与商用仿真结果对比验证了工具的准确性，为电网稳定性研究提供了可配置、可复现的开源方案。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
