@@ -1,0 +1,169 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-21T21:14:07.188978+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.16569v1",
+      "source": "arxiv",
+      "title": "From Discussion to Execution: Replicating Buggy and Correct Data Science Code",
+      "abstract": "Reproducing reliable data science code from informal sources is challenging due to ambiguous problem specifications, missing dependencies, and performance bottlenecks. Although developer Q&A forums provide rich discussions on diagnosing and fixing real-world issues, the information is often incomplete and unstructured, limiting its use for automated debugging and verification. In this paper, we introduce Reprodgen, a large language model (LLM) based framework for automatically replicating executable buggy and patched data science programs from Q&A forum posts. Given a question and its corresponding answer, Reprodgen reconstructs the buggy behavior described in the question and the intended fix described in the answer, producing executable buggy and patched code pairs that reflect the original discussion. The framework builds structured representations of code intent (CI), functional requirements (FR), and Structured Chain of Thought (SCoT), and iteratively refines code using an LLM-based reviewer until it is executable and semantically consistent. We evaluate Reprodgen on Stack Overflow (SO) and GitHub Issues (GI) across seven data science libraries, including pandas, numpy, and scikit-learn, and construct a benchmark of runnable buggy and patched programs validated by human experts. Our pipeline uses LLMs for semantic assessment, while executability is verified through actual execution. Results show reliable replication with clear differences in model performance.",
+      "authors": [
+        "Ragib Shahariar Ayon",
+        "Mohammad Wardat",
+        "Shibbir Ahmed"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-18T00:48:26+00:00",
+      "link": "https://arxiv.org/pdf/2607.16569v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Introduces framework to replicate data science code; provides source code.",
+      "llm_evidence_cn": "提出了复现数据科学代码的框架，提供了源代码。",
+      "llm_evidence": "提出了复现数据科学代码的框架，提供了源代码。",
+      "canonical_evidence": "提出了复现数据科学代码的框架，提供了源代码。",
+      "llm_tldr_en": "Reprodgen is an LLM-based framework that automatically replicates buggy and patched data science programs from Q&A posts.",
+      "llm_tldr_cn": "本文提出Reprodgen，一个基于大语言模型的框架，能够从问答论坛自动复现可执行的错误和修复后的数据科学程序。针对规范模糊、依赖缺失和性能瓶颈，Reprodgen根据问题描述重建错误行为，并根据答案构建修复方案。实验结果表明该框架能有效生成可运行代码，为程序调试和可复现性研究提供支持。该框架代码将开源发布。",
+      "llm_tldr": "本文提出Reprodgen，一个基于大语言模型的框架，能够从问答论坛自动复现可执行的错误和修复后的数据科学程序。针对规范模糊、依赖缺失和性能瓶颈，Reprodgen根据问题描述重建错误行为，并根据答案构建修复方案。实验结果表明该框架能有效生成可运行代码，为程序调试和可复现性研究提供支持。该框架代码将开源发布。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Search thesis which has code with it.",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.16973v1",
+      "source": "arxiv",
+      "title": "TurboVec: A Case Study in Cost-Efficient Private Retrieval for Enterprise RAG via Codebook-Oblivious Quantization",
+      "abstract": "Retrieval-Augmented Generation (RAG) systems increasingly power enterprise LLM applications, yet the vector retrieval layer introduces two underexplored challenges: (1) trained codebook quantizers may expose corpus statistics during index construction, creating a leakage channel in multi-tenant deployments, and (2) post-hoc filtering for tenant isolation degrades recall on selective queries. We study TurboVec, an open-source vector index built on TurboQuant - a codebook-oblivious scalar quantizer requiring no corpus-dependent training. On the DBpedia OpenAI embeddings benchmark (d=1536, 100K-999K vectors), TurboQuant 4-bit outperforms trained FAISS Product Quantization at the same memory budget by 8.5-8.9 percentage points in Recall@5 across all scales. Compared to HNSW (R@5=0.991) and IVF-PQ (R@5=0.840), TurboQuant occupies a distinct design point: higher recall than IVF-PQ without training, at 4-8x less memory than HNSW. Deployed on Snowpark Container Services, TurboVec achieves 11ms median query latency at 100K vectors versus 707ms for warehouse brute-force scan. Kernel-level allowlist filtering maintains 0.86-0.93 Recall@10 across 10-1000 tenant workloads versus 0.09-0.19 for post-filter baselines. Codebook-oblivious design reduces membership inference accuracy to near-random (50.0%) versus 57.3% for PQ codebooks. Limitations include single dataset evaluation, uncompressed HNSW comparison, and privacy evaluation on synthetic data only.",
+      "authors": [
+        "Navnit Shukla",
+        "Kamal Pandey",
+        "Omsankar Tiwari"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.IR"
+      ],
+      "published": "2026-07-18T21:43:40+00:00",
+      "link": "https://arxiv.org/pdf/2607.16973v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "open-source vector index TurboVec",
+      "llm_evidence_cn": "开源向量索引TurboVec",
+      "llm_evidence": "开源向量索引TurboVec",
+      "canonical_evidence": "开源向量索引TurboVec",
+      "llm_tldr_en": "TurboVec is an open-source vector index using codebook-oblivious quantization for cost-efficient private retrieval in enterprise RAG.",
+      "llm_tldr_cn": "针对企业RAG系统中向量检索的隐私泄露和召回率问题，本文提出TurboVec，一种基于无码本标量量化器的开源向量索引。该方法无需依赖数据的训练，在DBpedia基准上以相同内存预算相比FAISS产品量化提升8.5-8.9%的性能。提供了开源实现，便于可重复研究。",
+      "llm_tldr": "针对企业RAG系统中向量检索的隐私泄露和召回率问题，本文提出TurboVec，一种基于无码本标量量化器的开源向量索引。该方法无需依赖数据的训练，在DBpedia基准上以相同内存预算相比FAISS产品量化提升8.5-8.9%的性能。提供了开源实现，便于可重复研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.17089v1",
+      "source": "arxiv",
+      "title": "Grid-Interactive Operation of Solar-Integrated Data Centers for Coordinated Local and System-Level Decarbonization",
+      "abstract": "The exponential growth of AI is accelerating the deployment of data centers (DCs), placing unprecedented strain on power infrastructures. In response, major IT corporations are increasingly adopting on-site solar generation to reduce grid dependence and meet sustainability targets. However, the true impacts of this strategy remain ambiguous. While DCs are flexible assets capable of temporal load-shifting, anchoring them to self-generated power may inadvertently constrain their grid responsiveness. To evaluate these trade-offs, we propose a receding-horizon optimization (RHO) framework coordinating job scheduling, grid interactions, and on-site solar generation for a stand-alone DC. Our findings reveal a critical paradox: although solar integration increases energy self-sufficiency and reduces overall DC emissions, it inherently limits the facility's capacity to absorb low-cost, low-carbon electricity from the grid. This implies a fundamental tension between individual corporate sustainability goals and system-wide grid decarbonization.",
+      "authors": [
+        "Mingxu Yang",
+        "Weiqi Zhang",
+        "Hui Geng",
+        "Jiaze Ma"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-07-19T05:59:14+00:00",
+      "link": "https://arxiv.org/pdf/2607.17089v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "data center job scheduling and grid interaction framework",
+      "llm_evidence_cn": "数据中心作业调度与电网交互框架",
+      "llm_evidence": "数据中心作业调度与电网交互框架",
+      "canonical_evidence": "数据中心作业调度与电网交互框架",
+      "llm_tldr_en": "Proposes a receding-horizon optimization framework for solar-integrated data centers that coordinates job scheduling with grid interactions to evaluate decarbonization trade-offs.",
+      "llm_tldr_cn": "针对太阳能集成数据中心，提出滚动时域优化框架，协调作业调度与电网交互，揭示自我发电可能限制电网响应性。方法结合调度与可再生能源，为数据中心低碳运营提供新视角。",
+      "llm_tldr": "针对太阳能集成数据中心，提出滚动时域优化框架，协调作业调度与电网交互，揭示自我发电可能限制电网响应性。方法结合调度与可再生能源，为数据中心低碳运营提供新视角。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.17514v1",
+      "source": "arxiv",
+      "title": "A Predict-then-Schedule framework for Power Distribution Networks with AI Data Centers",
+      "abstract": "The surge of GPU-intensive workloads in artificial intelligence (AI) data centers drives massive energy demands, leading to soaring costs and significant stress on local power distribution networks. Coordinating delay-tolerant workload scheduling with power grid conditions via precise workload prediction can mitigate these issues. However, a critical gap remains in conventional approaches, i.e., minimizing prediction error does not necessarily lead to minimized downstream operational loss. Hence, this paper proposes an end-to-end Predict-Then-Schedule (PTS) framework that integrates upstream workload prediction with downstream scheduling optimization. By leveraging differentiable convex optimization, the PTS framework maps input features directly to optimal scheduling and enables gradient-based training. Furthermore, to respect the data center's capacity, a workload over-shifted loss combining electricity cost with a penalty for load-shedding is introduced to evaluate scheduling quality. Experiments demonstrate that the proposed framework significantly reduces operational cost and enhances system security compared to the conventional two-stage baseline.",
+      "authors": [
+        "Siqi Yan",
+        "Jiebao Zhang",
+        "Xi Yao",
+        "Juan Huang",
+        "Ye Shi"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-07-20T03:38:36+00:00",
+      "link": "https://arxiv.org/pdf/2607.17514v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Proposes scheduling framework for data centers with code likely available.",
+      "llm_evidence_cn": "提出了面向数据中心的调度框架，可能含有代码。",
+      "llm_evidence": "提出了面向数据中心的调度框架，可能含有代码。",
+      "canonical_evidence": "提出了面向数据中心的调度框架，可能含有代码。",
+      "llm_tldr_en": "Proposes an end-to-end Predict-then-Schedule (PTS) framework that integrates workload prediction with scheduling optimization for data center power distribution.",
+      "llm_tldr_cn": "本文提出端到端预测后调度（PTS）框架，将上游工作负载预测与下游调度优化集成，以减轻AI数据中心的能耗和电网压力。通过可微凸优化，PTS将预测误差直接转换为调度损失最小化。实验表明，PTS相比传统方法能更有效地降低运营成本。该框架可能提供代码实现，为数据中心的负载调度与电网协同提供了新范式。",
+      "llm_tldr": "本文提出端到端预测后调度（PTS）框架，将上游工作负载预测与下游调度优化集成，以减轻AI数据中心的能耗和电网压力。通过可微凸优化，PTS将预测误差直接转换为调度损失最小化。实验表明，PTS相比传统方法能更有效地降低运营成本。该框架可能提供代码实现，为数据中心的负载调度与电网协同提供了新范式。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

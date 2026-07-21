@@ -6,32 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-20
-- 运行时间：2026-07-20 21:27:51 UTC
+- 最新运行日期：2026-07-21
+- 运行时间：2026-07-21 21:16:24 UTC
 - 运行状态：成功
 - 本次总论文数：4
-- 精读区：3
-- 速读区：1
+- 精读区：1
+- 速读区：3
 
 ### 今日简报（AI）
-今日共读4篇论文，精读3篇、速读1篇，重点关注电网转换器导纳识别与酉群表示计算。最值得看的是《Open-Source Python Tool for Grid Converter Output Admittance Identification》（10分），提供了一个实用的开源工具。下步建议优先精读该论文并尝试运行其代码工具。
-- 详情：[/202607/20/README](/202607/20/README)
+今日精读一篇数据科学代码复现研究，速读三篇涉及企业RAG隐私检索、数据中心脱碳及AI电网调度。最值得关注的是评分9.0的《From Discussion to Execution》，揭示数据科学代码的正确与错误复现差异，同时《TurboVec》中基于码本模糊量化的低成本隐私检索方案值得深入。建议优先精读数据科学代码可靠性研究，并关注AI数据中心与电网协同的预测调度框架。
+- 详情：[/202607/21/README](/202607/21/README)
 
 ### 精读区论文标签
-1. [Open-Source Python Tool for Grid Converter Output Admittance Identification](/202607/20/2607.10653v2-open-source-python-tool-for-grid-converter-output-admittance-identification)  
-   标签：评分：10.0/10、query:code-paper
-   evidence：开源的电网变流器输出导纳识别Python工具，与电网和调度相关
-2. [GroupFunctions.jl: computing individual entries of the irreducible representations of the unitary group U(d)](/202607/20/2607.10867v1-groupfunctionsjl-computing-individual-entries-of-the-irreducible-representations-of-the-unitary-group-ud)  
+1. [From Discussion to Execution: Replicating Buggy and Correct Data Science Code](/202607/21/2607.16569v1-from-discussion-to-execution-replicating-buggy-and-correct-data-science-code)  
    标签：评分：9.0/10、query:code-paper
-   evidence：论文提供了GroupFunctions.jl Julia库的源代码
-3. [Anamnesis: An Open-Source Platform for Large-Scale Backstory-Conditioned Survey Simulation](/202607/20/2607.10628v1-anamnesis-an-open-source-platform-for-large-scale-backstory-conditioned-survey-simulation)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：开源平台，提供源代码用于调查模拟
+   evidence：提出了复现数据科学代码的框架，提供了源代码。
 
 ### 速读区论文标签
-1. [Open-Source Python Tool for Grid Converter Output Admittance Identification](/202607/20/2607.10653v1-open-source-python-tool-for-grid-converter-output-admittance-identification)  
+1. [TurboVec: A Case Study in Cost-Efficient Private Retrieval for Enterprise RAG via Codebook-Oblivious Quantization](/202607/21/2607.16973v1-turbovec-a-case-study-in-cost-efficient-private-retrieval-for-enterprise-rag-via-codebook-oblivious-quantization)  
    标签：评分：7.0/10、query:code-paper
-   evidence：开源MIT许可的电网导纳识别Python工具
+   evidence：开源向量索引TurboVec
+2. [Grid-Interactive Operation of Solar-Integrated Data Centers for Coordinated Local and System-Level Decarbonization](/202607/21/2607.17089v1-grid-interactive-operation-of-solar-integrated-data-centers-for-coordinated-local-and-system-level-decarbonization)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：数据中心作业调度与电网交互框架
+3. [A Predict-then-Schedule framework for Power Distribution Networks with AI Data Centers](/202607/21/2607.17514v1-a-predict-then-schedule-framework-for-power-distribution-networks-with-ai-data-centers)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提出了面向数据中心的调度框架，可能含有代码。
 
 
 <div class="dpr-home-promo-card">

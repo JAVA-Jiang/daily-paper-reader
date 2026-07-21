@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-21",
+  "date": "2026-07-21",
+  "generated_at": "2026-07-21T21:16:30",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/21/2607.16569v1-from-discussion-to-execution-replicating-buggy-and-correct-data-science-code",
+      "section": "deep",
+      "title_en": "From Discussion to Execution: Replicating Buggy and Correct Data Science Code",
+      "authors": "Ragib Shahariar Ayon, Mohammad Wardat, Shibbir Ahmed",
+      "date": "2026-07-18",
+      "pdf": "https://arxiv.org/pdf/2607.16569v1",
+      "score": "9.0",
+      "evidence": "提出了复现数据科学代码的框架，提供了源代码。",
+      "tldr": "从Q&A论坛的非正式讨论中复现可执行的数据科学代码面临规范模糊、依赖缺失等问题。本文提出Reprodgen框架，基于大语言模型自动从问答帖子中重建buggy和patched代码对，通过构建代码意图、功能需求和结构化思维链，并迭代优化直至可执行且语义一致。在Stack Overflow和GitHub Issues上覆盖pandas等7个库的评估表明，该方法能可靠复现代码，且不同模型间存在明显性能差异。该工作为自动化调试与验证提供了可执行基准。",
+      "tags": "query:code-paper",
+      "abstract_en": "Reproducing reliable data science code from informal sources is challenging due to ambiguous problem specifications, missing dependencies, and performance bottlenecks. Although developer Q&A forums provide rich discussions on diagnosing and fixing real-world issues, the information is often incomplete and unstructured, limiting its use for automated debugging and verification. In this paper, we introduce Reprodgen, a large language model (LLM) based framework for automatically replicating executable buggy and patched data science programs from Q&A forum posts. Given a question and its corresponding answer, Reprodgen reconstructs the buggy behavior described in the question and the intended fix described in the answer, producing executable buggy and patched code pairs that reflect the original discussion. The framework builds structured representations of code intent (CI), functional requirements (FR), and Structured Chain of Thought (SCoT), and iteratively refines code using an LLM-based reviewer until it is executable and semantically consistent. We evaluate Reprodgen on Stack Overflow (SO) and GitHub Issues (GI) across seven data science libraries, including pandas, numpy, and scikit-learn, and construct a benchmark of runnable buggy and patched programs validated by human experts. Our pipeline uses LLMs for semantic assessment, while executability is verified through actual execution. Results show reliable replication with clear differences in model performance.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/21/2607.16973v1-turbovec-a-case-study-in-cost-efficient-private-retrieval-for-enterprise-rag-via-codebook-oblivious-quantization",
+      "section": "quick",
+      "title_en": "TurboVec: A Case Study in Cost-Efficient Private Retrieval for Enterprise RAG via Codebook-Oblivious Quantization",
+      "authors": "Navnit Shukla, Kamal Pandey, Omsankar Tiwari",
+      "date": "2026-07-18",
+      "pdf": "https://arxiv.org/pdf/2607.16973v1",
+      "score": "7.0",
+      "evidence": "开源向量索引TurboVec",
+      "tldr": "企业RAG系统中，向量检索层面临多租户部署的隐私泄露和租户隔离召回率下降问题。本文提出TurboVec，基于codebook-oblivious标量量化器TurboQuant，无需语料训练即可构建索引。在DBpedia基准上，4-bit量化相比FAISS乘积量化，Recall@5提升8.5-8.9个百分点；在Snowpark上实现100K向量11ms中位延迟；内核级过滤保持0.86-0.93 Recall@10。Codebook-oblivious设计将成员推理准确率降至随机水平（50.0%），兼顾效率与隐私。",
+      "tags": "query:code-paper",
+      "abstract_en": "Retrieval-Augmented Generation (RAG) systems increasingly power enterprise LLM applications, yet the vector retrieval layer introduces two underexplored challenges: (1) trained codebook quantizers may expose corpus statistics during index construction, creating a leakage channel in multi-tenant deployments, and (2) post-hoc filtering for tenant isolation degrades recall on selective queries. We study TurboVec, an open-source vector index built on TurboQuant - a codebook-oblivious scalar quantizer requiring no corpus-dependent training. On the DBpedia OpenAI embeddings benchmark (d=1536, 100K-999K vectors), TurboQuant 4-bit outperforms trained FAISS Product Quantization at the same memory budget by 8.5-8.9 percentage points in Recall@5 across all scales. Compared to HNSW (R@5=0.991) and IVF-PQ (R@5=0.840), TurboQuant occupies a distinct design point: higher recall than IVF-PQ without training, at 4-8x less memory than HNSW. Deployed on Snowpark Container Services, TurboVec achieves 11ms median query latency at 100K vectors versus 707ms for warehouse brute-force scan. Kernel-level allowlist filtering maintains 0.86-0.93 Recall@10 across 10-1000 tenant workloads versus 0.09-0.19 for post-filter baselines. Codebook-oblivious design reduces membership inference accuracy to near-random (50.0%) versus 57.3% for PQ codebooks. Limitations include single dataset evaluation, uncompressed HNSW comparison, and privacy evaluation on synthetic data only.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/21/2607.17089v1-grid-interactive-operation-of-solar-integrated-data-centers-for-coordinated-local-and-system-level-decarbonization",
+      "section": "quick",
+      "title_en": "Grid-Interactive Operation of Solar-Integrated Data Centers for Coordinated Local and System-Level Decarbonization",
+      "authors": "Mingxu Yang, Weiqi Zhang, Hui Geng, Jiaze Ma",
+      "date": "2026-07-19",
+      "pdf": "https://arxiv.org/pdf/2607.17089v1",
+      "score": "7.0",
+      "evidence": "数据中心作业调度与电网交互框架",
+      "tldr": "AI高速发展使数据中心电力需求激增，IT企业部署现场太阳能以减少对电网依赖。然而，这虽然提高了能源自给率并降低了自身碳排放，但削弱了数据中心灵活调节负荷、吸收低价低碳电网电力的能力。通过滚动时域优化框架协调任务调度、电网交互与太阳能发电，发现个体可持续目标与系统级脱碳之间存在根本性矛盾。",
+      "tags": "query:code-paper",
+      "abstract_en": "The exponential growth of AI is accelerating the deployment of data centers (DCs), placing unprecedented strain on power infrastructures. In response, major IT corporations are increasingly adopting on-site solar generation to reduce grid dependence and meet sustainability targets. However, the true impacts of this strategy remain ambiguous. While DCs are flexible assets capable of temporal load-shifting, anchoring them to self-generated power may inadvertently constrain their grid responsiveness. To evaluate these trade-offs, we propose a receding-horizon optimization (RHO) framework coordinating job scheduling, grid interactions, and on-site solar generation for a stand-alone DC. Our findings reveal a critical paradox: although solar integration increases energy self-sufficiency and reduces overall DC emissions, it inherently limits the facility's capacity to absorb low-cost, low-carbon electricity from the grid. This implies a fundamental tension between individual corporate sustainability goals and system-wide grid decarbonization.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/21/2607.17514v1-a-predict-then-schedule-framework-for-power-distribution-networks-with-ai-data-centers",
+      "section": "quick",
+      "title_en": "A Predict-then-Schedule framework for Power Distribution Networks with AI Data Centers",
+      "authors": "Siqi Yan, Jiebao Zhang, Xi Yao, Juan Huang, Ye Shi",
+      "date": "2026-07-20",
+      "pdf": "https://arxiv.org/pdf/2607.17514v1",
+      "score": "7.0",
+      "evidence": "提出了面向数据中心的调度框架，可能含有代码。",
+      "tldr": "AI数据中心的GPU密集型工作负载带来巨大能耗和电网压力。针对传统两阶段方法中预测误差最小化未必降低运营损失的问题，本文提出端到端预测-调度框架，利用可微凸优化实现梯度训练，并引入负载过移损失惩罚甩负荷。实验表明该方法相比基线显著降低运营成本并提升系统安全性。",
+      "tags": "query:code-paper",
+      "abstract_en": "The surge of GPU-intensive workloads in artificial intelligence (AI) data centers drives massive energy demands, leading to soaring costs and significant stress on local power distribution networks. Coordinating delay-tolerant workload scheduling with power grid conditions via precise workload prediction can mitigate these issues. However, a critical gap remains in conventional approaches, i.e., minimizing prediction error does not necessarily lead to minimized downstream operational loss. Hence, this paper proposes an end-to-end Predict-Then-Schedule (PTS) framework that integrates upstream workload prediction with downstream scheduling optimization. By leveraging differentiable convex optimization, the PTS framework maps input features directly to optimal scheduling and enables gradient-based training. Furthermore, to respect the data center's capacity, a workload over-shifted loss combining electricity cost with a penalty for load-shedding is introduced to evaluate scheduling quality. Experiments demonstrate that the proposed framework significantly reduces operational cost and enhances system security compared to the conventional two-stage baseline.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
