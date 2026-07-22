@@ -1,0 +1,134 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-22T20:16:36.568545+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2607.16669v1",
+      "source": "arxiv",
+      "title": "OpenLanguageModel: Readable and Composable Small-Language-Model Pretraining for Education and Research",
+      "abstract": "OpenLanguageModel (OLM) is an open-source PyTorch library for building and pretraining small language models while keeping their machinery visible. In OLM, model code reads like the architecture: components are ordinary modules, while Block, Residual, Repeat, and Parallel describe how they are wired. The resulting model can move unchanged from a teaching notebook to a complete pretraining run or a research ablation. OLM connects this readable model layer to tokenizers, local and streaming datasets, optimization, mixed precision, callbacks, checkpoints, and hardware-aware CPU, single-GPU, and single-node multi-GPU execution. We demonstrate the full path by tracing GPT-2 from diagram to code, launching a FineWeb-Edu training script, replacing one attention component, and letting AutoTrainer configure the available machine. The package includes 27 presets across nine familiar model families and documentation that progresses from LM fundamentals to architecture research. Validation shows close agreement with independent reference implementations, 90.6% four-GPU weak-scaling efficiency for a 348M-parameter workload, compact architecture edits, and positive early usability results. OLM is MIT-licensed and available through PyPI, GitHub, and its documentation site.",
+      "authors": [
+        "Tavish Mankash",
+        "Vardhaman Kalloli",
+        "Keshava Prasad",
+        "Deepan Muthirayan"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.LG",
+        "cs.SE"
+      ],
+      "published": "2026-07-18T06:55:18+00:00",
+      "link": "https://arxiv.org/pdf/2607.16669v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source PyTorch library for SLM pretraining",
+      "llm_evidence_cn": "提供开源PyTorch库",
+      "llm_evidence": "提供开源PyTorch库",
+      "canonical_evidence": "提供开源PyTorch库",
+      "llm_tldr_en": "OLM is an open-source PyTorch library for building and pretraining small language models, ensuring code readability and composability. It supports the full pipeline from notebook to multi-GPU training, demonstrated with GPT-2 on FineWeb-Edu.",
+      "llm_tldr_cn": "该论文提出了OpenLanguageModel（OLM），一个开源PyTorch库，用于构建和预训练小型语言模型。模型代码与架构高度对应，支持从教学笔记本到完整预训练运行的多种场景。实验展示了从GPT-2图示到代码的完整路径，并成功启动了FineWeb-Edu训练。OLM降低了语言模型研究的门槛，促进了教育和可重复研究。",
+      "llm_tldr": "该论文提出了OpenLanguageModel（OLM），一个开源PyTorch库，用于构建和预训练小型语言模型。模型代码与架构高度对应，支持从教学笔记本到完整预训练运行的多种场景。实验展示了从GPT-2图示到代码的完整路径，并成功启动了FineWeb-Edu训练。OLM降低了语言模型研究的门槛，促进了教育和可重复研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.18642v1",
+      "source": "arxiv",
+      "title": "Spaghetti Architect: A Contamination-Resistant, By-Construction-Labelled, Multi-Language Code Dataset Generator",
+      "abstract": "Mined code corpora are abundant but uncontrolled: a snippet's semantics, surface \"messiness,\" and difficulty are whatever the wild contained; there is no known-optimal reference to grade against; and any public sample may already sit in a model's training set. We present Spaghetti Architect, a tool that mints code datasets with the control such corpora lack. An anti-optimization transpiler maps a clean, language-agnostic JSON intermediate representation to deliberately redundant, fully-flattened programs in five languages (Python, JavaScript, Go, Java, C++); every program is compiled, run, and checked against a reference oracle, so each instance is correct by construction. The clean IR is a known-optimal reference, messiness is dialed by strictly-nested anti-pattern profiles, each instance is labelled along two orthogonal difficulty axes, intrinsic (problem size) and incidental (presentation at fixed semantics), and contamination is resisted by minting fresh variants from a private held-out seed. We give construct-validity evidence that the quality order moves established complexity and readability metrics, and report baselines on a four-model open ladder: exact match rises with scale, and the intrinsic knob collapses arithmetic-aggregation accuracy of even the strongest model to zero. Further, development-set scores equal freshly re-minted held-out counterparts within $|Δ|\\le 0.012$ (comprehension) and $\\le 0.011$ (refactoring); on identical programs, refactoring equivalence ($0.73 \\rightarrow 0.99$) is scale-invariant while output prediction collapses; and ablating the generator's self-annotations shows they inflate the weakest model an order of magnitude more than the strongest ($-0.173$ vs $-0.017$): the annotated ladder resolves one of three adjacent pairs where the unannotated resolves all three. Open source (MIT), dependency-free, archived under a persistent DOI.",
+      "authors": [
+        "Yuxiang Ji"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.SE"
+      ],
+      "published": "2026-07-21T02:23:22+00:00",
+      "link": "https://arxiv.org/pdf/2607.18642v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "code dataset generator tool",
+      "llm_evidence_cn": "代码数据集生成工具",
+      "llm_evidence": "代码数据集生成工具",
+      "canonical_evidence": "代码数据集生成工具",
+      "llm_tldr_en": "Spaghetti Architect is a tool that generates clean, by-construction-labeled code datasets in five languages, ensuring correctness and controllability.",
+      "llm_tldr_cn": "现有代码语料库缺乏控制，样本语义和难度不可控。本文提出Spaghetti Architect，一种抗污染的、带标签的多语言代码数据集生成器。它通过反优化编译器将干净中间表示转换为冗余但正确的程序，并经过编译和运行验证。该工具为代码研究提供了可控的高质量训练/测试数据，有助于提升代码模型的评估可靠性。",
+      "llm_tldr": "现有代码语料库缺乏控制，样本语义和难度不可控。本文提出Spaghetti Architect，一种抗污染的、带标签的多语言代码数据集生成器。它通过反优化编译器将干净中间表示转换为冗余但正确的程序，并经过编译和运行验证。该工具为代码研究提供了可控的高质量训练/测试数据，有助于提升代码模型的评估可靠性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.19104v1",
+      "source": "arxiv",
+      "title": "SciCodePile: A 128GB Corpus and Executable Benchmark for Challenging Scientific Code Generation",
+      "abstract": "Large language models (LLMs) excel at general-purpose code generation, yet how well they handle scientific code remains an open question. Existing datasets and benchmarks are limited in scale, domain coverage, or executable verification, leaving the true gap between current LLMs and reliable scientific code generators inadequately assessed. To address these limitations, we present SciCodePile, the largest scientific code corpus to date, constructed from 37,737 public repositories and collectively comprising 128GB of code that spans multiple computational science disciplines. From this corpus, we further curate an executable benchmark of 200 tasks, each equipped with a sandboxed execution environment and an automated test harness for functional verification. We evaluate 15 LLMs from both open-source and closed-source families on three tasks: prefix-to-suffix completion, fill-in-the-middle infilling, and executable code generation. Results show that scientific code generation remains highly challenging: The best CodeBLEU reaches only 38.13 and 38.37 on the two completion tasks, while the strongest model achieves just 12.30\\% Pass@1 on the executable benchmark, underscoring how far current models remain from reliable scientific code generation. To demonstrate the training utility of SciCodePile, we further show that continued pretraining on our corpus improves CodeBLEU by $\\times$2.84 on scientific code completion, and instruction tuning on our data improves Pass@1 by $\\times$4.79 on the executable benchmark. All code and data are available at https://huggingface.co/SciCodePile.",
+      "authors": [
+        "Weifeng Sun",
+        "Ye Fan",
+        "Yuchen Chen",
+        "Gou Tan",
+        "Jieke Shi",
+        "Yuan Yidi",
+        "Swee Liang Wong",
+        "Jonathan Pan",
+        "David Lo"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-21T13:46:52+00:00",
+      "link": "https://arxiv.org/pdf/2607.19104v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides 128GB code corpus and executable benchmark",
+      "llm_evidence_cn": "提供128GB代码语料库与可执行基准",
+      "llm_evidence": "提供128GB代码语料库与可执行基准",
+      "canonical_evidence": "提供128GB代码语料库与可执行基准",
+      "llm_tldr_en": "SciCodePile provides a 128GB scientific code corpus from 37,737 repositories and an executable benchmark of 200 tasks with sandboxed testing, enabling evaluation of LLMs on challenging scientific code generation.",
+      "llm_tldr_cn": "现有LLM在科学代码生成上的能力缺乏大规模可执行评测。本文构建了SciCodePile，从37,737个公共仓库收集128GB科学代码，并从中筛选出200个任务形成可执行基准，每个任务配备沙盒环境与自动化测试。实验表明该基准能有效评估LLM的科学代码生成能力。该工作为科学代码生成研究提供了大规模数据与标准化评测平台。",
+      "llm_tldr": "现有LLM在科学代码生成上的能力缺乏大规模可执行评测。本文构建了SciCodePile，从37,737个公共仓库收集128GB科学代码，并从中筛选出200个任务形成可执行基准，每个任务配备沙盒环境与自动化测试。实验表明该基准能有效评估LLM的科学代码生成能力。该工作为科学代码生成研究提供了大规模数据与标准化评测平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

@@ -1,0 +1,54 @@
+{
+  "label": "2026-07-22",
+  "date": "2026-07-22",
+  "generated_at": "2026-07-22T20:19:00",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202607/22/2607.16669v1-openlanguagemodel-readable-and-composable-small-language-model-pretraining-for-education-and-research",
+      "section": "deep",
+      "title_en": "OpenLanguageModel: Readable and Composable Small-Language-Model Pretraining for Education and Research",
+      "authors": "Tavish Mankash, Vardhaman Kalloli, Keshava Prasad, Deepan Muthirayan",
+      "date": "2026-07-18",
+      "pdf": "https://arxiv.org/pdf/2607.16669v1",
+      "score": "9.0",
+      "evidence": "提供开源PyTorch库",
+      "tldr": "教育研究缺乏可读且可组合的小语言模型预训练工具。OpenLanguageModel（OLM）作为开源PyTorch库，通过Block、Residual、Repeat等可读模块构建模型，支持从教学笔记本到完整预训练的无缝迁移。集成分词器、混合精度、多GPU等特性，包含27种预设和循序渐进文档。验证显示与参考实现高度一致，四GPU弱扩展效率90.6%，模型编辑简洁且易用性初评积极。OLM以MIT协议发布，降低小语言模型开发门槛。",
+      "tags": "query:code-paper",
+      "abstract_en": "OpenLanguageModel (OLM) is an open-source PyTorch library for building and pretraining small language models while keeping their machinery visible. In OLM, model code reads like the architecture: components are ordinary modules, while Block, Residual, Repeat, and Parallel describe how they are wired. The resulting model can move unchanged from a teaching notebook to a complete pretraining run or a research ablation. OLM connects this readable model layer to tokenizers, local and streaming datasets, optimization, mixed precision, callbacks, checkpoints, and hardware-aware CPU, single-GPU, and single-node multi-GPU execution. We demonstrate the full path by tracing GPT-2 from diagram to code, launching a FineWeb-Edu training script, replacing one attention component, and letting AutoTrainer configure the available machine. The package includes 27 presets across nine familiar model families and documentation that progresses from LM fundamentals to architecture research. Validation shows close agreement with independent reference implementations, 90.6% four-GPU weak-scaling efficiency for a 348M-parameter workload, compact architecture edits, and positive early usability results. OLM is MIT-licensed and available through PyPI, GitHub, and its documentation site.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/22/2607.18642v1-spaghetti-architect-a-contamination-resistant-by-construction-labelled-multi-language-code-dataset-generator",
+      "section": "deep",
+      "title_en": "Spaghetti Architect: A Contamination-Resistant, By-Construction-Labelled, Multi-Language Code Dataset Generator",
+      "authors": "Yuxiang Ji",
+      "date": "2026-07-21",
+      "pdf": "https://arxiv.org/pdf/2607.18642v1",
+      "score": "9.0",
+      "evidence": "代码数据集生成工具",
+      "tldr": "现有代码数据集存在语义混乱、缺乏最优参考和训练集污染等问题。Spaghetti Architect通过抗优化转译器将干净中间表示转换为五种语言的冗余扁平程序，确保正确性且可调控难度。实验表明生成数据在复杂度指标上顺序合理，模型准确率随规模提升，内在难度可使最强模型算术聚合准确率归零。该工具可生成无污染、带正交难度标签的代码数据集，开源且无依赖。",
+      "tags": "query:code-paper",
+      "abstract_en": "Mined code corpora are abundant but uncontrolled: a snippet's semantics, surface \"messiness,\" and difficulty are whatever the wild contained; there is no known-optimal reference to grade against; and any public sample may already sit in a model's training set. We present Spaghetti Architect, a tool that mints code datasets with the control such corpora lack. An anti-optimization transpiler maps a clean, language-agnostic JSON intermediate representation to deliberately redundant, fully-flattened programs in five languages (Python, JavaScript, Go, Java, C++); every program is compiled, run, and checked against a reference oracle, so each instance is correct by construction. The clean IR is a known-optimal reference, messiness is dialed by strictly-nested anti-pattern profiles, each instance is labelled along two orthogonal difficulty axes, intrinsic (problem size) and incidental (presentation at fixed semantics), and contamination is resisted by minting fresh variants from a private held-out seed. We give construct-validity evidence that the quality order moves established complexity and readability metrics, and report baselines on a four-model open ladder: exact match rises with scale, and the intrinsic knob collapses arithmetic-aggregation accuracy of even the strongest model to zero. Further, development-set scores equal freshly re-minted held-out counterparts within $|Δ|\\le 0.012$ (comprehension) and $\\le 0.011$ (refactoring); on identical programs, refactoring equivalence ($0.73 \\rightarrow 0.99$) is scale-invariant while output prediction collapses; and ablating the generator's self-annotations shows they inflate the weakest model an order of magnitude more than the strongest ($-0.173$ vs $-0.017$): the annotated ladder resolves one of three adjacent pairs where the unannotated resolves all three. Open source (MIT), dependency-free, archived under a persistent DOI.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/22/2607.19104v1-scicodepile-a-128gb-corpus-and-executable-benchmark-for-challenging-scientific-code-generation",
+      "section": "deep",
+      "title_en": "SciCodePile: A 128GB Corpus and Executable Benchmark for Challenging Scientific Code Generation",
+      "authors": "Weifeng Sun, Ye Fan, Yuchen Chen, Gou Tan, Jieke Shi, Yuan Yidi, Swee Liang Wong, Jonathan Pan, David Lo",
+      "date": "2026-07-21",
+      "pdf": "https://arxiv.org/pdf/2607.19104v1",
+      "score": "8.0",
+      "evidence": "提供128GB代码语料库与可执行基准",
+      "tldr": "现有科学代码生成数据集规模小、领域覆盖窄且缺乏可执行验证。为弥补这一缺口，本文构建了最大规模的科学代码语料库SciCodePile，包含128GB来自37,737个仓库的代码，并从中策划了200个可执行基准任务。评估15个大模型发现科学代码生成仍极具挑战：最佳CodeBLEU仅38.13，最高Pass@1仅12.30%。在SciCodePile上继续预训练和指令微调分别将CodeBLEU提升2.84倍、Pass@1提升4.79倍，展示了语料库对提升模型科学代码能力的显著价值。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large language models (LLMs) excel at general-purpose code generation, yet how well they handle scientific code remains an open question. Existing datasets and benchmarks are limited in scale, domain coverage, or executable verification, leaving the true gap between current LLMs and reliable scientific code generators inadequately assessed. To address these limitations, we present SciCodePile, the largest scientific code corpus to date, constructed from 37,737 public repositories and collectively comprising 128GB of code that spans multiple computational science disciplines. From this corpus, we further curate an executable benchmark of 200 tasks, each equipped with a sandboxed execution environment and an automated test harness for functional verification. We evaluate 15 LLMs from both open-source and closed-source families on three tasks: prefix-to-suffix completion, fill-in-the-middle infilling, and executable code generation. Results show that scientific code generation remains highly challenging: The best CodeBLEU reaches only 38.13 and 38.37 on the two completion tasks, while the strongest model achieves just 12.30\\% Pass@1 on the executable benchmark, underscoring how far current models remain from reliable scientific code generation. To demonstrate the training utility of SciCodePile, we further show that continued pretraining on our corpus improves CodeBLEU by $\\times$2.84 on scientific code completion, and instruction tuning on our data improves Pass@1 by $\\times$4.79 on the executable benchmark. All code and data are available at https://huggingface.co/SciCodePile.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

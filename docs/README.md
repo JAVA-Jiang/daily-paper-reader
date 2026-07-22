@@ -6,32 +6,30 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-21
-- 运行时间：2026-07-21 21:16:24 UTC
+- 最新运行日期：2026-07-22
+- 运行时间：2026-07-22 20:18:54 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：1
-- 速读区：3
+- 本次总论文数：3
+- 精读区：3
+- 速读区：0
 
 ### 今日简报（AI）
-今日精读一篇数据科学代码复现研究，速读三篇涉及企业RAG隐私检索、数据中心脱碳及AI电网调度。最值得关注的是评分9.0的《From Discussion to Execution》，揭示数据科学代码的正确与错误复现差异，同时《TurboVec》中基于码本模糊量化的低成本隐私检索方案值得深入。建议优先精读数据科学代码可靠性研究，并关注AI数据中心与电网协同的预测调度框架。
-- 详情：[/202607/21/README](/202607/21/README)
+今日精读两篇9分论文，聚焦可读性语言模型与抗污染代码数据集生成器。最值得关注的方向：OpenLanguageModel提出可读且可组合的小语言模型预训练方法；Spaghetti Architect则提供抗污染、带标签的多语言代码数据集生成工具。建议读者分别用于教育科研和代码生成任务的数据处理需求。
+- 详情：[/202607/22/README](/202607/22/README)
 
 ### 精读区论文标签
-1. [From Discussion to Execution: Replicating Buggy and Correct Data Science Code](/202607/21/2607.16569v1-from-discussion-to-execution-replicating-buggy-and-correct-data-science-code)  
+1. [OpenLanguageModel: Readable and Composable Small-Language-Model Pretraining for Education and Research](/202607/22/2607.16669v1-openlanguagemodel-readable-and-composable-small-language-model-pretraining-for-education-and-research)  
    标签：评分：9.0/10、query:code-paper
-   evidence：提出了复现数据科学代码的框架，提供了源代码。
+   evidence：提供开源PyTorch库
+2. [Spaghetti Architect: A Contamination-Resistant, By-Construction-Labelled, Multi-Language Code Dataset Generator](/202607/22/2607.18642v1-spaghetti-architect-a-contamination-resistant-by-construction-labelled-multi-language-code-dataset-generator)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：代码数据集生成工具
+3. [SciCodePile: A 128GB Corpus and Executable Benchmark for Challenging Scientific Code Generation](/202607/22/2607.19104v1-scicodepile-a-128gb-corpus-and-executable-benchmark-for-challenging-scientific-code-generation)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：提供128GB代码语料库与可执行基准
 
 ### 速读区论文标签
-1. [TurboVec: A Case Study in Cost-Efficient Private Retrieval for Enterprise RAG via Codebook-Oblivious Quantization](/202607/21/2607.16973v1-turbovec-a-case-study-in-cost-efficient-private-retrieval-for-enterprise-rag-via-codebook-oblivious-quantization)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：开源向量索引TurboVec
-2. [Grid-Interactive Operation of Solar-Integrated Data Centers for Coordinated Local and System-Level Decarbonization](/202607/21/2607.17089v1-grid-interactive-operation-of-solar-integrated-data-centers-for-coordinated-local-and-system-level-decarbonization)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：数据中心作业调度与电网交互框架
-3. [A Predict-then-Schedule framework for Power Distribution Networks with AI Data Centers](/202607/21/2607.17514v1-a-predict-then-schedule-framework-for-power-distribution-networks-with-ai-data-centers)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：提出了面向数据中心的调度框架，可能含有代码。
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
