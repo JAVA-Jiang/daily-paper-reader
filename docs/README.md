@@ -6,27 +6,24 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-22
-- 运行时间：2026-07-22 20:18:54 UTC
+- 最新运行日期：2026-07-23
+- 运行时间：2026-07-23 21:31:19 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：3
+- 本次总论文数：2
+- 精读区：2
 - 速读区：0
 
 ### 今日简报（AI）
-今日精读两篇9分论文，聚焦可读性语言模型与抗污染代码数据集生成器。最值得关注的方向：OpenLanguageModel提出可读且可组合的小语言模型预训练方法；Spaghetti Architect则提供抗污染、带标签的多语言代码数据集生成工具。建议读者分别用于教育科研和代码生成任务的数据处理需求。
-- 详情：[/202607/22/README](/202607/22/README)
+今日精读2篇高分论文，聚焦可复现软件生态与任务调度优化。最值得关注的是9分论文提出的用户导向可移植可扩展软件生态方案，以及8分论文对迟到任务最小化贪心算法的严谨分析。建议读者结合自身场景，优先深入理解软件生态的通用设计思路，再评估调度算法的适用性。
+- 详情：[/202607/23/README](/202607/23/README)
 
 ### 精读区论文标签
-1. [OpenLanguageModel: Readable and Composable Small-Language-Model Pretraining for Education and Research](/202607/22/2607.16669v1-openlanguagemodel-readable-and-composable-small-language-model-pretraining-for-education-and-research)  
+1. [A User-oriented Portable, Reproducible, and Scalable Software Ecosystem](/202607/23/2607.18929v1-a-user-oriented-portable-reproducible-and-scalable-software-ecosystem)  
    标签：评分：9.0/10、query:code-paper
-   evidence：提供开源PyTorch库
-2. [Spaghetti Architect: A Contamination-Resistant, By-Construction-Labelled, Multi-Language Code Dataset Generator](/202607/22/2607.18642v1-spaghetti-architect-a-contamination-resistant-by-construction-labelled-multi-language-code-dataset-generator)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：代码数据集生成工具
-3. [SciCodePile: A 128GB Corpus and Executable Benchmark for Challenging Scientific Code Generation](/202607/22/2607.19104v1-scicodepile-a-128gb-corpus-and-executable-benchmark-for-challenging-scientific-code-generation)  
+   evidence：面向用户的可移植可重复可扩展软件生态系统，在能源规划项目中测试
+2. [Greedy Minimization of the Number of Late Tasks: Implementation and Analysis](/202607/23/2607.16347v1-greedy-minimization-of-the-number-of-late-tasks-implementation-and-analysis)  
    标签：评分：8.0/10、query:code-paper
-   evidence：提供128GB代码语料库与可执行基准
+   evidence：单机调度中最小化延期任务数的贪心算法
 
 ### 速读区论文标签
 - 本次无速读推荐。

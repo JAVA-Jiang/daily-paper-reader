@@ -1,0 +1,679 @@
+Title: Greedy Minimization of the Number of Late Tasks: Implementation and Analysis
+
+URL Source: https://arxiv.org/pdf/2607.16347v1
+
+Published Time: Tue, 21 Jul 2026 00:05:58 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+# Greedy Minimization of the Number of Late Tasks: Implementation and Analysis 
+
+Dean Matthew Menezes University of Texas at Austin 
+
+dean.menezes@utexas.edu 
+
+C. Gregory Plaxton University of Texas at Austin 
+
+plaxton@cs.utexas.edu 
+
+Abstract 
+
+We study the classical single-machine deadline problem 1 || P Uj , in which each task has a deadline and an execution requirement and the goal is to select as many on-time tasks as possible. The standard Moore-Hodgson algorithm processes tasks by deadline and may later delete a previously accepted task. We study the insertion-only shortest-job-first rule of Lin and Wang: process the tasks in nondecreasing execution requirement, and accept a task exactly when doing so preserves feasibility. We give a direct O(n log n)-time implementation using a balanced augmented BST keyed by deadline. Unlike the previous O(n log n) implementation of this SJF rule, our implementation needs neither a preëmptive schedule nor an amortized analysis of interval changes. Our analysis gives an explicit threshold form of the rule’s lexicographic ( lex-first ) optimality: for every threshold e, its outputs maximize the number of selected tasks whose execution re-quirement is at most e. The analysis also reveals additional combinatorial structure. After the shorter tasks have been greedily fixed, the feasible choices within a single execution-requirement tier form a nested matroid. These tier matroids assemble, as a direct sum, into an overall lami-nar matroid whose bases are exactly the greedy outputs. Finally, a flow network encoding the deadline-prefix constraints gives a polymatroid rank function for the underlying scheduling feasi-bility structure. This flow view also recovers the nested matroids that govern the equal-execution tiers. 
+
+# 1 Introduction 
+
+Let S be a set of n nonpreëmptive tasks, all available at time zero on one machine. Each task has a positive execution requirement and a positive deadline. We seek a maximum-cardinality subset whose tasks can all meet their deadlines; equivalently, we seek an execution order that minimizes the number of late tasks. This classical problem is denoted by 1 || P Uj .By Jackson’s rule [6], a task set is feasible if and only if its tasks meet their deadlines in earliest-deadline-first (EDF) order. Equivalently, for every deadline d, the total execution requirement of tasks with deadline at most d must be at most d. These deadline-prefix inequalities are the basis of both our analysis and our implementation [5, 10]. Our starting point is the insertion-only SJF-greedy rule of Lin and Wang [7]. The rule processes tasks in nondecreasing execution requirement and accepts a task exactly when adding it preserves feasibility. Thus, unlike the Moore–Hodgson rule [8], it never removes a previously accepted task. The rule is simple to state, but a direct implementation may spend O(n) time checking deadline prefixes for each of n tasks. The resulting O(n2) bound leaves open the question of whether the insertion-only rule itself admits a simple efficient implementation. 1arXiv:2607.16347v1 [cs.DS] 16 Jul 2026 Zhao and Yuan [12] gave the first fully specified O(n log n) implementation. Their algorithm uses SPT order with EDF tie-breaking and maintains a backward preëmptive schedule represented by a DD-interval family. Candidate tests search backward through idle gaps, and the total number of interval operations is bounded amortized. Their framework also solves the number–length tradeoff: for every attainable cardinality k, it produces a feasible k-task set of minimum total execution requirement. We give a different implementation of the same SJF-greedy rule. Our data structure stores only two aggregates per deadline-tree node: total execution work and minimum deadline-prefix slack. A candidate is handled by one point insertion, one constant-time root test, and, if the test fails, one rollback deletion. Consequently every candidate takes worst-case O(log n) time, and the complete algorithm runs in O(n log n) time. The implementation does not represent a schedule, maintain a DD-interval family, or require an amortized interval-change argument. Its advantage is therefore simplicity of maintained state and analysis, rather than a better asymptotic total bound. It also permits arbitrary tie-breaking within equal-execution-requirement tiers. In addition to the implementation, we develop the structure of all possible SJF-greedy outputs: 1. Every greedy prefix minimizes total execution requirement among feasible sets of the same cardinality. This yields a threshold characterization of lex-first optimality and extends the fixed-order cardinality result of Lin–Wang and Zhao–Yuan. 2. Tie-breaking is confined to equal-execution-requirement tiers. After shorter tiers are fixed, the possible choices in the next tier form a nested matroid; their direct sum is a laminar matroid whose bases are exactly the possible greedy outputs. 3. A flow formulation of the deadline-prefix constraints yields a polymatroid rank function and provides a second, global description of the scheduling feasibility structure. The remainder of the paper first defines the SJF-greedy rule and proves its prefix and tier properties. We then present the augmented-tree implementation and compare it with Zhao–Yuan’s DD-interval structure. The later sections develop the matroid and flow viewpoints; an appendix recalls Moore’s original shortest-processing-time algorithm for context. 
+
+# 2 Preliminaries 
+
+A task α has a positive real deadline α.d , a positive real execution requirement α.e , and an integer identifier α.i . A task set S is a finite set of tasks with distinct identifiers; the deadlines and execution requirements need not be distinct, so two tasks may tie in either or both. We use length 
+
+as a synonym for execution requirement. A task is shorter than another when it has the smaller execution requirement. For a task set S, put 
+
+ids( S) = {α.i | α ∈ S}, exec( S) = X
+
+> α∈S
+
+α.e. 
+
+For a task set X, write X + α = X ∪ { α} when α / ∈ X, and write X − α = X \ { α} when α ∈ X.We write X △ Y for the symmetric difference of X and Y .We study nonpreëmptive scheduling on a single resource starting at time zero. A schedule for a task set S specifies the order in which the tasks in S are executed. It is earliest deadline first (EDF) if it lists the tasks in nondecreasing order of deadline, and shortest job first (SJF) if it lists them in nondecreasing order of execution requirement. For a task set S, let edf( S) be the set of its EDF 2schedules, and let sjf( S) be the set of its SJF schedules. We use juxtaposition for concatenation of schedules on disjoint task sets; in particular, σα appends α to σ.A schedule for a task set S is said to be feasible if the completion time of each task α in S is at most α.d . A task set S is said to be feasible if it admits a feasible schedule. For a task set S, let 
+
+feasible( S) be the set of all feasible subsets of S, and for a positive real d, put 
+
+exec( S, d ) = X
+
+> α∈S:α.d ≤d
+
+α.e. 
+
+For two task sets X and Y , write X ≃ Y if X and Y have the same distribution of execution requirements; that is, for each positive real e, the number of tasks in X with execution requirement 
+
+e is equal to the number of tasks in Y with execution requirement e.
+
+Lemma 2.1 (Prefix feasibility) . The task set S is feasible if and only if exec( S, d ) ≤ d for every positive real d. It is enough to check values of d that occur as task deadlines. Proof. In any EDF schedule, each task α completes no later than exec( S, α.d ). The inequalities at task deadlines therefore make every EDF schedule feasible. If exec( S, d ) > d for some positive real d, then the tasks due by time d require more than d units of processing, so S is not feasible. This proves the converse. For a task set S, let 
+
+big( S) = arg max 
+
+> X∈feasible( S)
+
+|X|, short( S) = arg min 
+
+> X∈big( S)
+
+exec( X).
+
+Here and below, arg max and arg min denote the set of all optimizers. Consequently, big( S) is the set of maximum-cardinality feasible subsets, and short( S) is the set of task sets in big( S) with minimum total execution requirement. Let rank( S) be the cardinality of any task set in big( S). For a task set S and an integer i in {0, . . . , rank( S)}, put 
+
+short( S, i ) = arg min 
+
+> X∈feasible( S): |X|=i
+
+exec( X).
+
+For a task set S and a positive real e, put 
+
+S≤e = {α ∈ S | α.e ≤ e};
+
+the expressions S=e and S<e are defined analogously. For a task set S and a positive real d, put 
+
+gap( S, d ) = d − exec( S, d ), slack( S, d ) = min(gap( S, d ), min  
+
+> α∈S:d≤α.d
+
+gap( S, α.d )) .
+
+Here and below, the minimum over an empty set is ∞. Equivalently, slack( S, d ) is the smallest prefix gap at or after time d. In particular, slack is nondecreasing in d.
+
+Lemma 2.2 (Slack feasibility) . Let S be a task set. Then S is feasible if and only if slack( S, α.d ) ≥ 0
+
+for all α in S.Proof. Lemma 2.1 implies S is feasible if and only if gap( S, α.d ) ≥ 0 for all α in S. By the definition of slack( S, α.d ), these inequalities hold if and only if slack( S, α.d ) ≥ 0 for all α in S.
+
+Lemma 2.3 (Single-task insertion) . Let X be a feasible task set and let α be a task such that α.i 
+
+does not belong to ids( X). Then X + α is feasible if and only if slack( X, α.d ) ≥ α.e .Proof. Insertion leaves every prefix gap before α.d unchanged. At α.d and at every later task deadline, it subtracts α.e from the prefix gap. The minimum of the affected gaps before insertion is 
+
+slack( X, α.d ). Since the unaffected gaps are nonnegative, Lemma 2.1 shows that X + α is feasible exactly when slack( X, α.d ) ≥ α.e .33 The SJF Greedy Algorithm 
+
+The algorithm studied in this paper is an insertion-only rule. It first orders tasks by nondecreasing execution requirement, with arbitrary tie-breaking within each execution-requirement tier. It then scans that order once, retaining a task exactly when its insertion preserves feasibility. An accepted task is never subsequently removed. The properties proved in Sections 5–6 explain what this rule selects; the implementation in the next section uses only the feasibility criterion of Lemma 2.3. 
+
+3.1 The rule 
+
+Given an SJF schedule σ, the greedy algorithm starts with X = ∅ and scans σ from left to right, adding a task α precisely when X + α remains feasible. For a task set S and a schedule σ in sjf( S), let greedy( σ) be the task set returned by the greedy algorithm on input σ, and let greedy( S) be {greedy( σ) | σ ∈ sjf( S)}. The overall SJF-greedy procedure—sort the tasks into an SJF order, then run the greedy pass—is summarized in Algorithm 1. 
+
+Algorithm 1 The SJF-greedy algorithm  
+
+> 1:
+
+procedure SJF-Greedy (S) 
+
+> 2:
+
+sort S into an SJF schedule σ = ( α1, . . . , α n), so that α1.e ≤ · · · ≤ αn.e ; break ties arbitrarily  
+
+> 3:
+
+X ← ∅  
+
+> 4:
+
+for i ← 1 to n do  
+
+> 5:
+
+if X + αi is feasible then ▷ equivalently slack( X, α i.d ) ≥ αi.e , by Lemma 2.3  
+
+> 6:
+
+X ← X + αi 
+
+> 7:
+
+end if  
+
+> 8:
+
+end for  
+
+> 9:
+
+return X ▷ the returned set is greedy( σ) 
+
+> 10:
+
+end procedure 
+
+3.2 Structural consequences 
+
+The greedy rule has two logically separate aspects. First, its feasibility test is local: when a task is considered, only the current accepted set and the candidate matter. Second, the length-ordered scan has strong global consequences. The proofs later in the paper show that every greedy prefix is execution-minimal among feasible sets of the same cardinality, that tie-breaking matters only within equal-length tiers, and that the possible choices in each tier form a nested matroid. Their direct sum describes all possible greedy outputs. These structural facts explain what the rule selects, but none is needed to implement the feasibility test efficiently. This separation is important for the algorithmic contribution. The implementation below does not maintain a schedule, reconstruct an EDF order, or use any of the tier or matroid structure. It maintains only the deadline-prefix inequalities needed to decide whether one tentative insertion is feasible. 
+
+# 4 Fast Implementation 
+
+The implementation is a dynamic data-structure solution to the problem of maintaining the deadline-prefix inequalities for the current accepted set while tentatively inserting one task. It is independent 4of the exchange, matroid, and polymatroid properties proved later. 
+
+4.1 Our augmented deadline tree 
+
+We implement the greedy pass with a balanced BST T that maintains a multiset U of deadline– execution pairs. It supports three operations: T. insert( d, e ) inserts one copy of (d, e ); T. delete( d, e )
+
+deletes one copy; and T. feasible() returns whether U is feasible. Here each pair represents a task available at time zero. By Lemma 2.1, U is feasible if and only if, at every deadline d∗ occurring in U ,
+
+X 
+
+> (d′,e ′)∈U:d′≤d∗
+
+e′ ≤ d∗.
+
+The tree has one node for each distinct deadline. A node u has key u.d and stores in u.e the total execution requirement of all pairs with that deadline. Let Tu be the subtree rooted at u. We augment u with two fields: 
+
+u.x = X
+
+> v∈Tu
+
+v.e, u.y = min 
+
+> v∈Tu
+
+v.d − X
+
+> v′∈Tu:v′.d ≤v.d
+
+v′.e 
+
+ .
+
+The field u.x is the work in Tu, and u.y is its minimum local deadline-prefix slack. The multiset is feasible exactly when T is empty or the root has a nonnegative y-field. Thus T. feasible() takes constant time. For a node u, let xL, y L be the two fields of its left child and let xR, y R be those of its right child. For a missing child, use xL = xR = 0 and yL = yR = ∞. Then 
+
+u.x = xL + u.e + xR, u.y = min {yL, u.d − xL − u.e, y R − xL − u.e }.
+
+The three terms for u.y are, respectively, the minimum slack in the left subtree, the slack at u.d , and the minimum slack in the right subtree after accounting for the work at u and to its left. Both fields can therefore be recomputed in constant time after an update or rotation. A standard augmented red-black tree supports insertion and deletion in O(log( |T | + 1)) worst-case time [1, Ch. 14]. Our tree stores only the two summaries above. Each trial consists of one insertion, one root-field test, and, if the trial fails, one deletion; each update has a worst-case logarithmic bound. No schedule reconstruction or interval-update invariant is needed. 
+
+Lemma 4.1 (Correctness of the tree test) . At every iteration, the tree contains exactly the deadline– execution pairs for the currently accepted tasks, together with the one tentative candidate during the feasibility test. The root y-field is nonnegative if and only if the tentative accepted set is feasible. Proof. The invariant follows by induction: an accepted candidate remains in the tree, whereas a rejected candidate is removed. The formulae for x and y compute the total work and minimum deadline-prefix slack of each subtree. At the root, a nonnegative minimum slack is equivalent to all deadline-prefix inequalities. Lemma 2.1 then gives the claimed equivalence with feasibility. 
+
+Theorem 4.2 (Fast implementation) . After an SJF order has been computed, the greedy pass runs in O(n log( k+2)) time, where k is the number of distinct deadlines in the returned set. Consequently, SJF-greedy runs in O(n log n) time overall. 
+
+5Proof. Sort the tasks in nondecreasing order of execution requirement, and maintain the accepted task set X in the augmented red-black tree T . To process a task α, first insert (α.d, α.e ) into T . If 
+
+T. feasible() returns true, retain the insertion and add α to X; otherwise delete the pair just inserted. By the definition of the three tree operations, this accepts α if and only if X + α is feasible, exactly as required by the greedy algorithm; equivalently, this follows from Lemma 4.1. The displayed formulae update the x- and y-fields after each rotation or change to an aggregate-work field in constant time per visited node. Insertion and deletion therefore take O(log( |T | + 1)) 
+
+worst-case time, while the root-field feasibility test takes constant time. The tree contains only deadlines of accepted tasks, apart from the one candidate being tested. Since accepted tasks are never subsequently removed, they all belong to the returned set; thus |T | ≤ k+1 throughout the pass. The pass takes O(n log( k + 2)) time, and the initial sort gives O(n log n) total time. These bounds are stated in the comparison-based RAM model, in which each comparison and each arithmetic operation on the real-valued deadlines and execution requirements takes constant time. 
+
+4.2 Overview of the Zhao–Yuan implementation 
+
+The purpose of this subsection is to highlight the main ideas underlying the Zhao–Yuan data struc-ture; it is not a replacement for their full description and proofs [12]. Their first key observation is that a task set has a feasible nonpreëmptive schedule if and only if it has a feasible preëmptive schedule. Their data structure maintains a preëmptive representation of the current feasible set. The accepted tasks are scheduled backward from their deadlines: for each task, unused time is allocated as late as possible until the task’s execution requirement has been met. The occupied portions of the resulting schedule are stored as an ordered family of contiguous intervals. To test a candidate α with deadline d and execution requirement e, the algorithm locates the rightmost occupied interval whose start is at most d and scans the preceding idle gaps. It accepts 
+
+α when the available idle time reaches e before time zero; the intervals encountered by this scan are then deleted and replaced by one interval. If the available idle time is insufficient, the candidate is rejected. In that case, Zhao and Yuan modify the prefix of the schedule by packing the tasks in that prefix as early as possible. This lets the same interval family absorb a failed search rather than paying for the same intervals repeatedly. For context, Zhao and Yuan formalize this representation using a DD-schedule . In their Defini-tion 2.1, a DD-schedule consists of a feasible schedule whose occupied intervals satisfy two conditions: each noninitial interval ends exactly at the maximum deadline of the tasks it contains, and no un-selected task with deadline no larger than the schedule’s current frontier can be inserted feasibly. The corresponding ordered collection is a DD-interval family . Their Lemma 2.4 establishes that the maintained interval family corresponds at every iteration to the same accepted set as the Lin–Wang greedy algorithm; their Theorem 2.1 then gives the O(n log n) running time. At a high level, the amortization is as follows. A successful insertion merges the intervals examined by the backward scan. A failed insertion merges the relevant prefix after it is repacked from the origin. Across the entire run, the number of interval finding, deletion, and insertion operations is O(n), so the ordered-list operations give an amortized O(n log n) bound. This is a different guarantee from the worst-case per-candidate bound of the augmented deadline tree above. 
+
+4.3 Comparison between the two implementations 
+
+Both implementations begin with the same SJF insertion rule and have O(n log n) total running time after sorting. Our advantage is specifically simplicity of maintained state and a worst-case update 6guarantee, not universal superiority: the Zhao–Yuan interval framework supports their separate number–length tradeoff analysis. Their maintained state and complexity guarantees differ:           
+
+> Implementation Maintained state and guarantee Zhao–Yuan [12] A DD-interval family representing a backward preëmptive schedule. Can-didate searches may inspect many intervals, but interval changes are O(n)
+> amortized; with SPT order and EDF tie-breaking this gives O(nlog n)
+> total time. This paper Deadline-prefix work and minimum slack in an augmented balanced BST. Each candidate uses one insertion, one root test, and at most one rollback deletion, giving a worst-case O(log n)update. Tie-breaking within equal-length tiers is arbitrary.
+
+The tree implementation consequently does not need DD-schedules, backward scheduling, or the interval amortization argument. In concrete terms, our state consists of two scalar aggregates per deadline-tree node: total work and minimum prefix slack. A candidate is handled by one insertion, one constant-time root test, and—only on rejection—one rollback deletion. The DD framework remains valuable for Zhao and Yuan’s number–length tradeoff and optimal-subset-list results. The structural results in the rest of this paper are independent of either implementation. 
+
+# 5 Properties of the Greedy Algorithm 
+
+The next lemma supplies the exchange step. It replaces a task in an execution-minimal feasible set by a task in the current greedy prefix without changing the distribution of execution requirements. 
+
+Lemma 5.1 (Greedy-prefix exchange) . Let S be a task set, let σ belong to sjf( S), let σ′ denote a prefix of σ, let X denote greedy( σ′), and let Y belong to short( S, i ) for some i ≥ | X|. If X ⊈ Y ,then there exists a task α∗ in X \ Y and a task β∗ in Y \ X such that α∗.e = β∗.e and Y + α∗ − β∗
+
+belongs to short( S, i ).Proof. Since every task in X belongs to σ′ and X ⊈ Y , at least one task in σ′ belongs to X △ Y .Let α∗ denote the first task in σ′ that belongs to X △ Y . We first show that α∗ belongs to X \ Y .If instead α∗ belonged to Y \ X, then all earlier greedy choices would belong to Y , so the greedy set just before α∗ together with α∗ would be a subset of the feasible set Y . The greedy algorithm would then have accepted α∗, a contradiction. Thus α∗ ∈ X \ Y . Since |Y | ≥ | X|, the set Y \ X
+
+is nonempty. Let β∗ be one of its minimum-deadline tasks. The task α∗ precedes β∗ in σ. Indeed, 
+
+σ′ is a prefix of σ and α∗ is the first task of σ′ in X △ Y , so any task preceding α∗ in σ lies in σ′
+
+but not in X △ Y ; since β∗ ∈ Y \ X ⊆ X △ Y , it cannot precede α∗. As σ is an SJF schedule, we conclude α∗.e ≤ β∗.e . Let Y ′ denote Y + α∗ − β∗. We claim that Y ′ belongs to feasible( S). By Lemma 2.1, it is sufficient to prove that exec( Y ′, α.d ) ≤ α.d for all α in Y ′. Let α be a task in Y ′.We consider two cases. Case 1: α.d ≥ β∗.d . Then 
+
+exec( Y ′, α.d ) ≤ exec( Y, α.d ) − β∗.e + α∗.e 
+
+≤ α.d − β∗.e + α∗.e 
+
+≤ α.d, 
+
+where the second inequality holds by Lemma 2.1 because Y is feasible, and the third inequality holds because α∗.e ≤ β∗.e .7Case 2: α.d < β ∗.d . Let Y ′′ denote {β ∈ Y | β.d < β ∗.d } + α∗. The choice of β∗ as a minimum-deadline task in Y \ X implies that every task in Y with deadline smaller than β∗.d belongs to X;together with α∗ ∈ X, this shows that Y ′′ is contained in X. Therefore 
+
+exec( Y ′, α.d ) = exec( Y ′′ , α.d ) ≤ exec( X, α.d ) ≤ α.d, 
+
+where the last inequality holds by Lemma 2.1 because X is feasible. The sets Y and Y ′ both have cardinality i. Because Y minimizes total execution requirement among feasible i-sets, exec( Y ′) ≥ exec( Y ). On the other hand, exec( Y ′) = exec( Y ) + α∗.e − β∗.e ≤
+
+exec( Y ). Equality must hold throughout. Consequently, α∗.e = β∗.e and Y ′ ∈ short( S, i ), as required. 
+
+Lemma 5.2 (Prefix containment) . Let S be a task set, let σ belong to sjf( S), let σ′ denote a prefix of σ, let X denote greedy( σ′), and let Y belong to short( S, i ) for some i ≥ | X|. Then there is a task set Y ′ in short( S, i ) such that X ⊆ Y ′ and Y ≃ Y ′.Proof. Let k denote |X \ Y |. By repeated application of Lemma 5.1, there is a sequence of task sets 
+
+Y = Y0, . . . , Y k in short( S, i ) such that Y0 ≃ · · · ≃ Yk and |X \ Yj | = k − j for all j in {0, . . . , k }.The desired task set is therefore Yk.Lin and Wang prove the final-cardinality version of the following fact for their critical-set greedy algorithm [7]; Zhao and Yuan prove the corresponding fixed-order cardinality statement in the form needed for their optimal-subset list [12]. We include the argument here because we need the stronger prefix and tie-breaking formulation below. 
+
+Lemma 5.3 (Optimality of greedy outputs) . Let S be a task set. Then greedy( S) is contained in 
+
+short( S).Proof. Let X belong to greedy( S) and let Y belong to short( S). Thus |Y | ≥ | X|. Lemma 5.2 implies that there is a Y ′ in short( S) such that X ⊆ Y ′. Since X belongs to greedy( S), it is not properly contained in any feasible subset of S: if X + α were feasible for a rejected task α, then the greedy set present when α was processed, together with α, would be a subset of the feasible set 
+
+X + α, hence feasible. The greedy algorithm would therefore have accepted α. Thus no rejected task can extend X feasibly. It follows that X = Y ′, and hence that X belongs to short( S).Lemma 5.3 implies that every task set in greedy( S) has cardinality rank( S). For a task set S, a sequence σ in sjf( S), and an i in {0, . . . , rank( S)}, let greedy( σ, i ) be the task set consisting of the first i tasks chosen by the greedy algorithm on input σ. For a task set S and an i in {0, . . . , rank( S)},let greedy( S, i ) = {greedy( σ, i ) | σ ∈ sjf( S)}. Observe that greedy( S, rank( S)) = greedy( S).Zhao and Yuan show that their fixed SPT/EDF run supplies a minimum-total- execution feasible set for every attainable cardinality [12]. The next lemma strengthens this to all minimum-total sets and all SJF tie-breakings, simultaneously for every prefix length. 
+
+Lemma 5.4 (Prefix optimality) . Let S be a task set and let i belong to {0, . . . , rank( S)}. Then 
+
+greedy( S, i ) = short( S, i ). Moreover, X ≃ Y for all task sets X and Y in greedy( S, i ).Proof. Let X belong to greedy( S, i ) and let Y belong to short( S, i ). Choose an SJF schedule whose first i accepted tasks are exactly X, and let σX be the shortest prefix of that schedule after which those i tasks have been accepted; if i = 0 , let σX be the empty prefix. Then greedy( σX ) = X, so Lemma 5.2 gives a set Y ′ ∈ short( S, i ) such that X ⊆ Y ′ and X ≃ Y ′. The equality |X| = |Y ′| = i
+
+8implies X = Y ′. Hence X ∈ short( S, i ) and X ≃ Y . It follows that greedy( S, i ) is contained in 
+
+short( S, i ) and A ≃ B for all task sets A and B in greedy( S, i ) ∪ short( S, i ).It remains to prove that short( S, i ) is contained in greedy( S, i ). To do so, it is sufficient to prove that Y belongs to greedy( S, i ). Let σ denote a sequence in sjf( S) that, within each execution-requirement tier, lists the tasks of Y before the tasks of S \ Y . The first part of the proof implies that greedy( σ, i ) has the same distribution of execution requirements as Y .We prove by induction over the tiers that the greedy choices up to the first i accepted tasks are exactly the tasks of Y . Suppose the claim has been proved for all tiers shorter than e. Before any task of S \ Y =e is considered, all tasks of Y =e have been considered. Each task of Y =e is accepted: at the moment it is considered, the accepted tasks consist of tasks from Y in shorter tiers together with an initial segment of Y =e, and hence form a subset of the feasible set Y . If the first i accepted tasks end in tier e, only the appropriate initial segment is relevant; no task after the ith acceptance can enter greedy( σ, i ).The first part of the proof says that greedy( σ, i ) and Y have the same number of tasks in every tier. Consequently, after all tasks of Y =e have been considered, the greedy prefix has already obtained exactly its required number of tier-e tasks, so no task of S \ Y =e belongs to greedy( σ, i ).Induction over the tiers gives greedy( σ, i ) = Y , so Y belongs to greedy( S, i ), as required. For a task set S, let lex( S) be the set of all task sets X in feasible( S) that are prefix-dominant by execution requirement, meaning that 
+
+|X≤e| ≥ | Y ≤e|,
+
+for all task sets Y in feasible( S) and all positive reals e. This definition implies maximum cardinality by taking e at least as large as every execution requirement in S. Observe that all task sets in lex( S)
+
+have the same distribution of execution requirements. Lin and Wang characterize the final critical sets by lexicographically minimum sorted processing-time sequences [7]. The following is an equivalent threshold formulation, with the additional prefix-level and arbitrary-tie-breaking conclusions established here. 
+
+Lemma 5.5 (Lex-first characterization) . Let S be a task set. Then greedy( S) is equal to lex( S).Proof. We first prove that greedy( S) is contained in lex( S). Let X ∈ greedy( S), and choose 
+
+σ ∈ sjf( S) such that X = greedy( σ). Fix e > 0 and restrict σ to S≤e. Its greedy output is 
+
+X≤e, which has maximum cardinality among feasible subsets of S≤e by Lemma 5.3. For every 
+
+Y ∈ feasible( S), the set Y ≤e is such a subset. Therefore 
+
+|X≤e| ≥ | Y ≤e|.
+
+Since e was arbitrary, X ∈ lex( S).It remains to show that lex( S) is contained in greedy( S). Let X belong to lex( S) and let σ be a schedule in sjf( S) in which ties in execution requirement are broken in favor of tasks in X over tasks in S \ X. The first part of the proof gives greedy( σ) ∈ lex( S), and hence X and greedy( σ)
+
+have the same number of tasks in each execution-requirement tier. We prove tier by tier that the greedy choices are the tasks of X. Suppose this has been proved for all tiers shorter than e. When the algorithm reaches the tier of length e, all tasks of X=e appear before the tasks of S \ X=e. Each task of X=e is accepted when it is encountered, because the already accepted tasks in shorter tiers, together with the earlier accepted tasks of X=e, form a subset of the feasible set X. Since greedy( σ) and X contain the same number of tier-e tasks, no task of S \ X=e is accepted. Induction over the tiers gives greedy( σ) = X.95.1 Tier Orthogonality 
+
+Lemma 5.6 (Single-task orthogonality) . Let S be a task set, let α be a task such that α.i does not belong to ids( S), and assume that α.e ≥ β.e for all tasks β in S. Let σ and σ′ belong to sjf( S).Then α belongs to greedy( σα ) if and only if α belongs to greedy( σ′α).Proof. Lemma 5.3 implies | greedy( σ)| = | greedy( σ′)| and | greedy( σα )| = | greedy( σ′α)|. Since α
+
+is processed last in both schedules, the difference | greedy( σα )| − | greedy( σ)| is 1 exactly when α
+
+is accepted, and is 0 otherwise. The same statement holds for σ′, so the two schedules either both accept α or both reject it. 
+
+Lemma 5.7 (Tier-order independence) . Let S be a task set, let e be a positive real, let σ and σ′
+
+belong to sjf( S<e ), and let σ′′ belong to sjf( S=e). Then greedy( σσ ′′ )=e = greedy( σ′σ′′ )=e.Proof. Expose the tasks of σ′′ one at a time. After its first r tasks have been exposed, append the 
+
+(r + 1) st task to each order consisting of the lower tiers followed by those r tasks. Lemma 5.6 says that the next task is accepted in both orders or in neither. Induction on r proves that the two orders select the same tier-e tasks. For a task set S and a positive real e, let 
+
+BS,e = {greedy( σ)=e | σ ∈ sjf( S)}.
+
+Lemma 5.8 (Tier orthogonality) . Let S be a task set. Then 
+
+greedy( S) = {X ⊆ S | ∀ e ∈ R>0 : X=e ∈ B S,e }.
+
+Proof. Let e1 < · · · < e k be the distinct execution requirements in S. By definition, every greedy output has each tier in the corresponding family BS,e j .Conversely, suppose X ⊆ S and X=ej ∈ B S,e j for every j. We build an SJF schedule tier by tier. Assume that the orders of the first j − 1 tiers have already been fixed so that greedy selects X=eh
+
+from tier eh for all h < j . Since X=ej ∈ B S,e j , there is some SJF schedule whose tier-ej greedy selection is X=ej . Use its ordering of the tier-ej tasks as the next block. Lemma 5.7 shows that the tier-ej selection is unchanged by replacing that schedule’s lower-tier block with the lower-tier block already fixed. Induction over j gives an SJF schedule whose greedy output is exactly X.
+
+# 6 Matroid Interpretation 
+
+For a finite set U and any family I ⊆ 2U , the pair (U, I) is a matroid if the following three conditions are satisfied: (1) I is nonempty; (2) for any X in I and any subset Y of X, Y belongs to I (the hereditary property); (3) for any X and Y in I such that |X| < |Y |, there exists y in Y \ X such that X + y belongs to I (the exchange property). For a task set S and a positive real e, let 
+
+IS,e = {X ⊆ S=e | ∃ Y ∈ B S,e : X ⊆ Y }.
+
+Lemma 6.1 (Tier matroid) . Let S be a task set and let e be a positive real. Then (S=e, IS,e ) is a matroid. 
+
+10 Proof. Since ∅ belongs to IS,e , we know that IS,e is nonempty. The hereditary property follows directly from the definition of IS,e . It remains to establish the exchange property. Let X and Y
+
+belong to IS,e and assume that |X| < |Y |. We need to prove that there exists a y in Y \ X such that X + y belongs to IS,e .Choose a member B ∈ B S,e containing X, and choose an SJF schedule that realizes B as its tier-e greedy selection. Restrict that schedule to the lower tiers and to the tier-e tasks in X. Every task of X is still accepted, because omitting other tier-e tasks can only make feasibility easier. Thus we obtain an SJF schedule σ of S<e ∪ X for which greedy( σ)=e = X. Let A = greedy( σ)<e . Since 
+
+Y ∈ I S,e , choose a member C ∈ B S,e containing Y . Take an SJF schedule realizing C, keep its tier-e order, and replace its lower-tier block by the fixed lower-tier order in σ. Lemma 5.7 preserves the tier-e greedy selection, so the same member C is realized after the fixed lower-tier greedy set A.Hence A ∪ C is feasible, and therefore A ∪ Y is feasible. This is the point at which tier orthogonality is used: although the lower-tier tasks in the schedule realizing C may differ from those in the schedule realizing B, replacing that lower-tier block does not change which tier-e tasks are selected. Thus both X and Y can be compared after the same fixed lower-tier set A.Now let σ′ be any SJF schedule of Y \ X, and let Z = greedy( σσ ′)=e. Extending σσ ′ by the remaining tier-e tasks and then by the higher tiers cannot change the tasks already accepted. Hence 
+
+Z is contained in the tier-e slice of a full greedy output, so Z ∈ I S,e . The greedy output on σσ ′ is 
+
+A ∪ Z. By Lemma 5.3, |A ∪ Z| ≥ | A ∪ Y | because A ∪ Y is feasible. Hence |Z| ≥ | Y | > |X|. Also 
+
+X ⊆ Z ⊆ X ∪ Y . Hence some y ∈ Z \ X ⊆ Y \ X satisfies X + y ∈ I S,e .For a task set S and a positive real e, let MS,e be the matroid (S=e, IS,e ) of Lemma 6.1. Lemma 5.5 implies that all members of BS,e have the same cardinality. Since IS,e is their downward closure, its maximal members are precisely the members of BS,e . Thus BS,e is the set of bases of 
+
+MS,e .For a task set S, let 
+
+IS = {X ⊆ S | ∀ e ∈ R>0 : X=e ∈ I S,e }.
+
+Lemma 6.2 (Overall matroid) . Let S be a task set. Then IS is contained in feasible( S) and (S, IS )
+
+is a matroid. Proof. The tiers S=e, taken over the distinct execution requirements e appearing in S, partition S,and by definition a set X ⊆ S belongs to IS if and only if X=e ∈ I S,e for every e. Thus (S, IS ) is the direct sum L 
+
+> e
+
+MS,e of the tier matroids of Lemma 6.1, and a direct sum of matroids is again a matroid [9, §4.2]. It remains to show that IS is contained in feasible( S). Let X belong to IS . For each distinct execution requirement e appearing in S, extend X=e to a basis Be of MS,e . By Lemma 5.8, the union of the sets Be is a greedy output, hence feasible. Since X is a subset of that output, X is feasible. For a task set S, let MS be the matroid of Lemma 6.2, and let BS be the set of all bases of MS .
+
+Lemma 6.3 (Greedy bases) . Let S be a task set. Then BS = greedy( S).Proof. The bases of a direct sum are exactly the unions of bases of its parts [9, §4.2]. Hence the bases of MS = L 
+
+> e
+
+MS,e are the sets S 
+
+> e
+
+Be with Be ∈ B S,e for every e; equivalently, the sets X
+
+whose tier-e slice X=e lies in BS,e for every e. By Lemma 5.8 these are precisely the greedy outputs, so BS = greedy( S).11 6.1 Nested Structure of MS,e 
+
+For any feasible task set X and any task α not in X, we define level( X, α ) as ⌊slack( X, α.d )/α.e ⌋.
+
+Lemma 6.4 (Single-task extension) . For any feasible task set X and any task α such that α.i does not belong to ids( X), the task set X + α is feasible if and only if level( X, α ) ≥ 1.Proof. This is Lemma 2.3 rewritten after dividing by α.e > 0 and taking the integer part. 
+
+Lemma 6.5 (Level decrement) . Let X be a feasible task set, let α and β be tasks such that α.i ̸ = β.i 
+
+and {α.i, β.i } ∩ ids( X) = ∅, and assume that α.d ≤ β.d , α.e = β.e , and level( X, α ) ≥ 1. Then the task set X + α is feasible and level( X + α, β ) = level( X, β ) − 1.Proof. Lemma 6.4 implies X +α is feasible. Every gap in the minimum defining slack( X, β.d ) occurs at a value d ≥ β.d ≥ α.d . Adding α therefore reduces each such gap by α.e = β.e . Hence 
+
+slack( X + α, β.d ) = slack( X, β.d ) − β.e. 
+
+Dividing by β.e and taking floors gives level( X + α, β ) = level( X, β ) − 1.
+
+Lemma 6.6 (Equal-length batch) . Let X be a feasible task set, let k ≥ 1, and let Y = {α1, . . . , α k}
+
+be a task set such that ids( X) ∩ ids( Y ) = ∅, α1.d ≤ · · · ≤ αk.d , and α1.e = · · · = αk.e . Then the task set X ∪ Y is feasible if and only if level( X, α i) ≥ i for all i in {1, . . . , k }.Proof. Let Yi = {α1, . . . , α i}. We prove by induction on i that X ∪ Yi is feasible if and only if 
+
+level( X, α j ) ≥ j for j = 1 , . . . , i . The assertion is holds for i = 0 . Assume it holds for i − 1. If an earlier condition fails, then X ∪ Yi−1, and hence X ∪ Yi, is infeasible. Otherwise X ∪ Yi−1 is feasible, and repeated application of Lemma 6.5 gives 
+
+level( X ∪ Yi−1, α i) = level( X, α i) − (i − 1) .
+
+Lemma 6.4 now says that αi can be added if and only if level( X, α i) ≥ i. This completes the induction. We first record the general fact that cardinality constraints indexed by a laminar family define a matroid. 
+
+Lemma 6.7 (Laminar matroids) . Let E be a finite set, let L be a laminar family of subsets of E,and let c : L → Z≥0. Then J = {X ⊆ E : |X ∩L| ≤ c(L) for all L ∈ L} is the family of independent sets of a matroid on E.Proof. Nonemptiness and heredity follow directly from the definition. For exchange, take X and 
+
+Y in J with |X| < |Y |. Call L in L tight for X if |X ∩ L| = c(L), and let T be the collection of maximal tight sets. Because L is laminar, the sets in T are pairwise disjoint; let U = S 
+
+> L∈T
+
+L.For each L in T , since |Y ∩ L| ≤ c(L) = |X ∩ L|, summing over the disjoint members of T gives 
+
+|Y ∩ U | ≤ | X ∩ U |. But |Y | > |X|, so |Y \ U | > |X \ U |, and there exists an element ξ in (Y \ U ) \ X.This ξ is the element we need: adding it to X cannot violate any constraint, for if some L in L
+
+containing ξ were tight for X, then L would be contained in a maximal tight set in T , placing ξ in 
+
+U —contradicting the choice of ξ.12 Given a finite set U , a chain U1 ⊆ · · · ⊆ Uk ⊆ U , and nonnegative integers n1, . . . , n k, Lemma 6.7 shows that 
+
+{X ⊆ U | | X ∩ Ui| ≤ ni for all i ∈ { 1, . . . , k }} 
+
+is the family of independent sets of a matroid. When the constraining sets form a chain in this way, the matroid is often called a nested matroid or caterpillar matroid [11, Vol. B, §39.4]; see also [9, Ch. 1]. 
+
+Theorem 6.8 (Nested tier matroid) . For any task set S and any positive real e, the matroid MS,e 
+
+is nested. More explicitly, choose any σ ∈ sjf( S<e ) and set A = greedy( σ). Let τ1 < · · · < τ q be the distinct deadline values in A ∪ S=e. For k = 1 , . . . , q , put 
+
+Dk = {α ∈ S=e | α.d ≤ τk}, bk =
+
+ slack( A, τ k)
+
+e
+
+
+
+.
+
+Then 
+
+IS,e = {Y ⊆ S=e | | Y ∩ Dk| ≤ bk for all k}.
+
+Proof. If Y = ∅, the assertion is vacuous. Otherwise, list the tasks of Y ⊆ S=e in nondecreasing deadline order as α1, . . . , α m, and put Nk = |Y ∩ Dk|. By Lemma 6.6, A ∪ Y is feasible if and only if level( A, α i) ≥ i for every i.Suppose first that these inequalities hold. If Nk > 0, then αNk .d ≤ τk. Since slack is nondecreas-ing in its deadline argument, 
+
+bk ≥ level( A, α Nk ) ≥ Nk.
+
+Conversely, fix i and choose k such that τk = αi.d . The constraint on Dk gives bk ≥ Nk ≥ i, and 
+
+bk = level( A, α i). Thus feasibility is equivalent to Nk ≤ bk for every k.It remains to identify this feasible-extension family with IS,e . If Y ∈ I S,e , then Y is contained in some basis B ∈ B S,e , and tier orthogonality (Lemma 5.8) lets us realize B after the fixed lower-tier greedy set A; hence A ∪ Y is feasible. Conversely, if A ∪ Y is feasible, process the tasks of Y first within the tier-e block, then process the remaining tier-e tasks in any order, and append the higher tiers arbitrarily. The greedy algorithm accepts all tasks of Y before considering the remaining tier-e
+
+tasks; its full SJF output therefore has a tier-e basis containing Y . Hence Y ∈ I S,e .
+
+Example 6.9. Consider five tasks: 
+
+α = ( d=4 , e =1) , β = ( d=6 , e =1) , γ = ( d=8 , e =1) , δ = ( d=6 , e =3) , ϵ = ( d=8 , e =3) .
+
+Take A = {α, β, γ }, the greedy selection of the smaller tasks (here all of S<3), which is feasible (tasks finish at times 1, 2, 3). The residual slacks are slack( A, 4) = 3 at τ1=4 , then slack( A, 6) = 4 at τ2=6 ,and slack( A, 8) = 5 at τ3=8 . The bounds are therefore b1 = ⌊3/3⌋ = 1 , then b2 = ⌊4/3⌋ = 1 , and 
+
+b3 = ⌊5/3⌋ = 1 . The nested sets are D1 = ∅, D2 = {δ}, and D3 = {δ, ϵ }; the constraint at D1 is vacuous, and |Y ∩ D2| ≤ 1 and |Y ∩ D3| ≤ 1 give that at most one tier-3 task can be added. 
+
+Remark 6.10 (Raw capacity bounds) . Since slack( A, d ) = min d′≥d gap( A, d ′), the bounds b1, . . . , b q
+
+are nondecreasing. By contrast, the raw bounds 
+
+ck =
+
+ gap( A, τ k)
+
+e
+
+
+
+need not be nondecreasing: work in A due at τk causes a downward jump in the residual gap at that deadline. Moreover, 
+
+bk = min  
+
+> j≥k
+
+cj .
+
+13 Replacing ck by bk does not change the feasible family. If bk = cj for some j ≥ k, then Dk ⊆ Dj , so the original constraint on Dj implies |Y ∩ Dk| ≤ bk. Conversely, bk ≤ ck, so the new constraint on 
+
+Dk implies the original one. 
+
+Remark 6.11 (Laminar structure) . Each tier matroid MS,e is nested (Theorem 6.8), so its indepen-dent sets are cut out by a chain of cardinality constraints on S=e. Since distinct tiers occupy disjoint ground sets, the union of these chains over all tiers is a laminar family on S, so by Lemma 6.7 the overall matroid MS = L 
+
+> e
+
+MS,e is itself a laminar matroid [3], and by Lemma 6.3 its bases are exactly the greedy outputs. 
+
+# 7 A Network Flow Perspective 
+
+The exchange proof has a global counterpart. The deadline-prefix inequalities are cut constraints in a simple flow network, and the resulting maximum-flow value is a submodular function of the selected task set. This viewpoint is useful for two reasons. First, it gives a single global certificate for feasibility and quantifies the amount of work that can pass through the deadline prefixes even when a set is infeasible. Second, after the shorter tiers are fixed, contracting the corresponding feasible flow recovers the nested tier matroids. Thus the flow construction explains why the tier constraints have their nested form, rather than providing a second implementation of the algorithm. The augmented BST of Section 4 remains the implementation of the O(n log n) algorithm; the flow network is used only for the structural results in this section. For a task set S and a subset X ⊆ S, define the directed network GS (X) as follows. Write 
+
+0 = d0 < d 1 < · · · < d m for the distinct deadline values in S, and set ∆k = dk − dk−1. The network has a source s, a sink t, a task vertex vα for each α in S, and an interval vertex uk for k = 1 , . . . , m .The arcs are: 
+
+• a source arc s → vα of capacity α.e if α belongs to X, and capacity 0 otherwise; 
+
+• a task-to-interval arc vα → uk of capacity M whenever dk ≤ α.d ;
+
+• a sink arc uk → t of capacity ∆k.Choose M > P 
+
+> α∈S
+
+α.e . The cut that separates every task vertex from s has capacity P 
+
+> α∈X
+
+α.e < M . Hence no minimum cut crosses a capacity-M arc. Let F ∗ 
+
+> S
+
+(X) denote the value of a maximum s–t flow in GS (X).
+
+Example 7.1. Consider four tasks: α = ( d=3 , e =2) ; β = ( d=5 , e =2) ; γ = ( d=5 , e =1) ; and 
+
+δ = ( d=8 , e =3) . The distinct deadlines are d1 = 3 , d2 = 5 , and d3 = 8 , giving ∆1 = 3 , ∆2 = 2 , and 
+
+∆3 = 3 . For S = X = {α, β, γ, δ }, the flow network GS (X) is shown in Figure 1. The maximum flow saturates all source arcs, achieving value F ∗ 
+
+> S
+
+(X) = 2 + 2 + 1 + 3 = 8 = P 
+
+> α∈X
+
+α.e , confirming feasibility. 
+
+Lemma 7.2 (Threshold cuts) . Let S be a task set and let X ⊆ S. There exists a minimum s–t cut in GS (X) of the following form: for some ℓ in {0, 1, . . . , m }, the interval vertices u1, . . . , u ℓ lie on the source side and uℓ+1 , . . . , u m on the sink side, and a task vertex vα lies on the source side if and only if α belongs to X and α.d ≤ dℓ. The capacity of such a cut is 
+
+C(dℓ) = dℓ + X
+
+> α∈Xα.d>d ℓ
+
+α.e. 
+
+14 GS (X) for S = X = {α, β, γ, δ }
+
+> s
+> vα
+> vβ
+> vγ
+> vδ
+> u1
+> u2
+> u3
+> t
+> 2
+> 2
+> 1
+> 3
+> 3
+> 2
+> 3
+
+Figure 1: The flow network GS (X) for Example 7.1. Black arc labels show finite capacities; gray arcs have capacity M (large). Each source arc s → vα has capacity α.e ; each sink arc uk → t has capacity ∆k = dk − dk−1. A task vertex vα is connected to an interval vertex uk whenever dk ≤ α.d .
+
+Proof. Let V be the vertex set of GS (X), and let (U, V \ U ) be a finite-capacity minimum cut with 
+
+s ∈ U . No such cut crosses a capacity-M arc. First, every interval vertex in U has a predecessor in U : if uj ∈ U but no task vertex in U has an arc to uj , removing uj from U strictly decreases the cut, a contradiction. Second, the interval vertices in U form a prefix {u1, . . . , u ℓ}: if uj belongs to U , pick α with vα
+
+in U and an arc vα → uj . Then dj ≤ α.d , so for i < j the arc vα → ui exists, and since vα belongs to U , we need ui to belong to U to avoid crossing a capacity-M arc. Third, we may put the task vertices into the claimed normal form without increasing the cut capacity. If α belongs to X and α.d > d ℓ, then vα /∈ U (else vα → uℓ+1 would cross the cut). If α
+
+belongs to X and α.d ≤ dℓ, we may include vα in U without crossing a capacity-M arc, since all its outgoing arcs go to u1, . . . , u ℓ ⊆ U ; doing so also avoids the source-arc capacity. If α / ∈ X, its source arc has capacity 0, so keeping vα on the sink side is no more expensive than moving it to the source side. The cut capacity is therefore Pℓk=1 ∆k + P 
+
+> α∈X:α.d>d ℓ
+
+α.e = dℓ + P 
+
+> α∈X:α.d>d ℓ
+
+α.e .
+
+Theorem 7.3 (Flow characterizes feasibility) . Let S be a task set and let X ⊆ S. Then X is feasible if and only if F ∗ 
+
+> S
+
+(X) = P 
+
+> α∈X
+
+α.e .Proof. By the max-flow min-cut theorem and Lemma 7.2, 
+
+F ∗ 
+
+> S
+
+(X) = min  
+
+> ℓ∈{ 0,...,m }
+
+C(dℓ) = min 
+
+> ℓ
+
+
+
+dℓ + X
+
+> α∈Xα.d>d ℓ
+
+α.e 
+
+
+
+.
+
+Since d0 = 0 , C(d0) = P 
+
+> α∈X
+
+α.e . The displayed minimum equals P 
+
+> α∈X
+
+α.e if and only if every 
+
+C(dℓ) is at least P 
+
+> α∈X
+
+α.e , which simplifies to dℓ ≥ exec( X, d ℓ) for all ℓ—precisely the prefix inequalities of Lemma 2.1. 
+
+7.1 The Flow Rank Is a Polymatroid 
+
+Having established that the maximum flow characterizes feasibility, it is natural to ask what prop-erties the function X 7 → F ∗ 
+
+> S
+
+(X) has as a set function on 2S . For a feasible set X, the max-flow value equals P 
+
+> α∈X
+
+α.e ; but for an infeasible set, the flow saturates only as much work as the prefix 15 constraints allow, and the shortfall reveals where the bottleneck lies. As we now show, this function is monotone and submodular—and integer-valued when the data are integral—making it a polyma-troid rank function [2, 4], the natural generalization of a matroid rank to the setting of non-unit weights. For a task set S and a subset X ⊆ S, define rS (X) = F ∗ 
+
+> S
+
+(X).
+
+Lemma 7.4 (Chain-minimum submodularity) . Let E be a finite set, let B0 ⊇ B1 ⊇ · · · ⊇ Bm be a chain of subsets of E, let c0, . . . , c m be real numbers, and let wa be nonnegative for each a ∈ E.The function 
+
+f (X) = min 
+
+> 0≤ℓ≤m
+
+cℓ + X
+
+> a∈X∩Bℓ
+
+wa
+
+
+
+is submodular: f (X) + f (Y ) ≥ f (X ∪ Y ) + f (X ∩ Y ) for all X, Y ⊆ E.Proof. Choose a minimizer i for f (X) and a minimizer j for f (Y ). By symmetry, suppose that 
+
+Bi ⊇ Bj . Use j as a candidate for f (X ∪ Y ) and i for f (X ∩ Y ). It suffices to show 
+
+X
+
+> a∈X∩Bi
+
+wa + X 
+
+> a∈Y∩Bj
+
+wa ≥ X 
+
+> a∈(X∪Y)∩Bj
+
+wa + X 
+
+> a∈(X∩Y)∩Bi
+
+wa.
+
+This holds element by element: for each a ∈ E, the left side is at least the right side, as one can verify by considering the three cases a / ∈ Bi, a ∈ Bi \ Bj , and a ∈ Bj .
+
+Theorem 7.5 (Polymatroid rank) . Let S be a task set. If all deadlines and execution requirements in S are integral, then the function rS is an integer polymatroid rank on 2S : it is normalized (rS (∅) = 0 ), monotone, submodular, and integer-valued. Without the integrality assumption, the same proof gives a real-valued polymatroid rank. Proof. From the formula rS (X) = min ℓ(dℓ + P 
+
+> α∈X:α.d>d ℓ
+
+α.e ). Thus rS (∅) = min ℓ dℓ = d0 = 0 .Monotonicity holds because adding a task cannot decrease any arc capacity. For submodularity, set 
+
+E = S, define Bℓ = {α ∈ S : α.d > d ℓ}, and set cℓ = dℓ and wα = α.e ; then rS is the chain-minimum function of Lemma 7.4. When all capacities are integral, integrality follows from the integrality of max flow. 
+
+Remark 7.6 . When all execution requirements equal 1 and all deadlines are integral, the polymatroid rank function rS becomes a matroid rank function. The feasible sets are exactly the independent sets of a matroid on S, and the rank of any set X equals the size of its largest feasible subset. With nonintegral deadlines, the same feasible-set matroid is obtained by replacing each deadline capacity by its integer part, but the flow value rS itself need not be integer-valued. 
+
+Remark 7.7 . The tier matroids and the polymatroid are two views of the same feasibility structure. If A = greedy( σ) for some σ ∈ sjf( S<e ), then the contracted polymatroid 
+
+ρ(Y ) = rS (A ∪ Y ) − rS (A), Y ⊆ S=e,
+
+measures how much additional tier-e work can pass through the remaining prefix capacities. Since 
+
+A is feasible, rS (A) = exec( A). A set Y ⊆ S=e is independent in the tier matroid exactly when 
+
+A ∪ Y is feasible. By Theorem 7.3, this is equivalent to ρ(Y ) = e|Y |. This recovers the nested constraints of Theorem 6.8: the residual flow increase is the full tier work precisely when every deadline-prefix constraint has enough residual capacity. For a tier-e set, that condition is equivalent to the level inequalities of Lemma 6.6, and Theorem 6.8 rewrites those inequalities as the chain constraints |Y ∩ Dk| ≤ bk. The fact that the independent sets do not depend on the particular lower-tier greedy set A is exactly the tier-orthogonality property in Lemma 5.8. 16 8 Concluding Remarks 
+
+SJF-greedy computes a lex-first maximum-cardinality feasible task set. Although the family of all feasible task sets need not be a matroid, the choices within each equal-execution tier form a nested matroid once the shorter tiers have been fixed. The direct sum of these tier matroids has exactly the greedy outputs as its bases, while the flow formulation places the same deadline-prefix constraints in a polymatroid. Algorithmically, deadline-prefix slack yields a direct O(n log n) implementation using two sum-maries in a balanced deadline tree. The selection rule never revokes an earlier acceptance: each candidate is tentatively inserted, and only an infeasible candidate is immediately rolled back. This implementation avoids the backward preëmptive interval family and amortized interval-change anal-ysis used in the previous O(n log n) implementation of the same rule. 
+
+# A Moore’s Algorithm 
+
+For comparison, we reproduce Moore’s description of his SJF algorithm [8]. The algorithm consists of a decision rule for dividing the set of jobs into two subsets. This division produces an optimal schedule if the jobs in the first set are sequenced according to their due-dates, and are followed by the jobs in the second set in any order. 
+
+Step 1: Order the set of jobs according to the shortest processing time rule and call the resulting ordering (Ji1 · · · Jin ), where ti1 ≤ · · · ≤ tin , the current sequence. 
+
+Step 2: Using the current sequence, find the first late job, Jiq , and go to Step 3. If no such job is found, the algorithm terminates with an optimal schedule obtained by ordering the jobs in the current sequence according to their due-dates followed by the set of jobs that have been rejected in any order. 
+
+Step 3: Reorder the jobs, Ji1 · · · Jiq , according to the due-date rule producing a sequence of the form: 
+
+Jℓ1 · · · Jℓq , J iq+1 · · · Jin where Dℓ1 ≤ · · · ≤ Dℓq .
+
+There are two cases to consider: 1) If all the jobs in the subsequence Jℓ1 · · · Jℓq are early, define the total sequence as the current sequence and go to Step 2. 2) Otherwise reject the job Jiq and remove it from the sequence Jℓ1 · · · Jℓq Jiq+1 · · · Jin .Now go to Step 2 with the resulting sequence as the current sequence. 
+
+# References 
+
+[1] Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford Stein. Introduction to Algorithms . MIT Press, third edition, 2009. [2] Jack Edmonds. Submodular functions, matroids, and certain polyhedra. In Combinatorial Structures and Their Applications , pages 69–87. Gordon and Breach, 1970. [3] Tara Fife and James Oxley. Generalized laminar matroids. arXiv preprint arXiv:1801.06882 ,2018. [4] Satoru Fujishige. Submodular Functions and Optimization . Elsevier, second edition, 2005. 17 [5] W. A. Horn. Some simple scheduling algorithms. Naval Research Logistics Quarterly , 21(1):177– 185, 1974. [6] James R. Jackson. Scheduling a production line to minimize maximum tardiness. Research Report 43, Management Sciences Research Project, University of California, Los Angeles, Los Angeles, California, January 1955. Distributed by the Office of Technical Services; NTIS accession number AD 152722. [7] Yixun Lin and Xiumei Wang. Necessary and sufficient conditions of optimality for some classical scheduling problems. European Journal of Operational Research , 176(2):809–818, 2007. [8] J. M. Moore. An n job, one machine sequencing algorithm for minimizing the number of late jobs. Management Science , 15(1):102–109, 1968. [9] James Oxley. Matroid Theory . Oxford University Press, second edition, 2011. [10] Michael L. Pinedo. Scheduling: Theory, Algorithms, and Systems . Springer, sixth edition, 2022. [11] Alexander Schrijver. Combinatorial Optimization: Polyhedra and Efficiency . Springer, 2003. [12] Qiulan Zhao and Jinjiang Yuan. Scheduling to tradeoff between the number and the length of accepted jobs. Theoretical Computer Science , 891:24–34, 2021. 18

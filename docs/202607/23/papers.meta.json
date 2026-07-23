@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-23",
+  "date": "2026-07-23",
+  "generated_at": "2026-07-23T21:31:27",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/23/2607.18929v1-a-user-oriented-portable-reproducible-and-scalable-software-ecosystem",
+      "section": "deep",
+      "title_en": "A User-oriented Portable, Reproducible, and Scalable Software Ecosystem",
+      "authors": "Alfio Lazzaro, Utz-Uwe Haus, Sandrine Charousset, Nina Mujkanovic",
+      "date": "2026-07-21",
+      "pdf": "https://arxiv.org/pdf/2607.18929v1",
+      "score": "9.0",
+      "evidence": "面向用户的可移植可重复可扩展软件生态系统，在能源规划项目中测试",
+      "tldr": "科学家需在不同硬件（笔记本到超算）上运行研究，常需混合使用资源。本文提出面向用户的便携、可复现、可扩展软件生态系统，通过模块化统一命令行接口，支持跨平台运行相同工作流。该生态系统已成功应用于plan4res EU H2020项目，确保一致开发环境。其主要贡献在于提供一种通用方案，使其他项目能轻松复现并扩展计算工作流执行。",
+      "tags": "query:code-paper",
+      "abstract_en": "It is normal for scientists to perform their research on a diverse set of hardware, ranging from laptops and workstations to supercomputers and cloud resources. The standard scenario requires a mix of these resources. In this paper we describe a software ecosystem that enables users to rely on the same development environment for running their workflows across the different computational resources. We describe a modular, unified command-line interface that allows for the interaction with a user-workflow across diverse hardware platform. The software ecosystem has been successfully tested as part of the plan4res EU H2020 project. It can be extended to other projects with similar requirements, so that they can benefit from the same approach for executing computational workflows.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/23/2607.16347v1-greedy-minimization-of-the-number-of-late-tasks-implementation-and-analysis",
+      "section": "deep",
+      "title_en": "Greedy Minimization of the Number of Late Tasks: Implementation and Analysis",
+      "authors": "Dean Matthew Menezes, C. Gregory Plaxton",
+      "date": "2026-07-16",
+      "pdf": "https://arxiv.org/pdf/2607.16347v1",
+      "score": "8.0",
+      "evidence": "单机调度中最小化延期任务数的贪心算法",
+      "tldr": "经典单机截止时间问题1||∑Uj要求最大化按时完成任务数。标准Moore-Hodgson算法需删除操作。本文研究Lin和Wang的仅插入最短作业优先规则，给出基于平衡增广BST的O(n log n)实现，无需抢占式调度或摊还分析。分析证明该规则具有字典序最优性阈值形式，并揭示每个执行需求层内可行选择构成嵌套拟阵，整体形成层叠拟阵。通过流网络获得调度可行性的多拟阵秩函数，贡献在于简化实现并揭示深层次组合结构。",
+      "tags": "query:code-paper",
+      "abstract_en": "We study the classical single-machine deadline problem $1 \\mid\\mid \\sum U_j$, in which each task has a deadline and an execution requirement and the goal is to select as many on-time tasks as possible. The standard Moore-Hodgson algorithm processes tasks by deadline and may later delete a previously accepted task. We study the insertion-only shortest-job-first rule of Lin and Wang: process the tasks in nondecreasing execution requirement, and accept a task exactly when doing so preserves feasibility. We give a direct $O(n\\log n)$-time implementation using a balanced augmented BST keyed by deadline. Unlike the previous $O(n\\log n)$ implementation of this SJF rule, our implementation needs neither a preëmptive schedule nor an amortized analysis of interval changes.   Our analysis gives an explicit threshold form of the rule's lexicographic (\\emph{lex-first}) optimality: for every threshold~$e$, its outputs maximize the number of selected tasks whose execution requirement is at most~$e$. The analysis also reveals additional combinatorial structure. After the shorter tasks have been greedily fixed, the feasible choices within a single execution-requirement tier form a nested matroid. These tier matroids assemble, as a direct sum, into an overall laminar matroid whose bases are exactly the greedy outputs. Finally, a flow network encoding the deadline-prefix constraints gives a polymatroid rank function for the underlying scheduling feasibility structure. This flow view also recovers the nested matroids that govern the equal-execution tiers.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

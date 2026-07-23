@@ -1,0 +1,89 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-23T21:29:43.083277+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2607.18929v1",
+      "source": "arxiv",
+      "title": "A User-oriented Portable, Reproducible, and Scalable Software Ecosystem",
+      "abstract": "It is normal for scientists to perform their research on a diverse set of hardware, ranging from laptops and workstations to supercomputers and cloud resources. The standard scenario requires a mix of these resources. In this paper we describe a software ecosystem that enables users to rely on the same development environment for running their workflows across the different computational resources. We describe a modular, unified command-line interface that allows for the interaction with a user-workflow across diverse hardware platform. The software ecosystem has been successfully tested as part of the plan4res EU H2020 project. It can be extended to other projects with similar requirements, so that they can benefit from the same approach for executing computational workflows.",
+      "authors": [
+        "Alfio Lazzaro",
+        "Utz-Uwe Haus",
+        "Sandrine Charousset",
+        "Nina Mujkanovic"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-07-21T10:12:03+00:00",
+      "link": "https://arxiv.org/pdf/2607.18929v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "user-oriented portable reproducible scalable software ecosystem tested on energy planning project",
+      "llm_evidence_cn": "面向用户的可移植可重复可扩展软件生态系统，在能源规划项目中测试",
+      "llm_evidence": "面向用户的可移植可重复可扩展软件生态系统，在能源规划项目中测试",
+      "canonical_evidence": "面向用户的可移植可重复可扩展软件生态系统，在能源规划项目中测试",
+      "llm_tldr_en": "This paper presents a software ecosystem that enables users to run reproducible workflows across diverse hardware (laptops to clouds) with a unified CLI, tested on the plan4res EU H2020 energy project.",
+      "llm_tldr_cn": "科研人员经常需要在不同硬件上运行工作流，但环境不一致导致不可重复。本文提出一个模块化的统一命令行界面软件生态系统，使用户能在笔记本电脑、工作站、超算和云端使用相同的开发环境。该系统在EU H2020 plan4res能源项目上成功测试，可扩展至其他领域，显著提升科学工作流的可重复性和可移植性。",
+      "llm_tldr": "科研人员经常需要在不同硬件上运行工作流，但环境不一致导致不可重复。本文提出一个模块化的统一命令行界面软件生态系统，使用户能在笔记本电脑、工作站、超算和云端使用相同的开发环境。该系统在EU H2020 plan4res能源项目上成功测试，可扩展至其他领域，显著提升科学工作流的可重复性和可移植性。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.16347v1",
+      "source": "arxiv",
+      "title": "Greedy Minimization of the Number of Late Tasks: Implementation and Analysis",
+      "abstract": "We study the classical single-machine deadline problem $1 \\mid\\mid \\sum U_j$, in which each task has a deadline and an execution requirement and the goal is to select as many on-time tasks as possible. The standard Moore-Hodgson algorithm processes tasks by deadline and may later delete a previously accepted task. We study the insertion-only shortest-job-first rule of Lin and Wang: process the tasks in nondecreasing execution requirement, and accept a task exactly when doing so preserves feasibility. We give a direct $O(n\\log n)$-time implementation using a balanced augmented BST keyed by deadline. Unlike the previous $O(n\\log n)$ implementation of this SJF rule, our implementation needs neither a preëmptive schedule nor an amortized analysis of interval changes.   Our analysis gives an explicit threshold form of the rule's lexicographic (\\emph{lex-first}) optimality: for every threshold~$e$, its outputs maximize the number of selected tasks whose execution requirement is at most~$e$. The analysis also reveals additional combinatorial structure. After the shorter tasks have been greedily fixed, the feasible choices within a single execution-requirement tier form a nested matroid. These tier matroids assemble, as a direct sum, into an overall laminar matroid whose bases are exactly the greedy outputs. Finally, a flow network encoding the deadline-prefix constraints gives a polymatroid rank function for the underlying scheduling feasibility structure. This flow view also recovers the nested matroids that govern the equal-execution tiers.",
+      "authors": [
+        "Dean Matthew Menezes",
+        "C. Gregory Plaxton"
+      ],
+      "primary_category": "cs.DS",
+      "categories": [
+        "cs.DS",
+        "math.OC"
+      ],
+      "published": "2026-07-16T23:47:20+00:00",
+      "link": "https://arxiv.org/pdf/2607.16347v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "greedy algorithm for minimizing late tasks in single-machine scheduling",
+      "llm_evidence_cn": "单机调度中最小化延期任务数的贪心算法",
+      "llm_evidence": "单机调度中最小化延期任务数的贪心算法",
+      "canonical_evidence": "单机调度中最小化延期任务数的贪心算法",
+      "llm_tldr_en": "This paper presents an O(n log n) implementation of the shortest-job-first rule for selecting on-time tasks in single-machine scheduling, using a balanced augmented BST keyed by deadline.",
+      "llm_tldr_cn": "经典单机调度问题要求选择最大数量的按时完成任务。本文给出Lin和Wang的最短作业优先规则的直接O(n log n)实现，利用按截止时间键值的平衡增强二叉搜索树，无需先占调度或摊销分析。该实现简洁高效，可应用于更复杂的调度场景。",
+      "llm_tldr": "经典单机调度问题要求选择最大数量的按时完成任务。本文给出Lin和Wang的最短作业优先规则的直接O(n log n)实现，利用按截止时间键值的平衡增强二叉搜索树，无需先占调度或摊销分析。该实现简洁高效，可应用于更复杂的调度场景。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}
