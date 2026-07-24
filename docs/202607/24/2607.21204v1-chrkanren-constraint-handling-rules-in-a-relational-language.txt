@@ -1,0 +1,524 @@
+Title: chrKanren: Constraint Handling Rules in a Relational Language
+
+URL Source: https://arxiv.org/pdf/2607.21204v1
+
+Published Time: Fri, 24 Jul 2026 00:50:18 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+W. Faber, L. Giordano, R. Rocha, V. Santos Costa (Eds.): 42nd International Conference on Logic Programming (ICLP 2026) EPTCS 450, 2026, pp. 416–429, doi:10.4204/EPTCS.450.30 © Sanna et al. This work is licensed under the Creative Commons Attribution License. 
+
+# CHR KANREN : Constraint Handling Rules in a Relational Language 
+
+Rafaello Sanna 
+
+Harvard University Massachusetts, USA 
+
+rsanna@g.harvard.edu 
+
+William E. Byrd 
+
+University of Alabama at Birmingham Alabama, USA 
+
+webyrd@uab.edu 
+
+Nada Amin 
+
+Harvard University Massachusetts, USA 
+
+namin@seas.harvard.edu 
+
+We present CHR KANREN , a dialect of the purely relational constraint logic programming language 
+
+> MINI
+
+KANREN [13, 14, 4] which includes support for Constraint Handling Rules (CHR) [15], a lan-guage for writing rule-based programs such as constraint solvers. We show how to integrate CHR’s constraint propagation mechanism into the language of MINI KANREN search streams such that both processes remain complete. We also use CHR KANREN to illustrate novel applications of constraints in MINI KANREN , such as semantic unification of user-defined data structures and example propaga-tion in relational interpreters in the style of M YTH [27]. 
+
+# 1 Introduction 
+
+> MINI
+
+KANREN is a logic programming language focused on relational purity , the ability to write pro-grams which run completely in all groundedness modes [4]. One way MINI KANREN realizes this goal is with built-in support for Constraint Logic Programming (CLP) [21], which lazily propagates constraints over logic variables to prune large swathes of the search tree. CLP is effective, but only for domains with bespoke solvers, which are hard or impossible to write with only relational primitives. We present 
+
+> CHR
+
+KANREN , which integrates Constraint Handling Rules (CHR) — a declarative formalism for writ-ing rule-based constraint solvers — into MINI KANREN . CHR KANREN allows users to write their own constraint solvers without needing to modify or understand low-level internals. 
+
+1.1 Motivating Example: Relational Interpretation with Constraints 
+
+A relational interpreter [5, 6] is an interpreter written as a pure relation. When run under a complete search strategy, a relational interpreter can be used not only to evaluate ground programs, but also to synthesize programs from output values, complete partial programs, or generate quines. Consider, for example, evalo 1: a relational interpreter for a λ -calculus dialect with pairs and numbers 2. It relates a λ -term and an environment to its weak call-by-value normal form. We ask the system to find a λ -calculus term which evaluates to a function such that when it is called in the empty environment, it evaluates to a pair whose first component is 1:
+
+(run 1 (p) (fresh (v q) (evalo `(,p ,v) '() `(1 . ,q)))) 
+
+,→ ((((lambda (_.0) (cons 1 _.1))) (num _.1) (sym _.0))) 
+
+> 1
+
+The suffix -o or -o is a convention used to denote that a host-language identifier refers to a relation. We define evalo in Listing 1a. 
+
+> 2
+
+Because CHR KANREN is embedded in Scheme and the language we interpret is also Scheme-like, it’s easy to confuse terms in the guest and host languages. To make this dichotomy clearer, we use the name “ λ -calculus” for the guest language and the name “Scheme” for the host language. λ -calculus terms are denoted by Scheme S-expressions and constructed using Scheme’s quasiquote ( `) and unquote ( ,) syntax. For example, if the Scheme variable a refers to the Scheme S-expression 
+
+(x 3) , then the Scheme expression `(lambda (x) ,a) would evaluate to the Scheme S-expression (lambda (x) (x 3)) 
+
+and denote the λ -calculus term λ x.x 3. Sanna et al. 417 The system returns one general class of solutions: those where p is a Scheme expression of the pattern 
+
+(lambda (_.0) (cons 1 _.1)) , where _.0 and _.1 are fresh logic variables which must be a number and a symbol, respectively. This Scheme expression denotes a λ -term which ignores its argument, then constructs the requested pair, assuming the second cons element to be a number literal. While this interpreter can uniformly solve a number of programming problems [5], it can be unsat-isfying when solving other queries. Consider the following query, which asks for a λ -calculus term q,such that when evaluated as the first argument of a cons call with 2 as its second argument, it evaluates to the pair (1 . 3) :   
+
+> (run 1 (q) (evalo `(cons ,q 2) '() '(1 . 3))) ;; runs forever...
+
+It’s clear that no such term exists, as 2 cannot evaluate to 3. This causes evalo to diverge, which is a sound response under MINI KANREN ’s semi-decidable semantics, though not an ideal one. We would prefer that evalo exhibit finite failure in this case: to prove that there are no valid instantiations of q.Constraints allow us to do exactly this: We can, using simple CHR rules, write a constraint-based interpreter eval^o which decomposes the same query into independent sub-constraints over each com-ponent of the pair. Because constraint propagation is driven by the immediate availability of information, rather than traditional search, the sub-constraint over 2 fails immediately:     
+
+> (run 1 (q) (eval^o `(cons ,q 2) `() `(1 . 3)))
+> ,→()
+> CHR
+
+KANREN allows users to mix traditional MINI KANREN search with user-defined constraint solvers such as eval^o . The propagation behavior seen in this example is the natural behavior of CHR rules, which fire when arguments become sufficiently ground or restricted by other constraints. The constraint-based evaluator is just one example of what this enables. More generally, any domain in which constraints can propagate information during search benefits from the same approach. 
+
+1.2 Contributions 
+
+We make the following contributions: 1. We augment the stream-based operational semantics of MINI KANREN with native support for CHR-style constraint propagation such that search and constraint propagation remain complete (Section 3.2). 2. We implement the above semantics in a new MINI KANREN interpreter called CHR KANREN based on the first-order architecture of Rosenblatt et al. [30]. 3. We demonstrate two applications uniquely enabled by the combination of MINI KANREN ’s com-plete search and CHR’s user-extensible constraint propagation: type-and-example-directed pro-gram synthesis (Section 4), and semantic unification over user-defined data structures (Section 5). 
+
+# 2 Preliminaries 
+
+2.1 MINI KANREN 
+
+We introduce MINI KANREN by defining the relational interpreter evalo , as demonstrated in Sec-tion 1.1. Its complete definition is given in Listing 1a. The interpreter is defined using the conde goal constructor (line 3), which represents a disjunction of conjuncts. The first disjunct (line 5) handles nu-meric literals: the type constraint numbero ensures the λ -term must be a Scheme number, and == unifies 418 CHR KANREN  
+
+> 1
+
+(define-relation (evalo exp env val)  
+
+> 23
+
+(conde  
+
+> 45
+
+[(numbero exp)  
+
+> 6
+
+(== val exp)]  
+
+> 78910 11
+
+[(fresh (nm body)  
+
+> 12
+
+(== exp `(lambda (,nm) ,body))  
+
+> 13
+
+(symbolo nm)  
+
+> 14
+
+(== val `(clos ,nm ,body ,env)))]  
+
+> 15 16 17
+
+[(fresh (op arg)  
+
+> 18
+
+(== exp `(,op ,arg))  
+
+> 19
+
+(fresh (env^ nm body argv)  
+
+> 20
+
+(symbolo nm)  
+
+> 21
+
+(evalo op env `(clos ,nm ,body ,env^))  
+
+> 22
+
+(evalo arg env argv)  
+
+> 23
+
+(evalo body `((,nm . ,argv) . ,env^) val)))]  
+
+> 24 25 26
+
+[(symbolo exp)  
+
+> 27
+
+(lookupo exp env val)]  
+
+> 28 29 30 31 32
+
+[(fresh (lhs rhs)  
+
+> 33
+
+(== exp `(cons ,lhs ,rhs))  
+
+> 34
+
+(fresh (lval rval)  
+
+> 35
+
+(== val (cons lval rval))  
+
+> 36
+
+(evalo lhs env lval)  
+
+> 37
+
+(evalo rhs env rval)))])) 
+
+> 38
+
+(a) The evalo relational interpreter. 
+
+(define-constraint (eval^o exp env val)) (define-rules (forall (exp env val) (forget (eval^o exp env val)) (ground number? exp) a
+
+=> (== exp val)) (forall (env val nm body) (forget (eval^o `(lambda (,nm) ,body) env val)) => (symbolo nm) (== val `(clos ,nm ,body ,env))) (forall (op arg env val) (forget (eval^o `(,op ,arg) env val)) => (fresh (env^ nm body argv) (symbolo nm) (eval^o op env `(clos ,nm ,body ,env^)) (eval^o arg env argv) (eval^o body `((,nm . ,argv) . ,env^) val))) (forall (exp env val) (forget (eval^o exp env val)) (ground symbol? exp) a
+
+=> (lookupo exp env val)) (forall (lhs rhs env val) (forget (eval^o `(cons ,lhs ,rhs) env val)) => (fresh (lval rval) (== val (cons lval rval)) (eval^o lhs env lval) (eval^o rhs env rval)))) 
+
+(b) The eval^o constraint interpreter. 
+
+> a
+
+This is not directly analogous to MINI KANREN type constraints in all groundedness modes, but we abbreviate for space. We expand on this further in Section 7. 
+
+Listing 1: Two implementations of an interpreter for the λ -calculus. The lookupo relation is user-defined. the value with the term. Type constraints are disjoint: posting two conflicting type constraints to the same variable causes immediate failure without grounding the variable. The second disjunct (line 11) handles lambda abstractions: fresh introduces new logic variables nm and body , which are unified against the structure of the term, and the value is unified with a closure object capturing the body and the current environment. The third disjunct (line 17) handles applications: the operator is evaluated to a closure and the operand to an argument by recursive calls to evalo , and the closure body is then evaluated in the environment extended with the argument. The fourth disjunct (line 26) handles variable lookup. It uses symbolo , a type constraint analogous to numbero , which ensures the term is a symbol. The relation 
+
+lookupo retrieves the corresponding value from the environment. The fifth disjunct (line 32) handles the pair constructor cons : the term is matched against a cons form, and the value is required to be a pair whose components are the evaluations of the respective subterms. Sanna et al. 419 
+
+2.2 Constraint Handling Rules 
+
+Constraint Handling Rules (CHR) is a rule-based formalism for writing constraint solvers [16]. A CHR program maintains a multiset of constraints representing facts known to be true (the “constraint store”) and a set of rules which manipulate it. Each rule fires when a matching combination of constraints is present in the constraint store, removing some constraints and adding new ones. This process continues until a fixpoint is reached. Unlike the search of MINI KANREN , CHR uses “don’t-care” nondeterminism: when multiple rules are applicable, the choice of which to fire is arbitrary, and it is up to the rule author to ensure that the rules are confluent. Rules in CHR KANREN have the form (forall ( i ... ) ch ... => g ... ), which can be read as “if, for any terms i ..., each ch holds, then each g must also hold”. Each ch is a rule head , which is either a constraint guard (written as a constraint, optionally annotated with the witness modifiers keep or forget ), a syn-tactic unification guard (written with operator === ) or a predicate guard (written with operators ground 
+
+or scheme ). Constraint guards ensure certain constraints are currently in the constraint store, syntactic unification guards ensure that given terms unify, and predicate guards ensure that terms pass various host-language checks. The body g ... is a conjunction of MINI KANREN goals which are executed when the rule fires. Additionally, any constraint guard marked with forget is removed from the constraint store when the rule fires. To illustrate these ideas, consider the constraint-based interpreter eval^o in Listing 1b, which imple-ments the same interpreter as evalo using CHR rules. Each rule corresponds directly, and is vertically aligned with, a corresponding disjunct in the original interpreter. The first rule (line 5) handles the evalua-tion of numbers: the (ground number? exp) guard checks that exp is a ground number, the evaluation constraint is removed from the constraint store, and the unification (== exp val) goal is posed. The second rule (line 11) handles lambda abstractions: the term is matched against a lambda form in the rule head, and the value is unified with a closure object. The third rule (line 17) handles applications: three sub-constraints are posted to evaluate the operator, operand, and body respectively. The fourth rule (line 26) handles ground symbol lookup, using the same lookupo helper relation as in the corresponding case of Listing 1a. The fifth rule (line 32) handles cons : the constraint is decomposed into two sub-constraints over the components of the pair. Figure 2 shows an execution trace of eval^o on the query from Section 1.1. The initial constraint store contains a single constraint, (eval^o (cons q 2) () (1 . 3)) . Rule 5 (line 32) fires, decom-posing the constraint into two sub-constraints: (eval^o q () 1) and (eval^o 2 () 3) . Rule 1 (line 5) then fires on the second sub-constraint, as 2 is a ground number, reducing it to the unification 2 ≡ 3.This unification fails immediately, causing the entire query to fail finitely without considering the value of q.
+
+{(eval^o (cons q 2) () (1 . 3)) } 7 → (Rule 5) {(eval^o q () 1) , (eval^o 2 () 3) } (1) 
+
+7→ (Rule 1) {(eval^o q () 1) , (== 2 3) } (2) 
+
+7→ (Unify) fail (3) Figure 2: A trace of eval^o on the query (run 1 (q) (eval^o `(cons ,q 2) `() `(1 . 3))) ,showing finite failure without grounding q.420 CHR KANREN 
+
+# 3 The CHR KANREN Language 
+
+In order to give a formal account of CHR KANREN , we present both the syntax of the language in terms of a BNF grammar (Section 3.1) 3 and a stream-based operational semantics (Section 3.2). 
+
+3.1 CHR KANREN Syntax 
+
+Host Identifiers rn , cn , i ∈ I
+
+Terms t, pr ∈ T
+
+Witness Modifier m ∈ { forget , keep }Definitions d :: = (define-relation ( rn i ... ) g ... ) relation definition 
+
+| (define-constraint ( cn i ... )) constraint definition 
+
+| (define-rules r ... ) rule definition Rules r :: = (forall ( i ... ) ch ... => g ... ) rule syntax Constraints c :: = (=== t t ) syntactic unification 
+
+| (cn t ... ) user constraint Witness w :: = (m (cn t ...) ) witness Rule Heads ch :: = w constraint guard 
+
+| (scheme pr t ... ) predicate guard 
+
+| (=== t t ) syntactic unification guard Goals g :: = succeed trivial goal 
+
+| fail impossible goal 
+
+| (conj g1 g2) goal conjunction 
+
+| (disj g1 g2) goal disjunction 
+
+| (fresh ( i ... ) g) existential goal 
+
+| (rn t ... ) relation call 
+
+| c constraint call Figure 3: A grammar outlining the syntax of CHR KANREN .The primitive syntax of CHR KANREN is based on that of μ KANREN [19] and is outlined in Fig-ure 3. CHR KANREN is embedded in Scheme and so inherits its Lisp-style syntax. One way in which 
+
+> CHR
+
+KANREN differs from traditional MINI KANREN syntax is its inclusion of === in place of == in the core calculus of the language. CHR KANREN ’s === relation denotes syntactic unification , while == de-notes semantic unification , a user-extensible notion of unification further explained in Section 5. The latter is provided in userspace, and is therefore not part of our syntax or semantics as a primitive. Another point of note is that CHR KANREN allows arbitrary goals to occur in the body of a rule. Be-cause this includes disjunctions, this makes CHR KANREN an implementation of CHR ∨, or CHR extended to include both “don’t-know” and “don’t-care” nondeterminism. Sanna et al. 421 Search State Γ :: = ⟨σ , θ , ω⟩
+
+Search Streams s :: = [ ] failure stream 
+
+| Γ :: s solution stream 
+
+| s1 ⊕ s2 disjunction stream 
+
+| s >>= g binding stream 
+
+| Γ ▷◁ g paused binding stream 
+
+| ⟳ s propagating stream 
+
+| ⊚ Γ paused propagating stream Figure 4: A grammar outlining the structure of CHR KANREN stream objects 
+
+3.2 CHR KANREN Semantics 
+
+The semantics and implementation of MINI KANREN is traditionally phrased in terms of states: objects which reify the values held by variables and the constraints over those variables. In our semantics, states (written Γ) hold a variable substitution (written σ ), a constraint store (written θ ), and a rule application history (written ω). We write σ [fresh i ... ] to mean the substitution σ extended with the identifiers i ... 
+
+bound to fresh logic variables. The search process of MINI KANREN works by threading states through lazy, potentially infinite streams. Each goal might be thought of as a function from some initial state to a stream of all possible future states which satisfy the goal in question. Following Rosenblatt [30], we restrict ourselves to a fixed set of primitive stream constructors, as shown in Figure 4. The first two “mature” stream con-structors represent finite failure (written [ ] ) and a successful search result (written Γ :: s). The remaining “immature” stream constructors represent intermediate states of the search which require more work to complete. 
+
+Name Description 
+
+I The set of all host-language identifiers 
+
+T The set of all host-language terms 
+
+V The set of all logic variables 
+
+R The set of all defined constraint-handling rules 
+
+call (rn ,t... ) Instantiates the body of the relation named rn with arguments t ... 
+
+unify (σ ,t1,t2)v Returns the substitution which syntactically unifies t1 and t2 with variables in the set v, or ⊥ if none exists 
+
+apply (pr ,t... ) Applies a host-language predicate pr to the sequence of host-language terms t ...; returns ⊤ or ⊥ based on whether the predicate holds. 
+
+head (r) Returns the set of identifiers bound by the head of the rule r
+
+Table 1: Names and descriptions of metafunctions and objects The disjunction constructor (written s1 ⊕ s2) represents a stream whose elements are drawn from either of its two arguments and is used to implement disjunction. The bind constructor (written s >>= g)applies the goal of its right argument to each of the results from the stream on the left. Like the monadic bind after which it was named [25, 33], it forces a left-to-right evaluation order. The paused binding constructor (written Γ ▷◁ g) delays the execution of a particular goal against a state. Paused binding constructors are implicitly added to conjunctions, disjunctions and calls to relations in order to support                   
+
+> 3The full CHR KANREN language supports some shorthand which is not reflected in the syntax or semantics. Namely, the
+> fresh goal constructor explicitly conjoins its body into a single goal with conj , the conde goal constructor is rewritten to a
+> disj of conj ’s, the conj and disj constructors are restricted to binary versions, constraint guards without a witness modifier are implicitly wrapped in a keep modifier, and the ground constraint guard is elaborated to the more primitive scheme guard.
+
+422 CHR KANREN 
+
+start (succeed , Γ) = Γ :: [ ] 
+
+start (fail , Γ) = [ ] 
+
+start (( conj g1 g2), Γ) = ( Γ ▷◁ g1) >>= g2
+
+start (( disj g1 g2), Γ) = ( Γ ▷◁ g1) ⊕ (Γ ▷◁ g2)
+
+start (( fresh (i ... ) g), ⟨σ , θ , ω⟩) = start (g, ⟨σ [fresh i ... ], θ , ω⟩)
+
+start (( rn t ... ), Γ) = Γ ▷◁ call (rn ,t ... )
+
+start (( === t1 t2), ⟨σ , θ , ω⟩) = 
+
+(
+
+propagate (⟨σ ′, θ , ω⟩) unify (σ ,t1,t2)V = σ ′
+
+[ ] unify (σ ,t1,t2)V = ⊥
+
+start (( cn t ... ), ⟨σ , θ , ω⟩) = ⊚ ⟨σ , θ ∪ { (cn t ... )}, ω⟩
+
+step ([ ]) = [ ] 
+
+step (Γ :: s) = Γ :: sstep (s1 ⊕ s2) = 
+
+
+
+s2 step (s1) = [ ] 
+
+Γ :: (s2 ⊕ s3) step (s1) = Γ :: s3
+
+s2 ⊕ step (s1) otherwise 
+
+step (s >>= g) = 
+
+
+
+[ ] step (s) = [ ] (Γ ▷◁ g) ⊕ (s1 >>= g) step (s) = Γ :: s1
+
+step (s) >>= g otherwise 
+
+step (⟳ s) = 
+
+
+
+[ ] step (s) = [ ] (⊚ Γ) ⊕ (⟳ s1) step (s) = Γ :: s1
+
+⟳ step (s) otherwise 
+
+step (Γ ▷◁ g) = start (g, Γ)
+
+step (⊚ Γ) = propagate (Γ)
+
+Figure 5: An operational semantics detailing how goals are converted to streams, and how streams are advanced in terms of the metafunctions and objects of Table 1 and the constraint propagation mechanism of Figure 6. recursive relations and commutative disjunction. The two constraint propagation constructors (written 
+
+⟳ s and ⊚ Γ) are unique to CHR KANREN : The propagating constructor ( ⟳ s) propagates constraints over each state element of a stream. The paused propagating constructor ( ⊚ Γ) delays constraint propagation against a state in a manner analogous to the paused binding constructor. Goals are translated to streams with the start (g, Γ) metafunction, then advanced in small steps by the 
+
+step (s) metafunction, as shown in Figure 5. Both of these metafunctions make use of the propagate (Γ)
+
+metafunction, which actually performs constraint propagation. The propagate (Γ) metafunction, as defined in Figure 6, takes a state Γ and propagates its existing constraints. It does so by first finding a rule which can be applied to the state. If one exists, the rule is matched against the state, and the body of the rule is applied. If no such match is found, then the Sanna et al. 423 
+
+propagate (⟨σ , θ , ω⟩) = 
+
+
+
+⟳ start (g, ⟨σ , θ − { j | (forget j) ∈ { w ... }} , ω ∪ {⟨ r, w ... ⟩}⟩ )
+
+∃r ∈ R. match (r, ⟨σ [fresh head (r)] , θ , ω⟩)ε = ⟨g, w ... ⟩ ∧ ⟨ r, w ... ⟩ /∈ ω
+
+⟨σ , θ , ω⟩ :: [ ] 
+
+∀r ∈ R. match (r, ⟨σ [fresh head (r)] , θ , ω⟩)ε = ⊥
+
+match (( forall (i ... ) => g ... ), Γ)w... = ⟨(conj g ... ), w ... ⟩
+
+match (( forall (i ... ) ( scheme pr t ... ) ch ... => g ... ), ⟨σ , θ , ω⟩)w... =
+
+(
+
+⊥ apply (pr , σ (t ... )) = ⊥
+
+match (( forall (i ... ) ch ... => g ... ), ⟨σ , θ , ω⟩)w ... otherwise 
+
+match (( forall (i ... ) ( === t1 t2) ch ... => g ... ), ⟨σ , θ , ω⟩)w... =
+
+(
+
+match (( forall (i ... ) ch ... => g ... ), ⟨σ ′, θ , ω⟩)w... unify (σ ,t1,t2)i... = σ ′
+
+⊥ unify (σ ,t1,t2)i... = ⊥
+
+match (( forall (i ... ) ( m (cn t ... )) ch ... => g ... ), ⟨σ , θ , ω⟩)w... =
+
+
+
+match (( forall (i ... ) ch ... => g ... ), ⟨σ ′, θ , ω⟩)(m (cn t ′ ... )) ,w ... 
+
+∃ (cn t ′ ... ) ∈ θ − { j | ∃ m′. (m′ j) ∈ { w ... }} .unify (σ , (t ... ), (t′ ... )) i... = σ ′
+
+⊥∀ (cn t ′ ... ) ∈ θ − { j | ∃ m′. (m′ j) ∈ { w ... }} .unify (σ , (t ... ), (t′ ... )) i ... = ⊥
+
+Figure 6: An operational semantics detailing the process of rule search and matching. propagation is finished. The rule matching itself is performed by the match (r, Γ)w... metafunction, which checks if a rule r can match against the current state Γ. The index w ... is used as an accumulator of “witnesses”, annotated constraints we have already matched against that should not be considered for further head matches. The witnesses serve two roles: they prevent a single rule head from matching the same stored constraint twice, and they record which matched constraints should be removed when a rule fires. The matching against clause-heads occurs left-to-right and fails if any clause or guard should fail to find a match. Once this is done, match returns both the goal of the matched rule and the witnesses the rule matched against. 
+
+# 4 Application: Type-and-Example-Directed Program Synthesis 
+
+Section 1.1 showed that CHR KANREN can improve traditional relational interpreter synthesis by evalu-ating subterms only as information becomes available. However, types have long been used in program synthesis as a means of both specifying the desired program and pruning the search space [27]. De-spite this, a relational type-checker in MINI KANREN cannot serve this role directly: conjoining a typing relation with a relational interpreter produces generate-and-test behavior, in which the interpreter gener-ates candidate programs and the type-checker discards the ill-typed ones. Writing the type system as a 
+
+> CHR
+
+KANREN constraint resolves this: because constraints propagate incrementally during search rather than running as a separate phase, type^o prunes ill-typed candidates as they are constructed without first 424 CHR KANREN 
+
+enumerating them. We demonstrate this through a CHR type system for the simply-typed λ -calculus. The constraint 
+
+type^o , defined in Listing 7, relates an environment to a λ -term and a type. To illustrate the interaction between type^o and evalo , consider Ω — the canonical diverging term of the untyped λ -calculus, which is untypeable in the simply-typed λ -calculus: 
+
+(define-constraint (type^o env exp typ)) (define-rules (forall (env n typ) (forget (type^o env n typ)) (numbero n) => (== typ `number)) (forall (env n typ) (forget (type^o env n typ)) (ground number? n) => (== typ `number)) (forall (env sym typ) (forget (type^o env sym typ)) (symbolo sym) => (lookupo sym env typ)) (forall (env sym typ) (forget (type^o env sym typ)) (ground symbol? sym) => (lookupo sym env typ)) (forall (env rator arglist body typ rst) (forget (type^o env `(,rator ,arglist ,body . ,rst) typ)) => (== rst `()) (fresh (x i o) (== rator `lambda) (== arglist (list x)) (symbolo x) (== typ `(-> ,i ,o)) (type^o (cons (cons x i) env) body o))) (forall (env rator rand typ) (forget (type^o env `(,rator ,rand) typ)) => (fresh (t_input) (type^o env rator `(-> ,t_input ,typ)) (type^o env rand t_input)))) 
+
+Listing 7: A CHR type system for the simply-typed λ -calculus. 
+
+(define omega `((lambda (x) (x x)) (lambda (x) (x x)))) 
+
+Asking evalo to evaluate Ω diverges, as expected: 
+
+(run 1 (p) (evalo omega `() p)) ;; runs forever... 
+
+By posting type^o as a constraint before evaluation, CHR KANREN proves Ω untypeable and fails finitely, without ever invoking the evaluator: 
+
+(run 1 (p) (fresh (t) (type^o `() omega t)) (evalo omega `() p)) 
+
+,→ () 
+
+# 5 Application: Semantic Unification 
+
+One of the primary advantages of CHR is its extensibility: new behavior can be introduced by adding rules over existing constraints without modifying the underlying solver or language runtime. CHR KAN - 
+
+> REN
+
+takes advantage of this by expressing unification itself as a collection of CHR constraints and rules. Sanna et al. 425 By reifying unification as a CHR constraint, CHR KANREN allows users to extend unification for new data structures in a principled and declarative manner. To support this design, CHR KANREN distinguishes between two notions of unification. The first is 
+
+syntactic unification , written using the constraint === . This form of unification is used internally when matching rule heads during CHR propagation. In contrast, the familiar == relation of MINI KANREN is reinterpreted in CHR KANREN as semantic unification : a user-extensible constraint whose meaning is determined entirely by CHR rules. This separation allows the operational semantics of CHR to remain stable, while exposing unification as an object of user-level definition. Semantic unification over data structures is done using traditional CHR rules, using syntactic unifi-cation to bind concrete structure as appropriate. For example, traditional structural unification over cons cells is implemented by the following rule, which decomposes equality of compound terms into equality of their components: 
+
+(forall (a b c) (forget (== (cons a b) c)) => (fresh (d e) (=== c (cons d e)) (== d a) (== b e))) 
+
+{t | s} = {t′ | s′} ∧ C′
+
+tail (s), tail (s′) are not the same variable 
+
+
+
+7−→ C′ ∧ any of 
+
+(i) t = t′ ∧ s = s′
+
+(ii ) t = t′ ∧ { t | s} = s′
+
+(iii ) t = t′ ∧ s = {t′ | s′}
+
+(iv ) s = {t′ | N} ∧ { t | N} = s′ ∧ set (N)  
+
+> (a) Rule 9 of the equal (C)solver proposed by Dovier et al. [11]
+> (forall (t s t^ s^) (forget (== (set-cons t s) (set-cons t^ s^))) (scheme (negate eq?) (set-tail s) (set-tail s^)) => (conde [(== t t^) (== s s^)] [(== t t^) (== (set-cons t s) s^)] [(== t t^) (== s (set-cons t^ s^))] [(fresh (N) (== s (set-cons t^ N)) (== (set-cons t N) s^) (seto N))]))
+> (b) The above rule translated to CHR KANREN
+
+Figure 8: A straightforward translation between existing relational data structure theory and CHR KAN - 
+
+> REN
+
+syntax One advantage that moving unification to the constraint level brings is unification over a given seman-tic domain. For example, consider the finite set solving procedure of Dovier et al. [11]. We can translate the solver rules presented directly into CHR KANREN , as shown in Figure 8. By porting the remaining rules, we translate the complete solver for set unification into CHR KANREN entirely in userspace, which had previously required a purpose-built interpreter [31]. 426 CHR KANREN 
+
+# 6 Prior Work 
+
+A large amount of prior work has gone into implementing declarative and extensible constraint solvers, much of which has heavily influenced CHR KANREN .
+
+CHR(LP) Constraint Handling Rules has had a long history of being embedded in logic programming languages: most notably, Prolog [32, 16]. Much work has been done to make such embeddings efficient, generally by taking advantage of the language’s low-level features, such as attributed variables [23] or meta-structures [20]. Our work targets MINI KANREN , a language which is similar to Prolog, but has a number of key differences, especially regarding implementation. MINI KANREN ’s complete search and stream-based semantics are in stark contrast to Prolog’s depth-first search and stack-based semantics. To deal with this, we develop a new semantics for MINI KANREN which incorporates constraint propagation directly. 
+
+CLP in MINI KANREN Many implementations of MINI KANREN ship with some level of constraint solving built-in. These solvers are generally baked directly into the implementation of the language it-self. Some implementations of MINI KANREN — such as CKANREN [1], CONSTRAINT -μ KANREN [18] and CORE .LOGIC [26] — are parameterized over a host-language constraint solver for a particular do-main. These solvers must be manually composed, making modularity difficult to achieve. In contrast, 
+
+> CHR
+
+KANREN constraints compose automatically, without the need for host-language solvers or modifi-cations to the language implementation. 
+
+> MINI
+
+KANREN with Delayed Goals One common technique for implementing constraints in userspace is delayed goals, first introduced by Prolog II’s freeze/2 meta-relation [7]. MINNA KANREN [10], WALRUS [8] and the Bachelor’s thesis of Zharmukhametova [34] provide versions of delayed goal con-structors as primitive operators, allowing for some useful user-defined constraints. Delayed goals are, however, limited in their operational potential. They cannot interact with other constraints and so cannot faithfully implement common primitives such as MINI KANREN ’s type constraints due to their disjoint-edness. CHR KANREN does not have this limitation, as rules are multi-headed. 
+
+Semantics-Guided Program Synthesis (SemGus) Semantics-Guided Synthesis [22] is the task of, for a given language whose semantics is specified as constrained Horn clauses (CHCs), synthesizing a program which satisfies some query. A number of purpose-built solvers for this task exist, such as MESSY [9] and ABSYNTHE [17], which rely on existing CHC solvers and/or background theory solvers for nontrivial constraint domains such as algebraic data types. CHR KANREN allows background theories to be specified purely in terms of CHR rules, without the need for an external solver. 
+
+FreeCHR FreeCHR [28, 29] is a technique which extends CHR to arbitrary host languages by defin-ing a suitable F-algebra for evaluation of CHR rules over a given host domain. Such algebras can be composed and interpreted up to a fixpoint, providing a modular way of specifying rules. However, the FreeCHR technique provides no support for partially instantiated variables, unification of user-defined data structures or CHR ∨-style nondeterminism. CHR KANREN provides these features at the cost of mak-ing more assumptions about the host language. 
+
+# 7 Future Work 
+
+There are several directions in which CHR KANREN could be extended or improved: Sanna et al. 427 
+
+Performance CHR KANREN currently does not take advantage of a number of well-known techniques for making constraint propagation efficient . From the CHR literature, algorithms such as RETE [12] and LEAPS [24] provide efficient multi-headed rule matching and constraint compilation, translating CHR rules into efficient host-language code. From the MINI KANREN literature, multi-staged MINI KAN - 
+
+> REN
+
+[3] and the optimizing compiler of Ballantyne et al. [2] provide complementary techniques for improving the performance of search. 
+
+Higher-Level Constraint Abstractions In practice, large sets of CHR rules can feel rather “low-level”. Running rules in all groundedness modes often requires repeating rules for different scenarios. For example, the first two pairs of rules in Listing 7 are semantically identical, but the first of each pair deals with variables which are type-constrained ( (numbero n) and (symbolo sym) , respectively) and the second deals with ground values ( (ground number? n) and (ground symbol? sym) ). To our knowledge, all formulations of CHR(LP) currently require this duplication, though we believe a higher-level syntax may make it unnecessary. 
+
+# 8 Conclusions 
+
+We have presented CHR KANREN , a dialect of MINI KANREN that integrates Constraint Handling Rules directly into the language’s interpreter, allowing users to write their own constraint solvers declaratively without access to any low-level primitives. We have shown that CHR KANREN ’s constraint propagation mechanism is compatible with MINI KANREN ’s complete, interleaving search strategy, and that the two processes remain complete when composed. We have demonstrated this through two applications: a type-and-example-directed program synthesizer which exhibits finite failure where its purely relational counterpart diverges, and a framework for semantic unification over user-defined data structures. 
+
+# Acknowledgments 
+
+We would like to thank Ekaterina Verbitskaia and the members of the MINI KANREN seminar for an illuminating and interesting discussion on this topic. Will Byrd appreciates the support of Matt Might and the Hugh Kaul Precision Medicine Institute at the University of Alabama at Birmingham. We would also like to thank our anonymous reviewers for their feedback and references. 
+
+# References             
+
+> [1] Claire E. Alvis, Jeremiah J. Willcock, Kyle M. Carter, William E. Byrd & Daniel P. Friedman (2011): cK-anren: miniKanren with Constraints .In: Proceedings of the 2011 Workshop on Scheme and Functional Programming , Portland, Oregon, USA. Available at https://www.schemeworkshop.org/2011/papers/ Alvis2011.pdf . Co-located with SPLASH 2011. [2] Michael Ballantyne, Mitch Gamburg & Jason Hemann (2024): Compiled, Extensible, Multi-language DSLs (Functional Pearl) .Proc. ACM Program. Lang. 8(ICFP), doi:10.1145/3674627. [3] Michael Ballantyne, Rafaello Sanna, Jason Hemann, William E. Byrd & Nada Amin (2025): Multi-stage Relational Programming .Proc. ACM Program. Lang. 9(PLDI), doi:10.1145/3729314. https://github. com/namin/staged-miniKanren .[4] William E. Byrd (2009): Relational Programming in miniKanren: Techniques, Applications, and Implemen-tations . Ph.D. thesis, Indiana University.
+
+428 CHR KANREN 
+
+[5] William E. Byrd, Michael Ballantyne, Gregory Rosenblatt & Matthew Might (2017): A unified ap-proach to solving seven programming problems (functional pearl) . Proc. ACM Program. Lang. 1(ICFP), doi:10.1145/3110252. [6] William E. Byrd, Eric Holk & Daniel P. Friedman (2012): miniKanren, live and untagged: quine generation via relational interpreters (programming pearl) . In: Proceedings of the 2012 Annual Workshop on Scheme and Functional Programming , Scheme ’12, Association for Computing Machinery, New York, NY, USA, p. 8–29, doi:10.1145/2661103.2661105. [7] Alain Colmerauer (1982): Prolog II: Manuel de référence et modèle théorique . Technical Report, Groupe d’Intelligence Artificielle, Faculté des Sciences de Luminy, Université d’Aix-Marseille II, Marseille, France. Internal Report. [8] Santiago Cuéllar, Naomi Spargo, Jonathan Daugherty & David Darais (2025): Designing Wal-rus: Relational Programming with Rich Types, On-Demand Laziness, and Structured Traces ,doi:10.48550/arXiv.2510.02579. arXiv:2510.02579. [9] Loris D’Antoni, Qinheping Hu, Jinwoo Kim & Thomas W. Reps (2021): Programmable Program Synthesis .In Alexandra Silva & K. Rustan M. Leino, editors: Computer Aided Verification – 33rd International Confer-ence, CAV 2021, Virtual Event, July 20–23, 2021, Proceedings, Part I , Lecture Notes in Computer Science 
+
+12759, Springer, pp. 84–109, doi:10.1007/978-3-030-81685-8_4. [10] Evan Donahue (2023): Goals as Constraints: Writing miniKanren Constraints in miniKanren . In Nada Amin & William E. Byrd, editors: Proceedings of the 2023 miniKanren and Relational Programming Workshop , Seattle, WA, USA, pp. 1–12. Available at http://www.evandonahue.com/pdf/donahue_ goalsasconstraints2023.pdf . Co-located with ICFP 2023. Software available at https://github. com/emdonahue/minnaKanren .[11] Agostino Dovier, Carla Piazza, Enrico Pontelli & Gianfranco Rossi (2000): Sets and Constraint Logic Programming . ACM Transactions on Programming Languages and Systems 22(5), pp. 861–931, doi:10.1145/365151.365169. [12] Charles L. Forgy (1982): Rete: A fast algorithm for the many pattern/many object pattern match problem .
+
+Artificial Intelligence 19(1), pp. 17–37, doi:10.1016/0004-3702(82)90020-0. [13] Daniel P. Friedman, William E. Byrd & Oleg Kiselyov (2005): The Reasoned Schemer . The MIT Press, Cambridge, MA, USA, doi:10.7551/mitpress/5801.001.0001. [14] Daniel P. Friedman, William E. Byrd, Oleg Kiselyov & Jason Hemann (2018): The Reasoned Schemer , 2nd edition. The MIT Press, Cambridge, MA, USA. [15] Thom Frühwirth (1995): Constraint handling rules . In: Constraint programming: Basics and trends ,Springer, pp. 90–107, doi:10.1007/3-540-59155-9_6. [16] Thom Frühwirth (1998): Theory and Practice of Constraint Handling Rules . The Journal of Logic Pro-gramming 37(1–3), pp. 95–138, doi:10.1016/S0743-1066(98)10005-5. Special Issue on Constraint Logic Programming. [17] Sankha Narayan Guria, Jeffrey S. Foster & David Van Horn (2023): Absynthe: Abstract Interpretation-Guided Synthesis . Proceedings of the ACM on Programming Languages 7(PLDI), pp. 1584–1607, doi:10.1145/3591285. [18] Jason Hemann & Daniel P. Friedman (2017): A Framework for Extending microKanren with Constraints .
+
+Electronic Proceedings in Theoretical Computer Science 234, p. 135–149, doi:10.4204/eptcs.234.10. [19] Jason Hemann, Daniel P. Friedman, William E. Byrd & Matthew Might (2016): A small embedding of logic programming with a simple complete search . In: Proceedings of the 12th Symposium on Dy-namic Languages , DLS 2016, Association for Computing Machinery, New York, NY, USA, p. 96–107, doi:10.1145/2989225.2989230. [20] Christian Holzbaur (1992): Metastructures vs. Attributed Variables in the Context of Extensible Unification .In Maurice Bruynooghe & Martin Wirsing, editors: Programming Language Implementation and Logic Pro-gramming, 4th International Symposium (PLILP ’92) , Lecture Notes in Computer Science 631, Springer, Berlin, Heidelberg, pp. 260–268, doi:10.1007/3-540-55844-6_141. Sanna et al. 429 
+
+[21] Joxan Jaffar & Michael J. Maher (1994): Constraint Logic Programming: A Survey . The Journal of Logic Programming 19/20, pp. 503–581, doi:10.1016/0743-1066(94)90033-7. [22] Jinwoo Kim, Qinheping Hu, Loris D’Antoni & Thomas W. Reps (2021): Semantics-Guided Synthesis . Pro-ceedings of the ACM on Programming Languages 5(POPL), pp. 1–32, doi:10.1145/3434311. [23] Serge Le Huitouze (1990): A New Data Structure for Implementing Extensions to Prolog . In Pierre Deransart & Jan Maluszy´ nski, editors: Programming Language Implementation and Logic Programming, 2nd Inter-national Workshop (PLILP ’90) , Lecture Notes in Computer Science 456, Springer, Berlin, Heidelberg, pp. 136–150, doi:10.1007/BFb0024181. [24] Daniel P. Miranker, David A. Brant, Bernie Lofaso & David Gadbois (1990): On the performance of lazy matching in production systems . In: Proceedings of the Eighth National Conference on Artificial Intelli-gence - Volume 1 , AAAI’90, AAAI Press, p. 685–692. Available at https://dl.acm.org/doi/10.5555/ 1865499.1865602 .[25] Eugenio Moggi (1991): Notions of Computation and Monads . Information and Computation 93(1), pp. 55–92, doi:10.1016/0890-5401(91)90052-4. [26] David Nolen (2010): core.logic . Available at https://github.com/clojure/core.logic .[27] Peter-Michael Osera & Steve Zdancewic (2015): Type-and-example-directed Program Synthesis . In: Pro-ceedings of the 36th ACM SIGPLAN Conference on Programming Language Design and Implementation ,PLDI 2015, ACM, New York, NY, USA, pp. 619–630, doi:10.1145/2737924.2738007. [28] Sascha Rechenberger & Thom Frühwirth (2023): FreeCHR: An Algebraic Framework for CHR-Embeddings .In Anna Fensel, Ana Ozaki, Dumitru Roman & Ahmet Soylu, editors: Rules and Reasoning , Springer Nature Switzerland, Cham, pp. 190–205, doi:10.48550/arXiv.2306.00642. [29] Sascha Rechenberger & Thom W. Frühwirth (2025): A refined operational semantics for FreeCHR . In: 
+
+International Conference on Logic Programming , doi:10.48550/arXiv.2504.04962. [30] Gregory Rosenblatt, Lisa Zhang, William E. Byrd & Matthew Might (2019): First-order miniKanren Rep-resentation: Great for Tooling and Search . In: Proceedings of the 2019 miniKanren and Relational Programming Workshop , Berlin, Germany. Available at https://minikanren.org/workshop/2019/ minikanren19-final2.pdf . Co-located with ICFP 2019. Published as Harvard Computer Science Group Technical Report TR-02-19. [31] Rafaello Sanna, William E. Byrd & Nada Amin (2025): Beyond Cons: Purely Relational Data Structures .In: miniKanren and Relational Programming Workshop , doi:10.48550/arXiv.2510.03170. [32] Tom Schrijvers, Jan Wielemaker & Bart Demoen (2005): Constraint Handling Rules for SWI-Prolog . In Armin Wolf, Thom Frühwirth & Marc Meister, editors: Proceedings of the 19th Workshop on (Constraint) Logic Programming (W(C)LP 2005) , Ulmer Informatik-Berichte 2005-01, Universität Ulm, Ulm, Germany. Available at https://www.swi-prolog.org/download/publications/chr_for_swi.pdf .[33] Philip Wadler (1992): The Essence of Functional Programming . In: Conference Record of the Nineteenth Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (POPL ’92) , ACM Press, New York, NY, USA, pp. 1–14, doi:10.1145/143165.143169. [34] Laura Zharmukhametova (2021): microKanren with Delayed Goals . Bachelor’s thesis, Harvard College. Available at https://nrs.harvard.edu/URN-3:HUL.INSTREPOS:37368527 .

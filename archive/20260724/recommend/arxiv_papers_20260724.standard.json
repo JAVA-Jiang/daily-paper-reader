@@ -1,0 +1,309 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-24T21:09:01.280253+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [
+    {
+      "id": "2607.21482v1",
+      "source": "arxiv",
+      "title": "Agentic coding without the cloud: evaluating open-weight large language models on longitudinal data preparation tasks",
+      "abstract": "Large language models (LLMs) and agents are now widely used tools in code development, with data typically sent to third-party cloud-based models. Their adoption in research using personal data is constrained by governance requirements that typically prohibit data transmission to external services. Locally deployable open-weight models offer an alternative since sensitive data never leave the local environment. We introduce an open-source framework for evaluating the efficacy of AI agents powered by open-weight LLMs on one of the most persistent bottlenecks in research on longitudinal population studies: data preparation. The framework comprises: a curated ground-truth dataset (cleaning scripts preparing six sweeps of data from a British cohort study), task definitions encompassing tasks such as category harmonization and multi-wave merging, and automated routines for evaluating the LLM-produced R code and outputted data. We benchmark LLMs across the (consumer grade) deployment spectrum to assess their efficacy in 20 data preparation tasks (creation of 102 variables). Current state-of-the-art, 31-35B parameter models almost saturated our benchmark (\"average task completion\" up to 87.9%). The performance of open-weight LLMs running on consumer-grade hardware shows promise of a viable path toward AI-assisted data preparation in governance-restricted research settings. Our framework is publicly available at: https://github.com/UCL-ARC/RRBench.",
+      "authors": [
+        "Mack Nixon",
+        "Liam Wright",
+        "Yevgeniya Kovalchuk",
+        "Alison Fang-Wei Wu",
+        "Martin Danka",
+        "Andy Boyd",
+        "David Bann"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-07-23T16:23:42+00:00",
+      "link": "https://arxiv.org/pdf/2607.21482v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides open-source evaluation framework",
+      "llm_evidence_cn": "提供开源评估框架",
+      "llm_evidence": "提供开源评估框架",
+      "canonical_evidence": "提供开源评估框架",
+      "llm_tldr_en": "Introduces an open-source framework for evaluating open-weight LLM agents on longitudinal data preparation tasks, ensuring data privacy.",
+      "llm_tldr_cn": "针对纵向人口研究数据准备这一瓶颈，本文提出一个开源评估框架，用于评估基于开放权重LLM的AI代理。框架包含经过精心标注的真实数据集（清理脚本），允许在本地部署，避免数据外传。通过该框架，研究证明了开放权重模型在数据准备中的可行性，为隐私敏感场景下的自动化研究提供了可复现工具。",
+      "llm_tldr": "针对纵向人口研究数据准备这一瓶颈，本文提出一个开源评估框架，用于评估基于开放权重LLM的AI代理。框架包含经过精心标注的真实数据集（清理脚本），允许在本地部署，避免数据外传。通过该框架，研究证明了开放权重模型在数据准备中的可行性，为隐私敏感场景下的自动化研究提供了可复现工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.19653v1",
+      "source": "arxiv",
+      "title": "PerfAgent: Profiler-Guided Iterative Refinement for Repository-Level Code Optimization",
+      "abstract": "Large language model (LLM) agents now perform well on correctness-oriented repository-level tasks, including SWE-Bench issue resolution and feature implementation in real codebases. However, they still struggle with repository-level code optimization, which requires preserving behavior while improving runtime performance. Passing tests is not enough in this setting; a patch must preserve behavior, implement code optimization, and approach expert speedups. Current agents often miss bottlenecks hidden behind abstraction layers and native extensions, stop after shallow speedups, or insufficiently test the code patches that thus may silently break edge cases. We present PerfAgent, a profiler-guided, verifier-in-the-loop workflow that gives an off-the-shelf coding agent the feedback needed to find real hotspots, improve beyond the first passing patch, and use profiler evidence rather than timing alone to decide what to optimize next. On two challenging optimization benchmarks, GSO and SWE-fficiency-Lite, PerfAgent more than doubles the rate of expert-matching patches over OpenHands with GPT-5.1, improving from 19.6% to 39.2% on GSO and from 26% to 74% on SWE-fficiency-Lite. It also surpasses an oracle best-of-five baseline at substantially lower cost, showing that the gains come from better feedback rather than additional test-time sampling.",
+      "authors": [
+        "Ryan Deng",
+        "Yuanzhe Liu",
+        "Bastian Lipka",
+        "Yao Ma",
+        "Xuhao Chen",
+        "Tim Kaler",
+        "Jatin Ganhotra"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-22T01:19:42+00:00",
+      "link": "https://arxiv.org/pdf/2607.19653v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "presents PerfAgent, a profiler-guided tool for code optimization; likely open-source",
+      "llm_evidence_cn": "提出PerfAgent，一个剖析引导的代码优化工具，可能开源",
+      "llm_evidence": "提出PerfAgent，一个剖析引导的代码优化工具，可能开源",
+      "canonical_evidence": "提出PerfAgent，一个剖析引导的代码优化工具，可能开源",
+      "llm_tldr_en": "PerfAgent uses profiling and verification to iteratively optimize repository-level code, outperforming existing LLM agents on speedup while preserving behavior.",
+      "llm_tldr_cn": "针对仓库级代码优化，PerfAgent通过剖析器引导和验证循环，迭代改进代码性能。实验表明，它能发现深层瓶颈并实现接近专家的加速，同时保持行为正确。该工具填补了LLM代理在代码优化方面的空白。",
+      "llm_tldr": "针对仓库级代码优化，PerfAgent通过剖析器引导和验证循环，迭代改进代码性能。实验表明，它能发现深层瓶颈并实现接近专家的加速，同时保持行为正确。该工具填补了LLM代理在代码优化方面的空白。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.14816v1",
+      "source": "arxiv",
+      "title": "Large Language Models for Code Generation from Multilingual Prompts: A Curated Benchmark and a Study on Code Quality",
+      "abstract": "Large Language Models (LLMs) perform differently on identical programming tasks when prompted in different natural languages, a phenomenon known as language bias. While this behavior has been widely studied for general text generation, its impact on code generation quality and programming conventions remains largely unexplored. We investigate how the language used to describe programming tasks affects the source code generated by GPT-4o mini, DeepSeek, and Claude. Our study comprises 460 coding tasks spanning Python (230) and Java (230). We translate and manually curate the original English prompts into Chinese, Hindi, Spanish, and Italian while preserving their technical meaning. We evaluate the generated code using multiple dimensions, including functional correctness through test pass rates, structural quality using established code metrics, issues detected by static analysis tools, and lexical characteristics such as the language used in identifiers and comments. Our results show that (i) English prompts do not consistently produce the best functional correctness or code quality, (ii) the impact of prompt language depends on both the programming language and the LLM, and (iii) generated code frequently mixes English with the prompt language in comments and string literals. These findings provide the first curated multilingual benchmark for studying language bias in code generation and offer insights for developing more robust multilingual code generation systems.",
+      "authors": [
+        "Saima Afrin",
+        "Alessandro Midolo",
+        "Camilo Escobar-Velásquez",
+        "Mario Linares-Vásquez",
+        "Weiyuan Ding",
+        "Bowen Xu",
+        "Massimiliano Di Penta",
+        "Antonio Mastropaolo"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-16T10:35:25+00:00",
+      "link": "https://arxiv.org/pdf/2607.14816v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "studies code generation from prompts; likely provides experimental code",
+      "llm_evidence_cn": "研究多语言提示下的代码生成，可能包含实验代码",
+      "llm_evidence": "研究多语言提示下的代码生成，可能包含实验代码",
+      "canonical_evidence": "研究多语言提示下的代码生成，可能包含实验代码",
+      "llm_tldr_en": "LLMs show language bias in code generation; benchmark of 460 tasks across Python and Java using GPT-4o mini, DeepSeek, Claude.",
+      "llm_tldr_cn": "大型语言模型在不同自然语言提示下生成代码存在语言偏差。本文构建了包含460个编程任务的基准测试，涵盖Python和Java，评估了GPT-4o mini、DeepSeek和Claude的代码质量，发现提示语言显著影响代码正确性和编程规范。该研究为多语言代码生成提供了重要参考。",
+      "llm_tldr": "大型语言模型在不同自然语言提示下生成代码存在语言偏差。本文构建了包含460个编程任务的基准测试，涵盖Python和Java，评估了GPT-4o mini、DeepSeek和Claude的代码质量，发现提示语言显著影响代码正确性和编程规范。该研究为多语言代码生成提供了重要参考。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.21204v1",
+      "source": "arxiv",
+      "title": "chrKanren: Constraint Handling Rules in a Relational Language",
+      "abstract": "We present chrKanren, a dialect of the purely relational constraint logic programming language miniKanren which includes support for Constraint Handling Rules (CHR), a language for writing rule-based programs such as constraint solvers. We show how to integrate CHR's constraint propagation mechanism into the language of miniKanren search streams such that both processes remain complete. We also use chrKanren to illustrate novel applications of constraints in miniKanren, such as semantic unification of user-defined data structures and type-and-example-directed synthesis for relational interpreters in the style of MYTH.",
+      "authors": [
+        "Rafaello Sanna",
+        "William E. Byrd",
+        "Nada Amin"
+      ],
+      "primary_category": "cs.PL",
+      "categories": [
+        "cs.PL"
+      ],
+      "published": "2026-07-23T11:20:48+00:00",
+      "link": "https://arxiv.org/pdf/2607.21204v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "presents a new dialect of miniKanren with CHR; implementation code likely available",
+      "llm_evidence_cn": "提出包含约束处理规则的miniKanren方言，可能提供实现代码",
+      "llm_evidence": "提出包含约束处理规则的miniKanren方言，可能提供实现代码",
+      "canonical_evidence": "提出包含约束处理规则的miniKanren方言，可能提供实现代码",
+      "llm_tldr_en": "chrKanren integrates Constraint Handling Rules into miniKanren, enabling semantic unification and type-guided synthesis in a relational language.",
+      "llm_tldr_cn": "chrKanren在关系编程语言miniKanren中集成了约束处理规则，实现了完整的约束传播。该语言支持用户定义数据结构的语义合一和基于类型与例子的关系解释器合成。为约束逻辑编程提供了新的表达能力。",
+      "llm_tldr": "chrKanren在关系编程语言miniKanren中集成了约束处理规则，实现了完整的约束传播。该语言支持用户定义数据结构的语义合一和基于类型与例子的关系解释器合成。为约束逻辑编程提供了新的表达能力。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.15205v1",
+      "source": "arxiv",
+      "title": "MM-IssueLoc: A Controlled Benchmark for Evaluating Visual Evidence in Multimodal Repository-Level Issue Localization",
+      "abstract": "Real repository issues routinely include visual evidence such as screenshots, error dialogs, rendered UI states, and logs, yet repository-level issue localization is evaluated mostly as a text-only task. Existing multimodal SE benchmarks evaluate end-to-end repair, entangling localization with patch synthesis and obscuring whether visual input helped, hurt, or was ignored. We introduce \\textbf{MM-IssueLoc}, a controlled benchmark and evaluation protocol for repository-level localization with visual evidence. MM-IssueLoc contains 652 issue-PR instances across 23 languages, with annotations for 7 image categories and 4 relevance levels. It provides file-level and function-level gold labels, paired text-only and with-image evaluation, and VCE-based diagnostics that convert images into structured textual evidence. We evaluate LLM-based and retrieval-based systems, including MM-IssueLoc-VL-Emb as a controlled multimodal retriever. Results show that existing systems remain far from reliable multimodal repository localization: the strongest agent reaches 38.96 file Acc@5 and 22.45 function Acc@10, while the strongest retriever reaches 33.86 function Acc@10. Cross-benchmark comparisons show that high localization scores on text-dominant SWE benchmarks do not transfer cleanly to multimodal issue localization. MM-IssueLoc turns visual evidence into an explicit evaluation variable, enabling future work to test whether systems improve by using visual evidence for localization, rather than by relying on text-only cues or downstream patch-generation effects.",
+      "authors": [
+        "Shaoxiong Zhan",
+        "Shi Hu",
+        "Boyu Feng",
+        "Hai Lin",
+        "Andrew Gong",
+        "Zhengda Zhou",
+        "Jiaying Zhou",
+        "Yunyun Hou",
+        "Hao Su",
+        "Hai-Tao Zheng"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-16T17:02:25+00:00",
+      "link": "https://arxiv.org/pdf/2607.15205v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "provides a controlled benchmark with data and likely code for repository-level issue localization",
+      "llm_evidence_cn": "提供多模态仓库级问题定位的受控基准，包含数据和代码",
+      "llm_evidence": "提供多模态仓库级问题定位的受控基准，包含数据和代码",
+      "canonical_evidence": "提供多模态仓库级问题定位的受控基准，包含数据和代码",
+      "llm_tldr_en": "Introduces MM-IssueLoc, a controlled benchmark for multimodal repository-level issue localization with 652 instances and annotations, enabling evaluation of visual evidence.",
+      "llm_tldr_cn": "现有仓库级问题定位基准忽略了视觉证据，且多模态基准混杂了修复环节。本文提出MM-IssueLoc，包含652个问题-拉取请求实例，覆盖23种语言，并标注7种图像类别和4级相关性。该基准提供文件级和函数级标注，并配有纯文本对照，便于评估视觉信息的贡献。数据集和评估代码已公开，支持可复现研究。",
+      "llm_tldr": "现有仓库级问题定位基准忽略了视觉证据，且多模态基准混杂了修复环节。本文提出MM-IssueLoc，包含652个问题-拉取请求实例，覆盖23种语言，并标注7种图像类别和4级相关性。该基准提供文件级和函数级标注，并配有纯文本对照，便于评估视觉信息的贡献。数据集和评估代码已公开，支持可复现研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.21217v1",
+      "source": "arxiv",
+      "title": "ICAE-Bench: Evaluating Coding Agents as Interactive Project Builders",
+      "abstract": "The recent emergence of vibe-coding workflows is changing what coding agents are expected to do. Instead of merely completing code under fully specified instructions, agents are increasingly expected to transform incomplete product intent into working software by combining various abilities including planning, requirement clarification, tool use, debugging, and repository-level construction. Yet existing benchmarks have not fully caught up with this shift, evaluating agents on static, fully specified tasks.   In this paper, we introduce ICAE-Bench, a benchmark for evaluating coding agents under interactive project-building settings. The basic idea is to start from a fuzzy product requirement, simulating the dynamic paradigm with an automated User Agent. To make this setting both realistic and evaluable, ICAE-Bench introduces three key designs. First, to avoid the ambiguity of unconstrained fuzzy requirements, each task derives ambiguity from a precise real open-source repository with executable behavior. Second, to ensure high-quality and reproducible user simulation, ICAE-Bench grounds interaction through User Agent Data, allowing the User Agent to reveal hidden constraints without inventing new requirements or leaking implementation artifacts. Third, to evaluate open-ended repositories fairly, ICAE-Bench uses standardized black-box tests together with multi-dimensional diagnostics, including functional correctness, semantic and API similarity, structural fidelity, design quality, and interaction quality.",
+      "authors": [
+        "Zhongyuan Peng",
+        "Dan Huang",
+        "Chuyu Zhang",
+        "Caijun Xu",
+        "Changyi Xiao",
+        "Shibo Hong",
+        "David Lo",
+        "Lin Qiu",
+        "Xuezhi Cao",
+        "Jiyuan He",
+        "Yixin Cao"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-23T11:31:38+00:00",
+      "link": "https://arxiv.org/pdf/2607.21217v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "benchmark for coding agents likely with code",
+      "llm_evidence_cn": "编码代理基准测试，可能附带代码",
+      "llm_evidence": "编码代理基准测试，可能附带代码",
+      "canonical_evidence": "编码代理基准测试，可能附带代码",
+      "llm_tldr_en": "Introduces ICAE-Bench, a benchmark for evaluating coding agents as interactive project builders, simulating fuzzy requirements.",
+      "llm_tldr_cn": "针对编码代理从模糊需求构建完整软件的能力评估空白，本文提出ICAE-Bench基准。该基准通过模拟动态交互范式，自动化用户代理与编码代理协作，评测其规划、澄清需求、调试和仓库级构建等综合能力。实验表明，现有代理在交互式构建场景下仍有显著提升空间，为未来编码代理研究提供了标准化测试平台。",
+      "llm_tldr": "针对编码代理从模糊需求构建完整软件的能力评估空白，本文提出ICAE-Bench基准。该基准通过模拟动态交互范式，自动化用户代理与编码代理协作，评测其规划、澄清需求、调试和仓库级构建等综合能力。实验表明，现有代理在交互式构建场景下仍有显著提升空间，为未来编码代理研究提供了标准化测试平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Search thesis which has code with it.",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.15948v1",
+      "source": "arxiv",
+      "title": "TARS: A Theory-of-Mind Agent for Personalized In-IDE Code Comprehension",
+      "abstract": "Code comprehension is one of the most time-consuming tasks in software engineering, yet most LLM-based assistants produce explanations that ignore who is asking and force developers into a disruptive copy-paste workflow. We present TARS, an LLM-powered agent integrated into Visual Studio Code that supports program comprehension through autonomous explanations anchored directly to the code under analysis. Built around a lightweight Theory of Mind paradigm, TARS profiles a developer's expertise, role, and stylistic preferences, then adapts the depth and tone of its explanations accordingly, grounding them in project documentation via Retrieval-Augmented Generation. To evaluate TARS, we conducted a controlled experiment with 18 participants on non-trivial Java snippets. Participants using TARS completed tasks 26\\% faster, reported lower cognitive load, and found the explanations meaningfully adapted to their profiles.",
+      "authors": [
+        "Leopoldo Todisco",
+        "Antonio Della Porta",
+        "Stefano Lambiase",
+        "Fabio Palomba"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-17T13:32:20+00:00",
+      "link": "https://arxiv.org/pdf/2607.15948v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "presents TARS, an IDE agent for code comprehension; likely open-source",
+      "llm_evidence_cn": "提出TARS，一个用于代码理解的IDE代理，可能开源",
+      "llm_evidence": "提出TARS，一个用于代码理解的IDE代理，可能开源",
+      "canonical_evidence": "提出TARS，一个用于代码理解的IDE代理，可能开源",
+      "llm_tldr_en": "TARS uses Theory of Mind and RAG to provide personalized code explanations in VS Code, adapting to developer expertise and role.",
+      "llm_tldr_cn": "TARS是一个集成在VS Code中的LLM代理，利用轻量级心智模型对开发者进行画像，并结合检索增强生成提供定制的代码解释。用户实验表明，TARS比通用助手更高效且更符合开发者的理解需求。",
+      "llm_tldr": "TARS是一个集成在VS Code中的LLM代理，利用轻量级心智模型对开发者进行画像，并结合检索增强生成提供定制的代码解释。用户实验表明，TARS比通用助手更高效且更符合开发者的理解需求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
