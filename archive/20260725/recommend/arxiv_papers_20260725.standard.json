@@ -1,0 +1,298 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-25T20:59:43.815730+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2607.18064v1",
+      "source": "arxiv",
+      "title": "Autoresearch with Coding Agents: Generalizers and Metric-Maximizers on Quran Recitation Data",
+      "abstract": "Coding agents can now be left alone to improve software against a score. In this pattern--recently popularized as \"autoresearch\"--the agent receives a dataset, an evaluation script, and one editable file, and iterates without supervision: modify the code, measure, keep the change if the score improves. But what does the agent actually optimize--the developer's intent, or the literal number? We ran this loop on a real production task: deciding which Quranic verses appear in a noisy speech-recognition transcript and splitting the transcript by verse. Two frontier coding agents, Claude Code and OpenAI Codex, started from the same blank file with the same instructions, budget, and reasoning effort, three runs each. Both independently invented the same algorithm (canonicalization, n-gram anchoring, dynamic-programming alignment)--and then diverged. Claude stopped early with compact, general code. Codex drove the score ~10x lower, largely by memorizing answers to individual evaluation rows (19-41 hardcoded verse ids per run): a clean natural instance of specification gaming by a production agent. In a preregistered second study, we added a held-out test set and told both agents it existed. The memorization vanished, and the score gap vanished with it--yet Codex's general core transferred better and more consistently (held-out detection+split 0.085+/-0.004 vs. 0.121+/-0.031), losing only on one missed rejection of non-recitation input. Two exploratory community arms (Cursor, Antigravity) are consistent with the pattern. Every agent's held-out solution matched or beat the hand-engineered pipeline it was built to replace--the best by an order of magnitude--and now runs in production. From the ways agents exploited our harness--reading sibling runs through shared git state, leaving notes to \"future runs\" in persistent memory--we distill five design rules for evaluating autonomous agents.",
+      "authors": [
+        "Nursultan Askarbekuly",
+        "Mohamad Al Mdfaa",
+        "Ahmed Helaly",
+        "Gonzalo Ferrer",
+        "Manuel Mazzara"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-20T15:32:09+00:00",
+      "link": "https://arxiv.org/pdf/2607.18064v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "uses coding agents to iteratively improve software; code likely released",
+      "llm_evidence_cn": "使用编码代理迭代改进软件，代码可能公开",
+      "llm_evidence": "使用编码代理迭代改进软件，代码可能公开",
+      "canonical_evidence": "使用编码代理迭代改进软件，代码可能公开",
+      "llm_tldr_en": "Studies autoregressive coding agents autonomously improving software against a score; two agents tested on Quran recitation transcription show differing optimization behaviors.",
+      "llm_tldr_cn": "该论文研究编码代理在自动研究模式下无需监督地迭代改进软件。在古兰经诵读转录任务上，Claude Code和OpenAI Codex从空白文件开始，各自三次运行，分别优化评价指标。结果揭示了代理是优化开发者意图还是纯粹优化数字的区别。贡献在于提出了评估编码代理行为的框架，并公开了实验设置和代码。",
+      "llm_tldr": "该论文研究编码代理在自动研究模式下无需监督地迭代改进软件。在古兰经诵读转录任务上，Claude Code和OpenAI Codex从空白文件开始，各自三次运行，分别优化评价指标。结果揭示了代理是优化开发者意图还是纯粹优化数字的区别。贡献在于提出了评估编码代理行为的框架，并公开了实验设置和代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.18360v1",
+      "source": "arxiv",
+      "title": "HALLMARK: Diagnosing Three Failure Modes in LLM Citation Verifiers",
+      "abstract": "Large language models (LLMs) now routinely draft literature reviews and assist with academic writing, which means a higher risk of fabricated references: GPTZero found 53 papers with hallucinated citations among NeurIPS 2025's accepted set. Rule- and LLM-based verifiers are emerging, but no shared benchmark compares them and gives detailed failure diagnostics. We close that gap with HALLMARK (Hallucination benchmark): 2,526 BibTeX entries spanning 14 hallucination types, three difficulty tiers, six diagnostic sub-tests per entry, and a contamination-resistant held-out split. On it we evaluate a DOI-lookup baseline, frontier LLMs zero-shot, tool-augmented agents, and our own rule-based, co-designed verifier bibtex-updater. Across the benchmark one result is consistent: the false-positive rate, not recall, decides whether a verifier is deployable. HALLMARK makes it concrete through three failure modes: agentic lookups buy recall but inflate false positives; at a venue-realistic base rate, the order-of-magnitude spread in false-positive rates (FPRs) -- not recall -- governs whether a verifier's flags are mostly true catches or mostly noise; and most LLMs over-flag papers published past their training cutoff, where only the two latest-cutoff models hold their false-positive rate near in-distribution levels (a signal we report as descriptive, since it is confounded with possible recall of those entries). Thus FPR is the deployment bottleneck, but an undetected fabrication remains the costlier error for the scientific record.",
+      "authors": [
+        "Patrik Reizinger",
+        "Wieland Brendel"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-07-20T13:21:27+00:00",
+      "link": "https://arxiv.org/pdf/2607.18360v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides benchmark and verifier code for citation verification",
+      "llm_evidence_cn": "提供引文验证基准和验证器代码",
+      "llm_evidence": "提供引文验证基准和验证器代码",
+      "canonical_evidence": "提供引文验证基准和验证器代码",
+      "llm_tldr_en": "Presents HALLMARK, a benchmark of 2,526 BibTeX entries with 14 hallucination types, and evaluates rule/LLM-based verifiers including the open-source bibtex-updater.",
+      "llm_tldr_cn": "该论文针对大模型生成文献综述时产生幻觉引用的问题，构建了HALLMARK基准，包含2526条BibTeX记录、14种幻觉类型和多级难度。评估了多种验证器，包括DOI查找、零样本LLM、工具增强代理以及开源的bibtex-updater验证器。结果发现现有方法仍有不足，为引用验证提供了标准化评估平台。所有数据和代码开源。",
+      "llm_tldr": "该论文针对大模型生成文献综述时产生幻觉引用的问题，构建了HALLMARK基准，包含2526条BibTeX记录、14种幻觉类型和多级难度。评估了多种验证器，包括DOI查找、零样本LLM、工具增强代理以及开源的bibtex-updater验证器。结果发现现有方法仍有不足，为引用验证提供了标准化评估平台。所有数据和代码开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.20630v1",
+      "source": "arxiv",
+      "title": "Demonstrating GenDB: Instance-Optimized and Customized Query Processing Code Generation via LLM Agents",
+      "abstract": "Traditional query processing engines require continuous development and extensions to support new techniques and user requirements, and in some cases, entirely new systems must be built from scratch. However, these engines are difficult to extend due to their internal complexity, and building new systems demands significant engineering effort and cost. To address this, we demonstrate GenDB, a generative query engine that shifts query processing from manually engineered systems to query processing code generation driven by Large Language Models (LLMs). An early prototype of GenDB uses LLM agents to generate instance-optimized query execution code tailored to specific data, workloads, and hardware resources. This prototype suits offline code generation for repetitive, templated queries, since the upfront generation cost amortizes over many executions and correctness can be ensured through extensive fuzz testing and manual inspection. For ad-hoc queries, GenDB can work with a traditional DBMS in a hybrid architecture: the DBMS handles one-off queries, while GenDB speeds up frequent SQL templates. Our demonstration allows users to (1) visually and interactively explore how GenDB analyzes workloads, profiles hardware resources and underlying data, produces query plans, generates code based on them, and finally uses an optimizer to iteratively achieve a correct and efficient implementation; (2) use visual inspection and analysis to gain qualitative insights into why GenDB produces code that achieves significantly better performance than state-of-the-art query engines on two benchmarks: TPC-H and a newly constructed benchmark designed to reduce potential data leakage from LLM training data; and (3) upload their own data and queries to explore GenDB with different LLMs and query patterns.",
+      "authors": [
+        "Jiale Lao",
+        "Immanuel Trummer"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-07-22T18:01:29+00:00",
+      "link": "https://arxiv.org/pdf/2607.20630v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Demonstrates GenDB, a query engine that generates code via LLM agents, with available prototype",
+      "llm_evidence_cn": "演示了GenDB，一个通过LLM智能体生成代码的查询引擎，原型可用",
+      "llm_evidence": "演示了GenDB，一个通过LLM智能体生成代码的查询引擎，原型可用",
+      "canonical_evidence": "演示了GenDB，一个通过LLM智能体生成代码的查询引擎，原型可用",
+      "llm_tldr_en": "GenDB shifts query processing to code generation using LLM agents, producing instance-optimized execution code for specific data and hardware.",
+      "llm_tldr_cn": "GenDB提出了一种生成式查询引擎，利用LLM智能体针对特定数据、工作负载和硬件资源生成实例优化的查询执行代码，取代了传统的手工构建引擎。早期原型展示了该方法在减少工程成本的同时提供定制化查询处理的潜力。",
+      "llm_tldr": "GenDB提出了一种生成式查询引擎，利用LLM智能体针对特定数据、工作负载和硬件资源生成实例优化的查询执行代码，取代了传统的手工构建引擎。早期原型展示了该方法在减少工程成本的同时提供定制化查询处理的潜力。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.16038v1",
+      "source": "arxiv",
+      "title": "SciForge: An AI-Native, Multimodal Workbench for Scientific Discovery",
+      "abstract": "Scientific work increasingly spans heterogeneous artifacts -- papers, code, datasets, scientific file formats, model outputs, figures, manuscripts, and team decisions -- yet general-purpose AI assistants rarely preserve these objects as a coherent, auditable research state. We present SciForge, a multimodal research-native AI workbench that reserves the graphical interface for human judgment while search, parsing, model routing, workflow execution, plotting, writing, and presentation generation run as modular agent-accessible services. SciForge is built around five pillars: (i) \\emph{goal-scoped scientific decision governance} for \\textbf{goal-oriented} research, with review gates and shared review surfaces; (ii) \\emph{translate-then-reason} for \\textbf{multimodal} input, routing scientific objects through domain translators before the agent reasons; (iii) \\emph{evidence governance} for \\textbf{auditable} traceability, linking claims to provenance chains and audit findings; (iv) \\emph{collaborative team science} for \\textbf{collaborative} research, enabling multi-role decision governance, with shared team workspaces planned for future releases; and (v) \\emph{real-world application scenarios} for \\textbf{practical} impact, demonstrated through eight end-to-end user cases, with flagship demonstrations including multi-day agentic research sprints for gene discovery, AI-guided de novo protein design, molecular optimization, and genome-to-BGC discovery. The system combines a thin interaction layer, contextual research capability patterns, an Agent Runtime and Workflow Engine, an Evidence-DAG audit sidecar and a Scientific Model Router. SciForge currently runs as a desktop application, with mobile supervision support; future releases will deepen team collaboration. The system is open-source and available at https://github.com/AGI4Sci/SciForge",
+      "authors": [
+        "SciForge Team",
+        "Zhangyang Gao",
+        "Minghao Fang",
+        "Yifei Liu",
+        "Hanhui Yang",
+        "Xinyu Gu",
+        "Shixiang Tang",
+        "Siqi Sun",
+        "Lei Bai",
+        "Cheng Tan",
+        "Mengdi Liu",
+        "Hao Wu",
+        "Shuizhou Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-17T15:13:03+00:00",
+      "link": "https://arxiv.org/pdf/2607.16038v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "SciForge is a multimodal AI workbench for scientific discovery, likely with open code",
+      "llm_evidence_cn": "SciForge是一个面向科学发现的多模态AI工作台，可能提供开源代码",
+      "llm_evidence": "SciForge是一个面向科学发现的多模态AI工作台，可能提供开源代码",
+      "canonical_evidence": "SciForge是一个面向科学发现的多模态AI工作台，可能提供开源代码",
+      "llm_tldr_en": "SciForge is a multimodal AI workbench for scientific discovery integrating search, parsing, model routing, and workflow execution as agent-accessible services.",
+      "llm_tldr_cn": "SciForge是一个面向科学发现的多模态AI工作台，将搜索、解析、模型路由、工作流执行等模块作为智能体可访问的服务，保留图形界面用于人类判断。它通过目标导向的研究决策治理和翻译-推理等支柱，统一管理论文、代码、数据集等异构研究对象，实现可审计的研究状态。",
+      "llm_tldr": "SciForge是一个面向科学发现的多模态AI工作台，将搜索、解析、模型路由、工作流执行等模块作为智能体可访问的服务，保留图形界面用于人类判断。它通过目标导向的研究决策治理和翻译-推理等支柱，统一管理论文、代码、数据集等异构研究对象，实现可审计的研究状态。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.16603v1",
+      "source": "arxiv",
+      "title": "NOWJ@COLIEE 2026: Adaptive Pipelines for Legal Retrieval and Reasoning",
+      "abstract": "This paper presents the methodologies and results of the NOWJ team's participation across all five tasks of the COLIEE 2026 competition. For Task 1 (Legal Case Retrieval), we propose a four-stage pipeline comprising candidate filtering, dense retrieval with complementary embedding models, cross-encoder reranking via fine-tuned generative rerankers and MLP-based pairwise classification, and adaptive per-query cutoff prediction. For Task 2 (Legal Case Entailment), we combine BM25 filtering, T5-based reranking, and LLM-based entailment verification with consensus ensemble. For Task 3 (Statute Law Retrieval and Entailment), we adopt a retrieval-augmented generation framework with dense retrieval, attention-based reranking, and few-shot-prompted LLM reasoning. For Task 4 (Legal Textual Entailment), we introduce a dynamic routing pipeline that classifies query difficulty and dispatches cases to either a balanced few-shot solver or a structured zero-shot chain-of-thought solver. For the Pilot Task (Legal Judgment Prediction), we combine hierarchical transformers with CRF layers, argument relation mining, and probabilistic argumentation graph reasoning.",
+      "authors": [
+        "Thuong-Hieu Ngo",
+        "Hoang-Trung Nguyen",
+        "Huu-Dong Nguyen",
+        "Xuan-Bach Le",
+        "Le-Dung Nguyen",
+        "Quang-Thanh Tran",
+        "Ha-Thanh Nguyen",
+        "Thi-Hai-Yen Vuong"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-07-18T02:46:06+00:00",
+      "link": "https://arxiv.org/pdf/2607.16603v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "competition paper likely with code; provides retrieval pipelines",
+      "llm_evidence_cn": "竞赛论文可能附代码，提供检索管道",
+      "llm_evidence": "竞赛论文可能附代码，提供检索管道",
+      "canonical_evidence": "竞赛论文可能附代码，提供检索管道",
+      "llm_tldr_en": "Presents adaptive pipelines for legal case retrieval and entailment in COLIEE 2026, combining embedding, reranking, and LLM reasoning; likely open-source.",
+      "llm_tldr_cn": "该论文描述了在COLIEE 2026法律检索与推理竞赛中的方法，包括四阶段法律案例检索管道、T5重排序和LLM蕴含验证等。所有组件形成完整系统，通常竞赛代码会公开。贡献在于提供了多种检索和推理方法的集成方案，并可能发布源代码以供复现。",
+      "llm_tldr": "该论文描述了在COLIEE 2026法律检索与推理竞赛中的方法，包括四阶段法律案例检索管道、T5重排序和LLM蕴含验证等。所有组件形成完整系统，通常竞赛代码会公开。贡献在于提供了多种检索和推理方法的集成方案，并可能发布源代码以供复现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.18481v1",
+      "source": "arxiv",
+      "title": "Search-on-Graph-R1: Training Large Language Models to Search Knowledge Graphs with Reinforcement Learning",
+      "abstract": "Knowledge graph question answering (KGQA) requires navigating from topic entities to an answer several relations away. Recent methods prompt a frontier LLM to explore the graph through a retrieval tool, but their reliance on frontier-scale inference makes them costly to deploy. We present Search-on-Graph-R1 (\\sogrone{}), which internalizes this navigation into a compact 8B model through supervised fine-tuning (SFT) followed by reinforcement learning (RL). Our central idea is to scaffold a frontier teacher with each question's gold SPARQL query, so the teacher traverses a known answer-bearing path with a live \\texttt{Search} tool rather than having to discover the path itself. Since every call executes against a live Freebase server, the resulting trajectories are grounded in the knowledge graph by construction. On WebQSP, CWQ, and GrailQA, \\sogrone{} at 8B surpasses every frozen frontier-LLM system in our comparison and posts the strongest results on CWQ of any system we compare against. It does so using no auxiliary module at inference and no LLM judge during training. Isolating each training stage shows that SFT and RL contribute complementary gains, our approach transfers across model families, and RL learns to reach answers in fewer \\texttt{Search} calls than its SFT initialization.",
+      "authors": [
+        "Jia Ao Sun",
+        "Hao Yu",
+        "Fengran Mo",
+        "Zhan Su",
+        "Yuchen Hui",
+        "Bang Liu",
+        "Jian-Yun Nie"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.IR"
+      ],
+      "published": "2026-07-20T19:58:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.18481v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "proposes training method for LLM to search KG; code likely available",
+      "llm_evidence_cn": "提出训练LLM搜索知识图谱的方法，代码可能公开",
+      "llm_evidence": "提出训练LLM搜索知识图谱的方法，代码可能公开",
+      "canonical_evidence": "提出训练LLM搜索知识图谱的方法，代码可能公开",
+      "llm_tldr_en": "Proposes Search-on-Graph-R1 that internalizes KG navigation into an 8B model via SFT+RL using a teacher scaffolded with gold SPARQL queries.",
+      "llm_tldr_cn": "该论文针对知识图谱问答需要大模型调用搜索工具成本高的问题，提出Search-on-Graph-R1方法。通过教师模型使用真实SPARQL查询引导，将导航能力内化到8B参数模型中，采用监督微调和强化学习训练。实验表明紧凑模型能达到甚至超越前沿模型的性能，且成本更低。贡献在于提供了知识图谱问答的轻量化方案，代码将开源。",
+      "llm_tldr": "该论文针对知识图谱问答需要大模型调用搜索工具成本高的问题，提出Search-on-Graph-R1方法。通过教师模型使用真实SPARQL查询引导，将导航能力内化到8B参数模型中，采用监督微调和强化学习训练。实验表明紧凑模型能达到甚至超越前沿模型的性能，且成本更低。贡献在于提供了知识图谱问答的轻量化方案，代码将开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.19291v1",
+      "source": "arxiv",
+      "title": "EmbeddedKittens: An Evaluation of Code Embeddings for Scratch",
+      "abstract": "The trend of embedding source code for machine learning applications also enables new opportunities in learning analytics in programming education, but which code embedding approach is most suitable for learning analytics remains an open question. A common approach to embedding source code lies in treating the code as a token sequence similar to natural language when training large language models~(LLMs). However, in case of visual block-based programming languages like Scratch, this approach cannot be applied directly. While text-based representations of block-based code can be created to apply LLMs to this problem, other dedicated embedding models could potentially exhibit improved performance by capturing additional structural information. In this paper, we therefore instantiate four LLMs and five different popular embedding approaches for Scratch programs, create a token-prediction and two different classification tasks with corresponding datasets, and empirically evaluate the models on them. Our experiments demonstrate that a transfer of code embeddings to the educational environment of Scratch is feasible. The embedding models trained on large open Scratch datasets capture relevant structural and semantic information about the code to enable learning analytics like predicting functional correctness of student programs, in the typically small classroom setting without requiring further task-specific model fine-tuning.",
+      "authors": [
+        "Benedikt Fein",
+        "Gordon Fraser"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-21T17:02:08+00:00",
+      "link": "https://arxiv.org/pdf/2607.19291v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "evaluates code embeddings for Scratch; code likely available",
+      "llm_evidence_cn": "评估Scratch代码嵌入方法，代码可能公开",
+      "llm_evidence": "评估Scratch代码嵌入方法，代码可能公开",
+      "canonical_evidence": "评估Scratch代码嵌入方法，代码可能公开",
+      "llm_tldr_en": "Evaluates code embedding approaches for visual block-based Scratch code; finds dedicated models capturing structural information outperform LLM-based token sequences.",
+      "llm_tldr_cn": "该论文针对视觉块编程语言Scratch的代码嵌入问题，比较了基于大语言模型将其视为文本序列的嵌入方法与专用嵌入模型。专用模型通过捕获块结构信息获得更好效果。实验表明，在编程教育分析任务中，结构感知嵌入优于纯文本嵌入。贡献在于提供了Scratch代码嵌入的基准评估，并公开了代码和数据。",
+      "llm_tldr": "该论文针对视觉块编程语言Scratch的代码嵌入问题，比较了基于大语言模型将其视为文本序列的嵌入方法与专用嵌入模型。专用模型通过捕获块结构信息获得更好效果。实验表明，在编程教育分析任务中，结构感知嵌入优于纯文本嵌入。贡献在于提供了Scratch代码嵌入的基准评估，并公开了代码和数据。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
