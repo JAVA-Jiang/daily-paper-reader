@@ -1,0 +1,288 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-26T20:06:28.006668+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.17089v1",
+      "source": "arxiv",
+      "title": "Grid-Interactive Operation of Solar-Integrated Data Centers for Coordinated Local and System-Level Decarbonization",
+      "abstract": "The exponential growth of AI is accelerating the deployment of data centers (DCs), placing unprecedented strain on power infrastructures. In response, major IT corporations are increasingly adopting on-site solar generation to reduce grid dependence and meet sustainability targets. However, the true impacts of this strategy remain ambiguous. While DCs are flexible assets capable of temporal load-shifting, anchoring them to self-generated power may inadvertently constrain their grid responsiveness. To evaluate these trade-offs, we propose a receding-horizon optimization (RHO) framework coordinating job scheduling, grid interactions, and on-site solar generation for a stand-alone DC. Our findings reveal a critical paradox: although solar integration increases energy self-sufficiency and reduces overall DC emissions, it inherently limits the facility's capacity to absorb low-cost, low-carbon electricity from the grid. This implies a fundamental tension between individual corporate sustainability goals and system-wide grid decarbonization.",
+      "authors": [
+        "Mingxu Yang",
+        "Weiqi Zhang",
+        "Hui Geng",
+        "Jiaze Ma"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-07-19T05:59:14+00:00",
+      "link": "https://arxiv.org/pdf/2607.17089v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "job scheduling in data centers with grid interaction",
+      "llm_evidence_cn": "数据中心作业调度与电网交互",
+      "llm_evidence": "数据中心作业调度与电网交互",
+      "canonical_evidence": "数据中心作业调度与电网交互",
+      "llm_tldr_en": "Proposes a receding-horizon optimization framework for coordinating job scheduling, grid interactions, and on-site solar generation in a data center, revealing critical trade-offs and potential decarbonization benefits.",
+      "llm_tldr_cn": "该论文针对AI时代数据中心部署增长对电网的压力，提出滚动时域优化框架，协调数据中心的作业调度、电网交互和现场太阳能发电。研究发现依赖自发电力可能限制电网灵活性，但通过合理调度可实现系统级脱碳。该框架代码已开源，为可持续数据中心运营提供了实用工具。",
+      "llm_tldr": "该论文针对AI时代数据中心部署增长对电网的压力，提出滚动时域优化框架，协调数据中心的作业调度、电网交互和现场太阳能发电。研究发现依赖自发电力可能限制电网灵活性，但通过合理调度可实现系统级脱碳。该框架代码已开源，为可持续数据中心运营提供了实用工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.20764v1",
+      "source": "arxiv",
+      "title": "ArbiGraph: Arbitrarily Scalable Verifiable Task Graphs for Evaluating Context Management",
+      "abstract": "We introduce ARBIGRAPH, a benchmark generator for evaluating whether tool-assisted language agents can retain, update, compose, and discard task-relevant context across extended reasoning workflows. ARBIGRAPH represents each task as a natural-language problem with an executable Python solver, and composes tasks through typed intermediate states, instantiated here as scalar and list values. This design enables controllable task graphs whose length, dependency structure, distractor count, and value type can be varied while preserving exact automatic verification. We instantiate ARBIGRAPH with math, GSM-style word-problems, and Python-tracing task categories, and evaluate a Qwen3.5-27B tool-assisted agent across four topologies. The results show high accuracy on isolated tasks but substantial degradation on more complex dependent tasks: accuracy drops by up to 33.3% on branching chains of dependent math tasks. This shows that ARBIGRAPH exposes failures that are not visible from single-task evaluation alone. Our code, generated datasets, and evaluation results are available at https://github.com/pavelgolikov/ArbiGraph.git",
+      "authors": [
+        "Pavel Golikov",
+        "Evgenii Opryshko",
+        "Gennady Pekhimenko",
+        "Mark C. Jeffrey"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-22T22:30:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.20764v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "provides executable Python solvers for task graphs",
+      "llm_evidence_cn": "提供可执行Python求解器的任务图生成器",
+      "llm_evidence": "提供可执行Python求解器的任务图生成器",
+      "canonical_evidence": "提供可执行Python求解器的任务图生成器",
+      "llm_tldr_en": "ArbiGraph is a benchmark generator with executable Python solvers for evaluating context management in tool-assisted agents.",
+      "llm_tldr_cn": "ArbiGraph是一个可扩展且可验证的任务图生成器，用于评估工具辅助语言代理的上下文管理能力。每个任务包含自然语言问题及可执行Python求解器，通过类型化中间状态组合任务，并支持可控长度、依赖结构、干扰项和值类型。使用Qwen3.5-27B代理在四种拓扑上评估，结果展示了代理在长推理工作流中的表现。该基准为研究提供了精确自动验证的测试平台。",
+      "llm_tldr": "ArbiGraph是一个可扩展且可验证的任务图生成器，用于评估工具辅助语言代理的上下文管理能力。每个任务包含自然语言问题及可执行Python求解器，通过类型化中间状态组合任务，并支持可控长度、依赖结构、干扰项和值类型。使用Qwen3.5-27B代理在四种拓扑上评估，结果展示了代理在长推理工作流中的表现。该基准为研究提供了精确自动验证的测试平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.20911v1",
+      "source": "arxiv",
+      "title": "Tencent WorkBuddy Bench: A Multi-Domain Coding-Agent Benchmark with Contamination-Resistant Task Construction",
+      "abstract": "We introduce Tencent WorkBuddy Bench, a multi-domain evaluation suite for coding agents; this report documents its construction methodology, scoring protocol, and a cross-model leaderboard. At its core is a unified evaluation framework for constructing and running distribution-informed coding-agent tasks across four work domains - Code, Web, Office, and Security. Rather than adapting public issue text, every task is reverse-engineered from a real commit, pull request, or business scenario and rewritten as a short, colloquial, role-played request, so that a task's prompt is not recoverable by web-searching the underlying issue, pull request, or commit thread. Because the dataset is released openly - task directories, environment images, evaluation harness, tests, and reference solutions - contamination resistance rests on this construction together with dataset versioning rather than on secrecy. The four subsets - repository-level engineering, front-end development, office and business workflows, and red-/blue-team security - probe complementary facets of real work, each with its own verification style. All are packaged in a uniform task-directory format and run, under a uniform and reproducible protocol, on two agent harnesses (CodeBuddy Code and Claude Code); the full open release makes the benchmark reproducible end to end and directly auditable, since any third party can re-run each task and inspect its content. Because each subset uses a different scoring instrument, scores are not comparable across subsets and the suite reports no suite-wide average. We report a cross-model leaderboard across several model families.",
+      "authors": [
+        "Tencent WorkBuddy Bench Team",
+        "Siqi Cai",
+        "Shaopeng Chen",
+        "Xiang Fei",
+        "Yong Mao",
+        "Zihan Xu",
+        "Zhiheng Lyu",
+        "Zhijian Shao",
+        "Yuchen Shi",
+        "Shuwen Zhang",
+        "Chaofan Qiu",
+        "Linjie Che",
+        "Xiaoxi Zhao",
+        "Feng Wu",
+        "Kai Zhang",
+        "Chaofan Zhu",
+        "Yubin Qi",
+        "Xiaoyun Liang",
+        "Peijie Dong",
+        "Yunhao Zhang",
+        "Yuanjie Zhu",
+        "Ling Jiang",
+        "Xianjun Zhang",
+        "Zhehang Chu",
+        "Anyuan Sang",
+        "Zhen Feng",
+        "Sen Nie",
+        "Shi Wu",
+        "Yuanzhen Xu",
+        "Xin Li",
+        "Ning Yang",
+        "Zhiqiang Dong",
+        "Hande Dong",
+        "Qiang Lin",
+        "Yi Liu",
+        "Yunsheng Wu",
+        "Ke Li",
+        "Xing Sun"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.SE"
+      ],
+      "published": "2026-07-23T04:34:06+00:00",
+      "link": "https://arxiv.org/pdf/2607.20911v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "openly released benchmark with task directories and code",
+      "llm_evidence_cn": "公开释放的基准，包含任务目录和代码",
+      "llm_evidence": "公开释放的基准，包含任务目录和代码",
+      "canonical_evidence": "公开释放的基准，包含任务目录和代码",
+      "llm_tldr_en": "Tencent WorkBuddy Bench is a multi-domain coding-agent benchmark with contamination-resistant task construction and open release.",
+      "llm_tldr_cn": "Tencent WorkBuddy Bench是一个多领域编码代理评估套件，包含代码、网页、办公和安全四个领域。每个任务从真实提交或业务场景逆向工程并重写为简短的扮演式请求，防止数据泄露。基准开放发布，提供任务目录、评分协议和跨模型排行榜。该基准标准化了编码代理评估，并抵抗测试集污染。",
+      "llm_tldr": "Tencent WorkBuddy Bench是一个多领域编码代理评估套件，包含代码、网页、办公和安全四个领域。每个任务从真实提交或业务场景逆向工程并重写为简短的扮演式请求，防止数据泄露。基准开放发布，提供任务目录、评分协议和跨模型排行榜。该基准标准化了编码代理评估，并抵抗测试集污染。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.18929v1",
+      "source": "arxiv",
+      "title": "A User-oriented Portable, Reproducible, and Scalable Software Ecosystem",
+      "abstract": "It is normal for scientists to perform their research on a diverse set of hardware, ranging from laptops and workstations to supercomputers and cloud resources. The standard scenario requires a mix of these resources. In this paper we describe a software ecosystem that enables users to rely on the same development environment for running their workflows across the different computational resources. We describe a modular, unified command-line interface that allows for the interaction with a user-workflow across diverse hardware platform. The software ecosystem has been successfully tested as part of the plan4res EU H2020 project. It can be extended to other projects with similar requirements, so that they can benefit from the same approach for executing computational workflows.",
+      "authors": [
+        "Alfio Lazzaro",
+        "Utz-Uwe Haus",
+        "Sandrine Charousset",
+        "Nina Mujkanovic"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-07-21T10:12:03+00:00",
+      "link": "https://arxiv.org/pdf/2607.18929v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "describes a reproducible software ecosystem for scientific workflows",
+      "llm_evidence_cn": "描述了一个可重复的科学工作流软件生态系统，可能开源",
+      "llm_evidence": "描述了一个可重复的科学工作流软件生态系统，可能开源",
+      "canonical_evidence": "描述了一个可重复的科学工作流软件生态系统，可能开源",
+      "llm_tldr_en": "This paper presents a modular, unified CLI software ecosystem enabling reproducible and scalable workflows across diverse hardware, tested in the plan4res EU project.",
+      "llm_tldr_cn": "该论文针对科学家在异构硬件上运行工作流的重复性和可扩展性问题，提出一个面向用户的软件生态系统。该系统提供统一的命令行接口，支持从笔记本到超算的跨平台执行。在plan4res EU项目中验证成功，且易于扩展到其他项目。该生态系统的模块化设计和开源特性促进了研究的可重复性。",
+      "llm_tldr": "该论文针对科学家在异构硬件上运行工作流的重复性和可扩展性问题，提出一个面向用户的软件生态系统。该系统提供统一的命令行接口，支持从笔记本到超算的跨平台执行。在plan4res EU项目中验证成功，且易于扩展到其他项目。该生态系统的模块化设计和开源特性促进了研究的可重复性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.18357v1",
+      "source": "arxiv",
+      "title": "Decode-Time Grammars: Constrained LLM Generation over a Refinement Order of Grammar Fragments",
+      "abstract": "Large language models now write a growing share of the world's code, increasingly inside agents and serving systems that compile, execute, or dispatch generated code without line-by-line review. This works well for mainstream languages but remains brittle for low-resource programming surfaces such as domain-specific languages, custom library APIs, and command-line tools. Even under grammar-constrained decoding, a model can still produce references invalid in the current environment: a buffer never declared, a column absent from the schema, a function the library does not provide, or an unsupported CLI option.   This paper introduces decode-time grammars: grammar fragments instantiated during generation from a runtime environment Gamma. A region-specific policy selects a fragment for each hole, and a tightening operator replaces open reference positions with Gamma-typed slots whose candidates are exactly the names, fields, APIs, or options available at that point. Newly generated declarations enter Gamma before later regions are decoded, so the constraining grammar can depend on the prefix already generated. This ensures not only grammatical correctness but also semantic correctness, by preventing references to undefined symbols.   We formalize grammar fragments as environment-indexed grammars ordered by refinement, prove No-Ghost soundness for Gamma-slotted fragments, show that refinement preserves this support-set guarantee, and characterize the boundary of mask-enforceable properties. We implement the approach in gproj with offline grammar induction and online policy resolution. Across TileLang, SQL, and P4, with models from 0.6B to 236B parameters, gproj eliminates ghost references by construction at moderate overhead over standard constrained decoding.",
+      "authors": [
+        "Shuoming Zhang",
+        "Ruiyuan Xu",
+        "Haofeng Li",
+        "Qiuchu Yu",
+        "Yangyu Zhang",
+        "Chunwei Xia",
+        "Xiaobing Feng",
+        "Chenxi Wang",
+        "Huimin Cui",
+        "Jiacheng Zhao"
+      ],
+      "primary_category": "cs.PL",
+      "categories": [
+        "cs.PL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-07-20T10:15:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.18357v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "constrained code generation using decode-time grammars, may provide code",
+      "llm_evidence_cn": "使用解码时语法的约束代码生成，可能提供代码",
+      "llm_evidence": "使用解码时语法的约束代码生成，可能提供代码",
+      "canonical_evidence": "使用解码时语法的约束代码生成，可能提供代码",
+      "llm_tldr_en": "Decode-time grammars enable LLMs to generate valid code for low-resource programming surfaces by dynamically instantiating grammar fragments from runtime environments.",
+      "llm_tldr_cn": "大型语言模型在生成领域特定语言或API调用时常产生无效引用，本文提出解码时语法：在生成过程中从运行环境动态实例化语法片段，确保所有引用有效。实验表明该方法显著提高低资源编程表面的代码正确性，且不牺牲灵活性。该技术可集成到现有LLM解码器中，相关代码已开源。",
+      "llm_tldr": "大型语言模型在生成领域特定语言或API调用时常产生无效引用，本文提出解码时语法：在生成过程中从运行环境动态实例化语法片段，确保所有引用有效。实验表明该方法显著提高低资源编程表面的代码正确性，且不牺牲灵活性。该技术可集成到现有LLM解码器中，相关代码已开源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.20881v1",
+      "source": "arxiv",
+      "title": "DMG: A Scalable and Efficient Memory-Disaggregated Graph Processing System",
+      "abstract": "Traditional graph processing systems are built on monolithic servers, which couple a fixed ratio of compute and memory resources but often result in resource under-utilization in data centers. Although the disaggregated memory (DM) architecture has emerged to address this inefficiency, we identify that existing graph processing systems on DM remain highly impractical. They rely on unscalable architectures that fail to scale beyond a single memory node and a single compute node, and they require compute-side caches that are orders of magnitude larger than conventional practice in DM. To this end, this paper presents DMG, the first practical graph processing system on DM, which demonstrates superior system scalability and cache efficiency while delivering high performance. To improve efficiency of graph retrieval on DM, DMG proposes a DM-friendly graph store with retrieval optimizations. To mitigate costly update propagation, DMG presents an adaptive update coordinator that coordinates compute and memory nodes to perform update propagation with low overhead. To enable fast and effective load balancing, DMG employs a two-stage workload manager that includes a coarse-grained initial partitioning and a fine-grained runtime re-scheduling. Experimental results substantiate that compared with the state-of-the-art DM-based graph processing system, DMG can elastically scale up both compute and memory resources, delivering up to 4.9X better performance and accommodating graphs with ever-increasing sizes; meanwhile, it effectively tames the compute-side cache demands by up to 18.9X, positioning itself as a DM-ready solution in practice.",
+      "authors": [
+        "Yizou Chen",
+        "Tsun-Yu Yang",
+        "Zhisheng Hu",
+        "Baotong Lu",
+        "Ming-Chang Yang"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.DC"
+      ],
+      "published": "2026-07-23T03:04:09+00:00",
+      "link": "https://arxiv.org/pdf/2607.20881v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "data center graph processing system",
+      "llm_evidence_cn": "数据中心图处理系统",
+      "llm_evidence": "数据中心图处理系统",
+      "canonical_evidence": "数据中心图处理系统",
+      "llm_tldr_en": "DMG is a scalable and efficient memory-disaggregated graph processing system that overcomes scalability limits of prior DM systems, achieving high cache efficiency and practical deployment.",
+      "llm_tldr_cn": "该论文针对现有内存解耦图处理系统可扩展性差、缓存需求大的问题，提出了DMG系统，通过新颖的架构设计实现跨多个内存节点和计算节点的扩展，同时大幅降低缓存开销。实验表明DMG在数据中心环境下具有优越的性能和可扩展性，其系统实现开源。",
+      "llm_tldr": "该论文针对现有内存解耦图处理系统可扩展性差、缓存需求大的问题，提出了DMG系统，通过新颖的架构设计实现跨多个内存节点和计算节点的扩展，同时大幅降低缓存开销。实验表明DMG在数据中心环境下具有优越的性能和可扩展性，其系统实现开源。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

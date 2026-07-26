@@ -1,0 +1,252 @@
+Title: A User-oriented Portable, Reproducible, and Scalable Software Ecosystem
+
+URL Source: https://arxiv.org/pdf/2607.18929v1
+
+Published Time: Wed, 22 Jul 2026 00:48:53 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# A User-oriented Portable, Reproducible, and Scalable Software Ecosystem 
+
+Alfio Lazzaro 1[0000 −0003 −4256 −8270] , Utz-Uwe Haus 1∗[0000 −0001 −7292 −9984] ,Sandrine Charousset 2, and Nina Mujkanovic 1 
+
+> 1
+
+HPE HPC/AI EMEA Research Lab, 4051 Basel, Switzerland 
+
+{alfio.lazzaro,utz-uwe.haus,nina.mujkanovic }@hpe.com  
+
+> 2
+
+EDF Lab Paris Saclay, 91120 Palaiseau, France 
+
+sandrine.charousset@edf.fr  
+
+> ∗
+
+Corresponding author 
+
+Abstract. It is normal for scientists to perform their research on a di-verse set of hardware, ranging from laptops and workstations to super-computers and cloud resources. The standard scenario requires a mix of these resources. In this paper we describe a software ecosystem that enables users to rely on the same development environment for run-ning their workflows across the different computational resources. We describe a modular, unified command-line interface that allows for the interaction with a user-workflow across diverse hardware platform. The software ecosystem has been successfully tested as part of the plan4res 
+
+EU H2020 project. It can be extended to other projects with similar requirements, so that they can benefit from the same approach for exe-cuting computational workflows. 
+
+Keywords: Computational workflows · containerized environment · su-percomputing · cluster computing. 
+
+## 1 Introduction 
+
+Scientists typical have access to a range of computing hardware for their research, from laptops and workstations ( local resources), to supercomputers and cloud resources ( remote resources). A standard scenario requires a mix of these hard-ware resources, as science projects may consist of numerous steps and methods involving multiple applications and running on various devices, from classical high performance computing (HPC) systems to cloud-based services. For exam-ple, users may carry out fast prototyping of their workflows on local resources at their disposal, then move to HPC remote resources for specific production work-flows requiring more performant or specialized hardware (e.g. fast interconnects for parallel job executions, or GPUs for computation). We note that users often prefer their local systems due to familiarity with specific operating systems (OSs), e.g. Windows or macOS , or the availability of applications not typically available on remote resources which often have a 
+
+Linux system installed, possibly with limited privileges. Pre- and post-data arXiv:2607.18929v1 [cs.DC] 21 Jul 2026 2 A. Lazzaro et al. 
+
+processing, for example, can require custom or commercial applications, where the data cannot be shared outside the user’s institution due to security reasons. Conversely, data may instead be located on the remote site, and only a portion of it needed for user tests on the local machines, leaving the data closer to the computation ( edge computing). Cloud computing technologies have gained traction in HPC for their ben-efits, including resource dynamism compared to the more static approach of traditional workload managers such as Slurm and PBS, workload automation, reproducibility via virtualization, and resilience owing to their microservices ap-proach. Supercomputers offer access to advanced HPC computing techniques and massive processing capability for grand challenges and scientific discovery. In re-cent years we have seen the convergence between the two spheres, as typical HPC applications such as MPI have crept into the cloud ecosystem, and HPC system vendors and sites have incorporated the notion of microservices and container-ization. An overview on the differences and commonalities between cloud and supercomputers, and how to run workflows on each, can be found elsewhere [1, 5, 8, 15, 10]. This convergence and the commoditization of HPC on one side, and the growing complexity of simulation and data analysis workflows on the other, have made workflow management a necessity. The need for the efficient use of resources, as well as the increased requirements to provide constant, reliable, and reproducible results, has driven the creation of a multitude of workflow management applications, which are often domain dependant [10]. We, instead, envision a software ecosystem that enables users to rely on the same development environment (same user-experience ) for running their workflows across local and remote resources. In this paper, we describe a modular, unified command-line interface us-ing containerization to enable the launching of jobs via a workload manager on a mix of hardware resources. In Section 2, we describe the requirements that have driven the software ecosystem development, based upon the domain-expert user’s perspective ( user-oriented ). As users can integrate their specific applica-tions in the software ecosystem as part of their favourite development workflow environment, and run seamlessly on local and remote resources, we consider this approach portable and reproducible , and it can interface with a scalable work-load manager to carry out complex workflows. The implementation details of the software ecosystem are given in Section 3. The ecosystem was developed as part of the plan4res EU H2020 project [3], and we present a workflow application use case in Section 4. Finally, concluding remarks and an outlook are given. 
+
+1.1 Related Work 
+
+Various frameworks have emerged to support user workflows from simple desk-top calculations to complex activities that require large infrastructure shared by a vast community of users. Science gateways combine computational resources from grid, cloud, and supercomputers, while reducing the learning curve and barriers to entry by implementing Web and mobile applications [7]. Jupyter A User-oriented Software Ecosystem 3
+
+Notebook has proven convenient for running workflows via a Web interface on local and remote systems. Colonnelli et al. have shown a way to execute complex distributed workflows with Jupyter, with a unified interface to Cloud and HPC for scientific applications [4]. Although these methods provide user-friendly Web interfaces out-of-the-box, they are mostly suited for scripting language applica-tions, and not really meant for HPC execution as they lack sufficient support for the version control required for collaborative activities [14]. The Emerald system allows to build workflows to be executed between lo-cal resources and cloud, where users can decide which computation steps should run on remote resources [13]. An abundance of studies concerning software envi-ronments that allow portable, reproducible, and scalable deployments, targeting cloud and HPC resources, exists, see for example Refs. [16, 11]. Their common approach is to use software containers as execution building-blocks. We follow a similar approach, however we also provide a unified command-line interface en-abling the launching of jobs via a workload manager on a diverse set of hardware and OSs. 
+
+## 2 Software Ecosystem Requirements 
+
+With reference to Section 1, we aim to design a software ecosystem that allows users to run on different computing resources with minimal burden. Here we distinguish between local and remote resources, as show in Fig. 1. In particular, local resources can have different OSs ( Windows , macOS , Linux ), while we assume that remote resources are only based on Linux for intensive and scal-able computational tasks. Therefore, the goal is to have a single entry-point for the execution control of the hardware resources that integrates the local soft-ware environment, with the option of specific configurations depending on which resource is used. We base the design requirements of the software ecosystem on a user-oriented approach, where we generalize and abstract the domain-experts software for spe-cific hardware. The requirements were introduced during the plan4res project, and generalized later on with the introduction of additional requirements, re-sulting in the following: 
+
+– unified control of the resources via a shell command-line interface (CLI); 
+
+– support for multiple OSs and compute systems; 
+
+– a minimal set of commands (possibly one) to interact with the resources to ensure good usability for domain-expert (non-technical) users; 
+
+– possibility to enable specific configurations via files or environment variables; 
+
+– common pre-installed components and a mechanism to add extra software to the platform as needed; 
+
+– relocation of the environment across systems with a simple drop-in replace-ment procedure, i.e. no installation needed and binary exchangeability; 
+
+– presumed multi-user shared environment; 
+
+– possibility to define and execute data-driven, complex workflows composed of Shell- and Python-scripts, as well as binary executables, including data transfer out of and into the storage platform. 4 A. Lazzaro et al. User 
+
+> Laptops
+> Workstations
+> Cloud
+> Local clusters
+> Supercomputers
+> Local resources Remote resources
+
+Fig. 1. User-oriented approach for running on local and remote computational re-sources. 
+
+The technical implementation to address these requirements is described in Sec-tion 3. 
+
+## 3 Software Ecosystem Implementation 
+
+The fundamental assumption for the software environment implementation is that all platform tools will run in a modern Linux -based software environment, on hosts with x86 64 CPUs, where we avoid requiring Linux -specificity by rely-ing on topic-specific standards only, in particular POSIX . The user CLI must run in a terminal shell, which is available by default on Linux and macOS systems, while for Windows users we suggest to use the git-bash shell 3. The scripts, data, configuration files, and application executables of the software ecosystem are organized in a specific directory structure, as described in Section 3.1. To ease deployment, we create a containerized environment based on the Sin-gularity container infrastructure [6]. This container acts as executor , meaning that all tools are based in and operated by it. The use of containers has been proven to be a very convenient way to abstract from the underlying host OS, permitting software to run reliably when moved from one computing environ-ment to another (assuming hardware compatibility), without having to build and configure separately [9]. This fulfills the requirement of running on a variety of hardware resources of interest.  
+
+> 3
+
+https://www.atlassian.com/git/tutorials/git-bash .A User-oriented Software Ecosystem 5 
+
+> ECOSYSTEM ROOT bin config data cache local scratch executors singularity scripts add-ons swift site bin lib man
+> Fig. 2. Software ecosystem directory structure.
+
+While the Singularity container can run natively on a Linux OS host, it cannot on Windows or macOS OSs 4, which is one of our requirements. For this reason, a minimal installation of a Linux virtual machine (VM) is required. We again assume that hosts have x86 64 CPUs. We describe the container and the VM configurations in Sections 3.2 , as well as components required pre-installed, and a mechanism to add extra software to the platform as needed. Finally, in Section 3.3 we address the implementation requirements to define and execute data-driven, complex workflows. 
+
+3.1 Directory Structure 
+
+The software ecosystem is organized in a directory structure. The root directory, defined by the user on the computer system, needs to 
+
+– be accessible from all compute nodes that will concurrently work on the data; 
+
+– have enough space for all data and the software environment; 
+
+– satisfy POSIX file system semantics. We refer to this directory as ECOSYSTEM ROOT . This is also the name of an en-vironment variable that contains the directory name, which tools can query at run-time. Inside this root directory, the directory structure shown in Fig. 2 is mandated, and can be relied upon when writing programs for use within the framework.   
+
+> 4https://docs.sylabs.io/guides/3.8/admin-guide/installation.html# installation-on-windows-or-mac .6A. Lazzaro et al.
+
+The ECOSYSTEM ROOT/bin directory contains all software that is needed for workflow execution and must be in the user’s search PATH so that the operating system can find it. This software will run the specific commands via the con-tainer available in the ECOSYSTEM ROOT/executors directory, which includes the necessary files for building it. The ECOSYSTEM ROOT/config directory contains the configuration file(s), see Section 3.3. All data will reside below the ECOSYSTEM ROOT/data directory. This directory takes the role of the staging area and also the results storage area. Data cached from external sources will be stored below ECOSYSTEM ROOT/data/cache . Local data that is specific to the user’s workspace, in particular private data, should be stored below ECOSYSTEM ROOT/data/local . The ECOSYSTEM ROOT/data/scratch 
+
+directory is used as the working directory of tools and can be used for volatile data during program runs. The ECOSYSTEM ROOT/scripts directory can contain more complex scripts to execute repeated tasks using executables from ECOSYSTEM ROOT/bin .The ECOSYSTEM ROOT/site can be used by users to install their own local software (comparable to /usr/local on Unix systems), which already guaran-tees that ECOSYSTEM ROOT/site/bin is in PATH , ECOSYSTEM ROOT/site/lib is in LD LIBRARY PATH , and ECOSYSTEM ROOT/site/man is in the MANPATH .The directory structure can be automatically created by cloning a GIT repos-itory, for which the created directory represents the ECOSYSTEM ROOT path. This repository contains all scripts needed for the environment and can be shared be-tween multiple users via the standard GIT features, like branching and forking. 
+
+3.2 Executor environment 
+
+The execution in the platform is triggered by calling a BASH script driver in the ECOSYSTEM ROOT/bin directory, which acts as the only entry-point for all users activities to be executed in the software ecosystem, including the execu-tion on the container image with arguments designating the tool to execute. This command will parse the configuration files under ECOSYSTEM ROOT/config and modify the environment as needed, then start the appropriate script or binary within the container environment. The driver command acts like a special shell; in fact, running it without arguments will start a shell in the container environ-ment with all paths set up appropriately so that scripts and tools are found and can be executed:            
+
+> $ECOSYSTEM_ROOT / bin / driver ;; Run 'driver -h 'to get help . [ ENV ] ~>
+
+Alternatively, the command to be executed (with its arguments) can be di-rectly passed during the driver invocation. The configuration files are BASH 
+
+shell-script fragments with default environment variables set suitable for most users, depending on the specific workflow. The users can change the values of A User-oriented Software Ecosystem 7
+
+these variables by editing the configuration files, or by exporting the values di-rectly in the environment. For this reason, the variables are set via the syntax 
+
+VARIABLE NAME= ${VARIABLE NAME:-DEFAULT VALUE }. For example, there can be multiple containers under the ECOSYSTEM ROOT/executors directory that can be selected via a variable in the configuration file. The minimal required dependencies for a Linux host system are: the BASH 
+
+shell, the GIT command, and the Singularity application (we use version 3.11). We test on Debian 10 , Ubuntu 20.04 , Ubuntu 22.04 , Fedora 35 ,and SUSE Linux Enterprise Server 15 . The container image binds the host 
+
+ECOSYSTEM ROOT directories tree (read and write access), so that it can access all files of the ecosystem of the host system. For the Windows and macOS host systems, we based our implementation on Vagrant 5 and VirtualBox 6 to conveniently set up a suitable VM. The VM is based on the Debian 10 distribution. A Vagrantfile in the 
+
+ECOSYSTEM ROOT directory is provided for the installation of the dependencies. The user starts the VM when running the driver command (the driver will check if the VM is running, otherwise it will start it via the vagrant up com-mand). Therefore there is no direct connection to the VM, making all ecosystem CLI commands independent of the host OS. We test on Windows 10 21H2 and 
+
+macOS 11 and 12. The VM introduces an intermediate layer between the host system and the container image running on it. For this reason, the VM has to mount the host ECOSYSTEM ROOT directories tree (described in the Vagrantfile 
+
+and done during the provisioning of the Vagrant VM), so that the container image can bind it. The driver itself will deal with the intermediate layer, so that the users will not see any difference with respect to running directly on a 
+
+Linux host system. In conclusion, the entire ECOSYSTEM ROOT directory tree is shared (for reading and writing) between the Host ( Linux , Windows , macOS )and the container. The users can build the container locally via a script available in the 
+
+ECOSYSTEM ROOT/bin directory, or download a pre-built version available from a given URL. Note that the build procedure will directly occur on the Linux 
+
+host or in the VM for Windows and macOS hosts. The containers include all the required packages for building the users applications such as compilers, build tools (e.g. cmake ), Python modules, parallel libraries (e.g. MPI ), and scientific libraries. Therefore, the container serves as a common working platform for the users, but by design does not contain the users applications. We implement the building of the pre-built container as part of a continuous-integration (CI) pro-cedure linked to the the GIT repository of the software ecosystem. Any change of the files used for building the container pushed to the GIT repository will trigger the CI for rebuilding the container that is then stored as an artifact. In this way users can download this image and do not need to build it on their local systems. By default, the users download the containers, unless they have built a local container and set to use it in the configuration file. Then, for every    
+
+> 5https://developer.hashicorp.com/vagrant .
+> 6https://www.virtualbox.org/ .8A. Lazzaro et al.
+
+execution of the driver there will be a check whether the local cached copy of the container image matches the remote one, and updates will be downloaded automatically. This check can be avoided via a configuration setting to preserve the local cached copy. User specific software can be installed using a recipe-based add-on installa-tion infrastructure. These software packages will be built and executed via the container. This procedure allows to install tools that can not be directly inserted into the container (mainly due to licensing issues). The advantage of having the add-ons not be part of the container is that users can update the container with new functionalities without the need of reinstalling them. An add-on requires a recipe file, stored under the ECOSYSTEM ROOT/scripts/add-ons directory. The recipe is an executable script, based on makefile syntax, that supports a com-mon set of targets, in particular install , update , status , uninstall , and help .The add-ons are installed into the directory 
+
+ECOSYSTEM ROOT/scripts/add-ons/install so that they can be executed via the driver . Binaries, libraries, and man pages are automatically added to the corresponding environment variables of the container. A user can then query the list of available add-ons via the command:                               
+
+> $ECOSYSTEM_ROOT / bin / driver add - on <add - on name > :< installed |not installed > Use 'add - on <add - on name > 'to install an add - on . Use 'add - on <add - on name > help 'to see alist of specific options per each add - on .
+
+The add-ons can be parallel MPI applications, which the driver will launch through various mechanisms, such as mpiexec/mpirun commands or the srun 
+
+command for the Slurm batch system. Finally, we provide a script that can archive the entire ecosystem installed software so that it can be relocated to another system, including the possibility to store backups, or alternatively synchronize (via the rsync command) files between two locations, possibly between different users. 
+
+3.3 Workflow Execution 
+
+In this section we describe a possible user installation workflow that employs the software ecosystem described in this paper. There are 3 steps, as shown in Fig. 3: setup, configure, and run. We assume that all required dependencies mentioned at the beginning of Section 3 are installed on the host system. As a result of our abstraction, the same procedure is valid for local and remote resources, independently of the OS used for the local resources, with the possibility to relocate the software ecosystem across systems. The first step (setup) is to clone the GIT repository which provides the direc-tories tree and the default files, after which users can decide to use the remote container, which will be downloaded by calling the command: A User-oriented Software Ecosystem 9Setup         
+
+> •Download the GIT repository to set the directory structure and scripts
+> •For macOS and Windows users, use the driver to install the VM
+> •Download the container executor
+> Configure
+> •Set configurations
+> •Install the add -ons via the driver
+> Run
+> •Run applications via the driver on the container executor
+> •Possible to set a complex workflow for the execution on clusters/supercomputers with the
+> Swift/T workflow manager
+> •MPI -enabled tasks orchestration
+
+Fig. 3. Schematic example of the software ecosystem installation and usage. 
+
+$ ECOSYSTEM_ROOT / bin / driver -t 
+
+This command will download and cache the container file, and eventually test it via the installation integrity tests provided in the container. Note that every call to the driver command will trigger a check whether the local cached copy of the Singularity image matches the one on the remote site, and will down-load updates automatically, unless the user enables the configuration variable to preserve the local copy. The next step (configure) is to configure and install the proper add-ons. We again use the driver command, as described at the end of Section 3.2. Eventually, we can use the installed commands via the driver command, as described at the beginning of Section 3.2. Finally, the user can describe complex workflows with correlated data de-pendencies and executions to be performed (run step). The components of the overall workflow are conceptually coupled and interact via data transfers. While it is possible to execute a complete run of the tools by executing every task individually, the true power stems from the integration of all steps into a re-producible workflow described in a documented, machine-executable workflow description. There are two approaches: 
+
+– Manual workflows can be constructed by explicitly using data files and scripting in a common scripting language like Shell- and Python-scripts. The users can run these scripts via the usual driver command. 
+
+– Automated workflows are defined using Swift/T , an MPI-oriented work-flow language and runtime system [17]. Swift/T is designed to enable the execution of vast numbers of very small tasks across an MPI-enabled com-puting system. The tasks could be composed of Shell- and Python-scripts, as well as binary executables, all installed through the add-on procedure. This approach permits an execution model where decisions about the task exe-cution are driven by the availability of their required input data, and where data transfers can be performed by the tool in an efficient manner adapted to the capabilities of the system, instead of being planned by the user. 10 A. Lazzaro et al. 
+
+## 4 Plan4res Use-case 
+
+The plan4res (P4R) EU H2020 project aimed to provide a tool for optimizing and simulating the European electricity system, validating the results through real size case studies [3]. Operating the electricity system with the 2050 targeted shares of Renewable Energy Systems (RES) will only be possible and affordable if both grids and generation assets evolve towards a system designed to maximise its capacity to host such amounts of RES. This requires optimizing existing as-sets and new investments, while making the best use of all flexibilities, such as controllable power plants, but also storage, use of interconnections, and demand control. To achieve this, an integrated representation of the system becomes nec-essary, involving overcoming significant technical hurdles in the implementation and maintenance of complex models with several nested layers of structure and general and flexible algorithms for solving them, thus leading to problem sizes that grow tremendously with each level of detail modeled. The P4R environment has been developed following the software ecosystem implementation described in this paper [12]. The main GIT repository is avail-able on GitLab 7. The container executor is presented as a GIT submodule under the executors/singularity directory, which points to another GitLab 
+
+repository 8. This solution allows to separate the container development versus the main P4R ecosystem. We use the GitLab CI to build the container, which is then stored as an artifact of the repository. For convenience, the driver has been renamed to p4r . Two versions of the container are provided, containing MPICH and OpenMPI implementations, respectively. Add-ons provide users ac-cess to mathematical optimization packages [12]. The models and the solution algorithms have been implemented using the open-source Structured Modeling System++ (SMS++ ) 9 package, which is provided as an add-on. The full P4R workflow consists of the following base steps: 
+
+– access and stage data from an external source; 
+
+– run a transformation tool (a Python script, provided as add-on) on the data to convert them to a format for the following computation; 
+
+– solve the optimizations via SMS++ ;
+
+– store the results of the optimizations. A diagram of the P4R workflow is shown in Fig. 4. The workflow has been deployed both in a manual as well as an automated workflow and successfully executed on plan4res partner’s systems: laptops, private clusters, HPE Cray EX Supercomputers, and an AWS ParallelCluster instance 10 . Therefore, the P4R software ecosystem has been successful for providing a fast user prototyp-ing and deployment environment for workflow execution on different hardware resources.     
+
+> 7https://gitlab.com/cerl/plan4res/p4r-env .
+> 8https://gitlab.com/cerl/plan4res/p4r-exec-singularity .
+> 9https://smspp.gitlab.io/ .
+> 10 https://docs.aws.amazon.com/parallelcluster/ .
+
+A User-oriented Software Ecosystem 11 Singularity Container Executor 
+
+> Access the data platform and stage data Data are cached for reuse Apply transformation tool Solve optimizations Conversion of input data to common format SMS++ Optimization tool Store results Results are stored on the data platform User (Windows/macOS/Linux) Plan4Res command launcher Entry point for execution
+
+Fig. 4. Plan4res schematic workflow. 
+
+## 5 Conclusion 
+
+The appearance of and convergence between such varied compute sources as HPC, cloud technologies, edge computing, novel hardware including GPUs and FPGAs in the recent years has created both opportunities as well as challenges. Users now have a more flexible, portable, and easy to deploy option via con-tainerization, which renders the sharing and cooperation of research easier, but also introduces complexity in the workflow. In this paper we presented a software ecosystem that offers users a modular, unified command-line interface to enable the same development environment whether running their workflows on local or remote resources, thus allowing for easy deployment, letting users focus on their research instead of technological implementation specificities. The software ecosystem has been successfully tested as part of the plan4res 
+
+EU H2020 project, and was used to assess the feasibility and cost of a recently published, long-term energy scenario from the openENTRANCE EU H2020 project [2]. Currently, it is used within the openMod4Africa 11 project for case studies in Western Africa (both at the level of the whole West Africa Power Pool region, and at the level of Senegal) and Eastern Africa (for a case study at the level of the whole East Africa Power Pool and a study focused on Ethiopia). The case studies will be conducted by African experts from universities and the power  
+
+> 11
+
+https://openmod4africa.eu/ .12 A. Lazzaro et al. 
+
+pools, with the help of the European experts bringing the models. It is expected that the software ecosystem will be used by more than ten African institutions in the next two years. Another European project which will use the software ecosystem is MANOEUVRE 12 . This project has just started and is dedicated to designing transition scenarios for Europe as well as defining methodologies and providing tools for conducting the national exercises aiming at developing the National Energy and Climate Plans. Our software ecosystem can be extended to other projects with similar re-quirements, such that they can benefit from the same flexible approach for exe-cuting computational workflows. 
+
+Acknowledgments. The plan4res project received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 773897. 
+
+Disclosure of Interests. The authors have no competing interests to declare that are relevant to the content of this article. 
+
+## References 
+
+1. Balakrishnan, S.R., Veeramani, S., Leong, J.A., Murray, I., Sidhu, A.S.: High Performance Computing on the Cloud via HPC+Cloud software framework. In: 2016 Fifth International Conference on Eco-friendly Computing and Commu-nication Systems (ICECCS). pp. 48–52 (2016). https://doi.org/–10.1109/Eco-friendly.2016.7893240˝ 2. Charousset, S., O’Reilly, R., Ramos, A., Olmos, L., Alvarez, E., Frischmuth, F., Schmidt, S., Pinel, D., Schledorn, A., Perger, T., Pisciella, P., Holtz, F., Huppmann, D., Graabak, I.: Best practice for performing case studies for the European energy system in transition (Aug 2023). https://doi.org/10.5281/zenodo.8288993, https: //doi.org/10.5281/zenodo.8288993 
+
+3. Charousset-Brignol, S., van Ackooij, W., Oudjane, N., Daniel, D., Noceir, S., Haus, U.U., Lazzaro, A., Frangioni, A., Lobato, R., Ghezelsoflu, A., Iardella, N., Galli, L., Gorgone, E., dell’Amico, M., Giannelos, S., Moreira, A., Strbac, G., Borozan, S., Falugi, P., Pudjianto, D., Wyrwoll, L., Schmitt, C., Franken, M., Beulertz, D., Schwaeppe, H., Most, D., Y¨ uksel-Erg¨ un, I., Zittel, J., Koch, T.: Synergistic ap-proach of multi-energy models for a European optimal energy system management tool. In: The Project Repository Journal. vol. 9, pp. 113 – 116 (2021) 4. Colonnelli, I., Aldinucci, M., Cantalupo, B., Padovani, L., Rabellino, S., Spamp-inato, C., Morelli, R., Di Carlo, R., Magini, N., Cavazzoni, C.: Distributed workflows with Jupyter. Future Generation Computer Systems 128 , 282– 298 (2022). https://doi.org/https://doi.org/10.1016/j.future.2021.10.007, https: //www.sciencedirect.com/science/article/pii/S0167739X21003976 
+
+5. Golasowski, M., Martinoviˇ c, J., Levrier, M., Hachinger, S., Karagiorgou, S., Pa-papostolou, A., Mouzakitis, S., Tsapelas, I., Caballero, M., Aldinucci, M., et al.: Toward the Convergence of High-Performance Computing, Cloud, and Big Data Domains. HPC, Big Data, and AI Convergence Towards Exascale; CRC Press: Boca Raton, FL, USA pp. 1–16 (2022)  
+
+> 12
+
+https://man0euvre.eu/ A User-oriented Software Ecosystem 13 6. Kurtzer, G.M., Sochat, V., Bauer, M.W.: Singularity: Scientific containers for mo-bility of compute. PLoS ONE 12 (5), e0177459 (2017) 7. Lawrence, K., Zentner, M., Wilkins-Diehr, N., Wernert, J., Pierce, M., Marru, S., Michael, S.: Science gateways today and tomorrow: positive perspectives of nearly 5000 members of the research community: Science Gateways Today and Tomorrow. Concurrency and Computation: Practice and Experience 27 (05 2015). https://doi.org/10.1002/cpe.3526 8. Li, G., Woo, J., Lim, S.B.: HPC Cloud Architecture to Reduce HPC Workflow Complexity in Containerized Environments. Applied Sciences 11 (3) (2021), https: //www.mdpi.com/2076-3417/11/3/923 
+
+9. Merkel, D.: Docker: lightweight linux containers for consistent development and deployment. Linux journal 2014 (239), 2 (2014) 10. Mujkanovic, N., Durillo, J.J., Hammer, N., M¨ uller, T.: Survey of adaptive con-tainerization architectures for HPC. In: Proceedings of the SC ’23 Workshops of The International Conference on High Performance Computing, Network, Stor-age, and Analysis. p. 165–176. SC-W ’23, Association for Computing Machinery, New York, NY, USA (2023). https://doi.org/10.1145/3624062.3624588, https: //doi.org/10.1145/3624062.3624588 
+
+11. Piccolo, S.R., Ence, Z.E., Anderson, E.C., Chang, J.T., Bild, A.H.: Simplify-ing the development of portable, scalable, and reproducible workflows. eLife 
+
+10 , e71069 (oct 2021). https://doi.org/10.7554/eLife.71069, https://doi.org/10. 7554/eLife.71069 
+
+12. Plan4res : Synergistic Approach of Multi-Energy Models for an European Op-timal Energy System Management Tool.: Deliverable D6.1 Specification for the 
+
+plan4res Platform Implementation. Tech. rep. (2019), https://www.plan4res. eu/results/deliverables/ 
+
+13. Qian, H., Andresen, D.: Automate Scientific Workflow Execution between Local Cluster and Cloud. International Journal of Networked and Distributed Computing 
+
+4, 45–54 (2016). https://doi.org/10.2991/ijndc.2016.4.1.5, https://doi.org/10. 2991/ijndc.2016.4.1.5 
+
+14. Samuel, S., Mietchen, D.: Computational reproducibility of Jupyter note-books from biomedical publications. GigaScience 13 , giad113 (01 2024). https://doi.org/10.1093/gigascience/giad113, https://doi.org/10.1093/ gigascience/giad113 
+
+15. Usman, S., Mehmood, R., Katib, I.: Big Data and HPC Convergence: The Cutting Edge and Outlook. In: Mehmood, R., Bhaduri, B., Katib, I., Chlamtac, I. (eds.) Smart Societies, Infrastructure, Technologies and Applications. pp. 11–26. Springer International Publishing, Cham (2018) 16. Vaillancourt, P., Wineholt, B., Barker, B., Deliyannis, P., Zheng, J., Suresh, A., Brazier, A., Knepper, R., Wolski, R.: Reproducible and Portable Workflows for Scientific Computing and HPC in the Cloud. In: Practice and Experience in Ad-vanced Research Computing. p. 311–320. PEARC ’20, Association for Computing Machinery, New York, NY, USA (2020). https://doi.org/10.1145/3311790.3396659, 
+
+https://doi.org/10.1145/3311790.3396659 
+
+17. Wozniak, J.M., Armstrong, T.G., Wilde, M., Katz, D.S., Lusk, E., Foster, I.T.: Swift/t: Large-scale application composition via distributed-memory dataflow pro-cessing. In: 2013 13th IEEE/ACM International Symposium on Cluster, Cloud, and Grid Computing. pp. 95–102 (May 2013). https://doi.org/10.1109/CCGrid.2013.99

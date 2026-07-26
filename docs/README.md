@@ -6,41 +6,40 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-25
-- 运行时间：2026-07-25 21:05:59 UTC
+- 最新运行日期：2026-07-26
+- 运行时间：2026-07-26 20:10:23 UTC
 - 运行状态：成功
-- 本次总论文数：7
+- 本次总论文数：6
 - 精读区：3
-- 速读区：4
+- 速读区：3
 
 ### 今日简报（AI）
-今日精选7篇论文，精读聚焦编码代理研究与LLM引用验证器故障诊断。最值得关注《Autoresearch with Coding Agents》在古兰经数据上的泛化能力，以及《HALLMARK》揭示的三种引用验证失败模式。建议读者速读《Search-on-Graph-R1》，了解强化学习如何驱动大模型搜索知识图。
-- 详情：[/202607/25/README](/202607/25/README)
+今天精读了两篇高分论文：太阳能集成数据中心的电网交互脱碳方案与可扩展验证任务图，速读覆盖软件生态、内存解耦图处理及约束LLM生成。  
+最值得关注的方向是数据中心与电网协同脱碳，以及大规模上下文管理验证的可扩展性。  
+下一步建议普通读者优先精读9.0分论文，并思考如何将跨域协同优化应用于实际系统。
+- 详情：[/202607/26/README](/202607/26/README)
 
 ### 精读区论文标签
-1. [Autoresearch with Coding Agents: Generalizers and Metric-Maximizers on Quran Recitation Data](/202607/25/2607.18064v1-autoresearch-with-coding-agents-generalizers-and-metric-maximizers-on-quran-recitation-data)  
+1. [Grid-Interactive Operation of Solar-Integrated Data Centers for Coordinated Local and System-Level Decarbonization](/202607/26/2607.17089v1-grid-interactive-operation-of-solar-integrated-data-centers-for-coordinated-local-and-system-level-decarbonization)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：数据中心作业调度与电网交互
+2. [ArbiGraph: Arbitrarily Scalable Verifiable Task Graphs for Evaluating Context Management](/202607/26/2607.20764v1-arbigraph-arbitrarily-scalable-verifiable-task-graphs-for-evaluating-context-management)  
    标签：评分：8.0/10、query:code-paper
-   evidence：使用编码代理迭代改进软件，代码可能公开
-2. [HALLMARK: Diagnosing Three Failure Modes in LLM Citation Verifiers](/202607/25/2607.18360v1-hallmark-diagnosing-three-failure-modes-in-llm-citation-verifiers)  
+   evidence：提供可执行Python求解器的任务图生成器
+3. [Tencent WorkBuddy Bench: A Multi-Domain Coding-Agent Benchmark with Contamination-Resistant Task Construction](/202607/26/2607.20911v1-tencent-workbuddy-bench-a-multi-domain-coding-agent-benchmark-with-contamination-resistant-task-construction)  
    标签：评分：8.0/10、query:code-paper
-   evidence：提供引文验证基准和验证器代码
-3. [Demonstrating GenDB: Instance-Optimized and Customized Query Processing Code Generation via LLM Agents](/202607/25/2607.20630v1-demonstrating-gendb-instance-optimized-and-customized-query-processing-code-generation-via-llm-agents)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：演示了GenDB，一个通过LLM智能体生成代码的查询引擎，原型可用
+   evidence：公开释放的基准，包含任务目录和代码
 
 ### 速读区论文标签
-1. [SciForge: An AI-Native, Multimodal Workbench for Scientific Discovery](/202607/25/2607.16038v1-sciforge-an-ai-native-multimodal-workbench-for-scientific-discovery)  
+1. [A User-oriented Portable, Reproducible, and Scalable Software Ecosystem](/202607/26/2607.18929v1-a-user-oriented-portable-reproducible-and-scalable-software-ecosystem)  
    标签：评分：7.0/10、query:code-paper
-   evidence：SciForge是一个面向科学发现的多模态AI工作台，可能提供开源代码
-2. [Search-on-Graph-R1: Training Large Language Models to Search Knowledge Graphs with Reinforcement Learning](/202607/25/2607.18481v1-search-on-graph-r1-training-large-language-models-to-search-knowledge-graphs-with-reinforcement-learning)  
+   evidence：描述了一个可重复的科学工作流软件生态系统，可能开源
+2. [DMG: A Scalable and Efficient Memory-Disaggregated Graph Processing System](/202607/26/2607.20881v1-dmg-a-scalable-and-efficient-memory-disaggregated-graph-processing-system)  
    标签：评分：7.0/10、query:code-paper
-   evidence：提出训练LLM搜索知识图谱的方法，代码可能公开
-3. [NOWJ@COLIEE 2026: Adaptive Pipelines for Legal Retrieval and Reasoning](/202607/25/2607.16603v1-nowjcoliee-2026-adaptive-pipelines-for-legal-retrieval-and-reasoning)  
+   evidence：数据中心图处理系统
+3. [Decode-Time Grammars: Constrained LLM Generation over a Refinement Order of Grammar Fragments](/202607/26/2607.18357v1-decode-time-grammars-constrained-llm-generation-over-a-refinement-order-of-grammar-fragments)  
    标签：评分：6.0/10、query:code-paper
-   evidence：竞赛论文可能附代码，提供检索管道
-4. [EmbeddedKittens: An Evaluation of Code Embeddings for Scratch](/202607/25/2607.19291v1-embeddedkittens-an-evaluation-of-code-embeddings-for-scratch)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：评估Scratch代码嵌入方法，代码可能公开
+   evidence：使用解码时语法的约束代码生成，可能提供代码
 
 
 <div class="dpr-home-promo-card">
