@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-27 <!--dpr-date:20260727-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/27/2607.22456v1-grapheme-kit-grapheme-level-metrics-and-text-processing-for-multilingual-nlp" data-sidebar-item="{&quot;title&quot;: &quot;grapheme-kit: Grapheme-Level Metrics and Text Processing for Multilingual NLP&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.22456v1-grapheme-kit-grapheme-level-metrics-and-text-processing-for-multilingual-nlp&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;提供开源Python库&quot;}">grapheme-kit: Grapheme-Level Metrics and Text Processing for Multilingual NLP</a>
   * 2026-07-26 <!--dpr-date:20260726-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/26/2607.17089v1-grid-interactive-operation-of-solar-integrated-data-centers-for-coordinated-local-and-system-level-decarbonization" data-sidebar-item="{&quot;title&quot;: &quot;Grid-Interactive Operation of Solar-Integrated Data Centers for Coordinated Local and System-Level Decarbonization&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.17089v1-grid-interactive-operation-of-solar-integrated-data-centers-for-coordinated-local-and-system-level-decarbonization&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;数据中心作业调度与电网交互&quot;}">Grid-Interactive Operation of Solar-Integrated Data Centers for Coordinated Local and System-Level Decarbonization</a>

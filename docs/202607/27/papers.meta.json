@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-27",
+  "date": "2026-07-27",
+  "generated_at": "2026-07-27T20:58:17",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/27/2607.22456v1-grapheme-kit-grapheme-level-metrics-and-text-processing-for-multilingual-nlp",
+      "section": "deep",
+      "title_en": "grapheme-kit: Grapheme-Level Metrics and Text Processing for Multilingual NLP",
+      "authors": "Izzath Nisfer, Ashini Kavindya, Ovindu Atukorala, Purushoth Velayuthan, Menan Velayuthan",
+      "date": "2026-07-24",
+      "pdf": "https://arxiv.org/pdf/2607.22456v1",
+      "score": "9.0",
+      "evidence": "提供开源Python库",
+      "tldr": "现有文本相似度等度量基于Unicode码点，在复杂书写系统中一个字素由多个码点表示，导致错误评估。本文提出grapheme-kit库，将度量操作扩展到字素簇，并为泰米尔语和僧伽罗语提供精确的字素识别和组合分解工具。通过OCR案例证明字素级度量能更忠实评估复杂脚本。该库为多语言NLP提供了更准确的文本处理基础。",
+      "tags": "query:code-paper",
+      "abstract_en": "Existing lexical distance, similarity, and evaluation metrics operate on Unicode code points, which can misrepresent errors in writing systems where a single grapheme is represented by multiple Unicode code points. We introduce grapheme-kit, an open-source Python library that extends these metrics to operate on grapheme clusters instead. The library also provides improved grapheme processing for Tamil and Sinhala, including accurate grapheme cluster identification and grapheme composition/decomposition utilities. Through an OCR case study, we demonstrate that grapheme-level metrics provide a more faithful evaluation of complex scripts.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
