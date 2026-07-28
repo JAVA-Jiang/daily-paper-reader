@@ -1,0 +1,88 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-28T21:14:59.113625+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2607.22230v1",
+      "source": "arxiv",
+      "title": "trasgoDP: An Open Source Framework for Releasing Noised Tabular Microdata under Local Differential Privacy",
+      "abstract": "trasgoDP is a modular, open-source, and easy-to-use Python framework for releasing tabular microdata under ε-local differential privacy guarantees, as well as location data under geo-indistinguishability assumptions, designed to be installed and integrated within standard data science workflows. The software enables systematic exploration of privacy-utility trade-offs across multiple mechanisms, data types, and ε values. While differential privacy has been extensively studied for aggregate data, its application to row-wise microdata release remains underexploited in terms of reusable software tools, a gap that is even more pronounced in the case of metric privacy and location-based data. trasgoDP implements local-DP mechanisms for numerical and categorical attributes (Laplace, Gaussian, Exponential, and Randomized Response), a geo-indistinguishability mechanism for location data, and a set of utility metrics, including a novel correlation-loss measure, to quantify information loss as a function of the allocated privacy budget. The objective of this work is to provide the research community with a reproducible, open-source baseline for evaluating tabular and location-based data publication methodologies under formal local differential privacy guarantees.",
+      "authors": [
+        "Judith Sáinz-Pardo Díaz",
+        "Álvaro López García"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.DB"
+      ],
+      "published": "2026-07-24T11:56:09+00:00",
+      "link": "https://arxiv.org/pdf/2607.22230v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Open source Python framework for releasing noised tabular microdata under local differential privacy",
+      "llm_evidence_cn": "本地差分隐私下噪声表格微数据发布的开源框架",
+      "llm_evidence": "本地差分隐私下噪声表格微数据发布的开源框架",
+      "canonical_evidence": "本地差分隐私下噪声表格微数据发布的开源框架",
+      "llm_tldr_en": "trasgoDP is a modular, open-source Python framework for releasing tabular microdata under local differential privacy and location data under geo-indistinguishability, enabling systematic exploration of privacy-utility trade-offs across multiple mechanisms.",
+      "llm_tldr_cn": "现有差分隐私研究多集中于聚合数据，缺乏针对行级微数据发布的通用软件工具，位置隐私领域尤为明显。trasgoDP提出了一个模块化、易于集成的Python开源框架，实现了本地差分隐私和地理不可区分性机制的微数据发布。该框架支持多种隐私机制和隐私预算的灵活配置，能系统评估隐私-效用权衡。实验表明，trasgoDP可无缝嵌入标准数据科学工作流，填补了可复用工具的重要空白。",
+      "llm_tldr": "现有差分隐私研究多集中于聚合数据，缺乏针对行级微数据发布的通用软件工具，位置隐私领域尤为明显。trasgoDP提出了一个模块化、易于集成的Python开源框架，实现了本地差分隐私和地理不可区分性机制的微数据发布。该框架支持多种隐私机制和隐私预算的灵活配置，能系统评估隐私-效用权衡。实验表明，trasgoDP可无缝嵌入标准数据科学工作流，填补了可复用工具的重要空白。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.22348v1",
+      "source": "arxiv",
+      "title": "Ask the Curator: Demonstrating Expert-Driven RDF Data Curation with HERITRACE",
+      "abstract": "HERITRACE is an open-source Web application for curating RDF data held in triplestores, with provenance and change tracking recorded in RDF as well. It is agnostic to the data model: a technician configures it for a collection by writing SHACL shapes and YAML display rules, after which domain experts edit the data through generated forms, and every change becomes a provenance snapshot that can be inspected and restored. This paper traces the path from configuration to curation on a documented case of bibliographic ambiguity: two unrelated articles that PubMed records under the same DOI. We show how a technician prepares a small OpenCitations Meta subset for curation and how a curator acts on duplicate suggestions to merge two articles, inadvertently confirms a further merge despite conflicting metadata, reverts the mistake through the Time Machine, and corrects the DOI after verification against Crossref.",
+      "authors": [
+        "Arcangelo Massari",
+        "Silvio Peroni"
+      ],
+      "primary_category": "cs.DL",
+      "categories": [
+        "cs.DL"
+      ],
+      "published": "2026-07-24T14:26:30+00:00",
+      "link": "https://arxiv.org/pdf/2607.22348v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "open-source RDF curation application with code",
+      "llm_evidence_cn": "提供了开源RDF数据策展应用程序的代码",
+      "llm_evidence": "提供了开源RDF数据策展应用程序的代码",
+      "canonical_evidence": "提供了开源RDF数据策展应用程序的代码",
+      "llm_tldr_en": "HERITRACE is an open-source Web application for curating RDF data with provenance tracking, demonstrated on bibliographic duplicate resolution.",
+      "llm_tldr_cn": "该论文介绍了一个开源RDF数据策展工具HERITRACE，支持通过SHACL形状和YAML规则配置，生成表单供领域专家编辑，并记录完整溯源。通过处理PubMed中两篇论文共用同一DOI的案例，展示了其配置和策展流程。工具代码开源，支持复现和扩展。",
+      "llm_tldr": "该论文介绍了一个开源RDF数据策展工具HERITRACE，支持通过SHACL形状和YAML规则配置，生成表单供领域专家编辑，并记录完整溯源。通过处理PubMed中两篇论文共用同一DOI的案例，展示了其配置和策展流程。工具代码开源，支持复现和扩展。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

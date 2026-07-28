@@ -6,21 +6,24 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-27
-- 运行时间：2026-07-27 20:58:12 UTC
+- 最新运行日期：2026-07-28
+- 运行时间：2026-07-28 21:16:35 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：1
+- 本次总论文数：2
+- 精读区：2
 - 速读区：0
 
 ### 今日简报（AI）
-今日精读高分论文《grapheme-kit》，关注多语言NLP的字素级指标与文本处理。字素级方法为低资源语言与非拉丁文字提供了更精准的处理工具。建议深入该方向代码库，尝试应用于实际多语言任务。
-- 详情：[/202607/27/README](/202607/27/README)
+今日精读两篇高分论文：本地差分隐私框架trasgoDP与专家驱动的RDF策展工具HERITRACE。重点推荐trasgoDP的开源实现，以及HERITRACE的交互式数据策展流程。建议关注本地差分隐私在表格数据保护上的实践，并尝试体验专家驱动的策展工具。
+- 详情：[/202607/28/README](/202607/28/README)
 
 ### 精读区论文标签
-1. [grapheme-kit: Grapheme-Level Metrics and Text Processing for Multilingual NLP](/202607/27/2607.22456v1-grapheme-kit-grapheme-level-metrics-and-text-processing-for-multilingual-nlp)  
+1. [trasgoDP: An Open Source Framework for Releasing Noised Tabular Microdata under Local Differential Privacy](/202607/28/2607.22230v1-trasgodp-an-open-source-framework-for-releasing-noised-tabular-microdata-under-local-differential-privacy)  
    标签：评分：9.0/10、query:code-paper
-   evidence：提供开源Python库
+   evidence：本地差分隐私下噪声表格微数据发布的开源框架
+2. [Ask the Curator: Demonstrating Expert-Driven RDF Data Curation with HERITRACE](/202607/28/2607.22348v1-ask-the-curator-demonstrating-expert-driven-rdf-data-curation-with-heritrace)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：提供了开源RDF数据策展应用程序的代码
 
 ### 速读区论文标签
 - 本次无速读推荐。
