@@ -6,27 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-28
-- 运行时间：2026-07-28 21:16:35 UTC
+- 最新运行日期：2026-07-29
+- 运行时间：2026-07-29 21:25:52 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：2
-- 速读区：0
+- 本次总论文数：4
+- 精读区：0
+- 速读区：4
 
 ### 今日简报（AI）
-今日精读两篇高分论文：本地差分隐私框架trasgoDP与专家驱动的RDF策展工具HERITRACE。重点推荐trasgoDP的开源实现，以及HERITRACE的交互式数据策展流程。建议关注本地差分隐私在表格数据保护上的实践，并尝试体验专家驱动的策展工具。
-- 详情：[/202607/28/README](/202607/28/README)
+今日速读3篇论文，聚焦AI代码生成、时序微调与真实开发编辑。
+最值得关注的是CAPS时序微调与从5.36万真实编辑中学习AI代码修复，均获7分好评。
+下一步可深入检索增强代码生成中的不确定性处理，提升实际代码修改效果。
+- 详情：[/202607/29/README](/202607/29/README)
 
 ### 精读区论文标签
-1. [trasgoDP: An Open Source Framework for Releasing Noised Tabular Microdata under Local Differential Privacy](/202607/28/2607.22230v1-trasgodp-an-open-source-framework-for-releasing-noised-tabular-microdata-under-local-differential-privacy)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：本地差分隐私下噪声表格微数据发布的开源框架
-2. [Ask the Curator: Demonstrating Expert-Driven RDF Data Curation with HERITRACE](/202607/28/2607.22348v1-ask-the-curator-demonstrating-expert-driven-rdf-data-curation-with-heritrace)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：提供了开源RDF数据策展应用程序的代码
+- 本次无精读推荐。
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [CAPS: Fine-Tuning CCA Timing](/202607/29/2607.22821v1-caps-fine-tuning-cca-timing)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：通过分布式同步实现数据中心任务调度
+2. [Learning from 53.6K Real-World Developer Edits of AI-Generated Code](/202607/29/2607.25130v1-learning-from-536k-real-world-developer-edits-of-ai-generated-code)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提供DECODE真实世界代码编辑数据集
+3. [Beyond "What to Retrieve": Uncertainty in Retrieval-Augmented Code Generation](/202607/29/2607.24884v1-beyond-what-to-retrieve-uncertainty-in-retrieval-augmented-code-generation)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：代码生成框架，包含不确定性建模
+4. [CodeNib: A Multi-View Data System for Serving Repository Context to Coding Agents](/202607/29/2607.25431v1-codenib-a-multi-view-data-system-for-serving-repository-context-to-coding-agents)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：CodeNib系统，为编程智能体提供仓库上下文服务
 
 
 <div class="dpr-home-promo-card">

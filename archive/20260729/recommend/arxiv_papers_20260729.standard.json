@@ -1,0 +1,185 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-29T21:23:28.989784+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.22821v1",
+      "source": "arxiv",
+      "title": "CAPS: Fine-Tuning CCA Timing",
+      "abstract": "Data-center congestion control targets high throughput, fair bandwidth allocation, and low latency. Modern transports couple rate computation and packet scheduling into a single feedback loop, converging to near-optimal rates but leaving standing queues that can scale with the number of flows. We argue that separating the two reveals a simpler design point. Given stable feasible rates, the residual queue problem reduces to a timing problem: if every flow's packets arrive at the bottleneck in the correct slot, the link stays busy and the queue stays empty. Clocked ACK-Paced Synchronization CAPS is a lightweight distributed scheduling layer that achieves this by phase-locking each sender's transmissions to ACK-clocked bottleneck slots, with a per-flow correction that compensates for heterogeneous RTTs. We characterize the phase-locked steady state for dumbbell topologies under equal RTT, heterogeneous RTT, and bidirectional traffic, and validate the mechanism on a fat-tree under incast, permutation, and all-to-all traffic. CAPS reduces worst-case queue occupancy by 5-10x across all tested scenarios without throughput loss.",
+      "authors": [
+        "Raphael Zailer",
+        "Isaac Keslassy"
+      ],
+      "primary_category": "cs.NI",
+      "categories": [
+        "cs.NI"
+      ],
+      "published": "2026-07-24T18:00:25+00:00",
+      "link": "https://arxiv.org/pdf/2607.22821v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "data-center task scheduling via distributed synchronization",
+      "llm_evidence_cn": "通过分布式同步实现数据中心任务调度",
+      "llm_evidence": "通过分布式同步实现数据中心任务调度",
+      "canonical_evidence": "通过分布式同步实现数据中心任务调度",
+      "llm_tldr_en": "CAPS proposes a lightweight distributed scheduling layer for data-center congestion control that eliminates standing queues by phase-locking sender transmissions.",
+      "llm_tldr_cn": "针对数据中心拥塞控制中排队延迟随流数增长的问题，本文提出CAPS，一种轻量级分布式调度层。该层通过将发送器的传输相位锁定到ACK时钟化的瓶颈时隙，并辅以单流校正，实现了数据包在瓶颈节点上的精确时序调度。实验表明，该方法在不牺牲吞吐量或公平性的情况下，消除了残差队列，降低了延迟。",
+      "llm_tldr": "针对数据中心拥塞控制中排队延迟随流数增长的问题，本文提出CAPS，一种轻量级分布式调度层。该层通过将发送器的传输相位锁定到ACK时钟化的瓶颈时隙，并辅以单流校正，实现了数据包在瓶颈节点上的精确时序调度。实验表明，该方法在不牺牲吞吐量或公平性的情况下，消除了残差队列，降低了延迟。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.24884v1",
+      "source": "arxiv",
+      "title": "Beyond \"What to Retrieve\": Uncertainty in Retrieval-Augmented Code Generation",
+      "abstract": "Repository-level code generation relies on heterogeneous evidence whose relevance, compatibility, and completeness are inherently uncertain. Similar-code examples, repository context, and project-specific APIs may provide complementary information, but can also introduce noisy, redundant, or conflicting signals. Existing retrieval-augmented approaches primarily optimize retrieval relevance without explicitly modeling how uncertainty in retrieved evidence affects downstream generation. We introduce OpenCoder, an uncertainty-aware framework that estimates source-specific uncertainty, uses it to filter and rank heterogeneous evidence, and guides generation, verification, and repair. A factorial analysis over API knowledge, repository context, and similar-code evidence reveals no universal additive source ranking; instead, significant cross-source interactions depend on the accompanying evidence and LLM backend. On an expanded 32-task RepoExec-inline evaluation, OpenCoder improves GPT selected-output correctness over Baseline RAG from 56.25\\% to 78.13\\%. However, it matches a verification-and-repair control, and the corresponding Gemini improvement is not statistically supported, indicating backend-dependent benefits. Target-aware API refinement also substantially improves API-set retrieval. These findings support treating uncertainty as an actionable control signal for repository-level retrieval, verification, and repair.",
+      "authors": [
+        "Chandan Kumar Sah",
+        "Xiaoli Lian",
+        "Li Zhang"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-07-27T10:15:36+00:00",
+      "link": "https://arxiv.org/pdf/2607.24884v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "code generation framework with uncertainty modeling",
+      "llm_evidence_cn": "代码生成框架，包含不确定性建模",
+      "llm_evidence": "代码生成框架，包含不确定性建模",
+      "canonical_evidence": "代码生成框架，包含不确定性建模",
+      "llm_tldr_en": "OpenCoder models source-specific uncertainty in retrieved evidence for repository-level code generation, improving generation, verification, and repair.",
+      "llm_tldr_cn": "现有检索增强代码生成方法忽略了检索证据的不确定性。本文提出OpenCoder框架，通过估计不同来源的不确定性来过滤和排序异构证据，并指导代码生成、验证和修复。在仓库级代码生成任务上，方法有效提升了生成质量。该工作为代码生成中的不确定性处理提供了新思路。",
+      "llm_tldr": "现有检索增强代码生成方法忽略了检索证据的不确定性。本文提出OpenCoder框架，通过估计不同来源的不确定性来过滤和排序异构证据，并指导代码生成、验证和修复。在仓库级代码生成任务上，方法有效提升了生成质量。该工作为代码生成中的不确定性处理提供了新思路。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.25130v1",
+      "source": "arxiv",
+      "title": "Learning from 53.6K Real-World Developer Edits of AI-Generated Code",
+      "abstract": "Imperfections in AI-generated code require that software developers modify the generated code manually, or by re-prompting an AI programming assistant. Manual code edits provide more realistic and granular information on editing behavior than Git commits, which only contain final successful code snippets. Yet, due to a lack of high-quality, realistic code editing data, LLMs are mostly trained on publicly available Git data (e.g., commits). To address this gap, we introduce DECODE (Developer Edits of Code Dataset), a dataset of 53.6K real-world in-IDE code edits of AI-generated code in Python, TypeScript, and JavaScript, sourced from 1K+ developers. First, we demonstrate the utility of DECODE for data analysis, obtaining insights on when, why, and how AI-generated code is edited. We find that most edits occur within the first 15 minutes after accepting an AI completion, resulting in the removal of AI completions in 31% of edit trajectories. Second, we use DECODE to benchmark the ability of LLMs to predict code edits. We find that finetuning on DECODE enables open-source 3B models to perform code edit prediction tasks significantly better than frontier LLMs. We then discuss implications of this work, emphasizing the necessity of developer-centric machine learning approaches for future AI programming assistants.",
+      "authors": [
+        "Jenny T. Liang",
+        "Mihika Bairathi",
+        "Wayne Chi",
+        "Ameet Talwalkar",
+        "Nishant Subramani",
+        "Valerie Chen"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-07-27T22:50:05+00:00",
+      "link": "https://arxiv.org/pdf/2607.25130v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "provides DECODE dataset of real-world code edits",
+      "llm_evidence_cn": "提供DECODE真实世界代码编辑数据集",
+      "llm_evidence": "提供DECODE真实世界代码编辑数据集",
+      "canonical_evidence": "提供DECODE真实世界代码编辑数据集",
+      "llm_tldr_en": "Introduces DECODE dataset of 53.6K real-world in-IDE code edits of AI-generated code from 1K+ developers, enabling analysis of editing behavior and potential for training LLMs.",
+      "llm_tldr_cn": "现有AI生成代码编辑研究缺乏真实粒度的代码编辑数据，作者提出了DECODE数据集，包含来自1000多名开发者的5.36万个真实代码编辑实例。该数据集覆盖Python、TypeScript和JavaScript，可用于分析编辑行为并改进LLM训练。实验表明，DECODE提供了比Git提交更细粒度的编辑信息，有助于理解开发者如何修改AI生成代码。该工作为代码编辑领域提供了宝贵的资源。",
+      "llm_tldr": "现有AI生成代码编辑研究缺乏真实粒度的代码编辑数据，作者提出了DECODE数据集，包含来自1000多名开发者的5.36万个真实代码编辑实例。该数据集覆盖Python、TypeScript和JavaScript，可用于分析编辑行为并改进LLM训练。实验表明，DECODE提供了比Git提交更细粒度的编辑信息，有助于理解开发者如何修改AI生成代码。该工作为代码编辑领域提供了宝贵的资源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.25431v1",
+      "source": "arxiv",
+      "title": "CodeNib: A Multi-View Data System for Serving Repository Context to Coding Agents",
+      "abstract": "Coding agents repeatedly search, navigate, and retain context from evolving repositories, but disconnected indexes, language servers, and task-local histories force repeated discovery and obscure lifecycle costs. CodeNib builds reusable lexical, dense, and structural views per repository commit, maps outputs to repository-relative source ranges, maintains selected views across edits, and serves ranked search, symbol navigation, and bounded context through one runtime.   Across 100 snapshots, we map quality-cost frontiers across the repository-context lifecycle. When outputs match an independent rebuild, graph and vector updates are $8.7\\times$ and $25.4\\times$ faster at the median. On the static-navigation subset matching normalized live-server locations (63% of 1,000 requests), the median per-request live/static latency ratio is $4.7\\times$. Across five models, selected context policies preserve localization with 50--87% fewer trajectory tokens than paired grep/read. Together, these results support multi-view repository-context serving with explicit, operation-specific validity boundaries.",
+      "authors": [
+        "Zhongming Yu",
+        "Hengjia Yu",
+        "Boqin Yuan",
+        "Shuting Zhao",
+        "Yizhao Chen",
+        "Aryan Dokania",
+        "Mihir Jagtap",
+        "Jiayu Chang",
+        "Yitong Ma",
+        "Yash Jayswal",
+        "Wentao Ni",
+        "Hejia Zhang",
+        "Zhaoling Chen",
+        "Gangda Deng",
+        "Jishen Zhao"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-28T08:25:30+00:00",
+      "link": "https://arxiv.org/pdf/2607.25431v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "CodeNib system for repository context serving to coding agents",
+      "llm_evidence_cn": "CodeNib系统，为编程智能体提供仓库上下文服务",
+      "llm_evidence": "CodeNib系统，为编程智能体提供仓库上下文服务",
+      "canonical_evidence": "CodeNib系统，为编程智能体提供仓库上下文服务",
+      "llm_tldr_en": "CodeNib builds reusable lexical, dense, and structural views per repository commit, serving ranked search, symbol navigation, and bounded context for coding agents, with significant speedups.",
+      "llm_tldr_cn": "编程智能体在访问仓库上下文时面临重复发现和生命周期成本问题。CodeNib为每个仓库提交构建可复用的词法、稠密和结构视图，通过统一运行时提供排名搜索、符号导航和受限上下文。实验表明，在与独立重建匹配时，图和向量更新分别提速8.7倍和25.4倍。该系统有效降低了智能体上下文管理的开销。",
+      "llm_tldr": "编程智能体在访问仓库上下文时面临重复发现和生命周期成本问题。CodeNib为每个仓库提交构建可复用的词法、稠密和结构视图，通过统一运行时提供排名搜索、符号导航和受限上下文。实验表明，在与独立重建匹配时，图和向量更新分别提速8.7倍和25.4倍。该系统有效降低了智能体上下文管理的开销。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+Title: CAPS: Fine-Tuning CCA Timing
+
+URL Source: https://arxiv.org/pdf/2607.22821v1
+
+Published Time: Tue, 28 Jul 2026 00:10:05 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# CAPS : Fine-Tuning CCA Timing 
+
+# Raphael Zailer 1, Isaac Keslassy 1,2 
+
+> 1
+
+Technion 2 UC Berkeley 
+
+## Abstract 
+
+Data-center congestion control targets high throughput, fair bandwidth allocation, and low latency. Modern transports couple rate computation and packet scheduling into a single feedback loop, converging to near-optimal rates but leaving standing queues that can scale with the number of flows. We argue that separating the two reveals a simpler design point. Given stable feasible rates, the residual queue problem reduces to a timing problem: if every flow’s packets arrive at the bottleneck in the correct slot, the link stays busy and the queue stays empty. Clocked ACK-Paced Synchronization (CAPS ) is a lightweight distributed scheduling layer that achieves this by phase-locking each sender’s transmissions to ACK-clocked bottleneck slots, with a per-flow correction that compensates for heterogeneous RTTs. We character-ize the phase-locked steady state for dumbbell topologies under equal RTT, heterogeneous RTT, and bidirectional traf-fic, and validate the mechanism on a fat-tree under incast, permutation, and all-to-all traffic. CAPS reduces worst-case queue occupancy by 5–10 × across all tested scenarios with-out throughput loss. 
+
+## 1 Introduction 
+
+A congestion control algorithm manipulates two levers: (1) what to send (the rate or window size), and (2) when 
+
+to send it (ACK-clocking, pacing, or some other release disci-pline). The first lever has been studied for decades; modern data-center CCAs (Swift [ 16 ], HPCC [ 17 ], S-PERC [ 15 ]) can converge to near-optimal max-min fair rates. The second lever has barely been explored [ 1, 13 , 14 ]. This paper argues it is the key to eliminating persistent queues in long-lived, predictable datacenter workloads, such as bulk transfers and AI/ML collectives where rates are stable and RTTs are known. Persistent queues are not merely a latency nuisance, they are a scaling bottleneck. With 𝑁 unsynchronized periodic flows, queue occupancy typically scales as Θ(√𝑁 ) (as ob-served by HPCC [ 17 ] and Swift [ 16 ]). Unfortunately, switch buffers consume on-chip SRAM that dominates both die area and power dissipation. As we scale the number of flows 
+
+𝑁 , the need for deep buffers currently increases just as we reach a point where they become too costly: At 1.6 Tbps port speeds, deeper buffers multiply both memory cost and en-ergy per bit forwarded. Thus, we deploy many mechanisms to reduce those queues, such as ECN marking, PFC pause frames, and CCA window back-off, adding protocol complex-ity and triggering cascading slowdowns. If queues could be kept near-empty by construction, much of this machinery becomes irrelevant. Existing techniques do not solve the timing problem. Intra-flow pacing smooths micro-bursts from a single sender but cannot coordinate timing across flows: two independently paced flows can still collide persistently if their phases drift. ACK-clocking couples a flow’s cadence to the bottleneck rhythm, but only when all flows share the same RTT. With heterogeneous RTTs, shorter-RTT flows receive feedback sooner and gradually steal timing phase, rebuilding the queue that pacing was supposed to prevent. No deployed scheme accounts for this inter-flow phase drift. In this paper, we introduce Clocked ACK-Paced Synchro-nization ( CAPS ). CAPS exploits the second lever directly. Given converged fixed rates (from any allocator), it decides 
+
+when each packet is released. It abstracts time as a sequence of frames and makes sure that flows reuse the same bot-tleneck slots that are assigned to them across consecutive frames. To do so, it relies on a simple ACK-clocking with a small internal delay correction. The result is a phase-locked schedule: after about one RTT, queue occupancy drops to zero while utilization remains at or near 100%. Finally, we evaluate CAPS on datacenter topologies un-der all-to-one (incast), permutation, and all-to-all traffic. We show that CAPS reduces worst-case queue occupancy by 
+
+5 − 10 × across all tested scenarios, while keeping the same throughput and relying on a simple lightweight implemen-tation. 
+
+## 2 Background and Related Work 
+
+Convergence to optimal rates. Maintaining small buffers is a primary service-quality requirement in data centers. Small queues reduce tail latency for short RPC-style flows [ 2 ], mitigate bufferbloat [ 10 ], and limit head-of-line blocking under incast bursts [ 6 ]. Because links are fast and RTTs are short, even a modest standing queue imposes a meaningful latency penalty. Modern transports attack queues through continuous feed-back. S-PERC computes per-flow max-min fair rates from link-level capacity sharing [ 15 ]. Swift uses delay/RTT signals to keep queues near a target [ 16 ]. HPCC uses in-band teleme-try (INT) to estimate real-time utilization and applies rapid rate correction [ 17 ]. All three reach a good approximation in practice to the optimal fair rates. 
+
+> 1arXiv:2607.22821v1 [cs.NI] 24 Jul 2026 R. Zailer and I. Keslassy
+
+Pacing. Pacing spaces a sender’s packets evenly over an RTT to smooth bursts upon receiving ACKs [ 1] and is widely deployed (Linux FQ/pacing, BBR [ 5]). As discussed above, it cannot coordinate timing across flows or across successive rounds. A lighter variant, initial-window pacing (IWP), paces only the first window of packets and then relies on ACK clocking [8, 11]. 
+
+ACK clocking. Jacobson’s packet-conservation princi-ple [ 12 ] established that ACK-clocked senders naturally match the bottleneck service rate: each returning ACK re-leases exactly one new packet. Subsequent work modeled ACK-clock dynamics as an inner feedback loop [ 13 , 14 ] and analyzed stability in single-link settings [7]. 
+
+Buffer sizing. Classical buffer sizing rules (e.g., bandwidth-delay product divided by √𝑁 [ 3 ]) provision enough buffer to absorb statistical traffic fluctuations in the case of TCP-like CCAs. 
+
+TDMA scheduling. Time-division schemes assign flows to fixed time slots, guaranteeing collision-free access [ 18 ]. We share the goal of collision avoidance but intend to avoid any centralized slot assignment or global clock. Independently, with 𝑁 flows sending periodically at fair rates, standing queue occupancy can be modeled as scaling as Θ(√𝑁 ), re-gardless of how precisely rates converge (as follows from the ND/D/1 queueing model and detailed in HPCC [ 17 ] and Swift [16]). 
+
+## 3 CAPS Algorithm 
+
+In this section, we introduce the Clocked ACK-Paced Syn-chronization ( CAPS ) algorithm. We start by providing in-tuition in a toy topology, before extending to more general topologies. 
+
+Dumbbell topology. We start by considering a standard dumbbell network with 𝑛 flows, where in each flow 𝑖 source host 𝑖 sends an infinite-size flow to destination host 𝑖 . We assume two intermediate switches connected by a bottleneck link of capacity 𝐶 . The switches have FIFO output queues. All links have the same capacity 𝐶 , but different propagation delays. In addition, we assume that each flow 𝑖 knows its fixed propagation RTT 𝑇 𝑖 , as well as the worst-case propagation de-lay in the network 𝑇 max = max 𝑖 𝑇 𝑖 . We also assume that each flow 𝑖 targets a given constant rate 𝑥 𝑖 by using a window-based CCA with window size 𝑊 𝑖 = ⌊𝑥 𝑖 · 𝑇 𝑖 ⌋, such that the total rate cannot exceed the bottleneck link capacity: Í𝑛 𝑖 =1 𝑥 𝑖 < 𝐶 . The fixed window assumption is important: We rely below on the windows not changing too fast (i.e.,, being kept constant for more than an RTT) in order to establish several properties for the queue size. 
+
+Equal RTTs. Assume at first that all flows have the same RTT. Then our algorithm CAPS simply uses a standard ACK clocking mechanism: it always keeps 𝑊 𝑖 unacknowledged packets on the line, and sends the next packet upon receiving the next ACK. Formally, we wait to receive the ACK for packet 𝑘 in order to release packet 𝑘 + 𝑊 𝑖 .We find the following result: ACK clocking zeroes the queue size after an RTT . This is because after the initial packets are stuck in the bottleneck queue, they leave it in a FIFO order without overlap. The ACKs then keep this order and this global synchronization due to the equal RTTs, and this is later reflected in the packets sent in the next RTT. Thus, 
+
+the network reaches a global synchronization with a fully distributed ACK-clocking mechanism .Fig. 1 provides more intuition, assuming that time is slot-ted to make it easier to visualize. It illustrates four flows (A–D) with 𝑊 𝑖 = 2 and RTT = 8 slots. Fig. 1(a) illustrates a simple algorithm where each flow uses IWP, then periodic arrivals without ACK clocking. This simple approach results in a persistent collision and non-zero queues (it can be mod-eled using a D/D/1 queueing model [ 19 ]). On the contrary, Fig. 1(b) shows that CAPS leverages ACK clocking to get all packets globally synchronized and manages to fully fill the link. Specifically, as packets get queued, they are delayed and therefore they also delay their corresponding ACKs. After an RTT, the packets are effectively synchronized, the queue is empty, and we reach 100% link utilization. Formally, we can prove the following result: 
+
+Theorem 3.1. Using CAPS in a dumbbell topology with equal RTTs, the bottleneck queue size converges to zero within an RTT. 
+
+Proof Outline. We outline the proof due to space rea-sons. (1) Lindley’s recurrence at the bottleneck gives depar-tures that are always 𝜏 -spaced regardless of arrival collisions. 
+
+(2) Because downstream links have equal capacity and fixed delay, this spacing is preserved to the destination and back; no secondary queue forms and ACKs return in sending order. 
+
+(3) Under ACK-clocking, each successor packet arrives at the bottleneck exactly one RTT after its predecessor’s depar-ture, so the inter-arrival gaps equal the original departure gaps ( ≥ 𝜏 ). (4) The frame-level load constraint ensures the transient backlog clears by the end of the first frame; from round 2 onward every packet finds an empty queue. □
+
+Heterogeneous RTTs. When all flows have different RTTs, basic ACK clocking cannot globally synchronize all flows. Flows with a shorter RTT receive feedback sooner and ag-gressively send packets earlier, thus losing the synchroniza-tion with longer-RTT flows.  
+
+> 2CAPS : Fine-Tuning CCA Timing
+> (a) Random periodic arrivals: persistent queue of 2 packets despite stable output.
+> (b) ACK-clocked: queue drains to zero by round 3 while maintaining full utilization.
+
+Figure 1: Equal-RTT example with 4 flows ( 𝑊 𝑖 = 2 each, RTT = 8 slots). ACK clocking naturally aligns arrivals to bottleneck slots. 
+
+The idea in CAPS is to synchronize all flows as if they all had the same worst-case RTT 𝑇 max . Specifically, we employ the combination of two techniques: 
+
+(1) We use an adjusted window 
+
+𝑊 𝑚 𝑖 = ⌊𝑥 𝑖 · 𝑇 max ⌋ . (1) Thus, the adjusted window ensures that each flow still sends at approximate rate 𝑥 𝑖 over the common 𝑇 max frame. 
+
+(2) When an ACK on packet 𝑘 comes back to sender 𝑖 , we delay the transmission of packet 𝑘 + 𝑊 𝑚 𝑖 by 𝑇 max − 𝑇 𝑖 . This is because we simulate the fact that all flows have the same RTT 𝑇 max , so essentially we synchronize back all flows in a distributed way. Note that the delay only shifts the packet departure times, not their sending rate. To summarize, CAPS relies on a frame-alignment method, rather than only being an in-flight limiter as in most CCAs. In heterogeneous-RTT settings, all flows are mapped onto a common frame duration (T max ) so their combined packet budget matches what the bottleneck can serialize during that frame. CAPS is easiest to understand as a repeating loop: (1) The sender transmits a packet. (2) The packet reaches the bottleneck and is serialized there. (3) The receiver sends an ACK back. (4) The ACK arrival tells the sender when the next packet in the same window should be released. (5) The next round uses the same timing pattern again. When the loop stabilizes, each flow effectively reuses the same slot positions from one RTT frame to the next. That is the mechanism behind the zero queue size. Formally, using a proof that is very similar to the previous theorem, we obtain: 
+
+Theorem 3.2. Using CAPS in a dumbbell topology with heterogeneous RTTs, the bottleneck queue size converges to zero within an RTT. Example: Heterogeneous RTTs with and without CAPS .
+
+Fig. 2 traces three flows in a network with 𝑇 max = 12 , capacity 
+
+𝐶 = 1 pkt/slot, and 100% total link rate). For better intuition, we assume initial window pacing rather than a single burst. With standard unmodified ACK clocking (Fig. 2(a)), phase drift causes collisions and queueing. With CAPS (Fig. 2(b)), the 𝑇 max − 𝑇 𝑖 correction phase-locks all flows: by the second frame, 𝑄 (𝑡 ) = 0 at 100% utilization. The green dashed arrows show flow A’s ACK-to-release timing after the first RTT; the blue dashed arrows show how it later stays periodic. 
+
+General Topology. A general topology complicates things in two ways. First, it may have several bottlenecks, both on ACKs and on packets, complicating timing issues. Thus, we do not attempt to zero queue sizes anymore, just to reduce them. Second, ACKs and packets coexist on links. Thus, we need to take into account ACK rates and ensure that the sum of packet and ACK link rates stays below capacity. Since timing is important, we also want to reduce delays for ACKs. To do so, we assume that at each switch, ACKS and packets are queued in separate FIFO queues, and ACKs have strict priority. This is easily implemented in all modern switches (e.g., by using strict priority Queue 7 on Cisco Silicon One). 
+
+Flow changes. When a flow arrives or departs, the CCA rate allocator (e.g., S-PERC) recomputes feasible rates and updates each sender’s window 𝑊 𝑚 𝑖 . We then apply CAPS 
+
+without change. CAPS re-locks phases within one 𝑇 max frame, after which queues return to zero or near-zero occupancy. 
+
+## 4 Evaluation 
+
+In this section, we evaluate the above results, starting with a dumbbell topology then generalizing to a datacenter fat-tree topology. 
+
+Settings. We use a discrete-event simulator built on SimPy. We always assume 4K-byte packets and 64-byte ACKs. In all simulations, each flow starts after some random waiting      
+
+> 3R. Zailer and I. Keslassy
+> (a) Baseline (no alignment): phase drift causes collisions.
+> (b) CAPS (𝑇 max alignment): phase lock yields 100% utilization with zero queue.
+
+Figure 2: Heterogeneous-RTT example. Flow A: 𝑊 𝑚 =6,RTT =4. Flow B: 𝑊 𝑚 =2, RTT =6. Flow C: 𝑊 𝑚 =4, RTT =3.
+
+𝑇 max =12 , capacity =1 pkt/slot. 
+
+time to avoid artificial synchronization, and simulations run long enough to reach steady state after the initial transient. The fixed feasible rates are assigned by using S-PERC as the preliminary step. 
+
+Topologies. In the dumbbell topology, links have 100-Gbps link capacities and link delays are drawn from a truncated Gaussian (clipped to positive values) with mean 100 𝜇 s. In the unidirectional case, we run 100 equal-rate flows at 99% 
+
+aggregate load. In the bidirectional case, the 100 flows are split equally (50 in each direction) and we use a 96% aggregate packet load (to also allow for ACK load). In the datacenter topology, we assume an 8-ToR two-level fat-tree with 4 core switches and 4 hosts per ToR (32 hosts total), 1,600 Gbps links, host-to-ToR average propagation de-lays of 0.5 𝜇 s, and ToR-to-core average propagation delays of 2 𝜇 s. Again, exact delays are drawn from a Gaussian dis-tribution with standard deviation 16% of the mean. 
+
+Baseline. We compare CAPS against a baseline algorithm that uses ACK clocking, as well as a baseline augmented with IWP. 
+
+Dumbbell. Fig. 3 illustrates the results of the dumbbell eval-uations. Fig. 3(a) shows how in the unidirectional case, after the initial transient (first 50 ms ), the baseline accumulates a mean bottleneck occupancy of some 158 KB (≈40 packets) with a peak near 200 KB (≈50 packets). CAPS quickly reduces the mean occupancy to zero , i.e., every packet arriving at the bottleneck finds the link idle and is serialized immediately, while maintaining the same 99% link utilization. Figs. 3(b) and 3(c) illustrate the bidirectional case. After transient, the baseline sustains a mean forward queue of 
+
+34 KB (≈9 packets) with peaks up to 76 KB (≈19 packets), with similar numbers on the reverse path. CAPS does not yield a zero queue size anymore, as expected, but reduces the mean forward occupancy to 3.3 KB (≈1 packet) with peaks near 
+
+16 KB (≈4 packets), and the reverse direction is symmetric at 3.5 KB mean. Both directions show an approximately 10 ×
+
+reduction in mean occupancy compared to the baseline. The total throughput in both algorithms was near identical. 
+
+Fat-tree topology. We now run evaluations in a datacenter fat-tree topology. Each experiment compares three configu-rations: (i) a simplified baseline with no alignment correction and no IWP, (ii) the baseline with IWP added, and (iii) CAPS 
+
+with RTT max alignment, split data/ACK queues, and IWP. In all cases, per-flow congestion windows are set by a max-min fair-rate allocator. The metric plotted is the maximum instan-taneous queue occupancy across all switch links in the entire network, sampled at regular intervals. All plots begin slightly after simulation start (slightly over one RTT max ) to exclude the initial burst caused by the first round of transmissions, which produces a large transient peak (predominantly in    
+
+> 4CAPS : Fine-Tuning CCA Timing
+> (a) Unidirectional (b) Bidirectional, forward (c) Bidirectional, reverse
+
+Figure 3: Dumbbell bottleneck queue occupancy in bytes as function of time with heterogeneous RTTs. (a) unidi-rectional, 100 flows, 99% load. (b,c) bidirectional, 50 flows/direction, 96% load. 
+
+the unpaced baseline) that would compress the steady-state detail of interest. 
+
+All-to-one (incast). All sources send to a single destination host, each flow split into 8 subflows (224 flows total) with randomized routing and a utilization booster bringing the bottleneck to 96% load across all configurations. Fig. 4(a) shows the last-hop bottleneck queue. In steady state, CAPS flattens it to ≈1.5 KB , a 10 × reduction: even with 224 flows arriving through 4 core switches, phase lock keeps the single bottleneck nearly empty. 
+
+Permutation traffic. A random seeded permutation matches each of the 32 hosts to a distinct destination on a different ToR (32 flows), creating multiple simultaneous bottlenecks with no single dominant link. Fig. 4(b) plots the network-wide maximum queue. IWP alone does not reduce steady-state buildup ( 47 –53 KB ). CAPS 
+
+reduces the worst-case queue to ≈5–8 KB , a 7× reduction, demonstrating that per-flow phase alignment stabilizes tim-ing independently at whichever link constrains each flow. 
+
+All-to-all. Every source sends to every host on every other ToR (896 flows), saturating all uplinks, core links, and down-links simultaneously. Fig. 4(c) shows the network-wide maximum queue. IWP reduces both the transient (baseline’s ≈310 KB to ≈35 KB peak) and the steady state (baseline’s 50 –65 to ≈25 –35 KB ). 
+
+CAPS further reduces the steady state queue to ≈10 –12 KB ,
+
+5× from baseline and 2.5× from IWP. The higher residual compared to permutation is expected: with dozens of si-multaneously saturated links, cross-path interference limits phase-lock precision. Nevertheless, the reduction is substan-tial and consistent throughout the run. 
+
+Result summary. Table 1 summarizes the steady-state queue behavior across the three fat-tree scenarios. 
+
+Table 1: Average of the maximum queue occupancy across fat-tree experiments (after initial transient). 
+
+Scenario Baseline Baseline+IWP CAPS 
+
+All-to-One 15 KB 14 KB 1.5 KB Permutation 50 KB 50 KB 7 KB All-to-All 55 KB 28 KB 11 KB 
+
+## 5 Discussion 
+
+The missing primitive is timing, not rate. Current stacks control how much to send and how to react to congestion. 
+
+CAPS adds a third dimension: when to send. Two flows with identical rates can produce very different queue behavior depending on phase alignment. Treating release timing as a first-class control variable, alongside window and rate, makes a class of persistent queues avoidable by construction. 
+
+Combining with existing transports. Swift and HPCC keep standing queues at a target (e.g., a few packets) by react-ing to delay or INT signals, but their feedback loops cannot prevent persistent phase collisions: they only react after the queue has formed. We thought at first that CAPS is comple-mentary: it could run beneath any such CCA, consuming the residual timing error that the feedback loop cannot elim-inate. However, we found that Swift and HPCC need to have queues to be able to react. It is an open problem to classify which CCAs coexist well with CAPS, and how to adapt the non-coexisting ones to obtain similar properties. 
+
+Implications for buffer sizing. The small buffer-sizing rule allocates 𝐵 = BDP /√𝑁 on the premise that statisti-cal multiplexing of 𝑁 flows still requires meaningful buffer-ing to absorb rate fluctuations [ 3 ]. CAPS’s results suggest this premise may over-provision for workloads where phase 
+
+> 5R. Zailer and I. Keslassy
+
+(a) All-to-One (Incast) (b) Permutation (c) All-to-All 
+
+Figure 4: Fat-tree queue occupancy in bytes as function of time. (a) bottleneck link queue, 224 flows, single bottleneck, 96% load. (b) max queue across all links, 32 permutation flows, multiple bottlenecks. (c) max queue across all links, 896 flows, full contention. 
+
+alignment is feasible. In the dumbbell with 100 flows at 99% 
+
+load, the standing queue drops to zero, far below what any BDP-based formula would prescribe. In the fat-tree with 896 flows, the worst-case queue falls to 2–3 packets across the entire fabric. If phase-locked transport becomes practical at scale, buffer-sizing rules may need to distinguish between workloads that can be phase-aligned (long-lived, predictable) and those that cannot (short bursts, unpredictable arrivals), rather than applying a single statistical model to all traffic. 
+
+Relevance to AI/ML collectives. GPU training clusters run synchronized AllReduce/AllGather [ 4 ] where tail latency on any flow delays the entire collective [ 9]. CAPS ’s assumptions (stable rates, known RTTs, predictable patterns) are a natural fit for this workload, and the 5× queue reduction in our all-to-all experiment suggests potential benefit. Production collectives involve per-step bursts and RDMA semantics that require further validation. 
+
+Limitations. CAPS assumes (1) converged fixed rates, (2) no link oversubscription and (3) fixed routes. It is a post-convergence mechanism: during rate transitions, queues build until re-locking completes (one 𝑇 max transient). It is best suited for long-lived, predictable workloads (bulk trans-fers, AI/ML collectives). Open challenges for future work include 𝑇 max estimation in production and behavior under dynamic routing. 
+
+## 6 Conclusion 
+
+CAPS is a timing layer on top of fair-rate control. The fair-rate allocator decides how much each flow may send; CAPS 
+
+decides when each flow should send so that packets reuse the same bottleneck slots from one RTT frame to the next. In equal-RTT settings, plain ACK-clocking is sufficient. In heterogeneous-RTT settings, a simple RTT max correction restores alignment. In bidirectional settings, split data/ACK queues with ACK priority keep the feedback signal reliable. The dumbbell experiments confirmed the mechanism in its cleanest form: zero steady-state queue at 99% utilization with 100 heterogeneous-RTT flows, and a 10 × reduction under bidirectional traffic at 96% load. The fat-tree experiments extended the result to a realistic multi-bottleneck topology with up to 896 concurrent flows across three traffic patterns (incast, random permutation, and all-to-all). CAPS reduced worst-case queue occupancy anywhere in the network by 
+
+5–10 × without throughput loss, using the same algorithm and parameters as the dumbbell case. To summarize, the central finding is that standing queues are a timing bug, not a throughput requirement. High utiliza-tion and near-empty queues are not in conflict; they coexist naturally once flows are phase-aligned to the bottleneck service rhythm. 
+
+## References                    
+
+> [1] Amit Aggarwal, Stefan Savage, and Thomas Anderson. 2000. Under-standing the Performance of TCP Pacing. IEEE Infocom (2000). [2] Mohammad Alizadeh, Albert Greenberg, David A. Maltz, Jitendra Padhye, Parveen Patel, Balaji Prabhakar, Sudipta Sengupta, and Murari Sridharan. 2010. Data Center TCP (DCTCP). ACM SIGCOMM (2010). [3] Guido Appenzeller, Isaac Keslassy, and Nick McKeown. 2004. Sizing Router Buffers. ACM SIGCOMM (2004). [4] Tal Ben-Nun and Torsten Hoefler. 2019. Demystifying Parallel and Dis-tributed Deep Learning: An In-Depth Concurrency Analysis. Comput. Surveys (2019). [5] Neal Cardwell, Yuchung Cheng, C. Stephen Gunn, Soheil Has-sas Yeganeh, and Van Jacobson. 2017. BBR: Congestion-Based Con-gestion Control. Commun. ACM (2017). [6] Yanpei Chen, Rean Griffith, Junda Liu, Randy H. Katz, and Anthony D. Joseph. 2009. Understanding TCP Incast Throughput Collapse in Datacenter Networks. ACM WREN (2009). 6
+
+CAPS : Fine-Tuning CCA Timing 
+
+[7] Joon-Young Choi, Kyungmo Koo, J.S. Lee, and S.H. Low. 2005. Global Stability of FAST TCP in Single-Link Single-Source Network. In Pro-ceedings of the 44th IEEE Conference on Decision and Control .[8] Jerry Chu, Nandita Dukkipati, Yuchung Cheng, and Matt Mathis. 2013. Increasing TCP’s Initial Window. RFC 6928, Internet Engineering Task Force. [9] Jeffrey Dean and Luiz André Barroso. 2013. The Tail at Scale. Commun. ACM (2013). [10] Jim Gettys and Kathleen Nichols. 2012. Bufferbloat: Dark Buffers in the Internet. Commun. ACM (2012). [11] Monia Ghobadi and Yashar Ganjali. 2013. TCP Pacing in Data Center Networks. In 2013 IEEE 21st Annual Symposium on High-Performance Interconnects .[12] Van Jacobson. 1988. Congestion Avoidance and Control. In ACM SIGCOMM CCR .[13] K. Jacobsson, L. L. H. Andrew, A. Tang, K. H. Johansson, H. Hjalmars-son, and S. H. Low. 2008. ACK-Clocking Dynamics: Modelling the Interaction between Windows and the Network. In IEEE INFOCOM 2008 - The 27th Conference on Computer Communications .[14] Krister Jacobsson, Hakan Hjalmarsson, and Niels Moller. 2006. ACK-clock Dynamics in Network Congestion Control - An Inner Feedback Loop with Implications on Inelastic Flow Impact. In Proceedings of the 45th IEEE Conference on Decision and Control .[15] Lavanya Jose, Stephen Ibanez, Mohammad Alizadeh, and Nick Mcke-own. 2019. A Distributed Algorithm to Calculate Max-Min Fair Rates Without Per-Flow State. SIGMETRICS (2019). [16] Gautam Kumar, Nandita Dukkipati, Keon Jang, Hassan M. G. Was-sel, Xian Wu, Behnam Montazeri, Yaogong Wang, Kevin Springborn, Christopher Alfeld, Michael Ryan, David Wetherall, and Amin Vahdat. 2020. Swift: Delay is Simple and Effective for Congestion Control in the Datacenter. ACM SIGCOMM (2020). [17] Yuliang Li, Rui Miao, Hongqiang Harry Liu, Yan Zhuang, Fei Feng, Lingbo Tang, Zheng Cao, Ming Zhang, Frank Kelly, Mohammad Al-izadeh, and Minlan Yu. 2019. HPCC: High Precision Congestion Con-trol. ACM SIGCOMM (2019). [18] Jonathan Perry, Amy Ousterhout, Hari Balakrishnan, Devavrat Shah, and Hans Fugal. 2014. Fastpass: A Centralized “Zero-Queue” Datacen-ter Network. ACM SIGCOMM CCR (2014). [19] G. Redinbo. 1977. Queueing Systems, Volume I: Theory - Leonard Klein-rock .7
