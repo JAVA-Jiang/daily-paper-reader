@@ -1,0 +1,492 @@
+Title: ProFlow: RL-Driven and Performance-Aware Proactive Flow Placement in Datacenter Networks
+
+URL Source: https://arxiv.org/pdf/2607.26231v1
+
+Published Time: Thu, 30 Jul 2026 00:14:07 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# ProFlow : RL-Driven and Performance-Aware Proactive Flow Placement in Datacenter Networks 
+
+Sourya Saha, Md Nurul Absur, Saptarshi Debroy City University of New York Emails: ssaha2@gradcenter.cuny.edu, mabsur@gradcenter.cuny.edu, saptarshi.debroy@hunter.cuny.edu 
+
+Abstract —In datacenter fabrics composed of leaf and aggrega-tion switches, competing flows may become co-located on shared aggregation switches, creating congestion that can significantly degrade protected flows. However, before throughput degradation becomes observable, the network often exhibits early signs characterized by rising flow activity and queue overflow signals. Existing congestion-management approaches primarily react only after congestion becomes visible, leaving these early signs largely unexploited. In this paper, we propose ProFlow , a proactive flow-placement framework for protecting performance-sensitive traffic in multi-tenant datacenter networks, thereby utilizing the early signs of potential throughput degradations. ProFlow leverages distributed telemetry signals and offline-trained reinforcement learning (RL) to identify precursor congestion conditions and proactively reroute protected flows before throughput degrada-tion occurs. Evaluation results using FABRIC testbed show that 
+
+ProFlow achieves approximately 40% higher mean throughput than a reactive rerouting baseline while initiating rerouting decisions around 34 seconds earlier on average, demonstrating the effectiveness of anticipatory congestion management. 
+
+Index Terms —Datacenter networks, proactive flow place-ment, congestion management, reinforcement learning, software-defined networking, multi-tenant networks 
+
+I. I NTRODUCTION 
+
+Modern cloud datacenters host a diverse mix of workloads, including distributed training jobs, large-scale data processing pipelines, and latency-sensitive services, all placing significant network demand [1], [2], [3]. Many of these applications depend on sustained communication efficiency, and even short-lived throughput degradation can slow end-to-end execution by delaying synchronization and data exchange [4], [5]. To support such workloads at scale, datacenter operators widely rely on leaf-aggregate network fabrics [6], in which servers connect to leaf switches that forward traffic through a set of shared aggregation switches, providing multiple parallel paths between endpoints. While this architecture improves path diversity and network capacity, it also creates a fundamental challenge in multi-tenant environments, as in, flows from different tenants may be placed on the same aggregation switch and therefore contend for shared bandwidth. In practice, common path selection mechanisms do not reason about the future congestion impact of individual flow placements, which can allow harmful traffic co-location to persist. As a result, tenants with stricter service-level objectives may experience disproportionate performance degradation when their flows are co-located with aggressive or bandwidth-intensive traffic [7]. Ensuring that such flows maintain stable throughput becomes critical for both application correctness and SLA compliance, making intelligent flow placement across shared aggregation switches a key requirement in modern datacenters [8], [9]. While interference originates from the co-location of com-peting flows on shared aggregation switches, the challenge 
+
+This material is based upon work supported by the National Science Foundation (NSF) under Award Number CNS-2232889. 
+
+> Fig. 1: Temporal dynamics of congestion onset and protected flow degradation in a multi-tenant leaf-aggregate fabric. Flow throughput (smoothed) shown over a 90-second window. The left axis marks the point at which congestion flows are launched; the red dashed line marks the onset of protected flow degradation. A temporal gap of approximately 15 sec. separates these two events of flow degradation and congestion flow start; during this, congestion is already observable building, yet the protected flow remains healthy. The cyan dotted line marks the point at which a reactive approach decides to reroute the flow by which time, the flow throughput has completely degraded.
+
+lies in identifying when such placement begins to pose a risk. In practice, bandwidth-intensive flows assigned to the same aggregation switch as a latency-sensitive protected flow can rapidly consume available capacity, eventually causing queue overflow and throughput degradation. However, as illustrated in Figure 1, manifestation of congestion is preceded by a precursor phase during which the network already exhibits early warning signals, such as increasing active flow counts and rising queue overflow activity, while the protected flow itself continues to operate normally. This creates a temporal gap between the emergence of congestion-inducing conditions and their observable impact on performance. By the time conventional indicators such as throughput collapse become visible, degradation is already underway, leaving limited op-portunity for corrective action. Exploiting this gap requires reasoning about whether current network conditions are likely to evolve into future congestion on a particular aggregation switch before any direct performance degradation is observed. Such reasoning is fundamentally challenging because the precursor signals are distributed, noisy, and highly dependent on the evolving global traffic state. 
+
+Existing approaches to congestion management in datacen-ter networks do not fully address the problem of proactive flow placement under emerging congestion. A large class of transport-layer mechanisms improves network utilization and fairness by reacting to congestion signals using richer telemetry, faster control loops, or host-level feedback [10], [11], [12], but these approaches regulate transmission only after contention begins to manifest, without influencing where flows are placed in the fabric. At the network level, load balancing and repathing techniques redistribute traffic across available paths based on observed congestion [13], yet their arXiv:2607.26231v1 [cs.NI] 28 Jul 2026 decisions are still triggered by conditions on the current path, rather than by anticipating which alternative paths may become congested. Architectural proposals aim to avoid congestion altogether through stronger network guarantees and redesigned fabric support [14], but such approaches require changes to the underlying infrastructure and are not easily deployable in existing systems. More recently, learning-based methods have explored reinforcement learning for datacenter control [15], [16], demonstrating the ability to optimize congestion-control parameters or global traffic patterns, but not addressing proactive per-flow protection based on early precursor signals. 
+
+As a result, the problem of deciding whether a currently healthy flow should be moved before degradation begins, based on indirect and distributed signals of future congestion, remains largely unaddressed. 
+
+In this paper, we present ProFlow , a reinforcement learning (RL)-driven proactive flow-placement framework for multi-tenant datacenter networks. ProFlow identifies when a well-performing flow is at risk of future degradation and proactively relocates it before congestion impacts throughput. It leverages distributed telemetry from leaf and aggregation switches to learn precursor patterns of future congestion, evaluates alter-native aggregation paths, and selects the placement expected to maintain stable performance. The approach operates over existing network infrastructures without requiring changes to the underlying fabric, making it readily applicable to practical multi-tenant deployments. We implement ProFlow on a programmable leaf-aggregation datacenter environment deployed across multiple FABRIC testbed sites [17]. We evaluate it under realistic multi-tenant traffic scenarios in which protected flows coex-ist with competing bandwidth-intensive transfers that create dynamic and heterogeneous congestion across aggregation paths. We compare ProFlow against static placement and reactive rerouting driven by observed congestion. Across these scenarios, ProFlow preserves protected-flow throughput un-der contention, achieving approximately 40% higher mean throughput than the reactive baseline while initiating reroutes about 34 seconds earlier on average. These results show that early precursor signals can support effective proactive place-ment before congestion becomes directly observable through throughput degradation. The rest of the paper is organized as follows. Section II reviews related work. Section III provides an overview of the system design on which our work is based and the formulation of the problem we are dealing with in this work. Section IV presents the design of ProFlow . Section V presents the system implementation and evaluates ProFlow under realistic multi-tenant traffic conditions. Finally, Section VI concludes the paper and outlines directions for future work. II. R ELATED WORK 
+
+The current literature has highlighted congestion across different layers [18], [19], [20]. 
+
+Datacenter Congestion Control: Datacenter transport proto-cols have addressed the problem of maintaining high through-put & low latency under heterogeneous & bursty workloads. Early contributions, such as DCTCP, use ECN feedback to estimate congestion levels and adjust the congestion window accordingly [21]. This enables high throughput while retaining switch queues less crowded. More recent contributions address improving the speed and precision of congestion feedback. HPCC leverages in-network telemetry to acquire fine-grained link-road information and precisely control sending rates [22]. PowerTCP [23] adapts the congestion window using the bandwidth-window product feedback for rapid reaction under dynamic traffic conditions. These transport-layer mechanisms improve congestion response by observing ECN mark reflec-tions, telemetry, delay, or queueing signals. Nevertheless, these works do not decide where the flow should be placed in the network fabric. To address this limitation, they regulate the sender once congestion pressure builds, but do not prevent a vulnerable flow from being co-located with congestion-inducing traffic on a shared aggregation path. 
+
+Load Balancing and Congestion-Aware Path Selection: 
+
+Distributing traffic across multipath paths in Clos & leaf-aggregate datacenter fabrics is becoming more common in recent times. ECMP is widely used because of its simplicity and scalability, but its hash-based placement can cause runtime congestion and map competing flows onto the same bottleneck path [24]. Congestion-aware load balancing systems address the aforementioned limitations by using network feedback to shift traffic away from congested paths. Liu et al. explain that the advanced algorithm Gemma leverages queue length to im-prove network performance in Remote Direct Memory Access (RDMA) [25]. Some other recent works, such as CONGA [26] and PLB [27], propose path changes to reduce packet reordering. These systems demonstrate that path changes mit-igate hotspots in multipath datacenter fabrics. However, their triggering status condition remains fundamentally reactive and susceptible to predictable activity. This makes the problem counterfactual rather than purely congestion-responsive. 
+
+Learning-Based Datacenter Traffic Optimization: The emergence of machine learning has also been explored for data center traffic control. Reinforcement learning mitigates chal-lenges such as partial observability, nonstationarity, and multi-objectivity [28]. Other learning-based control methods fine-tune congestion control parameters or optimize global traffic patterns [29], [30]. These works highlight promises of data-driven decision-making in complex network environments. Yet, most prior learning-based systems optimize aggregate network-level objectives, congestion-control parameters, or traffic-engineering policies. This keeps the vacuum of finding outcomes of alternative placements in the network hidden unless the flow is actually moved. Overall, prior work holds significant promise for improving datacenter congestion man-agement, but the current state of the art still lacks proactive per-flow protection. None of the aforementioned approaches directly solves the problem of deciding whether a currently healthy, performance-sensitive flow should be moved before degradation begins, relying instead on indirect, distributed precursor signals. 
+
+III. S YSTEM MODEL AND PROBLEM FORMULATION 
+
+A. System Model 
+
+We consider a multi-tenant datacenter network composed of leaf and aggregation switches arranged in a two-tier Clos topology, as illustrated in Figure 2. End-hosts attach to leaf switches, and all inter-host traffic is forwarded through one of several aggregation switches, each providing an equal-cost path between source and destination. This architecture offers high path diversity and is widely used in modern datacenter deployments. Path selection in the network is performed using Equal-Cost Multi-Path (ECMP) routing, where each flow is assigned to an aggregation switch based on a hash of its Fig. 2: Different layers in a datacenter topology 
+
+packet header fields. Once assigned, a flow remains on the selected path for its lifetime, as ECMP does not incorporate runtime congestion feedback. As a result, multiple flows may be mapped to the same aggregation switch, leading to potential contention for shared bandwidth. The network is managed by a centralized SDN controller, as shown in Figure 2, which can override default forwarding decisions and reroute individual flows across aggregation switches. The controller also collects aggregate telemetry, including traffic rates and activity levels, from the network switches. These signals provide only a partial view of the network state and do not directly reveal the placement or behavior of individual competing flows. 
+
+B. Problem Formulation 
+
+We denote the aggregation-switch set by S, with each switch having uplink capacity C, and the set of leaf switches hosting congestion-flow sources by L. The protected flow fp is a long-lived TCP stream between a fixed source-destination host pair whose throughput must be maintained under multi-tenant load. At any time, fp traverses exactly one aggregation switch, with its current placement denoted by k∗ ∈ S . A set of N
+
+congestion flows f1, . . . , f N , each comprising multiple parallel TCP streams, originates from leaves in L. The assignment of each congestion flow is fixed at arrival and not directly observable by the controller; only the aggregate effect on each aggregation switch is measurable through telemetry. At regular intervals the controller collects a telemetry ob-servation vector ot ∈ Rd encoding aggregate signals from L
+
+and S together with the current placement k∗. These signals characterise instantaneous load, deviation from per-episode baselines, and congestion trends. Based on ot, the controller may issue a reroute command that moves fp to any k ∈ S .Let ϕ(ot, k ) denote the throughput of fp when placed on aggregation switch k under the network conditions represented by ot. The proactive aggregation switch selection problem has two tightly coupled objectives. The first is to maximize the cumulative throughput of the protected flow over time:  
+
+> max
+> k0,k 1,...,k TTX
+> t=0
+> ϕ(ot, k t)(1)
+
+subject to the constraint that each decision at time t is made using only the observations available up to that point. The second objective is to maximize the lead time τlead ,defined as the interval between the controller’s reroute de-cision and the manifestation of congestion on the protected flow’s original aggregation switch in the form of throughput degradation of the flow. A positive lead time corresponds to a proactive decision made during the precursor phase, before any observable performance degradation, while a negative lead time corresponds to a reactive response after congestion has already impacted throughput. This scenario is depicted in Figure 1. These objectives are generally aligned because earlier rerouting provides more time to reach a less congested des-tination before throughput degrades. However, positive lead time does not guarantee higher throughput if the selected destination is also congested. We therefore report both metrics and seek placements kt ∈ S that preserve throughput while enabling timely intervention. A key difficulty is that ϕ(ot, k ) is directly observable only for the current placement k∗ — we write the realised through-put compactly as ϕt ≡ ϕ(ot, k ∗) — while the throughput under alternative placements k̸ = k∗ remains unknown unless the flow is explicitly rerouted. This introduces a counterfactual decision problem in which the controller must reason about outcomes that cannot be directly measured. Compounding this challenge are the temporal dynamics of congestion. As illus-trated in Figure 1, congestion flows produce early precursor signals in the network shortly after arrival, while the protected flow’s throughput remains unaffected for a substantial period. Degradation occurs later, once the token bucket on the con-gested aggregation switch is exhausted. A reactive strategy that waits for throughput degradation is therefore inherently late. The controller must therefore use indirect precursor signals in ot to predict future congestion and select an aggregation switch for fp before the delayed throughput consequences become observable. IV. S OLUTION STRATEGY 
+
+A. Design Motivation 
+
+The proactive aggregation switch selection problem is pre-dictive and counterfactual, as future congestion must be in-ferred from current telemetry ot, and the throughput of fp
+
+under alternative placements k̸ = k∗ is unobservable unless taken. A third requirement is that learning must be performed offline, since exploratory rerouting in a production network would directly degrade the protected flow’s performance. These constraints motivate an offline learning formulation that infers future congestion from collected telemetry while reasoning about unobserved outcomes. ProFlow adopts this formulation to learn a proactive placement policy entirely offline, which is then deployed as a fixed inference component within the controller. 
+
+B. ProFlow Overview 
+
+We hereby discuss ProFlow , a routing mechanism imple-mented within the SDN controller that enables proactive place-ment of performance-sensitive flows in multi-tenant datacenter networks. Building on the requirements outlined above, the key idea is to leverage real-time network telemetry to antici-pate congestion and adjust flow placement before performance degradation occurs, rather than reacting to it afterwards. At runtime, the system operates in a closed loop. At each decision interval, the controller collects a telemetry observa-tion ot that summarises current network conditions across aggregation switches in S and leaf switches in L. Based on this observation, ProFlow evaluates the expected future performance of the protected flow under different placement options and selects an aggregation switch that is likely to Fig. 3: ProFlow pipeline. Offline (left): a dynamics model fψ is trained on offline episodes collected from controlled congestion scenarios (Stage 1); the Q-network Qθ is then pre-trained on real transitions via fitted Q-iteration (Stage 2) and refined with Dyna-style synthetic rollouts generated by fψ (Stage 3). Online (right): the trained Qθ is deployed as a frozen inference component within the SDN controller. At each 500 ms decision interval, telemetry from leaf and aggregation switches is normalised into the state vector        
+
+> st∈Rds , the decision module computes Q-values and applies a stability gate (margin δ,Wconsecutive votes, cooldown) to select kbest , and the SDN controller installs per-flow OpenFlow rules to enforce the chosen aggregation switch.
+
+remain uncongested. If the selected switch differs from the current placement k∗ and satisfies a stability condition, the controller issues a reroute command through the SDN control plane. The system consists of three logical components. A signal collection module gathers network telemetry from switches and constructs the observation vector ot used for decision making. A decision module processes this observation to evaluate candidate placements and determine whether a reroute should be performed. Finally, the SDN controller enforces the selected placement by updating forwarding rules for fp.To this end, ProFlow employs an offline-trained model that captures the relationship between observed telemetry signals and future congestion, as well as the expected impact of placement decisions. This model is trained on data collected from curated congestion scenarios on a physical testbed, and deployed as a fixed inference component that processes real-time telemetry without further learning or exploration. 
+
+C. State Representation 
+
+At each decision interval, ProFlow converts the raw teleme-try observation ot into a structured state representation st ∈
+
+Rds used for decision making. The state vector is constructed by grouping and normalising telemetry signals into four com-ponents:          
+
+> st=xagg
+> t,xleaf
+> t,ht,xflow
+> t
+> (2)
+
+The first component, xagg  
+
+> t
+
+∈ R5|S| , summarises per-aggregation-switch congestion state. For the current host k∗,overflow and flow-count signals are encoded as signed devia-tions from per-episode baselines, exposing both the protected flow’s own TCP collapse (an early sign of severe congestion on the current path) and crowd accumulation (the primary signal used for proactive rerouting); for all other switches k̸ = k∗,unsigned normalisations are used. The second component, 
+
+xleaf  
+
+> t
+
+∈ R2|L| , captures precursor signals at the leaf switches in L. The third component, ht ∈ {0, 1}|S| , is a one-hot encoding of the current placement k∗. The fourth component, 
+
+xflow  
+
+> t
+
+∈ R4, captures protected-flow throughput ϕt, aggregate congestion-flow intensity, and short-window degradation sig-nals that allow the controller to detect throughput drop on the current path before it becomes severe. The full per-coordinate signal definitions, normalisation, scaling constants Cx, and signed/unsigned encoding rules are given in Appendix A. 
+
+D. Action Space and Rerouting Mechanism 
+
+ProFlow models the placement decision for the protected flow as a discrete action selection problem. At each decision interval, the controller selects an aggregation switch k ∈ A ,where the action set A = S identifies each action with placing the protected flow on a specific aggregation switch. Once an action is selected, the SDN controller enforces the corresponding placement by installing per-flow forwarding rules on the relevant leaf switches. The update is applied to both the forward path and the reverse path to ensure consistent routing. A key challenge in this setting is avoiding excessive rerout-ing. During the precursor phase, congestion indicators may fluctuate across aggregation switches, leading to small varia-tions in the estimated quality of different placement options. If the controller always selects the best-scoring switch at each interval, this can result in frequent switching between aggregation switches, which may disrupt the transport layer and degrade overall performance. To address this, ProFlow em-ploys a three-part stability mechanism. Let Q(st, k ) denote the estimated value of placing the protected flow on aggregation switch k under state st. At each step, the controller computes the highest-scoring action kbest = arg max k∈A Q(st, k ) and the Q-value gap ∆Q = Q(st, k best ) − Q(st, k ∗).First, a reroute candidate is admitted only if ∆Q > δ , where 
+
+δ is a margin threshold that filters noise-driven switches. Sec-ond, the same candidate switch must win for W consecutive decision steps before a reroute is issued, ensuring that the controller acts on a consistent signal rather than a transient fluctuation. Third, once a reroute has been issued, a cooldown period suppresses further reroutes, allowing the transport layer to stabilise before the next decision. A reroute is triggered only when all three conditions are simultaneously satisfied. 
+
+E. Model-Based Offline Reinforcement Learning 
+
+ProFlow formulates the placement problem as a reinforce-ment learning problem and learns a value function from offline data. At each decision interval, the controller observes the current state st, selects an action k ∈ A , and receives a scalar reward rt that captures how well the chosen placement served the protected flow. The goal is to learn a function Q(s, k ) that estimates the expected long-term return of choosing switch k
+
+in state s:       
+
+> Q(st, k ) = E
+> "∞X
+> i=0
+> γirt+ist, k t=k
+> #
+> ,(3)
+
+where γ ∈ (0 , 1) is a discount factor. At runtime, the controller selects the action with the highest Q-value, subject to the stability gate. The Q-function is implemented as a multi-layer feedforward neural network Qθ : Rds → R|A| that maps the state vector directly to a vector of values, one per candidate action. a) Reward design: The reward jointly encodes the two objectives from Section III: high throughput on the current placement, and early action driven by precursor signals. For transitions observed in the collected data, the reward is defined as:                     
+
+> rt= clip
+> 
+> ϕnorm −αtc ˆξk∗+αstay (1 −ˆξk∗)
+> −αcoll (1 −ϕnorm ) + β∆n+
+> k∗,−1,2
+> (4)
+
+where ϕnorm = ϕt+1 /ϕ 0 is the next-step throughput nor-malised by the per-episode pre-congestion baseline ϕ0, and 
+
+ˆξk∗ = ξk∗ /C ξ is the normalised token-bucket overflow rate on the current host k∗. The term ∆n+ 
+
+> k∗
+
+= max(0 , (nk∗ − ¯n)/C n)
+
+is the positive excess flow count on k∗, where ¯n and Cn are defined in Appendix A. The clipping bounds prevent extreme Q-value targets during training. The term ϕnorm rewards high throughput. The terms weighted by αtc and αstay together penalise placement on a congested aggregation switch and reward placement on a clean one. The term weighted by αcoll additionally penalises states where the protected flow’s throughput has already collapsed below baseline. These terms are all grounded in signals that are directly observable in the current state. The crowd term β ∆n+ 
+
+> k∗
+
+(β < 0) is the proactive compo-nent: it fires as soon as excess flows arrive on k∗, before the token bucket is exhausted and before throughput degrades. By penalising crowd accumulation independently of throughput, this term directly incentivises rerouting during the precursor window, which is the core behavioural objective of the system. 
+
+b) Handling counterfactual outcomes with a learned dynamics model: Because the data-collection policy did not freely move fp to all switches at all times, the Q-function must evaluate placements rarely seen in the data and reason about future states that depend on actions not yet executed. To address this, ProFlow learns a dynamics model fψ in addition to the Q-function. The dynamics model is a feedforward neural network that takes as input the current state st and a one-hot encoding of the selected action k, and predicts the resulting next state s′
+
+> t+1
+
+. Given this model, the agent can simulate the consequences of any placement decision from any state, even those not present in the collected data. 
+
+c) Reward for synthetic transitions: Because the dynam-ics model is used to generate rollouts under hypothetical place-ment decisions, particularly reroutes that were not executed in the data, the reward applied to these synthetic transitions is designed to be more explicitly proactive than the real-transition reward. For a reroute action, the synthetic reward augments the real-transition reward’s throughput/congestion structure with three additional shaping terms: a destination-congestion penalty on the chosen switch, a proactive-escape bonus that rewards moving from a more congested switch to a cleaner one, and a lead-time bonus that rewards rerouting while k∗ is still clean, explicitly incentivising early action. For a stay action, analogous terms reward remaining on a clean switch while penalising congestion and throughput collapse, including a crowd penalty consistent with the real-transition reward. The full form is given in Appendix B. 
+
+d) Training procedure: Training proceeds in three offline stages. In the first stage, the dynamics model fψ is trained on transitions extracted around observed reroute events, learning to predict how the network state evolves following a placement change. This model is the foundation for all subsequent planning. In the second stage, the Q-network Qθ is pre-trained on all real transitions using fitted Q-iteration (FQI). This stage provides a stable initialisation of the Q-function by regressing Q-values toward Bellman targets computed from the real-transition reward and bootstrapped next-state values. In the third stage, the Q-network is refined using a Dyna-style approach. For each batch of real transitions, the agent also performs a series of synthetic rollout steps using fψ , with rewards computed by the synthetic reward function. These rollouts allow the agent to evaluate placement choices that were not taken in the data — in particular, early reroutes during the precursor phase — enabling it to learn proactive behaviour that the real data alone cannot fully supervise. The entire pipeline for ProFlow is shown in Figure 3. V. E VALUATION AND RESULTS 
+
+A. Implementation a) Testbed: ProFlow is implemented on the NSF FAB-RIC testbed using a leaf-aggregation switch topology com-posed of Open vSwitch instances. Four aggregation switches and four leaf switches are deployed on dedicated compute nodes, each running OVS; three of the four leaves (constitut-ing L) host the congestion-source hosts. Eight end-hosts are attached to the leaf layer, two per leaf. A centralized Ryu SDN controller manages all switches and hosts the signal collection module, the Q-function inference engine, and the rerouting logic. Egress rate limiting on each aggregation switch uplink is enforced using Linux tc token-bucket filters. 
+
+b) Signal collection and telemetry: The controller polls port statistics and flow-level byte counters from all switches via OpenFlow at 500 ms intervals. Token-bucket overflow rates are collected concurrently from each aggregation switch via a lightweight HTTP endpoint running on each node. These raw measurements are combined to construct the state vector st as described in Section IV. 
+
+c) Training data and setup: The Q-network Qθ and dynamics model fψ are trained entirely offline using controlled testbed episodes generated under the strategies listed in Table I (Appendix C). Training is performed in PyTorch on a CUDA-capable GPU and completes in under ten minutes. 
+
+d) Evaluation scenarios: The agent is evaluated across ten main scenarios (S1–S10) and two ablation scenarios (C1, C2), all run on the physical testbed. Each scenario is repeated three times under three policies (agent, reactive, static (no reroute)), yielding 10 × 3 × 3 = 90 main-test episodes and 
+
+2 × 3 = 6 ablation episodes per model variant. Table II (Appendix D) summarises each scenario. 
+
+e) Baseline thresholds: The reactive baseline reroutes when the token-bucket overflow rate on the protected flow’s current switch exceeds ξth = 27 ,000 bytes/s for three con-secutive samples, chosen as the lowest threshold that never false-alarms on the protected flow’s own overflow, as detailed in Appendix E. Similarly, the crowd signal reroutes when the flow count on the protected flow’s switch exceeds a threshold, set to T = 5 , chosen to sit between the flow count produced by a single congester and the smallest genuine multi-host crowd, as detailed in Appendix G. 
+
+B. Results 
+
+We evaluate ProFlow against two baselines, static and reactive (Section V-A), across the ten main scenarios and two crowd-only ablation scenarios defined in Appendix D. We first present per-scenario throughput timeseries, then aggregate mean throughput across scenarios. We then quantify the lead-time advantage of ProFlow over reactive and contrast their token-bucket overflow profiles. A reward-signal sweep and crowd-signal ablation isolate the contribution of each design choice. We close with a seed-robustness study demonstrating that ProFlow’s behaviour is reproducible across training seeds. 
+
+a) Per-Scenario Throughput Timeseries: Figure 4 shows the throughput of fp over the 120 s congestion window for all ten scenarios. Each panel overlays three policies: Static (solid purple), Reactive (solid orange), and Agent (solid green). Lines show the median episode per policy, selected by mean throughput across three repeats. Shaded bands show the min-max range of the remaining two repeats, reflecting run-to-run variability without averaging artefacts. Vertical markers indicate the first reroute time of the median episode (dashed) and a second reroute where applicable (dotted). Across most scenarios, the agent exhibits a consistent be-havioural pattern. It detects the crowd signal ∆n+ 
+
+> k∗
+
+within 10– 18 s of congestion start and reroutes while fp is still operating near its healthy baseline. The flow experiences little to no throughput degradation, and the shaded bands are narrow, indicating that this behaviour is reproducible across repeats. The static policy sustains near-zero throughput throughout once congestion arrives, as fp competes indefinitely with congestion traffic on the same switch. The reactive policy recovers, but only after throughput has already collapsed. ξk∗
+
+must exceed ξth for three consecutive seconds before a reroute fires, by which point fp has degraded substantially. This delay is visible in every panel as a prolonged low-throughput period before the reactive reroute marker. In S6, the reactive policy never fires at all because the rolling congestion pattern clears each switch before ξth can be sustained, making reactive functionally indistinguishable from static. In S9, the burst pattern similarly defeats reactive. The 30 s burst window ends before three consecutive seconds above ξth are accumulated, and by the time the second burst triggers a reroute, only 18 s of the episode remain. Two scenarios depart from this dominant pattern and merit closer examination. S7 is the only scenario where the agent does not outperform reactive: two congesters share k∗ and three are placed on a separate switch, leaving no fully clean destination at decision time. The agent correctly detects the crowd signal and reroutes, but selects a destination switch already carrying three congestion flows, trading one partially congested placement for a more heavily congested one. Reac-tive ends up at a similarly congested destination in its median episode, but issues a second reroute after the cooldown expires and recovers marginally better, leaving a 0.06 MB/s margin, effectively a tie. The failure here is behavioral rather than structural. The state already carries the information needed to rank destinations, and the agent does use it elsewhere, correctly avoiding a congested destination, as shown in Ap-pendix F. S7 is harder because every candidate switch is already congested, so the differences are small and the policy does not reliably prefer the marginally cleaner one, a training-coverage limit rather than a representational one. S8 differs in the opposite way: congesting flows arrive sequentially, one every 25 s, so the crowd signal builds gradually rather than saturating, and the agent issues its reroute around 18 s, later than in the full-overlap scenarios. The agent still beats reactive by a substantial margin, but a transient dip is visible in the agent line immediately after rerouting, caused by TCP slow-start on the new (clean) path as the connection must renegotiate its congestion window before recovering to peak throughput, which it does within 10-15 s. The wider shaded band in S8 relative to the full-overlap scenarios reflects the timing sensitivity of the ramp-up pattern where small differences in when the last of all the consecutive vote accumulates determine how much of the slow-start dip falls inside the measurement window. 
+
+b) Mean Flow Throughput: Figure 5 reports the mean throughput of fp over the 120 s congestion window for all ten scenarios, averaged across three repeats per policy. The agent achieves the highest mean throughput in 9 of 10 scenarios, with dataset-wide means of 13.93 MB/s (agent), 9.92 MB/s (re-active), and 4.81 MB/s (static), a 40% improvement over reac-tive (95% CI [28%, 56%]) and a 3 × improvement over static. Averaged across the ten scenarios, the agent’s per-scenario ad-vantage over reactive is 4.01 MB/s ( 95% CI [2 .48 , 5.54] MB/s, paired t-test t = 5 .94 , p < 0.001 ), consistent with the relative gain above. Per-scenario values appear in Appendix H. The agent’s advantage holds across qualitatively different scenario types. In the full-overlap scenarios (S1-S4), where all five congesters share k∗ from the start, the agent leads reactive by 3.7-6.6 MB/s. The margin narrows under partial overlap (S5, S7) or gradual load build-up (S8), where reactive has more opportunity to recover before collapse. In S6 the rolling pattern never accumulates ξth , so reactive collapses to static, while the agent still reroutes proactively and leads by 2.9 MB/s. S9 yields the largest single-scenario improvement (+6.7 MB/s) since the burst pattern blocks reactive from firing on the first congestion period, and by the time it fires on the second the episode is nearly over. The agent loses only S7, by 0.06 MB/s, a near-tie attributable to the destination-selection failure discussed above. Static is competitive only in S6, where the rolling pattern leaves k∗ congested for only a fraction of the episode window; elsewhere it sustains severely degraded throughput for the full 120 s. Rerouting is therefore necessary, and the choice of when 
+
+to reroute is what separates the agent from reactive. 
+
+c) Proactive Lead Time: Figure 6 reports the reroute trigger time for the agent and reactive policy across all ten sce-narios, alongside a degradation-onset marker estimated from the steepest decline in the reactive policy’s median throughput. The agent achieves a positive τlead in the majority of scenarios and repeats, rerouting while fp is still near its healthy baseline. Reactive achieves a negative τlead in every scenario where it fires, rerouting only after throughput has already collapsed. The agent reroutes within 9-18 s of congestion start across all scenarios, reactive fires 30-107 s after start. The shaded bar at each scenario in Figure 6 represents the lead the agent gives over reactive in that scenario, with a mean of 34 s (95% CI 
+
+[26 .8, 41 .5] s, Appendix H) across the eight scenarios where reactive fired on all three repeats. In S6 reactive never fires on any repeat (the rolling pattern clears each switch before ξk∗
+
+can sustain above ξth for the required consecutive window), and in S9 it fires on only two of three repeats, and only after 102-107 s. Agent reroute times are tight for most scenarios. In the steady-load scenarios (S1-S5, S10) all repeats fire within a 1-2 s window with means in the 10-12 s range. S8 is a mild outlier (mean 17 s), where congesters arrive one at a time over 95 s and the signal accumulates gradually rather than saturating. S7 varies more across repeats, two reroute at 9-S1 S2 S3 S4 S5 
+
+S6 S7 S8 S9 S10     
+
+> Fig. 4: Throughput of fp(MB/s) over the 120 s congestion window for all ten evaluation scenarios. Each panel shows the median episode per policy (Static: solid purple; Reactive: solid orange; Agent: solid green), with shaded bands indicating the min-max range across the remaining two repeats. Vertical dashed and dotted markers indicate first and second reroute times of the median episode, respectively.
+> Fig. 5: Mean throughput of fp(MB/s) across the ten evaluation scenarios per policy (Static purple, Reactive orange, Agent green). Error bars are standard deviation across three repeats. The agent achieves the highest throughput in 9 of 10 scenarios, with dataset-wide means of 13.93 (agent), 9.92 (reactive), and 4.81 (static) MB/s.
+> Fig. 6: Reroute trigger time (seconds after congestion start) for the agent and reactive policy across ten evaluation scenarios, shown as discrete per-scenario markers since the scenarios are independent. The shaded line for each scenario is the lead time gap between the agent and reactive.
+
+11 s and one at 32 s, the repeat shown in Figure 6, giving a scenario mean of 17 s. Only two congesters share k∗ in this scenario, so the crowd signal sometimes builds more slowly. In both S7 and S8, the agent still leads reactive by over 30 s on average, though τlead is reduced and is near-zero or negative in some individual repeats. 
+
+d) Token-Bucket Overflow at Reroute: Figure 7 shows the distribution of ξk∗ at the exact moment each policy issues its reroute, pooled across all scenarios and repeats. The two distributions are clearly separated. The agent fires at a mean 
+
+ξk∗ of 22,300 bytes/s, with most reroutes between 20,000-26,000 bytes/s. Reactive fires at a mean of 32,100 bytes/s, with all values above ξth = 27 ,000 bytes/s by construction. Reactive’s mean exceeds ξth because firing requires ξk∗ > ξ th 
+
+for three consecutive seconds (the smallest debounce that suppressed transient false positives in preliminary runs), during which ξk∗ continues to rise sharply from full-rate congester    
+
+> Fig. 7: Distribution of ξk∗(bytes/s) at the moment of the first reroute, pooled across all scenarios and repeats. Agent has 30 data points, reactive has 26 (S6 never fired and one S9 repeat did not fire). Reactive fires by construction above ξth , while the agent fires well below.
+
+arrivals. This separation corroborates the lead-time result. At the moment the agent reroutes, ξk∗ has not yet saturated, so fp’s throughput is still near baseline. By the time reactive fires, the token bucket is in deep overflow and throughput has already collapsed. The agent’s reroute times are driven by the crowd signal rather than by ξk∗ . At the flow counts seen 10-17 s after congestion start (typically 8-12 active flows on k∗), the crowd component of the learned value function is sufficient to trigger rerouting independently of ξk∗ . The agent distribution has a low tail extending down to approximately 12,000 bytes/s, corresponding to the earliest reroutes where the crowd signal crossed the decision boundary before ξk∗ had meaningful time to build. The one agent data point above ξth corresponds to S7 repeat 1, where slower crowd-signal accumulation led to an unusually late reroute at 32 s. 
+
+e) Q-Network Signal Analysis: To identify which signals drive the agent’s rerouting decisions, we probe the locked Q-network by sweeping individual state dimensions through syn-thetic state vectors with all other dimensions held at baseline. Two sweeps are run, one varying the flow count on k∗ (crowd sweep) and one varying ξk∗ (overflow sweep). For each input we compute the decision margin Q(s, k ∗) − max k̸ =k∗ Q(s, k ),where a positive margin means the agent prefers to stay and a negative margin means it prefers to reroute. Figure 8 shows the results. In the crowd sweep (left panel), the margin crosses zero at a flow count of 5 for switches 1 and 2, and at 7-8 for switches 3 and 4, with ξk∗ held at a negligible 5,000 bytes/s throughout. The crowd signal alone is therefore sufficient to flip the agent’s decision at flow counts well below the maximum seen in live evaluation. In the overflow sweep (right panel), with the flow count fixed at 1, the margin does not cross zero until ξk∗ reaches 30,000-40,000 bytes/s for (a) Crowd Sweep (b) tc_ol Sweep         
+
+> Fig. 8: Q-network decision margin as a function of flow count with ξk∗fixed at 5,000 bytes/s (left) and as a function of ξk∗with flow count fixed at 1 (right). A negative margin indicates a reroute decision. The crowd signal alone triggers rerouting at 5-8 flows depending on the switch, while ξk∗alone does not trigger rerouting until 30,000-40,000 bytes/s, above ξth (dashed).
+
+switches 1-3, and never crosses zero for switch 4 within the swept range. Critically, at ξth all four switch margins remain positive, so the agent would prefer to stay if ξk∗ were its only signal. Without the crowd signal, the agent would fire later 
+
+than reactive, not earlier. The probe provides a mechanistic explanation for the lead-time advantage. The agent acts on the crowd signal, which builds within seconds of congestion onset, rather than waiting for ξk∗ to accumulate to threshold-detectable levels. 
+
+f) Analysis of the Crowd Signal: To quantify the em-pirical value of the crowd signal, we train a variant with the crowd penalty removed from the reward function and all other components identical. This ablated model can rely only on ξk∗
+
+and throughput signals. Both models are evaluated on scenario C1, designed specifically to isolate the crowd signal. C1 places 30 bandwidth-capped flows on k∗ (five congester nodes, six streams each, 1 Mbps per stream) through the 200 Mbps token bucket. The capped flows never saturate the bucket, so ξk∗ remains near the per-episode baseline and 
+
+ξth is never reached. The only signal that rises is the flow count, which jumps from 2 to over 30 within seconds of congestion start. C1 therefore acts as a binary test for crowd-signal learning, where a model that has learned the signal will reroute and one that has not will stay indefinitely. Figure 9 shows the throughput timeseries for both models side by side. The full model detects the rising flow count, ac-cumulates the required consecutive votes, and reroutes within approximately 12 s while fp is still at near-baseline throughput. After rerouting, ξk∗ on the new switch stabilises at fp’s own TCP baseline and throughput is maintained for the remainder of the episode. The ablated model has no mechanism to act on the flow count, never reroutes across any repeat, and lets 
+
+fp compete with 30 flows for the full 120 s, degrading and oscillating throughout. The mean throughput gap is 4.3 MB/s (15.2 vs 10.9 MB/s), the direct cost of removing the crowd signal in a stealth-crowd scenario where ξk∗ provides no usable information. On S1, where both ξk∗ and crowd signals are active, the gap narrows to 2.0 MB/s (14.8 vs 12.8 MB/s), consistent with the crowd signal providing a lead-time advan-tage on top of ξk∗ rather than being the sole trigger. While the crowd signal is necessary for the agent to detect stealth congestion, it is not sufficient on its own. Appendix F evaluates a flow-count threshold as a standalone baseline and shows it fails in two special cases, one where it never fires and another where it selects the wrong destination. 
+
+g) Seed Robustness: The crowd signal is a learned fea-ture that emerges from the reward function and training data rather than being hardcoded. To verify that this emergence is not seed-specific, we train four additional models with dif-
+
+(a) With Crowd Signal (b) Without Crowd Signal     
+
+> Fig. 9: Throughput of fpon scenario C1 (stealth crowd, 30 bandwidth-capped flows, negligible ξk∗) for the full model (crowd signal active, left) and the ablated model (crowd signal removed, right). Median episode shown, with shaded bands giving the min-max range across the other two repeats. The vertical dotted line marks the reroute time in the full-model panel. The ablated model never reroutes.
+> Fig. 10: Mean protected flow throughput on C1 for four independently trained model seeds. Error bars show standard deviation across three repeats. All seeds achieve 14.4– 15.2 MB/s, well above the A1 no crowd baseline of 10.9 MB/s (not shown), confirming that the crowd signal is stably learned across random initializations.
+
+ferent random seeds (identical hyperparameters, architecture, and corpus) and evaluate each on C1. Figure 10 shows the mean throughput for all four seeds. Every seed achieves be-tween 14.4-15.2 MB/s, well above the ablated-model baseline of 10.9 MB/s. The spread across seed means is 0.8 MB/s, comparable to within-seed run-to-run variability in the main evaluation. Since C1 is not in the training corpus and requires generalisation from full-rate congestion to a novel capped-flow pattern, the crowd signal is a stable, generalised feature of the learned policy rather than a seed-specific accident. All datasets and related scripts along with a detailed README are provided as a GitHub repository [31]. VI. C ONCLUSIONS AND FUTURE WORK 
+
+This paper presented ProFlow, a proactive flow-placement framework for protecting performance-sensitive traffic in multi-tenant datacenter networks. By leveraging distributed telemetry signals and offline-trained reinforcement learn-ing, ProFlow identifies precursor congestion conditions and reroutes a protected flow before throughput degradation oc-curs. The evaluation showed that ProFlow achieves approxi-mately 40% higher mean throughput than the reactive baseline while initiating rerouting decisions around 34 seconds earlier on average, demonstrating the effectiveness of anticipatory congestion management using early precursor signals. Future work will focus on extending ProFlow beyond single-flow protection toward intelligent multi-flow placement and protection. In practical datacenter environments, multiple performance-sensitive flows may simultaneously compete for limited clean paths, requiring the controller to jointly reason about congestion risk, path allocation, and flow prioritization across the network. This transforms the problem into a broader intelligent flow-placement and optimization problem under dynamic traffic conditions. REFERENCES [1] M. Dickinson, S. Debroy, P. Calyam, S. Valluripally, Y. Zhang, R. B. Antequera, T. Joshi, T. White, and D. Xu, “Multi-cloud performance and security driven federated workflow management,” IEEE Transactions on Cloud Computing , vol. 9, no. 1, pp. 240–257, 2021. [2] R. B. Antequera, P. Calyam, S. Debroy, L. Cui, S. Seetharam, M. Dickin-son, T. Joshi, D. Xu, and T. Beyene, “Adon: Application-driven overlay network-as-a-service for data-intensive science,” IEEE Transactions on Cloud Computing , vol. 6, no. 3, pp. 640–655, 2018. [3] M. Nguyen, S. Debroy, P. Calyam, Z. Lyu, and T. Joshi, “Multi-cloud performance and security-driven brokering for bioinformatics workflows,” in 2019 IEEE 27th International Conference on Network Protocols (ICNP) , pp. 1–2, 2019. [4] J. Fei, C.-Y. Ho, A. N. Sahu, M. Canini, and A. Sapio, “Efficient sparse collective communication and its application to accelerate distributed deep learning,” in Proceedings of the 2021 ACM SIGCOMM 2021 Conference , SIGCOMM ’21, (New York, NY, USA), p. 676–691, Association for Computing Machinery, 2021. [5] H. S. Yeddulapalli, M. L. Alarcon, U. Roy, R. L. Neupane, D. Gafurov, M. Mounesan, S. Debroy, and P. Calyam, “Veca: Reliable and confiden-tial resource clustering for volunteer edge-cloud computing,” in 2024 IEEE International Conference on Cloud Engineering (IC2E) , pp. 152– 159, 2024. [6] M. Al-Fares, A. Loukissas, and A. Vahdat, “A scalable, commodity data center network architecture,” SIGCOMM Comput. Commun. Rev. ,vol. 38, p. 63–74, Aug. 2008. [7] A. Pandey, P. Calyam, S. Debroy, S. Wang, and M. L. Alarcon, “Vectrust: trusted resource allocation in volunteer edge-cloud computing work-flows,” in Proceedings of the 14th IEEE/ACM International Conference on Utility and Cloud Computing , UCC ’21, (New York, NY, USA), Association for Computing Machinery, 2021. [8] Y. Zhang, S. Debroy, and P. Calyam, “Network measurement recommen-dations for performance bottleneck correlation analysis,” in 2016 IEEE International Symposium on Local and Metropolitan Area Networks (LANMAN) , pp. 1–7, 2016. [9] Y. Zhang, P. Calyam, S. Debroy, and M. Sridharan, “Pca-based network-wide correlated anomaly event detection and diagnosis,” in 2015 11th International Conference on the Design of Reliable Communication Networks (DRCN) , pp. 149–156, 2015. [10] V. Addanki, O. Michel, and S. Schmid, “Powertcp: Pushing the perfor-mance limits of datacenter networks,” 2021. [11] S. Arslan, Y. Li, G. Kumar, and N. Dukkipati, “Bolt: Sub-RTT con-gestion control for Ultra-Low latency,” in 20th USENIX Symposium on Networked Systems Design and Implementation (NSDI 23) , (Boston, MA), pp. 219–236, USENIX Association, Apr. 2023. [12] S. Agarwal, A. Krishnamurthy, and R. Agarwal, “Host congestion control,” in Proceedings of the ACM SIGCOMM 2023 Conference , ACM SIGCOMM ’23, (New York, NY, USA), p. 275–287, Association for Computing Machinery, 2023. [13] M. A. Qureshi, Y. Cheng, Q. Yin, Q. Fu, G. Kumar, M. Moshref, J. Yan, V. Jacobson, D. Wetherall, and A. Kabbani, “Plb: congestion signals are simple and effective for network load balancing,” in Proceedings of the ACM SIGCOMM 2022 Conference , SIGCOMM ’22, (New York, NY, USA), p. 207–218, Association for Computing Machinery, 2022. [14] S. Agarwal, Q. Cai, R. Agarwal, D. Shmoys, and A. Vahdat, “Harmony: a congestion-free datacenter architecture,” in Proceedings of the 21st USENIX Symposium on Networked Systems Design and Implementation ,NSDI’24, (USA), USENIX Association, 2024. [15] S. Yan, X. Wang, X. Zheng, Y. Xia, D. Liu, and W. Deng, “Acc: automatic ecn tuning for high-speed datacenter networks,” SIGCOMM ’21, (New York, NY, USA), p. 384–397, Association for Computing Machinery, 2021. [16] L. Chen, J. Lingys, K. Chen, and F. Liu, “Auto: scaling deep rein-forcement learning for datacenter-scale automatic traffic optimization,” in Proceedings of the 2018 Conference of the ACM Special Interest Group on Data Communication , SIGCOMM ’18, (New York, NY, USA), p. 191–205, Association for Computing Machinery, 2018. [17] I. Baldin, A. Nikolich, J. Griffioen, I. I. S. Monga, K.-C. Wang, T. Lehman, and P. Ruth, “FABRIC: A national-scale programmable experimental network infrastructure,” IEEE Internet Computing , vol. 23, no. 6, pp. 38–47. [18] G. A. Akpakwu, T. E. Mathonsi, T. M. Tshilongamulenzhe, S. P. Maswikaneng, and T. Muchenje, “Congestion control in constrained ap-plication protocol for the internet of things: State-of-the-art, challenges, and future directions,” IEEE Access , vol. 13, pp. 33733–33767, 2025. [19] W. Li, J. Liu, S. Wang, T. Zhang, S. Zou, J. Hu, W. Jiang, and J. Huang, “Survey on traffic management in data center network: From link layer to application layer,” IEEE Access , vol. 9, pp. 38427–38456, 2021. [20] V. Khagga, N. Sangeetha Priya, and A. Prasad, “Revolutionizing con-gestion control protocols for robust wsn routing dynamics through optimized dual aggregated attention capsule network,” International Journal of Communication Systems , vol. 38, no. 9, p. e70103, 2025. e70103 IJCS-24-4748.R1. [21] M. Alizadeh, A. Greenberg, D. A. Maltz, J. Padhye, P. Patel, B. Prab-hakar, S. Sengupta, and M. Sridharan, “Data center tcp (dctcp),” SIG-COMM Comput. Commun. Rev. , vol. 40, p. 63–74, Aug. 2010. [22] Y. Li, R. Miao, H. H. Liu, Y. Zhuang, F. Feng, L. Tang, Z. Cao, M. Zhang, F. Kelly, M. Alizadeh, and M. Yu, “Hpcc: high precision congestion control,” in Proceedings of the ACM Special Interest Group on Data Communication , SIGCOMM ’19, (New York, NY, USA), p. 44–58, Association for Computing Machinery, 2019. [23] W. Jiang, Y. Hu, H. Li, K. Wang, J. Huang, and J. Wang, “Analysis and improvement of powertcp,” in 2024 IEEE/ACM 32nd International Symposium on Quality of Service (IWQoS) , pp. 1–10, 2024. [24] M. Fathurrohim and A. Basuki, “Evaluation of traffic distribution performance of ecmp and pcc+ cake for multi-isp load balancing on real networks based using mikrotik,” Kinetik: Game Technology, Information System, Computer Network, Computing, Electronics, and Control , 2025. [25] J. Liu, Z. Zhao, and D. Zhang, “Gemma: Robust and path-aware loading balancing in rdma networks,” in 2024 IEEE International Conference on High Performance Computing and Communications (HPCC) , pp. 1118– 1123, 2024. [26] I. Das, P. Das, P. Debnath, M. Chanda, and S. Nath, “A survey on congestion control in large data centers,” Power Devices and Internet of Things for Intelligent System Design , pp. 25–86, 2025. [27] M. A. Qureshi, Y. Cheng, Q. Yin, Q. Fu, G. Kumar, M. Moshref, J. Yan, V. Jacobson, D. Wetherall, and A. Kabbani, “Plb: congestion signals are simple and effective for network load balancing,” in Proceedings of the ACM SIGCOMM 2022 Conference , SIGCOMM ’22, (New York, NY, USA), p. 207–218, Association for Computing Machinery, 2022. [28] C. Tessler, Y. Shpigelman, G. Dalal, A. Mandelbaum, D. Haritan Kaza-kov, B. Fuhrer, G. Chechik, and S. Mannor, “Reinforcement learning for datacenter congestion control,” SIGMETRICS Perform. Eval. Rev. ,vol. 49, p. 43–46, Jan. 2022. [29] G. Pandove et al. , “Optimizing traffic flow with q-learning and genetic algorithm for congestion control,” Evolutionary Intelligence , vol. 17, no. 5, pp. 4179–4197, 2024. [30] K. Boussaoud, A. En-Nouaary, and M. Ayache, “Adaptive congestion detection and traffic control in software-defined networks via data-driven multi-agent reinforcement learning,” Computers , vol. 14, no. 6, p. 236, 2025. [31] “Github repository.” https://github.com/dissectlab/ProFlow-LCN2026.g it. Accessed: 2026-07-26. 
+
+APPENDIX ASTATE VECTOR CONSTRUCTION 
+
+This appendix gives the full per-coordinate construction of the state vector st ∈ Rds summarised in Section IV, where 
+
+ds = 6 |S| + 2 |L| + 4 depends on the sizes of the aggregation-switch set S and the leaf-switch set L defined in Section III. The constant 4 is a fixed design dimension of xflow  
+
+> t
+
+that does not scale with the topology. Based on our implementation (Section V-A), |S| = 4 and |L| = 3 , giving the concrete state dimensions xagg  
+
+> t
+
+∈ R20 , xleaf  
+
+> t
+
+∈ R6, ht ∈ { 0, 1}4, xflow  
+
+> t
+
+∈ R4,and an overall state dimension of ds = 34 .The first component, xagg  
+
+> t
+
+∈ R5|S| , captures per-aggregation-switch congestion state across all aggregation switches:            
+
+> xagg
+> t=
+> h
+> ρk/C ρ,clip( ˙ ρk/C ρ,−1,1) ,˜ξk,˜nk, e k/C ρ
+> i
+> k∈S
+> (5)
+
+where ρk denotes the transmit rate on switch k, ˙ρk its rate of change, ξk the token-bucket overflow rate (overlimits per second), nk the number of active flows, and ek the aggregate rate of elephant flows. The function clip( x, a, b ) truncates its input to the interval [a, b ].The normalised overflow and flow-count signals, ˜ξk and 
+
+˜nk, are computed differently depending on whether k = k∗.For the current host k∗, both signals are encoded as signed deviations from per-episode baselines: ˜ξk∗ = clip             
+
+> ξk∗−¯ξCξ
+> ,−1,1
+> 
+> ,˜nk∗= clip
+> nk∗−¯nCn
+> ,−0.5,1
+> 
+> (6)
+
+where ¯ξ is the per-episode mean token-bucket load contributed by the flow’s own TCP traffic on its initial aggregation switch, and ¯n is the per-episode baseline flow count on that aggregation switch before congestion arrives. Negative values of ˜ξk∗ indicate that the flow’s TCP output is collapsing below its own baseline, providing an early sign of severe congestion on the current path. Positive values of ˜nk∗ indicate that new flows have arrived above the per-episode baseline, which is the primary crowd signal used for proactive rerouting. For all other switches k̸ = k∗, unsigned normalisations are used: 
+
+˜ξk = ξk/C ξ and ˜nk = nk/C n, both clipped to [0 , 1] .The second component, xleaf  
+
+> t
+
+∈ R2|L| , captures precursor signals observed at the leaf switches in L:  
+
+> xleaf
+> t= [ λℓ/C λ, μ ℓ/C ρ]ℓ∈L (7)
+
+where λℓ denotes the ingress rate of congestion flows at leaf 
+
+ℓ, and μℓ the corresponding transmit rate toward aggregation switches. The third component, ht ∈ { 0, 1}|S| , is a one-hot encoding of the current placement k∗:         
+
+> (ht)k=⊮[k=k∗],k∈ S (8)
+
+so that exactly one entry is set to one — corresponding to the current host k∗ — and all others are zero. This component allows the Q-network to condition on the current placement when interpreting the signed/unsigned signals in xagg  
+
+> t
+
+.The fourth component, xflow  
+
+> t
+
+∈ R4, captures flow-level intensity and flow health:      
+
+> xflow
+> t= [ ϕt/C ϕ, F t/C ρ,clip(∆ ϕt/C ϕ,−1,1) , d t](9)
+
+where ϕt is the realised throughput of the protected flow on the current host (defined in Section III), Ft the aggregate rate of congestion flows, ∆ϕt the change in ϕt since the previous step, and dt = max(0 , ¯ϕt − ϕt) / ¯ϕt the fractional drop of ϕt
+
+relative to a rolling maximum baseline ¯ϕt computed over a short window. Each scaling constant Cx is a normalisation denominator chosen to map the typical operating range of the corre-sponding signal approximately to [0 , 1] , with values exceeding the constant clipped to 1. Rate-based signals are normalised by the token-bucket rate limit of the aggregation switches, overflow indicators by an empirical upper bound observed across training scenarios, flow counts by a soft saturation threshold above which the crowd signal is treated as fully active, and throughput signals by the maximum observed flow rate of the protected flow. APPENDIX BSYNTHETIC REWARD FUNCTION 
+
+This appendix gives the full form of the synthetic reward summarised in Section IV. The reward shares a common predictive base across both action types and adds action-gated shaping terms. For a reroute action ( k̸ = k∗):                    
+
+> rsyn
+> t=ϕ′
+> norm −μ1˜ξ′
+> k+μ2ReLU( ˜ξk∗−˜ξ′
+> k)+μ3(1 −˜ξk∗)−μ4ˆξnow
+> k
+> (10)
+
+For a stay action ( k = k∗):                           
+
+> rsyn
+> t=ϕ′
+> norm −μ1˜ξ′
+> k∗+μ2ReLU( ˜ξk∗−˜ξ′
+> k∗)+ν1(1 −˜ξk∗)−ν2˜ξk∗−ν3(1 −ϕ′
+> norm ) + β∆n+
+> k∗
+> (11)
+
+Primes denote values in the predicted next state, with 
+
+ϕ′ 
+
+> norm
+
+= ϕ′
+
+> t+1
+
+/ϕ 0 the predicted next-step throughput nor-malised by the per-episode pre-congestion baseline ϕ0
+
+(cf. Eq. 4). The first three terms are common to both forms: 
+
+μ1 ˜ξ′ 
+
+> k
+
+penalises the predicted congestion of the chosen switch, and μ2 ReLU( ˜ξk∗ − ˜ξ′
+
+> k
+
+) is the proactive-escape bonus, which rewards moves toward a cleaner predicted state. The reroute-specific terms in Eq. 10 are the lead-time bonus 
+
+μ3 (1 − ˜ξk∗ ), which fires while k∗ is still clean to incentivise early action, and the destination-congestion penalty μ4 ˆξnow  
+
+> k
+
+,which discourages rerouting to an already-congested switch. The stay-specific terms in Eq. 11 are: ν1 (1 − ˜ξk∗ ) rewards remaining on a clean current switch; ν2 ˜ξk∗ penalises staying as the current switch becomes congested; ν3 (1 − ϕ′
+
+> norm
+
+)
+
+penalises predicted throughput collapse; and β ∆n+ 
+
+> k∗
+
+(β < 0)is the crowd penalty consistent with the real-transition reward (Eq. 4). APPENDIX CTRAINING STRATEGIES 
+
+Table I lists the full set of training-data strategies sum-marised in Section V-A. Each strategy specifies (i) where the protected flow fp is initially placed, (ii) where the congester nodes generate traffic, and (iii) whether and when the data-collection runner issues a reroute. Together the strategies span the full reward-design space of Section IV: the base strategies (A–E) cover escape from a congested switch, placement diver-sity, stay-on-clean behaviour, the precursor window required to learn proactive action, and full pile-up; the dwell-time variants (A LONG, A SHORT, D SHORT, D LONG) sweep reroute timing within those base setups; and the late-addition strategies (F STAY, F LATE, F EARLY, G CLEAN, H PARTIAL) tar-get stay-vs-leave decisions, positional bias, and tolerance of partial congestion that earlier datasets under-represented. The 779-episode corpus referenced in Section V-A is built from these strategies across dataset versions v4, v6, v7, v8, and v10. APPENDIX DEVALUATION SCENARIOS 
+
+Table II lists the full set of evaluation scenarios sum-marised in Section V-A. The ten main scenarios (S1–S10) are designed to vary independently along three axes: spatial overlap between the protected flow fp and the congesters (full overlap S1–S4, partial overlap S5/S7, no overlap by construction in C1/C2), temporal profile of the congestion (static S1–S4, rolling S6, ramp-up S8, burst S9, heavy S10), and topological position of the protected flow (S1–S4 cycle through all four aggregation switches in S). The two ablation scenarios (C1, C2) isolate the crowd-driven component of the agent’s behaviour by capping per-flow bandwidth, so that token-bucket overflow remains negligible and only ∆n+ 
+
+> k∗
+
+can drive a reroute. APPENDIX EREACTIVE THRESHOLD SELECTION 
+
+The reactive baseline reroutes the protected flow when the token-bucket overflow rate ξk∗ on its current aggregation TABLE I: Training episode strategies. Each strategy defines how congestion is placed relative to the protected flow and whether or when the data-collection runner issues a reroute. Strategies A–E were collected in datasets v4–v7; F–H in v8; A SHORT and F EARLY in v10. 
+
+Strategy Description 
+
+A Protected flow on the most-loaded switch; runner reroutes once tc ol is confirmed above threshold. Teaches escape from a congested switch. A LONG Same as A but with an extended dwell (40–60 s) before rerouting. A SHORT Same as A but reroute issued early (5–20 s), balanced across all four switches. Restores correct per-switch de-parture timing. B Protected flow on a randomly selected switch; reroute at a random time. Provides placement and timing diversity. C Protected flow on the cleanest switch; no reroute. Teaches that staying on a clean switch yields high reward. D Protected flow starts on a clean switch; 2–3 congesters are subsequently rerouted onto it. Runner waits for tc ol to rise before rerouting. Creates the pre-congestion pre-cursor window that is the primary training signal for proactive behaviour. D SHORT Same as D with a shorter post-arrival dwell (10–20 s). D LONG Same as D with a longer post-arrival dwell (30–50 s). E All 5 congesters on the protected flow’s switch from the start; full pile-up. Runner reroutes after 20–40 s. Teaches response at the high end of the tc ol range. F STAY All 5 congesters on the protected flow’s switch; no reroute issued. Teaches that high tc ol does not always mandate rerouting. F LATE All 5 congesters on the protected flow’s switch; reroute issued late (40–60 s). F EARLY All 5 congesters on the protected flow’s switch; reroute issued early (5–20 s), balanced across all four switches. Teaches early departure under maximum load. G CLEAN All 5 congesters on a different switch from the protected flow; no reroute. Corrects positional bias by teaching that any clean switch warrants staying. H PARTIAL 1–3 congesters on the protected flow’s switch; no reroute. Teaches tolerance of partial congestion without unneces-sary rerouting. 
+
+switch k∗ stays above a fixed threshold ξth for three consec-utive samples. The protected flow runs at about 92% of its token-bucket rate, so it produces some overflow even when no congesting flows are present. The threshold must sit above this self-induced overflow, or the policy false-alarms on the flow’s own traffic. This appendix shows that ξth = 27 ,000 bytes/s is the lowest threshold that never triggers on this self-induced overflow. We use 120 episodes collected on the original testbed. A sample counts as self-induced overflow when the protected flow is already at full rate on its current aggregation switch 
+
+k∗ and no congesting host shares that switch ( nk∗ ≤ 2, the protected flow alone). We only count a sample once the flow’s rate is above 15 ×10 6 bytes/s, since at the start of each episode the connection is still ramping up to full speed and has not yet reached this steady state. Any reactive firing under these conditions is a false alarm, since no congestion is present. This gives 5,433 samples across 107 episodes. The remaining 13 
+
+episodes never place the protected flow alone on its switch at full rate, so they contribute no self-noise samples. Figure 11(a) shows the distribution of this self-induced over-flow. It concentrates between 22 ,000 and 26 ,000 bytes/s, with a mean of 23 ,093 bytes/s, matching the steady-state baseline reported in Section V-A. The distribution has a heavy upper tail, with a 95 th percentile of 26 ,002 bytes/s and occasional spikes up to 28 ,336 bytes/s. A threshold placed inside this tail would be tripped by the protected flow alone.   
+
+> TABLE II: Evaluation scenarios. All main scenarios (S1–S10) use 5 congester nodes running full-rate TCP flows unless stated otherwise. Each scenario is evaluated under 3 policies (agent, reactive, static) ×3 repeats = 9 episodes per scenario. Ablation scenarios (C1, C2) use 3 repeats per model variant. All episodes run for 120 s post-congestion start.
+
+Scenario Description 
+
+S1 All 5 congesters on the same aggregation switch as the protected flow (Switch 1), full-rate S2 Same as S1 but protected flow and all congesters on Switch 2S3 Same as S1 but protected flow and all congesters on Switch 3S4 Same as S1 but protected flow and all congesters on Switch 4S5 Partial overlap: 3 of 5 congesters share the protected flow’s switch; 2 are on other switches S6 Rolling: congesters start on the protected flow’s switch and migrate to a new switch every 30 s S7 Minority overlap: only 2 of 5 congesters share the protected flow’s switch; 3 are elsewhere S8 Ramp-up: all congesters target the protected flow’s switch but arrive one at a time every 25 s S9 Burst: congesters arrive simultaneously, clear after 30 s, and return after another 30 s S10 Heavy load: same placement as S1 but each congester runs double the number of streams C1 Stealth crowd: 30 bandwidth-capped flows on the protected flow’s switch — n flows rises sharply but tc ol remains near zero C2 Slow-ramp crowd: bandwidth-capped flows arrive one at a time every 10 s — isolates adaptive baseline behaviour 
+
+(a) Self-induced overflow (b) False-alarm rate           
+
+> Fig. 11: (a) Distribution of the protected flow’s self-induced token-bucket overflow (5,433 samples across 107 episodes), with the 95 th percentile (dashed) and the chosen threshold ξth = 27 ,000 bytes/s (solid) marked. (b) False-alarm rate of the reactive policy against the overflow threshold in the no-congestion regime, reaching 0% at 27 ,000
+> bytes/s.
+
+For each candidate threshold, we apply the reactive rule exactly, firing whenever the overflow exceeds the threshold for three consecutive samples, and count how many of the 107 
+
+episodes would false-alarm in the no-congestion case above. Figure 11(b) plots this false-alarm rate. It falls from 42 .1% at 
+
+25 ,000 bytes/s to 13 .1% at 26 ,000 bytes/s and reaches 0% at 
+
+27 ,000 bytes/s, the lowest threshold with zero false alarms at 
+
+500 byte resolution. The chosen value ξth = 27 ,000 bytes/s is therefore the tightest setting that clears the protected flow’s own overflow while staying as sensitive as possible to real congestion. A lower threshold causes spurious reroutes, and a higher one only delays the reactive response. APPENDIX FCROWD BASELINE ON RATE -C OUNT DECOUPLING 
+
+The flow count nk counts distinct source-destination pairs on switch k and therefore scales with the number of congesters present rather than their transmission rate. Scenarios S1–S10 hold the congester count fixed at five, so flow count and offered load increase together and either signal alone is sufficient TABLE III: Rate-count-decoupling scenarios evaluated against the crowd baseline. S11 and S12 add a fourth policy, crowd, which reroutes when the flow count on the protected flow’s switch exceeds a fixed threshold T = 5 , and are constructed to test where this flow-count signal diverges from the true congestion state. Each scenario is evaluated under 3 repeats per policy.    
+
+> Scenario Description
+> S11 Elephant: a single congester saturates the protected flow’s switch at full rate; n flows reaches only 4, below the flow-count threshold, while tc ol and loss rise normally S12 Destination trap: the protected flow’s switch is congested and every candidate switch reports the same n flows, but one of them is saturated by a single elephant flow
+
+to detect congestion. Scenarios S11 and S12, summarised in Table III, decouple these two quantities. In S11 a single congester saturates k∗ at the offered load level of S1, while 
+
+nk∗ reaches only four. In S12 every candidate switch reports an equal flow count while one of them is saturated, so nk provides no information for destination selection. Both scenarios are deliberate stress tests of the flow-count signal rather than representative workloads and are reported separately from S1– S10 for that reason. The crowd baseline is evaluated only on S11 and S12. S11 and S12 were also collected on a differ-ent FABRIC site than S1–S10, a consequence of FABRIC’s limited lease durations and the resulting unavailability of the original site rather than an experimental choice. Both sites realise the same logical topology described in Section V-A, and the agent evaluated on S11 and S12 is the same model trained on the original deployment, with no additional training performed on the new site. This successful rerouting on the new site suggests that the learned policy is not specific to the hardware of the original deployment and generalises across physical sites .Figure 12 shows the throughput of fp over the congestion window for S11 and S12 under all four policies. In S11 the single elephant congester drives the flow count on k∗ to only four, below the crowd threshold T = 5, so Crowd never fires and tracks Static near the noise floor, while the agent reroutes at approximately nine seconds and holds fp near its healthy baseline. In S12 Crowd and the agent both reroute at approximately six seconds, but Crowd selects the elephant-loaded destination switch because it reports the minimum flow count and recovers only partially, whereas the agent reads the elevated overflow ˜ξk on that switch and routes to a clean destination instead. Reactive recovers in both scenarios, but only after ξk∗ sustains above ξth for three seconds, well after the agent has already recovered. Together these two timelines show that a flow-count threshold alone is insufficient for proactive rerouting, since it can fail to trigger when congestion arises from a single high-rate flow and can trigger correctly but still select the wrong destination when flow count does not distinguish between candidate switches. APPENDIX GCROWD THRESHOLD SELECTION 
+
+This appendix justifies the crowd signal’s flow-count thresh-old T = 5 . The crowd signal reroutes the protected flow when the flow count nk∗ on its current aggregation switch exceeds a threshold T . We test this threshold on three scenarios, S1, S5 and S8, each stressing the flow count in a different way. In S1, all five congesting hosts join at once, so the flow count rises quickly and clears any reasonable threshold. This is the control case, where the threshold never matters. In S5, only three of 
+
+(a) S11: Elephant (b) S12: Destination Trap   
+
+> Fig. 12: Throughput of fp(MB/s) over the congestion window for S11 (a) and S12 (b), with the Crowd baseline added (Static: green dotted; Reactive: blue dashed; Crowd: orange dash-dot; Agent: navy solid). Each panel shows the median episode per policy, with shaded bands giving the min-max range across the other two repeats and a vertical dashed marker at the first reroute of the median episode.
+
+(a) Count Threshold sweep (b) Count Structure     
+
+> Fig. 13: (a) Crowd-signal mean throughput as the flow-count threshold Tchanges, for a high (S1), marginal (S5), and slowly rising (S8) flow count. Three repeats per bar, error bars show one standard deviation. (b) The flow count nkon the protected flow’s switch adds up, two entries for the protected flow itself plus two for every congesting host present.
+
+the five congesters share the switch, so the flow count stays close to the threshold, making this the case most sensitive to 
+
+T . In S8, congesters arrive one at a time, so the flow count rises slowly, and exactly when it crosses T depends on where 
+
+T is set. Together, these three cases cover a high, a marginal, and a slowly rising flow count, the three situations where a count threshold could fail. Figure 13(a) shows the crowd policy’s mean throughput as 
+
+T changes. In S1, throughput stays flat at about 22 MB/s for every T , since the flow count is already high enough that the threshold never gets in the way. In S5, throughput holds steady until T = 8 , where it drops sharply to 6.5 MB/s. In S8, throughput falls more gradually, from 19 MB/s at T ∈ { 4, 5}
+
+down to 10 .6 MB/s at T = 8 . In both S5 and S8, raising T
+
+only makes the crowd signal perform worse. The flow count nk that this threshold reads is not continu-ous, and it does not depend on how much traffic a flow sends. Each connection installs two entries in the switch’s flow table, one for each direction. So the protected flow alone always contributes two entries, and each congesting host adds two more. This means nk can only take the values 4 with one congesting host, 6 with two, and 8 with three. Because nk does not depend on rate, a single congesting flow always produces 
+
+nk = 4 , whether that flow is harmless or, as in scenario S11 (Appendix F), a real elephant flow causing genuine congestion. Either way, it is still one flow, not a crowd. Elephant runs (S11) always peak at nk = 4 , crowd runs (S5 and S8) always reach 
+
+nk = 8 or 12 , and no run ever produces nk = 5 . Since a single flow can produce nk = 4 , the threshold must not fire at that count, which sets a lower bound of T ≥ 4. We set T = 5 
+
+rather than T = 4 for the safety margin this adds; T = 4 
+
+would sit exactly on the single-flow count with no room to spare, while T = 5 places the threshold a full step above it, in the gap between nk = 4 , a single flow, and nk = 6 , the smallest real crowd, so it fires on every real crowd but never TABLE IV: Confidence intervals and significance for the two main claims. The sampling unit is the scenario.                 
+
+> Claim Estimate 95% CI Test
+> Throughput gain, absolute
+> 4.01 MB/s [2 .48 ,5.54] paired t,
+> p=0 .0002 ,
+> n=10
+> Throughput gain, relative
+> 40% [28% ,56%] scenario bootstrap Proactive lead time
+> 34 .2s[26 .8,41 .5] tinterval,
+> n=8
+
+on a single flow, as Figure 13(b) shows. This margin costs nothing, across all three scenarios the mean throughput at the two thresholds differs by less than one standard deviation (S1: 
+
+22 .41 vs 22 .92 MB/s, S5: 22 .18 vs 21 .73 MB/s, S8: 19 .04 vs 
+
+18 .80 MB/s). APPENDIX HCONFIDENCE INTERVALS FOR THROUGHPUT AND LEAD 
+
+TIME 
+
+This appendix gives confidence intervals for the paper’s two main claims, throughput gain and proactive lead time. Each of the ten scenarios (S1-S10) is run three times under the agent, reactive, and static policies. We treat each scenario’s three-repeat mean as one independent observation, since run-to-run noise within a scenario is a separate concern from variation across scenarios. Intervals are Student t intervals across scenarios, wide given the small sample. Table IV summarises both claims with their intervals and significance tests.                                                             
+
+> TABLE V: Per-scenario mean throughput (MB/s, three repeats) and proactive lead time. Gain is agent minus reactive. Lead is the reactive minus agent reroute time.
+> Scenario Agent Reactive Static Gain Lead (s)
+> S1 14.99 8.38 4.63 +6 .61 41.7 S2 14.60 10.77 2.16 +3 .82 27.7 S3 14.51 8.01 2.94 +6 .50 52.7 S4 14.96 11.25 2.96 +3 .71 27.7 S5 14.98 11.54 3.70 +3 .45 28.0 S6 14.94 12.05 12.19 +2 .88 —S7 6.83 6.89 4.70 −0.06 31.7 S8 13.74 11.29 4.97 +2 .45 31.4 S9 14.69 7.98 6.36 +6 .71 92.3 †
+> S10 15.07 11.02 3.52 +4 .05 32.4
+> Mean 13.93 9.92 4.81 +4.01 34.2
+
+Table V lists the throughput and lead time for each of the ten scenarios individually. The 40% relative gain reported earlier comes from the ratio of the two dataset-wide means. Additionally, averaging each scenario’s own relative gain gives a consistent result, a mean of 42% and a median of 34% . The small difference is because scenarios with higher throughput count for more in the dataset-wide ratio than in a plain average of ten percentages. Lead time is defined per scenario as the reactive reroute time minus the agent reroute time. Reactive never fires in S6, so no lead time exists there, and it fires in only two of three repeats in S9 (marked †), so both scenarios are left out of the 34 .2 s mean. S7 is the only scenario where the agent does worse than reactive, a 0.06 MB/s difference caused by the destination-selection failure discussed in Section V-B.

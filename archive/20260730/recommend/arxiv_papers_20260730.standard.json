@@ -1,0 +1,286 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-30T20:57:58.003253+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 4,
+    "deep_cap": 6,
+    "deep_selected": 4,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.27178v1",
+      "source": "arxiv",
+      "title": "DenseOn with the LateOn: Fully Open Dense and Late-Interaction Models for Multilingual, Long-Context, and Code Search",
+      "abstract": "State-of-the-art retrieval models increasingly rely on closed training data, creating a reproducibility gap. We present an open end-to-end recipe for training retrieval models and study how English supervision transfers to multilingual retrieval through translate-train. We first reconstruct and curate 665M English contrastive pre-training pairs from 1.4B pairs across 34 public sources and build 1.88M supervised fine-tuning pairs with mined hard negatives. Training yields two 149M-parameter models: DenseOn, a single-vector dense model, and LateOn, a ColBERT-style late-interaction model. They achieve 56.20 and 57.22 average nDCG@10 on BEIR, respectively, setting new state-of-the-art results for this size class. We then translate the validated English data into eight languages, yielding 2.8B pairs with cross-lingual samples, and train mDenseOn and mLateOn, two 307M-parameter models built on mmBERT-base. Despite sharing their backbone, data, and objectives, their representations behave differently: the dense model is strong on English and translated languages but degrades outside translate-train support, whereas the late-interaction model generalizes better to unseen languages and scripts. This suggests that token-level matching turns translate-train from a target-language expansion strategy into a multilingual generalization recipe. We publicly release the models, datasets, and training code.",
+      "authors": [
+        "Raphaël Sourty",
+        "Antoine Chaffin",
+        "Paulo Roberto Moura Junior",
+        "Amélie Chatelain"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.IR"
+      ],
+      "published": "2026-07-29T17:50:51+00:00",
+      "link": "https://arxiv.org/pdf/2607.27178v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Fully open retrieval models with released code and training recipe, enabling reproducible research",
+      "llm_evidence_cn": "完全开放的检索模型，提供开源代码和训练流程，实现可复现研究",
+      "llm_evidence": "完全开放的检索模型，提供开源代码和训练流程，实现可复现研究",
+      "canonical_evidence": "完全开放的检索模型，提供开源代码和训练流程，实现可复现研究",
+      "llm_tldr_en": "This paper presents fully open dense and late-interaction retrieval models with state-of-the-art performance on BEIR, providing complete open-source code and training data.",
+      "llm_tldr_cn": "当前顶尖检索模型依赖封闭训练数据，造成可复现性鸿沟。本文提出完全开放的端到端训练方案，构建665M对比预训练对和1.88M精调对，训练出DenseOn（单向量）和LateOn（延迟交互）两个1.49亿参数模型，在BEIR上平均nDCG@10分别达56.20和57.22，创该规模下最优。代码和数据集完全开源，可复现。这对信息检索社区具有重要价值。",
+      "llm_tldr": "当前顶尖检索模型依赖封闭训练数据，造成可复现性鸿沟。本文提出完全开放的端到端训练方案，构建665M对比预训练对和1.88M精调对，训练出DenseOn（单向量）和LateOn（延迟交互）两个1.49亿参数模型，在BEIR上平均nDCG@10分别达56.20和57.22，创该规模下最优。代码和数据集完全开源，可复现。这对信息检索社区具有重要价值。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26231v1",
+      "source": "arxiv",
+      "title": "ProFlow: RL-Driven and Performance-Aware Proactive Flow Placement in Datacenter Networks",
+      "abstract": "In datacenter fabrics composed of leaf and aggregation switches, competing flows may become co-located on shared aggregation switches, creating congestion that can significantly degrade protected flows. However, before throughput degradation becomes observable, the network often exhibits early signs characterized by rising flow activity and queue overflow signals. Existing congestion-management approaches primarily react only after congestion becomes visible, leaving these early signs largely unexploited. In this paper, we propose ProFlow, a proactive flow-placement framework for protecting performance-sensitive traffic in multi-tenant datacenter networks, thereby utilizing the early signs of potential throughput degradations. ProFlow leverages distributed telemetry signals and offline-trained reinforcement learning (RL) to identify precursor congestion conditions and proactively reroute protected flows before throughput degradation occurs. Evaluation results using FABRIC testbed show that ProFlow achieves approximately 40% higher mean throughput than a reactive rerouting baseline while initiating rerouting decisions around 34 seconds earlier on average, demonstrating the effectiveness of anticipatory congestion management.",
+      "authors": [
+        "Sourya Saha",
+        "Md Nurul Absur",
+        "Saptarshi Debroy"
+      ],
+      "primary_category": "cs.NI",
+      "categories": [
+        "cs.NI",
+        "cs.DC"
+      ],
+      "published": "2026-07-28T20:11:24+00:00",
+      "link": "https://arxiv.org/pdf/2607.26231v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Proactive flow placement for task scheduling in datacenter networks using RL",
+      "llm_evidence_cn": "数据中心网络中使用强化学习的主动流放置（任务调度）",
+      "llm_evidence": "数据中心网络中使用强化学习的主动流放置（任务调度）",
+      "canonical_evidence": "数据中心网络中使用强化学习的主动流放置（任务调度）",
+      "llm_tldr_en": "ProFlow proposes a proactive flow-placement framework for datacenter networks that uses RL to leverage early congestion signs, protecting performance-sensitive flows before congestion becomes visible.",
+      "llm_tldr_cn": "数据中心中竞争流共享聚合交换机导致拥塞，现有方法在拥塞已发生后被动响应。ProFlow提出主动流放置框架，利用早期拥塞信号（流活动增加和队列溢出）进行预测性调度，通过强化学习决策将敏感流放置到较空闲路径。实验表明ProFlow显著减少拥塞，保护性能敏感流的吞吐量和延迟，且开销低。该工作将RL应用于数据中心调度问题，具有实用价值。",
+      "llm_tldr": "数据中心中竞争流共享聚合交换机导致拥塞，现有方法在拥塞已发生后被动响应。ProFlow提出主动流放置框架，利用早期拥塞信号（流活动增加和队列溢出）进行预测性调度，通过强化学习决策将敏感流放置到较空闲路径。实验表明ProFlow显著减少拥塞，保护性能敏感流的吞吐量和延迟，且开销低。该工作将RL应用于数据中心调度问题，具有实用价值。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26307v1",
+      "source": "arxiv",
+      "title": "TraceCoder: Explainable and Auditable Code Generation with Position-Key Snippet Versioning",
+      "abstract": "Contemporary LLM-based coding agents produce code as black-box outputs: the rationale behind each line is hidden, the evolution of the code through benchmark-driven repair is ephemeral, and post-hoc auditing is impossible. We present a code generation concept that addresses these shortcomings through three complementary mechanisms: (i) a relational snippet-history schema that records, per repair event, the benchmark reference, round number, failure text, and LLM explanation, enabling full provenance queries; (ii) a browser-based visualisation tool that renders this history as heat-mapped, hover-annotated source code; and (iii) a competitive fractional position-key indexing scheme with tree-node delimiters that assigns stable, lexicographically-ordered identifiers to each code snippet, enabling fine-grained tracking without disrupting surrounding lines. We evaluate TraceCoder on 30 algorithmic programming tasks spanning string processing, mathematical computation, and data-structure manipulation, across two provider configurations. Of these, 10 exhaust the 6-iteration budget on tasks with subtle edge-case behaviour. Mean Chg% reaches 30%, three in ten code snippets carry a traceable repair-event row, compared to 21% when using Gemini 2.0 Flash as sole provider on a 20-task subset. Three detailed case studies demonstrate how the system explains which specific benchmark failures shaped each line of the final program. The proposed mechanism makes the internal \"narrative\" of automated code generation auditable and replayable, a property essential for trust and accountability in production deployments.",
+      "authors": [
+        "Rwaida Alssadi",
+        "Muntaser Syed",
+        "Balaji Kasula",
+        "Lamine Deen",
+        "Majed Alotaibi",
+        "Mohammed Alghamdi",
+        "Tyler Ton",
+        "Ali Alqarni",
+        "Marius Silaghi"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-07-28T22:03:52+00:00",
+      "link": "https://arxiv.org/pdf/2607.26307v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Code generation tool with open source code for provenance",
+      "llm_evidence_cn": "提供开源代码的可解释代码生成工具",
+      "llm_evidence": "提供开源代码的可解释代码生成工具",
+      "canonical_evidence": "提供开源代码的可解释代码生成工具",
+      "llm_tldr_en": "TraceCoder introduces a code generation approach with full provenance tracking, including a relational snippet-history schema and visualization tool, enabling explainable and auditable code generation.",
+      "llm_tldr_cn": "现有的基于大语言模型的编码代理将代码视为黑箱输出，缺乏可解释性和可审计性。为此，本文提出TraceCoder，通过三个互补机制解决这一问题：关系型片段历史模式记录每次修复事件的基准引用、轮次、失败文本及LLM解释；浏览器可视化工具以热图注释方式展示代码历史；竞争性分数位置键索引方案分配稳定标识。实验表明，该方法能有效提升代码生成的可审计性和透明度。",
+      "llm_tldr": "现有的基于大语言模型的编码代理将代码视为黑箱输出，缺乏可解释性和可审计性。为此，本文提出TraceCoder，通过三个互补机制解决这一问题：关系型片段历史模式记录每次修复事件的基准引用、轮次、失败文本及LLM解释；浏览器可视化工具以热图注释方式展示代码历史；竞争性分数位置键索引方案分配稳定标识。实验表明，该方法能有效提升代码生成的可审计性和透明度。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26777v1",
+      "source": "arxiv",
+      "title": "CodeSpec: Dual Executable Specifications for Agentic Long-Horizon Feature Development",
+      "abstract": "LLM-based code agents have advanced repository-level software development through iterative interaction with codebases and tools. However, feature development requires integrating new behaviors into existing architectures through coherent cross-component functional chains. Existing agents typically derive such chains through free-form reasoning, often producing unreliable feature designs with incomplete functional chains. Moreover, textual designs are difficult to verify and enforce, making it challenging to maintain design-implementation consistency throughout long-horizon development. We propose CodeSpec, a dual executable specification method for repository-level feature development. It builds reliable functional chains from evidence pairing sub-requirement semantics with repository architectures, then compiles them into complementary architecture and behavior specifications that check chain completeness and correctness while preserving design-implementation consistency over long interactions. On FeatureBench, which targets feature development in existing repositories, CodeSpec achieves 70.7%, 55.0%, and 49.9% pass rates under DeepSeek-V4-Pro, outperforming representative baselines such as Claude Code. Results on the repository generation benchmark NL2Repo-Bench further demonstrate its generalizability.",
+      "authors": [
+        "Peiding Wang",
+        "Li Zhang",
+        "Fang Liu",
+        "Taichuan Li",
+        "Yinghao Zhu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-29T11:20:49+00:00",
+      "link": "https://arxiv.org/pdf/2607.26777v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "proposes CodeSpec, a method with dual executable specifications for code agents; likely includes code",
+      "llm_evidence_cn": "提出了CodeSpec，一种用于编码智能体的双可执行规范方法，很可能包含代码",
+      "llm_evidence": "提出了CodeSpec，一种用于编码智能体的双可执行规范方法，很可能包含代码",
+      "canonical_evidence": "提出了CodeSpec，一种用于编码智能体的双可执行规范方法，很可能包含代码",
+      "llm_tldr_en": "CodeSpec introduces dual executable specifications to ensure reliable functional chains in LLM-based code agents for long-horizon feature development, providing verifiable designs with likely code release.",
+      "llm_tldr_cn": "基于LLM的编码智能体在长期功能开发中常生成不可靠的功能链，且文本设计难以验证。本文提出CodeSpec，通过双重可执行规范方法从证据中构建可靠的功能链，确保设计与实现一致性。实验证明该方法显著提高了功能开发的可靠性和效率。该工作为智能体代码生成提供了可验证的开发框架。",
+      "llm_tldr": "基于LLM的编码智能体在长期功能开发中常生成不可靠的功能链，且文本设计难以验证。本文提出CodeSpec，通过双重可执行规范方法从证据中构建可靠的功能链，确保设计与实现一致性。实验证明该方法显著提高了功能开发的可靠性和效率。该工作为智能体代码生成提供了可验证的开发框架。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.22335v1",
+      "source": "arxiv",
+      "title": "LinkML-Scala: a Robust, Fast, and Portable Implementation of LinkML",
+      "abstract": "LinkML is a unified framework for data and domain modeling that spans diverse formats and ecosystems: JSON, RDF, CSV, SQL, spreadsheets and more. However, until now it had only one fully-featured implementation, written in Python, which is limited in terms of performance, portability, and behavior consistency. This restricts LinkML's usability in settings such as real-time schema editing and enterprise server applications. To address these issues, we present LinkML-Scala: a robust, fast, and portable implementation of LinkML that covers the metamodel, runtime support, schema derivation, and generators for JSON Schema, SHACL, RDFS, and Table Schema. Written in Scala 3, it runs in the browser (JavaScript transpilation), on the JVM, and as native binaries. LinkML-Scala is distributed as an in-browser playground, a CLI application, a GitHub CI Action, and JVM / JavaScript libraries. In our benchmarks, it outperforms the Python implementation in every tested scenario, on average by 22.9--38.5x. We consider LinkML-Scala an important contribution toward increasing LinkML's adoption and we outline a plan for further work to ensure implementation interoperability and stability.",
+      "authors": [
+        "Piotr Sowinski",
+        "Kacper Grzymkowski",
+        "Andriy Plokhotnyuk"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB"
+      ],
+      "published": "2026-07-24T14:12:59+00:00",
+      "link": "https://arxiv.org/pdf/2607.22335v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "provides implementation of LinkML framework",
+      "llm_evidence_cn": "提供LinkML框架的实现代码",
+      "llm_evidence": "提供LinkML框架的实现代码",
+      "canonical_evidence": "提供LinkML框架的实现代码",
+      "llm_tldr_en": "LinkML-Scala presents a robust implementation of LinkML in Scala, covering metamodel, runtime, and generators, enabling cross-platform usage.",
+      "llm_tldr_cn": "LinkML-Scala是LinkML框架的Scala实现，解决了原Python实现性能受限和难以移植的问题。它覆盖了元模型、运行时支持、模式推导以及JSON Schema、SHACL等生成器，可在浏览器、JVM和本地运行。该工作为需要实时模式编辑和企业服务器应用的数据建模场景提供了高效、可移植的解决方案。",
+      "llm_tldr": "LinkML-Scala是LinkML框架的Scala实现，解决了原Python实现性能受限和难以移植的问题。它覆盖了元模型、运行时支持、模式推导以及JSON Schema、SHACL等生成器，可在浏览器、JVM和本地运行。该工作为需要实时模式编辑和企业服务器应用的数据建模场景提供了高效、可移植的解决方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.22471v1",
+      "source": "arxiv",
+      "title": "MineValiCoder: Reliable Code Generation with Test Case Quality Mining and Bipartite Graph-Based Mutual Validation",
+      "abstract": "Large Language Model (LLM)-based Test-Driven Development (TDD) has advanced automated code generation. However, existing approaches depend heavily on human-crafted test cases and cannot operate effectively when only natural-language requirements are available. Although recent work enables automatic test generation, it often overlooks the inherent stochasticity of LLMs, leading to two key defects: faulty tests generate misleading feedback that distorts code optimization, while mixed-quality test cases produce conflicting evaluation signals that hinder reliable code selection.   To address these challenges, we propose MineValiCoder, a collaborative closed-loop TDD framework based on the mutual reinforcement of test-case quality and code quality. MineValiCoder comprises three modules. The Test Case Quality Mining (TCQM) module filters faulty test cases through self-validation, providing reliable optimization supervision. The Parallel TDD Refinement module iteratively optimizes code and generates diverse high-quality code candidates using validated test-case feedback. The Bipartite Graph-Based Code-Test Mutual Validation (BiCoTeV) module dynamically models code-test interactions and performs mutual validation scoring for stable and reliable optimal-code selection.   Extensive evaluations across four LLMs and mainstream benchmarks show that MineValiCoder significantly outperforms state-of-the-art methods. Specifically, it achieves Pass@1 scores of 96.34% on HumanEval, 87.40% on MBPP, 64.00% on APPS, and 51.33% on LiveCodeBench. These results demonstrate the effectiveness of MineValiCoder in mitigating LLM stochasticity and improving the reliability of automated code generation.",
+      "authors": [
+        "Zhen Zhao",
+        "Qihang Yang",
+        "Feifei Dai",
+        "Xiangfang Li",
+        "Bo Li"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-24T16:39:06+00:00",
+      "link": "https://arxiv.org/pdf/2607.22471v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "code generation framework with test case quality mining and mutual validation",
+      "llm_evidence_cn": "带有测试用例质量挖掘和互验证的代码生成框架",
+      "llm_evidence": "带有测试用例质量挖掘和互验证的代码生成框架",
+      "canonical_evidence": "带有测试用例质量挖掘和互验证的代码生成框架",
+      "llm_tldr_en": "MineValiCoder proposes a closed-loop TDD framework using test case quality mining and bipartite graph mutual validation to improve LLM code generation reliability.",
+      "llm_tldr_cn": "LLM驱动的测试驱动开发（TDD）依赖高质量测试用例，但自动生成测试可能存在噪声和冲突。本文提出MineValiCoder，通过挖掘测试用例质量并构建二部图互验证机制，增强代码生成可靠性。实验表明该方法显著提升了代码正确率，减少了误导性反馈。",
+      "llm_tldr": "LLM驱动的测试驱动开发（TDD）依赖高质量测试用例，但自动生成测试可能存在噪声和冲突。本文提出MineValiCoder，通过挖掘测试用例质量并构建二部图互验证机制，增强代码生成可靠性。实验表明该方法显著提升了代码正确率，减少了误导性反馈。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.26877v1",
+      "source": "arxiv",
+      "title": "Hybrid Workflow Composition for Extreme-Scale Data Processing: A Case Study on the HL-LHC (Extended Version)",
+      "abstract": "High-Throughput Computing (HTC) environments tailored for high-concurrency resource efficiency require sophisticated orchestration to manage petabyte-scale data across heterogeneous resources. A critical but often overlooked challenge is workflow composition: the strategic grouping of tasksets within a Directed Acyclic Graph (DAG) to mitigate execution overhead while maximizing resource utilization. This paper presents a novel simulation framework for characterizing the interplay between taskset granularity and system-level constraints (e.g., job latency, failure rate, throughput, and I/O bandwidth).   By exploring a high-dimensional parameter space, we quantify the performance sensitivity of diverse workflow topologies. Our results demonstrate that hybrid composition strategies, which dynamically balance taskset independence with execution grouping, can yield up to 3.8x throughput increase and a 14.9x reduction in network overhead. We further propose a multi-metric objective function that enables policy-driven optimization, allowing system architects to navigate the Pareto frontier between throughput, I/O cost, and CPU efficiency. These findings provide a rigorous foundation for automated workflow synthesis in distributed systems, offering a scalable model for next-generation scientific pipelines. All artifacts are publicly available.",
+      "authors": [
+        "Alan Malta Rodrigues",
+        "Douglas Thain"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.SE"
+      ],
+      "published": "2026-07-29T13:07:31+00:00",
+      "link": "https://arxiv.org/pdf/2607.26877v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Workflow composition for task scheduling in HTC environments",
+      "llm_evidence_cn": "高通量计算环境中的工作流组合与任务调度",
+      "llm_evidence": "高通量计算环境中的工作流组合与任务调度",
+      "canonical_evidence": "高通量计算环境中的工作流组合与任务调度",
+      "llm_tldr_en": "This paper presents a simulation framework for workflow composition in high-throughput computing, analyzing taskset granularity vs. system constraints for petabyte-scale data.",
+      "llm_tldr_cn": "高通量计算环境需要优化工作流组合以最大化资源利用率。本文提出一种模拟框架，探讨任务集粒度与作业延迟、故障率、吞吐量、I/O带宽等系统约束之间的相互作用。通过高维参数空间搜索，量化不同工作流拓扑的性能敏感性。该框架可用于指导巨型数据中心的任务调度策略优化。",
+      "llm_tldr": "高通量计算环境需要优化工作流组合以最大化资源利用率。本文提出一种模拟框架，探讨任务集粒度与作业延迟、故障率、吞吐量、I/O带宽等系统约束之间的相互作用。通过高维参数空间搜索，量化不同工作流拓扑的性能敏感性。该框架可用于指导巨型数据中心的任务调度策略优化。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

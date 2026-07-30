@@ -1,0 +1,255 @@
+Title: LinkML-Scala: a Robust, Fast, and Portable Implementation of LinkML
+
+URL Source: https://arxiv.org/pdf/2607.22335v1
+
+Published Time: Mon, 27 Jul 2026 00:48:53 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# LinkML-Scala: a Robust, Fast, and Portable Implementation of LinkML 
+
+Piotr Sowiński 1,2 ,*, Kacper Grzymkowski 1 and Andriy Plokhotnyuk 1
+
+> 1
+
+NeverBlink, ul. Wspólna 56, 00-684 Warsaw, Poland 
+
+> 2
+
+Warsaw University of Technology, Pl. Politechniki 1, 00-661 Warsaw, Poland 
+
+Abstract 
+
+LinkML is a unified framework for data and domain modeling that spans diverse formats and ecosystems: JSON, RDF, CSV, SQL, spreadsheets and more. However, until now it had only one fully-featured implementation, written in Python, which is limited in terms of performance, portability, and behavior consistency. This restricts LinkML’s usability in settings such as real-time schema editing and enterprise server applications. To address these issues, we present LinkML-Scala: a robust, fast, and portable implementation of LinkML that covers the metamodel, runtime support, schema derivation, and generators for JSON Schema, SHACL, RDFS, and Table Schema. Written in Scala 3, it runs in the browser (JavaScript transpilation), on the JVM, and as native binaries. LinkML-Scala is distributed as an in-browser playground, a CLI application, a GitHub CI Action, and JVM / JavaScript libraries. In our benchmarks, it outperforms the Python implementation in every tested scenario, on average by 22.9–38.5x. We consider LinkML-Scala an important contribution toward increasing LinkML’s adoption and we outline a plan for further work to ensure implementation interoperability and stability. 
+
+Keywords 
+
+LinkML, Linked Data Modeling Language, Data integration, Data modeling, Scala 
+
+# 1. Introduction 
+
+Integrating data across systems and organizations remains a persistent challenge. Data is described using a plethora of formats and modeling languages – JSON Schema, SQL DDL, spreadsheets, and countless bespoke conventions – each tied to a particular technology stack. However, these formats capture structure but not meaning: they offer little support for expressing what the data is about, linking records across datasets, or aligning terms with shared vocabularies. The resulting models are fragmented and locked to their original ecosystem, making them hard to reuse or interlink. On the other hand, Semantic Web standards such as RDFS [ 1 ], OWL [ 2 ], and SHACL [ 3] support rich, machine-readable semantics and interlinking across datasets. However, this expressiveness applies mainly to data represented as RDF. The vast majority of data in practice is held in relational databases, JSON documents, and spreadsheets, not RDF. As a result, the benefits the semantic standards offer remain out of reach for most of the data that could benefit from them. LinkML [ 4 ] addresses this gap: it is a unified framework for data and domain modeling that works across different data formats and ecosystems. LinkML is designed to be easy to use and expressive enough to cover diverse types of data, from spreadsheets to JSONs and complex, interlinked RDF graphs. LinkML models are written in a YAML syntax, and then translated to other languages (e.g., JSON Schema, RDFS, SHACL, Table Schema [ 5 ], SQL DDL, classes in OOP languages) with the use of 
+
+generators . This generated code can then be reused with tooling specific to the target ecosystem – e.g., one can write a LinkML model, generate SHACL from it, and apply it with any SHACL validator. So far, there was only one implementation of LinkML that covered the full modeling lifecycle (authoring, validation, generation): the linkml Python package. Over the course of our work, we found that this implementation has limitations that inhibit LinkML’s usefulness in enterprise use cases: 
+
+Authors’ preprint. 
+
+> *
+
+Corresponding author. 
+
+$ piotr@neverblink.eu (P. Sowiński); kacper.grzymkowski@neverblink.eu (K. Grzymkowski); andriy@neverblink.eu (A. Plokhotnyuk) 
+
+ 0000-0002-2543-9461 (P. Sowiński); 0009-0008-9227-8240 (K. Grzymkowski); 0009-0006-8321-2202 (A. Plokhotnyuk)  
+
+> ©2026 Copyright for this paper by its authors. Use permitted under Creative Commons License Attribution 4.0 International (CC BY 4.0).
+
+1. Poor performance. The implementation was never designed to be fast and the Python runtime is also limiting in this regard. This makes working with large models challenging and prohibits certain use cases entirely, such as real-time model linting in code editors. 2. Lack of portability. Due to being tied to the Python ecosystem, linkml cannot run in browsers, native binaries, or the Java Virtual Machine, without extensive and fragile workarounds. This limits LinkML’s usability in user interfaces, server applications, and edge devices. 3. Inconsistent behaviors and low reliability. Code generators in linkml have many undocu-mented or off-spec behaviors and inconsistencies. A LinkML model may work with JSON Schema, but break unexpectedly in SHACL. This contributes to a poor user experience. To address these issues, we propose LinkML-Scala : a cross-platform, robust, and fast implementation of LinkML, covering the metamodel, runtime support, schema derivation, and generators for various languages (e.g., JSON Schema, SHACL, RDFS, Table Schema). LinkML-Scala aims to be a drop-in replace-ment for the linkml Python package, while being much faster, portable (spanning JavaScript, JVM, and native binaries), and more reliable. Our contributions include: (1) an open-source implementation of LinkML-Scala; (2) tooling, including an in-browser playground, a CLI application, and a GitHub CI Action; (3) performance benchmarks comparing LinkML-Scala with the linkml Python package. 
+
+# 2. LinkML-Scala 
+
+LinkML-Scala is written in the Scala 3 language, which is key to its portability. Pure-Scala programs can run not only on the Java Virtual Machine, but can also also be transpiled to JavaScript with Scala.js [ 6], and compiled to native binaries with GraalVM [ 7 ]. Scala also offers excellent metaprogramming capabilities [ 8 , 9 ] and a very rich type system, which allow us to express very complex transformations succinctly and safely (with compile-time guarantees). We followed the official Porting LinkML 1 guide, starting with a Scala generator implemented in Python. After LinkML-Scala reached self-hosting (Scala code generated from LinkML-Scala), we discarded the Python-to-Scala generator. 
+
+Architecture. LinkML-Scala has a modular design. At the core lies Runtime , which contains the minimum components to support Scala classes generated from LinkML schemas. To load schemas from YAML files into type-safe classes, we implemented a custom codec generator using the scala-yaml 
+
+parser. Custom Scala macros were needed to support LinkML’s compact and simple dictionaries which inject YAML dictionary keys into child object fields during decoding, a structural semantic that standard serialization libraries cannot handle. The macros emit highly optimized and reflection-free decoding/encoding code at compile time while safely resolving recursive schema types. Scala’s typeclass system (implicits) [10] allowed us to easily override edge cases by providing custom implicit codecs. 
+
+Metamodel and SchemaView packages implement LinkML’s syntax and semantics. The Metamodel 
+
+package contains Scala code generated from the LinkML metamodel using our own Scala generator. The SchemaView package is the toolkit for developing generators. It implements LinkML semantics, schema loading utilities, schema validation, and common utilities for generators. All data classes are immutable, which facilitates easy caching using Scala’s lazy val . ElementView instances are used to encapsulate functionality specific to a type of a LinkML Element, such as text-to-meaning mappings for enums and slot derivation for classes. Additional utilities provide functionalities such as inferring the inlining mode, case conversions, and mapping LinkML types to their runtime counterparts. Many of these utilities use Scala enumerations or algebraic data types, which allows generators to use pattern matching to turn unhandled cases into compile-time errors. This set-up allows us to move most logic out of generators and into the shared SchemaView, so writing consistent generators is much easier. The Generators package contains the generators that transform a LinkML schema into different output formats. Currently, LinkML-Scala supports JSON Schema, SHACL, RDFS, Scala, Table Schema and LinkML (derivation) generators. These generators take a variety of approaches, from direct string building (e.g., Scala generator), to intermediate AST generation with a decoupled serializer (e.g., JSON 
+
+> 1https://linkml.io/linkml/howtos/port-linkml.html
+
+Schema, Table Schema). New generators can be implemented easily as plugins, a pattern used extensively in NeverBlink’s internal projects. 
+
+Testing. To ensure consistency between generators, LinkML-Scala hosts a model catalog for testing (dubbed the model zoo ), covering various edge cases of the LinkML specification. These models are accompanied by instances in different serialization formats. This allows testing whether the generators output schemas that accept valid instances and reject invalid instances, avoiding assertions on the structure of generator output, and only asserting its expected behavior. We find this property useful for integration testing with languages that have their own validators, such as SHACL and JSON Schema. Thanks to this, we are able to enforce a common data model for all generators. The model catalog is language-agnostic and can be reused by other implementations of LinkML. 
+
+# 3. Tooling and User Experience 
+
+To facilitate uptake, LinkML-Scala is made available as: (1) a CLI application; (2) an in-browser play-ground; (3) a GitHub CI Action; (4) a library, published to Maven Central (JVM) and npm (JS). These artifacts were designed with user experience in mind – we highlight some of these considerations below. 
+
+CLI. The linkml-scala command-line application currently allows one to lint/validate models (linkml-scala validate ) and use generators (e.g., linkml-scala generate shacl ). The tool is a single, self-contained native binary, compiled for Linux, macOS, and Windows. It can be easily installed via an installation script or the mise environment manager. The binary is compiled with GraalVM Native Image [ 7 ], which allows for near-instant startup times ( ∼2.5ms to show the help text on Linux), in contrast to the typical 1–2s needed to start a JVM or a Python application. This greatly speeds up various scripted workloads (e.g., CI pipelines) and makes for a more responsive user experience. 
+
+Online playground. Exploiting the fact that LinkML-Scala can compile to JavaScript, we built an in-browser playground 2 (Figure 1). It allows one to edit and validate LinkML models, as well as use the built-in generators (e.g., live LinkML-to-SHACL conversion). In our view, it is a useful tool to help popularize LinkML, as it requires no installation or backend and can be used for quick experimentation.   
+
+> Figure 1: LinkML-Scala in-browser playground: https://linkml.neverblink.eu/playground/
+
+GitHub CI Action. We package a ready-made GitHub CI Action 3 that allows for fast schema validation and generation. The Action is written in pure JavaScript, so it runs on all platforms. 
+
+Libraries. We publish library JARs to Maven Central – this allows for accessing the SchemaView 
+
+interface, generators, and other features in Scala, Java, or other JVM languages. The library also allows for writing custom generators, a feature used extensively at NeverBlink for internal projects. We also 
+
+> 2https://linkml.neverblink.eu/playground/
+> 3https://github.com/marketplace/actions/linkml-linkml-scala
+
+publish an ES module to npm that exposes an API for running generators programmatically from JavaScript 4. The module includes TypeScript bindings to speed up application development. 
+
+Error handling. LinkML-Scala detects model issues at SchemaView level, not in generators, making it behave uniformly across generators. All errors point to a specific location in the model (line/column or JSON path) and have standardized messages. This speeds up model debugging and development. 
+
+# 4. Evaluation 
+
+We evaluated the performance of the two implementations by measuring the throughput of SHACL and JSON Schema generators (generations per second). The benchmarks were performed in two scenarios that emulate different usage patterns: (1) Cold start : end-to-end generation from CLI, emulating a workflow typical for CI scripts and schema authoring; (2) Warm : generator runs in a loop inside an interpreter/JIT, emulating a persistent server application. 
+
+Benchmark setup. We used LinkML-Scala 0.9.3 and LinkML (Python) 1.11.1. Test bench: Intel Core Ultra 9 285K CPU (3.7GHz, boost 5.7GHz), RAM 64GB DDR5-6400, Ubuntu Desktop 24.04 (Linux 6.14). Unless otherwise stated, we used OpenJDK 25.0.2+10-LTS and CPython 3.14.6 as the runtimes. 
+
+Datasets. We collected 11 diverse LinkML schemas for benchmarking by browsing the LinkML Schema Registry 5 and publicly available GitHub repositories. These schemas cover domains such as: cybersecurity (d3fend, iso27001), finance (cdm), biology (nmdc, crdch, include), and energy (tc57cim). Table 1 presents a summary of all datasets. Several schemas required minor manual repairs, such as fixing missing prefixes or invalid URIs. We published the complete benchmark dataset on GitHub 6.
+
+Table 1 
+
+Benchmark dataset statistics. Classes and Attributes are the materialized (induced) totals. 
+
+bridge2ai cdm chem-dcat crdch d3fend fluxnova include iso27001 nmdc sssom tc57cim Files 1 37 5 1 1 17 1 1 14 1 1Size (KiB) 39.5 2237.9 117.4 1064.8 2591.3 244.3 56.3 251.7 558.8 59.4 2952.3 Classes 38 779 89 41 4366 258 10 35 80 9 1528 Attributes 160 3245 889 335 5250 2765 149 781 1655 110 34172 
+
+Cold-start benchmarks. The benchmark is implemented as a shell script calling the hyperfine CLI tool [ 11 ]. We used the CLI binary compiled with Oracle GraalVM Native Image 25.0.1+8.1 for LinkML-Scala, and the default LinkML (Python) CLI script. Results are presented in Figure 2. bridge2ai   
+
+> cdm
+> chem-dcat-ap
+> crdch
+> d3fend
+> fl uxnova-bpm
+> include
+> iso27001
+> nmdc
+> sssom
+> tc57cim
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> Throughput (ops/s)
+> 125×
+> 7.1×
+> 46×
+> 7.1× 16×
+> 52×
+> 121×
+> 50×
+> 24×
+> 124×
+> 35×
+> Target = JSON Schema
+> bridge2ai
+> cdm
+> chem-dcat-ap
+> crdch
+> d3fend
+> fl uxnova-bpm
+> include
+> iso27001
+> nmdc
+> sssom
+> tc57cim
+> 127×
+> 4.2×
+> 10×
+> 7.3× 24×
+> 3.4×
+> 124×
+> 55×
+> 5.0×
+> 126×
+> 65×
+> Target = SHACL
+> Implementation
+> Python
+> Scala
+
+Figure 2: Cold-start benchmark results. 
+
+Warm benchmarks. Benchmark has split implementations: LinkML-Scala uses the Java Microbench-mark Harness [ 12 ], LinkML-Python uses a plain Python script. Both implementations are allowed to 
+
+> 4
+
+https://www.npmjs.com/package/@neverblink/linkml 
+
+> 5
+
+https://linkml.io/linkml-registry/registry/ 
+
+> 6
+
+https://github.com/NeverBlink-labs/linkml-benchmark-schemas parse schemas and resolve imports in their set-up phase, meaning that all required models are loaded into memory before measurement. Each warm scenario has 5 warm-up runs and 10 measure runs across 5 forks. Results are presented in Figure 3. bridge2ai 
+
+> cdm
+> chem-dcat-ap
+> crdch
+> d3fend
+> fl uxnova-bpm
+> include
+> iso27001
+> nmdc
+> sssom
+> tc57cim
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> 10 4
+> Throughput (ops/s)
+> 60×
+> 1.7×
+> 22×
+> 18×
+> 61×
+> 187×
+> 54×
+> 88×
+> 18×
+> 55×
+> 124×
+> Target = JSON Schema
+> bridge2ai
+> cdm
+> chem-dcat-ap
+> crdch
+> d3fend
+> fl uxnova-bpm
+> include
+> iso27001
+> nmdc
+> sssom
+> tc57cim
+> 86×
+> 1.9×
+> 3.1×
+> 46×
+> 212×
+> 2.2×
+> 95×
+> 123×
+> 2.1×
+> 83×
+> 235×
+> Target = SHACL
+> Implementation
+> Python
+> Scala
+
+Figure 3: Warm benchmark results. 
+
+Results summary. We calculate speedup as the ratio between LinkML-Scala’s throughput and LinkML (Python) throughput. The geometric mean of the speedup for the cold-start scenario is 36.5x 
+
+(JSON Schema) and 22.9x (SHACL). For the warm scenario, the average speedup is 38.5x (JSON Schema) and 26.8x (SHACL). LinkML-Scala is faster than LinkML (Python) in every tested scenario. 
+
+Discussion and limitations. The speedup is not uniform across datasets. In warm JSON Schema benchmarks it ranges from 1.7x to 187x (two orders of magnitude). These differences may be caused by uneven feature coverage between the implementations, unoptimized code paths in LinkML-Scala, or very text-heavy schemas – we will investigate these outliers in follow-up work. In cold-start benchmarks, for small datasets LinkML-Scala was mainly limited by the startup time of its GraalVM-compiled binary. We estimate that on a modern Linux machine linkml-scala starts in ∼2.5ms. Some datasets (e.g., 
+
+sssom ) were generated in only ∼5ms, making startup roughly half of the elapsed time. 
+
+# 5. Conclusion and Future Work 
+
+LinkML-Scala is a robust, fast, and portable implementation of LinkML, opening new application areas for this data modeling framework, such as responsive web editors and enterprise-grade server applications. It can be reused in a variety of ways, including a CLI application, programming libraries (JS and JVM), an online playground, and a GitHub Actions workflow. We also contribute the model catalog (test cases) and benchmark datasets, to be reused by the community. In the immediate future, we are considering adding support for SQL DDL, Avro, Parquet, and Protobuf. We also plan to ingrate LinkML-Scala with Jelly [ 13 ], to speed up processing of large SHACL/RDFS schemas. We hope that LinkML-Scala will mark a turn in LinkML’s development, as the second fully-featured implementation, encouraging the improvement of the LinkML specification as a shared interoperability basis. To that end, in the coming months we will contribute fixes and improvements to the specification. We also plan to engage directly with LinkML (Python) maintainers to improve the coverage and consistency of both implementations. We are also eager to see how the community will choose to use LinkML-Scala and what features should be developed next. We invite feature requests on our issue tracker: https://github.com/NeverBlink-OSS/linkml-scala/issues 
+
+Online playground: https://linkml.neverblink.eu/playground/ 
+
+Code and documentation: https://github.com/NeverBlink-OSS/linkml-scala 
+
+Benchmark code and datasets: https://github.com/NeverBlink-labs/linkml-benchmark-schemas 
+
+Acknowledgements. This work has been supported by the HEDGE-IoT project grant number 101136216 funded by the European Commission as part of the Horizon Europe Framework Programme. Declaration on Generative AI. During the preparation of this work, the authors used Anthropic Claude to assist in writing the benchmark code, data analysis scripts, and plotting scripts, and for drafting selected parts of the paper. After using this tool, the authors reviewed and edited the content, and performed manual cross-checks to ensure output validity. The authors take full responsibility for the publication’s content. 
+
+# References 
+
+[1] R. Guha, D. Brickley, RDF Schema 1.1, W3C Recommendation, W3C, 2014. https://www.w3.org/ TR/2014/REC-rdf-schema-20140225/. [2] P. Patel-Schneider, B. Parsia, P. Hitzler, S. Rudolph, M. Krötzsch, OWL 2 Web Ontology Lan-guage Primer (Second Edition), W3C Recommendation, W3C, 2012. https://www.w3.org/TR/2012/ REC-owl2-primer-20121211/. [3] H. Knublauch, D. Kontokostas, Shapes Constraint Language (SHACL), W3C Recommendation, W3C, 2017. https://www.w3.org/TR/2017/REC-shacl-20170720/. [4] S. A. T. Moxon, H. Solbrig, N. L. Harris, P. Kalita, M. A. Miller, S. Patil, K. Schaper, C. Bizon, J. H. Caufield, S. C. Cuesta, C. Cox, F. Dekervel, D. M. Dooley, W. D. Duncan, T. Fliss, S. Gehrke, A. S. L. Graefe, H. Hegde, A. J. Ireland, J. O. B. Jacobsen, M. Krishnamurthy, C. Kroll, D. Linke, R. Ly, N. Matentzoglu, J. A. Overton, J. L. Saunders, D. R. Unni, G. Vaidya, W.-M. A. M. Vierdag, LinkML Community Contributors, O. Ruebel, C. G. Chute, M. H. Brush, M. A. Haendel, C. J. Mungall, LinkML: an open data modeling framework, GigaScience 15 (2026) giaf152. doi: 10. 1093/gigascience/giaf152 .[5] D. Fowler, J. Barratt, P. Walsh, Frictionless data: making research data quality visible, International Journal of Digital Curation 12 (2017) 274–285. [6] S. Doeraene, Scala.js: Type-directed interoperability with dynamically typed languages (2013). [7] C. Wimmer, GraalVM native image: large-scale static analysis for Java (keynote), in: Proceedings of the 13th ACM SIGPLAN International Workshop on Virtual Machines and Intermediate Languages, 2021, pp. 3–3. [8] N. Stucki, A. Biboudis, S. Doeraene, M. Odersky, Semantics-preserving inlining for metaprogram-ming, in: Proceedings of the 11th ACM SIGPLAN International Symposium on Scala, 2020, pp. 14–24. [9] N. A. Stucki, Scalable metaprogramming in Scala 3, Ph.D. thesis, EPFL, 2023. [10] B. C. Oliveira, A. Moors, M. Odersky, Type classes as objects and implicits, ACM Sigplan Notices 45 (2010) 341–360. [11] D. Peter, hyperfine, 2023. URL: https://github.com/sharkdp/hyperfine. [12] OpenJDK Contributors, Java Microbenchmark Harness (JMH), 2025. https://github.com/openjdk/ jmh, accessed on 23 July 2026. [13] P. Sowiński, K. Bogacka, A. Danilenka, N. Kozlov, Jelly: a fast and convenient RDF serialization format, arXiv preprint arXiv:2506.11298, presented at SEMANTiCS 2025 Developers Workshop, 3 September, 2025, Vienna, Austria (2025). doi: 10.48550/arXiv.2506.11298 .
