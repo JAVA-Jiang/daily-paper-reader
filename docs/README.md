@@ -6,41 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-30
-- 运行时间：2026-07-30 21:01:32 UTC
+- 最新运行日期：2026-07-31
+- 运行时间：2026-07-31 21:43:02 UTC
 - 运行状态：成功
-- 本次总论文数：7
-- 精读区：4
+- 本次总论文数：4
+- 精读区：1
 - 速读区：3
 
 ### 今日简报（AI）
-今日推荐7篇论文，精读2篇高分研究聚焦多语言长文本检索与数据中心网络流量优化。重点关注《DenseOn with the LateOn》提出的密集与延迟交互模型以及《ProFlow》用强化学习实现主动流量调度。若需提升代码生成可靠性，可速读《MineValiCoder》的测试质量挖掘方法。
-- 详情：[/202607/30/README](/202607/30/README)
+今日精读1篇、速读3篇，共4篇，聚焦LLM缺陷修复与编码智能体技术。
+最值得关注：OwlPath通过无损知识压缩提升LLM bug修复（8.0分），以及Agent Retrieval Bench对仓库上下文检索的评估。
+建议后续留意编码智能体的检索与任务生成方向，优先阅读这两篇高分论文。
+- 详情：[/202607/31/README](/202607/31/README)
 
 ### 精读区论文标签
-1. [DenseOn with the LateOn: Fully Open Dense and Late-Interaction Models for Multilingual, Long-Context, and Code Search](/202607/30/2607.27178v1-denseon-with-the-lateon-fully-open-dense-and-late-interaction-models-for-multilingual-long-context-and-code-search)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：完全开放的检索模型，提供开源代码和训练流程，实现可复现研究
-2. [ProFlow: RL-Driven and Performance-Aware Proactive Flow Placement in Datacenter Networks](/202607/30/2607.26231v1-proflow-rl-driven-and-performance-aware-proactive-flow-placement-in-datacenter-networks)  
+1. [OwlPath: Lossless Knowledge Compression for LLM Bug Repair](/202607/31/2607.27249v1-owlpath-lossless-knowledge-compression-for-llm-bug-repair)  
    标签：评分：8.0/10、query:code-paper
-   evidence：数据中心网络中使用强化学习的主动流放置（任务调度）
-3. [TraceCoder: Explainable and Auditable Code Generation with Position-Key Snippet Versioning](/202607/30/2607.26307v1-tracecoder-explainable-and-auditable-code-generation-with-position-key-snippet-versioning)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：提供开源代码的可解释代码生成工具
-4. [CodeSpec: Dual Executable Specifications for Agentic Long-Horizon Feature Development](/202607/30/2607.26777v1-codespec-dual-executable-specifications-for-agentic-long-horizon-feature-development)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：提出了CodeSpec，一种用于编码智能体的双可执行规范方法，很可能包含代码
+   evidence：介绍了一个有50万+GitHub星标的开源工具CodeGraph及其上的统一CLI，明显是提供代码的论文。
 
 ### 速读区论文标签
-1. [LinkML-Scala: a Robust, Fast, and Portable Implementation of LinkML](/202607/30/2607.22335v1-linkml-scala-a-robust-fast-and-portable-implementation-of-linkml)  
+1. [Agent Retrieval Bench: Evaluating Repository Context Retrieval for Coding Agents](/202607/31/2607.24882v1-agent-retrieval-bench-evaluating-repository-context-retrieval-for-coding-agents)  
    标签：评分：7.0/10、query:code-paper
-   evidence：提供LinkML框架的实现代码
-2. [MineValiCoder: Reliable Code Generation with Test Case Quality Mining and Bipartite Graph-Based Mutual Validation](/202607/30/2607.22471v1-minevalicoder-reliable-code-generation-with-test-case-quality-mining-and-bipartite-graph-based-mutual-validation)  
+   evidence：引入了公开基准，很可能附带源代码以实现可复现的仓库上下文检索评测。
+2. [Change2Task: From Repository Changes to Executable Coding Agent Tasks and Environments](/202607/31/2607.28591v1-change2task-from-repository-changes-to-executable-coding-agent-tasks-and-environments)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提出了将仓库变更转换为可执行任务的系统，很可能发布代码与环境。
+3. [From Execution to Capability: Scientific Experience Consolidation via Procedural Knowledge Synthesis](/202607/31/2607.24459v1-from-execution-to-capability-scientific-experience-consolidation-via-procedural-knowledge-synthesis)  
    标签：评分：6.0/10、query:code-paper
-   evidence：带有测试用例质量挖掘和互验证的代码生成框架
-3. [Hybrid Workflow Composition for Extreme-Scale Data Processing: A Case Study on the HL-LHC (Extended Version)](/202607/30/2607.26877v1-hybrid-workflow-composition-for-extreme-scale-data-processing-a-case-study-on-the-hl-lhc-extended-version)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：高通量计算环境中的工作流组合与任务调度
+   evidence：提出一个框架且很可能包含代码，符合含代码论文的需求。
 
 
 <div class="dpr-home-promo-card">

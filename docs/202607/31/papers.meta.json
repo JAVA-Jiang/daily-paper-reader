@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-31",
+  "date": "2026-07-31",
+  "generated_at": "2026-07-31T21:43:08",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/31/2607.27249v1-owlpath-lossless-knowledge-compression-for-llm-bug-repair",
+      "section": "deep",
+      "title_en": "OwlPath: Lossless Knowledge Compression for LLM Bug Repair",
+      "authors": "Bo Zhang, Ren Pan, Huan Chen, Xiang Song",
+      "date": "2026-07-28",
+      "pdf": "https://arxiv.org/pdf/2607.27249v1",
+      "score": "8.0",
+      "evidence": "介绍了一个有50万+GitHub星标的开源工具CodeGraph及其上的统一CLI，明显是提供代码的论文。",
+      "tldr": "LLM修复代码受限于上下文窗口，标准检索将代码当文本，难以捕获子类链、传递调用等多跳结构依赖。OwlPath将源码无损压缩为OWL2本体，在CodeGraph上通过SPARQL属性路径和OWL-SKM预计算摘要实现结构感知检索。在SWE-bench Pro上严格应用率68.4%，token减少28.8%，离线检索召回率提升2.06倍，验证了知识压缩增强代码检索的有效性。",
+      "tags": "query:code-paper",
+      "abstract_en": "LLM-based software engineering agents are constrained by limited context windows: roughly 100K tokens must store structurally relevant code  subsets to resolve bugs. Standard retrieval models treat code as plain text, forcing agents to resolve multi-hop dependencies including subclass  chains, transitive callers and interface implementations through slow trial and error. We tackle this limitation with lossless knowledge  compression, encoding source code into an OWL2 ontology to answer structural queries using minimal relevant code fragments.   We present OwlPath, an OWL2 reasoning layer atop CodeGraph, a widely used code intelligence platform with 500K+ GitHub stars, offering a unified  CLI for structural code retrieval. Powered by tree-sitter parsing, OwlPath supports multi-language repositories (Python, JavaScript,  TypeScript, Go, etc.) and encodes language-specific semantics into a unified OWL2 ontology. It adopts two complementary modules. First, a  transitive-closure engine fetches all structurally linked symbols via single SPARQL property-path queries, capturing multi-hop relations missed  by string matching. Second, the OWL Software Knowledge Map (OWL-SKM) precomputes a compact 3KB summary with module trees, core APIs and  issue-related symbols, directing agents to target modules in the first query.   Evaluated on 18 SWE-bench Pro instances, OwlPath obtains a 68.4% strict-apply rate versus 66.7% for the CodeGraph baseline, cutting token usage  by 28.8% and runtime by 39.5%. In offline retrieval tests over 67 instances, OwlPath improves recall 2.06 times (0.464 vs 0.226) and reaches  88.1% hit rate compared to CodeGraph's 59.7%. On a 37-question structural retrieval benchmark, recall rises from 4.4% to 28.8%, with 69-80%  accuracy on transitive caller and interface tasks.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/31/2607.24882v1-agent-retrieval-bench-evaluating-repository-context-retrieval-for-coding-agents",
+      "section": "quick",
+      "title_en": "Agent Retrieval Bench: Evaluating Repository Context Retrieval for Coding Agents",
+      "authors": "Bowen Qin, Yi Xie",
+      "date": "2026-07-27",
+      "pdf": "https://arxiv.org/pdf/2607.24882v1",
+      "score": "7.0",
+      "evidence": "引入了公开基准，很可能附带源代码以实现可复现的仓库上下文检索评测。",
+      "tldr": "编码代理评估常以最终补丁正确性为准，但前期需从仓库中检索相关文件，这一环节缺乏专门评估。我们提出Agent Retrieval Bench，基于真实编码工作流构建文件级检索基准，含427个样本、25个仓库，覆盖四类正检索任务及选择性检索子集。实验表明词法检索、开源嵌入与RepoMap各有优势，无单一方法主导，且选择性阈值存在校准差距。该基准为编码代理的上下文获取能力提供了系统评测方法。",
+      "tags": "query:code-paper",
+      "abstract_en": "Modern coding agents are usually evaluated by whether they eventually produce a correct patch, but patch generation depends on an earlier context-acquisition stage: finding the repository files needed for the task. We introduce Agent Retrieval Bench, a file-level benchmark for this upstream retrieval problem. Samples are built from real coding-workflow signals and evaluated against frozen base-commit repositories, with relevance defined by what an agent needs next rather than direct query-file semantic similarity. The benchmark covers four positive-retrieval tasks: code2test, comment2context, trace2code, and edit2ripple; a fifth subset evaluates selective retrieval using natural evidence-backed no-gold cases and counterfactual wrong-repository controls. Agent Retrieval Bench contains 427 samples across 25 repositories: 345 positive examples, 50 natural no-gold examples, and 32 counterfactual controls. The corpus includes 308 base-commit snapshots, 392,000 files, and 7.9 million chunks. We evaluate lexical retrieval, RepoMap, open-source embeddings, selective abstention, and logged agent context selection. No single retrieval family dominates: Qwen3-Embedding-4B has the best sample-weighted MRR on positive samples, Qwen3-Embedding-8B the best Recall@20, and RepoMap the best budgeted context yield at 8K tokens, with task-level winners differing substantially. Selective thresholds calibrated with counterfactual controls do not improve selective success on natural no-gold cases, revealing a calibration gap. Logged trajectories also miss every gold file on 27-35 percent of samples. A controlled seed-intervention pilot finds that retrieval-derived initial context yields higher file F1 with less post-seed exploration than random non-gold context, while oracle gold context shows substantial remaining headroom.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/31/2607.28591v1-change2task-from-repository-changes-to-executable-coding-agent-tasks-and-environments",
+      "section": "quick",
+      "title_en": "Change2Task: From Repository Changes to Executable Coding Agent Tasks and Environments",
+      "authors": "Haomin Qi, Xingliang Wang, Xuanqi Gao, Baihui Sang, Xin Zhang, Minghua Ma, Pengfei Gao, Yu Kang, Qingwei Lin, Saravan Rajmohan, Dongmei Zhang, Qi Zhang",
+      "date": "2026-07-30",
+      "pdf": "https://arxiv.org/pdf/2607.28591v1",
+      "score": "7.0",
+      "evidence": "提出了将仓库变更转换为可执行任务的系统，很可能发布代码与环境。",
+      "tldr": "训练编码智能体需要源源不断且可执行的仓库级任务数据，但构造成本高。Change2Task基于仓库历史，将合并的PR转化为现代健康版本上的已验证任务，通过补丁反转、代码映射或代理重建重构任务状态，并验证从健康基座到任务态再恢复的完整生命周期。在Bug修复、特征添加等五类常见任务族上，从1130个候选变更达到79.6%的验证任务构建成功率，比基于PR的构造基线多恢复29.2%的验证任务。复用现代基座使整个流程支出降低10.8%，为编码智能体训练与评测提供了可扩展、可复用的数据供应链。",
+      "tags": "query:code-paper",
+      "abstract_en": "Scaling coding agents requires a continuing supply of executable data for training, benchmarking, and continuous evaluation. Each task must couple a realistic software state with a specification, development tools, and reliable verification. To expand this supply, we present Change2Task, a system grounded in repository history that converts merged pull requests into verified tasks on healthy modern revisions of the same repository. It aligns historical evidence with evolved code, reconstructs task states through Patch Reversal, Code Mapping, or Agent Reconstruction, and validates the lifecycle from a healthy base to a task state and a restored state. By deriving multiple tasks grounded in developer evidence from maintained environments, Change2Task provides executable data for coding agent training and evaluation while reducing repeated environment setup, storage, and task construction effort. We evaluate the system through five common and widely adopted coding agent task families: Bug Fix, Feature Addition, Test Generation, Application Programming Interface Migration, and Security Repair. Starting from 1,130 source changes eligible for construction, Change2Task achieves 79.6% verified task construction success across these task families. On a matched candidate set, it recovers 29.2% more verified tasks than a construction baseline based on pull requests. Historical and reconstructed cases achieve up to 98.0% matched outcome agreement under agent evaluation, while reuse of modern bases reduces measured expenditure across the complete pipeline by 10.8%.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/31/2607.24459v1-from-execution-to-capability-scientific-experience-consolidation-via-procedural-knowledge-synthesis",
+      "section": "quick",
+      "title_en": "From Execution to Capability: Scientific Experience Consolidation via Procedural Knowledge Synthesis",
+      "authors": "Liwei Dong, Jiahao Zhao, Nan Xu",
+      "date": "2026-07-27",
+      "pdf": "https://arxiv.org/pdf/2607.24459v1",
+      "score": "6.0",
+      "evidence": "提出一个框架且很可能包含代码，符合含代码论文的需求。",
+      "tldr": "针对科学计算任务中可执行反馈难以转化为持久能力的问题，提出SciConsolidate框架。通过对比成败样本提取跨任务程序性知识，经开发验证门筛选，并以失败信息合成无答案查询扩展数据。用强模型将抽象流程具体化为代码监督以适配弱模型，实验显示流程注入提升27B模型性能，但9B模型存在抽象-执行差距，经具体化后9B模型获得显著提升。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large language models increasingly solve scientific-computing tasks, but executable feedback from one problem rarely becomes durable capability on subsequent problems. We study scientific-computing experience consolidation: converting verified runtime experience into transferable procedural knowledge and persistent model improvement. This setting presents two challenges: trajectory-derived artifacts may encode source-specific repairs rather than cross-task computational mechanisms; and a weaker target model may be unable to operationalize an otherwise valid abstract procedure - an abstraction-execution gap. We introduce SciConsolidate, which contrasts verified successes and failures to induce cross-task procedures, selects them through a development-validation gate, and uses failure-informed, answer-free query synthesis to expand the consolidation data without requiring pre-existing reference answers. Because the target model may not directly execute these abstractions, a stronger model concretizes them into executable code supervision for standard, procedure-free SFT; a matched no-procedure teacher branch isolates the value of procedural guidance. On SciCode, runtime procedure injection improves Qwen3.6-27B by +3.85/+6.26 sub-step/main-problem points, but yields almost no aggregate main-problem gain for Qwen3.5-9B, providing operational evidence of the abstraction-execution gap. After procedure-guided concretization, the 9B student improves under procedure-free deployment by +3.89/+6.25 points over the no-procedure SFT control and by +5.62/+11.25 over the original 9B model. These results establish an experience-to-capability pathway for scientific computing and provide a practical starting point for scaling self-improving scientific assistance.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
