@@ -1,0 +1,413 @@
+Title: Virtual Process Dossier: A Process-Aware Data Catalogue
+
+URL Source: https://arxiv.org/pdf/2607.27840v1
+
+Published Time: Fri, 31 Jul 2026 00:41:09 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# VIRTUAL PROCESS DOSSIER : A P ROCESS -A WARE DATA 
+
+# CATALOG 
+
+A P REPRINT 
+
+Lukas Kubelka 1, Alexander Bott 2, Frank Döhner 3,6 , Saksham Kiroriwal 6, Georg Zeeb 4,7 , Julia Butte 1,5 , Julius Pfrommer 6, Jürgen Beyerer 6, and  Tobias Käfer 11Institute of Applied Informatics and Formal Description Methods, Karlsruhe Institute of Technology, Karlsruhe, Germany 
+
+> 2
+
+Institute of Production Sciences, Karlsruhe Institute of Technology, Karlsruhe, Germany 
+
+> 3
+
+Institute for Anthropomatics and Robotics, Karlsruhe Institute of Technology, Karlsruhe, Germany 
+
+> 4
+
+Institute of Vehicle System Technology, Karlsruhe Institute of Technology, Karlsruhe, Germany 
+
+> 5
+
+Institute of Information Security and Dependability, Karlsruhe Institute of Technology, Karlsruhe, Germany 
+
+{firstname.lastname}@kit.edu 
+
+> 6
+
+Fraunhofer Institute of Optronics, System Technologies and Image Exploitation, Karlsruhe, Germany 
+
+{firstname.lastname}@iosb.fraunhofer.de 
+
+> 7
+
+Fraunhofer Institute for Chemical Technology, Pfinztal, Germany 
+
+July 31, 2026 
+
+## ABSTRACT 
+
+We propose the Virtual Process Dossier (VPD), a Knowledge Graph-based data catalog that also captures workflow provenance. We developed VPD for multi-stage manufacturing use-cases where downstream AI-based optimization tasks require to distinct between datasets generated during individual workflow steps. VPD provides these datasets in a FAIR manner and makes both prospective and retrospective workflow provenance explicit. Our contributions are: (1) the VPD ontology that serves as the catalog’s semantic core; (2) the VPD provenance framework that integrates ontology instantiation into the production environment; and (3) the VPD user interface that provides human-centered interaction with the VPD Knowledge Graph. 
+
+Keywords Data catalog · Workflow provenance · FAIR · Industry 4.0. 
+
+VPD ontology: http://purl.org/vpd/vocab 
+
+VPD UI: https://github.com/kubeluk/VirtualProcessDossier 
+
+License: MIT 
+
+## 1 Introduction 
+
+Applying data-driven AI methods in manufacturing environments remains a significant challenge as data scientist face challenges to reliably trace where data originated and how it should be interpreted. For engineering corresponding AI systems with the right data for the right analyses it is important to know, e.g. (i) what sensor data was generated during the manufacturing process of a product, (ii) where and how this data can be accessed, and (iii) what machines were involved in the production and how these were configured. (iv) how did the overall production workflow look like, (v) during which of these steps was what sensor recording captured, and (vi) which machine was responsible for each step. Such questions are hard to answer without management of metadata, which is on top tedious to reconstruct if it is not captured automatically. As a result, manufacturing data is typically underutilized and remains overwhelming, rather than an easily reusable knowledge asset. This paper presents the Virtual Process Dossier to tackle the necessary information life-cycle management. The issue of underutilized value of data is not limited to the manufacturing domain. Similar issues exist in larger projects or whole companies [ 18 ]. We agree with [ 13 , 23 , 6], that this stems from the lack of a proper (meta)data arXiv:2607.27840v1 [cs.AI] 30 Jul 2026 Virtual Process Dossier A P REPRINT 
+
+Figure 1: The VPD is our approach to FAIR data management in multi-stage workflow domains such as manufacturing. management framework in place and leads to data being locked in silos. To address this dilemma, a common proposal is to make data Findable, A ccessible, I nteroperable, and Reusable (FAIR) [ 32 ]. The FAIR principles imply that unlocking the full value of data requires more than merely informing potential consumers of its existence or providing mechanisms for access. To make effective use of data, consumers must be able to seamlessly combine it with other relevant data and, most importantly, understand its meaning. To properly interpret the meaning, provenance plays an important role [ 16 ]. In previous works, data catalogs have emerged as a metadata management solution in academia and practice [ 9, 30 ]. Yet, current data catalog approaches seem to struggle when it comes to fostering FAIR data practices [ 23 ]. While many approaches indeed provide features for describing the meaning of data, they merely focus on generic metadata like taxonomies or business glossaries [ 22 , 23 ]. This is not sufficient in a workflow-driven setting like ours, where detailed provenance about workflow executions is required. Although ontologies have been identified as beneficial for domain modeling [ 10 ] and there exist well-established standards [ 15 , 24 , 28 ], the majority of approaches do not leverage them [ 22 ]. A few exceptions are [ 3, 11 , 25 , 5]. However, the proposed solutions usually either focus solely on digital -data generation processes or fail to suit multi - stage manufacturing environments, neglecting the linkage of datasets to individual, stage-specific provenance information. We propose the Virtual Process Dossier (VPD), a knowledge graph-based, and process-aware data catalog for multi-stage workflow environments. These environment produces physical entities while generating vast amounts of sensor observations throughout workflow executions which are stored in various, external data sources. The VPD constitutes a 
+
+knowledge layer that sits above the raw source data layer of sensor observations – i.e. it semantically augments primary data, which is stored elsewhere, in order to make it FAIR. The VPD is comprised of the components highlighted in Fig. 1 which represent our main contributions: 1. The VPD ontology 1 represents the knowledge layer in our approach. It semantically describes the workflow provenance of physical, multi-stage production processes and links it to digital data generation processes happening in between by aligning the DCAT [1], WiLD [20], PROV [24] and SSN/SOSA [15] ontologies. 2. The VPD framework provides guiding steps on how the VPD knowledge graph is instantiated based on the VPD ontology and how it can be integrated into a manufacturing environment for capturing provenance during workflow executions and linking it to generated sensor datasets automatically. 3. The VPD UI 2 is a Web application that sits logically above the VPD knowledge graph. It provides a guided way for non-expert users to query, browse and update the VPD by visualizing datasets and their provenance. The rest of the paper is structured as follows: We first introduce preliminaries in section 2, followed by the running example in section 3. In section 4, we present the VPD ontology. Afterwards, we explain the accompanying framework for constructing the VPD knowledge graph in section 5. Section 6 provides a brief overview over the VPD UI’s tech stack. Finally, we state related work in section 7 and conclude this paper in section 8. 
+
+> 1http://purl.org/vpd/vocab
+> 2https://github.com/kubeluk/VirtualProcessDossier
+
+2Virtual Process Dossier A P REPRINT 
+
+## 2 Preliminaries 
+
+In this section we provide a brief overview over the FAIR principles and introduce relevant provenance terminology that we use throughout the paper. 
+
+2.1 FAIR Principles 
+
+The FAIR data principles [ 32 ] have been proposed by a diverse set of stakeholders for providing guidelines to (meta)data management and stewardship. They are composed of the four core principles Findable , Accessible , Interoperable and 
+
+Reusable , which themselves were respectively refined into sub-principles. In summary, they promote (meta)data to be globally identifiable and searchable (F), by which it is retrievable using a standardized communication protocol (A). It should use a broadly applicable knowledge representation language (I) – e.g. RDF [ 4 ]. Finally, detailed provenance information and usage conditions should be present (R). 
+
+2.2 Provenance 
+
+Provenance has been extensively studied across domains and is generally defined as any information describing the production process of an end product – digital or physical [ 16 ]. As such, it comprises “meta-data about entities, data, processes, activities, and persons involved in the production process” [ 14 ]. In general, four different types of provenance can be distinguished that decrease in scope of what kind of provenance they collect [ 17 ]: (i) provenance meta-data; (ii) information system provenance; (iii) workflow provenance; and (iv) data provenance. Workflow provenance focuses on production processes that can be represented as workflows – e.g. through a directed graph, where nodes represent units of work and edges represent data or control flow. It can be further divided into (iii.a) prospective provenance; (iii.b) retrospective provenance; and (iii.c) evolution provenance. Prospective provenance captures an abstracted overview of a workflow, which is independent of its execution [ 2 ]. Retrospective provenance captures information related to a workflow’s execution. Evolution provenance relates to capturing changes between versions of a workflow. In this paper, we view manufacturing processes as workflows that model the control flow of production steps. 
+
+2.3 DCAT, PROV, SSN/SOSA and WiLD ontology 
+
+DCAT [ 28 ] provides a standardized vocabulary for describing datasets, their distributions, and access mechanisms and supports interoperable metadata exchange. PROV [24 ] offers standardized terminology for modeling retrospec-tive provenance through entities, activities, and agents, enabling the representation of how artifacts were produced, transformed, or used. SSN/SOSA [ 15 ] supplies a standardized framework for describing sensors and their observations, including the relations between sensing devices, observed properties, and generated results. WiLD [20 ] introduces vocabulary for stating retrospective as well as prospective workflow provenance. It comes with an operational semantics which makes it executable, e.g. by ASM4LD [ 19 ]. Together, these ontologies provide interoperable building blocks for expressing dataset metadata, provenance, and sensor observations in a standardized or published way. 
+
+## 3 Running Example 
+
+We use a simplified production process throughout this paper as a running example. It essentially describes a two-step manufacturing workflow for producing fiber-reinforced plastic parts by, starting from an initial sheet of fiber material, (i) heating it in an oven and; (ii) forming it with a press. Throughout the process the sheet is held in place by a gripper frame in which it travels from step to step. There are several sensors involved in this process that observe various feature properties like surface temperatures or gripper angles during runtime. This process is presented in Fig. 2. It resembles in this case a closer description of the manufacturing environment mentioned in Fig. 1. 
+
+## 4 VPD Ontology 
+
+This section introduces the VPD ontology, which represents the data catalog’s semantic core. It provides the basis for making sensor data in our use-case FAIR by providing the structure of how sensor data is linked to prospective and retrospective provenance and thus how it is intended to be interpreted. Section 4.1 explains our approach to ontology engineering. Section 4.2 elaborates on the ontology’s structure. 3Virtual Process Dossier A P REPRINT 
+
+Figure 2: The multi-step manufacturing workflow presenting our running example 
+
+4.1 Ontology Engineering 
+
+We conducted multiple workshops with VPD stakeholders from our manufacturing use-case – process engineers, mechanical engineers and data scientists. The goal was to extract the individual information needs of each group. This involved building a shared understanding of the manufacturing environment, e.g. which products would be produced, what the possible production workflows would look like, what sensors and machines could be deployed, and how down-stream AI tasks may look like. From several group discussions and individual refinements, competency questions 
+
+such as the following emerged which describe the needed forms of knowledge about workflow provenance for said down-stream tasks: 1. Which data D1, . . . , D n was produced during production of product P ?2. How did the production workflow W look like for P ?3. During which step in W was data Di recorded? 4. What was the observation target T and observed aspect A for dataset Dj ?5. What happened during, before or after the observations of Di?6. Which data D1, . . . , D j are observations of machine Mk or product Pl?7. Which data D1, . . . , D j come from runs where first machine M1 with value V1 for parameter C1 performed an action and afterwards machine M2 with value V2 for parameter C2?After the collection of competency questions, we researched published, well-known and standardized ontologies that are applicable for our use-case. Our aim was to re-use existing vocabularies as frequently as possible, since this is considered to be best practice. As a result, the VPD ontology largely comprises terms that come from published or standardized ontologies – i.e. DCAT [ 28 ], PROV [ 24 ], SOSA/SSN [ 15 ], WiLD [ 20 ]. It further only introduces a few new classes for the sake of being used as alignment elements between the listed ontologies. We accessed the ontology’s fairness using the FOOPS! tool 3.
+
+4.2 Ontology Overview 
+
+We structure our explanation about VPD-O in three parts that respectively present a certain view on the ontology: (i) Sensors and datasets, (ii) machines and parameters, and (iii) products and materials. 
+
+4.2.1 Sensors and Datasets. 
+
+As the competency questions suggest, we are foremost interested in questions about sensor data produced during multi-stage production workflows and their related provenance. The PROV [ 24 ] ontology is limited in this regard and does not enable to model parallel activities or the topological relation between activities explicitly, since it was developed for capturing retrospective provenance. Identifying activities that happened simultaneously is possible by comparing their start ( prov:startedAtTime ) and end times ( prov:endedAtTime ), but statements about the order and general flow of activities cannot be made as this requires terminology for describing prospective provenance. Such terms are provided by the WiLD [ 20 ] ontology – e.g. due to its distinction between wild:AtomicActivity ,
+
+wild:SequentialActivity and wild:ParallelActivity . As hinted in Fig. 3, a workflow in WiLD is represented as a type of wild:WorkflowModel which represents the static, abstracted process. A workflow model has a root 
+
+> 3https://foops.linkeddata.es/FAIR_validator.html
+
+4Virtual Process Dossier A P REPRINT 
+
+Figure 3: VPD-O view on sensor activities. 
+
+Figure 4: VPD-O view on datasets. 5Virtual Process Dossier A P REPRINT 
+
+behaviour ( wild:hasBehaviour ) that builds the root activity of the tree-based workflow structure. At some point in this hierarchy there will be instances of type wild:AtomicActivity that are the individual actions to be performed by machines and sensors. The running example’s workflow model could be described as such 4:                                             
+
+> 1@prefix wild : < http :// purl . org / wild / vocab # > .
+> 2@base < http :// example . org / > .
+> 34< wf /1# it > awild : WorkflowModel ;
+> 5wild : hasBehaviour < wf /1/ root # it > .
+> 67< wf /1/ root # it > awild : ParallelActivity ;
+> 8wild : hasChildActivities (
+> 9< wf /1/ root / heatingAndForming # it >
+> 10 < wf /1/ root / gripping # it >
+> 11 ).
+> 12 13 < wf /1/ root / heatingAndForming # it > awild : SequentialActivity ;
+> 14 wild : hasChildActivities (
+> 15 < wf /1/ root / heatingAndForming / heating # it >
+> 16 < wf /1/ root / heatingAndForming / forming # it >
+> 17 ).
+> 18 19 < wf /1/ root / heatingAndForming / heating # it > awild : ParallelActivity ;
+> 20 wild : hasChildActivities (
+> 21 < wf /1/ root / heatingAndForming / heating / do # it >
+> 22 < wf /1/ root / heatingAndForming / heating / sense / u p pe r S u r fa c e T e mp e r a t ur e # it >
+> 23 < wf /1/ root / heatingAndForming / heating / sense / l o we r S u r fa c e T e mp e r a t ur e # it >
+> 24 ).
+
+In VPD-O, as shown in Fig. 3, we introduce vpd:SensorActivity as a subclass of wild:AtomicActivity and 
+
+sosa:Procedure . When a workflow model is executed, basically two things happen: (1) a wild:WorkflowInstance 
+
+is created, representing the workflow execution, and (2) all activities contained in the workflow model’s behavior get instantiated by a respective wild:ActivityInstance . The corresponding counterpart for our sensor activities is modeled by the class vpd:SensorActivityInstance – i.e. it is a subclass of wild:ActivityInstance . As it is used to describe retrospective sensor activities it is further subclass of sosa:Observation 5. From this connec-tion it is possible to add further information about the sensor activity instance like sosa:FeatureOfInterest , its 
+
+sosa:ObservableProperty and the sosa:Sensor that was responsible. For the observation of the product’s upper surface temperature during the heating step from our running example, this could look like the following:                            
+
+> 1< wfI /1# it > awild : WorkflowInstance ;
+> 2wild : workflowInstanceOf < wf /1# it > .
+> 34< wfI /1/ root / heatingAndForming / heating / sense /1# it > awild : SensorActivityInstance , sosa : Observation ;
+> 5wild : inWorkflowInstance < wfI /1# it > ;
+> 6wild : activityInstanceOf < wf /1/ root / heatingAndForming / heating / sense /1# it > ;
+> 7sosa : madeBySensor < sensors / pyrometer /1# it > ;
+> 8sosa : featureOfInterest < product /1# it > ;
+> 9sosa : observedProperty < product /1# upperSurface > .
+
+The SSN/SOSA ontology provides a PROV alignment module which states that sosa:Observation is a subclass of 
+
+prov:Activity . This also applies to our sensor activity instance through the transitivity of the subclass relationship. From that, the possibility for linking a dcat:Dataset to a sensor observation emerges. The DCAT vocabulary states the prov:wasGeneratedBy property which can be used to describe the prov:Activity that lead to the generation of a dcat:Dataset .Based on this simple alignment between WiLD, PROV, SSN/SOSA and DCAT, the VPD ontology enables to describe the generation process of sensor data by stating in which explicit step in a workflow execution it was generated, which sensor was responsible for it and which entity and according property was observed. VPD-O immediately catalogs all datasets as part of a dcat:Catalog that represents the VPD data catalog (cf. Fig. 4). Datasets are further directly linked to the workflow execution ( wild:WorkflowInstance ) via the dcat:theme property 6. The dcat:Distribution is used to state where and how a dataset may be accessed. Applied to our example, this could look like so:        
+
+> 1< vpd / cat # it > adcat : Catalog ;
+> 2dcat : dataset < vpd / ds /1# it > .
+> 4
+
+Due to space constraints we omitted the further triples for the gripping and forming activities as well as all atomic activities such as further sensor activities. 
+
+> 5
+
+The introduction of a dedicated subclass is necessary, since wild:ActivityInstance has an attached state and represents completed activites (i.e. prov:Activity ) only when their state is wild:done .
+
+> 6
+
+The reason behind this is simply w.r.t. simplifying SPARQL queries looking for all datasets related to a production run. 
+
+6Virtual Process Dossier A P REPRINT 
+
+Figure 5: VPD-O view on machine activities.                    
+
+> 34< vpd / ds /1# it > adcat : Dataset ;
+> 5dcat : theme < wfI /1# it > ;
+> 6dcat : distribution [
+> 7adcat : Distribution ;
+> 8dcat : downloadURL < http :// store . example . org / path / to / file . csv >
+> 9];
+> 10 prov : wasGeneratedBy < wfI /1/ root / heatingAndForming / heating / sense /1# it > .
+
+4.2.2 Machines and Parameters. 
+
+Next, from the competency questions we can take that we are further interested in (i) observations regarding machines, and (ii) how they were parameterized. Thus, Fig. 5 shows similar ideas from our elaborations about sensors in the work-flow. We again have a dedicated activity class – vpd:MachineActivity – that is used for alignment with WiLD and SSN/SOSA as a sublass of wild:AtomicActivity and sosa:Procedure . For capturing the parameterizations for ma-chines we introduce the class vpd:Machine as a subclass of prov:Agent and the class vpd:Parameterization . For associating parameterizations with machines, we apply the qualification pattern [ 7] used in PROV. When a machine per-formed a task, we associate it with the corresponding wild:ActivityInstance via the prov:wasAssociatedWith 
+
+property. We then qualify this association and attach the parameterization which we model as a prov:Plan . For representing individual parameter values, we utilize the QUDT ontology [ 29 ]. The provenance for the heating activity from our running example could be described as such:                                                
+
+> 1@prefix qudt : < http :// qudt . org / schema / qudt / > .
+> 2@prefix unit : < http :// qudt . org / vocab / unit / > .
+> 34< wfI /1/ root / heatingAndForming / heating / do # it > awild : ActivityInstance ;
+> 5wild : inWorkflowInstance < wfI /1# it > ;
+> 6wild : activityInstanceOf < wf /1/ root / heatingAndForming / heating / do # it > ;
+> 7prov : wasAssociatedWith < machines / oven /1# it > ;
+> 8prov : q ualif iedAs socia tion [
+> 9aprov : Association ;
+> 10 prov : agent < machines / oven /1# it > ;
+> 11 prov : hadPlan [
+> 12 aprov : Plan ;
+> 13 vpd : heatingTemperature [
+> 14 aqudt : QuantityValue ;
+> 15 qudt : value 200.0 ;
+> 16 unit : DEG_C
+> 17 ]
+> 18 ]
+> 19 ].
+
+7Virtual Process Dossier A P REPRINT 
+
+Sensors also observe the activities of machines in our use-case. Up to this point, with VPD-O it is possible to query which machine activities happened before, during or after a certain sensor observation via wild:inWorkflowInstance 
+
+and wild:activityInstanceOf which link to the static, abstracted workflow description. Though, it is possible that during one machine activity there could be multiple sensors involved that observe its execution. For such cases, it would not be possible to separate the generated dataset from each other. In order to make this distinction clear, we further model vpd:Machine as a subclass of sosa:FeatureOfInterest . As shown in Fig. 6, this enables to attach multiple 
+
+sosa:ObservableProperty to it and describe observation-relevant aspects. In our running example this could be e.g. the angles and forces of grippers inside the gripper frame during the forming step. Figure 6 also presents that we use SHACL [ 21 ] shapes in the form of the vpd:ParameterDescription class as descriptions for how certain machine parameterizations need to be represented 7. Within these shapes, parameters are referenced via an individual sh:PropertyShape and further described by an individual sh:NodeShape which simultaneously represents a property that may be observed by sensors. For the press in our example this may look like this:                                                                                            
+
+> 1@prefix sh : < https :// www . w3 . org / ns / shacl > .
+> 23vpd : d r a p i n g P r e s s P a r a m e t e r D e s c r i p t i o n ash : NodeShape , vpd : P arame terDe scrip tion ;
+> 4sh : targetClass vpd : D r a p i n g P r e s s P a r a m e t r i z a t i o n ;
+> 5sh : property [
+> 6sh : path fofa : pressForce ;
+> 7sh : name " Force " ;
+> 8sh : node fofa : pressForceParameter ;
+> 9sh : minCount 1;
+> 10 sh : maxCount 1
+> 11 ].
+> 12 13 vpd : pressForceParameter ash : NodeShape , sosa : ObservableProperty ;
+> 14 sh : targetClass vpd : PressForce ;
+> 15 sh : property [
+> 16 sh : path qudt : hasUnit ;
+> 17 sh : name " Unit " ;
+> 18 sh : in (unit : N );
+> 19 sh : defaultValue unit : N ;
+> 20 sh : nodeKind sh : IRI ;
+> 21 sh : maxCount 1;
+> 22 sh : minCount 1
+> 23 ];
+> 24 sh : property [
+> 25 sh : path qudt : value ;
+> 26 sh : name " Value " ;
+> 27 sh : minCount 1;
+> 28 sh : maxCount 1;
+> 29 sh : minInclusive 60 ;
+> 30 sh : maxInclusive 900 ;
+> 31 sh : defaultValue 100 ;
+> 32 sh : datatype xsd : integer
+> 33 ].
+
+4.2.3 Products and Materials. 
+
+Finally, we provide the ability to describe that a certain product was the output of a respective workflow execution. In Fig. 7 there is the class vpd:Product that is connected a vpd:Material which it was derived from. Again, for alignment with PROV, both of these classes are subclasses of prov:Entity . Like we did before, we apply the qualification pattern to this relation and link workflow executions ( wild:WorkflowInstance ) via prov:Derivation 
+
+as a corresponding prov:Generation .
+
+## 5 VPD Framework 
+
+The VPD-O comes with a framework that provides a straight-forward way for describing various workflow-based manufacturing environments and capturing the provenance of workflow runs – i.e. a guide to instantiate and populate the VPD knowledge graph according to the ontology. It comprises three phases that roughly divide the required actions according to whether they happen before (5.1), during (5.2) or after (5.3) the manufacturing of products. 
+
+> 7
+
+The reason for modeling with shapes is for utilizing them for the automated generation of HTML forms. More information on this will be provided in section 6 
+
+8Virtual Process Dossier A P REPRINT 
+
+5.1 Setup and Initial Handshake 
+
+Initially, before any production run may happen, apply the following steps for setting up the VPD knowledge graph and priming it with prospective workflow provenance. This preparation work is crucially important as the later phases are reliant on a tight coupling and coordination between the manufacturing system and the knowledge graph in order to capture retrospective workflow provenance: 1. Instantiate dcat:Catalog by minting the fresh IRI [8] V PD .2. Instantiate vpd:Machine and sosa:Sensor for every system in the environment by minting the fresh IRIs 
+
+Mi and Sj .3. Describe the systems Mi and Sj using the SSN/SOSA [15] vocabulary as needed. 4. Instantiate sosa:ObservableProperty with IRI Ok for every aspect that will be observed throughout production runs. Link each entity with its respective property which will be observed via ssn:hasProperty .5. Describe the manufacturing workflow using the WiLD [ 20 ] vocabulary by instantiating wild:WorkflowModel 
+
+with IRI W and link the IRIs Al for instances of type wild:AtomicActivity to the implementing system via ssn:implementedBy .6. For each system, distribute the IRI tuple (Al, M i) to the respective controller Cm that is responsible for its activation. If Al is a sensor activity, also attach (V PD , S j , O k). In simple terms: Every actor in the physical manufacturing environment must possess a name by whom it is globally identifiable and must be aware of the activity’s name which it will be executing. Further, sensors must be aware of the data catalog’s name and which property of what entity it will be observing. 
+
+5.2 Final Handshake and Execution 
+
+When a new production run is scheduled and executed, apply the following steps for capturing retrospective provenance of machine and sensor activities (synchronously and in a distributed manner or asynchronously in a local manner, or in a combination): (i) the production environment immediately inserts retrospective provenance information into the VPD knowledge graph using an event-driven approach as actions are performed and completed, or (ii) the execution context is collected within the manufacturing management system and inserted in bulk from a central controller: 1. Instantiate the workflow model W by constructing a new workflow instance IRI W I for itself and activity instance IRIs AIc for all attached activities in the workflow tree, except for the atomic activities AIa which are the machine and sensor activities. Those will be instantiated by the manufacturing system on-demand and augmented with the active runtime provenance information which we will explain next. 2. Publish the generated workflow instance IRI W I to each controller Cm that manages the execution of Al.At this stage, all relevant IRIs have been distributed to all Cm which marks the completion of the synchronization process (two-way “ handshake ”) between the manufacturing management system and the VPD knowledge graph that is required for capturing provenance information. From this point on, the manufacturing system executes in a distributed, open-loop fashion and updates the VPD knowledge graph by capturing provenance information as events occur. This is simply done through directly sending SPARQL/ UPDATE [12 ] queries from the manufacturing environment to the triple store where the VPD knowledge graph is hosted. We will explain this step for sensor and machine activity executions next. 
+
+5.2.1 Sensors executions. 
+
+For any execution AIa that instantiates a sensor activity vpd:SensorActivity , the responsible controller Cm collects the sensor reading dataset and mints the IRI D for it. It then adds it to the data catalog and links it to W I . The following SPARQL/Update template does this:                                               
+
+> 1INSERT DATA
+> 2{
+> 3<AIa>avpd : SensorActivityInstance , wild : ActivityInstance , sosa : Observation ;
+> 4wild : activityInstanceOf <Al>;
+> 5wild : inWorkflowInstance <WI>;
+> 6sosa : madeBySensor <Sj>;
+> 7sosa : observedProperty <Ok>;
+> 8sosa : featureOfInterest <Mi>.
+> 9<D>adcat : Dataset ;
+> 10 prov : wasGeneratedBy <AIa>.
+> 11 <VPD>dcat : dataset <D>.
+
+9Virtual Process Dossier A P REPRINT  
+
+> 12 }
+
+Cm also sends the dataset and the IRIs D and AIa to the a component C′ 
+
+> m
+
+that is responsible for storing the dataset persistently. This component then stores the dataset and acquires the identifier L. Finally, C′ 
+
+> m
+
+mints the IRI G for a 
+
+dcat:Distribution and sends the following SPARQL/Update query for linking D with G that uses L as object for 
+
+dcat:downloadURL :               
+
+> 1INSERT DATA
+> 2{
+> 3<G>adcat : Distribution ;
+> 4dcat : downloadURL <L>.
+> 5<D>dcat : distribution <G>.
+> 6}
+
+5.2.2 Machine executions. 
+
+For machine activity instances the steps taken for capturing the provenance information are analogous to the ones we explained for sensor activity instances and are thus omitted for brevity. 
+
+5.3 Retrospective Augmentation 
+
+Other retrospective provenance information about the newly generated IRIs of production run W I may also be added to the knowledge graph. Reasons for doing this include: (i) The information cannot be automatically captured – e.g. any form of relevant human observations that occurred throughout the manufacturing process, (ii) the procedure for doing so has not been implemented yet, or (iii) the procedure will not be implemented due to complexity or other reasons. 
+
+## 6 VPD System 
+
+Accompanying to the VPD-O and its instantiation framework we propose the VPD data catalog user interface (UI). The VPD UI adds an application layer on top of the semantic knowledge layer and is directly fed from the VPD knowledge graph that is hosted by a triple store. As such, it is intended for users that are unfamiliar with the VPD-O structure and constructing SPARQL queries for accessing graph itself. The VPD UI provides the following features: (i) register production runs, (ii) perform retrospective augmentation, (iii) browse and search for datasets, and (iv) visualize the provenance of production runs. We publish the UI’s source code as an open-source software artifact. As mentioned before, we leverage SHACL shapes for representing machine parameterizations. We use them to generating HTML forms which can be used to view, modify, generate and validate RDF triples from user inputs. We utilize the shacl-form 8
+
+library for this means. It powers the UI view to browse and add machine parameterizations for workflow executions. 
+
+## 7 Related Work 
+
+The PROV ontology [ 24 ] provides vocabulary that is applicable for capturing retrospective provenance. However, on its own it is not possible to describe the structural dependencies between occurred activities and thus to capture the static context of a workflow – i.e. prospective provenance. With D-PROV [ 27 ] there exists a proposal for extending PROV with means for describing prospective provenance. As opposed to our approach for capturing provenance information, it rather focuses on the production of digital data products instead of physical entities. As a result, workflow descriptions in D-PROV represent data flows which is why it is not applicable in our manufacturing use-case. The PCPAC ontology presented in [ 5] is used to introduce a data catalog approach for establishing FAIR data management in data lake architectures. Although the approach captures provenance information, it merely captures information system provenance which states the introduction of datasets to the data lake or their modification. As such, DCPAC is not applicable for our manufacturing scenario. The Procedural Knowledge Ontolgy (PKO) [ 3] presents the closest fit to our use case. It focuses on workflows that model the control flow of industrial companies and like WiLD [ 20 ] provides means for distinguishing between abstracted activities and their actual executions – i.e. prospective vs. retrospective provenance. However, PKO takes a flow-based view on processes. The properties pko:nextStep and pko:nextAlternativeStep indeed provide 
+
+> 8https://github.com/ULB-Darmstadt/shacl-form
+
+10 Virtual Process Dossier A P REPRINT 
+
+means for describing the order of steps. Nevertheless, the latter cannot be used to denote parallelism. It can be thought of as a logical xor relationship 9. Using pko:nextStep to describe parallelism would be a hack, as the documentation implies a 1:1 cardinality between the previous and the next step. The WiLD ontology takes a tree-based view on processes, similar to OWL-S [ 26 ]. In WiLD, child activities of wild:Activity are modeled as RDF lists, which gives them an order and an explicit closure. Sub-classes of wild:Activity determine how this list must be interpreted, e.g. wild:SequentialActivity , where activities are running in sequence (i.e. closure and order matters), or wild:ParallelActivity , where activities are running in parallel (i.e. only closure matters), or 
+
+wild:ConditionalActivity , where there is a logical xor relationship (i.e. only closure matters and conditions need to be considered). For a comparison of processes as flows and trees and their convertibility see the work of Vanhatalo et al [31]. PKO internally uses the P-Plan ontology [ 11 ] for representing workflow steps, that was extended by the EP-Plan [ 25 ]ontology. EP-Plan was designed for modeling scientific workflows. Such workflows describe data dependencies [ 16 ]and hence are not applicable in our use-case. 
+
+## 8 Conclusion 
+
+With the introduction of the Virtual Process Dossier (VPD) we presented an approach to foster FAIR data management practices in multi-stage manufacturing environments by leveraging our VPD-O ntology and Semantic Web technologies to create process-aware data catalogs. VPD-O reuses well-know, standardized and published ontologies and enables to describe the provenance of sensor data by leveraging the physical production workflow as a first-class citizen. It comes with a straight-forward framework for instantiating and populating the VPD knowledge graph, and scaling it to manufacturing workflows of arbitrary complexity. For browsing the VPD catalog and visualizing captured provenance information, we introduced the VPD UI which we publish as an open-source software artifact. VPD could have the potential to play a crucial role in various AI-driven manufacturing use-cases as it presents an extensible, scalable, interoperable and standards-based solution to break down data silos in this domain. We built VPD for a research endeavour to improve immature manufacturing processes, where a lot of data around a manufacturing process is measured and simulated, and needs to be used in downstream analyses by data scientists. This endeavour involves 8 research labs in Karlsruhe, Germany, spanning three faculties of the Karlsruhe Institute of Technology (KIT), next to two Fraunhofer institutes (IOSB and ICT). As VPD solves a general problem, and we strived for a general solution, we believe it is useful for the larger community. 
+
+## References 
+
+[1] Albertoni, R., Browning, D., Cox, S.J.D., et al.: Data catalog vocabulary (dcat). W3C Recommendation REC-vocab-dcat-3, W3C (Aug 2024), https://www.w3.org/TR/vocab-dcat-3/ 
+
+[2] Alper, P., Belhajjame, K., Goble, C.A., et al.: Enhancing and abstracting scientific workflow provenance for data publishing. In: Proceedings of the Joint EDBT/ICDT 2013 Workshops. p. 313–318. EDBT ’13, Association for Computing Machinery, New York, NY, USA (2013). doi:10.1145/2457317.2457370 [3] Carriero, V.A., Scrocca, M., Baroni, I., et al.: Procedural knowledge ontology (pko). In: The Semantic Web: 22nd European Semantic Web Conference, ESWC 2025, Portoroz, Slovenia, June 1–5, 2025, Proceedings, Part II. p. 334–350. Springer-Verlag, Berlin, Heidelberg (2025). doi:10.1007/978-3-031-94578-6_19 [4] Cyganiak, R., Wood, D., Lanthaler, M.: Rdf 1.1 concepts and abstract syntax. W3c recommendation, W3C (Feb 2014), https://www.w3.org/TR/rdf11-concepts/ 
+
+[5] Dibowski, H., Schmid, S., Svetashova, Y., et al.: Using semantic technologies to manage a data lake: Data catalog, provenance and access control. In: Proceedings of the 13th International Workshop on Scalable Semantic Web Knowledge Base Systems co-located with 19th International Semantic Web Conference (ISWC 2020). CEUR Workshop Proceedings, vol. 2757, pp. 65–80 (Nov 2020) [6] Dinter, B., Gluchowski, P., Schieder, C.: A stakeholder lens on metadata management in business intelligence and big data – results of an empirical investigation. In: AMCIS 2015 Proceedings (2015) [7] Dodds, L., Davis, I.: Qualified relation. In: Linked Data Patterns: A pattern catalogue for modelling, publishing, and consuming Linked Data. Online (2022), https://patterns.dataincubator.org/ 
+
+[8] Dürst, M.J., Suignard, M.: Internationalized Resource Identifiers (IRIs). RFC 3987, IETF (Jan 2005), https: //www.rfc-editor.org/info/rfc3987 
+
+> 9https://w3id.org/pko#nextAlternativeStep
+
+11 Virtual Process Dossier A P REPRINT 
+
+[9] Ehrlinger, L., Schrott, J., Melichar, M., et al.: Data catalogs: A systematic literature review and guidelines to implementation. In: Database and Expert Systems Applications - DEXA 2021 Workshops. pp. 148–158. Springer International Publishing (2021) [10] Feilmayr, C., Wöß, W.: An analysis of ontologies and their success factors for application to business. Data & Knowledge Engineering 101 , 1–23 (2016), https://doi.org/10.1016/j.datak.2015.11.003 
+
+[11] Garijo Verdejo, D., Gil, Y.: Augmenting prov with plans in p-plan: Scientific processes as linked data. In: Proceedings of the 2nd International Workshop on Linked Science. vol. 951. CEUR Workshop Proceedings (2012), 
+
+http://ceur-ws.org/Vol-951/ 
+
+[12] Gearon, P., Passant, A., Polleres, A.: Sparql 1.1 update. W3c recommendation, W3C (Mar 2013), https: //www.w3.org/TR/sparql11-update/ 
+
+[13] Gröger, C.: There is no ai without data. Commun. ACM 64 (11), 98–108 (Oct 2021). doi:10.1145/3448247 [14] Groth, P., Moreau, L.: Prov-overview. an overview of the prov family of documents. W3c working group note, W3C (April 2013), https://www.w3.org/TR/prov-overview/ 
+
+[15] Haller, A., Janowicz, K., Cox, S., et al.: Semantic sensor network (ssn) ontology / sosa: Sensor, observation, sample, and actuator ontology. W3C Recommendation REC-vocab-ssn, W3C (Oct 2017), https://www.w3. org/TR/vocab-ssn/ 
+
+[16] Herschel, M., Diestelkämper, R., Ben Lahmar, H.: A survey on provenance: What for? what form? what from? The VLDB Journal 26 (6), 881–906 (Dec 2017). doi:10.1007/s00778-017-0486-1 [17] Herschel, M., Hlawatsch, M.: Provenance: On and behind the screens. In: Proceedings of the 2016 International Conference on Management of Data. p. 2213–2217. SIGMOD ’16, Association for Computing Machinery, New York, NY, USA (2016). doi:10.1145/2882903.2912568 [18] Jahnke, N.F., Otto, B.: Data catalogs in the enterprise: Applications and integration. Datenbank-Spektrum 23 (2), 89–96 (2023). doi:10.1007/s13222-023-00445-2 [19] Käfer, T., Harth, A.: Rule-based programming of user agents for linked data. In: Proceedings of the Workshop on Linked Data on the Web (LDOW). CEUR-WS (2018), http://ceur-ws.org/Vol-2073/#article-05 
+
+[20] Käfer, T., Harth, A.: Specifying, monitoring, and executing workflows in linked data environments. In: The Semantic Web – ISWC 2018: 17th International Semantic Web Conference, Monterey, CA, USA, October 8–12, 2018, Proceedings, Part I. p. 424–440. Springer-Verlag, Berlin, Heidelberg (2018). doi:10.1007/978-3-030-00671-6_25 [21] Knublauch, H., Kontokostas, D.: Shapes constraint language (shacl). W3c recommendation, W3C (Jul 2017), 
+
+https://www.w3.org/TR/shacl/ 
+
+[22] Kropshofer, J., Schrott, J., Wöß, W., et al.: A survey on the functionalities of data catalog tools. IEEE Access 13 ,83297–83319 (2025). doi:10.1109/ACCESS.2025.3568542 [23] Labadie, C., Legner, C., Eurich, M., et al.: Fair enough? enhancing the usage of enterprise data with data catalogs. In: 2020 IEEE 22nd Conference on Business Informatics (CBI). vol. 1, pp. 201–210 (2020). doi:10.1109/CBI49978.2020.00029 [24] Lebo, T., Sahoo, S., McGuinness, D., et al.: PROV-O: The PROV Ontology. W3C Recommendation TR-prov-o, W3C (Apr 2013), https://www.w3.org/TR/prov-o/ 
+
+[25] Markovic, M., Garijo, D., Edwards, P.: Linking abstract plans of scientific experiments to their corresponding execution traces. In: Proceedings of the Third International Workshop on Capturing Scientific Knowledge (Sciknow 2019). CEUR-WS (Oct 2019) [26] Martin, D., Burstein, M., Hobbs, J., et al.: OWL -S: Semantic Markup for Web Services. W3C Working Group Note, W3C (Nov 2004), https://www.w3.org/submissions/OWL-S/ 
+
+[27] Missier, P., Dey, S., Belhajjame, K., et al.: D-PROV: Extending the PROV provenance model with Workflow structure. In: 5th USENIX Workshop on the Theory and Practice of Provenance (TaPP 13). USENIX Associ-ation, Lombard, IL (Apr 2013), https://www.usenix.org/conference/tapp13/technical-sessions/ presentation/missier 
+
+[28] Publications Office of the European Union: DCAT Application profile for data portals in Europe (DCAT-AP), 
+
+https://op.europa.eu/en/web/eu-vocabularies/dcat-ap , Accessed: Nov 30 2025 [29] QUDTOrganization: Fairsharing.org: Qudt; quantities, units, dimensions and types, https://doi.org/10. 25504/FAIRsharing.d3pqw7 , Accessed: Nov 30 2025 12 Virtual Process Dossier A P REPRINT 
+
+[30] Schilling, R., Aier, S., Winter, R., et al.: Design dimensions for enterprise-wide data management: A chief data officer’s journey. In: Proc. 53rd Hawaii International Conference on System Sciences (HICSS 53) (2020), 
+
+https://scholarspace.manoa.hawaii.edu/bitstream/10125/64456/0576.pdf 
+
+[31] Vanhatalo, J., Völzer, H., Koehler, J.: The refined process structure tree. Data & Knowledge Engineering 
+
+68 (9), 793–818 (2009), https://doi.org/10.1016/j.datak.2009.02.015 , sixth International Conference on Business Process Management (BPM 2008) – Five selected and extended papers [32] Wilkinson, M.D., Dumontier, M., Aalbersberg, I.J., et al.: The fair guiding principles for scientific data manage-ment and stewardship. Scientific Data 3, 160018 (3 2016), https://doi.org/10.1038/sdata.2016.18 
+
+## A Further Figures 
+
+Figure 6: VPD-O view on parameter shapes. 
+
+Figure 7: VPD-O view on physical products. 13

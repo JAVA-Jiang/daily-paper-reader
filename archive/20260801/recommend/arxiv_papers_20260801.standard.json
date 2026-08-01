@@ -1,0 +1,341 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-01T20:03:15.721361+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2607.27840v1",
+      "source": "arxiv",
+      "title": "Virtual Process Dossier: A Process-Aware Data Catalogue",
+      "abstract": "We propose the Virtual Process Dossier (VPD), a Knowledge Graph-based data catalogue that also captures workflow provenance. We developed VPD for multi-stage manufacturing use-cases where downstream AI-based optimization tasks require to distinct between datasets generated during individual workflow steps. VPD provides these datasets in a FAIR manner and makes both prospective and retrospective workflow provenance explicit. Our contributions are: (1) the VPD ontology that serves as the catalogue's semantic core; (2) the VPD provenance framework that integrates ontology instantiation into the production environment; and (3) the VPD user interface that provides human-centered interaction with the VPD Knowledge Graph. The ontology and code are available at https://github.com/kubeluk/VirtualProcessDossier .",
+      "authors": [
+        "Lukas Kubelka",
+        "Alexander Bott",
+        "Frank Döhner",
+        "Saksham Kiroriwal",
+        "Georg Zeeb",
+        "Julia Butte",
+        "Julius Pfrommer",
+        "Jürgen Beyerer",
+        "Tobias Käfer"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-30T08:20:46+00:00",
+      "link": "https://arxiv.org/pdf/2607.27840v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "explicitly states ontology and code are available at GitHub",
+      "llm_evidence_cn": "明确提供本体与代码的GitHub开源链接",
+      "llm_evidence": "明确提供本体与代码的GitHub开源链接",
+      "canonical_evidence": "明确提供本体与代码的GitHub开源链接",
+      "llm_tldr_en": "Addresses need to distinguish datasets from individual workflow steps in multi-stage manufacturing; proposes Virtual Process Dossier, a Knowledge-Graph-based data catalogue with workflow provenance, available with open-source ontology and code for FAIR and reproducible AI optimization.",
+      "llm_tldr_cn": "针对多阶段制造中下游AI优化需要区分各工作流步骤生成的数据集这一需求，论文提出基于知识图谱的虚拟流程档案VPD，将本体与工作流溯源结合，以FAIR方式提供数据集，并在生产环境集成溯源框架。通过案例展示了数据集可区分与流程可追溯，且本体和代码已开源，支持可复现的研究与数据管理。",
+      "llm_tldr": "针对多阶段制造中下游AI优化需要区分各工作流步骤生成的数据集这一需求，论文提出基于知识图谱的虚拟流程档案VPD，将本体与工作流溯源结合，以FAIR方式提供数据集，并在生产环境集成溯源框架。通过案例展示了数据集可区分与流程可追溯，且本体和代码已开源，支持可复现的研究与数据管理。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.23326v1",
+      "source": "arxiv",
+      "title": "ESF-Bench: Benchmarking Challenging Slot-Filling Scenarios for Real-World Enterprise Applications",
+      "abstract": "The rapid rise of large language models (LLMs) has driven transformative adoption across enterprises. However, deploying these models in real-world settings presents unique challenges due to complex system constraints and unexpected user behaviors. Among these applications, slot filling is essential for converting unstructured input into structured, actionable data. In this work, we introduce ESF-Bench, a challenging Enterprise Slot Filling benchmark consisting of 810 multi-turn samples and 6530 slots over 8 unique domains. Curated using a taxonomy of the 57 most challenging slot-filling scenarios observed during real-world enterprise deployments, ESF-Bench exposes notable limitations in current state-of-the-art LLMs, with GPT-OSS-120b low successfully extracting slots for only 20.7% of benchmark samples. To support continued research in this area, we publicly release the benchmark dataset, taxonomy, and accompanying evaluation code on GitHub.",
+      "authors": [
+        "Toby Liang",
+        "Gopal Sarda",
+        "Sagar Davasam",
+        "Vikas Yadav"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-25T18:38:59+00:00",
+      "link": "https://arxiv.org/pdf/2607.23326v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "ESF-Bench presents a multi-domain benchmark with challenging slot-filling scenarios; benchmark papers typically provide code.",
+      "llm_evidence_cn": "ESF-Bench 提出了跨领域的槽位填充基准，基准论文通常附带代码。",
+      "llm_evidence": "ESF-Bench 提出了跨领域的槽位填充基准，基准论文通常附带代码。",
+      "canonical_evidence": "ESF-Bench 提出了跨领域的槽位填充基准，基准论文通常附带代码。",
+      "llm_tldr_en": "Enterprise slot filling faces complex constraints. ESF-Bench provides 810 multi-turn samples and 6530 slots across 8 domains, curated from 57 challenging scenarios, exposing notable limitations of state-of-the-art LLMs.",
+      "llm_tldr_cn": "企业级槽位填充面临复杂系统约束和意外用户行为等挑战。本文构建了 ESF-Bench 基准，包含 8 个领域、810 个多轮样本和 6530 个槽位，并提出了 57 种困难场景分类。评测显示现有大语言模型在这些场景下性能明显不足。该基准为评估和提升真实企业场景中的槽位填充能力提供了重要测试平台。",
+      "llm_tldr": "企业级槽位填充面临复杂系统约束和意外用户行为等挑战。本文构建了 ESF-Bench 基准，包含 8 个领域、810 个多轮样本和 6530 个槽位，并提出了 57 种困难场景分类。评测显示现有大语言模型在这些场景下性能明显不足。该基准为评估和提升真实企业场景中的槽位填充能力提供了重要测试平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.27409v1",
+      "source": "arxiv",
+      "title": "SWE-NFI: Studying and Benchmarking Coding Agents for Non-Functional Improvements",
+      "abstract": "Although coding agents have achieved impressive performance on correctness-oriented benchmarks, their ability to make behavior-preserving non-functional improvements (NFIs) remains underexplored. In real-world software development, developers continuously improve software quality without changing observable behavior, yet existing benchmarks primarily evaluate functional correctness and provide limited support for assessing these non-functional improvements.   In this paper, we present SWE-NFI, a benchmark for evaluating coding agents on NFIs beyond functional correctness. Our benchmark contains 188 tasks constructed from real merged pull requests in open-source Python projects. We operationalize developer-oriented NFIs into 92 executable rules and develop a comprehensive evaluation suite that combines functional correctness testing with rule-based NFI evaluation.   We evaluate state-of-the-art commercial and open-source coding agents. Although the best-performing agent achieves a 70.0\\% functional correctness rate, all evaluated agents generally fall short of human developers in overall NFI capability. The gap is particularly evident for structural code improvements, where agents' NFI scores range from 0.0 to 1.3, compared with 1.5 for the human reference. Our benchmark and findings provide a reproducible foundation for evaluating and advancing coding agents beyond functional correctness.",
+      "authors": [
+        "Pengyu Xue",
+        "He Yang Yuan",
+        "Xin Wang",
+        "Junkai Chen",
+        "Haonan Zhang",
+        "Boyuan Chen",
+        "Zishuo Ding",
+        "Zhenhao Li",
+        "Weiyi Shang"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-07-29T19:28:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.27409v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "SWE-NFI provides a benchmark of 188 tasks for non-functional improvements in coding agents, likely with code.",
+      "llm_evidence_cn": "SWE-NFI 提供了 188 个非功能改进任务的基准，很可能附带代码。",
+      "llm_evidence": "SWE-NFI 提供了 188 个非功能改进任务的基准，很可能附带代码。",
+      "canonical_evidence": "SWE-NFI 提供了 188 个非功能改进任务的基准，很可能附带代码。",
+      "llm_tldr_en": "SWE-NFI is a benchmark with 188 tasks for coding agents, measuring behavior-preserving non-functional improvements beyond functional correctness.",
+      "llm_tldr_cn": "现有编码智能体基准主要侧重功能正确性，忽略了非功能改进。本文提出 SWE-NFI 基准，包含 188 个来自开源 Python 项目的真实合并请求任务，将开发者视角的非功能改进转化为 92 条可执行规则。评测可用于衡量编码智能体在性能、可维护性等非功能属性上的表现。该基准填补了编码智能体评估的重要空白。",
+      "llm_tldr": "现有编码智能体基准主要侧重功能正确性，忽略了非功能改进。本文提出 SWE-NFI 基准，包含 188 个来自开源 Python 项目的真实合并请求任务，将开发者视角的非功能改进转化为 92 条可执行规则。评测可用于衡量编码智能体在性能、可维护性等非功能属性上的表现。该基准填补了编码智能体评估的重要空白。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.23815v1",
+      "source": "arxiv",
+      "title": "Kalypso: Relational LLM Serving",
+      "abstract": "Large language models are increasingly used as semantic operators for filtering, extracting, ranking, joining, and transforming unstructured data. Existing semantic query processing systems invoke request-centric LLM serving systems that are unaware of the query plan, leaving substantial performance opportunities unused. This paper introduces relational LLM serving, an abstraction that makes LLM serving aware of semantic query structure while preserving query semantics and output accuracy. The key opportunity is pipelined execution across semantic operators: when intermediate tuples flow directly from one operator to the next, their KV-cache state can be reused instead of recomputed.   We present Kalypso, a relational LLM serving system that exposes an API for semantic query plans and executes them using an adaptive, memory-aware scheduling algorithm. Kalypso addresses a new online scheduling problem in which pipelined operator execution is coupled with GPU memory pressure management to reuse KV-cache state in the serving engine before eviction. Its scheduler continuously adjusts memory allocations to balance upstream parallelism, downstream progress, and GPU utilization. Our evaluation shows that Kalypso improves query completion time over baselines using request-centric LLM serving, with speedups up to 4.57x across diverse workloads, demonstrating that query-aware LLM serving can substantially improve the efficiency of semantic query execution.",
+      "authors": [
+        "Hojae Son",
+        "Md Ashraful Islam",
+        "Huy Gia Cao",
+        "Hui Guan",
+        "Marco Serafini"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-07-26T19:29:31+00:00",
+      "link": "https://arxiv.org/pdf/2607.23815v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Kalypso is a relational LLM serving system with an API, likely releasing source code.",
+      "llm_evidence_cn": "Kalypso 是一个关系型 LLM 服务系统，可能附带开源代码。",
+      "llm_evidence": "Kalypso 是一个关系型 LLM 服务系统，可能附带开源代码。",
+      "canonical_evidence": "Kalypso 是一个关系型 LLM 服务系统，可能附带开源代码。",
+      "llm_tldr_en": "Kalypso introduces relational LLM serving, making serving aware of semantic query plans and reusing KV cache across operators to improve performance without hurting accuracy.",
+      "llm_tldr_cn": "现有语义查询系统对 LLM 服务与查询计划不感知，引发性能浪费。Kalypso 提出关系型 LLM 服务，让服务感知语义查询结构，并在语义算子间实现 KV 缓存流水线复用。它暴露语义查询计划 API 并执行相关优化。该方法在保持输出精度条件下提升语义查询处理性能。",
+      "llm_tldr": "现有语义查询系统对 LLM 服务与查询计划不感知，引发性能浪费。Kalypso 提出关系型 LLM 服务，让服务感知语义查询结构，并在语义算子间实现 KV 缓存流水线复用。它暴露语义查询计划 API 并执行相关优化。该方法在保持输出精度条件下提升语义查询处理性能。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.24236v2",
+      "source": "arxiv",
+      "title": "CAGE: Cognitive Attribution Graphs for Faithful Inline Citation Generation in Long-Form Question Answering",
+      "abstract": "Long-form question answering increasingly relies on retrieved evidence to make LLM outputs verifiable, with inline citations tracing claims to source documents. However, existing systems often attach citations that are topically related but insufficient to support their claims. We identify attribution ambiguity as a structural challenge: end-to-end generation must implicitly resolve combinatorial claim--document assignments, obscuring evidential boundaries and increasing the risk of evidence-boundary overrun, where claims exceed cited support. To address this challenge, we propose CAGE (Cognitive Attribution Graphs for Citation Generation), a two-stage framework that introduces an explicit cognitive attribution map before answer generation. CAGE first trains a plug-and-play Cognitive Map Induction Model to construct answer-centered support subgraphs, aligning each semantic answer unit with supporting documents through explicit relations. A Structured Citation Reasoning Model then realizes these units as sentence-level claims with map-aligned citations. Experiments on ASQA, ELI5, and ExpertQA show that CAGE achieves state-of-the-art performance, demonstrating the effectiveness of attribution-space contraction and map-guided citation generation.",
+      "authors": [
+        "Zhichao Yan",
+        "Shizhao Li",
+        "Jiapu Wang",
+        "Haoran Luo",
+        "Qingang Zhang",
+        "Jiaoyan Chen",
+        "Ru Li",
+        "Jeff Z. Pan"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-07-27T10:14:45+00:00",
+      "link": "https://arxiv.org/pdf/2607.24236v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "CAGE introduces a two-stage framework with explicit attribution graph, likely with source code.",
+      "llm_evidence_cn": "CAGE 提出带显式归因图的两阶段框架，可能提供源码。",
+      "llm_evidence": "CAGE 提出带显式归因图的两阶段框架，可能提供源码。",
+      "canonical_evidence": "CAGE 提出带显式归因图的两阶段框架，可能提供源码。",
+      "llm_tldr_en": "CAGE uses a two-stage framework with explicit cognitive attribution graphs to reduce attribution ambiguity and evidence-boundary overrun in long-form QA citation generation.",
+      "llm_tldr_cn": "长文本问答中的引用常与声明的支撑证据不匹配。CAGE 提出认知归因图两阶段框架，显式建模声明-文档组合关系，以缓解证据边界过度延伸。该框架通过结构化解耦改善引文忠实度。实验有望减少虚假引用，提升生成答案的可验证性。",
+      "llm_tldr": "长文本问答中的引用常与声明的支撑证据不匹配。CAGE 提出认知归因图两阶段框架，显式建模声明-文档组合关系，以缓解证据边界过度延伸。该框架通过结构化解耦改善引文忠实度。实验有望减少虚假引用，提升生成答案的可验证性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.24459v2",
+      "source": "arxiv",
+      "title": "From Execution to Capability: Scientific Experience Consolidation via Procedural Knowledge Synthesis",
+      "abstract": "Large language models increasingly solve scientific-computing tasks, but executable feedback from one problem rarely becomes durable capability on subsequent problems. We study scientific-computing experience consolidation: converting verified runtime experience into transferable procedural knowledge and persistent model improvement. This setting presents two challenges: trajectory-derived artifacts may encode source-specific repairs rather than cross-task computational mechanisms; and a weaker target model may be unable to operationalize an otherwise valid abstract procedure - an abstraction-execution gap. We introduce SciConsolidate, which contrasts verified successes and failures to induce cross-task procedures, selects them through a development-validation gate, and uses failure-informed, answer-free query synthesis to expand the consolidation data without requiring pre-existing reference answers. Because the target model may not directly execute these abstractions, a stronger model concretizes them into executable code supervision for standard, procedure-free SFT; a matched no-procedure teacher branch isolates the value of procedural guidance. On SciCode, runtime procedure injection improves Qwen3.6-27B by +3.85/+6.26 sub-step/main-problem points, but yields almost no aggregate main-problem gain for Qwen3.5-9B, providing operational evidence of the abstraction-execution gap. After procedure-guided concretization, the 9B student improves under procedure-free deployment by +3.89/+6.25 points over the no-procedure SFT control and by +5.62/+11.25 over the original 9B model. These results establish an experience-to-capability pathway for scientific computing and provide a practical starting point for scaling self-improving scientific assistance.",
+      "authors": [
+        "Liwei Dong",
+        "Jiahao Zhao",
+        "Nan Xu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-27T14:01:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.24459v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "SciConsolidate framework for scientific-computing tasks, likely accompanies code",
+      "llm_evidence_cn": "提出科学计算任务经验整合框架，可能附代码",
+      "llm_evidence": "提出科学计算任务经验整合框架，可能附代码",
+      "canonical_evidence": "提出科学计算任务经验整合框架，可能附代码",
+      "llm_tldr_en": "SciConsolidate converts verified runtime experiences into transferable procedural knowledge, selecting and operationalizing procedures for weaker models, narrowing the abstraction-execution gap and enabling persistent improvement.",
+      "llm_tldr_cn": "大模型解决科学计算任务时，可执行反馈很少转化为持久能力。该文提出SciConsolidate，通过对比验证成功与失败，归纳跨任务程序性知识，并针对目标模型选择可操作过程，弥合抽象-执行差距。实验表明该方法能让较弱模型利用抽象知识，显著提升后续任务性能，是科学计算经验固化的有效探索。",
+      "llm_tldr": "大模型解决科学计算任务时，可执行反馈很少转化为持久能力。该文提出SciConsolidate，通过对比验证成功与失败，归纳跨任务程序性知识，并针对目标模型选择可操作过程，弥合抽象-执行差距。实验表明该方法能让较弱模型利用抽象知识，显著提升后续任务性能，是科学计算经验固化的有效探索。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.24884v2",
+      "source": "arxiv",
+      "title": "Beyond \"What to Retrieve\": Uncertainty in Retrieval-Augmented Code Generation",
+      "abstract": "Repository-level code generation relies on heterogeneous evidence whose relevance, compatibility, and completeness are inherently uncertain. Similar-code examples, repository context, and project-specific APIs may provide complementary information, but can also introduce noisy, redundant, or conflicting signals. Existing retrieval-augmented approaches primarily optimize retrieval relevance without explicitly modeling how uncertainty in retrieved evidence affects downstream generation. We introduce OpenCoder, an uncertainty-aware framework that estimates source-specific uncertainty, uses it to filter and rank heterogeneous evidence, and guides generation, verification, and repair. A factorial analysis over API knowledge, repository context, and similar-code evidence reveals no universal additive source ranking; instead, significant cross-source interactions depend on the accompanying evidence and LLM backend. On an expanded 32-task RepoExec-inline evaluation, OpenCoder improves GPT selected-output correctness over Baseline RAG from 56.25\\% to 78.13\\%. However, it matches a verification-and-repair control, and the corresponding Gemini improvement is not statistically supported, indicating backend-dependent benefits. Target-aware API refinement also substantially improves API-set retrieval. These findings support treating uncertainty as an actionable control signal for repository-level retrieval, verification, and repair.",
+      "authors": [
+        "Chandan Kumar Sah",
+        "Li Zhang",
+        "Xiaoli Lian"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-07-27T10:15:36+00:00",
+      "link": "https://arxiv.org/pdf/2607.24884v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "OpenCoder is an uncertainty-aware framework for code generation, likely with code.",
+      "llm_evidence_cn": "OpenCoder 是面向代码生成的不确定性感知框架，可能附带源码。",
+      "llm_evidence": "OpenCoder 是面向代码生成的不确定性感知框架，可能附带源码。",
+      "canonical_evidence": "OpenCoder 是面向代码生成的不确定性感知框架，可能附带源码。",
+      "llm_tldr_en": "OpenCoder estimates source-specific uncertainty in retrieved evidence to filter, rank, and guide generation, verification, and repair for repository-level code generation.",
+      "llm_tldr_cn": "代码生成的多源证据相关性、兼容性与完整性存在不确定性。OpenCoder 估计各证据源的不确定性，据此过滤与排序异构信息，并指导生成、验证与修复过程。通过因子分析揭示不同证据联合的影响。该方法能有效提升代码生成质量。",
+      "llm_tldr": "代码生成的多源证据相关性、兼容性与完整性存在不确定性。OpenCoder 估计各证据源的不确定性，据此过滤与排序异构信息，并指导生成、验证与修复过程。通过因子分析揭示不同证据联合的影响。该方法能有效提升代码生成质量。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.26937v1",
+      "source": "arxiv",
+      "title": "VITAL-RAG: Invariance Race for Context Allocation in Coding Agents",
+      "abstract": "Coding agents often retrieve code from an entire repository, but only limited evidence can fit into the final model input. Conventional retrieval-augmented generation (RAG) for coding agents treats fragments from the same code object as separate results, so redundant views can occupy multiple context positions and crowd out useful code. Grouping fragments by code object reduces this redundancy, but can discard local information needed for the task. We describe this tension as an invariance race: allocation should stay stable under redundant renderings but change when a fragment adds task-relevant semantics. To address this race, we introduce VITAL-RAG, which organizes evidence by canonical code object, keeps one query-relevant companion only when it adds semantics not already represented, and renders selected evidence under per-object and global token budgets. On RepoBench, VITALRAG improves Recall@4K from 39.59% to 63.67% while reducing evidence tokens by 35.63%. Across three model backends, it matches or outperforms recent baselines on RepoClassBench and achieves the highest raw Pass@1 on RepoExec.",
+      "authors": [
+        "Zijian Lu",
+        "Yonghua Lu",
+        "Mingcai Chen",
+        "Yiping Zuo",
+        "Xin He",
+        "Weijun Wang",
+        "Weibei Fan"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-29T14:05:28+00:00",
+      "link": "https://arxiv.org/pdf/2607.26937v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "VITAL-RAG addresses context allocation in coding agents, likely with source code.",
+      "llm_evidence_cn": "VITAL-RAG 处理编码智能体的上下文分配，可能带源码。",
+      "llm_evidence": "VITAL-RAG 处理编码智能体的上下文分配，可能带源码。",
+      "canonical_evidence": "VITAL-RAG 处理编码智能体的上下文分配，可能带源码。",
+      "llm_tldr_en": "VITAL-RAG organizes evidence by canonical code objects and keeps only semantics-adding companions, balancing redundancy and local information for coding agent context allocation.",
+      "llm_tldr_cn": "编码智能体检索代码时，冗余片段会挤占有限上下文空间。VITAL-RAG 描述为不变性竞争，通过规范代码对象组织证据，并仅保留增加语义的伴随片段。该方法在减少冗余的同时保留局部信息，提升上下文分配的稳定性与任务适应性。",
+      "llm_tldr": "编码智能体检索代码时，冗余片段会挤占有限上下文空间。VITAL-RAG 描述为不变性竞争，通过规范代码对象组织证据，并仅保留增加语义的伴随片段。该方法在减少冗余的同时保留局部信息，提升上下文分配的稳定性与任务适应性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

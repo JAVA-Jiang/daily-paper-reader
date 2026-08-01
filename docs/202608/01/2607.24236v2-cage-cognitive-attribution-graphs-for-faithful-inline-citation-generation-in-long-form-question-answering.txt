@@ -1,0 +1,903 @@
+Title: CAGE: Cognitive Attribution Graphs for Faithful Inline Citation Generation in Long-Form Question Answering
+
+URL Source: https://arxiv.org/pdf/2607.24236v2
+
+Published Time: Wed, 29 Jul 2026 00:47:09 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# CAGE: Cognitive Attribution Graphs for Faithful Inline Citation Generation in Long-Form Question Answering 
+
+## Zhichao Yan 1, Shizhao Li 1, Jiapu Wang 2, Haoran Luo 4, Qingang Zhang 6, Jiaoyan Chen 3,Ru Li 1, Jeff Z. Pan 5
+
+> 1
+
+Shanxi University, Taiyuan, China 
+
+> 2
+
+Nanjing University of Science and Technology, Nanjing, China 
+
+> 3
+
+The University of Manchester, Manchester, UK 
+
+> 4
+
+Nanyang Technological University, Singapore 
+
+> 5
+
+The University of Edinburgh, Edinburgh, UK 
+
+> 6
+
+Jilin University, Jilin, China 
+
+{yanzhichao,lishizhao,liru}@sxu.edu.cn jiapu.wang@njust.edu.cn , jiaoyan.chen@manchester.ac.uk qinggangzhang@jlu.edu.cn , j.z.pan@ed.ac.uk 
+
+Abstract 
+
+Long-form question answering increasingly relies on retrieved evidence to make LLM outputs verifiable, with inline cita-tions tracing claims to source documents. However, exist-ing systems often attach citations that are topically related but insufficient to support their claims. We identify attribu-tion ambiguity as a structural challenge: end-to-end genera-tion must implicitly resolve combinatorial claim–document assignments, obscuring evidential boundaries and increasing the risk of evidence-boundary overrun , where claims exceed cited support. To address this challenge, we propose CAGE 
+
+(Cognitive Attribution Graphs for Citation G eneration), a two-stage framework that introduces an explicit cognitive at-tribution map before answer generation. CAGE first trains a plug-and-play Cognitive Map Induction Model to construct answer-centered support subgraphs, aligning each semantic answer unit with supporting documents through explicit re-lations. A Structured Citation Reasoning Model then realizes these units as sentence-level claims with map-aligned cita-tions. Experiments on ASQA, ELI5, and ExpertQA show that CAGE achieves state-of-the-art performance, demonstrating the effectiveness of attribution-space contraction and map-guided citation generation. 
+
+## Introduction 
+
+Large language models (LLMs) can generate fluent long-form responses for knowledge-intensive tasks, yet hallucina-tions and unreliable source attribution undermine the verifi-ability and trustworthiness of their outputs (Farquhar et al. 2024; Yan et al. 2025; Chen et al. 2024; Wang et al. 2023). Retrieval-augmented generation (RAG) partially mitigates this issue by grounding generation in retrieved documents (Pan et al. 2024, 2023; Cheng et al. 2026; Zhuo et al. 2025; Xu et al. 2025), but document grounding alone does not es-tablish whether each individual claim is supported by suffi-cient evidence. This limitation is especially consequential in downstream applications that consume LLM outputs without 
+
+Copyright © 2027, Association for the Advancement of Artificial Intelligence (www.aaai.org). All rights reserved. Cognitive-Map-Inspired Attribution-Space Contraction  
+
+> Cognitive Map
+> Induction Model
+> A1 A2
+> Structure 1 Structure 2
+> Pruning
+> ...
+> LLM
+> Long-form Answer with Citation
+> Implicit to Explicit
+> ...
+> Explicit Structure
+> Cognitive Map
+> Implicit Relation
+> A2
+> A1
+> Inspiring
+> Query Top-k documents
+> ...
+
+Figure 1: Motivation of CAGE. The human brain abstracts scattered observations into relational cognitive maps to or-ganize and associate discrete information. CAGE simulates this workflow with a plug-and-play Cognitive Map Induction Model that converts retrieved documents into intermediate evidence structures, contracting the attribution space before LLM-based citation generation. independent verification (Zhang et al. 2026; Luo et al. 2025; Wang et al. 2024), making explicit claim-level attribution essential for trustworthy long-form generation. Citation-grounded long-form generation requires claims to include citations to supporting documents (Gao et al. 2022; Bohnet et al. 2022). Yet when claims and citations are gen-erated jointly, the model must simultaneously decide what to state and what evidence to cite without explicit claim-specific support relations. Under weak, incomplete, or distributed ev-idence, this coupled process may produce claims that exceed available support while attaching topically related but in-sufficient citations (Sun et al. 2025; Qian et al. 2026; Su et al. 2025). We call this evidence-boundary overrun , where a claim exceeds what its cited documents can strictly justify. The risk of such overrun is amplified by attribution am-biguity : retrieved documents may be relevant to the question without specifying which subset supports each individual claim. A document may provide only partial evidence, while different claims may require different document combina-arXiv:2607.24236v2 [cs.CL] 28 Jul 2026 tions. For a fixed set of m candidate claims and n retrieved documents, each claim may be assigned any non-empty doc-ument subset, yielding up to (2 n − 1) m possible citation assignments. This combinatorial space does not itself imply unsupported generation, but resolving it implicitly during de-coding makes it difficult to distinguish topical relevance from sufficient support. Explicitly determining claim-specific sup-port relations before final generation can therefore improve the verifiability of citation-grounded outputs and reduce the risk of evidence-boundary overrun .Cognitive-map theories suggest that complex reasoning can benefit from transforming implicit relations among ob-servations into explicit relational structures for structured in-ference (Mark et al. 2020; Whittington et al. 2022; Tan et al. 2025). Drawing on this perspective, citation-grounded gen-eration should externalize latent relations between retrieved evidence and semantic answer units as an explicit attribu-tion structure before final decoding. Such a structure can exclude invalid evidence assignments, organize supporting documents around answer units, and make claim-specific support relations explicit. This also explains why stronger prompting or larger generators may still produce missing or incorrect citations: improving model capacity alone may be insufficient without an explicit mechanism that external-izes claim–document relations and constrains unsupported assignments before generation. 
+
+To this end, we introduce CAGE (Cognitive Attribution 
+
+Graphs for Citation G eneration), a two-stage framework for inline citation generation. As illustrated in Figure 1, CAGE first trains a plug-and-play Cognitive Attribution Map Induc-tion Model to construct a cognitive attribution map from a question and its retrieved documents. The map consists of answer-centered support subgraphs that link answer units to their supporting documents and explicitly define the evidence boundary; unsupported documents are excluded, while the absence of supported answer units triggers evidence-driven abstention. In the second stage, a Structured Citation Reason-ing Model reasons over the induced map, realizes its semantic answer nodes as coherent sentence-level claims, and gener-ates inline citations aligned with the corresponding graph-specified document identifiers. CAGE externalizes answer– document attribution as validated support subgraphs, decou-pling attribution from generation across heterogeneous back-bones. In summary, the main contributions are as follows: 
+
+• We identify attribution ambiguity as a structural cause of citation error in end-to-end generation, where uncon-strained claim–document assignment induces a combina-torial citation-assignment space and allows topical rele-vance to substitute for evidential support. 
+
+• We propose CAGE , a two-stage framework that trains a plug-and-play Cognitive Attribution Map Induction Model and a Structured Citation Reasoning Model to explicitly determine semantic answer units and their sup-porting documents before final answer realization. 
+
+• We demonstrate best performance on ASQA, ELI5, and ExpertQA, and show that CAGE consistently improves proprietary LLMs, indicating that cognitive attribution map provide complementary gains beyond document fil-tering and enhance strong end-to-end systems. 
+
+## Preliminaries 
+
+Task Definition: Inline Citation Generation 
+
+Given a question Q and top-k retrieved documents Dk =
+
+{di}ki=1 , inline citation generation requires an LLM M to produce a long-form answer grounded in specific source doc-uments. We formalize the output as 
+
+Y = {(sj , c j )}mj=1 ← M (Q, Dk), (1) where sj is an individual factual statement and cj ⊆ D k is the citation set supporting it, m is the number of claims. If 
+
+Dk lacks sufficient evidence for Q, the model should perform evidence-driven abstention by returning an explicit refusal. 
+
+Cognitive Attribution Map 
+
+Given a query Q and Dk = {d1, . . . , d k}, the map G is defined as a collection of answer-centered support subgraphs: 
+
+G = {G r }mr=1 , 0 ≤ m. (2) Each subgraph represents one semantic answer unit: 
+
+Gr = ( Vr , Er ; ρr ), Vr = {Q} ∪ D r ∪ { ar } , (3) where Dr ⊆ D k is a non-empty supporting document set, ar
+
+is a canonical semantic answer unit supported by Dr , and ρr
+
+describes their support relation. The answer node specifies the content to be conveyed without fixing its final wording or position in the long-form answer. A document node di = (id , name , content) stores its ci-tation ID, title, and evidence text. The query node follows the same schema, with id( Q) = Q, name( Q) containing the query, and content( Q) a fixed instruction. An answer node 
+
+ar =  id( ar ), name( ar ), content( ar ), (4) uses a unique unit ID, the fixed name “Answer Unit”, and its canonical semantics as content. The edge set is 
+
+Er = {(Q, d i), (di, a r ) | di ∈ D r }, (5) encodes evidence selection through query-to-document edges and evidential support through document-to-answer edges. A complete subgraph example is provided below:              
+
+> Example graph 1:
+> Nodes :id :Q name : Who wrote The Sound of Silence?
+> content : Reasoning the graph with node A based on the node starting with d.
+> id :d1 name : The Sound of Silence content : "The Sound of Silence" is a song by Simon & Garfunkel. It was written by Paul Simon.
+> id :A1 name : Answer Unit content : Paul Simon wrote "The Sound of Silence".
+> Edges :nodes :Q inputs :outputs : d1
+> nodes :d1 inputs : Q outputs : A1
+> nodes :A1 inputs : d1 outputs : N/A
+> subgraph_description : The document supports the answer by stating that "The Sound of Silence" was written by Paul Simon. Query
+
+Step 1: Evidence Sufficiency Assessment       
+
+> 12345Top-5 Docs Validator
+
+Step 3: Map-aligned Answer Target Construction 
+
+Stage 1: Validated Cognitive Attribution Synthesis  
+
+> Query
+> 15
+> Generator
+
+...             
+
+> id: Qname: Query content: Reasoning on the ... id: d1 name: Title of d1 content: Text of document ... description: d1 does not mention the answer ...
+> Nodes:
+> ...
+> N/A Edges:
+
+Step 2: Attribution Map Construction  
+
+> Map Generation Prompt A1 A2
+> ...
+> Connection?
+> Sufficiency?
+> Validator
+
+Has Answer?   
+
+> Valid Map
+> Empty Map
+> Query Valid
+> Map
+> Generator
+> Long-form Answer with Citations
+> Validator Valid Map
+> Gold Answer
+> Answer Correctness? Citation Consistency?
+> Valid Long-form Answer
+
+Stage 2 ：Learning Cognitive Attribution Map for Citation Generation 
+
+Cognitive Attribution Map Induction Model 
+
+Input 
+
+> Instruction for Map
+
+Q: Who was the champion of the 2018 World Cup?     
+
+> Answer Generation Prompt
+> 12345
+
+Output                        
+
+> Edges:
+> nodes: inputs: N/A outputs: nodes: inputs: outputs: nodes: inputs: outputs: nodes: inputs: outputs: N/A subgraph_description:
+> d1 d2 Q
+> QA1
+> d2
+> d1
+> A1 d1 d2
+> QA1
+> Nodes:
+> id :name :Query
+> content :Reasoning on the ...
+> Q
+> id: name: Title of
+> content: The final took ...
+> d1 d1
+> id: name: Answer Unit 1
+> content: France win the...
+> A2
+> Valid Map
+> A2
+> A1
+> Empty Map
+> OR
+> Evidence-aware Abstention
+> Instruction for Answer Empty Map Valid Map
+
+Input 
+
+> LLM
+> OR
+
+Structured Citation Reasoning Model 
+
+> Plug-and-Play Map for any Answer Generation Model
+> France defeated Croatia with 4:2 and won the 2018 championship [1] [2].
+> Kylian Mbappé scored a goal in the 65th minute of the final [5].
+
+Output           
+
+> I apologize, but I couldn't find an answer to your question.
+> Answerable: Unanswerable: Fixed Format for Unanswerable
+> Step Transition Concatenation Supervision Transfer Discard Document Parameter Update Subgraph Description Filter Query A1 Answer Node
+> LLM
+
+Figure 2: Overview of CAGE . Stage 1 Validated Cognitive Attribution Synthesis constructs validated cognitive attribution map and map-aligned answer supervision, which are used to train the Cognitive Attribution Map Induction Model and the Structured Citation Reasoning Model, respectively, in Stage 2. 
+
+Attribution-space contraction. The graph induces the re-tained document set D+ = Smr=1 Dr, with n = |D +|, and specifies the attribution target 
+
+αG(ar ) = {id( di) | di ∈ D r } . (6) Thus, if a generated claim sπ (r) semantically realizes ar ,its target citation set is c∗ 
+
+> π(r)
+
+= αG(ar ). Documents outside 
+
+D+ are excluded from generation; if m = 0 , CAGE abstains. Without an attribution map, each of the m claims may select any non-empty subset of the n retained documents, yielding up to 
+
+|Ωunstr | = (2 n − 1) m. (7) Once induced, the attribution map G fixes one citation set for each answer node: 
+
+ΩG =   αG(a1), . . . , α G(am) , |ΩG| = 1 . (8) Thus, conditioned on the induced map, CAGE reduces the downstream citation-assignment space from up to (2 n − 1) m
+
+unconstrained choices to one graph-specified target, while attribution is resolved during map induction. 
+
+## Methodology 
+
+This section presents CAGE , a two-stage framework for citation-grounded long-form answer generation. Validated Cognitive Attribution Synthesis (VCAS) constructs validated cognitive attribution map and map-aligned answers, which supervise a Cognitive Attribution Map Induction Model 
+
+(CMI) for constructing answer-centered support subgraphs and a Structured Citation Reasoning Model (SCR) for map-conditioned answer generation. 
+
+Validated Cognitive Attribution Synthesis (VCAS) 
+
+This section introduces how VCAS constructs supervision through two LLM-instantiated roles: a generator and a valida-tor. As shown in Figure 2, VCAS converts query–document instances into two aligned supervision sets: one for CMI and the other for SCR. Since LLMs generate token sequences, a non-empty cog-nitive attribution map G = {G r}mr=1 is represented by a canonical textual encoding: 
+
+zmap = Enc map (G)= Enc V (V(G)) ⊕ Enc E (E(G)) ⊕ Enc ρ(ρ(G)) ,
+
+(9) where V(G), E(G), and ρ(G) denote its nodes, edges, and descriptions, respectively. The encoding preserves the map structure while serving as an autoregressive prediction target. 
+
+Step 1: Evidence Sufficiency Assessment. Given a query Q
+
+and its top-k retrieved documents Dk = {d1, . . . , d k}, the validator determines whether the retrieved documents con-tain enough evidence to support at least one query-responsive answer unit: 
+
+∃a, ∃D ′ ⊆ D k, D′̸ = ∅, D′ |=Q a. (10) Here, D′ |=Q a means that D′ provides sufficient evidence for a under Q.Unsupported instances are assigned a document preserv-ing empty map: 
+
+G∗∅ = ( V∗∅ , E∗∅ ; ρ∗∅),
+
+V∗∅ = di, E∗∅ = ∅, z∗ 
+
+> map ,∅
+
+= Enc map (G∗∅). (11) Here, ρ∗∅ explains the evidence insufficiency. The empty map retains all candidate document nodes but contains no an-swer nodes, selected supporting-document assignments, or support edges. These instances train CMI to identify un-supported questions without constructing spurious answer units. The seed questions are sampled from the training sets of FRONT (Huang et al. 2024a) and ASQA (Stelmakh et al. 2022) and the number of documents was set to 5, consistent with prior study (Song et al. 2025). 
+
+Step 2: Attribution Map Construction. For each supported instance, the generator Mgen receives (Q, Dk, Pmap ) and generates a candidate cognitive attribution map through its canonical textual encoding: 
+
+zmap = Mgen (Q, Dk, Pmap )= Enc map 
+
+ G, G = Gr 
+
+> ¯mr=1
+
+. (12) where Pmap is a specific prompt for map generation. The validator checks each candidate subgraph for struc-tural connectivity and evidential support: 
+
+VQ
+
+ Gr
+
+ = I Connected  Gr
+
+ ∧ D r |=Q ar
+
+ . (13) Here, Connected( Gr ) requires Dr̸ = ∅ and every document node to lie on a complete support path from the query node to the semantic answer node: 
+
+∀di ∈ D r , (Q, d i) ∈ E r ∧ (di, a r ) ∈ E r . (14) Thus, all query, document, and answer nodes participate in the support structure, with no isolated nodes. The relation 
+
+Dr |=Q ar indicates that the assigned documents collectively provide sufficient evidence for the semantic answer node. The accepted subgraphs are assembled into the validated cognitive attribution map: 
+
+G∗ = {G r ∈ G | VQ
+
+ Gr
+
+ = 1 }. (15) A supported instance is discarded if G∗ = ∅. Otherwise, the validated map is encoded as the CMI target: 
+
+z∗ 
+
+> map
+
+= Enc map 
+
+ G∗. (16) Together with unsupported instances encoded as docu-ment preserving empty maps, these targets form the CMI supervision set SCMI , which contains 7.8K samples. 
+
+Step 3: Map-aligned Answer Target Construction. Since each retained document node contains its document ID, title, and textual content, the encoded map provides both textual evidence and citation identifiers for answer generation. The generator receives (Q, z ∗
+
+> map
+
+, Pans ) and constructs a map-aligned long-form answer with inline citations: 
+
+Y∗ = {(s∗ 
+
+> j
+
+, c ∗ 
+
+> j
+
+)}mj=1 = Mans (Q, z ∗
+
+> map
+
+, Pans ), (17) where s∗ 
+
+> j
+
+is a sentence-level claim and c∗ 
+
+> j
+
+is its citation set, 
+
+Pans is a prompt for map-aligned answer generation. The answer target must satisfy a one-to-one alignment between graph nodes and generated claims. Since the final answer order need not follow the graph order, correctness is defined by the existence of a permutation π such that 
+
+s∗ 
+
+> π(r)
+
+≡ a∗ 
+
+> r
+
+, c ∗ 
+
+> π(r)
+
+= αG∗ (a∗ 
+
+> r
+
+), ∀r ∈ { 1, . . . , m }. (18) Thus, every generated claim must realize exactly one vali-dated answer node, and its citation set must match the citation target specified by the corresponding answer-centered sup-port subgraph. The validator retains only answers that are correct with respect to the validated answer nodes and whose citation assignments are consistent with the graph-specified mapping. The accepted outputs form SSCR , containing 2.3K instances. The prompt of Pmap and Pans can be found in Appendix. 
+
+Learning Cognitive Attribution Map for Citation Generation 
+
+CAGE factorizes citation-grounded generation through the textual encoding of a cognitive attribution map: 
+
+pθg ,θ a (zmap , Y | Q, Dk, Pmap , Pans )= pθg (zmap | Q, Dk, Pmap ) pθa (Y | Q, z map , Pans ) .
+
+(19) Inference follows the same two-stage decomposition: 
+
+ˆzmap = arg max  
+
+> z
+
+pθg (z | Q, Dk, Pmap ),
+
+ˆY = arg max  
+
+> Y
+
+pθa (Y | Q, ˆzmap , Pans ). (20) 
+
+Cognitive Attribution Map Induction Model CMI im-plements the first stage of CAGE by learning to generate the textual encoding of a cognitive attribution map. Given a query Q and its top-k retrieved documents Dk, CMI predicts 
+
+ˆzmap = fθg (Q, Dk, Imap ). (21) Here, ˆzmap denotes the generated textual encoding of the cognitive attribution map, Imap is a task specific instruction for CMI. When well formed, it specifies an induced graph-structured cognitive attribution map ˆG. If the generated en-coding corresponds to an empty map, CMI indicates that no answer unit can be supported by the retrieved documents. Otherwise, the encoded map specifies answer-centered sup-port subgraphs following the schema in Eq. 3, including answer nodes, supporting document nodes, support edges, and descriptions. Thus, CMI learns to decide what can be supported, ab-stract supported answer units, and assign document evidence to these units before any final answer sentence is decoded. The graph-structured map remains the intermediate reason-ing object, while its textual encoding is the sequence gener-ated and optimized by the LLM. CMI is trained to generate the target map encoding z∗
+
+> map
+
+constructed by VCAS in Eq. 16. For non-empty maps, this en-coding preserves the typed nodes, support edges, and support descriptions of G∗. For empty maps, it produces a schema-preserving empty-map encoding that contains no evidence-supported answer nodes, supporting document nodes, or sup-port edges, but records why the retrieved documents fail to support the question. Let Xg = ( Q, Dk, Imap ), CMI is optimized by autore-gressive maximum likelihood: 
+
+LCMI = −ESCMI 
+
+> |z∗
+> map |
+
+X
+
+> t=1
+
+log Pθg
+
+ z∗ 
+
+> map ,t
+
+| z∗
+
+> map ,<t
+
+, X g
+
+ .
+
+(22) SCR Model Method                                                                                                                                                                                                                                                                                                                                                                                                        
+
+> ASQA(610 answerable, 338 unanswerable) ExpertQA(682 answerable, 1487 unanswerable) ELI5(207 answerable, 793 unanswerable)
+> Average
+> EM F1
+> AC F1 GR F1 GC TRUST EM F1
+> AC F1 GR F1 GC TRUST EM F1
+> AC F1 GR F1 GC TRUST
+> Qwen-2.5-0.5B ICL †20.96 47.19 0.34 22.83 21.42 38.71 0.44 20.19 13.73 33.14 0.37 15.75 19.59 PostCite †8.55 50.84 8.23 22.54 13.32 48.08 5.60 22.33 9.87 27.10 4.10 13.69 19.52 PostAttr 8.55 50.84 2.23 20.54 13.32 48.08 1.49 20.96 9.87 27.10 0.68 12.55 18.02 FRONT †42.83 39.15 45.87 42.62 18.27 24.05 34.62 25.65 13.74 17.29 27.95 19.66 29.31 T-ALIGN †50.59 61.28 52.40 54.76 18.16 63.31 35.07 38.85 13.68 60.79 22.72 32.40 42.00
+> CAGE 56.90 69.89 70.49 65.76 26.59 71.45 64.13 54.06 21.91 61.30 42.73 38.65 52.82
+> ∆6.31 ↑8.61 ↑18.09 ↑11.00 ↑5.17 ↑8.14 ↑29.06 ↑15.21 ↑8.17 ↑0.51 ↑14.78 ↑6.25 ↑10.82 ↑
+> Qwen-2.5-1.5B ICL †50.55 41.74 6.69 32.99 30.67 26.09 6.89 21.22 20.56 17.78 4.99 14.44 22.88 PostCite †16.36 52.46 15.40 28.07 22.22 48.66 16.92 29.27 15.63 26.71 5.17 15.84 24.39 PostAttr †16.36 52.46 4.45 24.42 22.22 48.66 13.15 28.01 15.63 26.71 0.62 14.32 22.25 FRONT †57.74 41.36 55.70 51.60 29.15 24.60 50.22 34.66 19.57 17.29 37.70 24.85 37.04 T-ALIGN †52.68 62.38 66.81 60.62 25.06 68.38 51.44 48.29 19.03 57.91 31.63 36.19 48.37
+> CAGE 59.27 69.81 80.67 69.91 32.05 71.68 77.34 60.35 28.52 61.47 43.14 44.38 58.21
+> ∆1.53 ↑7.43 ↑13.86 ↑9.29 ↑2.90 ↑3.30 ↑25.90 ↑11.37 ↑8.95 ↑3.56 ↑5.44 ↑8.19 ↑9.84 ↑
+> Qwen-2.5-3B ICL †37.72 51.36 51.72 46.93 35.14 49.65 42.67 42.49 29.12 46.31 34.34 36.59 42.00 PostCite †9.58 35.30 10.94 18.61 040.66 013.55 21.73 48.49 7.56 25.93 19.36 PostAttr †9.58 35.30 36.29 27.06 040.66 013.55 21.73 48.49 1.31 23.84 21.48 FRONT †55.15 44.01 62.72 53.96 25.67 29.86 44.48 33.34 18.69 25.37 37.40 27.15 38.15 T-ALIGN †55.19 63.76 78.64 65.86 20.97 65.79 60.25 49.0 22.52 64.38 42.01 42.97 52.61
+> CAGE 59.98 70.08 83.09 71.05 33.68 71.75 78.39 61.27 30.69 61.63 48.55 46.96 59.76
+> ∆4.79 ↑6.32 ↑4.45 ↑5.19 ↑0.54 ↑5.96 ↑18.14 ↑12.27 ↑1.57 ↑-2.75 ↓6.54 ↑3.99 ↑7.15 ↑
+> Qwen-2.5-7B ICL †58.94 54.34 75.46 62.91 36.33 42.28 56.09 44.9 28.27 37.13 44.13 36.51 48.11 PostCite †27.52 45.93 4.19 25.88 25.58 54.9 13.77 31.42 21.82 22.23 7.03 17.03 24.78 PostAttr †27.52 45.93 17.92 30.46 25.58 54.9 12.46 30.98 21.82 22.23 0.96 15.00 25.48 FRONT †64.58 60.08 58.27 60.98 32.41 55.56 67.35 51.77 28.27 54.14 56.61 46.34 53.03 T-ALIGN †55.04 66.22 83.57 68.28 25.57 69.16 62.7 52.48 24.30 63.79 47.02 45.04 55.27
+> CAGE 60.98 70.09 85.32 72.12 33.14 71.61 80.04 61.60 31.32 61.31 53.44 48.70 60.81
+> ∆-3.60 ↓3.87 ↑1.75 ↑3.84 ↑-3.19 ↓2.45 ↑12.69 ↑9.12 ↑3.05 ↑-2.48 ↓6.42 ↑2.36 ↑5.54 ↑
+> Qwen3.5-9B CAGE 60.21 70.08 87.87 72.72 33.74 71.70 80.95 62.13 29.83 61.55 57.79 49.72 61.52
+
+Table 1: Main results on ASQA, ExpertQA, and ELI5. Qwen3.5-9B is fixed as CMI and Qwen-2.5 models serve as SCR, except the last row, which uses separate Qwen3.5-9B models for both stages. The answerable setting and † results follow (Song et al. 2025). ∆ is the gain over the strongest baseline; Average is mean TRUST . LLaMA results are in the Appendix. where the expectation is taken over (Xg , z ∗
+
+> map
+
+) ∼ S CMI .At inference time, CMI generates the map encoding ˆzmap 
+
+and passes it to SCR. If the encoding specifies an empty map, it preserves the attribution-map schema and records why the retrieved documents fail to support the question, but contains no concrete evidence-supported answer nodes, supporting document nodes, or support edges. Otherwise, it provides the encoded support subgraphs, retained document content, and map-specified citation targets for citation reasoning. 
+
+Structured Citation Reasoning Model SCR implements the second stage of CAGE by reasoning over the encoded cognitive attribution map and realizing the underlying map as a citation-grounded long-form answer. Given the Q and 
+
+zmap , SCR predicts the final answer: 
+
+ˆY = fθa (Q, z map ,, Ians ) . (23) Here, Ians is an instruction for SCR and ˆY = {(ˆ sj , ˆcj )}mj=1 ,where ˆsj is a generated claim and ˆcj is its citation set. SCR performs three map-aligned operations: realizing an-swer nodes as sentence-level claims, aligning each claim with citation IDs specified by the support-subgraph document as-signments, and organizing the cited claims into a coherent long-form answer. Since the output order need not follow the support-subgraph order, correctness is defined by a permu-tation π satisfying 
+
+sπ(r) ≡ ar , cπ(r) = αG(ar ), ∀r ∈ { 1, . . . , m }, (24) where αG(ar ) denotes the citation identifiers of the docu-ment nodes assigned to answer node ar in G.For autoregressive training, the map-aligned answer itself serves as the target sequence, written as claim–citation units: 
+
+Y = ⊕mj=1 [sj ; cj ]. (25) Let Xa = ( Q, z map , Ians ), SCR is optimized by autoregres-sive maximum likelihood over the final answer sequence: 
+
+LSCR = −E(Xa,Y)∼S SCR 
+
+> |Y|
+
+X
+
+> t=1
+
+log Pθa (Yt | Y <t , X a) .
+
+(26) This objective trains SCR to generate cited claims aligned with the map-specified document IDs encoded in zmap .
+
+## Experiments 
+
+Experimental settings 
+
+Datasets. We evaluate our method on three representative long-form QA benchmarks for inline citation generation: ASQA (Stelmakh et al. 2022), ELI5 (Fan et al. 2019), and ExpertQA (Malaviya et al. 2024). 
+
+Baselines. We compare CAGE with six representa-tive baselines: ICL , PostCite , PostAttr (Gao et al. 2023), 
+
+FRONT (Huang et al. 2024a), T-ALIGN (Song et al. 2025), and Ground-GRPO (Sim et al. 2025), covering in-context generation, post-hoc attribution, preference learn-ing, grounded answering, and GRPO-based alignment. We exclude START (Huang et al. 2024b), LongCite (Zhang et al. 2025), and SelfCite (Chuang et al. 2025) due to differences in reproducibility, task formulation, and evaluation protocol. 
+
+LLMs. We evaluate CAGE with Qwen-2.5 , Qwen-3 
+
+series and Qwen-3.5 as SCR models. In CMI, we use Qwen3.5-9B by default. We further compare CAGE with 
+
+GPT-5.5 and Claude-Sonnet-4.6 . The implementa-tion details can be found in Appendix. 
+
+Metrics. We adopt TRUST (Song et al. 2025) as the over-all metric, which averages answer calibration EM F 1AC , re-fusal behavior F1 RG , and citation groundedness F1 CG . Here, 
+
+EM F 1AC measures correctness on answerable questions while accounting for the model’s decision to answer, F1 RG evalu-ates answering/refusal decisions over answerable and unan-swerable questions, and F1 CG measures citation precision and recall using the TRUE model following prior work (Gao et al. 2023; Song et al. 2025). The final score is: 
+
+TRUST = 13
+
+ EM F 1AC + F1 RG + F1 CG 
+
+ . (27) Here, the details of metric can be found in the Appendix. 
+
+Experimental Results and Analysis 
+
+Main Results The experimental results are displayed in Table 1 and the experimental analyses are listed as follows: (1) CAGE consistently achieves the best TRUST scores across Qwen-2.5 SCR models of different scales, indicat-ing that its effectiveness is not tied to a specific model size. Averaged across datasets, CAGE improves TRUST over the strongest baseline by 10.82%, 9.84%, 7.15%, and 5.54% with Qwen-2.5-0.5B, 1.5B, 3B, and 7B, respectively. The gains are particularly pronounced in attribution grounding: on ExpertQA, CAGE improves F1 GC by up to 29.06%. These results support our theoretical analysis that graph-specified evidence paths contract the attribution space, reducing attri-bution ambiguity. (2) Across the three TRUST dimensions, CAGE consis-tently improves answer calibration, refusal behavior, and ci-tation grounding across different model–dataset settings. The gains are especially notable in citation grounding, with F1 GC 
+
+reaching 70.5% on ASQA with Qwen-2.5-0.5B and 78.4% on ExpertQA with Qwen-2.5-3B, while maintaining strong per-formance on the other dimensions. These results suggest that the graph-guided intermediate representation organizes evi-dence before generation, enabling more accurate claim-level attribution without compromising overall response quality. (3) Finally, Table 1 shows that scaling the SCR model yields only marginal gains once a high-quality graph is avail-able. Qwen3.5-9B achieves the highest average TRUST score of 61.52%, but improves over the Qwen-2.5-7B SCR model by only 0.71%. This suggests that reliable support graphs, rather than model scaling, are the primary driver of evidence alignment and attribution quality. 
+
+Effect of Model Scale in CAGE As shown in Figure 3, scaling the SCR model improves TRUST, but increasing map induction capacity yields larger gains. With CAGE-9B as the induction model, scaling the SCR model from 1.5B to 7B improves TRUST 4.32%. In contrast, fixing the 1.5B 3B 7B    
+
+> Structured Citation Reasoning Model
+> 30.0
+> 32.5
+> 35.0
+> 37.5
+> 40.0
+> 42.5
+> 45.0
+> 47.5
+> 50.0
+> TRUST
+> Cognitive Map Induction Model
+> CAGE-9B CAGE-1.5B CAGE-3B CAGE-7B
+> 44.38
+> 48.70
+> 33.07
+> 35.48
+> 38.89
+> 42.15
+> 39.77
+> 44.04
+> +11.31  +4.32
+
+Figure 3: Effect of model scale on TRUST performance. CAGE-9B uses Qwen3.5-9B in CMI stage, while CAGE-1.5B/3B/7B use Qwen-2.5 models of the corresponding sizes for map induction. The SCR model is varied from 1.5B to 7B, showing that scaling map induction brings larger gains than merely scaling SCR model. SCR model and replacing the same-size induction model with CAGE-9B brings larger gains: 33.07% → 44.38% on 1.5B (+11.31%), 41.75% → 46.96% on 3B (+5.21%), and 44.04% → 48.70% on 7B (+4.66%). These results indicate that TRUST is more constrained by map induction quality than by structured citation reasoning capacity, since stronger induction better establishes evidence–answer alignments and contracts the attribution space before generation. 
+
+Ablation Study We conduct ablation experiments for the CMI stage, as reported in Figure 4. Specifically, w/o graph 
+
+removes the support graph while retaining the documents mentioned in the subgraphs, and w/o desc removes the textual descriptions associated in subgraph. (1) In the w/o graph setting, TRUST drops substantially despite retaining the same documents; for example, on ASQA with Qwen-2.5-1.5B, it decreases from 69.91% to 52.60%. This shows that CAGE benefits from explicit graph structure rather than document filtering alone. Without the graph, the generator must infer claim–document assignments from an unstructured document set, whereas the support graph explic-itly constrains these assignments, supporting our attribution-space contraction analysis. (2) In the w/o desc setting, performance also declines, but less severely than removing the graph structure; for example, TRUST on ASQA with Qwen-2.5-1.5B drops from 69.91% to 65.54%. This suggests that textual descriptions help the generator interpret the semantic role of each support unit, while the main attribution-space contraction still comes from the graph structure. 
+
+Analysis of CMI under Different SCR Backbones We analyze CAGE from three perspectives: its effectiveness over strong end-to-end baselines, the plug-and-play gener-ality of CMI across SCR backbones, and its ability to reduce evidence-boundary overrun, as reported in Tables 2 and 3. (1) CAGE outperforms strong end-to-end baselines, high-lighting the benefit of attribution-space contraction. On ASQA, CAGE with Claude-4.6 achieves 76.62% TRUST, outperforming end-to-end Claude-4.6 by 7.21%. With Qwen3-4B, it also exceeds Ground-GRPO by 6.94%. These 1.5B 3B 7B 1.5B 3B 7B            
+
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> 60
+> 70
+> 80
+> TRUST
+> ASQA ELI5
+> -17.31 -17.15
+> -13.79
+> -10.82
+> -27.71
+> -21.89
+> -4.37 -3.23 -2.46
+> -2.55
+> -1.27 -1.87
+> 69.91 71.05 72.12
+> 44.38 46.96 48.70
+> w/o graph w/o desc CAGE
+
+Figure 4: Ablation study. We fix the structured citation rea-soning model size (1.5B/3B/7B) and ablate map induction model, including “ w/o graph ” (no structure, documents re-tained) and “ w/o desc ” (no graph descriptions). 
+
+Method EM F1 AC F1 RG F1 CG TRUST 
+
+ASQA Ground-GRPO 4B 47.22 62.88 81.94 64.01 CMI 9B +SCR Qwen3-4B 59.50 66.54 86.82 70.95 6.94 ↑
+
+GPT-5.5 66.18 61.54 70.69 66.14 CMI 9B +SCR GPT-5.5 61.41 70.09 92.32 74.61 8.47 ↑
+
+Claude-4.6 70.46 64.56 73.22 69.41 CMI 9B +SCR Claude-4.6 65.29 70.09 94.48 76.62 7.21 ↑
+
+ExpertQA Ground-GRPO 4B 20.56 67.14 59.37 49.02 CMI 9B +SCR Qwen3-4B 36.27 62.22 78.81 62.41 13 .39 ↑
+
+GPT-5.5 46.74 54.46 49.78 50.33 CMI 9B +SCR GPT-5.5 32.88 71.74 89.15 64.59 14 .26 ↑
+
+Claude-4.6 47.66 64.54 53.80 55.33 CMI 9B +SCR Claude-4.6 36.70 71.74 90.86 66.43 11 .10 ↑
+
+Table 2: Backbone capability and proprietary model com-parison. 9B denotes Qwen3.5-9B. We additionally finetune Qwen3-4B for the SCR stage to enable a direct comparison with Ground-GRPO. gains indicate that stronger backbones or preference opti-mization alone cannot fully resolve citation attribution. By inducing a Cognitive Map before citation reasoning, CAGE narrows the claim–document assignment space and reduces unsupported attributions. (2) CMI offers practical plug-and-play utility across het-erogeneous SCR backbones. Its consistent gains with both Claude and GPT models show that CMI can be directly in-tegrated into proprietary LLM systems without additional training. For example, on ExpertQA, CAGE with Claude-4.6 improves TRUST from 55.33% to 66.43%. CAGE therefore provides a reusable attribution service that improves gen-erators across model families and scales without generator-specific retraining or architectural modifications. (3) CAGE substantially reduces evidence-boundary over-run. Following the atomic-fact decomposition paradigm of FActScore (Min et al. 2023), we use GPT-5.5 to decompose each valid long-form answer into atomic facts and apply TRUE to assess their support against the top-5 retrieved doc-
+
+Method A-EBO ↓ S-EBO ↓ R-EBO ↓
+
+GPT-5.5 38.00 34.33 62.71 Claude-4.6 40.85 36.90 83.48 CMI 9B +SCR Qwen-7B 14.69 13.11 39.28 CMI 9B +SCR GPT-5.5 7.21 7.30 15.49 
+
+CMI 9B +SCR Claude-4.6 5.77 5.58 18.94 
+
+Table 3: Evidence-boundary overrun on ASQA. A-EBO (Atomic-EBO) measures the proportion of unsupported atomic facts, S-EBO (EBO-Severity) their mean per-answer proportion, and R-EBO (Response-EBO) the proportion of answers containing any unsupported fact. Lower is better. uments considered jointly. Unsupported facts are treated as evidence-boundary overruns. We report their overall pro-portion (Atomic-EBO), mean per-answer proportion (EBO-Severity), and occurrence rate across answers (Response-EBO), with formal definitions provided in the Appendix. As shown in Table 3, direct GPT-5.5 and Claude-4.6 yield Atomic-EBO scores of 38.00% and 40.85%, which fall to 7.21% and 5.77% after incorporating CMI with the corre-sponding SCR backbones. Similar reductions across EBO-Severity and Response-EBO show that stronger generation alone cannot ensure evidence-bounded answers. By con-straining answer units to supporting evidence through a Cog-nitive Map, CAGE substantially reduces overrun at both the fact and answer levels. 
+
+## Related Work 
+
+Existing methods for inline citation generation can be catego-rized into parameter-updating and prompt-based approaches. 
+
+Parameter-updating methods train models on citation-oriented supervision. Early work constructs statement– document attribution data with NLI models or advanced LLMs and improves citation quality through supervised fine-tuning or preference optimization (Ye et al. 2024; Huang et al. 2024a; Li et al. 2024). Later studies explore self-improving data synthesis (Huang et al. 2024b), coarse-to-fine construc-tion for long-context generation (Zhang et al. 2025), context-ablation-based preference optimization (Chuang et al. 2025), and grounding from parametric or external knowledge (Khal-ifa et al. 2024; Shen et al. 2025). 
+
+Prompt-based methods keep the backbone LLM frozen and use prompting or decomposition to elicit citation be-havior. ALCE (Gao et al. 2023) prompts LLMs with re-trieved documents, while later work adopts chain-of-thought, search-based expansion, or query/document selection (Ji et al. 2024; Li and Ng 2025; Hirsch et al. 2025). Attribute First, then Generate (Slobodkin et al. 2024) organizes se-lected evidence spans into sentence-level plans before gen-eration. In contrast, CAGE models attribution as an ex-plicit intermediate reasoning structure by inducing validated answer–document support graphs, enabling generation to fol-low structured attribution constraints rather than evidence planning alone. Conclusion and Limitations 
+
+We propose CAGE , a two-stage framework that introduces a cognitive attribution map for citation-grounded long-form generation. By modeling answer–evidence attribution before generation, CAGE yields more reliable claim-level citations, clearer evidential boundaries, and less attribution ambiguity. Experiments on ASQA, ELI5, and ExpertQA show consis-tent gains across diverse open-source and proprietary LLMs. As a reusable attribution service, CAGE improves diverse generation backbones without generator-specific retraining or architectural modifications. These results demonstrate both the effectiveness and practical deployability of explicit attribution modeling across model families and scales. The two-stage design inevitably introduces error propaga-tion: the map induction module fails to preserve supporting evidence for 15.42% of instances on average, limiting down-stream recovery. Nevertheless, CAGE consistently improves citation-grounded generation across datasets and backbones, while making attribution errors more identifiable and mea-surable. Future work will focus on improving attribution map induction and reducing cross-stage error propagation. 
+
+## References 
+
+Bohnet, B.; Tran, V. Q.; Verga, P.; Aharoni, R.; Andor, D.; Soares, L. B.; Ciaramita, M.; Eisenstein, J.; Ganchev, K.; Herzig, J.; et al. 2022. Attributed question answering: Eval-uation and modeling for attributed large language models. 
+
+arXiv preprint arXiv:2212.08037 .Chen, J.; Kim, G.; Sriram, A.; Durrett, G.; and Choi, E. 2024. Complex Claim Verification with Evidence Retrieved in the Wild. In Proceedings of the 2024 Conference of the North American Chapter of the Association for Computa-tional Linguistics: Human Language Technologies (Volume 1: Long Papers) . Association for Computational Linguistics. Cheng, X.; Zhang, Z.; Wang, J.; Fang, L.; He, C.; Guan, Q.; Pan, S.; and Luo, W. 2026. GraphRAG-induced dual knowledge structure graphs for personalized learning path recommendation. In Proceedings of the AAAI Conference on Artificial Intelligence , volume 40, 14610–14620. Chuang, Y.-S.; Cohen-Wang, B.; Shen, Z.; Wu, Z.; Xu, H.; Lin, X. V.; Glass, J. R.; Li, S.-W.; and Yih, W.-T. 2025. SelfCite: Self-Supervised Alignment for Context Attribution in Large Language Models. In International Conference on Machine Learning , 10839–10858. PMLR. Fan, A.; Jernite, Y.; Perez, E.; Grangier, D.; Weston, J.; and Auli, M. 2019. ELI5: Long Form Question Answering. In 
+
+Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , 3558–3567. Florence, Italy: Association for Computational Linguistics. Farquhar, S.; Kossen, J.; Kuhn, L.; and Gal, Y. 2024. Detect-ing hallucinations in large language models using semantic entropy. Nature , 630(8017): 625–630. Gao, L.; Dai, Z.; Pasupat, P.; Chen, A.; Chaganty, A. T.; Fan, Y.; Zhao, V.; Lao, N.; Lee, H.; Juan, D.-C.; and Guu, K. 2022. RARR: Researching and Revising What Language Models Say, Using Language Models. ArXiv , abs/2210.08726. Gao, T.; Yen, H.; Yu, J.; and Chen, D. 2023. Enabling Large Language Models to Generate Text with Citations. In Bouamor, H.; Pino, J.; and Bali, K., eds., Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing , 6465–6488. Association for Compu-tational Linguistics. Hirsch, E.; Slobodkin, A.; Wan, D.; Stengel-Eskin, E.; Bansal, M.; and Dagan, I. 2025. Laquer: Localized attribu-tion queries in content-grounded generation. In Proceedings of the 63rd Annual Meeting of the Association for Computa-tional Linguistics (Volume 1: Long Papers) , 15355–15370. Huang, L.; Feng, X.; Ma, W.; Gu, Y.; Zhong, W.; Feng, X.; Yu, W.; Peng, W.; Tang, D.; Tu, D.; et al. 2024a. Learn-ing Fine-Grained Grounded Citations for Attributed Large Language Models. In Findings of the Association for Com-putational Linguistics ACL 2024 , 14095–14113. Huang, L.; Feng, X.; Ma, W.; Zhao, L.; Fan, Y.; Zhong, W.; Xu, D.; Yang, Q.; Liu, H.; and Qin, B. 2024b. Advancing large language model attribution through self-improving. In 
+
+Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing , 3822–3836. Ji, B.; Liu, H.; Du, M.; and Ng, S.-K. 2024. Chain-of-Thought Improves Text Generation with Citations in Large Language Models. Proceedings of the AAAI Conference on Artificial Intelligence , 38(16): 18345–18353. Khalifa, M.; Wadden, D.; Strubell, E.; Lee, H.; Wang, L.; Beltagy, I.; and Peng, H. 2024. Source-Aware Training En-ables Knowledge Attribution in Language Models. In First Conference on Language Modeling .Li, D.; Sun, Z.; Hu, B.; Liu, Z.; Hu, X.; Liu, X.; and Zhang, M. 2024. Improving Attributed Text Generation of Large Lan-guage Models via Preference Learning. arXiv:2403.18381. Li, J.; and Ng, H. T. 2025. Think&Cite: Improving attributed text generation with self-guided tree search and progress reward modeling. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , 9928–9942. Luo, J.; Zhang, W.; Yuan, Y.; Zhao, Y.; Yang, J.; Gu, Y.; Wu, B.; Chen, B.; Qiao, Z.; Long, Q.; et al. 2025. Large language model agent: A survey on methodology, applications and challenges. arXiv preprint arXiv:2503.21460 .Malaviya, C.; Lee, S.; Chen, S.; Sieber, E.; Yatskar, M.; and Roth, D. 2024. ExpertQA: Expert-Curated Questions and Attributed Answers. In Proceedings of the 2024 Confer-ence of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) , 3025–3045. Mexico City, Mexico: Association for Computational Linguistics. Mark, S.; Moran, R.; Parr, T.; Kennerley, S. W.; and Behrens, T. E. 2020. Transferring structural knowledge across cogni-tive maps in humans and models. Nature communications ,11(1): 4783. Min, S.; Krishna, K.; Lyu, X.; Lewis, M.; Yih, W.-t.; Koh, P.; Iyyer, M.; Zettlemoyer, L.; and Hajishirzi, H. 2023. FActScore: Fine-grained Atomic Evaluation of Factual Pre-cision in Long Form Text Generation. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing , 12076–12100. Association for Computational Linguistics. Pan, J. Z.; Razniewski, S.; Kalo, J.-C.; Singhania, S.; Chen, J.; Dietze, S.; Jabeen, H.; Omeliyanenko, J.; Zhang, W.; Lis-sandrini, M.; et al. 2023. Large Language Models and Knowl-edge Graphs: Opportunities and Challenges. Transactions on Graph Data and Knowledge .Pan, S.; Luo, L.; Wang, Y.; Chen, C.; Wang, J.; and Wu, X. 2024. Unifying Large Language Models and Knowledge Graphs: A Roadmap. IEEE Transactions on Knowledge and Data Engineering , 36(7): 3580–3599. Qian, P.; Wang, S.; Wang, X.; Chen, Y.; Xu, W.; Yu, Q.; Lin, S.; Zhang, S.; You, J.; and Wei, X. 2026. Relevant is not warranted: Evidence-force calibration for cited RAG. arXiv preprint arXiv:2605.28044 .Shen, J.; Zhou, T.; Chen, Y.; Qiu, D.; Liu, S.; Liu, K.; and Zhao, J. 2025. Transparentize the internal and external knowledge utilization in LLMs with trustworthy citation. In 
+
+Findings of the Association for Computational Linguistics: ACL 2025 , 17858–17877. Sim, S. H.; Pala, T. D.; Toh, V.; Chieu, H. L.; Zadeh, A.; Li, C.; Majumder, N.; and Poria, S. 2025. Lessons from Training Grounded LLMs with Verifiable Rewards. arXiv:2506.15522. Slobodkin, A.; Hirsch, E.; Cattan, A.; Schuster, T.; and Dagan, I. 2024. Attribute first, then generate: Locally-attributable grounded text generation. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , 3309–3344. Song, M.; Sim, S. H.; Bhardwaj, R.; Chieu, H. L.; Majumder, N.; and Poria, S. 2025. Measuring and Enhancing Trustwor-thiness of LLMs in RAG through Grounded Attributions and Learning to Refuse. In The Thirteenth International Confer-ence on Learning Representations .Stelmakh, I.; Luan, Y.; Dhingra, B.; and Chang, M.-W. 2022. ASQA: Factoid Questions Meet Long-Form Answers. In 
+
+Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing , 8273–8288. Abu Dhabi, United Arab Emirates: Association for Computational Lin-guistics. Su, X.; Li, R.; Li, X.; and Yan, Z. 2025. EFSP-TE: End-to-End Frame-Semantic Parsing with Table Encoder. Tsinghua Science and Technology , 30(4): 1474–1495. Sun, Z.; Zang, X.; Zheng, K.; Xu, J.; Zhang, X.; Yu, W.; Song, Y.; and Li, H. 2025. Redeep: Detecting hallucina-tion in retrieval-augmented generation via mechanistic inter-pretability. In International Conference on Learning Repre-sentations , volume 2025, 50250–50279. Tan, L.; Qiu, Y.; Qiu, L.; Lin, S.; Li, J.; Liao, J.; Zhang, Y.; Zou, W.; and Huang, R. 2025. The medial and lateral orbitofrontal cortex jointly represent the cognitive map of task space. Communications Biology , 8(1): 163. Wang, J.; Sun, K.; Luo, L.; Wei, W.; Hu, Y.; Liew, A. W.-C.; Pan, S.; and Yin, B. 2024. Large language models-guided dynamic adaptation for temporal knowledge graph reason-ing. In Proceedings of the 38th International Conference on Neural Information Processing Systems , 8384–8410. Wang, J.; Wang, B.; Qiu, M.; Pan, S.; Xiong, B.; Liu, H.; Luo, L.; Liu, T.; Hu, Y.; Yin, B.; et al. 2023. A survey on temporal knowledge graph completion: Taxonomy, progress, and prospects. arXiv preprint arXiv:2308.02457 .Whittington, J. C.; McCaffary, D.; Bakermans, J. J.; and Behrens, T. E. 2022. How to build a cognitive map. Nature neuroscience , 25(10): 1257–1272. Xu, H.; Zhao, Y.; Zhang, J.; Wang, Z.; and Li, R. 2025. LOG: A Local-to-Global Optimization Approach for Retrieval-based Explainable Multi-Hop Question Answering. In Pro-ceedings of the 31st International Conference on Computa-tional Linguistics , 9085–9095. Yan, Z.; Wang, J.; Chen, J.; Li, X.; Liang, J.; Li, R.; and Pan, J. Z. 2025. Atomic fact decomposition helps attributed question answering. IEEE Transactions on Knowledge and Data Engineering .Ye, X.; Sun, R.; Arik, S.; and Pfister, T. 2024. Effective large language model adaptation for improved grounding and ci-tation generation. In Proceedings of the 2024 Conference of the North American Chapter of the Association for Computa-tional Linguistics: Human Language Technologies (Volume 1: Long Papers) , 6237–6251. Zhang, J.; Bai, Y.; Lv, X.; Gu, W.; Liu, D.; Zou, M.; Cao, S.; Hou, L.; Dong, Y.; Feng, L.; et al. 2025. Longcite: Enabling llms to generate fine-grained citations in long-context qa. In 
+
+Findings of the Association for Computational Linguistics: ACL 2025 , 5098–5122. Zhang, J.; Lv, X.; Feng, L.; Hou, L.; and Li, J. 2026. Chain-ing the Evidence: Robust Reinforcement Learning for Deep Search Agents with Citation-Aware Rubric Rewards. arXiv preprint arXiv:2601.06021 .Zhuo, X.; Wang, J.; Wu, G.; Pan, S.; and Wu, X. 2025. Ef-fective instruction parsing plugin for complex logical query answering on knowledge graphs. In Proceedings of the ACM on Web Conference 2025 , 4780–4792. Implementation details. 
+
+For the Valid Cognitive Attribution Synthesis stage, we use GPT-5.5 as both the validator and generator. We imple-ment the training of the Cognitive Attribution Map Induc-tion Model and Structured Citation Reasoning Model using LLaMA-Factory. Both components are optimized via full-parameter supervised fine-tuning with DeepSpeed ZeRO-3 and BF16 precision on 4 NVIDIA A800-80G GPUs. The graph induction model uses a per-device batch size of 6, while the citation reasoning model uses a per-device batch size of 8 with gradient accumulation of 2. We train both models for three epochs using AdamW with a learning rate of 1 × 10 −5, cosine learning-rate scheduling, and a warmup ratio of 0.1. The random seed is set to 42, and weight decay is set to zero for all experiments. 
+
+## More Experimental results 
+
+Experimental results on LLaMA Families 
+
+Table 4 demonstrates that CAGE exhibits strong generaliza-tion across the LLaMA family. Despite substantial differ-ences in the capacity of the SCR models, CAGE consistently achieves the highest overall Trust performance on ASQA, ExpertQA, and ELI5, indicating that its effectiveness is not restricted to a particular model scale. Specifically, CAGE ob-tains average Trust scores of 58.60%, 54.24%, 60.90%, and 59.36% with the 2–7B, 3.2–1B, 3.2–3B, and 3–8B models, respectively, outperforming the strongest baselines by 4.04%, 4.83%, 5.63%, and 3.04%. Moreover, CAGE achieves the best Trust score across all 12 model–dataset combinations. Its Trust scores remain consistently high on ASQA, ranging from 69.16 to 72.68, while reaching 50.09%–62.02% on the more challenging ExpertQA dataset and 43.47%–48.00% on ELI5. The consistent improvements across both compact and relatively large LLaMA models suggest that the effective-ness of CAGE mainly arises from its structured attribution mechanism rather than increased model capacity. Particu-larly substantial gains are observed on difficult settings, such as ASQA with the 3.2–1B model and ExpertQA with the 3.2–3B model, where CAGE improves Trust by 10.29% and 13.02%, respectively. Although CAGE does not achieve the best score on every individual metric, it consistently provides the strongest aggregate Trust performance. This result indi-cates that the cognitive attribution map helps balance answer correctness, response grounding, and citation quality by or-ganizing claim-specific evidence before generation, thereby improving the robustness and cross-scale generalization of citation-grounded generation on LLaMA models. 
+
+Evidence-Boundary Overrun Evaluation 
+
+We evaluate evidence-boundary overrun (EBO) using the same 948 ASQA questions and the same top-5 retrieved documents for all methods. The evaluated outputs include Full CAGE, previously generated direct-answerer outputs, and newly generated outputs from the GPT-5.5 and Claude Sonnet 4.6 APIs. We use GPT-5.5 to decompose each long-form answer into atomic facts and apply the same TRUE model used for citation-groundedness evaluation to deter-mine whether each fact is supported by the top-5 documents considered jointly. Refusal and empty responses are excluded from the EBO calculation. Let N denote the number of valid responses, Li the number of atomic facts in response i, pi,ℓ its ℓ-th atomic fact, and 
+
+Di, 5 the corresponding top-5 retrieved documents. We define 
+
+Entail( pi,ℓ , D i, 5) ∈ { 0, 1}, where a value of 1 indicates that the atomic fact is supported by the document set. 
+
+Atomic-EBO. Atomic-EBO measures the proportion of atomic facts across all valid responses that are unsupported by the top-5 documents: 
+
+Atomic -EBO = 1 −
+
+PNi=1 
+
+PLi 
+
+> ℓ=1
+
+Entail( pi,ℓ , D i, 5)
+
+PNi=1 Li
+
+. (28) This metric is a fact-level micro-average. Responses contain-ing more atomic facts therefore receive greater weight. 
+
+EBO-Severity. EBO-Severity first computes the propor-tion of unsupported atomic facts within each valid response and then averages it across responses: 
+
+EBO -Severity = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+1 − 1
+
+LiLiX
+
+> ℓ=1
+
+Entail( pi,ℓ , D i, 5)
+
+!
+
+.
+
+(29) Each response receives equal weight, so this metric captures the average extent to which an answer exceeds its evidence boundary. 
+
+Response-EBO. Response-EBO measures the proportion of valid responses containing at least one unsupported atomic fact: 
+
+Response -EBO = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+I [Ui > 0] ,Ui =
+
+> Li
+
+X
+
+> ℓ=1
+
+(1 − Entail( pi,ℓ , D i, 5)) ,
+
+(30) This metric captures the occurrence of evidence-boundary overrun at the response level, regardless of the number of unsupported facts within the response. All three metrics are reported as percentages, and lower values indicate better ev-idence alignment. 
+
+Complete results of the Influence of CMI model across different SCR Backbones 
+
+Table 5 demonstrates that CAGE can effectively enhance diverse downstream LLMs, including both open-source and proprietary models, without requiring modifications to the underlying generators. Across ASQA, ELI5, and Ex-pertQA, CAGE consistently outperforms end-to-end base-lines, achieving the best TRUST scores of 76.62% with Claude-4.6 on ASQA and 66.43% with Claude-4.6 on Ex-pertQA. Notably, when coupled with GPT-5.5 and Claude-4.6, CAGE improves TRUST by 8.47 and 11.10 points on ASQA, and by 14.26 and 11.10 points on ExpertQA, respec-tively. These gains are primarily attributed to stronger citation Size Type ASQA(610 answerable, 338 unanswerable) EXPERTQA(682 answerable, 1487 unanswerable) ELI5(207 answerable, 793 unanswerable) Average Truthfulness AG Trust Truthfulness AG Trust Truthfulness AG Trust F1 AC F1 GR F1 GC F1 AC F1 GR F1 GC F1 AC F1 GR F1 GC 
+
+2-7b ICL 0.00 26.28 0.00 8.76 0.00 41.01 9.25 16.84 0.50 46.71 5.04 15.57 13.72 PostCite 0.07 35.23 0.00 11.77 4.85 44.27 5.23 18.12 1.86 44.98 13.80 17.29 15.73 PostAttr 0.07 35.23 0.00 11.77 4.85 44.27 2.26 17.13 1.86 44.98 0.00 15.61 14.84 FRONT 60.47 39.15 68.86 56.16 9.33 23.92 74.75 36.00 21.66 17.15 52.72 30.51 40.89 T-ALIGN 52.48 66.12 83.94 67.51 25.03 67.91 62.46 51.8 22.54 63.27 47.35 44.39 54.57 
+
+CAGE 58.59 69.62 83.34 70.52 31.25 71.24 75.19 59.22 27.61 61.44 49.15 46.07 58.60 
+
+∆ 1.88 ↓ 3.50 ↑ 0.60 ↓ 3.01 ↑ 6.22 ↑ 3.33 ↑ 0.44 ↑ 7.42 ↑ 5.07 ↑ 1.83 ↓ 3.57 ↓ 1.68 ↑ 4.04 ↑
+
+3.2-1b ICL 35.95 50.94 9.96 32.28 21.55 32.83 9.04 21.14 12.87 27.10 5.23 15.07 22.83 PostCite 0.59 50.22 0.24 17.02 5.48 49.1 2.67 19.08 2.04 50.88 1.02 17.98 18.03 PostAttr 0.48 48.42 0.00 16.30 8.24 47.72 1.5 19.15 2.04 50.88 0.07 17.66 17.70 FRONT 48.22 54.48 48.29 50.33 20.83 29.26 37.45 29.18 16.11 20.76 30.19 22.35 33.95 T-ALIGN 38.64 58.61 79.35 58.87 20.32 64.87 62.1 49.1 13.20 59.35 48.21 40.25 49.41 
+
+CAGE 60.20 70.07 77.19 69.16 31.17 71.85 74.26 50.09 27.69 61.46 41.25 43.47 54.24 
+
+∆ 11.98 ↑ 11.46 ↑ 2.16 ↓ 10.29 ↑ 10.34 ↑ 6.98 ↑ 12.16 ↑ 0.99 ↑ 14.49 ↑ 2.11 ↑ 6.96 ↓ 3.22 ↑ 4.83 ↑
+
+3.2-3b ICL 2.04 27.98 53.95 27.99 33.5 51.21 38.37 41.03 18.55 55.56 30.70 34.94 34.65 PostCite 31.03 56.59 2.29 36.87 25.68 38.11 5.29 23.03 18.12 25.14 4.44 15.90 25.27 PostAttr 29.76 56.71 4.69 30.39 25.45 38.58 3.4 22.48 18.48 25.14 0.53 14.72 22.53 FRONT 63.19 49.45 57.46 56.70 27.24 43.34 50.91 40.5 19.95 32.21 41.97 31.38 42.86 T-ALIGN 59.82 66.38 84.21 70.14 11.72 56.93 78.35 49.0 18.33 62.79 55.87 45.66 54.93 
+
+CAGE 60.45 69.95 87.65 72.68 33.60 71.61 80.83 62.02 30.70 61.39 51.92 48.00 60.90 
+
+∆ 2.74 ↓ 3.57 ↑ 3.44 ↑ 2.54 ↑ 6.36 ↑ 14.68 ↑ 2.48 ↑ 13.02 ↑ 12.37 ↑ 1.40 ↓ 3.95 ↓ 2.34 ↑ 5.97 ↑
+
+3-8b ICL 3.01 28.58 86.50 39.36 2.82 42.5 69.46 38.26 0.00 44.23 0.00 14.74 30.79 PostCite 32.98 53.31 28.01 38.10 14.06 50.08 7.09 23.74 20.80 45.88 8.06 24.91 28.92 PostAttr 32.98 53.31 5.95 30.75 14.06 50.08 6.29 23.47 20.80 45.88 1.25 22.64 25.62 FRONT 62.25 41.62 66.14 56.67 30.34 24.92 56.7 37.32 18.99 17.85 44.69 27.18 40.39 T-ALIGN 53.94 65.49 88.26 69.23 27.36 67.07 70.11 54.85 20.81 63.57 50.24 44.87 56.32 
+
+CAGE 59.39 69.52 85.78 71.56 30.89 71.60 76.48 59.66 27.45 61.38 51.77 46.86 59.36 
+
+∆ 2.86 ↓ 4.03 ↑ 2.48 ↓ 2.33 ↑ 3.53 ↑ 4.53 ↑ 6.37 ↑ 4.81 ↑ 6.64 ↑ 2.19 ↓ 1.53 ↑ 1.99 ↑ 3.04 ↑
+
+Table 4: Main results on ASQA, ExpertQA, and ELI5 under the TRUST evaluation framework. Qwen3.5-9B is used as the CMI models, while LLaMA families models of different scales are used as SCR models. ∆ denotes the improvement of CAGE over the strongest baseline. grounding, where CAGE achieves F1 CG scores of 94.48% on ASQA and 90.86% on ExpertQA with Claude-4.6. Unlike methods that rely on generator-specific optimization, CAGE separates evidence attribution from final response genera-tion, allowing existing LLMs to leverage explicit support structures through a lightweight integration process. These results demonstrate that the induced attribution map provides a model-agnostic evidence alignment interface, enabling het-erogeneous LLM backbones to produce more faithful and better-attributed responses while preserving their original generation capabilities. This property is particularly valu-able for real-world applications built on proprietary LLM APIs, where model parameters and training pipelines are inaccessible. 
+
+Experimental results with same LLMs on CMI and SCR stage 
+
+Tables 6 and 7 demonstrate that CAGE remains effective even when the Cognitive Map Induction Model and Structured Ci-tation Reasoning Model share the same backbone, indicating that the performance gains originate from explicit attribu-tion modeling rather than backbone heterogeneity. Across different scales of Qwen and LLaMA models, CAGE and CAGE DPO consistently improve TRUST over existing base-lines, showing that the induced attribution graph provides additional reasoning capability beyond the original language models. For Qwen models, CAGE achieves the highest TRUST scores of 65.05%, 56.38%, and 41.75% on ASQA, Ex-pertQA, and ELI5 with the 1.5B, 3B, and 7B settings, respec-tively, while CAGE DPO further improves TRUST to 62.19%, 68.58%, and 47.58% across different scales. Similar trends are observed on LLaMA models, where CAGE obtains con-sistent gains, achieving TRUST scores of 63.35%, 66.49%, and 72.41% on ASQA with different model scales, and reach-ing 60.67% on ExpertQA with LLaMA-8B. Moreover, im-provements are particularly evident in citation grounding, with CAGE variants achieving substantial gains in F1 GC ,demonstrating stronger evidence alignment. These results indicate that CAGE does not rely on ad-ditional model capacity or complementary backbones. In-stead, the intermediate attribution graph explicitly organizes answer units and supporting evidence before generation, re-ducing attribution ambiguity and constraining citation selec-tion. Therefore, even a single backbone model can benefit from the structured attribution process, validating the effec-tiveness and generality of CAGE as a model-independent framework for citation-grounded generation. Experimental results when proprietary LLM as CMI model 
+
+Table 8 investigates the impact of different CMI models on CAGE performance while keeping the SCR models un-changed. The results show that stronger CMI models consis-tently improve the quality of induced attribution maps, lead-ing to better citation-grounded generation across different SCR backbones. In particular, replacing GPT-5-mini with GPT-5.5 as the CMI model improves the average TRUST score across all datasets and SCR models, demonstrating that the quality of intermediate attribution structures directly affects downstream generation. Quantitatively, GPT-5.5-based CAGE achieves substan-tial improvements over GPT-5-mini-based CAGE, especially on ASQA, where TRUST increases from 60.23–63.68% to 67.75–70.88%. Similar improvements are observed on ELI5 and ExpertQA, with notable gains in F1 GC , indicating that stronger CMI models mainly enhance evidence attribution and citation grounding rather than only answer generation. For example, with Qwen2.5-7B as the SCR model, GPT-5.5 improves F1 GC from 72.48% to 82.66% on ASQA and from 47.69% to 64.08% on ExpertQA. These results indicate that the CMI stage serves as a critical attribution bottleneck in CAGE. A stronger map induction model provides more accurate answer–evidence alignment, which enables the SCR model to generate better-supported claims regardless of its backbone architecture. Therefore, CAGE benefits not only from stronger generators but also from improving the quality of the intermediate cognitive attribution map. 
+
+## Metrics. 
+
+We use TRUST (Song et al. 2025) as the overall metric, which consists of two dimensions: truthfulness and attribu-tion groundedness (Att-Grd.). Truthfulness includes answer calibration EM F 1AC and refusal scoring F1 RG , while Att-Grd. is computed using the TRUE 1 model. Following Song et al. , the test set is divided into answerable questions Ag and unanswerable questions Aug . For EM F 1AC , it is formalized as: 
+
+EM F1 AC = 2EM α 
+
+> AC
+
+· EM β
+
+> AC
+
+EM α 
+
+> AC
+
++ EM β
+
+> AC
+
+, (31) where 
+
+EM α 
+
+> AC
+
+= 1
+
+|Ar |
+
+X 
+
+> qi∈Ag∩Ar
+
+EM qi
+
+> AC
+
+,
+
+EM β 
+
+> AC
+
+= 1
+
+|Ag |
+
+X 
+
+> qi∈Ag∩Ar
+
+EM qi
+
+> AC
+
+,
+
+(32) and Ar denotes the set of answered questions. The refusal score F1 RG is calculated as F1 RG = 12 (F1 ref + F1 ans ) ,
+
+where F1 ref = 2P ref ·Rref   
+
+> Pref +R ref
+
+, F1 ans = 2P ans ·Rans  
+
+> Pans +R ans
+
+, and 
+
+Pref = |¬ Ar ∩ ¬ Ag ||¬ Ar | , R ref = |¬ Ar ∩ ¬ Ag ||¬ Ag | ,Pans = |Ar ∩ Ag ||Ar | , R ans = |Ar ∩ Ag ||Ag | .
+
+(33) 
+
+> 1
+
+https://huggingface.co/google/t5_xxl_true_nli_mixture Method G A EM F1  
+
+> AC
+
+F1 RG F1 CG TRUST 
+
+ASQA Ground-GRPO End-to-end 47.22 62.88 81.94 64.01 GPT-5.5 End-to-end 66.18 61.54 70.69 66.14 Claude-4.6 End-to-end 70.46 64.56 73.22 69.41 CAGE 9B 4B 59.50 66.54 86.82 70.95 CAGE 9B 4B-Inst. 61.07 68.34 88.10 72.50 CAGE 9B 4B-Think. 61.03 67.07 86.07 71.39 CAGE 9B GPT-5.5 61.41 70.09 92.32 74.61 
+
+CAGE 9B Claude-4.6 65.29 70.09 94.48 76.62 
+
+ELI5 Ground-GRPO End-to-end 20.32 61.85 51.71 44.62 GPT-5.5 End-to-end 42.76 45.81 40.44 43.00 Claude-4.6 End-to-end 37.33 61.03 46.91 48.42 CAGE 9B 4B 26.98 61.11 57.86 48.65 CAGE 9B 4B-Inst. 30.73 61.48 57.58 49.92 
+
+CAGE 9B 4B-Think. 27.48 59.03 58.26 48.26 ExpertQA Ground-GRPO End-to-end 20.56 67.14 59.37 49.02 GPT-5.5 End-to-end 46.74 54.46 49.78 50.33 Claude-4.6 End-to-end 47.66 64.54 53.80 55.33 CAGE 9B 4B 36.27 62.22 78.81 62.41 CAGE 9B 4B-Inst. 36.61 73.35 80.41 63.46 CAGE 9B 4B-Think. 37.59 73.24 79.15 63.33 CAGE 9B GPT-5.5 32.88 71.74 89.15 64.59 
+
+CAGE 9B Claude-4.6 36.70 71.74 90.86 66.43 
+
+Table 5: Backbone capability and proprietary model com-parison. G and A denote the map induction model and SCR model, respectively. 9B denotes Qwen3.5-9B; Q4B, 4B-Inst., and 4B-Think. denote Qwen3-4B, Qwen3-4B-Instruct-2507, and Qwen3-4B-Thinking-2507, respectively. CAGE fixes Qwen3.5-9B as G and evaluates Qwen3-4B variants as A, while gray rows denote end-to-end baselines. For Att-Grd., following (Gao et al. 2023), we report the citation-grounded F1 score F1 CG = 2·CP ·CR CP+CR ,: where CP 
+
+and CR denote citation precision and recall, respectively. Finally, TRUST = 13 (F1 RG + EM F1 AC + F1 CG ).
+
+## Case Study 
+
+Figure 5 presents a case study illustrating how CAGE performs evidence-grounded reasoning through attribution graph construction. Given a complex question requiring multi-source information integration, CAGE first identifies multiple support subgraphs from retrieved documents, where each subgraph corresponds to a distinct answer unit with ex-plicit evidence paths. In this example, the induced graph separates different aspects of the answer, including Anatoli Boukreev’s death, Scott Fischer’s death, and the total number of casualties, while linking each answer unit to its support-ing documents. This decomposition prevents unsupported information mixing and enables precise claim-level citation generation. Compared with directly generating answers from retrieved documents, CAGE explicitly determines which evi-dence supports each answer unit before decoding, resulting in more faithful responses with well-aligned citations. Notably, Size Type ASQA(610 answerable, 338 unanswerable) EXPERTQA(682 answerable, 1487 unanswerable) ELI5(207 answerable, 793 unanswerable) Truthfulness AG Trust Truthfulness AG Trust Truthfulness AG Trust F1 AC F1 GR F1 GC F1 AC F1 GR F1 GC F1 AC F1 GR F1 GC 
+
+1.5b ICL 50.55 41.74 6.69 32.99 30.67 26.09 6.89 21.22 20.56 17.78 4.99 14.44 PostCite 16.36 52.46 15.40 28.07 22.22 48.66 16.92 29.27 15.63 26.71 5.17 15.84 PostAttr 16.36 52.46 4.45 24.42 22.22 48.66 13.15 28.01 15.63 26.71 0.62 14.32 FRONT 57.74 41.36 55.70 51.60 29.15 24.60 50.22 34.66 19.57 17.29 37.70 24.85 T-ALIGN 52.68 62.38 66.81 60.62 25.06 68.38 51.44 48.29 19.03 57.91 31.63 36.19 
+
+CAGE 50.71 66.89 77.55 65.05 24.80 52.79 53.97 43.85 21.98 43.31 33.89 33.07 CAGE DPO 47.81 64.25 74.49 62.19 24.53 63.91 61.48 49.98 24.69 56.32 38.24 39.78 
+
+3b ICL 37.72 51.36 51.72 46.93 35.14 49.65 42.67 42.49 29.12 46.31 34.34 36.59 PostCite 9.58 35.30 10.94 18.61 0 40.66 0 13.55 21.73 48.49 7.56 25.93 PostAttr 9.58 35.30 36.29 27.06 0 40.66 0 13.55 21.73 48.49 1.31 23.84 FRONT 55.15 44.01 62.72 53.96 25.67 29.86 44.48 33.34 18.69 25.37 37.40 27.15 T-ALIGN 55.19 63.76 78.64 65.86 20.97 65.79 60.25 49.0 22.52 64.38 42.01 42.97 
+
+CAGE 55.78 61.12 78.09 65.00 31.71 68.17 69.28 56.38 25.12 58.80 41.32 41.75 CAGE DPO 53.99 66.81 84.96 68.58 30.24 67.63 70.27 56.05 28.41 61.16 48.34 45.97 
+
+7b ICL 58.94 54.34 75.46 62.91 36.33 42.28 56.09 44.9 28.27 37.13 44.13 36.51 PostCite 27.52 45.93 4.19 25.88 25.58 54.9 13.77 31.42 21.82 22.23 7.03 17.03 PostAttr 27.52 45.93 17.92 30.46 25.58 54.9 12.46 30.98 21.82 22.23 0.96 15.00 FRONT 64.58 60.08 58.27 60.98 32.41 55.56 67.35 51.77 28.27 54.14 56.61 46.34 T-ALIGN 55.04 66.22 83.57 68.28 25.57 69.16 62.7 52.48 24.30 63.79 47.02 45.04 
+
+CAGE 60.24 59.03 82.15 67.14 34.78 69.00 71.19 58.32 28.84 54.48 48.80 44.04 CAGE DPO 61.04 65.93 84.44 70.47 35.20 72.95 78.57 62.23 31.59 61.86 49.45 47.58 
+
+Table 6: Experimental results of different model scales of Qwen on the ASQA, QAMPARI, and ELI5 datasets. CAGE does not simply select all death-related documents; instead, it distinguishes different evidence-supported answer units and attributes each claim to its corresponding source. Size Type ASQA(610 answerable, 338 unanswerable) EXPERTQA(682 answerable, 1487 unanswerable) ELI5(207 answerable, 793 unanswerable) Truthfulness AG Trust Truthfulness AG Trust Truthfulness AG Trust F1 AC F1 GR F1 GC F1 AC F1 GR F1 GC F1 AC F1 GR F1 GC 
+
+2-7b ICL 0.00 26.28 0.00 8.76 0.00 41.01 9.25 16.84 0.50 46.71 5.04 15.57 PostCite 0.07 35.23 0.00 11.77 4.85 44.27 5.23 18.12 1.86 44.98 13.80 17.29 PostAttr 0.07 35.23 0.00 11.77 4.85 44.27 2.26 17.13 1.86 44.98 0.00 15.61 FRONT 60.47 39.15 68.86 56.16 9.33 23.92 74.75 36.00 21.66 17.15 52.72 30.51 T-ALIGN 52.48 66.12 83.94 67.51 25.03 67.91 62.46 51.8 22.54 63.27 47.35 44.39 
+
+CAGE 49.71 63.12 77.25 63.35 23.88 64.09 78.45 55.48 22.49 57.89 40.19 40.19 CAGE DPO 50.34 62.72 83.86 65.64 22.15 62.55 74.35 53.01 19.47 57.09 40.47 39.01 3.2-1b ICL 35.95 50.94 9.96 32.28 21.55 32.83 9.04 21.14 12.87 27.10 5.23 15.07 PostCite 0.59 50.22 0.24 17.02 5.48 49.1 2.67 19.08 2.04 50.88 1.02 17.98 PostAttr 0.48 48.42 0.00 16.30 8.24 47.72 1.5 19.15 2.04 50.88 0.07 17.66 FRONT 48.22 54.48 48.29 50.33 20.83 29.26 37.45 29.18 16.11 20.76 30.19 22.35 T-ALIGN 38.64 58.61 7935 58.87 20.32 64.87 62.1 49.1 13.20 59.35 48.21 40.25 
+
+CAGE 43.97 58.77 67.51 56.75 24.59 64.84 62.41 50.62 13.13 56.54 36.56 35.41 CAGE DPO 58.59 69.62 83.34 70.52 25.67 65.21 62.95 51.28 13.71 54.29 35.17 34.39 3.2-3b ICL 2.04 27.98 53.95 27.99 33.5 51.21 38.37 41.03 18.55 55.56 30.70 34.94 PostCite 31.03 56.59 2.29 36.87 25.68 38.11 5.29 23.03 18.12 25.14 4.44 15.90 PostAttr 29.76 56.71 4.69 30.39 25.45 38.58 3.4 22.48 18.48 25.14 0.53 14.72 FRONT 63.19 49.45 57.46 56.70 27.24 43.34 50.91 40.5 19.95 32.21 41.97 31.38 T-ALIGN 59.82 66.38 84.21 70.14 11.72 56.93 78.35 49.0 18.33 62.79 55.87 45.66 
+
+CAGE 52.31 60.47 86.70 66.49 24.86 63.99 82.19 57.01 29.43 61.85 45.64 45.64 CAGE DPO 48.14 59.26 86.75 64.72 21.25 59.62 82.58 54.49 28.51 63.84 47.47 46.61 2-8b ICL 3.01 28.58 86.50 39.36 2.82 42.5 69.46 38.26 0.00 44.23 0.00 14.74 PostCite 32.98 53.31 28.01 38.10 14.06 50.08 7.09 23.74 20.80 45.88 8.06 24.91 PostAttr 32.98 53.31 5.95 30.75 14.06 50.08 6.29 23.47 20.80 45.88 1.25 22.64 FRONT 62.25 41.62 66.14 56.67 30.34 24.92 56.7 37.32 18.99 17.85 44.69 27.18 T-ALIGN 53.94 65.49 88.26 69.23 27.36 67.07 70.11 54.85 20.81 63.57 50.24 44.87 
+
+CAGE 61.38 69.93 85.92 72.41 31.39 71.15 79.46 60.67 27.45 61.38 51.77 46.86 CAGE DPO 58.59 69.62 83.34 70.52 31.25 71.24 75.19 59.22 27.61 61.44 49.15 46.07 
+
+Table 7: Experimental results of different model scales of Llama on the ASQA, QAMPARI, and ELI5 datasets. 
+
+Dataset SCR Model GPT-5-mini as CMI GPT-5.5 as CMI 
+
+EM F1 AC F1 GR F1 GC TRUST EM F1 AC F1 GR F1 GC TRUST ASQA Llama3.2-1B 63.15 52.13 65.40 60.23 67.79 61.71 73.76 67.75 Llama3.2-3B 65.49 52.36 73.20 63.68 68.52 61.71 81.01 70.42 Qwen2.5-3B 64.02 52.13 71.76 62.64 67.84 61.71 78.99 69.51 Qwen2.5-7B 65.15 52.58 72.48 63.40 68.26 61.71 82.66 70.88 ELI5 Llama3.2-1B 23.39 43.15 22.93 29.82 24.99 40.70 42.94 36.21 Llama3.2-3B 25.03 43.32 31.04 33.13 28.95 40.99 56.19 42.04 Qwen2.5-3B 25.34 43.24 27.81 32.13 29.55 41.09 53.83 41.49 Qwen2.5-7B 25.41 43.24 30.15 32.93 30.26 41.09 55.08 42.14 ExpertQA Llama3.2-1B 33.66 53.64 37.69 41.67 32.17 45.01 53.18 43.45 Llama3.2-3B 37.88 55.18 48.49 47.18 36.82 45.03 64.75 48.87 Qwen2.5-3B 38.53 55.08 46.56 46.72 35.38 45.08 62.94 47.80 Qwen2.5-7B 39.19 55.18 47.69 47.35 37.54 45.08 64.08 48.90 
+
+Table 8: Effect of CMI model quality on CAGE performance with different SCR backbones. GPT-5-mini and GPT-5.5 are used as CMI models, while finetuned Qwen and LLaMA models serve as SCR models. Case Study 
+
+Question 
+
+Who died in the book Into Thin Air ?
+
+Retrieved Documents D1 
+
+Many public criticisms at Krakauer concerning the accuracy of each man’s account of what happened on the mountain during the 1996 climbs. Boukreev was killed in 1997 in an avalanche during a winter ascent of Annapurna in Nepal. D2 
+
+Journalist Jon Krakauer, on assignment from Outside mag-azine, was in a party led by guide Rob Hall that lost four climbers on the south side; he afterwards published the best-seller Ïnto Thin Air¨ (1997), which related his experience. Ana-toli Boukreev was a guide in Scott Fischer’s party, which lost Scott Fischer, but no clients. D3 
+
+Into Thin Air details the author’s experience at the 1996 Mount Everest disaster, in which eight climbers were killed and several others were stranded by a rogue storm. D4 
+
+Adventure Consultants was the guiding company led by Rob Hall.Members of his party died on the way down. The disaster became very well known, with ten million people reading about it in Into Thin Air . In 1996, Hall also employed two Sherpa people who managed to survive. 
+
+D5 
+
+The storm led to a number of deaths, including both head guides (Rob Hall and Scott Fischer) . Krakauer clarified his initial statements—especially those regarding the death of Andy Harris—in Into Thin Air .
+
+Support Graph  
+
+> Q
+> D1
+> A1
+> Q
+> D2 D5
+> A2
+> Q
+> D3
+> A3
+
+Edges: 
+
+subgraph0 
+
+nodes:Q inputs: N/A outputs: D1 nodes:D1 inputs: Q outputs: A1 nodes:A1 inputs: D1 outputs: N/A subgraph_description: The document supports the candidate answer by confirming that Anatoli Boukreev died in 1997 during a winter ascent of Annapurna. 
+
+subgraph1 
+
+nodes:Q inputs: N/A outputs: D2,D5 nodes:D2 inputs: Q outputs: A2 nodes:D5 inputs: Q outputs: A2 nodes:A2 inputs: D2,D5 outputs: N/A subgraph_description: The documents support that Scott Fischer died in the 1996 Everest disaster, as they mention his party and the tragic event. 
+
+subgraph2 
+
+nodes:Q inputs: N/A outputs: D3 nodes:D3 inputs: Q outputs: A3 nodes:A3 inputs: D3 outputs: N/A subgraph_description: The document supports the candidate answer by stating that eight climbers were killed during the 1996 Mount Everest disaster. 
+
+Generated Answer 
+
+Anatoli Boukreev, who served as a guide on the 1996 Mount Everest expedition described in Jon Krakauer’s Into Thin Air , died in 1997 during a winter ascent of Annapurna in Nepal [1]. Scott Fischer, a guide in the 1996 Mount Everest disaster, died during the 1996 Everest disaster while leading his own expedition [2][5]. Eight climbers died during the 1996 Mount Everest disaster, as documented in Jon Krakauer’s book Into Thin Air [3]. 
+
+Figure 5: A case study illustrating graph-based reasoning for multi-source information integration. Subgraph 0 identifies Anatoli Boukreev’s death, Subgraph 1 captures Scott Fischer’s death supported by two documents, and Subgraph 2 provides the total death toll of eight climbers. Prompt for Cognitive Attribution Map Construction 
+
+Important rules for subgraph construction: 1. Each subgraph corresponds to exactly one answer node: subgraph0 -> A1, subgraph1 -> A2, subgraph2 -> A3, and so on. Never reuse the same A node across multiple subgraphs. 2. Each subgraph expresses one semantically independent answer aspect. If different documents support different facts or angles of the answer, split them into separate subgraphs with separate A nodes. 3. Only group multiple T nodes into the same subgraph when they jointly support the same single answer aspect (as T1 and T5 both support who won the 2018 World Cup in subgraph0). The most important: 4. When all documents fail to support answering questions, an empty chart should be output . In the empty chart, the input and output of each document node are empty, and Reason (Within 20 tokens) should provide an explanation for each document indicating that it is not supported. Empty edges is: Edges: nodes:Q inputs: outputs: nodes:T1 inputs: outputs: reason: ... nodes:T2 inputs: outputs: reason: ... nodes:T3 inputs: outputs: reason: ... nodes:T4 inputs: outputs: reason: ... nodes:T5 inputs: outputs: reason: ... 
+
+For example, the input is: Who was the champion of the 2018 World Cup? Document 1: France defeated Croatia 4-2 in the 2018 final. Document 2: Kylian Mbappé contributed 2 goals in the final, playing a significant role in France's championship victory. Document 3: It discusses the 2022 World Cup final Document 4: It discusses the semi-finals of the 2018 World Cup Document 5: France was the champion of the 2018 World Cup We want the model output(one subgraph, one A node, one independent answer aspect.): Edges subgraph0 nodes:Q inputs: N/A outputs: T1,T5 nodes:T1 inputs: Q outputs: A1 nodes:T5 inputs: Q outputs: A1 nodes:A1 inputs: T1, T5 outputs: N/A subgraph_description: Document 1 and Document 5 jointly directly support the answer, explicitly stating that France was the champion of the 2018 World Cup. Document 1 provides details of the final score, while Document 5 directly states the ownership of the championship Based on a given single question node Q and several document title nodes T (T1-T5), construct one or more causal subgraphs containing answer node A through causal reasoning. The question should be treated as answerable if at least one document node contains explicit statements or clear indicators that directly answer the question, even if other documents are irrelevant. When the question involves multiple entities, multi-hop reasoning, or requires information decomposition, multiple subgraphs can be generated, but they must 
+
+maintain logical clarity and semantic independence. The A node in the generated edges should be inferred from the supporting T node(s). The description of the A node should indicate that all its input T nodes individually support the A node, or collectively contribute to the generation of the A node. T nodes that are irrelevant to the A node should not be included as inputs to the A node. {user_input} Prompt for Long-form Answer Generation on the Map 
+
+Generate the final answer from the retrieved documents, using the graph only to decide citations. Graph schema: - Q is the user question. - T nodes are retrieved documents. T1 maps to citation [1], T2 maps to citation [2], and so on. - Each subgraph is one citation plan. It lists the T documents that should support one answer sentence. - subgraph_description is only a hint about why those T documents were selected; do not copy it as the answer. Rules: - If at least one evidence path is provided, answer the question. Do not refuse. - For each subgraph, write exactly one independent answer sentence grounded only in the documents used by that subgraph. - Do not merge subgraphs, even if they appear to support the same answer. - Keep each sentence short and focused on one factual claim. - Cite that sentence with exactly the numeric citations for the T nodes in that subgraph, unless a listed document does not support the sentence. - Use document text, not subgraph_description text, to decide the factual content of the sentence. - Every answer sentence must end with numeric citations in this exact form: sentence text [1]. - Do not put citations on a separate line or at the start of a sentence. - Do not cite documents that are not listed for the evidence paths. - Output the independent answer sentences as one concise paragraph. 
+
+Question: {question} Evidence paths extracted from the graph: Path {i}: - Citation nodes for one answer sentence: {[citation_ids]} - Selection hint, not answer text: {subgraph_description} Referenced documents: [{citation_id}] {document_title} {document_text} Original graph structure: {graph_input}

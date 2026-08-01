@@ -1,0 +1,340 @@
+Title: ESF-Bench: Benchmarking Challenging Slot-Filling Scenarios for Real-World Enterprise Applications
+
+URL Source: https://arxiv.org/pdf/2607.23326v1
+
+Published Time: Tue, 28 Jul 2026 00:43:50 GMT
+
+Number of Pages: 19
+
+Markdown Content:
+# ESF-Bench: Benchmarking Challenging Slot-Filling Scenarios for Real-World Enterprise Applications 
+
+## Toby Liang 
+
+## ServiceNow 
+
+> toby.liang@servicenow.com
+
+## Gopal Sarda 
+
+## ServiceNow 
+
+> gopal.sarda@servicenow.com
+
+## Sagar Davasam 
+
+## ServiceNow 
+
+> sagar.davasam@servicenow.com
+
+## Vikas Yadav 
+
+## ServiceNow 
+
+> vikas.yadav@servicenow.com
+
+## Abstract 
+
+The rapid rise of large language models (LLMs) has driven transformative adoption across en-terprises. However, deploying these models in real-world settings presents unique challenges due to complex system constraints and unex-pected user behaviors. Among these appli-cations, slot filling is essential for converting unstructured input into structured, actionable data. In this work, we introduce ESF-Bench, a challenging Enterprise Slot Filling benchmark consisting of 810 multi-turn samples and 6530 slots over 8 unique domains. Curated using a taxonomy of the 57 most challenging slot-filling scenarios observed during real-world enterprise deployments, ESF-Bench exposes notable limitations in current state-of-the-art LLMs, with GPT-OSS-120b low successfully extracting slots for only 20.7% of benchmark samples. To support continued research in this area, we publicly release the benchmark dataset, taxonomy, and accompanying evalua-tion code on GitHub 1.
+
+## 1 Introduction 
+
+As large language models (LLMs) become increas-ingly integral to enterprise AI assistants, slot filling has emerged as a key capability for transforming unstructured user input into actionable data. Mod-ern enterprise assistants often rely on slot filling to extract relevant information, such as account numbers, product categories, or scheduling details, from complex user-assistant conversations based on a task-oriented schema (Feng et al., 2023; Xu et al., 2024a) . This structured data allows AI systems to automate business processes, enhance decision-making, and deliver personalized user ex-periences across multiple business domains such as IT service management, customer service man-agement, and beyond (Bhargav et al., 2024). In practice, real-world applications of slot filling in enterprise contexts are often noisy and nuanced, 
+
+> 1https://github.com/ServiceNow/ESF-Bench
+
+Figure 1: An example conversation and final dialog state from ESF-Bench. The user specifies slot values relative to other slots, later revises the original slot in a subse-quent turn, and provides values that require complex temporal reasoning for accurate slot filling. 
+
+requiring LLMs to handle a wide variety of scenar-ios where slot values exhibit intricate dependencies, constraints, and normalization requirements (Liu et al., 2021; Rana et al., 2025). Some applications require slots to be populated with multiple distinct values while others require slots to be extracted from various conflicting sources based on special-ized priority and tiebreaker rules. Meanwhile, users may exhibit unexpected behavior, such as provid-ing information that is vague or contradictory, or by providing values that require mathematical, tem-poral reasoning, or counting abilities to resolve, leading to significant challenges in accurately ex-tracting and populating the slots. To systematically study these challenges, we in-troduce ESF-Bench, a comprehensive slot-filling benchmark comprising 6530 slots across 810 sam-ples and spanning 8 enterprise domains including IT Service Management (ITSM), Customer Ser-1arXiv:2607.23326v1 [cs.AI] 25 Jul 2026 vice (CSM), IT Operations Management (ITOM), Human Resources (HR), Finance, Medical, Law, and Education. Each sample is specifically de-signed to evaluate enterprise slot filling within a multi-turn user-assistant conversation and incorpo-rates multi-source contextual metadata often found in real-world production environments such as user persona details, relevant knowledge-base (KB) articles, session information, and user-submitted forms, which must be leveraged to complete the slot-filling task effectively. To curate the evaluation dataset, we first con-structed a human-annotated taxonomy capturing the most common and complex features, con-straints, and user behaviors. Through careful obser-vation of LLM performance in real-world slot fill-ing systems, we identified 57 distinct scenarios to guide our data generation, ensuring both diversity and complexity in the resulting test set. Tagging each slot with its corresponding scenario from the taxonomy enables fine-grained evaluation metrics that reveal model strengths and weaknesses at a much more granular level, allowing better diagno-sis of performance gaps across various dimensions of the slot-filling task. We summarize our contributions in the following manners: 1) First, we introduce ESF-Bench, a multi-domain slot-filling benchmark aimed at capturing the full complexity of real-world enterprise slot-filling systems, including multi-source context, in-tricate constraints, and unexpected user behaviors. 2) Additionally, we release a human-annotated taxonomy that formalizes the most difficult and commonly observed slot-filling scenarios in pro-duction, enabling fine-grained metrics that reveal specific strengths and weaknesses in model behav-ior. 3) We also provide an in-depth analysis of state-of-the-art LLMs on ESF-Bench, highlighting sys-tematic capability gaps across taxonomy categories and offering insights that can guide the develop-ment of more robust and enterprise-ready slot-filling models. 
+
+## 2 Related Work 
+
+2.1 Slot Filling Benchmarks for TOD Systems 
+
+Research on task-oriented dialog (TOD) systems (Hosseini-Asl et al., 2020) has been largely focused on dialog state tracking (Jacqmin et al., 2022), where models are evaluated on their ability to up-date dialog states through natural language under-standing (NLU) , incrementally modifying intents and slots throughout the conversation. Prominent benchmarks such as MultiWOZ (Budzianowski et al., 2018), the Schema-Guided Dialog (SGD) 
+
+dataset (Rastogi et al., 2020), and its extension 
+
+SGD-X (Lee et al., 2022) all follow this paradigm, providing annotations that support joint intent de-tection and slot filling at each dialog turn. These datasets typically rely on metrics such as joint goal accuracy (JGA) and slot accuracy (Jacqmin et al., 2022) to assess slot-filling performance. More recently, ToD benchmarks have expanded their scope to multilingual settings. Datasets such as BiToD (English and Chinese) (Lin et al., 2021) and Multi3WOZ (Hu et al., 2023) (4 languages), introduce multilingual slot-filling resources de-signed to support multilingual TOD applications. 
+
+2.2 Single Utterance Slot Filling Benchmarks 
+
+In parallel with advances in task-oriented dialog benchmarks, research on single-utterance slot fill-ing has also been highly active, particularly within 
+
+spoken language understanding (SLU) . SLU fo-cuses on mapping raw speech to intents and slots, and is commonly evaluated on benchmarks such as ATIS (Hemphill et al., 1990), SNIPS (Coucke et al., 2018), Fluent Speech Commands (FSC) (Lugosch et al., 2019), and SLURP (Bastianelli et al., 2020), which provide audio-based annota-tions for assessing slot extraction directly from speech. Another widely used benchmark is MAS-SIVE (FitzGerald et al., 2023), a text-based single-utterance slot-filling dataset derived from SLURP which covers 51 languages. Across these bench-marks, slot-filling accuracy and F1 scores are pri-marily used to evaluate single utterance slot-filling performance. 
+
+2.3 Slot Filling Benchmarks for Enterprise 
+
+Recently, efforts have increasingly focused on cre-ating benchmarks that more accurately capture realistic enterprise domains and scenarios. HR-MultiWOZ (Xu et al., 2024b), for example, is an HR-focused TOD benchmark featuring purely ex-tractive slots and long, domain-rich entities. It cov-ers 10 distinct HR-related subdomains, including benefits enrollment, performance review, and relo-cation requests. Another benchmark, used as a held-out test set, encompasses over seven enterprise-oriented scenarios, introduces challenges such as long-form values, categorical slot decisions, and 2name-splitting tasks (Bhargav et al., 2024). By par-titioning test data across these scenarios, it enables fine-grained evaluation metrics tailored to each spe-cific setting. 
+
+## 3 ESF-Bench Overview 
+
+Unlike the previous work discussed in Section 2, ESF-Bench is designed specifically to evaluate complex, unexpected, real-world slot-filling sce-narios. While earlier benchmarks such as Multi-WOZ (Budzianowski et al., 2018) and SGD (Ras-togi et al., 2020) primarily emphasize extractive slots, ESF-Bench introduces a broader range of ab-stractive cases (Rana et al., 2025), better reflecting production settings in which LLMs must normalize values, correct typos, or perform multi-step reason-ing. ESF-Bench also incorporates multi-source con-textual metadata including user persona details, rel-evant knowledge-base articles, session information, and user-submitted forms. These additional sources are required for slots that depend on user person-alization data or multi-hop reasoning to produce accurate predictions. Because errors in intent detection can negatively affect slot-filling performance (Rana et al., 2025), ESF-Bench decouples slot filling from intent de-tection where the input schema provides only the available slots. This separation enables a clearer evaluation of slot-extraction capabilities on their own, without relying on assumptions about up-stream classification accuracy. Finally, as ESF-Bench is based on an LLM’s abil-ity to generate the complete and final dialog state, it 
+
+makes no assumptions on the downstream task .This perspective generalizes across evaluations of end-to-end TOD performance as well as offline tasks such as form population, case creation, and general conversational information extraction, in-dependent of any particular dialog-management architectures or task formulations. 
+
+3.1 Slot Filling Taxonomy 
+
+To generate ESF-Bench, we first constructed a tax-onomy reflecting the most prevalent and challeng-ing scenarios observed in production enterprise sys-tems. We selected each scenario through detailed review of complex slot-filling prompts, defect re-ports, and LLM behavior in real-world workflows. The resulting taxonomy comprises 57 scenar-ios, organized into 12 high-level categories: Se-
+
+Statistic Value 
+
+Total # of Samples 810 Total # of Slots 6530 Avg. # Tokens per Prompt 4617.4 Avg. # Slots per Schema 8.06 # of Domains 8# of Taxonomy Scenarios 57 
+
+> Table 1: Key Statistics of ESF-Bench
+
+lection (SEL), Conditionals (COND), Reason-ing (REA), Multi-Source (MS), Long/Multi-Value (LMV), Conversation Understanding (CU), Per-sonalization (PER), Schema Constraints (SC), Un-expected User Behavior (UUB), Relative (REL), Corrections (COR), and Slot Reset (SR). Figure 2 shows the distribution of slots within each category and Table A in the appendix provides the full taxon-omy. The following sections examine the scenario types within each category. 
+
+3.1.1 Selection 
+
+Often, multiple candidate values are available for a given slot. These candidates can originate from the conversation history or from external sources such as user persona data, knowledge base articles, session metadata, or user-submitted forms. Addi-tionally, schemas may define a fixed set of valid slot values using an enum. When multiple candidates exist, models must determine the most appropriate value based on the user’s input. Users may provide information mapping directly to a defined enum value, or they may express preferences through comparisons (e.g., earlier than 9 am, cheaper than $50) or superla-tives (e.g., the fastest option, the second-cheapest plan). Values can also be inferred through negation (e.g., the no-meat option) or explicit specification (e.g., use my work email instead of my personal one). In certain cases, users may also select from a presented menu by referencing an option implic-itly (e.g., option B) without stating the underlying value. 
+
+3.1.2 Conditionals 
+
+While users often specify slot values directly, they may also specify values through conditional statements. Specifically, users can supply an if-conditional (e.g., "If <condition> then...") or an if-else conditional (e.g., "If <condition> then ... else ...") to determine whether to fill a slot or which 3Figure 2: Distribution of ESF-Bench Taxonomy Categories 
+
+slot value to use. Conditionals may also govern whether to correct (Section 3.1.11) or reset (Sec-tion 3.1.12) a slot value. The schema itself may also include conditional statements that determine the correct default value or normalization rule to apply to a particular slot. 
+
+3.1.3 Reasoning 
+
+In the most challenging cases, slot filling requires advanced reasoning capabilities. This occurs when the correct slot value can only be derived through multi-step mathematical (Ahn et al., 2024) or tem-poral reasoning (Chu et al., 2024), counting op-erations (e.g., counting the number of documents mentioned by the user), or general knowledge in-ference (e.g., inferring that the user is located in France when they mention Paris). In such situa-tions, the necessary information may be distributed across the conversation history or drawn from mul-tiple external sources. LLMs must therefore first retrieve all relevant context and then apply appro-priate reasoning processes to infer the final slot value. 
+
+3.1.4 Multi-Source 
+
+Given multiple sources, such as user persona infor-mation, knowledge base articles, session metadata, and user-submitted forms, accurate slot filling often requires synthesizing information through multi-hop inference across these inputs. Furthermore, conflicting information may arise across sources due to outdated data, contextual differences, or re-trieval errors. To address such conflicts, prompts may specify a source priority hierarchy, requir-ing LLMs to fill slot values based on the highest-priority source to determine the correct slot assign-ment. 
+
+3.1.5 Long/Multi-Value 
+
+Slot filling often involves extracting long or multi-value entries, particularly within the enterprise do-main. For example, long identifiers, URLs, or serial numbers exceeding 512 characters are commonly found in enterprise data. Certain slots may also require multiple values to be filled, such as when a user specifies a list of permissions to enable. When values are excessively lengthy or numerous, LLMs must handle them with particular care and precision to ensure accurate extraction. 
+
+3.1.6 Conversation Understanding 
+
+In many scenarios, conversational understanding is critical for accurate slot assignment. Users may reference slot values discussed in previous turns without explicit repetition (e.g., let’s go with the second option), requiring the model to maintain memory of prior alternatives. They may also pro-pose slot values as rhetorical questions (e.g., how about 5pm?), and assistants may suggest values that users subsequently confirm. Finally, users may 4clarify or discuss the meaning of a potential slot value without actually committing to it. In all of these cases, LLMs must possess deep conversa-tional understanding abilities to accurately assign the correct slot value. 
+
+3.1.7 Personalization 
+
+Personalization is an essential feature of enterprise solutions in which accurate slot value prediction often requires consideration of user persona infor-mation to deliver a tailored experience. Specifically, users may request slot values relative to their per-sona metadata (e.g., find me the option closest to my office). In adversarial scenarios where the re-trieved user persona does not match the actual user (e.g., due to retrieval errors), LLMs must identify the persona mismatch and refrain from incorpo-rating erroneous persona data into the slot filling task. 
+
+3.1.8 Schema Constraints 
+
+One of the most common cases involves constraints specified within the schema to determine whether or not to fill a slot. In particular, slots may require regex matching before extraction or impose seman-tic constraints based on general knowledge (e.g., the value must be a national capital city). Further, some slots may require units to be specified, while in other cases, pairs of slots may have cross-slot constraints (e.g., a check-out date must be after a check-in date). The schema may also specify par-ticular methods for filling slots, such as providing default values when a slot is not explicitly specified or defining custom normalization rules to apply after extracting a slot value. 
+
+3.1.9 Unexpected User Behavior 
+
+In production scenarios, LLMs must be able to handle a variety of unexpected user behaviors (Liu et al., 2021). For example, users may specify slot values in ways that are uncertain, generic, or am-biguous, making it impossible to extract a single definitive slot value. Users may also specify values within hypothetical statements (e.g., If I were trav-eling for business, I’d book the Marriott, but this is personal) or embed them in sarcastic or non-serious comments. Additionally, users may make typo errors, produce confusing double-negation state-ments (e.g., It’s not that I’m unopposed to using the backup server), or mention irrelevant third-party entities that should be ignored (e.g., Most people in sales use the CRM dashboard, but I need access to the analytics portal). 
+
+3.1.10 Relative 
+
+Rather than directly specifying a slot value, users may define values relative to other slots (e.g., Set the CPU limit to double the requested CPU). This relative specification creates dependencies between slots that must be maintained throughout the inter-action. When a slot is defined relative to a previ-ously filled slot, subsequent updates (see 3.1.11) to that base slot require implicit propagation of changes to all dependent slots. For example, if a user initially sets the CPU request to 2 cores and defines the CPU limit as double that value (4 cores), later updating the CPU request to 3 cores should automatically recalculate the CPU limit to 6 cores to preserve the established relationship. 
+
+3.1.11 Corrections 
+
+Often, users may revise slot values through cor-rections or updates. These corrections may specify explicit values or relative updates based on the orig-inal value (e.g., Actually, increase the headcount by 15% and then add 5 more). Users may also intro-duce conditional updates (e.g., If <condition>, then update <slot_name> to <new_value>) or reverse previous changes, restoring a slot to its original value. In adversarial scenarios, updated values may violate schema constraints, requiring the slot to be left unfilled. 
+
+3.1.12 Slot Reset 
+
+In addition to slot corrections, the user may opt to completely reset the slot value back to an unfilled state. Similar to corrections, the user may specify a slot reset based on a condition or decide at a later time to undo the slot reset and keep the original slot value. In special cases, users may request a full conversation reset, clearing all slot values and ef-fectively restarting the conversation from its initial state. 
+
+3.2 Benchmark Dataset Generation 
+
+The ESF-Bench dataset comprises of 6530 slots over 810 samples. Each sample consists of a de-tailed prompt, multiple sources, and is selected from 1 of 8 domains. Comprehensive statistics for ESF-Bench are presented in Table 1. 
+
+3.2.1 Data Synthesis Methodology 
+
+Building on LLM-driven synthetic data genera-tion (Long et al., 2024) and LLM-based evaluation (Zheng et al., 2023), we developed an in-house data synthesis engine that converts our taxonomy 5Model F-JGA Tagged Slot Acc. Median # Total Tokens Open Source Reasoner Gemini 2.5 Flash Dynamic-Thinking 33.3 80.9 3536.5 ✗ ✓                                                       
+
+> GPT-5.1 High 30.7 78.2 7611.5 ✗✓
+> GPT-OSS-120b High 23.8 76.5 5796.5 ✓✓
+> Qwen3-32b-Think 22.0 75.3 1656.5 ✓✓
+> Ministral3 14b Reasoning 20.9 74.1 10271.0 ✓✓
+> Gemini 2.5 Flash No-Thinking 9.2 64.5 209.0 ✗✗
+> GPT-5.1 Minimal 10.9 67.3 179.0 ✗✗
+> GPT-OSS-120b Low 20.7 73.0 844.5 ✓✓
+> Qwen3-32b-No-Think 4.3 56.3 176.5 ✓✗
+> Ministral3 14b Inst 3.7 56.7 194.5 ✓✗
+> High-Capability Avg. 26.1 77.0 5774.4 --Low-Latency Avg. 9.8 63.6 320.7 --
+
+Table 2: Evaluation of high-capability and low-latency large language models on ESF-Bench. Models with extended reasoning (top group) significantly outperform non/low-reasoning models (bottom group) on F-JGA and tagged slot accuracy, though at higher token costs. 
+
+Figure 3: Performance–efficiency trade-off across SOTA models. F-JGA is plotted against median com-pletion length on a log scale. 
+
+of enterprise slot-filling scenarios into benchmark-ing samples. The pipeline begins by stochastically sampling slot-filling scenarios from the taxonomy, which are then used to systematically generate prompt components and their corresponding meta-data through a series of LLM calls. Ground truths are then generated using a separate LLM call con-ditioned on the same metadata used for prompt generation, with a judge model verifying label cor-rectness. Each slot in the dataset is tagged with its source scenario from the taxonomy, enabling fine-grained performance analysis across different enter-prise use cases. Within our pipeline, we use GPT-5 high both for data generation and judging and GPT-4.1 for scenario tagging. To validate the quality of the synthetically generated data, we conducted a human annotation exercise on a representative sample of 122 tagged slots where human annota-tors achieved a Tagged Slot Accuracy of 93.83%. We report additional human performance results in section 5.3. An example prompt can be found in section C of the appendix. 
+
+3.2.2 Multiple Sources 
+
+Each prompt within our dataset includes a syn-thetically generated task-oriented schema, user-assistant conversation, and auxiliary sources such as knowledge base articles, user persona details, session information, and previous user form sub-missions. These sources model the metadata typi-cally found in real enterprise applications. Samples in ESF-bench are specifically generated to require cross-referencing information from these sources to the conversation history to accurately complete the slot filling task. 
+
+3.2.3 Output Format Conversion 
+
+As there is no standard output format for slot fill-ing, we evaluate model robustness by varying the output format specifications across prompts. While this approach enhances prompt diversity, it com-plicates the evaluation process when comparing model predictions against ground truth, as each output adheres to a different structure. To address this challenge, we employ an LLM to automatically generate a Python function that maps each prompt’s output to a standardized for-mat suitable for evaluation. This strategy enables us to preserve the diversity of our prompt set while standardizing comparisons across all model out-puts. 
+
+3.2.4 Dataset Domains 
+
+To ensure domain diversity, our dataset spans over 8 enterprise domains: IT Service Management 6Model UUB COND CU COR LMV MS PER REA REL SC SEL SR Gemini 2.5 Flash Dynamic-Thinking 74.5 88.1 89.0 84.1 77.7 86.9 58.7 64.0 85.0 82.5 89.5 90.1                                                                                                                                     
+
+> GPT-5.1 High 64.9 88.4 93.1 78.3 78.6 84.1 47.3 64.2 79.4 80.7 82.6 88.6 GPT-OSS-120b High 59.5 87.2 89.8 72.6 81.5 80.8 45.7 60.4 76.0 83.8 80.3 87.0 Qwen3-32b-Think 57.9 75.0 86.6 83.4 74.3 87.3 66.8 53.8 91.2 74.6 83.1 82.5 Ministral3 14b Reasoning 60.1 74.4 88.6 76.8 75.7 78.4 60.9 54.5 78.7 77.1 80.8 84.4 Gemini 2.5 Flash No-Thinking 66.8 60.7 76.5 68.1 63.5 71.9 62.3 22.1 66.2 70.5 72.3 79.4 GPT-5.1 Minimal 62.5 64.2 82.5 67.8 68.5 73.1 64.7 23.4 65.4 77.1 75.6 86.0
+> GPT-OSS-120b Low 57.6 85.5 86.6 70.7 76.3 75.9 42.4 52.7 72.1 82.4 81.5 80.4 Qwen3-32b-No-Think 50.9 59.0 61.8 64.6 59.2 66.1 58.2 20.6 56.9 62.1 64.8 64.4 Ministral3 14b Inst 58.2 54.7 69.9 59.6 52.6 66.9 55.4 17.6 49.8 64.9 68.6 64.8 High-Capability Avg. 63.4 82.6 89.4 79.0 77.6 83.5 55.9 59.4 82.1 79.7 83.3 86.5 Low-Latency Avg. 59.2 64.8 75.5 66.2 64.0 70.8 56.6 27.3 62.1 71.4 72.6 75.0
+
+Table 3: Slot-level performance breakdown by taxonomy category. Models with extended reasoning (top group) demonstrate superior handling of complex slot filling scenarios including relative (REL), conditionals (COND), and reasoning (REA). 
+
+(ITSM), Customer Service Management (CSM), IT Operations Management (ITOM), Human Re-sources (HR), medical, legal, finance, and educa-tion. For each domain, we compiled 25 specific instances (e.g., password reset for ITSM) that are randomly sampled during prompt generation. This approach yields 200 unique domain-instance pairs, enabling diverse scenario specification throughout the dataset. 
+
+## 4 Experimental Setup 
+
+4.1 Model Selection 
+
+We select five model families to conduct our experiments (GPT-5.1, Gemini 2.5 Flash (Co-manici et al., 2025), GPT-OSS-120b (Agarwal et al., 2025), Qwen3-32b (Qwen Team, 2025), and Ministral3 14b (Mistral AI, 2026)), and evaluate each under two deployment configurations. The 
+
+High-Capability models includes the reasoning-optimized variant, leveraging extended reason-ing through increased test-time compute (Snell et al., 2025; DeepSeek-AI, 2025) to target scenar-ios where quality is prioritized over latency. The 
+
+Low-Latency models includes the corresponding efficient variant of each family reflecting produc-tion deployments where token consumption and response latency are primary constraints. Notably, GPT-OSS-120b Low retains reasoning capabilities despite being in the low-latency tier, highlighting that reasoning ability and latency efficiency are not mutually exclusive. We include both proprietary and open-source models to represent realistic de-ployment scenarios where organizations commonly leverage a mix of commercial and open-source so-lutions. 
+
+4.1.1 High-Capability Models 
+
+To evaluate slot filling performance on ESF bench, we configure each reasoning model with its maxi-mum reasoning capacity, setting GPT-5.1 and GPT-OSS to "high" reasoning effort, Gemini 2.5 Flash to "dynamic thinking" mode, Qwen3 32b to "think mode," and deploy the reasoning variant of Minis-tral3 14b. Across all models, we set max tokens to 32k and temperature to 0.6. 
+
+4.1.2 Low-Latency Models 
+
+For each model specified in Section 4.1.1, we evaluate a corresponding non-reasoning or low-reasoning variant, disabling thinking entirely for GPT-5.1, Gemini 2.5 Flash, and Qwen3 32b, while GPT-OSS-120B is evaluated with reasoning effort set to low. For Ministral3 14b, we use the instruct version as the non-reasoning baseline. We con-figure these experiments with a maximum token limit of 32k and set the temperature to 0.6 for GPT-OSS-120B (low reasoning) and 0.001 for all other models. 
+
+4.2 Metrics Definitions 
+
+Traditional dialogue evaluation metrics like Joint Goal Accuracy (JGA) (Jacqmin et al., 2022) mea-sure state tracking at individual turns, limiting their applicability to task-agnostic settings where the complete dialogue outcome matters most. Since ESF-bench is designed to generalize across both online task-oriented dialogue (TOD) systems and offline evaluation tasks, we require a metric that evaluates performance based on the complete final dialog state rather than turn-by-turn accuracy. We therefore introduce Final Joint Goal Accuracy (F-
+
+7Figure 4: Slot-Level Category Scores For High-Capability Models (Left) and Low-Latency Models (Right) 
+
+JGA) , which extends JGA by evaluating whether all slots in the final dialogue state are correct (see Appendix B for formal definition). This holistic metric directly assesses whether a model can com-prehend the full conversational context and reliably extract all required slots simultaneously, both crit-ical capabilities for real-world dialogue systems where partial solutions often provide little value. In addition to F-JGA, we measure the accuracy of slots tagged with at least one scenario from our taxonomy, which represents 66.8% of all slots. While untagged slots still contribute to the F-JGA score, they can often be filled through simple ex-traction and provide limited insight when evaluat-ing slot-filling capabilities. Therefore, we compute 
+
+slot accuracy exclusively for tagged slots to bet-ter assess the model’s performance on these more challenging scenarios. Finally, we report the median number of tokens 
+
+per response, including reasoning traces. We use the median rather than the mean because reasoning trace lengths often contain outliers that would sig-nificantly skew the average, making the median a more robust measure of typical model behavior. 
+
+## 5 Results 
+
+We present our findings in two parts. First we report overall F-JGA, tagged slot accuracy, and median number of total tokens under Table 2. We also report fine-grained category-level slot accuracy metrics under Table 3. Overall, we find that while slot filling is a well-        
+
+> Model F-JGA Tagged Slot Acc.
+> Human 73.33 93.83 Gemini 2.5 Flash DT 40.0 82.7 GPT-5.1 High 33.3 76.5
+> Table 4: Human performance baseline compared to top-performing models on a representative subset (122 tagged slots). DT = Dynamic-Thinking.
+
+known task, certain aspects of slot filling still re-main a challenge, with certain models performing better or worse based on specific scenarios or con-straints. Among the evaluated models, Gemini2.5 Flash Dynamic-Thinking achieves the strongest overall performance, achieving the best results when dealing with comparisons (98.0%), superla-tives (89.6%), and negations (82.2%). Across all evaluated taxonomy categories, we find that reasoning and personalization presents the greatest challenge for the highest-performing LLMs, consistent with known difficulties in mathe-matical (Ahn et al., 2024) and temporal reasoning (Chu et al., 2024), with high capability models scoring only 59.4% on the reasoning category and just 55.9% on personalization. In contrast, models generally demonstrate strong performance on con-versation understanding, averaging 89.4% across high-capability models and 75.5% even among low-latency models. 85.1 High-Capability vs Low-Latency Models 
+
+High-capability (reasoning-optimized) models demonstrate substantial advantages over low-latency (low/non-reasoning) models across both metrics, achieving average improvements of +16.3% in F-JGA and +13.4% in tagged slot ac-curacy. These gains extend across nearly all fine-grained taxonomy categories, with the most im-provements observed in reasoning (+32.1%), rela-tive (+20%), and conditionals (+17.8%) categories. We find that high-capability models perform bet-ter on tasks requiring multiple steps, particularly in scenarios where logical inference or calculations are necessary for accurate slot filling. This is most evident in math (+44.0%), temporal (+33.2%), and counting (+32.0%) categories, where producing the correct value requires multi-step inference that low-latency models consistently fail to carry out. Relative categories such as relative corrections (+54.7%) and relative slot (+43.9%) show similarly large disparities, as low-latency models often fail to remember or aggregate information across mul-tiple conversation turns before deriving the final slot value. High-capability models also outperform low-latency models in conditional cases like condi-tional counting (+29.6%), conditional corrections (+21.5%), and conditional reset (+20.6%), where low-latency models struggle to correctly evaluate the condition before determining the correct slot to populate. On the other hand, our experiments also reveal specific failure cases for high-capability models, particularly when handling unexpected user be-havior. For third-party entity references, high-capability LLMs fail to recognize that a mentioned entity belongs to a third party and incorrectly ex-tract slot values as if they were the user’s own. Sim-ilarly, when users express preferences sarcastically with exaggerated or implausible values, models of-ten take these statements at face value and extract the slot accordingly. Double negations also pose a challenge, as models become confused by the lay-ered negation structure and frequently misinterpret the user’s actual intent. In the personalization category, while high-capability models outperform low-latency mod-els on standard cases where the user persona matches the user within conversation history, they frequently fail in adversarial scenarios featuring user persona mismatches, often resulting in invalid slot fills. Further, we continue to notice some cases where models extract slots values that require units, even when units are not explicitly provided in the context. 
+
+5.2 Open Source vs Closed Models 
+
+We find that among the evaluated models, open source models still provide a viable alternative in certain areas. GPT-OSS-120b High scores within -4.4% tagged slot accuracy of the best proprietary model and leads on long/multi-value and schema constraints, while Qwen3-32b-Think tops all mod-els on multi-source, personalization, and relative slots, though both trail proprietary models on ar-eas like unexpected user behavior, reasoning, and overall F-JGA. 
+
+5.3 Human Performance Baseline 
+
+To contextualize model performance, we estab-lished a human baseline by having annotators com-plete the slot-filling task on a representative sub-set of 122 tagged slots. As shown in Table 4, human annotators achieved an F-JGA of 73.33 and a Tagged Slot Accuracy of 93.83%, substan-tially outperforming even the best model (Gem-ini 2.5 Flash Dynamic-Thinking at 40.0 F-JGA). The 33.33-point gap in F-JGA between human and model performance demonstrates that ESF-Bench remains a non-trivial and challenging benchmark for current state-of-the-art LLMs. Notably, the gap narrows at the slot level (93.83% vs 82.7%), sug-gesting that while models can handle individual slots reasonably well, they struggle to get all slots correct simultaneously within a single sample, a requirement that is critical for real-world enterprise deployments where partial solutions often provide little value. 
+
+## 6 Conclusion 
+
+In this paper, we present ESF-Bench, a benchmark designed to reflect the noisy, constrained realities of enterprise slot-filling systems. Our empirical evaluations reveal scenarios where even state-of-the-art LLMs fall short, while highlighting the performance-latency tradeoffs between full reason-ing models and their efficient variants. By releasing ESF-Bench with its associated data, code, and tax-onomy, we aim to provide the community with a foundation for systematically advancing more reli-able and enterprise-ready slot-filling systems. 97 Limitations 
+
+7.1 Error Attribution in Slot Prediction 
+
+While each slot is tagged with its associated taxon-omy scenario, determining the cause of a mispre-dicted slot still requires manual review of the sam-ple. For example, a successful slot extraction might require both correct extraction of a slot as well as applying the proper normalization rule. However, it is non-trivial to determine which step a particular model failed at. Therefore, future work can be done to automate the process of determining the exact cause of mispredictions. 
+
+7.2 Synthetic Data Generation Bias 
+
+As ESF-Bench is generated using a fully synthetic data generation pipeline based on multiple LLM calls, there may exist the possiblity of evaluation biases. These biases could be more pronounced for models from the same family or for models that share training data with those used to generate the dataset (GPT-5 and GPT-4.1). Given this, our re-sults show that GPT-based models do not score sig-nificantly higher than other models. Nonetheless, further analysis can be done to better understand and quantify the potential impact of benchmark bias in synthetically generated data. 
+
+7.3 Language and Modalities Support 
+
+Though all slots and sources are primarily in English, support for multiple languages may be greatly beneficial to global enterprises spanning multiple countries and regions. Similarly, slot-filling can be expanded to include multi-modal sup-port where user and assistant conversations may be provided through audio recordings and auxilary sources may contain images of tables and figures where slots can be extracted from. To this end, future work can be done to extend ESF-Bench sup-port to multilingual and multimodal domains. 
+
+## References 
+
+Sandhini Agarwal, Lama Ahmad, Jason Ai, Sam Alt-man, Andy Applebaum, Edwin Arbus, Rahul K. Arora, and 1 others. 2025. gpt-oss-120b & gpt-oss-20b model card. arXiv preprint arXiv:2508.10925 .Janice Ahn, Rishu Verma, Renze Lou, Di Liu, Rui Zhang, and Wenpeng Yin. 2024. Large language models for mathematical reasoning: Progresses and challenges. In Proceedings of the 18th Conference of the European Chapter of the Association for Com-putational Linguistics: Student Research Workshop ,pages 225–237. Association for Computational Lin-guistics. Emanuele Bastianelli, Andrea Vanzo, Pawel Swietojan-ski, and Verena Rieser. 2020. SLURP: A spoken lan-guage understanding resource package. In Proceed-ings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pages 7252–7262, Online. Association for Computational Linguistics. G. P. Shrivatsa Bhargav, Sumit Neelam, Udit Sharma, Shajith Ikbal, Dheeraj Sreedhar, Hima Karanam, Sachindra Joshi, Pankaj Dhoolia, Dinesh Garg, Kyle Croutwater, Haode Qi, Eric Wayne, and J. William Murdock. 2024. An approach to build zero-shot slot-filling system for industry-grade conversational assis-tants. arXiv preprint arXiv:2406.08848 .Paweł Budzianowski, Tsung-Hsien Wen, Bo-Hsiang Tseng, Iñigo Casanueva, Stefan Ultes, Osman Ra-madan, and Milica Gaši´ c. 2018. MultiWOZ – a large-scale multi-domain Wizard-of-Oz dataset for task-oriented dialogue modelling. In Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing , pages 5016–5026. As-sociation for Computational Linguistics. Zheng Chu, Jingchang Chen, Qianglong Chen, Wei-jiang Yu, Haotian Wang, Ming Liu, and Bing Qin. 2024. Timebench: A comprehensive evaluation of temporal reasoning abilities in large language models. 
+
+Preprint , arXiv:2311.17667. Gheorghe Comanici, Eric Bieber, Mike Schaeker-mann, Ice Pasupat, Noveen Sachdeva, and 1 others. 2025. Gemini 2.5: Pushing the frontier with ad-vanced reasoning, multimodality, long context, and next generation agentic capabilities. arXiv preprint arXiv:2507.06261 .Alice Coucke, Alaa Saade, Adrien Ball, Théodore Bluche, Alexandre Caulier, David Leroy, Clément Doumouro, Thibault Gisselbrecht, Francesco Calt-agirone, Thibaut Lavril, Maël Primet, and Joseph Dureau. 2018. Snips voice platform: An em-bedded spoken language understanding system for private-by-design voice interfaces. arXiv preprint arXiv:1805.10190 .DeepSeek-AI. 2025. DeepSeek-R1 incentivizes reason-ing in LLMs through reinforcement learning. Nature ,645:633–638. Yujie Feng, Zexin Lu, Bo Liu, Liming Zhan, and Xiao-Ming Wu. 2023. Towards LLM-driven dialogue state tracking. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pages 739–755. Association for Computa-tional Linguistics. Jack FitzGerald, Christopher Hench, Charith Peris, Scott Mackie, Kay Rottmann, Ana Sanchez, Aaron Nash, Liam Urbach, Vishesh Kakarala, Richa Singh, Swetha Ranganath, Laurie Crist, Misha Britan, 
+
+10 Wouter Leeuwis, Gokhan Tur, and Prem Natara-jan. 2023. MASSIVE: A 1M-example multilin-gual natural language understanding dataset with 51 typologically-diverse languages. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) ,pages 4277–4302, Toronto, Canada. Association for Computational Linguistics. Charles T. Hemphill, John J. Godfrey, and George R. Doddington. 1990. The ATIS spoken language sys-tems pilot corpus. In Proceedings of the DARPA Speech and Natural Language Workshop , pages 96– 101. Morgan Kaufmann. Ehsan Hosseini-Asl, Bryan McCann, Chien-Sheng Wu, Semih Yavuz, and Richard Socher. 2020. A simple language model for task-oriented dialogue. In Ad-vances in Neural Information Processing Systems ,volume 33, pages 20179–20191. Songbo Hu, Han Zhou, Mete Hergul, Milan Gritta, Guchun Zhang, Ignacio Iacobacci, Ivan Vuli´ c, and Anna Korhonen. 2023. Multi3WOZ: A multilingual, multi-domain, multi-parallel dataset for training and evaluating culturally adapted task-oriented dialog sys-tems. Transactions of the Association for Computa-tional Linguistics , 11:1396–1415. Léo Jacqmin, Lina M. Rojas Barahona, and Benoit Favre. 2022. “Do you follow me?”: A survey of recent approaches in dialogue state tracking. In Pro-ceedings of the 23rd Annual Meeting of the Special Interest Group on Discourse and Dialogue , pages 336–350, Edinburgh, UK. Association for Computa-tional Linguistics. Harrison Lee, Raghav Gupta, Abhinav Rastogi, Yuan Cao, Bin Zhang, and Yonghui Wu. 2022. SGD-X: A benchmark for robust generalization in schema-guided dialogue systems. In Proceedings of the AAAI Conference on Artificial Intelligence , volume 36, pages 10938–10946. Zhaojiang Lin, Andrea Madotto, Genta Indra Winata, Peng Xu, Feijun Jiang, Yuxiang Hu, Chen Shi, and Pascale Fung. 2021. BiToD: A bilingual multi-domain dataset for task-oriented dialogue modeling. In Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks .Jiexi Liu, Ryuichi Takanobu, Jiaxin Wen, Dazhen Wan, Hongguang Li, Weiran Nie, Cheng Li, Wei Peng, and Minlie Huang. 2021. Robustness testing of language understanding in task-oriented dialog. In Proceed-ings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th Interna-tional Joint Conference on Natural Language Pro-cessing (Volume 1: Long Papers) , pages 2467–2480. Association for Computational Linguistics. Lin Long, Rui Wang, Ruixuan Xiao, Junbo Zhao, Xiao Ding, Gang Chen, and Haobo Wang. 2024. On LLMs-driven synthetic data generation, curation, and evaluation: A survey. In Findings of the Associa-tion for Computational Linguistics: ACL 2024 , pages 11065–11082. Association for Computational Lin-guistics. Loren Lugosch, Mirco Ravanelli, Patrick Ignoto, Vikrant Singh Tomar, and Yoshua Bengio. 2019. Speech model pre-training for end-to-end spoken lan-guage understanding. In Proc. Interspeech , pages 814–818. Mistral AI. 2026. Ministral 3. arXiv preprint arXiv:2601.08584 .Qwen Team. 2025. Qwen3 technical report. arXiv preprint arXiv:2505.09388 .Mansi Rana, Kadri Hacioglu, Sindhuja Gopalan, and Maragathamani Boothalingam. 2025. Zero-shot slot filling in the age of LLMs for dialogue systems. In 
+
+Proceedings of the 31st International Conference on Computational Linguistics: Industry Track (COL-ING) , pages 697–706, Abu Dhabi, UAE. Association for Computational Linguistics. Abhinav Rastogi, Xiaoxue Zang, Srinivas Sunkara, Raghav Gupta, and Pranav Khaitan. 2020. Towards scalable multi-domain conversational agents: The schema-guided dialogue dataset. In Proceedings of the AAAI Conference on Artificial Intelligence , vol-ume 34, pages 8689–8696. Charlie Snell, Jaehoon Lee, Kelvin Xu, and Aviral Ku-mar. 2025. Scaling LLM test-time compute optimally can be more effective than scaling parameters for rea-soning. In International Conference on Learning Representations (ICLR) .Derong Xu, Wei Chen, Wenjun Peng, Chao Zhang, Tong Xu, Xiangyu Zhao, Xian Wu, Yefeng Zheng, Yang Wang, and Enhong Chen. 2024a. Large language models for generative information extraction: A sur-vey. Frontiers of Computer Science , 18(6):186357. Weijie Xu, Zicheng Huang, Wenxiang Hu, Xi Fang, Ra-jesh Kumar Cherukuri, Naumaan Nayyar, Lorenzo Malandri, and Srinivasan H. Sengamedu. 2024b. HR-MultiWOZ: A task oriented dialogue (TOD) dataset for HR LLM agent. In Proceedings of the First Work-shop on Natural Language Processing for Human Re-sources (NLP4HR) , pages 59–72, St. Julian’s, Malta. Association for Computational Linguistics. Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric Xing, Hao Zhang, Joseph E. Gonzalez, and Ion Stoica. 2023. Judging LLM-as-a-judge with MT-bench and chatbot arena. In Advances in Neural Information Processing Sys-tems , volume 36. 
+
+11 Appendix A ESF-Bench Taxonomy 
+
+Scenario Categories Description 
+
+Valid Enum Selection Schema provides a list of enums for a particular slot and the user specifies a slot values that maps to an enum. Invalid Enum Selection Schema provides a list of enums for a particular slot and the user specifies a slot values that does not map to any of the enums. Comparison Selection Multiple options for a slot exist throughout the con-versation and sources. The user specifies a slot using a comparison statement (e.g., Find me an option that arrives before 5pm.). Adversarial Comparison Selection Multiple options for a slot exist throughout the con-versation and sources. The user specifies a slot using a comparison statement but none of the options sat-isfy the statement. Superlative Selection Multiple options for a slot exist throughout the con-versation and sources. The user specifies a slot using a superlative statement (e.g., Find me the option that is least expensive after applying state tax.). Negation Selection Multiple options for a slot exist throughout the con-versation and sources. The user specifies a slot using a negation statement (e.g., I don’t want any options that contain meat). Adversarial Negation Selection Multiple options for a slot exist throughout the con-versation and sources. The user specifies a slot using a negation statement but multiple options fit the crite-ria. Ambiguous Slot Specification Selection Multiple conflicting slot values are present within various sources and the user specifies one of them (e.g., Use my work email instead of my personal one). Conversation History Menus Selection The assistant provides a menu of options to choose from (a), (b), (c), or (d) and the user selects from on or more of the provided options. If Conditionals Conditionals User specifies a slot value based on an if condition (e.g., If <condition>, then <slot> should be <value>). If Else Conditionals Conditionals User specifies a slot value based on an if/else con-dition (e.g., If <condition>, then <slot> should be <value1>. Otherwise, it should be <value2>). Math Reasoning Requires determining relevant numerical information and multiple steps of arithmetic to fill the slot. 
+
+Continued on next page 
+
+12 Scenario Categories Description 
+
+Temporal Reasoning Requires temporal reasoning based on dates and time to determine the slot. Counting Reasoning Requires counting occurrences of relevant informa-tion to fill the slot. Conditional Counting Reasoning, Conditionals Requires counting occurrences of relevant informa-tion based on conditions (e.g., Only count if <condi-tion>) to fill the slot. General Knowledge Inference Reasoning Requires slots to be filled using general knowl-edge inference (e.g., If user mentions apt-get, pri-mary_os_family should be set to Linux). Multi-Hop Multi-Source Requires synthesis of information from multiple sources and multi-hop inference to fill the slot. Source Priority Multi-Source Conflicting information is found in multiple sources and source priority and tiebreaker instructions are required to determine the correct slot value to fill. Long Value Long/Multi-Value Slot values are provided with extremely long values (64+ characters) such as IDs, URLs, or tokens. Multi Value Slots Long/Multi-Value Slots requiring multiple values within a single slot. Multi Value Slots Constraints Long/Multi-Value Slots requiring multiple values within a single slot filtered by specific constraints defined within the schema. Conversation Memory Conversation Understanding Assistant provides options in a previous turn and the user selects one of the options later in the conversa-tion (e.g., 5 more than the first option we spoke about previously.) Rhetorical Question Conversation Understanding User specifies a slot value using a rhetorical question (e.g., How about 5pm?). Assistant Proposal Conversation Understanding The slot value is proposed by the assistant and con-firmed by the user rather than the user specifying the slot value directly. Adversarial Assistant Proposal Conversation Understanding The slot value is proposed by the assistant and con-firmed by the user but the value proposed by the assistant is invalid based on schema constraints. Meta Discussion Conversation Understanding User clarifies and discusses the meaning of a possible slot value with the assistant without actually confirm-ing the slot value. User Personalization Personalization Slot filling requires custom personalization based on user persona metadata (e.g., find me the option that is closest to my office). 
+
+Continued on next page 
+
+13 Scenario Categories Description 
+
+Adversarial User Persona Personalization The user within the conversation does not match the user persona metadata. Only use information pro-vided directly from the user. Adversarial User Persona No Value Personalization The user within the conversation does not match the user persona metadata. The user does not provide any information and the user persona metadata should be ignored as well. Default Value Schema Con-straints The schema specifies a default value to use when no slot value can be extracted. Conditional Default Value Schema Con-straints, Condi-tionals The schema specifies a default value based on a condi-tion (e.g., If <condition>, then use <default_value 1>otherwise use <default_value 2>. Normalization Schema Con-straints The schema contains custom normalization rules to use to extract a slot into a standardized format. Conditional Normalization Schema Con-straints, Condi-tionals The schema specifies a normalization rule based on a condition (e.g., If <condition>, then nor-malize to <normalization_rule 1>, otherwise use <normalization_rule 2>). Syntax Constraints Schema Con-straints The schema contains syntax constraints that must be adhered to before a slot can be extracted (e.g., contains numeric digits, avoid specific keywords, is all upper-case, etc.) General Knowledge Constraints Schema Con-straints The schema mentions constraints that require general or common knowledge to resolve. (e.g., must be a national captital city). Units Required Schema Con-straints The schema provides a slot that requires a specific unit (e.g., attendance_duration_minutes) but the user does not specify any units. Cross Slot Constraints Schema Con-straints The schema specifies constraints between a pair of slots (e.g., check_out_date > check_in_date). Cross Slot Constraints Correc-tions Schema Con-straints The schema specifies constraints between a pair of slots (e.g., check_out_date > check_in_date). Later in the conversation, a correction is made to one of the slot values to validate or invalidate this constraint. Third Party Entity No Value Unexpected User Behavior User mentions a slot value from a third party entity without ever providing their own value (e.g., My spouse uses Brookside Pharmacy on Pine). Double Negation Unexpected User Behavior User specifies a slot value using double negation (e.g., I don’t mean that I don’t want to not have the account frozen). Uncertainty Unexpected User Behavior User provides a slot value in an uncertain manner (e.g., Maybe around 3-ish but I’m not sure). 
+
+Continued on next page 
+
+14 Scenario Categories Description 
+
+Generic Unexpected User Behavior User provides a slot value in a vague manner (e.g., Let’s do it sometime after quarter end.). Ambiguous Unexpected User Behavior The user specifies multiple values (e.g., primary ve-hicle, secondary vehicle, rental vehicle, etc.) for a single value slot. Sarcasm Unexpected User Behavior User specifies a slot value in a sarcastic or non-serious tone and the slot should not be extracted. Typo Unexpected User Behavior The user makes a typo mistake for common English words within the slot value. Relative Slot Relative Slots are specified relative to one of the previously filled slots (e.g., Make the CPU limit equal to double the requested CPU). Relative Slot Correction Relative, Cor-rections Slots are specified relative to one of the previously filled slots. Later in the conversation, the previously filled slot is updated so that the relative slot must be implicitly updated too. Relative Slot Reset Slot Reset, Rel-ative Slots are specified relative to one of the previously filled slots. Later in the conversation, the previously filled slot is reset so that the relative slot must be implicitly reset too. Corrections Corrections User provides an initial slot value and corrects or updates the value later in the conversation. Adversarial Corrections Corrections User corrects or updates a previously specified (valid) slot value such that the the updated value is no longer valid based on constraints defined in the schema or instructions. Relative Corrections Corrections, Relative User corrects or updates a previously specified slot in a relative manner (e.g., Actually increase the head-count by 15% and then add 5 more). Conditional Corrections Corrections, Conditionals User corrects a slot based on a conditional (e.g., If <condition>, then update the operating system to Linux). Meta-Corrections Corrections User corrects a previously specified slot and then undos the correction, reverting the slot back to its original value. Slot Reset Slot Reset User specifies a slot value and then decides to reset the slot value later in the conversation (e.g., Actually, forget what I said about <slot> ). All Slot Reset Slot Reset User resets all previously filled slots within the con-versation. Conditional Reset Slot Reset, Con-ditionals User resets a slot based on a conditional (e.g., If <condition>, then forget what I said about <slot> ). 
+
+Continued on next page 
+
+15 Scenario Categories Description 
+
+Meta-Reset Slot Reset User resets a previously filled slot and then undos the reset, reverting the slot back to its original value. 
+
+## B Final Joint Goal Accuracy (F-JGA) 
+
+Let D = {d1, d 2, . . . , d N } be a set of N dialogues. For each dialogue di, let S∗ 
+
+> i
+
+= {(sk, v k)} denote the ground-truth final dialogue state and ˆSi = {(sk, ˆvk)} denote the predicted final dialogue state, where sk
+
+is a slot and vk is its corresponding value. F-JGA is defined as: F-JGA = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+1
+
+h ˆSi = S∗
+
+> i
+
+i
+
+(1) where 1[·] is the indicator function that equals 1 if the predicted final dialogue state exactly matches the ground-truth final dialogue state, and 0 otherwise. Unlike turn-level JGA, which computes accuracy at every dialogue turn t:JGA = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+1
+
+TiTiX
+
+> t=1
+
+1
+
+h ˆSti = S∗ti
+
+i
+
+(2) F-JGA evaluates only the final turn Ti, making it agnostic to the number of dialogue turns and focusing solely on whether the model correctly resolves the complete dialogue state by the end of the conversation. 
+
+## C Prompt Example 
+
+16 17 18 19
