@@ -1,0 +1,135 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-02T20:11:07.244078+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.26766v1",
+      "source": "arxiv",
+      "title": "MediaWiki Code2Code Search: Neural Retrieval for the Semantic Discovery of Open-Source Software Entities",
+      "abstract": "Code search in large-scale ecosystems is often hindered by the lexical gap between user queries and implementation details, alongside the trade-off between the low latency of traditional Information Retrieval (IR) and the precision of Deep Learning (DL). We present MediaWiki Code2Code Search, a neural retrieval system for semantic code-to-code discovery. By indexing 1.29 million structural entities (functions, types, and templates) across 2,500+ MediaWiki repositories, our system enables retrieval based on computational intent rather than surface tokens. We employ a split-build architecture, decoupling GPU-intensive offline indexing from a CPU-only serving layer; our FAISS IVF-PQ index occupies 168.6 MB: a 96.6\\% reduction compared to a flat float32 baseline, and achieves a median query latency of 1.85 seconds on commodity hardware, satisfying the 6 GiB RAM constraint of Wikimedia Toolforge. Our evaluation across a 27-query benchmark demonstrates superior performance over the BM25 baseline, achieving a P@10 of 0.87 compared to 0.64 (0.52 versus 0.34 for strict matching). Gains are most pronounced in name-obfuscated tasks where lexical methods fail. The system is available at https://code2codesearch.toolforge.org under the Apache 2.0 licence and provides an open RESTful API.",
+      "authors": [
+        "Francesco Tosoni"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.AI",
+        "cs.CL",
+        "cs.SE"
+      ],
+      "published": "2026-07-29T11:07:07+00:00",
+      "link": "https://arxiv.org/pdf/2607.26766v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Neural retrieval system for semantic discovery of open-source software entities, likely releasing code and focused on open-source code",
+      "llm_evidence_cn": "面向开源软件实体语义发现的神经检索系统，聚焦开源代码",
+      "llm_evidence": "面向开源软件实体语义发现的神经检索系统，聚焦开源代码",
+      "canonical_evidence": "面向开源软件实体语义发现的神经检索系统，聚焦开源代码",
+      "llm_tldr_en": "MediaWiki Code2Code Search uses a split-build FAISS IVF-PQ index for semantic code-to-code retrieval across 2,500+ repositories, enabling intent-based discovery of open-source software entities with low latency.",
+      "llm_tldr_cn": "针对大规模生态中代码搜索存在词汇鸿沟与延迟精度权衡的问题，本文提出MediaWiki Code2Code Search神经检索系统。系统将离线GPU索引与在线CPU服务解耦，以FAISS IVF-PQ索引2,500多个仓库的129万结构化实体，按计算意图而非表面词元检索。索引仅占168.6MB，较常见方案下降96.6%，实现低延迟的语义代码发现。",
+      "llm_tldr": "针对大规模生态中代码搜索存在词汇鸿沟与延迟精度权衡的问题，本文提出MediaWiki Code2Code Search神经检索系统。系统将离线GPU索引与在线CPU服务解耦，以FAISS IVF-PQ索引2,500多个仓库的129万结构化实体，按计算意图而非表面词元检索。索引仅占168.6MB，较常见方案下降96.6%，实现低延迟的语义代码发现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.28563v1",
+      "source": "arxiv",
+      "title": "MQSS Client: Interface for Decoupling Quantum Programming Interfaces",
+      "abstract": "Quantum Computing (QC) is an emerging technology that requires customized tools, such as software stacks and programming interfaces. However, currently, the tools are generally tightly coupled and exhibit limited interoperability. This, in particular, affects High Performance Computing (HPC) facilities and data centers, which are required to support multiple programming interfaces. In this paper, we introduce MQSS Client, a unifying, context-aware access layer and programming library that decouples the programming interfaces and the underlying compilation and runtime stack. MQSS Client aims to support all existing programming interfaces by providing abstractions for resources, jobs, and results. It provides two access modes to accommodate the varied needs of remote and HPC users. Thus, interoperability between software stacks and programming interfaces increases.",
+      "authors": [
+        "Ercüment Kaya",
+        "Muhammad Nufail Farooqi",
+        "Minh Chung",
+        "Burak Mete",
+        "Martin Schulz",
+        "Jorge Echavarria"
+      ],
+      "primary_category": "cs.ET",
+      "categories": [
+        "cs.ET"
+      ],
+      "published": "2026-07-30T17:28:56+00:00",
+      "link": "https://arxiv.org/pdf/2607.28563v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "MQSS Client is a programming library, inherently provides code, mentions data centers.",
+      "llm_evidence_cn": "MQSS Client 为编程库，天然含代码，并涉及数据中心。",
+      "llm_evidence": "MQSS Client 为编程库，天然含代码，并涉及数据中心。",
+      "canonical_evidence": "MQSS Client 为编程库，天然含代码，并涉及数据中心。",
+      "llm_tldr_en": "MQSS Client is a unifying access layer and programming library that decouples quantum programming interfaces from underlying compilation/runtime stacks. It abstracts resources, jobs, and results, supporting HPC facilities and data centers with multiple programming interfaces.",
+      "llm_tldr_cn": "量子计算软件栈与编程接口紧耦合，限制了HPC设施和数据中心的多接口支持。论文提出MQSS Client，一个统一且上下文感知的访问层与编程库，将编程接口与底层编译运行栈解耦。通过抽象资源、作业和结果，为用户提供两种访问模式，支撑多种量子编程接口。作为编程库，其实现天然包含源代码，且面向数据中心场景。",
+      "llm_tldr": "量子计算软件栈与编程接口紧耦合，限制了HPC设施和数据中心的多接口支持。论文提出MQSS Client，一个统一且上下文感知的访问层与编程库，将编程接口与底层编译运行栈解耦。通过抽象资源、作业和结果，为用户提供两种访问模式，支撑多种量子编程接口。作为编程库，其实现天然包含源代码，且面向数据中心场景。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.28033v1",
+      "source": "arxiv",
+      "title": "DataClawEval: A Benchmark for Data Engineering Agents in Real Industrial Harness",
+      "abstract": "Large language models (LLMs) and LLM-based agents are increasingly being deployed to automate complex workflows, promising to revolutionize data management and processing. However, existing benchmarks predominantly focus on simplified Text-to-SQL translation or data analysis, leaving the critical and complex domain of end-to-end data engineering largely unexplored. To bridge this gap, we introduce DataClawEval, the first comprehensive benchmark designed specifically to evaluate the end-to-end task completion capabilities of autonomous agents in real-world data engineering scenarios. Built upon production-grade code authored by professional enterprise data engineers, it comprises 100 rigorous, end-to-end tasks spanning five execution engines: PySpark, MySQL, HiveSQL, PrestoSQL/Trino, and FlinkSQL. Rather than non-deterministic LLM-as-a-judge scoring, each task is executed within a case-specific, isolated sandbox and graded by deterministic, rule-based scripts. Evaluating 16 frontier agents exposes critical limitations: The strongest model attains only 74.9 overall, and no single model dominates, as each excels on a different engine, revealing strict domain specialization rather than omnipotent proficiency. Thus, autonomous data engineering remains a formidable, unresolved challenge. We release our dataset, containerized environments, and deterministic evaluation scripts at https://github.com/Dicemy/DataClawEval/tree/master",
+      "authors": [
+        "Debin Meng",
+        "Jiaming Yang",
+        "Zefang Zong",
+        "Tengyue Xu",
+        "Haining Xie",
+        "Yang Li",
+        "Peng Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-30T11:17:27+00:00",
+      "link": "https://arxiv.org/pdf/2607.28033v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Benchmark built on production-grade code, likely provides code for data engineering agents",
+      "llm_evidence_cn": "基于生产级代码的基准，可能提供数据工程智能体相关代码",
+      "llm_evidence": "基于生产级代码的基准，可能提供数据工程智能体相关代码",
+      "canonical_evidence": "基于生产级代码的基准，可能提供数据工程智能体相关代码",
+      "llm_tldr_en": "DataClawEval is the first benchmark for end-to-end data engineering agents, with 100 tasks on production-grade code across five execution engines.",
+      "llm_tldr_cn": "针对现有基准过度聚焦Text-to-SQL和简化数据分析而忽视端到端数据工程的问题，提出DataClawEval，首个专门评测自主智能体在真实工业数据工程场景中端到端任务完成能力的基准。该基准基于专业企业数据工程师编写的生产级代码，包含100个跨五个执行引擎的严格任务，为数据工程智能体的能力评估提供标准。",
+      "llm_tldr": "针对现有基准过度聚焦Text-to-SQL和简化数据分析而忽视端到端数据工程的问题，提出DataClawEval，首个专门评测自主智能体在真实工业数据工程场景中端到端任务完成能力的基准。该基准基于专业企业数据工程师编写的生产级代码，包含100个跨五个执行引擎的严格任务，为数据工程智能体的能力评估提供标准。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

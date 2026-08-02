@@ -1,0 +1,54 @@
+{
+  "label": "2026-08-02",
+  "date": "2026-08-02",
+  "generated_at": "2026-08-02T20:13:38",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202608/02/2607.26766v1-mediawiki-code2code-search-neural-retrieval-for-the-semantic-discovery-of-open-source-software-entities",
+      "section": "deep",
+      "title_en": "MediaWiki Code2Code Search: Neural Retrieval for the Semantic Discovery of Open-Source Software Entities",
+      "authors": "Francesco Tosoni",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.26766v1",
+      "score": "8.0",
+      "evidence": "面向开源软件实体语义发现的神经检索系统，聚焦开源代码",
+      "tldr": "代码搜索面临用户查询与实现细节间的词汇鸿沟，且传统IR低延迟与深度学习高精度难以兼得。本文提出MediaWiki Code2Code Search，利用神经检索对2500多个仓库的129万结构实体进行语义代码到代码发现。采用分裂架构解耦GPU离线索引与CPU服务层，FAISS IVF-PQ索引仅168.6MB，较基线压缩96.6%，中位延迟1.85秒。在27查询基准上P@10达0.87，显著优于BM25的0.64，尤其擅长名称混淆任务。",
+      "tags": "query:code-paper",
+      "abstract_en": "Code search in large-scale ecosystems is often hindered by the lexical gap between user queries and implementation details, alongside the trade-off between the low latency of traditional Information Retrieval (IR) and the precision of Deep Learning (DL). We present MediaWiki Code2Code Search, a neural retrieval system for semantic code-to-code discovery. By indexing 1.29 million structural entities (functions, types, and templates) across 2,500+ MediaWiki repositories, our system enables retrieval based on computational intent rather than surface tokens. We employ a split-build architecture, decoupling GPU-intensive offline indexing from a CPU-only serving layer; our FAISS IVF-PQ index occupies 168.6 MB: a 96.6\\% reduction compared to a flat float32 baseline, and achieves a median query latency of 1.85 seconds on commodity hardware, satisfying the 6 GiB RAM constraint of Wikimedia Toolforge. Our evaluation across a 27-query benchmark demonstrates superior performance over the BM25 baseline, achieving a P@10 of 0.87 compared to 0.64 (0.52 versus 0.34 for strict matching). Gains are most pronounced in name-obfuscated tasks where lexical methods fail. The system is available at https://code2codesearch.toolforge.org under the Apache 2.0 licence and provides an open RESTful API.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/02/2607.28563v1-mqss-client-interface-for-decoupling-quantum-programming-interfaces",
+      "section": "deep",
+      "title_en": "MQSS Client: Interface for Decoupling Quantum Programming Interfaces",
+      "authors": "Ercüment Kaya, Muhammad Nufail Farooqi, Minh Chung, Burak Mete, Martin Schulz, Jorge Echavarria",
+      "date": "2026-07-30",
+      "pdf": "https://arxiv.org/pdf/2607.28563v1",
+      "score": "8.0",
+      "evidence": "MQSS Client 为编程库，天然含代码，并涉及数据中心。",
+      "tldr": "量子计算软件栈常与特定编程接口紧耦合，互操作性差，HPC设施需支持多种接口。MQSS Client作为统一、上下文感知的访问层，通过抽象资源、作业和结果解耦接口与底层编译及运行时栈，并提供两种访问模式以适应远程和HPC用户。该设计提升了软件栈与编程接口间的互操作性，简化了多接口支持。",
+      "tags": "query:code-paper",
+      "abstract_en": "Quantum Computing (QC) is an emerging technology that requires customized tools, such as software stacks and programming interfaces. However, currently, the tools are generally tightly coupled and exhibit limited interoperability. This, in particular, affects High Performance Computing (HPC) facilities and data centers, which are required to support multiple programming interfaces. In this paper, we introduce MQSS Client, a unifying, context-aware access layer and programming library that decouples the programming interfaces and the underlying compilation and runtime stack. MQSS Client aims to support all existing programming interfaces by providing abstractions for resources, jobs, and results. It provides two access modes to accommodate the varied needs of remote and HPC users. Thus, interoperability between software stacks and programming interfaces increases.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/02/2607.28033v1-dataclaweval-a-benchmark-for-data-engineering-agents-in-real-industrial-harness",
+      "section": "quick",
+      "title_en": "DataClawEval: A Benchmark for Data Engineering Agents in Real Industrial Harness",
+      "authors": "Debin Meng, Jiaming Yang, Zefang Zong, Tengyue Xu, Haining Xie, Yang Li, Peng Chen",
+      "date": "2026-07-30",
+      "pdf": "https://arxiv.org/pdf/2607.28033v1",
+      "score": "6.0",
+      "evidence": "基于生产级代码的基准，可能提供数据工程智能体相关代码",
+      "tldr": "现有基准多限于Text-to-SQL或数据分析，难以评测真实数据工程场景。为此提出DataClawEval，首个面向端到端数据工程智能体的基准，含100个生产级任务，覆盖PySpark、MySQL等5种执行引擎，并用确定性脚本在隔离沙箱中评估。对16个前沿智能体评测显示，最强模型仅74.9分，且无一模型全面占优，暴露领域特化问题。该基准及环境已开源，可推动自动数据工程研究。",
+      "tags": "query:code-paper",
+      "abstract_en": "Large language models (LLMs) and LLM-based agents are increasingly being deployed to automate complex workflows, promising to revolutionize data management and processing. However, existing benchmarks predominantly focus on simplified Text-to-SQL translation or data analysis, leaving the critical and complex domain of end-to-end data engineering largely unexplored. To bridge this gap, we introduce DataClawEval, the first comprehensive benchmark designed specifically to evaluate the end-to-end task completion capabilities of autonomous agents in real-world data engineering scenarios. Built upon production-grade code authored by professional enterprise data engineers, it comprises 100 rigorous, end-to-end tasks spanning five execution engines: PySpark, MySQL, HiveSQL, PrestoSQL/Trino, and FlinkSQL. Rather than non-deterministic LLM-as-a-judge scoring, each task is executed within a case-specific, isolated sandbox and graded by deterministic, rule-based scripts. Evaluating 16 frontier agents exposes critical limitations: The strongest model attains only 74.9 overall, and no single model dominates, as each excels on a different engine, revealing strict domain specialization rather than omnipotent proficiency. Thus, autonomous data engineering remains a formidable, unresolved challenge. We release our dataset, containerized environments, and deterministic evaluation scripts at https://github.com/Dicemy/DataClawEval/tree/master",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

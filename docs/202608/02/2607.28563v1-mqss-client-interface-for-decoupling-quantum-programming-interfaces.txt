@@ -1,0 +1,328 @@
+Title: MQSS Client: Interface for Decoupling Quantum Programming Interfaces
+
+URL Source: https://arxiv.org/pdf/2607.28563v1
+
+Published Time: Fri, 31 Jul 2026 01:24:46 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# MQSS Client: Interface for Decoupling Quantum Programming Interfaces 
+
+Ercüment Kaya 
+
+Technical University of Munich (TUM) Leibniz Supercomputing Centre (LRZ) Garching bei München, Germany ercuement.kaya@lrz.de 
+
+Muhammad Nufail Farooqi 
+
+Leibniz Supercomputing Centre (LRZ) Garching bei München, Germany muhammad.farooqi@lrz.de 
+
+Minh Chung 
+
+Leibniz Supercomputing Centre (LRZ) Garching bei München, Germany minh.chung@lrz.de 
+
+Burak Mete 
+
+Technical University of Munich (TUM) Leibniz Supercomputing Centre (LRZ) Garching bei München, Germany burak.mete@lrz.de 
+
+Martin Schulz 
+
+Technical University of Munich (TUM) Leibniz Supercomputing Centre (LRZ) Garching bei München, Germany schulzm@in.tum.de 
+
+Jorge Echavarria 
+
+Munich Quantum Valley (MQV) Garching bei München, Germany jorge.echavarria@munich-quantum-valley.de 
+
+Abstract —Quantum Computing (QC) is an emerging tech-nology that requires customized tools, such as software stacks and programming interfaces. However, currently, the tools are generally tightly coupled and exhibit limited interoperability. This, in particular, affects High Performance Computing (HPC) facilities and data centers, which are required to support multiple programming interfaces. In this paper, we introduce MQSS Client, an unifying, context-aware access layer and programming library that decouples the programming interfaces and the underlying compilation and runtime stack. MQSS Client aims to support all existing programming interfaces by providing abstractions for resources, jobs, and results. It provides two access modes to accommodate the varied needs of remote and HPC users. Thus, interoperability between software stacks and programming interfaces increases. 
+
+Index Terms —Quantum Computing, High Performance Com-puting, Programming Interfaces, Decoupling 
+
+I. I NTRODUCTION 
+
+Quantum Computing (QC) is advancing swiftly and promises to revolutionize computation by enabling solutions to problems that would require exponential resources for classical computing systems. Rather than replacing classical infras-tructure, Quantum Processing Units (QPUs) are increasingly envisioned as accelerators—similar to Graphics Processing Units (GPUs) and Field Programmable Gate Arrays (FP-GAs)—within existing High Performance Computing (HPC) environments. While remarkable progress has been made in hardware development, such as Google’s Willow [1] and IQM super-conducting quantum processors [2], these achievements alone are insufficient to unlock the full potential of QC. To achieve the quantum advance truly, the hardware requires compatible and sophisticated programming languages, models, and robust underlying compilation infrastructures. The challenge lies not only in hardware limitations but also in the lack of cohesive software ecosystems that allow users to effectively develop, execute, and manage quantum applications across heteroge-End-Users 
+
+> Programming
+> Interface A
+> Programming
+> Interface B
+> Programming
+> Interface C
+> Python
+> C/C++
+> ...
+> Access Paths
+> HPC
+> Remote/Cloud
+> Use-Case-Specific
+> Systems
+> Modality B
+> API-Client?
+> Modality A
+> Modality C
+
+Fig. 1. An illustration of multi-programming models and multi-quantum modalities connecting through different access paths, underscoring the mo-tivation for a unified API client. 
+
+neous platforms. These components are crucial for effectively exploiting the quantum systems. A QPU in quantum technologies can be implemented using different physical approaches, such as superconducting or photonic systems. This diversity affects the usability of the devices. For instance, the definition of a quantum job may vary between vendors. In parallel, this diversity poses challenges for data centers and HPC facilities that host multiple distinct quantum devices. Hence, unified software stacks that support different devices have become increasingly important. The thriving field of QC led to the development of a wide range of programming models and Domain-Specific Languages (DSLs). Figure 1 illustrates a scenario from a computing center side, where there might be multiple pro-gramming interfaces for end-users. Users can expect to work across multiple quantum modalities via different access paths and choose the most suitable option based on their expertise and needs. Similarly, this diversity poses a challenge for the mentioned facilities, as they are required to support a wide range of DSLs. Software Development Kit (SDK) fragmen-tation is the central obstacle: each quantum vendor ships its own incompatible toolchain, forcing HPC facilities to maintain arXiv:2607.28563v1 [cs.ET] 30 Jul 2026 parallel, redundant software stacks. In this paper, we introduce the MQSS Client , a unifying, context-aware access layer that addresses the fragmentation of the quantum software stack by decoupling the programming model from the underlying compilation and runtime stack. 
+
+MQSS Client is designed to support a broad range of exist-ing programming interfaces via middleware modules named 
+
+MQSS Adapters [3]. In particular, MQSS Client supports mul-tiple execution environments, including REST-based remote/-cloud access, HPC, or use-case-specific systems, allowing it to operate seamlessly across diverse deployment scenarios. By acting as a bridge between programming interfaces and quantum backends, it enables users to develop and submit quantum jobs in a consistent manner, independent of the underlying system. In summary, our contributions are as follows:  
+
+> •
+
+a unified abstraction layer that decouples programming models from backend-specific infrastructures;  
+
+> •
+
+a flexible interface supporting multiple access paradigms across remote/cloud, HPC environments, or different use-case-specific systems;  
+
+> •
+
+a runtime library for standardized quantum job submis-sion, resource querying, and result retrieval. The remainder of this paper is organized as follows: Sec-tion II covers background and related works. In Section III, we introduce the design and implementation details of MQSS Client . Section IV describes the instantiations and how we de-ploy the client in our ecosystem. In Section V, we present the experiments and performance evaluation. Finally, we conclude the paper in Section VI. II. B ACKGROUND AND RELATED WORK 
+
+Quantum programming models and interfaces are essen-tial to interact with quantum hardware. While programming models define how computation is performed, interfaces are practical tools to enable creating quantum programs. The most well-known quantum programming models are gate-based, pulse-based, and Hamiltonian models. The gate-based model defines quantum circuits as a sequence of quantum gates. Similarly, the pulse-based model uses a sequence of physical signals. On the other hand, the Hamiltonian model describes the computation via the system’s energy function. To describe a quantum program at a higher level, we use programming interfaces, such as Qiskit [4] and CUDA Quantum [5]. Python is the dominant language in the QC domain. For instance, Qiskit [4] is a Python-based, open-source SDK developed by IBM and widely used in developing quantum ap-plications. It provides abstractions to define custom backends and quantum job definitions. Another widely used Python-based SDK is PennyLane [6], developed by Xanadu Quantum Technologies. As an extension to it, Catalyst is a Just-in-Time (JIT) compiler that compiles High-Performance Computing-Quantum Computing (HPCQC) applications as a whole [7]. PennyLane also provides an abstraction to create a custom backend. To enable the JIT, an additional custom backend needs to be created by inheriting the corresponding interface from Catalyst’s Runtime. While Python dominates quantum application development, it is unsuitable for HPC environments where low-latency, compiled code is standard. C and C++ remain the dominant languages in HPC, making native support for them essential for seamless HPCQC integration. Therefore, it is necessary to create programming interfaces in these languages to enable seamless HPCQC integration. For instance, CUDA Quantum [5] is a language extension that allows users to integrate quantum circuits using C++ and Python. It allows the creation of different backends with their abstraction classes. In parallel, Quantum Programming Interface (QPI) is a C-based runtime library solution that allows users to create quantum circuits within HPC applications. In addition, CQ [8] is a C-like API, programming model, and specifications for the hybrid application. In parallel, quantum software stacks, such as Munich Quan-tum Software Stack (MQSS) [9], [10], are required to support multiple programming models and quantum devices. Simi-larly, Rust-based Quantum Resource Management Interface (QRMI) [11] is a vendor-agnostic library for submitting quan-tum jobs and monitoring their behavior by abstracting away the complexity of quantum resources. On the backend side, QRMI provides an abstraction layer that supports multiple quantum devices. In addition, MQSS provides abstraction via Quantum Device Management Interface (QDMI) [12]. Hence, abstraction is a key concept for stripping away the complexity and versatility of the fast-paced development of the quantum ecosystem. III. D ESIGN AND IMPLEMENTATION 
+
+As depicted in Figure 2, the MQSS Client is a unifying, context-aware access layer and programming library that de-couples the programming interfaces and the underlying com-pilation and runtime stack. We implement the MQSS Client 
+
+using C++17 with Niels Lohmann’s JSON [13] to handle the JSON data format, libcurl [14] to establish the remote connection, rabbitmq-c [15] to handle the HPC connection. To create the Python bindings, we utilize pybind11 [16]. Figure 3 shows the full class structure of the MQSS Client .At the top level, MQSSClient is the single entry point for all user interactions. It delegates transport to one of two inter-nal backends — MQSSRestClient or MQSSHPCClient —both implementing the MQSSBaseClient interface. This design localizes transport-specific logic within the backend classes, keeping the public-facing MQSSClient API uni-form regardless of the chosen access mode. Outward from 
+
+MQSSClient , three domain objects carry the core abstrac-tions: JobRequest defines what to run, JobResult cap-tures what came back, and Resource describes where it ran. We provide two access modes to accommodate distinct requirements: a REST-based remote access and a RabbitMQ-based HPC access. The access modes are built on top of the unified layer that encapsulates the job and resource interfaces. Fig. 2. The structure of MQSS Client: It is designed to be between programming interfaces and the underlying compiler infrastructure. 
+
+This distinction allows compilation and runtime stacks to follow different protocols while remaining decoupled. The REST-based remote access mode allows users to access quantum resources in a remote location by exposing the resources through standard HTTP endpoints. In parallel, the 
+
+RabbitMQ-based HPC access is tailored for performance-critical environments such as data and supercomputing centers. While Listing 1 demonstrates the life cycle of the MQSS Client, the line 4 creates an object based on HPC access, in parallel, line 5 demonstrates object creation for remote access. We provide two interfaces within the MQSS Client to fulfill the requirements of end users and libraries built on top of it: the Job and Resource Interfaces. At a high level, a Job 
+
+represents a quantum task while a Resource represents any quantum computation asset that can execute a quantum task, such as quantum computers, simulators, as well as stacks. The Job interface encapsulates the logic related to quantum task definition and execution. The job interface consists of highly customizable Job Request and Job Result classes. A Job Result includes the outcome of the quantum task and execution metrics, such as completion and submission times. Conversely, a Job Request defines the quantum task to be offloaded to the underlying stack. We define two job requests to accommodate the use of different quantum-computation assets: Circuit and Hamilto-nian . A circuit job request describes a gate-based quantum program, including the number of shots and the resources to be used during execution. On the other hand, a Hamiltonian job request describes a quantum task that determines the total energy of a quantum system with given interaction terms and coefficients. Lines 11 to 21 in Listing 1 show the creation and submission of a circuit job request, followed by a Hamiltonian job request at lines 23 to 26 in the same Listing. The MQSS Client can query the results of a job using the 
+
+getJobResult function, where the first parameter is the job to be queried, followed by a boolean value indicating whether to wait for the results, and an integer value for the timeout. In that case, if the results are not produced or not ready, the returned value is NULL. Otherwise, the function returns a unique pointer to a Job Result . It contains the histogram of the results, along with metrics such as submission time and completion time. The Resource Interface dynamically abstracts the char-acteristics and capabilities of the available quantum compu-tation assets. It exposes methods such as getCouplingMap ,
+
+getQubitCount , and getNativeGateset that provide information about the resources’ capabilities. Lines 7 to 9 in Listing 1 show querying the resources and receiving the properties of a resource. IV. I NSTANTIATIONS AND DEPLOYMENT 
+
+This section describes how the MQSS Client is instantiated and deployed in different programming languages, program-ming models, and configurations. Its low-level implementation and bindings allow us to exploit it as a standalone client library as well as a backend service for the external applications. This flexibility improves the re-usability of the MQSS Client. The MQSS Client is deployed at one of Europe’s leading su-percomputing centers for HPCQC, and used by a diverse user base with different programming languages and models—from beginner users who use it in remote mode to advanced users who use it in tightly-coupled hybrid applications. We divide the instantiations of MQSS Client into two: 
+
+Standalone Client Library and Backend Adapters , and Table I summarizes the instantiations based on language, access mode, and the job type. 
+
+A. Instantiation as a Standalone Client Library 
+
+In this instantiation, the MQSS client is embedded within an HPCQC application that is directly exposed to end users. The users are responsible for orchestrating interactions with the library. This instantiation is most suitable for the HPCQC application with static quantum circuits. As given earlier, Listing 1 presents an example on using the MQSS Client as a standalone library. Thanks to the MQSS Client’s Python bindings, it can be used in Python applications. MQSSClient 
+
+> - token: string
+> - url_or_queue : string
+> - is_hpc: bool
+> - mClient: MQSSBaseClient
+> - waitForJobResult(JobRequest, size_t): JobResult
+> + getAllResources() : vector<Resource>
+> + getResourceInfo(string) : Resource
+> + submitJob(JobRequest) : string
+> + cancelJob(JobRequest) : void
+> + getJobStatus(JobRequest) : string
+> + getJobResult(JobRequest, bool, size_t) : JobResult
+> + getNumberPendingJobs(string) : int
+> MQSSBaseClient
+> + get(string) : string
+> + post(string) : string
+> + del(string) : void
+> MQSSRestClient
+> - mUrl: string
+> - mToken : string
+> - pHeaders: struct curl_slist *
+> + get(string) : string
+> + post(string) : string
+> + del(string) : void
+> MQSSHPCClient
+> - mToken : string
+> - mOf fl oadListenerQueueName: string
+> - mResponseQueueName: string
+> - mRabbitmqClient: MQSSRabbitMQClient
+> + get(string) : string
+> + post(string) : string
+> + del(string) : void
+
+0..* 
+
+> Resource
+> - mName: string
+> - mQubitCount: unsigned
+> - mOnline: bool
+> - mCouplingMap: vector<pair<int, int>>
+> - mNativeGateset: vector<string>
+> + getName(): string
+> + getQubitCount(): int
+> + getCouplingMap(): vector<pair<int, int>>
+> + isOnline(): bool
+> + getNativeGateset(): vector<string>
+
+0..* 
+
+> JobResult
+> - mResults: map<string, unsigned int>
+> - mTimestampCompleted: string
+> - mTimestampSubmitted: string
+> - mTimestampScheduled: string
+> + getResults(): map<string, unsigned int>
+> + getTimestampCompleted(): string
+> + getTimestampSubmitted(): string
+> + getTimestampScheduled(): string
+
+0..* 
+
+> JobRequest
+> - mUuid: string
+> + toJson(): json
+> + setUuid(string): void
+> + getPath(): string
+> + getUuid(): string
+> CircuitJobRequest
+> - mCircuit: string
+> - mCircuitFormat: string
+> - mQueued: bool
+> - mNoModify: bool
+> - mShots: unsigned int
+> - mResourceName: string
+> + setCircuit(string): void
+> + ...
+> + setResourceName(string): void
+> + getCircuitFormat(): string
+> + setCircuitFormat(string): void
+> HamiltonianJobRequest
+> - mInteractionStr: string
+> - mCoef fi cientsStr: string
+> - mResourceName: string
+> + setResourceName(string): void
+> + getResourceName(): string
+> + getPath(): string
+> + getCoef fi cientsString(): string
+> + setCoef fi cientsString(string): void
+> + getInteractionString(): string
+> + setInteractionString(string): void
+> + toJson(): json
+
+Fig. 3. The class diagram of the MQSS Client that shows the relationships among the classes and the abstractions 
+
+Instantiation Language Access Mode Job Types 
+
+Standalone Library C++, Python Both Circuit, Hamiltonian QDMI Device C++ Remote Circuit QPI Backend C HPC Circuit CUDA-Q Backend C++ Both Circuit Qiskit Backend Python Both Circuit PennyLane Backend Python Both Circuit Benchmarking Framework Python Remote Circuit TABLE I OVERVIEW OF MQSS C LIENT INSTANTIATIONS 
+
+B. Instantiations as Backend Adapters 
+
+In this instantiation, the MQSS Client is wrapped around the existing backend configurations to provide support for pro-gramming models and languages. The configurations support both REST-based remote and RabbitMQ-based HPC access modes, determined by the environment in which they are initiated. 
+
+1) Stack-as-device QDMI Device: 
+
+QDMI, one of the core components of the MQSS, is a C-based API that encapsulates job submission, capability queries, and the life cycle of a quantum system. Any implementation of QDMI specifications referred as QDMI Device 1. The majority of the QDMI devices correspond to a quantum asset. However, the Stack-as-device concept enables us to implement the QDMI specification as a software stack. In this way, various software stacks may exploit the quantum resources of other facilities and software stacks. 
+
+1They can be found here: https://github.com/Munich-Quantum-Software-Stack/MQSS-QDMI-Devices-Suite 
+
+We implement the specifications of the QDMI, using MQSS Client to create a QDMI device for Leibniz Supercomputing Centre (LRZ). The most critical components of the implemen-tation are outlined below: 1) The QDMI_device_initialize function initiate the de-vice. 2) The QDMI_device_session_init function initiate the session based on the given parameters, such as base URL and token , that set using 
+
+QDMI_device_session_set_parameter function. 3) The QDMI_device_job_submit function submits a cir-cuit job, which is created and configured by us-ing the QDMI_device_session_create_device_job and 
+
+QDMI_device_job_set_parameter functions, respec-tively. 
+
+2) C-based QPI Backend: 
+
+As mentioned earlier, QPI is a lightweight, C-based program-ming library that allows embedding quantum circuits in HPC applications. To connect QPI to MQSS Client, we embedded it into the runtime using C bindings. Hereby, users can submit a quantum job in a location and HPC environment without any modifications in the code. 
+
+3) C++ based CUDA-Q Backend: 
+
+CUDA-Q [5] allows the implementation of custom backends using the provided abstractions. Its abstractions include, but are not limited to QPU class which executes the quantum ker-nels, and Executor which executes compiled quantum codes. To connect CUDA-Q to MQSS Client, we inherit the 
+
+QPU class and override the launchKernel method. Within the 1 #include <mqss/client.h>                                                                                      
+
+> 2int main() {
+> 3....
+> 4auto client =MQSSClient(token, queue_or_url, isHpc);
+> 56auto resources =client.getAllResources ();
+> 7auto resourceToUse =chooseTheResource( resources);
+> 8std::string resourceName =resourceToUse.getName();
+> 910 std::string circuit =R"(
+> 11 OPENQASM 2.0;
+> 12 include "qelib1.inc";
+> 13 qreg q[2];
+> 14 creg c[2];
+> 15 hq[0];
+> 16 cx q[0], q[1];
+> 17 measure q-> c;)";
+> 18 19 CircuitJobRequest circuitJob =CircuitJobRequest(circuit, "qasm", resourceName, shotCount, noModify, isQueued);
+> 20 auto circuitJobID =client.submitJob( circuitJob);
+> 21 22 std::string interactionStr ="0 1; 12; 02; 03;";
+> 23 std::string coefficientsStr ="0.5 0.1 0.8 1;";
+> 24 HamiltonianJobRequest hamiltonianJob =HamiltonianJobRequest(resourceName, interactionStr, coefficientsStr);
+> 25 auto hamiltonianJobID =client. submitJob(hamiltonianJob);
+> 26 27 std::unique_ptr<JobResult> hamiltonianResult =client. getJobResult(hamiltonianJob, true, 10);
+> 28 std::unique_ptr<JobResult> circuitResult =client.getJobResult( circuitJob, true, 10);
+> 29 30 }
+
+Listing 1: The Life Cycle of the MQSS Client method, we create a CircuitJobRequest using the quantum ker-nel’s corresponding Quake representation. Hence, a quantum application can target remote and HPC workflows without any modification. From the user’s perspective, the MQSS backend behaves identically to any native CUDA Quantum backend — the MQSS Client layer remains entirely transparent. 
+
+4) Python-based Qiskit and Pennylane Backend: 
+
+Qiskit Framework [4] provides abstractions to create custom backends. Abstractions such as BackendV2 and JobV1 , which are required components to execute a Qiskit circuit. To connect Qiskit to MQSS Client, we inherit the Back-endV2 class to orchestrate the job submission and receive information about the available quantum resources and JobV1 
+
+class to create the CircuitJobRequest based on the OpenQASM [17] representation of the Qiskit Circuit. Similarly, a custom MQSS client further enables PennyLane [18] job submissions through a custom MQSS PennyLane adapter, allowing users to use native PennyLane features within hybrid workflows, such as quantum optimization via the parameter-shift method or gradient-based optimizers. The way to enable that is through the implementation of a PennyLane device [19], where execution occurs via MQSS client calls. Similar to the Qiskit adapter, the client can also fetch dynamic and static metadata, such as the device’s coupling map and basis gates. 
+
+5) MQSS Benchmarking Framework: 
+
+Another front-end module that MQSS Client enables is the MQSS Benchmarking Framework [20]. MQSS Benchmark-ing Framework is a software package that offers high-level interfaces to benchmarking workflows and further separates them into hardware, software, application, and simulation benchmarks. It provides abstract classes for adapters and benchmarks, enabling end users to implement their own. The module also defines core features and implementations of these abstract classes, namely the MQSS adapters, and a few core benchmarks, such as randomized benchmarking [21], QAOA [22], and Quantum Volume [23]. MQSS Client serves as the common entry point and the runtime module across all adapters. It also enables fetching hardware benchmark metrics, such as gate and readout fidelities, or runtime execution char-acteristics (compilation duration per job, quantum/classical time, etc.), without the need to couple individual adapters, as it forwards the required metrics directly to the framework. V. E VALUATION 
+
+A. Evaluation Setup 
+
+To evaluate the MQSS Client, we conducted a validation experiment and a performance experiment. The validation experiment aims to verify that the MQSS Client performs as expected in the real system. In addition, the performance experiment aims to evaluate the performance introduced by the MQSS Client. 
+
+1) Validation Experiment: 
+
+For the validation experiment, we develop four standalone applications covering two programming languages (C++ and Python) and two access modes (HPC and Remote), targeting the production MQSS server deployed at LRZ. For the HPC access mode experiments, we used HPC resources at the LRZ, which QC systems are integrated into. The experiments are submitted to the resources using Slurm [24]; then the quantum parts are offloaded to the quantum accelerator. The classical node has 256 GB of memory and features 2 Intel CPU sockets (Intel Xeon Platinum 8360Y @ 2.40 GHz), each with 36 physical cores. For the remote access mode experiments, we use a Docker environment based on the python:3.11-bookworm im-age, running on a MacBook Pro with an Apple M3 Pro AQT20 QExa20 MAQCS Lang. TE (s) CC (ms) RQ (ms) JSC (ms) RES (s) EQC (s) JSC (ms) RES (s) EQC (s) JSC (ms) RES (s) EQC (s)                                                         
+
+> HPC Access Mode
+> C++ 28.55 5.25 9.98 10.64 2.23 13.85 8.62 1.90 4.13 13.24 1.86 6.04 Python 34.82 6.16 6.38 6.06 1.87 20.23 9.11 1.83 4.21 6.22 2.11 3.92
+> Remote Access Mode
+> C++ 36.14 1.29 217.21 240.79 1.48 15.93 181.52 1.20 7.65 256.86 1.87 7.04 Python 47.20 3.89 208.01 254.75 1.16 31.29 156.90 1.69 5.00 183.01 1.28 5.47
+> TABLE II RESULTS OBTAINED FROM VALIDATION EXPERIMENTS . TE: T OTAL EXECUTION , CC: C LIENT CREATION , RQ: R ESOURCE QUERY JSC: J OB
+> SUBMISSION AND CREATION , RES: R ESULT RETRIEVAL .
+
+Chip and 18 GB of memory, to reflect typical remote user conditions. During these experiments, we target three different quantum resources: (1) 20-qubit Ion-Trap System from AQT (AQT20), (2) 20-qubit superconducting system from IQM (QExa20), and (3) 16-qubit neutral atom demonstrator from planqc (MAQCS). 
+
+2) Performance Experiment: 
+
+For the performance experiment, we evaluate the performance introduced by the MQSS Client by comparing it against a direct implementation across two access modes — HPC and Remote — and two programming languages — C++ and Python. The direct implementation constructs and submits job requests manually. The Python experiment additionally validates the choice of C++ as the core implementation lan-guage, as the Python interface is built on top of the C++ core via pybind11 [16]; any overhead difference between the two languages reflects the cost of the binding layer. To ensure reproducibility and minimize measurement noise, experiments are conducted in the test environment rather than in the production environment, where the system’s load may affect performance results. While for the remote access experiments, we send requests to a remote server that is hosted by LRZ, for the HPC access experiments, the RabbitMQ daemon and the software stack are hosted locally on the same machine as the client. As a result, the reported HPC overhead reflects the cost of the abstraction layer alone, independent of network conditions. We note that submitted jobs are not executed on any quantum backend. Each experiment run consists of the following steps:  
+
+> •
+
+Total Execution (TE): End-to-end runtime of the appli-cation.  
+
+> •
+
+Client Creation (CC) : Initialization of the MQSS Client (not applicable for direct implementations).  
+
+> •
+
+Resource Query (RQ) : Retrieval of available quantum resources.  
+
+> •
+
+Job Submission and Creation (JSC) : Construction and submission of the quantum job.  
+
+> •
+
+Execution of Quantum Circuit (EQC): Backend-reported execution time of the quantum circuit, returned as part of the JobResult . 
+
+> •
+
+Result Retrieval (RES) Estimated time for result trans-fer, computed as the difference between the blocking result acquisition time and the EQC, i.e., RES =
+
+TgetJobResult − EQC. We repeated the performance experiment 100 times to ensure statistical reliability; however, we performed the valida-tion experiment once, as it targets a production system subject to queue scheduling and hardware availability.                                                                  
+
+> Test Device Lang. Impl. TE (s) CC (ms) RQ (ms) JSC (ms) RES (s) EQC (s)
+> HPC Access Mode
+> C++ Direct 2.31 –19.70 13.05 1.24 0.95 C++ Client 2.42 20.25 24.12 14.16 1.26 0.97 Python Direct 2.71 –54.15 52.50 1.26 1.04 Python Client 2.62 19.41 23.82 15.18 1.31 0.98
+> Remote Access Mode
+> C++ Direct 24.44 –258.77 185.63 1.46 22.46 C++ Client 24.64 1.91 273.12 185.17 1.36 22.74 Python Direct 25.28 –247.09 204.83 1.95 22.54 Python Client 25.03 3.69 250.31 186.37 1.43 22.84
+> TABLE III RESULTS OBTAINED FROM PERFORMANCE EXPERIMENTS .
+
+B. Evaluation Results 
+
+In this section, we present the results of our two experiments and evaluate them. Table II shows the results of our validation experiments. The results demonstrate that MQSS Client performs as expected across all programming languages and access modes. The HPC access mode outperforms the remote access mode across the programming languages. Even though the results are expected, the TE time is not a suitable metric for evaluating the MQSS Client, as it is highly dependent on the execution of the quantum circuit. The EQC shows variable elapsed time across the target devices, based not onl on access mode and programming language. This directly affects the TE, with on average 84.5% of the TE and a range of 81% to 88%. Even though the effect of the CC, introduced by the MQSS Client, is negligible, taking only 1.12 ∗ 10 −2% on average, it varies more across access modes than across programming lan-guages. This can be attributed to differences in the underlying communication infrastructure, whereas the HPC access mode is responsible for declaring the required messaging queues. However, after the initial communication is established, HPC access mode significantly outperforms HPC requirements on RQs and JSCs, which rely on communication. Table III shows the results of our performance experiments. Unlike validation experiments, we did not target the production environment. For remote access mode experiments, we target the staging environment with a mock device server; likewise, for HPC access mode experiments, we created a local test environment that exhibits the same behavior except for the execution of the quantum circuit. In the HPC access mode, the experiments mostly show predicted results across the access mode, language, and imple-mentation type. The direct implementation in C++ outperforms the other configurations, followed by client implementations in C++ and Python, and lastly, the direct implementation in Python. The TE difference between the C++ implementations is 0.21 seconds, and approximately 9%. The main cause of the difference is the EQC, which is 0.15 seconds longer in the client implementation. Since it is not directly caused by the MQSS Client itself, we can disregard it for more accurate evaluation. Another significant difference is the RES, which is 0.06 seconds higher in the client implementation. It may be caused by the state of the communication infrastructure, along with the overhead introduced by the MQSS Client. The TE difference between the Python implementations is 0.9 seconds, and approximately 2%, where the client imple-mentation outperforms. The main differences observed on the RES and EQC, where they differ by 0.5 and 0.6 seconds. While the direct implementation outperforms on RES, the client implementation outperforms on other parts, even if we disregard the EQC. The TE difference between client implementations is 0.2 seconds and approximately 8%. where the C++ implementa-tion outperforms. The results show similar behaviors. How-ever, we observe a noticeable difference in JSC and RES. Since JobRequest and JobResult carry larger data, this situation may have made the overhead added by these Python bindings more noticeable. We have drawn the following conclusions from our experi-ments: 1) The overhead introduced by the MQSS Client is negli-gible. 2) Using C++ in the core of the MQSS Client provides better performance. 3) Python bindings cause a negligible overhead. Experiments for the remote access mode lead to the same conclusions. Only a significant difference on CC is observed compared to HPC access mode. As stated earlier, this can be explained by the underlying communication infrastructure as CC in the HPC mode responsible for declaring messaging queues. VI. C ONCLUSION AND FUTURE WORK 
+
+In this paper, we present MQSS Client, a unifying, context-aware access layer and programming library that decouples the programming model and the underlying compilation and runtime stack. MQSS Client addresses SDK fragmentation in HPC facilities, enabling diverse programming models to target the same quantum infrastructure without modification. Our evaluation shows that MQSS Client introduces negli-gible overhead compared to direct implementation in C++. Notably, the Python binding outperforms the direct Python implementation across both access modes, demonstrating the benefit of building the client on a compiled C++ core. As future work, we plan to extend the supported job types to include Annealing and Pulse-Level jobs, and to broaden compatibility with additional programming models beyond the current instantiations. VII. A CKNOWLEDGMENTS 
+
+The authors used Grammarly, Claude, and ChatGPT for language editing, grammar check, and to improve the qual-ity of the article. All content was reviewed and edited by the authors, who take full responsibility for the final work. This work is supported by the German Federal Ministry of Research, Technology, and Space (BMFTR) with the grants 13N15689 (DAQC), 13N16063 (Q-Exa), 13N16078 (MUNIQC-Atoms), 13N16187 (MUNIQC-SC), 13N16690 (Euro-Q-Exa), 13N16894 (MAQCS), European fundings 101114305 (Millenion), 101113946 (OpenSuperQ-Plus), 101194491 (QEX), and the Bavarian State Ministry of Science and the Arts (StMWK) through funding, as part of Munich Quantum Valley, Q-DESSI. REFERENCES [1] H. Neven, “Meet Willow, our state-of-the-art quantum chip,” 6 2025. [2] E. Mansfield, S. Seegerer, P. Vesanen, J. Echavarria, M. N. Farooqi, B. Mete, and L. Schulz, “First practical experiences integrating quantum computers with hpc resources: A case study with a 20-qubit supercon-ducting quantum computer,” in Proceedings of the SC ’25 Workshops of the International Conference for High Performance Computing, Networking, Storage and Analysis , SC Workshops ’25, (New York, NY, USA), p. 1842–1850, Association for Computing Machinery, 2025. [3] Munich Quantum Software Stack (MQSS) Contributors, “MQSS Inter-faces Documentation.” https://munich-quantum-software-stack.github. io/MQSS-Interfaces/, 2025. Accessed: July 31, 2026. [4] A. Javadi-Abhari, M. Treinish, K. Krsulich, C. J. Wood, J. Lishman, J. Gacon, S. Martiel, P. D. Nation, L. S. Bishop, A. W. Cross, B. R. Johnson, and J. M. Gambetta, “Quantum computing with Qiskit,” 2024. [5] J.-S. Kim, A. McCaskey, B. Heim, M. Modani, S. Stanwyck, and T. Costa, “Cuda quantum: The platform for integrated quantum-classical computing,” in 2023 60th ACM/IEEE Design Automation Conference (DAC) , pp. 1–4, 2023. [6] V. Bergholm, J. Izaac, M. Schuld, C. Gogolin, S. Ahmed, V. Ajith, M. S. Alam, G. Alonso-Linaje, B. AkashNarayanan, A. Asadi, J. M. Arrazola, U. Azad, S. Banning, C. Blank, T. R. Bromley, B. A. Cordier, J. Ceroni, A. Delgado, O. D. Matteo, A. Dusko, T. Garg, D. Guala, A. Hayes, R. Hill, A. Ijaz, T. Isacsson, D. Ittah, S. Jahangiri, P. Jain, E. Jiang, A. Khandelwal, K. Kottmann, R. A. Lang, C. Lee, T. Loke, A. Lowe, K. McKiernan, J. J. Meyer, J. A. Montañez-Barrera, R. Moyard, Z. Niu, L. J. O’Riordan, S. Oud, A. Panigrahi, C.-Y. Park, D. Polatajko, N. Quesada, C. Roberts, N. Sá, I. Schoch, B. Shi, S. Shu, S. Sim, A. Singh, I. Strandberg, J. Soni, A. Száva, S. Thabet, R. A. Vargas-Hernández, T. Vincent, N. Vitucci, M. Weber, D. Wierichs, R. Wiersema, M. Willmann, V. Wong, S. Zhang, and N. Killoran, “Pennylane: Automatic differentiation of hybrid quantum-classical computations,” 2022. [7] D. Ittah, A. Asadi, E. O. Lopez, S. Mironov, S. Banning, R. Moyard, M. J. Peng, and J. Izaac, “Catalyst: a python jit compiler for auto-differentiable hybrid quantum programs,” Journal of Open Source Soft-ware , vol. 9, no. 99, p. 6720, 2024. [8] O. T. Brown, M. Meller, and J. Richings, “Introducing cq: A c-like api for quantum accelerated hpc,” 2025. [9] E. Kaya, J. Echavarria, M. N. Farooqi, A. Swierkowska, P. Hopf, B. Mete, L. Burgholzer, R. Wille, L. Schulz, and M. Schulz, “A software platform to support disaggregated quantum accelerators,” in SC24-W: Workshops of the International Conference for High Performance Computing, Networking, Storage and Analysis , pp. 1646–1653, 2024. [10] L. Burgholzer, J. Echavarria, P. Hopf, Y. Stade, D. Rovara, L. Schmid, E. Kaya, B. Mete, M. N. Farooqi, M. Chung, M. De Pascale, L. Schulz, M. Schulz, and R. Wille, “The munich quantum software stack: Con-necting end users, integrating diverse quantum technologies, accelerating hpc,” in Proceedings of the Supercomputing Asia and International Conference on High Performance Computing in Asia Pacific Region ,SCA/HPCAsia ’26, (New York, NY, USA), p. 55–67, Association for Computing Machinery, 2026. [11] U. Bacher, M. Birmingham, C. D. Carothers, A. Damin, C. D. G. Calaza, A. K. Karnad, S. Mensa, M. Moreau, A. Nober, M. Ohtani, et al. ,“Quantum resources in resource management systems,” arXiv preprint arXiv:2506.10052 , 2025. [12] R. Wille, L. Schmid, Y. Stade, J. Echavarria, M. Schulz, L. Schulz, and L. Burgholzer, “QDMI – Quantum Device Management Interface: A Standardized Interface for Quantum Computing Platforms,” in IEEE International Conference on Quantum Computing and Engineering (QCE) .[13] N. Lohmann, “JSON for Modern C++,” Apr. 2025. [14] D. Stenberg, “curl.” https://curl.se, 1998. Accessed: 2026-04-06. [15] rabbitmq-c developers, “rabbitmq-c: Rabbitmq c client library.” https: //github.com/alanxz/rabbitmq-c, 2024. Accessed: 2026-04-06. [16] W. Jakob, J. Rhinelander, and D. Moldovan, “pybind11 – seamless operability between c++11 and python,” 2017. https://github.com/pybind/pybind11. [17] A. W. Cross, L. S. Bishop, J. A. Smolin, and J. M. Gambetta, “Open quantum assembly language,” 2017. [18] V. Bergholm, J. Izaac, M. Schuld, C. Gogolin, S. Ahmed, V. Ajith, M. S. Alam, G. Alonso-Linaje, B. AkashNarayanan, A. Asadi, et al. ,“Pennylane: Automatic differentiation of hybrid quantum-classical com-putations,” arXiv preprint arXiv:1811.04968 , 2018. [19] Xanadu Quantum Technologies, “Pennylane quantum devices.” https: //pennylane.ai/devices, 2026. Accessed: 2026-04-20. [20] Munich Quantum Software Stack (MQSS), “Mqss benchmark-ing framework.” https://github.com/Munich-Quantum-Software-Stack/ MQSS-Benchmarking-Framework, 2026. Accessed: 2026-04-01. [21] E. Knill, D. Leibfried, R. Reichle, et al. , “Randomized benchmarking of quantum gates,” Physical Review A , vol. 77, no. 1, p. 012307, 2008. [22] E. Farhi, J. Goldstone, and S. Gutmann, “A quantum approximate optimization algorithm,” arXiv preprint arXiv:1411.4028 , 2014. [23] A. W. Cross, L. S. Bishop, S. Sheldon, P. D. Nation, and J. M. Gambetta, “Validating quantum computers using randomized model circuits,” Physical Review A , vol. 100, no. 3, p. 032328, 2019. [24] M. A. Jette and T. Wickberg, “Architecture of the slurm workload man-ager,” in Job Scheduling Strategies for Parallel Processing (D. Klusáˇ cek, J. Corbalán, and G. P. Rodrigo, eds.), (Cham), pp. 3–23, Springer Nature Switzerland, 2023.

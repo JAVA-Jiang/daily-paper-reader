@@ -1,0 +1,343 @@
+Title: MediaWiki Code2Code Search: Neural Retrieval for the Semantic Discovery of Open-Source Software Entities
+
+URL Source: https://arxiv.org/pdf/2607.26766v1
+
+Published Time: Thu, 30 Jul 2026 00:46:36 GMT
+
+Number of Pages: 21
+
+Markdown Content:
+# MediaWiki Code2Code Search: Neural Retrieval for the Semantic Discovery of Open-Source Software Entities 
+
+Francesco Tosoni 
+
+> Sant’Anna School of Advanced Studies, p.zza Martiri della Libertà 33, 56127 Pisa PI, Italy
+
+Abstract 
+
+Code search in large-scale ecosystems is often hindered by the lexical gap between user queries and implementation details, alongside the trade-off be-tween the low latency of traditional Information Retrieval (IR) and the pre-cision of Deep Learning (DL). We present MediaWiki Code2Code Search, a neural retrieval system for semantic code-to-code discovery. By indexing 1.29 million structural entities (functions, types, and templates) across 2,500+ MediaWiki repositories, our system enables retrieval based on computational intent rather than surface tokens. We employ a split-build architecture, de-coupling GPU-intensive offline indexing from a CPU-only serving layer; our FAISS IVF-PQ index occupies 168.6 MB: a 96.6% reduction compared to a flat float32 baseline, and achieves a median query latency of 1.85 seconds on commodity hardware, satisfying the 6 GiB RAM constraint of Wikimedia Toolforge. Our evaluation across a 27-query benchmark demonstrates supe-rior performance over the BM25 baseline, achieving a P@10 of 0.87 compared to 0.64 (0.52 versus 0.34 for strict matching). Gains are most pronounced in name-obfuscated tasks where lexical methods fail. The system is available at code2codesearch.toolforge.org under the Apache 2.0 licence and provides an open RESTful API. 
+
+Keywords: Neural Information Retrieval, Semantic Code Search, MediaWiki, Software Heritage, Vector Embeddings, Large Language Models arXiv:2607.26766v1 [cs.IR] 29 Jul 2026 Nr. Code metadata description Value 
+
+C1 Current code version v2.0.0 C2 Permanent GitHub link to code/repository 
+
+https://github.com/ftosoni/m ediawiki-code2code-search 
+
+C3 Legal Code License Apache Software License 2.0 C4 Code versioning system used git C5 Software code languages, tools, and services used Python, JavaScript, SQLite, FAISS, Qwen3, Software Heritage C6 Compilation requirements & depen-dencies Python 3.11, Node.js (for UI), 6GiB RAM (min) C7 Link to developer documenta-tion/manual 
+
+https://www.mediawiki.org/wi ki/Code2Code_Search 
+
+C8 Support email for questions Francesco.Tosoni@santannapis a.it 
+
+> Table 1: Code metadata. The tool is registered on Wikidata as item Q139251277.
+
+Current code version 1. Motivation and significance 
+
+Wikipedia and its sister projects, attracting over 1.5 billion unique monthly visitors, are socio-technical systems underpinned by collaborative commu-nities, open content, and open-source infrastructure. Software development has been central to the Wikimedia community since its inception. The Medi-aWiki ecosystem (the technical backbone of most wiki projects) has evolved over two decades since 2002 [1, §1]. Continuous maintenance and expansion have transformed it from a monolithic application into a highly decentralised ecosystem spanning over 2,500 code repositories across various forges (e.g., Gerrit, GitHub, GitLab). This decentralisation, while mirroring the commu-nity’s diversity, complicates software discovery, maintenance, and the con-sistency of data modelling. The resulting shared codebase includes toolkits for processing Wikipedia [2] and Wikidata [3, 4, 5], user scripts [6], bots for database analysis [7], visualisation tools [8], and the core infrastructure itself: MediaWiki [1] and Wikibase [9]. For maintainers, this abundance of code often leads to redundant or seman-tically similar features. Efficient code search (retrieving relevant snippets via natural-language or code queries) is hence essential for modern development   
+
+> Email address: Francesco.Tosoni@santannapisa.it (Francesco Tosoni)
+
+2[10, 11], facilitating code completion, synthesis, traceability, and vulnerabil-ity identification. Since 2019, the community has utilised a Codesearch tool [12] powered by Hound [13]. This tool leverages traditional information retrieval (IR) tech-niques, such as regular expressions and pattern matching, to index the ori-gin/main branches of specified repositories without requiring local clones. Despite its scalability and the “2019 Coolest Tool Award,” the system is lim-ited by its reliance on surface-level terminological matching. For instance, a search for “permission validation logic” may fail if the target function is named checkUserLoginStatus . This lexical gap, caused by two decades of evolving and inconsistent naming conventions, hinders volunteer onboarding and reduces efficiency for core developers. Semantic search using deep learning (DL) models [14, 15, 16, 17] offers a robust alternative that balances accuracy and scalability. Consequently, the Wikimedia Foundation (WMF) and its affiliates have begun integrating AI-enabled retrieval into major projects, including Wikidata [18], Wikipedia [19], and Wikimedia Commons [20]. Notably, the Wikidata Embedding Project [18] employs graph embeddings for approximately 30 million nodes, using a two-stage scheme with Jina AI models and a DataStax vector database. While advanced, we contend that this reliance on proprietary storage and models contrasts with Wikimedia’s commitment to free, open-source software (see, e.g., the Toolforge licensing policies 1). Other recent initiatives include the WMF’s hybrid search models (piloted March 2026) [19] and the WISE multilingual image search engine [20], which provides semantic search for a curated subset of Wikimedia Commons images. 
+
+Our proposal. Despite these advancements, the underlying codebase govern-ing Wikimedia projects still lacks a scalable, efficient code-search implemen-tation. To address this, we present a code-to-code retrieval system that uses code embeddings to index MediaWiki-related repositories. Our pri-mary contributions are threefold: (i) we transform snippets into vector rep-resentations, enabling intent-based retrieval via cosine distance; (ii) we have archived the 2,500+ MediaWiki repositories in Software Heritage (SWH) [21, §2.1][22, 23, 24, 25], ensuring a unified data model across forges and utilising citable, ISO/IEC-compliant Software Hash IDs (SWHIDs) [26, 27]; and (iii) we provide a modern GUI built on Codex 2 that supports multiple languages (including 14 Indian languages) to improve accessibility and lower barriers for non-English-speaking contributors. 
+
+> 1https://wikitech.wikimedia.org/wiki/Special:PermaLink/2239062
+> 2https://doc.wikimedia.org/codex/main/
+
+3Our architecture follows a build-heavy, serve-light approach: we use GPU-accelerated infrastructure to project code snippets into embeddings, while the deployment environment remains resource-constrained and CPU-only. Unlike existing initiatives that rely on proprietary components, our entire system, including the chosen Qwen3 model, is released under the Apache Software License 2.0. The system is currently deployed on Toolforge ( http s://code2codesearch.toolforge.org/ ). It is accessible via both the Codex frontend and a RESTful API with documentation served via an auto-generated Swagger UI at the /docs endpoint. 
+
+2. Software description 
+
+The implementation of the Code2Code Search pipeline is structured into discrete modules to support maintainability, CI/CD workflows, unit testing, data integrity, and resource efficiency. We have chosen Qwen/Qwen3-Embedding-0.6B for its OSI-compliant licence and because preliminary results indicate it offers a compelling trade-off be-tween inference efficiency and precision, making it viable for a resource-constrained environment. 
+
+2.1. Software Architecture 
+
+The system employs an asymmetric (build-heavy, serve-light) architecture, as illustrated in Figure 1. Python dependencies are managed via the requirements.txt 
+
+file at the project root. The pipeline comprises the following stages: 1. Repository Discovery: We adopt the repository enumeration strat-egy of the legacy Codesearch tool. The script list_repos.py queries the /api/v1/repos endpoint across predefined categories (e.g., search ,
+
+extensions , pywikibot ). We identified 2,568 repositories, primar-ily hosted on gerrit.wikimedia.org (1,372), gitlab.wikimedia.org 
+
+(826), and github.com (342). Canonical gerrit URLs are prioritised by replacing read-only gerrit-replica addresses. 2. Cloning: Using download_repos.py , we perform shallow clones ( –depth 1) of the main branch for each repository. Consistent with existing infrastructure, Git submodules are excluded. Approximately 60 repos-itories are omitted due to duplication, authentication requirements, or download timeouts. 4MediaWiki Codesearch API 
+
+list repos.py 
+
+download repos.py 
+
+extract structural entities.py 
+
+archive to swh.py 
+
+resolve swh hashes local.py 
+
+SWH API 
+
+generate embeddings.py migrate to sqlite.py 
+
+build index.py 
+
+FAISS 
+
+> IndexIVFPQ 168.6 MB
+
+Qwen3 model 
+
+> 1024-dim
+
+SQLite snippets.db 
+
+> ≈1.74 GB
+
+FastAPI 
+
+app.py 
+
+Codex Frontend 
+
+RESTful API     
+
+> Repo discovery
+> Repo URLs
+> Shallow clones All repo URLs
+> Structural entities Archival requests
+> raw snippets.json raw snippets.json
+> embeddings.npy
+> mediawiki.index
+> Indexed metadata
+> Vectorisation
+> ANN search
+> Query encoding
+> Metadata lookup
+> search-box queries JSON queries
+> Build Phase (CPU + GPU) Service Phase (Toolforge)
+
+Figure 1: System architecture of MediaWiki Code2Code Search. Node colours: build scripts; external services; data artefacts; API backend; ML model; fron-tend. 
+
+53. Archival: To ensure persistence, archive_to_swh.py submits all repos-itories to Software Heritage (SWH) in a single bulk request. Where ele-vated privileges are unavailable, we provide archive_individual_to_swh.py ,which supports sequential archival and checkpointing for resumable ex-ecution. 4. Structural Extraction: extract_structural_entities.py uses TreeSit-ter [28, 29, 30] to parse source files and extract functions, types, and templates across twelve languages. We note that 319 cloned repositories yielded no valid structural entities (as they contain only documenta-tion, translation files, or assets in non-target languages), resulting in a final index of 2,242 active repositories. 5. Hash computation: Subsequently, resolve_swh_hashes_local.py 
+
+generates content-based identifiers, including sha1 and SWHIDs, en-riched with metadata (origin, filepath, lines). Using ThreadPoolExecutor 
+
+from concurrent.futures , we generate a raw_snippets.json mani-fest containing all structural and repository-level metadata. 6. Vectorisation: generate_embeddings.py executes on a GPU-enabled machine. It loads the Qwen3-Embedding-0.6B model via sentence-transformers 
+
+to encode code snippets into normalised 1,024-dimensional vectors. This process, which takes approximately 31 minutes on a single NVIDIA H200, produces embeddings.npy .7. Index Construction: build_index.py converts embeddings.npy into a compressed FAISS IndexIVFPQ index. Using 128 sub-quantisers (8 bits/sub-vector), we significantly reduce the memory footprint to en-sure compatibility with Toolforge’s constraints. 8. Metadata Migration: migrate_to_sqlite.py transforms raw_snippets.json 
+
+into a SQLite database ( snippets.db ). By decoupling metadata stor-age from the FAISS index, this step runs independently and stays well within the 6 GiB RAM limit. Table 2 summarises the indexed corpus. Following the offline build phase, the lightweight serving layer is deployed via a FastAPI backend, providing both a web interface and a RESTful API. 
+
+Latency. We measured end-to-end query latency by issuing 27 benchmark queries (see Section 3) to a local API instance and repeating the full run 7 times. We employed an ASUSTeK VivoBook X1605VA laptop (Windows 11), equipped with a 13th-generation Intel ® Core ™ i9-13900H processor (14 6Category Count Share 
+
+Functions 1,050,748 81.5% Types (classes, structs, interfaces, enums) 237,653 18.4% C++ Templates 1,051 0.1% 
+
+Total indexed entities 1,289,452 
+
+Top file extensions 
+
+JavaScript (.js) 464,791 36.0% PHP (.php) 312,369 24.2% Go (.go) 305,591 23.7% Python (.py) 112,946 8.8% TypeScript (.ts) 36,362 2.8% Other 57,393 4.5% 
+
+> Table 2: Indexed corpus statistics (snippets.db, May 2026).
+
+cores / 20 threads, up to 5.4 GHz boost), 32 GB of DDR4-SDRAM, and an integrated Intel ® Iris ® Xe Graphics GPU (128 MB dedicated VRAM). No discrete GPU was used. Figure 2 shows the per-query latency distributions. The overall median la-tency across the 27 queries is 1.85 s (mean 1.87 s). Latency correlates with query snippet length, ranging from 0.9 s for the shortest query (A1, a 4-line GCD) to 3.3 s for the longest (C3, a 22-line fan-out). On Toolforge (the live deployment, CPU-only shared virtual machines, 6 GiB RAM limit), end-to-end latency is substantially higher, averaging ≈31 s, ranging from 11 s for the shortest query (A1) to 111 s for the slowest (B5), because the Qwen3-Embedding-0.6B model runs on throttled shared CPU resources. GPU nodes are not currently available, but GPU deployment is the subject of an ongoing infrastructure request to the WMF to restore second-order inference. 
+
+2.2. Software Functionalities Syntactic Entity Extraction. Using Tree-sitter [28, 29, 30], the system per-forms structural analysis across 12 languages (PHP, Python, C++, C, JavaScript, TypeScript, Lua, Go, Java, Rust, Ruby, and Perl). The extraction logic in extract_structural_entities.py employs a recursive scope-resolution algorithm to capture qualified identifiers (e.g., Namespace\Class::Method ). The frontend includes multi-select filters (by repository group, language, and entity type) to refine search results. 
+
+Single-Stage Neural Retrieval. User queries are encoded at inference time using the Qwen3-Embedding-0.6B model. Corpus embeddings are stored 70 200 400 600 800 1,000 1,200 1,400 1,600 1,800 2,000 2,200 2,400 2,600 2,800 3,000 3,200 3,400 3,600 3,800 4,000 
+
+> A1
+> C1
+> B1
+> B3
+> B6
+> C2
+> B2
+> B4
+> A4
+> B7
+> D4
+> A3
+> B8
+> A5
+> D2
+> B5
+> A2
+> C4
+> D1
+> C6
+> B11
+> B12
+> B9
+> C5
+> B10
+> D3
+> C3
+> Latency (milliseconds)
+> Evaluation Queries
+
+Figure 2: Per-query end-to-end API latency distribution on the commodity laptop across the 27-query benchmark, measured on commodity CPU hardware (7 independent runs). Queries are sorted by median latency. Latency scales with query snippet length. On the current Toolforge deployment (not illustrated in the figure), the average latency is 31 s, with interquartiles 19–35 s. 
+
+in a FAISS IndexIVFPQ index, configured with 128 sub-quantisers (8 bits per sub-vector). This quantisation reduces the memory footprint by 96.6% compared to a flat float32 baseline (168.6 MB versus approximately 4.9 GB), ensuring the serving layer operates comfortably within Toolforge’s 6 GiB RAM limit. 
+
+2.3. Software Verification and Technical Integrity 
+
+System robustness and semantic accuracy are validated by a suite of 34 
+
+pytest unit tests. Software provenance and citability are maintained via 
+
+codemeta.json and CITATION.cff files, which are synchronised with the release SWHID and commit hash using update_release.py . Further, the GitHub Actions CI pipeline ( .github/workflows/python-ci.yml ) enforces PEP 8 compliance via flake8 and validates the parser logic on every commit. 
+
+2.4. Portability and Reuse 
+
+Software Heritage’s content-addressed data model [22] serves as a founda-tional enabler, allowing repositories from disparate forges to be mapped to a unified SWHID namespace. This architecture effectively mitigates the chal-lenges posed by multi-forge diversity, demonstrating its scalability across varied software ecosystems. The system is highly modular: only the repository discovery script, list_repos.py ,is ecosystem-specific. Retargeting the system for different forges, package 8Figure 3: The Codex-based frontend interface. 
+
+registries, or domains (such as research institutions or SMEs) requires only replacing this single component. All downstream stages (Tree-sitter parsing, SWHID resolution, neural vectorisation, FAISS indexing, SQLite migration, and the FastAPI serving layer) are domain-agnostic. They depend solely on local source-file clones and the generated raw_snippets.json manifest. 
+
+3. Illustrative examples 
+
+We provide a frontend selector with 27 queries, designed with varying seman-tics and increasing difficulty (Table 4), offering a readily available sample of the codebase’s functionality. We observe that a formal ground truth for code search in the MediaWiki ecosystem is unavailable, and a direct comparison with the existing Code-search tool (based on Hound) is not meaningful due to fundamentally differ-ent query interfaces: Hound accepts regular expressions and exact strings, whereas Code2Code accepts code snippets. We thus evaluate retrieval quality based on the 27-query corpus. 9Methodology 
+
+Each query in the 27-query benchmark is a self-contained code snippet sub-mitted verbatim to the system’s API; the pooled top-10 results of both sys-tems are assessed against a three-point graded relevance scale (see Table 3).               
+
+> Table 3: Graded relevance scale used for adjudication.
+> Class Label Criterion
+> RRelevant The retrieved snippet implements the same com-putational task or provides a correct, specific so-lution for the intent expressed in the query. PPartially relevant The snippet is topically related but does not implement the requested function, or is apartial/less-idiomatic realisation. IIrrelevant The snippet does not solve the problem, is an unrelated data structure, or implements a fun-damentally different functionality.
+
+We evaluate Precision@10 (P@10) [31, §8.3]: the fraction of the top-10 results judged at least partially relevant (categories ‘P’ or ‘R’). We additionally report a strict P@10 that counts only fully relevant results; the gap between the two metrics measures how much of a system’s score relies on partial matches. 
+
+Baseline. We compare Code2Code against a Okapi’s BM25 [32][31, §11.4.3][14, §3.2.1], baseline applied to the same corpus of 1.29 M indexed entities. For each query snippet, we extract all non-trivial identifiers (filtering out common keywords and tokens shorter than three characters as stop-words); then, we submit it as a bag-of-words query to a BM25 index built over the code_for_embedding 
+
+field of snippets.db , enabling direct comparison with Code2Code 
+
+Annotation protocol. We adopt the ‘LLM-as-judge’ paradigm, which has been shown to effectively approximate human preferences, achieving agree-ment rates on par with human-human agreement when using strong mod-els [33]. Adjudication was performed by a single LLM judge (Claude Opus 4.8, max intelligence), who inspected the full source of each pooled snippet against the query intent. The complete per-result judgements and rationales are released within scripts/evaluation .
+
+Results 
+
+Table 5 reports per-query P@10 for both systems under the pooled adjudi-cation. Code2Code attains an overall P@10 of 0.87 versus 0.64 for BM25 (a 10 Table 4: Query taxonomy (27 queries across four categories). 
+
+Cat. Difficulty Rationale 
+
+A Canonical algorithms Textbook algorithms (GCD, binary search, . . . ). Establishes an upper bound for both systems. B Name-obfuscated semantics Same computational intent as a canonical pattern, but expressed with non-standard identifiers. C Cross-language Query and relevant results are often in dif-ferent programming languages. D Domain-specific / niche Patterns endemic to the Wikimedia ecosys-tem. 
+
+35% relative gain), and the gap widens under the strict, fully-relevant metric (0.52 vs. 0.34, a 53% relative gain), confirming that Code2Code’s advantage is not merely an artefact of partial-credit scoring. The improvement is con-centrated in the name-obfuscated category B (0.91 vs. 0.54) and in cases within categories A and C where the query body shares no discriminative tokens with the relevant code. Conversely, the two systems tie at or near the ceiling on queries whose bodies retain standard library/API tokens; BM25’s P@10 exceeds Code2Code’s on four queries (C5, D4, B10, D2; marked †), decisively only on C5 and D4, while the two systems are essentially even on the niche category D, where BM25 in fact edges ahead on the lenient mean (0.78 vs. 0.70). 
+
+Table 5: P@10 per query, per-category mean, and overall, un-der single-judge pooled adjudication. “Strict” columns count only fully-relevant results. Bold marks the higher value in each mean row. †: the four queries on which BM25’s P@10 exceeds Code2Code’s. 
+
+P@10 Strict ID Lang. Title BM25 C2C BM25 C2C 
+
+A1 Py Greatest common di-visor 0.4 1.0 0.1 0.8 A2 JS Binary search 0.6 1.0 0.6 0.9 A3 PHP String truncation 0.9 1.0 0.7 1.0 A4 Go JSON encode (error forwarding) 1.0 1.0 1.0 1.0 
+
+11 Table 5 – continued 
+
+P@10 Strict ID Lang. Title BM25 C2C BM25 C2C 
+
+A5 Py Retry w/ exponen-tial back-off 1.0 1.0 0.7 1.0 
+
+Category A mean 0.78 1.00 0.62 0.94 
+
+B1 PHP Permission check (canUserEdit )0.8 0.9 0.8 0.8 B2 JS Debounce (delayExecution )1.0 1.0 0.3 0.6 B3 PHP Session inval. (invalidateUserSession )0.8 0.9 0.6 0.4 B4 Py LRU eviction (evictOldest )0.1 1.0 0.0 0.4 B5 PHP Rate-limit gate (isRateLimited )0.4 1.0 0.0 0.5 B6 TS Error normaliser (toError )0.0 1.0 0.0 0.1 B7 Py URL slug (make_slug )0.6 0.9 0.2 0.1 B8 PHP CAPTCHA verify (diff. field names) 0.1 0.7 0.0 0.3 B9 Go Worker pool (processWithPool )0.4 0.8 0.3 0.5 B10 † PHP Recursive subtree (getDescendants )
+
+1.0 0.9 0.5 0.5 B11 Py Paginated fetch (fetch_all_pages )0.9 0.9 0.2 0.4 B12 Go HTTP retry on 5xx (doWithRetry )0.4 0.9 0.2 0.4 
+
+Category B mean 0.54 0.91 0.26 0.42 
+
+C1 PHP →Go SHA-256 file hash 0.0 1.0 0.0 0.5 C2 Py →PHP ISO-8601 date pars-ing 0.8 1.0 0.3 1.0 C3 Go →JS Fan-out / parallel map 0.1 0.3 0.0 0.2 C4 TS →PHP Throttle / call-rate limiter 1.0 1.0 0.9 1.0 C5 † Lua →Py Recursive table seri-aliser 
+
+1.0 0.4 0.8 0.2 
+
+12 Table 5 – continued                                                 
+
+> P@10 Strict ID Lang. Title BM25 C2C BM25 C2C
+> C6 Py →PHP Wikidata SPARQL runner 1.0 1.0 0.2 0.7
+> Category C mean 0.65 0.78 0.37 0.60
+> D1 PHP Wikitext internal link extractor 0.9 0.9 0.6 0.5 D2 †Py Git-compatible SHA-1 / SWHID
+> 1.0 0.6 0.0 0.0 D3 Py IRC message line parser 0.6 1.0 0.0 0.3 D4 †PHP MediaWiki hook dis-patcher
+> 0.6 0.3 0.2 0.0
+> Category D mean 0.78 0.70 0.20 0.20
+> Overall mean (27 queries) 0.64 0.87 0.34 0.52
+
+Where Code2Code excels. Code2Code demonstrates a decisive advantage in category B (0.91 vs. 0.54; strict 0.42 vs. 0.26). The clearest success cases are those where the query shares no discriminative tokens with the target code. For B6 (an error normaliser), BM25 scores 0.0: it matches tokens like JSON.stringify and returns configuration validators that merely throw 
+
+errors, whereas Code2Code identifies getError , the functional analogue for coercing values into an Error . Similar patterns appear in B4 ( evictOldest :0.1 vs. 1.0; Code2Code retrieves evictLRU and prune-on-capacity logic), B5 (isRateLimited : 0.4 vs. 1.0; identifying pingLimiter and isThrottled ), and B8 (CAPTCHA verification: 0.1 vs. 0.7; identifying passCaptcha ). Cat-egory C reveals the most striking gap: in C1 (SHA-256 hashing), BM25 scores 0.0 because the common token filepath dominates, pulling in unrelated path-manipulation utilities, while Code2Code correctly identifies file-hashing implementations. Further, Code2Code consistently retrieves cross-language analogues, such as Rust tree-sitter link extractors for PHP queries (D1) or Java/JS recursive walkers (B10), that are inaccessible to token-based match-ers. 
+
+Where the two systems tie. On approximately one-third of queries, BM25 and Code2Code perform similarly. This convergence occurs when the query body retains highly discriminative tokens, allowing lexical and semantic methods to identify the same relevant results. Queries such as A4 (Go json.Marshal 
+
+13 + fmt.Errorf ), A5 ( retry ), and C4 ( throttle ) reach performance ceilings for both systems. The strict metric, however, highlights nuance: on B2, while both score P@10 = 1.0, Code2Code achieves a higher strict P@10 (0.6 vs. 0.3) by returning genuine debounce implementations, whereas BM25 is dominated by throttle functions (a related but distinct rate-limiter). 
+
+Where BM25 wins. Four queries ( †) favour the baseline, two decisively. In C5 (recursive Lua table serialiser), the Lua-specific tokens table , pairs ,and indent are so discriminative that BM25 retrieves accurate recursive dumpers ( print_r , deepToString ), scoring 1.0, while Code2Code drifts to-ward unrelated value renderers (0.4). In D4 (MediaWiki hook dispatcher), BM25 retrieves the exact target, HookContainer::run , whereas Code2Code favours near-duplicate unit tests (0.3). These cases define the limits of dense retrieval: when domain vocabulary is highly specific and shared by adja-cent but irrelevant functions, embedding similarity can be misleading. This justifies the future integration of hybrid lexical-semantic ranking. 
+
+Corpus-coverage caveats (D2, C3). D2 (git/SWHID hashing) reflects a cover-age gap: BM25 reaches P@10 = 1.0 using generic file hashers, while Code2Code scores 0.6 due to the inclusion of unit tests and wrappers; both fail the strict metric (0.0), as the unique blob \0 framing is absent from the indexed cor-pus. C3 (Go fan-out to JS Promise.all ) is challenging for both systems (0.1 vs. 0.3). 
+
+Threats to validity. Relevance was adjudicated by a single LLM, precluding inter-annotator agreement statistics; absolute P@10 values should be inter-preted as indicative. The 27-query benchmark is small, English-centric, and based on a four-tier taxonomy authored by the author. Larger-scale, multi-annotator human validation is a priority for future work. Further, the corpus exhibits significant redundancy due to vendored de-pendencies. The top-10 lists carry an average of 8.7 distinct snippets for Code2Code and 8.9 for BM25; in the worst case (B6), nine of Code2Code’s hits are byte-identical. This makes absolute P@10 values slightly optimistic and complicates the use of rank-discounted metrics like NDCG [31, §8.4]. Yet, since redundancy is near-symmetric, it does not disproportionately advan-tage either system. Ultimately, Code2Code outperforms the baseline overall (0.87 vs. 0.64) and remains robust across both lenient and strict metrics, particularly in cases involving semantic gaps. 
+
+4. Impact 
+
+MediaWiki Code2Code Search introduces semantic retrieval capabilities to the Wikimedia open-source ecosystem. By indexing 1.29 million code snip-14 pets, the tool facilitates ecosystem-scale empirical research, including the analysis of code reuse, duplicate functionality, vulnerability tracing (via the SWH graph [34]), and the alignment of best practices with actual implemen-tations. The system is deeply integrated into the Wikimedia technical landscape: it is registered on Toolhub, documented on MediaWiki.org, featured on the Wikimedia Diff blog, and mapped to structured metadata on Wikidata (Q139251277 ). For new developers, the tool mitigates the “cold start” prob-lem; instead of navigating an unfamiliar 2,500-repository corpus via keyword search, they can identify relevant functions, classes, and templates by pro-viding a code sketch. Experienced developers benefit from granular frontend selectors that allow for precise filtering by entity type, language, and reposi-tory group. Reflecting the WMF’s commitment to equitable access, the interface is fully localised in 17 languages. This reduces linguistic barriers for international contributors, with a specific focus on Indian developer communities. More-over, by adopting SWHIDs as first-class identifiers for every indexed en-tity, the system renders retrieved snippets permanently citable in academic work and documentation, operationalising the UNESCO Recommendation on Open Science [25] at the granularity of individual software entities. The service has been deployed on Wikimedia Toolforge (since April 2026). Its RESTful API, documented via Swagger UI at the /docs endpoint, facilitates programmatic integration into IDE plugins, bots, and automated code-review workflows. 
+
+5. Conclusions 
+
+We have presented MediaWiki Code2Code Search, a neural retrieval sys-tem for the semantic discovery of structural software entities across the Me-diaWiki ecosystem. By leveraging Tree-sitter to index about 1.29 million functions, types, and templates, the system facilitates efficient navigation through 2,500+ repositories. Our implementation encodes these entities as 1,024-dimensional vectors using the Qwen3-Embedding-0.6B model. The re-sulting FAISS IVF-PQ index, occupying only 168.6 MB, represents a 96.6% reduction in memory compared to a flat float32 baseline, enabling the sys-tem to serve nearest-neighbour queries on commodity CPU hardware with a median latency of 1.85 seconds. The architecture employs a split-build paradigm that decouples GPU-intensive vectorisation from resource-constrained deployment. This allows the use of state-of-the-art neural models within the Wikimedia Toolforge environ-15 ment while maintaining strict adherence to open-source infrastructure re-quirements. Beyond its technical implementation, the system reinforces three core values: (i) open reproducibility, achieved by archiving all repositories in Software Heritage and attaching ISO/IEC 18670:2025-compliant SWHIDs to every re-sult; (ii) linguistic equity, provided through a fully localised interface in 17 languages with specific support for Indian developer communities; and (iii) ecosystem discoverability, through integration with Toolhub, Wikidata, and MediaWiki.org. While the current deployment focuses on MediaWiki, the underlying architecture is inherently modular and portable. Future research will explore cross-encoder reranking to enhance precision in critical work-flows, implement incremental reindexing for near-real-time updates, and sys-tematically evaluate the model’s performance in supporting natural-language queries. 
+
+Funding 
+
+This study was funded by the Alfred P. Sloan Foundation with the grant #G-2025-25193 ( sloan.org ). It was also funded by Wikimedia CH via their micro-grant programme ( https://w.wiki/SrcE ). 
+
+Acknowledgements 
+
+All the offline code-vectorisation computations presented in this paper were performed using the GRICAD infrastructure (https://gricad.univ-grenoble-alpes.fr), which is supported by Grenoble research communities. The author thanks Pierre Girard and the whole SOS Gricad team for tech-nical support. He also thanks the Software Heritage (SWH) team in Paris and the members of CodeCommons WP3 for continuous technical feedback and discussions on this work; in particular, Erika Lena, Leonardo Venuta and Paolo Ferragina (Acube Lab, Pisa), and Gaël De Chalendar and Asma Graiess (CEA-List). Special thanks are due to the Wikimedia Toolforge community and admin-istrators for providing the infrastructure, and to the members of the Indic MediaWiki Developers User Group and the Italian Wikimedia technical com-munity for their insightful discussions and feedback. 
+
+References 
+
+[1] Y. Koren, Working with MediaWiki, 2nd Edition, WikiWorks Press, 2022, second edition, third printing. URL https://workingwithmediawiki.com/book/ 
+
+16 [2] D. Milne, I. H. Witten, An open-source toolkit for mining wikipedia, Ar-tificial Intelligence 194 (2013) 222–239, artificial Intelligence, Wikipedia and Semi-Structured Resources. doi:https://doi.org/10.1016/j.ar tint.2012.06.007 .URL https://www.sciencedirect.com/science/article/pii/S000 437021200077X 
+
+[3] P. Scharpf, C. Breitinger, A. Spitz, N. Meuschke, A. Greiner-Petter, M. Schubotz, B. Gipp, Entity linking with wikidata: A systematic literature review, ACM Comput. Surv. 58 (9) (Feb. 2026). doi: 10.1145/3795134 .URL https://doi.org/10.1145/3795134 
+
+[4] D. Vrandečić, M. Krötzsch, Wikidata: a free collaborative knowledge-base, Commun. ACM 57 (10) (2014) 78–85. doi:10.1145/2629489 .URL https://doi.org/10.1145/2629489 
+
+[5] D. Vrandečić, L. Pintscher, M. Krötzsch, Wikidata: The making of, in: Companion Proceedings of the ACM Web Conference 2023, WWW ’23 Companion, Association for Computing Machinery, New York, NY, USA, 2023, p. 615–624. doi:10.1145/3543873.3585579 .URL https://doi.org/10.1145/3543873.3585579 
+
+[6] H. Turki, M. A. H. Taieb, M. B. Aouicha, Coupling wikipedia cate-gories with wikidata statements for better semantics, in: L. Kaffee, S. Razniewski, A. Hogan (Eds.), Proceedings of the 2nd Wikidata Work-shop (Wikidata 2021) co-located with the 20th International Semantic Web Conference (ISWC 2021), Virtual Conference, October 24, 2021, CEUR Workshop Proceedings, CEUR-WS.org, 2021. URL https://ceur-ws.org/Vol-2982/paper-8.pdf 
+
+[7] E. Seidlmayer, J. Voß, T. Melnychuk, L. Galke, K. Tochtermann, C. Schultz, K. U. Förstner, ORCID for wikidata. data enrichment for scientometric applications, in: L. Kaffee, O. Tifrea-Marciuska, E. Sim-perl, D. Vrandecic (Eds.), Proceedings of the 1st Wikidata Workshop (Wikidata 2020) co-located with 19th International Semantic Web Con-ference(OPub 2020), Virtual Conference, November 2-6, 2020, CEUR Workshop Proceedings, CEUR-WS.org, 2020. URL https://ceur-ws.org/Vol-2773/paper-09.pdf 
+
+[8] F. Å. Nielsen, D. Mietchen, E. Willighagen, Scholia, scientometrics and wikidata, in: E. Blomqvist, K. Hose, H. Paulheim, A. Ławrynowicz, 17 F. Ciravegna, O. Hartig (Eds.), The Semantic Web: ESWC 2017 Satel-lite Events, Springer International Publishing, Cham, 2017, pp. 237–259. 
+
+doi:10.1007/978-3-319-70407-4_36 .[9] L. Rossenova, P. Duchesne, I. Blümel, Wikidata and wikibase as com-plementary research data management services for cultural heritage data, in: Wikidata 2022 : Wikidata Workshop 2022, Proceedings of the 3rd Wikidata Workshop 2022 co-located with the 21st Inter-national Semantic Web Conference (ISWC2022), 2022, p. 15. doi: 10.25968/opus-2573 .URL https://ceur-ws.org/Vol-3262/paper15.pdf 
+
+[10] S. Daniotti, J. Wachs, X. Feng, F. Neffke, Who is using ai to code? global diffusion and impact of generative ai, Science 0 (0) eadz9311. arXiv: https://www.science.org/doi/pdf/10.1126/science.adz9311 ,
+
+doi:10.1126/science.adz9311 .URL https://www.science.org/doi/abs/10.1126/science.adz931 1
+
+[11] J. Shuai, L. Xu, C. Liu, M. Yan, X. Xia, Y. Lei, Improving code search with co-attentive representation learning, in: Proceedings of the 28th In-ternational Conference on Program Comprehension, ICPC ’20, Associa-tion for Computing Machinery, New York, NY, USA, 2020, p. 196–207. 
+
+doi:10.1145/3387904.3389269 .URL https://doi.org/10.1145/3387904.3389269 
+
+[12] MediaWiki Codesearch, MediaWiki, online; accessed 2026 (2026). URL https://www.mediawiki.org/wiki/Codesearch 
+
+[13] hound-search, K. Norton, J. Klein, Hound: Lightning fast code searching made easy, GitHub repository (2015). URL https://github.com/hound-search/hound 
+
+[14] T. Grainger, D. Turnbull, M. Irwin, AI-Powered Search, Manning Pub-lications, Shelter Island, NY, 2024, foreword by Grant Ingersoll. [15] X. Gu, H. Zhang, S. Kim, Deep code search, in: 2018 IEEE/ACM 40th International Conference on Software Engineering (ICSE), 2018, pp. 933–944. doi:10.1145/3180155.3180167 .[16] S. Sachdev, H. Li, S. Luan, S. Kim, K. Sen, S. Chandra, Retrieval on source code: a neural code search, in: Proceedings of the 2nd ACM SIGPLAN International Workshop on Machine Learning and Program-ming Languages, MAPL 2018, Association for Computing Machinery, 18 New York, NY, USA, 2018, p. 31–41. doi:10.1145/3211346.3211353 .URL https://doi.org/10.1145/3211346.3211353 
+
+[17] F. Hu, Y. Wang, L. Du, X. Li, H. Zhang, S. Han, D. Zhang, Revisiting code search in a two-stage paradigm, in: Proceedings of the Sixteenth ACM International Conference on Web Search and Data Mining, WSDM ’23, Association for Computing Machinery, New York, NY, USA, 2023, p. 994–1002. doi:10.1145/3539597.3570383 .URL https://doi.org/10.1145/3539597.3570383 
+
+[18] J. Fraine, L. Pintscher, P. Saadé, WikidataSearch: Retrieval Augmented Generation with the Wikidata Vector Database, web application: http s://wd-vectordb.wmcloud.org (2026). URL https://github.com/wmde/WikidataSearch 
+
+[19] Wikimedia Foundation Information Retrieval Working Group, Read-ers/Information Retrieval, MediaWiki project page (2026). URL https://www.mediawiki.org/wiki/Readers/Information_Ret rieval 
+
+[20] P. Sridhar, H. Lee, A. Dutta, A. Zisserman, WISE image search engine, Wiki Workshop 2023, 10th edition, May 11, 2023 (May 2023). URL https://wikiworkshop.org/2023/papers/WikiWorkshop2023_ paper_43.pdf 
+
+[21] T. Mens, C. De Roover, A. Cleve (Eds.), Software Ecosystems: Tooling and Analytics, 1st Edition, Springer Cham, 2023, xXII, 314 pages. doi: 10.1007/978-3-031-36060-2 .[22] J. Abramatic, R. D. Cosmo, S. Zacchiroli, Building the universal archive of source code, Commun. ACM 61 (10) (2018) 29–31. doi:10.1145/31 83558 .URL https://doi.org/10.1145/3183558 
+
+[23] R. Di Cosmo, Archiving and referencing source code with software heritage, in: A. M. Bigatti, J. Carette, J. H. Davenport, M. Joswig, T. de Wolff (Eds.), Mathematical Software – ICMS 2020, Springer In-ternational Publishing, Cham, 2020, pp. 362–373. doi:10.1007/978-3 -030-52200-1_36 .[24] L. Courtès, T. Sample, S. Zacchiroli, S. Tournier, Source code archiving to the rescue of reproducible deployment, in: Proceedings of the 2nd ACM Conference on Reproducibility and Replicability, ACM REP ’24, 19 Association for Computing Machinery, New York, NY, USA, 2024, p. 36–45. doi:10.1145/3641525.3663622 .URL https://doi.org/10.1145/3641525.3663622 
+
+[25] UNESCO, Canadian Commission for UNESCO, An introduction to the unesco recommendation on open science, Programme and meeting docu-ment SC-PBS-STIP/2022/OSB/1, UNESCO, licensed under CC BY-SA 3.0 IGO. (2022). doi:10.54677/XOIR1696 .URL https://unesdoc.unesco.org/ark:/48223/pf0000383771 
+
+[26] Information technology — software hash identifier (swhid) specification V1.2 (April 2025). URL https://www.iso.org/standard/89985.html 
+
+[27] SWHID Working Group, SWHID.org — software hash identifier (swhid), official website of the SWHID international standard (ISO/IEC 18670:2025) (2025). URL https://www.swhid.org 
+
+[28] T. A. Wagner, S. L. Graham, Efficient and flexible incremental parsing, ACM Trans. Program. Lang. Syst. 20 (5) (1998) 980–1013. doi:10.114 5/293677.293678 .URL https://doi.org/10.1145/293677.293678 
+
+[29] A. Latif, F. Azam, M. W. Anwar, A. Zafar, Comparison of leading language parsers – antlr, javacc, sablecc, tree-sitter, yacc, bison, in: 2023 13th International Conference on Software Technology and Engineering (ICSTE), 2023, pp. 7–13. doi:10.1109/ICSTE61649.2023.00009 .[30] F. Refolli, D. Sas, F. A. Fontana, Lessons learned from implementing a language-agnostic dependency graph parser, in: Proceedings of the 20th International Conference on Evaluation of Novel Approaches to Software Engineering - ENASE, INSTICC, SciTePress, 2025, pp. 484– 491. doi:10.5220/0013277600003928 .[31] C. D. Manning, P. Raghavan, H. Schütze, Introduction to Information Retrieval, Cambridge University Press, 2008. doi:10.1017/CBO97805 11809071 .[32] S. E. Robertson, S. Walker, S. Jones, M. Hancock-Beaulieu, M. Gatford, Okapi at TREC-3, in: D. K. Harman (Ed.), Proceedings of The Third Text REtrieval Conference, TREC 1994, Gaithersburg, Maryland, USA, November 2-4, 1994, NIST Special Publication, National Institute of 20 Standards and Technology (NIST), 1994, pp. 109–126. URL http://trec.nist.gov/pubs/trec3/papers/city.ps.gz 
+
+[33] L. Zheng, W.-L. Chiang, Y. Sheng, S. Zhuang, Z. Wu, Y. Zhuang, Z. Lin, Z. Li, D. Li, E. P. Xing, H. Zhang, J. E. Gonzalez, I. Stoica, Judging llm-as-a-judge with mt-bench and chatbot arena, in: Proceedings of the 37th International Conference on Neural Information Processing Sys-tems, NIPS ’23, Curran Associates Inc., Red Hook, NY, USA, 2023. [34] A. Pietri, D. Spinellis, S. Zacchiroli, The software heritage graph dataset: Large-scale analysis of public software development history, in: Proceed-ings of the 17th International Conference on Mining Software Reposito-ries, MSR ’20, Association for Computing Machinery, New York, NY, USA, 2020, p. 1–5. doi:10.1145/3379597.3387510 .URL https://doi.org/10.1145/3379597.3387510 
+
+21
