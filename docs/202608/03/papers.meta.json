@@ -1,0 +1,69 @@
+{
+  "label": "2026-08-03",
+  "date": "2026-08-03",
+  "generated_at": "2026-08-03T21:04:32",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202608/03/2607.27178v2-denseon-with-the-lateon-fully-open-dense-and-late-interaction-models-for-multilingual-long-context-and-code-search",
+      "section": "deep",
+      "title_en": "DenseOn with the LateOn: Fully Open Dense and Late-Interaction Models for Multilingual, Long-Context, and Code Search",
+      "authors": "Raphaël Sourty, Antoine Chaffin, Paulo Roberto Moura Junior, Amélie Chatelain",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.27178v2",
+      "score": "8.0",
+      "evidence": "论文明确用完全开放描述模型和端到端训练方案，因此会提供源码，匹配度强。",
+      "tldr": "SOTA检索模型依赖闭源数据，复现困难。本文提出开放端到端训练配方：构建665M对比预训练对和1.88M监督微调对，训练149M参数的稠密模型DenseOn与晚期交互模型LateOn，BEIR上分别达到56.20和57.22 nDCG@10，刷新同尺寸SOTA。将数据翻译成8语言训练307M多语言版本后，晚期交互模型对未见语言泛化更好，表明token级匹配能助力翻译训练策略。模型、数据与代码均已公开。",
+      "tags": "query:code-paper",
+      "abstract_en": "State-of-the-art retrieval models increasingly rely on closed training data, creating a reproducibility gap. We present an open end-to-end recipe for training retrieval models and study how English supervision transfers to multilingual retrieval through translate-train. We first reconstruct and curate 665M English contrastive pre-training pairs from 1.4B pairs across 34 public sources and build 1.88M supervised fine-tuning pairs with mined hard negatives. Training yields two 149M-parameter models: DenseOn, a single-vector dense model, and LateOn, a ColBERT-style late-interaction model. They achieve 56.20 and 57.22 average nDCG@10 on BEIR, respectively, setting new state-of-the-art results for this size class. We then translate the validated English data into eight languages, yielding 2.8B pairs with cross-lingual samples, and train mDenseOn and mLateOn, two 307M-parameter models built on mmBERT-base. Despite sharing their backbone, data, and objectives, their representations behave differently: the dense model is strong on English and translated languages but degrades outside translate-train support, whereas the late-interaction model generalizes better to unseen languages and scripts. This suggests that token-level matching turns translate-train from a target-language expansion strategy into a multilingual generalization recipe. We publicly release the models, datasets, and training code.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/03/2607.28815v1-preventing-premature-commitment-in-coding-agents-with-an-evidence-conditioned-execution-layer",
+      "section": "quick",
+      "title_en": "Preventing Premature Commitment in Coding Agents with an Evidence-Conditioned Execution Layer",
+      "authors": "Yisen Xu, Chenglin Li, Zehao Wang, Jinqiu Yang, Tse-Hsun Chen",
+      "date": "2026-07-30",
+      "pdf": "https://arxiv.org/pdf/2607.28815v1",
+      "score": "7.0",
+      "evidence": "提出执行层ECLoop，是基于代码的工具，可能开源",
+      "tldr": "语言模型驱动的编码智能体常因未充分查看仓库证据便修改代码或提交补丁而失败，这被称为过早承诺。我们提出一个证据条件执行层，它插在智能体与仓库之间，从任务描述和仓库结构编译出观察条件，并跟踪智能体轨迹，只有满足条件才许可修改或提交。在包含五百个真实任务的标准基准上，该方法将首要通过率提升五至十二个百分点，同时最多降低约一成二的令牌消耗，且无需重新训练模型或改动现有脚手架。",
+      "tags": "query:code-paper",
+      "abstract_en": "LLM-based coding agents often edit source code or submit patches before examining enough repository evidence to justify the change, a failure pattern we call premature commitment. We present ECLoop, an execution layer that interposes between the agent and the repository to enforce evidence-conditioned execution. For each task, ECLoop uses the issue description and repository structure to compile a set of conditions specifying what the agent should observe before each type of code modification or patch submission. During execution, ECLoop tracks which conditions the agent's runtime trajectory has satisfied and postpones any proposed action whose required conditions remain unmet. Evaluated on all 500 instances of SWE-bench Verified with two language models and two agent scaffolds, ECLoop raises Pass@1 by 4.8-11.8 percentage points without model retraining or scaffold changes. Ablation experiments show that each of ECLoop's three operations contributes distinct value and that structured evidence conditions outperform an equivalent natural-language summary. These gains come at no additional inference cost: by redirecting the agent before it pursues unsupported actions, ECLoop lowers average token consumption by up to 12.1%.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/03/2607.23808v1-indic-diarbench-a-multilingual-joint-diarization-and-asr-benchmark-for-indian-languages",
+      "section": "quick",
+      "title_en": "Indic DiarBench: A Multilingual Joint Diarization and ASR Benchmark for Indian Languages",
+      "authors": "Deovrat Mehendale, Aditya Mehndiratta, Dhruv Rathi, Kaushal Bhogale, Mitesh M. Khapra",
+      "date": "2026-07-26",
+      "pdf": "https://arxiv.org/pdf/2607.23808v1",
+      "score": "6.0",
+      "evidence": "明确作为开放获取资源发布，可能包含代码",
+      "tldr": "针对印度22种语言缺乏统一的多说话人语音基准，本文提出Indic DiarBench，含约108小时近场、远场及野外多说话人音频，人工校正时间对齐的说话人标注转录，覆盖英语混码、方言和重叠语音。评测商业API和多模态大模型，为联合说话人日志与ASR提供开放基准。",
+      "tags": "query:code-paper",
+      "abstract_en": "In this work, we introduce Indic DiarBench, a speaker diarization and ASR benchmark dataset spanning all 22 scheduled languages of India. This corpus comprises approximately 108 hours of natural multi-speaker audio from near-field meetings, far-field recordings, and in-the-wild audios. All annotations are human-corrected with time-aligned speaker attributed transcriptions. The dataset captures conversational nuance prevalent in Indian speech, such as English code-mixing, dialectal variation, and frequent speaker overlap. To establish a baseline for joint ASR and diarization capabilities we evaluate leading systems including commercial speech APIs and multimodal large language models. Indic DiarBench is released as an open-access resource to advance inclusive, multilingual speech technology research for Indian languages.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/03/2607.29677v1-extractbench-a-benchmark-for-schema-guided-enterprise-document-extraction",
+      "section": "quick",
+      "title_en": "ExtractBench: A Benchmark for Schema-Guided Enterprise Document Extraction",
+      "authors": "Boyang Zhang, Adrian Lyjak, Eli Stewart, Zhaoqi Li, Simon Suo",
+      "date": "2026-07-31",
+      "pdf": "https://arxiv.org/pdf/2607.29677v1",
+      "score": "6.0",
+      "evidence": "作为基准包含评估系统与构造流水线，可能公开代码/数据，但不在目标领域。",
+      "tldr": "企业工作流日益依赖代理进行模式引导的文档抽取，但缺少同时评估准确、完整、溯源与成本的基准。提出ExtractBench，该基准包含370份企业文档、4869页，覆盖8领域67类型，通过独立系统一致性、已知值及人工验证构建真值。实验结果显示：商用VLM在长文档上易截断记录，编码代理准确但成本高，LlamaExtract Agentic Plus三项指标均最优且成本低。该基准系首次联合评测这些维度，并开源数据集与评估代码。",
+      "tags": "query:code-paper",
+      "abstract_en": "Enterprise workflows increasingly rely on agents for \\emph{schema-guided extraction}: given a document and a user-defined schema, the agent faithfully follows the schema to produce the correct output with source evidence as grounding metadata. We present ExtractBench, a benchmark for schema-guided extraction and, to our knowledge, the first to score value accuracy, record completeness at scale, grounding, and measured cost together. The evaluation system contains 4,869 pages across 370 enterprise documents, 8 business domains, and 67 document types, with clear tags differentiating their challenge scenarios. The scalable schema and ground-truth curation pipeline combines independent-system agreement for real documents, known values for synthetic lists, and human verification for forms. We report order-insensitive value F1 for value accuracy, plus two grounding metrics for source traceability: word- and page-level F1. Commercial VLMs perform well on short documents but often truncate record lists on long ones, while coding agents retain higher accuracy at much higher cost. LlamaExtract Agentic Plus ranks first on all three metrics, with accuracy comparable to coding agents at a fraction of the cost. Dataset and evaluation code are available on \\href{https://huggingface.co/datasets/llamaindex/ExtractBench}{HuggingFace} and \\href{https://github.com/run-llama/ExtractBench}{GitHub}.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

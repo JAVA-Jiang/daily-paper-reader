@@ -6,29 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-02
-- 运行时间：2026-08-02 20:13:32 UTC
+- 最新运行日期：2026-08-03
+- 运行时间：2026-08-03 21:04:25 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：2
-- 速读区：1
+- 本次总论文数：4
+- 精读区：1
+- 速读区：3
 
 ### 今日简报（AI）
-今日精读2篇、速读1篇，聚焦代码语义检索与量子编程接口。最值得关注的是MediaWiki代码实体神经检索方案（8.0分）及MQSS量子编程接口解耦设计（8.0分），另有一份工业数据工程基准可作参考。建议普通读者优先浏览高分精读摘要，速读篇按需查阅即可。
-- 详情：[/202608/02/README](/202608/02/README)
+今日精读1篇、速读3篇，共4篇论文；最值得关注的是8.0分《DenseOn with the LateOn》——面向多语言、长上下文和代码搜索的开放密集与晚期交互模型。若时间有限，可优先精读该模型的技术细节，速读部分则适合关注编码代理的过早承诺干预、印度语言语音基准及企业文档抽取基准。
+- 详情：[/202608/03/README](/202608/03/README)
 
 ### 精读区论文标签
-1. [MediaWiki Code2Code Search: Neural Retrieval for the Semantic Discovery of Open-Source Software Entities](/202608/02/2607.26766v1-mediawiki-code2code-search-neural-retrieval-for-the-semantic-discovery-of-open-source-software-entities)  
+1. [DenseOn with the LateOn: Fully Open Dense and Late-Interaction Models for Multilingual, Long-Context, and Code Search](/202608/03/2607.27178v2-denseon-with-the-lateon-fully-open-dense-and-late-interaction-models-for-multilingual-long-context-and-code-search)  
    标签：评分：8.0/10、query:code-paper
-   evidence：面向开源软件实体语义发现的神经检索系统，聚焦开源代码
-2. [MQSS Client: Interface for Decoupling Quantum Programming Interfaces](/202608/02/2607.28563v1-mqss-client-interface-for-decoupling-quantum-programming-interfaces)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：MQSS Client 为编程库，天然含代码，并涉及数据中心。
+   evidence：论文明确用完全开放描述模型和端到端训练方案，因此会提供源码，匹配度强。
 
 ### 速读区论文标签
-1. [DataClawEval: A Benchmark for Data Engineering Agents in Real Industrial Harness](/202608/02/2607.28033v1-dataclaweval-a-benchmark-for-data-engineering-agents-in-real-industrial-harness)  
+1. [Preventing Premature Commitment in Coding Agents with an Evidence-Conditioned Execution Layer](/202608/03/2607.28815v1-preventing-premature-commitment-in-coding-agents-with-an-evidence-conditioned-execution-layer)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提出执行层ECLoop，是基于代码的工具，可能开源
+2. [Indic DiarBench: A Multilingual Joint Diarization and ASR Benchmark for Indian Languages](/202608/03/2607.23808v1-indic-diarbench-a-multilingual-joint-diarization-and-asr-benchmark-for-indian-languages)  
    标签：评分：6.0/10、query:code-paper
-   evidence：基于生产级代码的基准，可能提供数据工程智能体相关代码
+   evidence：明确作为开放获取资源发布，可能包含代码
+3. [ExtractBench: A Benchmark for Schema-Guided Enterprise Document Extraction](/202608/03/2607.29677v1-extractbench-a-benchmark-for-schema-guided-enterprise-document-extraction)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：作为基准包含评估系统与构造流水线，可能公开代码/数据，但不在目标领域。
 
 
 <div class="dpr-home-promo-card">

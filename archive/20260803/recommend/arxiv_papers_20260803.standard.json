@@ -1,0 +1,174 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-03T21:00:17.992267+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.27178v2",
+      "source": "arxiv",
+      "title": "DenseOn with the LateOn: Fully Open Dense and Late-Interaction Models for Multilingual, Long-Context, and Code Search",
+      "abstract": "State-of-the-art retrieval models increasingly rely on closed training data, creating a reproducibility gap. We present an open end-to-end recipe for training retrieval models and study how English supervision transfers to multilingual retrieval through translate-train. We first reconstruct and curate 665M English contrastive pre-training pairs from 1.4B pairs across 34 public sources and build 1.88M supervised fine-tuning pairs with mined hard negatives. Training yields two 149M-parameter models: DenseOn, a single-vector dense model, and LateOn, a ColBERT-style late-interaction model. They achieve 56.20 and 57.22 average nDCG@10 on BEIR, respectively, setting new state-of-the-art results for this size class. We then translate the validated English data into eight languages, yielding 2.8B pairs with cross-lingual samples, and train mDenseOn and mLateOn, two 307M-parameter models built on mmBERT-base. Despite sharing their backbone, data, and objectives, their representations behave differently: the dense model is strong on English and translated languages but degrades outside translate-train support, whereas the late-interaction model generalizes better to unseen languages and scripts. This suggests that token-level matching turns translate-train from a target-language expansion strategy into a multilingual generalization recipe. We publicly release the models, datasets, and training code.",
+      "authors": [
+        "Raphaël Sourty",
+        "Antoine Chaffin",
+        "Paulo Roberto Moura Junior",
+        "Amélie Chatelain"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.IR"
+      ],
+      "published": "2026-07-29T17:50:51+00:00",
+      "link": "https://arxiv.org/pdf/2607.27178v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Paper explicitly presents fully open retrieval models and an open end-to-end training recipe, so source code is available; strong match.",
+      "llm_evidence_cn": "论文明确用完全开放描述模型和端到端训练方案，因此会提供源码，匹配度强。",
+      "llm_evidence": "论文明确用完全开放描述模型和端到端训练方案，因此会提供源码，匹配度强。",
+      "canonical_evidence": "论文明确用完全开放描述模型和端到端训练方案，因此会提供源码，匹配度强。",
+      "llm_tldr_en": "DenseOn and LateOn are fully open dense and late-interaction retrieval models covering multilingual, long-context, and code search. They release an open training recipe and achieve state-of-the-art BEIR nDCG@10 for 149M models. The explicit open-source release strongly satisfies the code-paper requirement, though the domain is retrieval, not scheduling.",
+      "llm_tldr_cn": "本文提出完全开放的稠密检索模型DenseOn和后期交互模型LateOn，覆盖多语言、长上下文和代码搜索，并给出端到端开源训练配方；基于34个公开来源重建665M英文对比预训练对和1.88M微调对。模型在BEIR上以同尺寸取得56.20和57.22的nDCG@10，刷新最优成绩。标题和摘要都强调完全开放，说明会提供训练代码与模型权重，这非常契合用户对含代码论文的首要要求；虽然主题是检索而非电网或数据中心调度，但开放代码这一点使其成为强相关候选。",
+      "llm_tldr": "本文提出完全开放的稠密检索模型DenseOn和后期交互模型LateOn，覆盖多语言、长上下文和代码搜索，并给出端到端开源训练配方；基于34个公开来源重建665M英文对比预训练对和1.88M微调对。模型在BEIR上以同尺寸取得56.20和57.22的nDCG@10，刷新最优成绩。标题和摘要都强调完全开放，说明会提供训练代码与模型权重，这非常契合用户对含代码论文的首要要求；虽然主题是检索而非电网或数据中心调度，但开放代码这一点使其成为强相关候选。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.28815v1",
+      "source": "arxiv",
+      "title": "Preventing Premature Commitment in Coding Agents with an Evidence-Conditioned Execution Layer",
+      "abstract": "LLM-based coding agents often edit source code or submit patches before examining enough repository evidence to justify the change, a failure pattern we call premature commitment. We present ECLoop, an execution layer that interposes between the agent and the repository to enforce evidence-conditioned execution. For each task, ECLoop uses the issue description and repository structure to compile a set of conditions specifying what the agent should observe before each type of code modification or patch submission. During execution, ECLoop tracks which conditions the agent's runtime trajectory has satisfied and postpones any proposed action whose required conditions remain unmet. Evaluated on all 500 instances of SWE-bench Verified with two language models and two agent scaffolds, ECLoop raises Pass@1 by 4.8-11.8 percentage points without model retraining or scaffold changes. Ablation experiments show that each of ECLoop's three operations contributes distinct value and that structured evidence conditions outperform an equivalent natural-language summary. These gains come at no additional inference cost: by redirecting the agent before it pursues unsupported actions, ECLoop lowers average token consumption by up to 12.1%.",
+      "authors": [
+        "Yisen Xu",
+        "Chenglin Li",
+        "Zehao Wang",
+        "Jinqiu Yang",
+        "Tse-Hsun Chen"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-07-30T20:16:35+00:00",
+      "link": "https://arxiv.org/pdf/2607.28815v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "presents an execution layer (ECLoop) that is a code-based tool, likely open-source",
+      "llm_evidence_cn": "提出执行层ECLoop，是基于代码的工具，可能开源",
+      "llm_evidence": "提出执行层ECLoop，是基于代码的工具，可能开源",
+      "canonical_evidence": "提出执行层ECLoop，是基于代码的工具，可能开源",
+      "llm_tldr_en": "To prevent premature commitment in LLM coding agents, ECLoop interposes an evidence-conditioned execution layer that tracks satisfied conditions and postpones actions until evidence is gathered, significantly reducing premature patches on SWE-bench Verified.",
+      "llm_tldr_cn": "针对LLM编码智能体在证据不足时过早提交修改的问题，提出ECLoop执行层。该层根据问题描述和仓库结构编译条件集合，在运行时追踪证据满足情况并延迟未达条件的动作。在SWE-bench Verified全部500个实例上的实验表明，它能有效减少过早提交并提高修复成功率，为可靠代码智能体提供了新机制。",
+      "llm_tldr": "针对LLM编码智能体在证据不足时过早提交修改的问题，提出ECLoop执行层。该层根据问题描述和仓库结构编译条件集合，在运行时追踪证据满足情况并延迟未达条件的动作。在SWE-bench Verified全部500个实例上的实验表明，它能有效减少过早提交并提高修复成功率，为可靠代码智能体提供了新机制。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.23808v1",
+      "source": "arxiv",
+      "title": "Indic DiarBench: A Multilingual Joint Diarization and ASR Benchmark for Indian Languages",
+      "abstract": "In this work, we introduce Indic DiarBench, a speaker diarization and ASR benchmark dataset spanning all 22 scheduled languages of India. This corpus comprises approximately 108 hours of natural multi-speaker audio from near-field meetings, far-field recordings, and in-the-wild audios. All annotations are human-corrected with time-aligned speaker attributed transcriptions. The dataset captures conversational nuance prevalent in Indian speech, such as English code-mixing, dialectal variation, and frequent speaker overlap. To establish a baseline for joint ASR and diarization capabilities we evaluate leading systems including commercial speech APIs and multimodal large language models. Indic DiarBench is released as an open-access resource to advance inclusive, multilingual speech technology research for Indian languages.",
+      "authors": [
+        "Deovrat Mehendale",
+        "Aditya Mehndiratta",
+        "Dhruv Rathi",
+        "Kaushal Bhogale",
+        "Mitesh M. Khapra"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-07-26T19:12:39+00:00",
+      "link": "https://arxiv.org/pdf/2607.23808v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Explicitly released as an open-access resource, likely including code",
+      "llm_evidence_cn": "明确作为开放获取资源发布，可能包含代码",
+      "llm_evidence": "明确作为开放获取资源发布，可能包含代码",
+      "canonical_evidence": "明确作为开放获取资源发布，可能包含代码",
+      "llm_tldr_en": "Indic DiarBench is an open-access multilingual benchmark with 108 hours of annotated audio for joint diarization and ASR across 22 Indian languages; released as open resource.",
+      "llm_tldr_cn": "多语言会话语音研究缺少覆盖印度全境语言的联合说话人日志与ASR基准。本文提出Indic DiarBench，包含22种印度语言约108小时的多人语音数据，并有人工校对的时间对齐转写。评测了多家商业API和多模态大模型，并作为开放资源发布。该论文提供开源数据与基线，可复现性强，属于含代码论文。",
+      "llm_tldr": "多语言会话语音研究缺少覆盖印度全境语言的联合说话人日志与ASR基准。本文提出Indic DiarBench，包含22种印度语言约108小时的多人语音数据，并有人工校对的时间对齐转写。评测了多家商业API和多模态大模型，并作为开放资源发布。该论文提供开源数据与基线，可复现性强，属于含代码论文。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.29677v1",
+      "source": "arxiv",
+      "title": "ExtractBench: A Benchmark for Schema-Guided Enterprise Document Extraction",
+      "abstract": "Enterprise workflows increasingly rely on agents for \\emph{schema-guided extraction}: given a document and a user-defined schema, the agent faithfully follows the schema to produce the correct output with source evidence as grounding metadata. We present ExtractBench, a benchmark for schema-guided extraction and, to our knowledge, the first to score value accuracy, record completeness at scale, grounding, and measured cost together. The evaluation system contains 4,869 pages across 370 enterprise documents, 8 business domains, and 67 document types, with clear tags differentiating their challenge scenarios. The scalable schema and ground-truth curation pipeline combines independent-system agreement for real documents, known values for synthetic lists, and human verification for forms. We report order-insensitive value F1 for value accuracy, plus two grounding metrics for source traceability: word- and page-level F1. Commercial VLMs perform well on short documents but often truncate record lists on long ones, while coding agents retain higher accuracy at much higher cost. LlamaExtract Agentic Plus ranks first on all three metrics, with accuracy comparable to coding agents at a fraction of the cost. Dataset and evaluation code are available on \\href{https://huggingface.co/datasets/llamaindex/ExtractBench}{HuggingFace} and \\href{https://github.com/run-llama/ExtractBench}{GitHub}.",
+      "authors": [
+        "Boyang Zhang",
+        "Adrian Lyjak",
+        "Eli Stewart",
+        "Zhaoqi Li",
+        "Simon Suo"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-31T17:55:58+00:00",
+      "link": "https://arxiv.org/pdf/2607.29677v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Benchmark with an evaluation system and curation pipeline, likely releasing code/data; not in target domain.",
+      "llm_evidence_cn": "作为基准包含评估系统与构造流水线，可能公开代码/数据，但不在目标领域。",
+      "llm_evidence": "作为基准包含评估系统与构造流水线，可能公开代码/数据，但不在目标领域。",
+      "canonical_evidence": "作为基准包含评估系统与构造流水线，可能公开代码/数据，但不在目标领域。",
+      "llm_tldr_en": "ExtractBench is a schema-guided document extraction benchmark covering 4,869 pages from 370 documents, scoring accuracy, completeness, grounding, and cost. It provides a scalable curation pipeline, likely with code and data, thereby matching the code-paper requirement, though unrelated to scheduling.",
+      "llm_tldr_cn": "本文提出面向企业文档模式引导抽取的基准ExtractBench，包含370篇文档、4869页和67种类型，首个同时评估值准确率、记录完整性、引用依据与成本的基准。其标注流水线结合了人工与合成数据，可扩展生成真值。此类基准通常会附带评测代码与数据，满足含代码论文的要求；但由于主题是企业文档抽取，与电网或任务调度无关，故相关性中等。",
+      "llm_tldr": "本文提出面向企业文档模式引导抽取的基准ExtractBench，包含370篇文档、4869页和67种类型，首个同时评估值准确率、记录完整性、引用依据与成本的基准。其标注流水线结合了人工与合成数据，可扩展生成真值。此类基准通常会附带评测代码与数据，满足含代码论文的要求；但由于主题是企业文档抽取，与电网或任务调度无关，故相关性中等。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
