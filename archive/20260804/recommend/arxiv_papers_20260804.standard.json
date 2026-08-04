@@ -1,0 +1,334 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-04T20:16:12.410015+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2608.01158v1",
+      "source": "arxiv",
+      "title": "PlainMedScale: A Corpus of Multi-Level Simplified Medical Texts in German and English",
+      "abstract": "We introduce PlainMedScale, a topic-aligned medical corpus spanning four levels of comprehensibility in German and English, drawn from MSD (professional and consumer), Gesund.Bund, Apotheken Umschau Einfache Sprache, and the NHS. The four tiers correspond to distinct communicative functions --- reference, explanation, decision support, and access --- and move beyond the binary expert--lay contrast of prior corpora. In two pilot studies enabled by the alignments, we show that many readability metrics established on two registers fail to generalize across the full gradient, and that a SOTA open-weight LLM prompted for Plain Language still partially preserves the difficulty of its input. Code (https://github.com/GS-Uni-Heidelberg/PlainMedScale) and data (https://doi.org/10.5281/zenodo.21728290) are made available.",
+      "authors": [
+        "Bruno Brocai",
+        "Ilaria Papagno",
+        "Mayumi Ohta"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-02T11:28:27+00:00",
+      "link": "https://arxiv.org/pdf/2608.01158v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Abstract includes a GitHub code link, indicating open-source availability.",
+      "llm_evidence_cn": "摘要包含GitHub代码链接，表明开源可用性。",
+      "llm_evidence": "摘要包含GitHub代码链接，表明开源可用性。",
+      "canonical_evidence": "摘要包含GitHub代码链接，表明开源可用性。",
+      "llm_tldr_en": "PlainMedScale is a topic-aligned medical corpus with four comprehensibility levels in German and English, publicly released with code, facilitating research in plain-language generation.",
+      "llm_tldr_cn": "医疗科普文本简化研究常依赖专家-大众二元对照语料，难以覆盖完整难度梯度。本文构建PlainMedScale德英双语医学语料库，包含参考、解释、决策支持和访问四种沟通功能的四级可理解度文本，并公开了代码与数据。两项初步研究表明，许多在双语域上建立的可读性指标难以推广到完整梯度，而SOTA开源大模型在提示简化时仍部分保留原文难度。该资源为多级医学文本简化和可读性研究提供了新基准。",
+      "llm_tldr": "医疗科普文本简化研究常依赖专家-大众二元对照语料，难以覆盖完整难度梯度。本文构建PlainMedScale德英双语医学语料库，包含参考、解释、决策支持和访问四种沟通功能的四级可理解度文本，并公开了代码与数据。两项初步研究表明，许多在双语域上建立的可读性指标难以推广到完整梯度，而SOTA开源大模型在提示简化时仍部分保留原文难度。该资源为多级医学文本简化和可读性研究提供了新基准。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.00267v1",
+      "source": "arxiv",
+      "title": "LoopsBench: From Harness Engineering to Loop Engineering in Benchmarking Coding Agent",
+      "abstract": "Coding agent infrastructure is shifting from harness engineering toward loop engineering as coding agents are deployed for sustained long-horizon software development. Existing benchmarks often center on localized tasks or end-state outcomes, offering limited insight into sustained execution. We introduce LOOPSBENCH, a long-horizon benchmark for loop engineering in coding agent evaluation. Each task is a dependency DAG over separately testable development units with source-evidenced prerequisite edges. LOOPSBENCH comprises 112 tasks from authentic sources spanning 8 programming languages and 9 domains. Its flow-aware runtime releases tests along the ready frontier and retains completed nodes as regression obligations. We evaluate frontier coding agents paired with widely used loop implementations. The strongest configuration, Opus-4.7 with Claude Code and outer continuation, resolves 25.00% of tasks. Recorded plans recover only part of the source-recovered prerequisite DAG, and regression events remain visible across the evaluated loop profiles. We open source the benchmark data and code, including all tasks, more than 5,300 development units, and executable tests, at microsoft/Loopsbench.",
+      "authors": [
+        "Han Li",
+        "Zhemin Fang",
+        "Rili Feng",
+        "Yingqi Zhao",
+        "Jiaheng Liu",
+        "Pengfei Gao",
+        "He Ye",
+        "Dayi Lin",
+        "Qingwei Lin",
+        "Saravan Rajmohan",
+        "Dongmei Zhang"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.CL"
+      ],
+      "published": "2026-07-31T20:18:25+00:00",
+      "link": "https://arxiv.org/pdf/2608.00267v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Long-horizon benchmark for coding agents, typically accompanied by open-source evaluation code.",
+      "llm_evidence_cn": "面向编码代理的长周期基准，通常附带开源评测代码。",
+      "llm_evidence": "面向编码代理的长周期基准，通常附带开源评测代码。",
+      "canonical_evidence": "面向编码代理的长周期基准，通常附带开源评测代码。",
+      "llm_tldr_en": "LOOPSBENCH introduces a long-horizon benchmark for coding agents using dependency DAGs, with 112 tasks across 8 languages and 9 domains to evaluate sustained code development loops.",
+      "llm_tldr_cn": "现有编码代理基准多关注局部任务或最终状态，难以评估持续长周期开发。为此提出LOOPSBENCH，用依赖有向无环图组织可独立测试的开发单元，包含来自真实来源的112个任务、覆盖8种编程语言和9个领域，并通过流感知运行时在就绪前沿释放测试、保留已完成节点作为回归义务。实验表明该基准能够有效刻画代理在长周期循环工程中的表现，为编码代理的长期评估提供了新基础设施。",
+      "llm_tldr": "现有编码代理基准多关注局部任务或最终状态，难以评估持续长周期开发。为此提出LOOPSBENCH，用依赖有向无环图组织可独立测试的开发单元，包含来自真实来源的112个任务、覆盖8种编程语言和9个领域，并通过流感知运行时在就绪前沿释放测试、保留已完成节点作为回归义务。实验表明该基准能够有效刻画代理在长周期循环工程中的表现，为编码代理的长期评估提供了新基础设施。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26710v1",
+      "source": "arxiv",
+      "title": "PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems",
+      "abstract": "The rapid growth of AI workloads is turning data centers into large-scale, volatile, yet spatiotemporally flexible grid loads, creating an urgent need for coordinated electricity-computing scheduling. Under stringent grid constraints, schedules from general-purpose large language models (LLMs) are often infeasible, causing line-flow violations and unserved load. We present PowerAtlas, an LLM-agent framework for electricity-computing co-scheduling that integrates historical instances, domain knowledge, and physical constraints to produce joint decisions satisfying both grid operational rules and the service-level agreements (SLAs) of computing tasks. Working with a provincial power utility in China, we built an experimental electricity-computing network and validated the decision loop on real data-center data; from de-identified operational data we further constructed ECBench, a benchmark of 2,000 scheduling instances with oracle-optimal solutions. Experiments across eleven LLMs demonstrate the effectiveness of PowerAtlas under realistic physical operating conditions, with consistent feasibility and cost gains across three open-weight backbones. Our code is publicly available at https://github.com/JAVA-Jiang/PowerAtlas.",
+      "authors": [
+        "Kaiwen Jiang",
+        "Siya Xu",
+        "Ziyue Zhu",
+        "Chao Yang",
+        "Anh Tuan Luu",
+        "Haoran Luo"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-29T09:53:50+00:00",
+      "link": "https://arxiv.org/pdf/2607.26710v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "electricity-computing co-scheduling in data centers matching the task scheduling and power grid theme",
+      "llm_evidence_cn": "面向数据中心与电网的电算协同调度，符合任务调度与电力调度主题",
+      "llm_evidence": "面向数据中心与电网的电算协同调度，符合任务调度与电力调度主题",
+      "canonical_evidence": "面向数据中心与电网的电算协同调度，符合任务调度与电力调度主题",
+      "llm_tldr_en": "PowerAtlas is an LLM-agent framework for joint electricity-computing scheduling that integrates historical instances, domain knowledge, and physical constraints to satisfy both grid operational rules and computing task SLAs, validated with a provincial utility.",
+      "llm_tldr_cn": "现有通用大语言模型在处理电网约束下的调度时常常产生不可行方案。为此提出PowerAtlas，一个面向电算协同调度的LLM智能体框架，融合历史实例、领域知识与物理约束，生成同时满足电网运行规则和计算任务SLA的联合决策。与省级电力公司合作搭建实验网络进行验证，结果表明其能避免线路潮流越限并降低失负荷风险。该工作为电力系统与数据中心协同调度提供了可行范式。",
+      "llm_tldr": "现有通用大语言模型在处理电网约束下的调度时常常产生不可行方案。为此提出PowerAtlas，一个面向电算协同调度的LLM智能体框架，融合历史实例、领域知识与物理约束，生成同时满足电网运行规则和计算任务SLA的联合决策。与省级电力公司合作搭建实验网络进行验证，结果表明其能避免线路潮流越限并降低失负荷风险。该工作为电力系统与数据中心协同调度提供了可行范式。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.00450v1",
+      "source": "arxiv",
+      "title": "Revibing Code from Papers: Reimplementing HCI Artifacts",
+      "abstract": "Software artifacts for most technical HCI research projects are unavailable. The lack of access to these imposes limits on academic knowledge production. It is difficult to: extend or reuse research artifacts; use strong baselines in evaluating follow-up work; and perform replication or reproducibility research. In this work, we demonstrate the potential of new agentic AI technologies to revibe interactive software: reimplement systems directly from research papers. To measure the success of the approach, we describe a revibeability metric. By revibing recent research papers from UIST, and interviewing their original authors, we demonstrate the plausibility (and limitations) of revibed system. The results are encouraging. In many cases producing code suitable for strong baseline use. We argue that this may represent a fundamental shift in how we produce, use, and evaluate research artifacts in the technical HCI community.",
+      "authors": [
+        "Eytan Adar",
+        "Yoonjoo Lee",
+        "Ning-Er",
+        "Lei",
+        "Q. Vera Liao",
+        "Weirui Peng"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.SE"
+      ],
+      "published": "2026-08-01T05:18:25+00:00",
+      "link": "https://arxiv.org/pdf/2608.00450v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Reimplements systems directly from research papers to recover missing source code",
+      "llm_evidence_cn": "直接从论文重实现系统，以恢复缺失的源代码",
+      "llm_evidence": "直接从论文重实现系统，以恢复缺失的源代码",
+      "canonical_evidence": "直接从论文重实现系统，以恢复缺失的源代码",
+      "llm_tldr_en": "This paper uses agentic AI to reimplement interactive systems directly from research papers, demonstrating plausible recovery of usable code and a new revibeability metric for reproducible research.",
+      "llm_tldr_cn": "技术型HCI研究普遍缺乏可获取的软件工件，限制了成果复用与复现。本文提出利用智能体AI直接根据论文重实现交互系统，并设计\"可复活性\"指标评估该过程。作者对UIST近期论文进行重实现并采访原作者，结果表明在许多情况下可以产出适合继续开发的代码。这项研究为从论文恢复代码、提升研究可复现性开辟了新可能。",
+      "llm_tldr": "技术型HCI研究普遍缺乏可获取的软件工件，限制了成果复用与复现。本文提出利用智能体AI直接根据论文重实现交互系统，并设计\"可复活性\"指标评估该过程。作者对UIST近期论文进行重实现并采访原作者，结果表明在许多情况下可以产出适合继续开发的代码。这项研究为从论文恢复代码、提升研究可复现性开辟了新可能。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.02499v1",
+      "source": "arxiv",
+      "title": "SWE-Touch: Benchmarking Coding Agents When Users Touch the Code",
+      "abstract": "Real-world software development requires coding agents to operate in shared workspaces where users may inspect and modify code during an ongoing task, yet existing repository-level benchmarks typically evaluate agents working alone or restrict user participation to messages. This leads us to ask: how do coding agents understand and respond to code changes in a shared workspace? We introduce SWE-Touch, a framework that stress-tests this setting through validated Counter-Edits: plausible edits to task-relevant code that conflict with task completion. SWE-Touch mines task-critical regions from multiple repair trajectories, uses a separate User Patch Generator to construct the edits, and injects them with contextual user messages when agents reach the relevant code. We evaluate nine coding models on SWE-bench Verified, with additional experiments on longer-horizon tasks from SWE-Bench Pro and DeepSWE. Counter-Edit lowers average resolve rate by 7.7 percentage points on SWE-bench Verified, with degradation also persisting on both longer-horizon benchmarks. Trajectory analysis links these failures to limited awareness of the evolving workspace: agents may retain conflicting code or replace it without sufficiently re-inspecting the repository and validating the revised code with targeted tests. These findings show that strong autonomous performance does not yet ensure the state awareness and adaptive behavior needed for shared-workspace collaboration, and point to detecting workspace changes, reconciling conflicting edits with the task, and verifying the affected behavior as key capabilities for future optimization.",
+      "authors": [
+        "Yuqiao Tan",
+        "Jinxiang Meng",
+        "Fangyu Lei",
+        "Minzheng Wang",
+        "Shizhu He",
+        "Jun Zhao",
+        "Kang Liu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-03T17:03:19+00:00",
+      "link": "https://arxiv.org/pdf/2608.02499v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Benchmark for coding agents in shared workspaces; code release is typical for such frameworks.",
+      "llm_evidence_cn": "面向共享工作区编码代理的基准，此类框架通常会发布代码。",
+      "llm_evidence": "面向共享工作区编码代理的基准，此类框架通常会发布代码。",
+      "canonical_evidence": "面向共享工作区编码代理的基准，此类框架通常会发布代码。",
+      "llm_tldr_en": "SWE-Touch benchmarks coding agents when users edit code during tasks, using validated Counter-Edits and a User Patch Generator to stress-test agent behavior in shared workspaces.",
+      "llm_tldr_cn": "现实软件开发中编码代理常与用户共享工作区，用户可能在任务进行中检查和修改代码，而现有基准要么让代理单独工作，要么限制用户只能发消息。本文提出SWE-Touch框架，从多条修复轨迹中挖掘任务关键区域，用独立的用户补丁生成器构造合理的反向编辑（Counter-Edits），并在代理到达相关代码时注入带上下文信息的用户消息。该框架能够系统性地评估编码代理在共享工作区对代码变更的理解与响应能力，弥补了现有基准的空白。",
+      "llm_tldr": "现实软件开发中编码代理常与用户共享工作区，用户可能在任务进行中检查和修改代码，而现有基准要么让代理单独工作，要么限制用户只能发消息。本文提出SWE-Touch框架，从多条修复轨迹中挖掘任务关键区域，用独立的用户补丁生成器构造合理的反向编辑（Counter-Edits），并在代理到达相关代码时注入带上下文信息的用户消息。该框架能够系统性地评估编码代理在共享工作区对代码变更的理解与响应能力，弥补了现有基准的空白。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.00921v1",
+      "source": "arxiv",
+      "title": "Refined Thompson Learning for Adaptive Bandits: Sustainable Power-Efficient Flexibility Scheduling Across Data Centers",
+      "abstract": "The rapid rise in energy consumption from large-scale AI workloads in data centers placed the increasing pressures on power grids in recent years. Since grids must maintain real-time bal- ance between supply and demand, there has been heightened interest in job flexibility services from data centers. We propose an adaptive, learning-based contextual restless multi-armed bandit (RMAB) framework in which the grid requests load reductions without requiring visibility into job (re)scheduling decisions. With multiple virtual machine (VM) datasets, the core strategy models a cyclic job queue and batch-level (re)scheduling within each data center as a Markov decision process (MDP), and derives Whittle-index-based policies computed from the learned transition and reward functions via Thompson sampling. To address the challenges of enlarging state space and sparse state visits, we introduce domain-knowledge-enriched refined strategies, including adaptive mixed strategies, gated priors, low-rank smoothing, and offline posterior support. Extensive simulations under both baseline and stress scenarios demonstrate that the cellwise best refined variant exceeds TW in every reported cell of the stress sweep at lower computational cost than EXP4. These results demonstrate the economic value of data center flexibility services and underscore the importance of high-quality, open-source AI workload datasets for developing and evaluating adaptive scheduling algorithms.",
+      "authors": [
+        "Yifu Ding",
+        "Zixi Chen",
+        "Ruicheng Ao",
+        "David Simchi-Levi",
+        "Thomas Magnanti"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-08-02T01:27:00+00:00",
+      "link": "https://arxiv.org/pdf/2608.00921v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Data center job flexibility scheduling and power-grid load reduction, aligning with the combined data-center/task-scheduling/code theme",
+      "llm_evidence_cn": "面向数据中心作业调度与电网灵活性，契合含代码与数据中心调度的综合需求",
+      "llm_evidence": "面向数据中心作业调度与电网灵活性，契合含代码与数据中心调度的综合需求",
+      "canonical_evidence": "面向数据中心作业调度与电网灵活性，契合含代码与数据中心调度的综合需求",
+      "llm_tldr_en": "A contextual restless bandit framework for data center flexibility scheduling; models cyclic job queue and batch-level rescheduling as MDP and derives Whittle-index-based policies to reduce grid load.",
+      "llm_tldr_cn": "针对数据中心大规模AI负载给电网带来的压力，论文提出自适应上下文restless多臂老虎机框架，将数据中心内循环作业队列与批级重调度建模为MDP，并推导基于Whittle指数的调度策略。在多个虚拟机数据集上评估，显示该方法无需网格可见作业重调度即可实现负载削减，兼顾能效与电网平衡，为数据中心参与电力灵活性服务提供可行方案。",
+      "llm_tldr": "针对数据中心大规模AI负载给电网带来的压力，论文提出自适应上下文restless多臂老虎机框架，将数据中心内循环作业队列与批级重调度建模为MDP，并推导基于Whittle指数的调度策略。在多个虚拟机数据集上评估，显示该方法无需网格可见作业重调度即可实现负载削减，兼顾能效与电网平衡，为数据中心参与电力灵活性服务提供可行方案。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.00892v1",
+      "source": "arxiv",
+      "title": "Execution Timing Control for Deterministic Task Offloading in the IoT-Edge-Cloud Continuum",
+      "abstract": "Latency-critical IoT applications, such as autonomous mobility and industrial automation, require deterministic guarantees to ensure that tasks are completed within strict deadlines. The 6G-enabled IoT-edge-cloud continuum can support such requirements by leveraging communication, computation and intelligence resources across devices, edge, and cloud infrastructures. However, existing task offloading strategies mainly focus on selecting where tasks are executed and typically assume immediate processing upon task arrival. This leads to transient congestion when multiple tasks coincide in time and results in inefficient resource utilization under dynamic workloads. This paper addresses these limitations by introducing an execution timing control strategy for deterministic task offloading that jointly determines where tasks are executed and when their execution starts, while guaranteeing deadline compliance. The key idea is to exploit the latency budget of tasks to control their execution timing, enabling a more balanced distribution of workload over time and reducing peak congestion across the continuum. Evaluation results show that, compared to existing benchmarks, the proposed approach achieves up to 70% higher satisfaction ratio, reduces the communication resources usage by 40%, lowers peak computing resource utilization by 15%, and decreases average execution time by up to 77%.",
+      "authors": [
+        "Keyvan Aghababaiyan",
+        "Baldomero Coll-Perales",
+        "Javier Gozalvez"
+      ],
+      "primary_category": "cs.NI",
+      "categories": [
+        "cs.NI",
+        "cs.DC"
+      ],
+      "published": "2026-08-01T23:11:59+00:00",
+      "link": "https://arxiv.org/pdf/2608.00892v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "task offloading and execution timing control in computing continuum, directly relevant to task scheduling in data centers",
+      "llm_evidence_cn": "在计算连续体中研究任务卸载与执行时序控制，与数据中心任务调度直接相关",
+      "llm_evidence": "在计算连续体中研究任务卸载与执行时序控制，与数据中心任务调度直接相关",
+      "canonical_evidence": "在计算连续体中研究任务卸载与执行时序控制，与数据中心任务调度直接相关",
+      "llm_tldr_en": "This paper proposes execution timing control for deterministic task offloading in the IoT-edge-cloud continuum, addressing transient congestion and dynamic workload inefficiency in latency-critical applications.",
+      "llm_tldr_cn": "针对延迟关键型物联网应用，现有任务卸载策略只决定执行位置而忽略执行时序，导致瞬时拥塞和资源利用率低下。本文提出执行时序控制方法，在6G使能的物联网-边缘-云连续体中为任务确定执行时间，满足严格截止期限要求。该方法可提升动态工作负载下的资源效率，为任务卸载研究增加了时间维度控制的新视角。",
+      "llm_tldr": "针对延迟关键型物联网应用，现有任务卸载策略只决定执行位置而忽略执行时序，导致瞬时拥塞和资源利用率低下。本文提出执行时序控制方法，在6G使能的物联网-边缘-云连续体中为任务确定执行时间，满足严格截止期限要求。该方法可提升动态工作负载下的资源效率，为任务卸载研究增加了时间维度控制的新视角。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.01250v1",
+      "source": "arxiv",
+      "title": "Smoothing the Ramp, Not the Peak: Scheduling-Induced Power Dynamics of LLM Inference and Their Grid-Scale Consequences",
+      "abstract": "Large language model (LLM) inference serving is a fast-growing electricity load whose power dynamics remain uncharacterized from a grid-planning perspective. Using real, measured GPU power traces, we show that chunked prefill scheduling, a latency-motivated technique already deployed by default in production LLM serving, is a controllable knob that regulates power ramp rate without touching peak power. Contrary to the intuitive hypothesis that splitting a long prompt's computation into smaller steps should flatten its power spike, peak power stays relatively the same while mean ramp rate falls substantially. Critically, this ramp-rate benefit is not a fixed property of the policy: it grows monotonically with system saturation, and we confirm this along two independent axes: concurrency (7.0% at light load to 34.6% at heavy load, mean-ramp reduction) and long-prompt (\"whale\") request load (from statistically flat at low whale incidence to 42.6% at high whale fraction/size). We translate this single-GPU mechanism into an operational grid quantity, regulation-reserve procurement, posed and solved as a chance-constrained problem using a model-free bootstrap directly resampling real measured power traces. At a representative operating point, this translates to an estimated 20.3-22.7% reduction in the fast-ramping reserve capacity a grid operator would need to provision, across reliability levels from 95% to 99.9%. Together, these results give grid operators a no-cost demand-shaping tool available today, whose benefit is largest precisely when data centers run hottest and grid stress is most salient.",
+      "authors": [
+        "Pan Li",
+        "Yize Chen",
+        "Xia Miao",
+        "Dai Wang"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-08-02T14:01:51+00:00",
+      "link": "https://arxiv.org/pdf/2608.01250v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "LLM inference scheduling in data centers impacts grid-scale power ramp dynamics",
+      "llm_evidence_cn": "数据中心内LLM推理调度影响电网尺度功率爬坡动态",
+      "llm_evidence": "数据中心内LLM推理调度影响电网尺度功率爬坡动态",
+      "canonical_evidence": "数据中心内LLM推理调度影响电网尺度功率爬坡动态",
+      "llm_tldr_en": "Using real GPU power traces, this paper shows chunked prefill scheduling for LLM inference can substantially reduce power ramp rate without changing peak power, offering a grid-scale control knob.",
+      "llm_tldr_cn": "现有电网规划缺少对大语言模型推理负载功率动态的刻画。本文基于真实GPU功率测量数据，研究生产环境默认的分块预填调度策略对功率爬坡速率的影响。结果显示，该策略能在不改变峰值功率的情况下显著降低平均爬坡速率，且这种收益随策略参数单调变化。研究说明调度策略是一个可用的电网侧调控旋钮，为数据中心电力协同提供了新的规划视角。",
+      "llm_tldr": "现有电网规划缺少对大语言模型推理负载功率动态的刻画。本文基于真实GPU功率测量数据，研究生产环境默认的分块预填调度策略对功率爬坡速率的影响。结果显示，该策略能在不改变峰值功率的情况下显著降低平均爬坡速率，且这种收益随策略参数单调变化。研究说明调度策略是一个可用的电网侧调控旋钮，为数据中心电力协同提供了新的规划视角。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

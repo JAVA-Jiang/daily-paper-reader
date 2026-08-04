@@ -6,32 +6,47 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-03
-- 运行时间：2026-08-03 21:04:25 UTC
+- 最新运行日期：2026-08-04
+- 运行时间：2026-08-04 20:22:28 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：1
+- 本次总论文数：8
+- 精读区：5
 - 速读区：3
 
 ### 今日简报（AI）
-今日精读1篇、速读3篇，共4篇论文；最值得关注的是8.0分《DenseOn with the LateOn》——面向多语言、长上下文和代码搜索的开放密集与晚期交互模型。若时间有限，可优先精读该模型的技术细节，速读部分则适合关注编码代理的过早承诺干预、印度语言语音基准及企业文档抽取基准。
-- 详情：[/202608/03/README](/202608/03/README)
+- 今日共生成 8 篇推荐（精读 5 篇，速读 3 篇）
+- 精读：《PlainMedScale: A Corpus of Multi-Level Simplified Medical Texts in German and English》（10.0/10）, 《PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems》（8.0/10）
+- 速读：《Refined Thompson Learning for Adaptive Bandits: Sustainable Power-Efficient Flexibility Scheduling Across Data Centers》（7.0/10）, 《Smoothing the Ramp, Not the Peak: Scheduling-Induced Power Dynamics of LLM Inference and Their Grid-Scale Consequences》（7.0/10）, 《Execution Timing Control for Deterministic Task Offloading in the IoT-Edge-Cloud Continuum》（6.0/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202608/04/README](/202608/04/README)
 
 ### 精读区论文标签
-1. [DenseOn with the LateOn: Fully Open Dense and Late-Interaction Models for Multilingual, Long-Context, and Code Search](/202608/03/2607.27178v2-denseon-with-the-lateon-fully-open-dense-and-late-interaction-models-for-multilingual-long-context-and-code-search)  
+1. [PlainMedScale: A Corpus of Multi-Level Simplified Medical Texts in German and English](/202608/04/2608.01158v1-plainmedscale-a-corpus-of-multi-level-simplified-medical-texts-in-german-and-english)  
+   标签：评分：10.0/10、query:code-paper
+   evidence：摘要包含GitHub代码链接，表明开源可用性。
+2. [PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems](/202608/04/2607.26710v1-poweratlas-towards-electricity-computing-co-scheduling-for-power-systems)  
    标签：评分：8.0/10、query:code-paper
-   evidence：论文明确用完全开放描述模型和端到端训练方案，因此会提供源码，匹配度强。
+   evidence：面向数据中心与电网的电算协同调度，符合任务调度与电力调度主题
+3. [LoopsBench: From Harness Engineering to Loop Engineering in Benchmarking Coding Agent](/202608/04/2608.00267v1-loopsbench-from-harness-engineering-to-loop-engineering-in-benchmarking-coding-agent)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：面向编码代理的长周期基准，通常附带开源评测代码。
+4. [Revibing Code from Papers: Reimplementing HCI Artifacts](/202608/04/2608.00450v1-revibing-code-from-papers-reimplementing-hci-artifacts)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：直接从论文重实现系统，以恢复缺失的源代码
+5. [SWE-Touch: Benchmarking Coding Agents When Users Touch the Code](/202608/04/2608.02499v1-swe-touch-benchmarking-coding-agents-when-users-touch-the-code)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：面向共享工作区编码代理的基准，此类框架通常会发布代码。
 
 ### 速读区论文标签
-1. [Preventing Premature Commitment in Coding Agents with an Evidence-Conditioned Execution Layer](/202608/03/2607.28815v1-preventing-premature-commitment-in-coding-agents-with-an-evidence-conditioned-execution-layer)  
+1. [Refined Thompson Learning for Adaptive Bandits: Sustainable Power-Efficient Flexibility Scheduling Across Data Centers](/202608/04/2608.00921v1-refined-thompson-learning-for-adaptive-bandits-sustainable-power-efficient-flexibility-scheduling-across-data-centers)  
    标签：评分：7.0/10、query:code-paper
-   evidence：提出执行层ECLoop，是基于代码的工具，可能开源
-2. [Indic DiarBench: A Multilingual Joint Diarization and ASR Benchmark for Indian Languages](/202608/03/2607.23808v1-indic-diarbench-a-multilingual-joint-diarization-and-asr-benchmark-for-indian-languages)  
+   evidence：面向数据中心作业调度与电网灵活性，契合含代码与数据中心调度的综合需求
+2. [Smoothing the Ramp, Not the Peak: Scheduling-Induced Power Dynamics of LLM Inference and Their Grid-Scale Consequences](/202608/04/2608.01250v1-smoothing-the-ramp-not-the-peak-scheduling-induced-power-dynamics-of-llm-inference-and-their-grid-scale-consequences)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：数据中心内LLM推理调度影响电网尺度功率爬坡动态
+3. [Execution Timing Control for Deterministic Task Offloading in the IoT-Edge-Cloud Continuum](/202608/04/2608.00892v1-execution-timing-control-for-deterministic-task-offloading-in-the-iot-edge-cloud-continuum)  
    标签：评分：6.0/10、query:code-paper
-   evidence：明确作为开放获取资源发布，可能包含代码
-3. [ExtractBench: A Benchmark for Schema-Guided Enterprise Document Extraction](/202608/03/2607.29677v1-extractbench-a-benchmark-for-schema-guided-enterprise-document-extraction)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：作为基准包含评估系统与构造流水线，可能公开代码/数据，但不在目标领域。
+   evidence：在计算连续体中研究任务卸载与执行时序控制，与数据中心任务调度直接相关
 
 
 <div class="dpr-home-promo-card">

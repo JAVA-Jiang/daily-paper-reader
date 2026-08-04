@@ -1,0 +1,1076 @@
+Title: PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems
+
+URL Source: https://arxiv.org/pdf/2607.26710v1
+
+Published Time: Thu, 30 Jul 2026 00:48:35 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 
+
+## Kaiwen Jiang 
+
+jiangkaiwen@bupt.edu.cn State Key Laboratory of Networking and Switching Technology, Beijing University of Posts and Telecommunications Beijing, China 
+
+## Siya Xu ∗
+
+xusiyaxsy@bupt.edu.cn State Key Laboratory of Networking and Switching Technology, Beijing University of Posts and Telecommunications Beijing, China 
+
+## Ziyue Zhu 
+
+zyzhu@bupt.edu.cn State Key Laboratory of Networking and Switching Technology, Beijing University of Posts and Telecommunications Beijing, China 
+
+## Chao Yang 
+
+yangchaoneu@163.com Information and Communication Branch, State Grid Liaoning Electric Power Co., Ltd. Liaoning, China 
+
+## Anh Tuan Luu 
+
+anhtuan.luu@ntu.edu.sg College of Computing and Data Science, Nanyang Technological University Singapore, Singapore 
+
+## Haoran Luo ∗
+
+haoran.luo@ntu.edu.sg College of Computing and Data Science, Nanyang Technological University Singapore, Singapore 
+
+## Abstract 
+
+The rapid growth of AI workloads is turning data centers into large-scale, volatile, yet spatiotemporally flexible grid loads, creating an urgent need for coordinated electricity-computing scheduling. Under stringent grid constraints, schedules from general-purpose large language models (LLMs) are often infeasible, causing line-flow violations and unserved load. We present PowerAtlas, an LLM-agent framework for electricity-computing co-scheduling that integrates historical instances, domain knowledge, and physical constraints to produce joint decisions satisfying both grid operational rules and the service-level agreements (SLAs) of computing tasks. Working with a provincial power utility in China, we built an experimental electricity-computing network and validated the decision loop on real data-center data; from de-identified operational data we further constructed ECBench, a benchmark of 2,000 scheduling instances with oracle-optimal solutions. Experiments across eleven LLMs demonstrate the effectiveness of PowerAtlas under realistic physical operating conditions, with consistent feasibility and cost gains across three open-weight backbones. Our code is publicly available at https://github.com/JAVA-Jiang/PowerAtlas. 
+
+## CCS Concepts 
+
+• Computing methodologies → Natural language process-ing ; Reinforcement learning ; • Applied computing → Physical sciences and engineering .
+
+## Keywords 
+
+Electricity-Computing Co-Scheduling, Unit Commitment, Data-Center Scheduling, Large Language Models 
+
+## 1 Introduction 
+
+AI training and inference workloads [ 26 ] are turning data cen-ters into large-scale, volatile, yet flexible loads. Computing jobs 
+
+> ∗Corresponding authors.
+
+Figure 1: An LLM agent maps a coupled specification to a joint schedule, checked for format, physics, and task SLAs. 
+
+can be shifted over time and migrated across data centers [ 33 , 34 ,57 , 69 , 70 , 83 ]. This flexibility reshapes nodal demand, affecting unit commitment, economic dispatch, and transmission flows; con-versely, grid capacity and prices constrain when and where jobs run [ 8, 66 ]. Electricity-Computing Co-Scheduling (ECCS) jointly op-timizes electricity and computing to minimize operating cost under grid-security and task-service constraints [14, 24, 35, 41, 64, 84]. Recent LLMs enable complex reasoning and structured genera-tion [ 67 , 80 ] for scheduling and optimization [ 3 , 19 , 25 , 63 , 75 , 76 ], suggesting a unified decision paradigm for ECCS (Figure 1): system state and task requirements map to schedules over both domains. ECCS couples unit commitment, economic dispatch, and DC power flow on the RTS-GMLC system [ 2, 5, 10 , 17 , 18 , 30 , 62 , 72 , 74 , 85 ]with real data-center workloads over 24 hours (Figure 2). However, existing studies apply LLMs to power scheduling, job orchestration, or data-center resource management [ 6, 27 , 28 , 45 ,arXiv:2607.26710v1 [cs.LG] 29 Jul 2026 Jiang et al. 
+
+Figure 2: Overview and motivation of PowerAtlas, illustrating the integration of large language models with power-system physics and computing-task scheduling knowledge for electricity-computing co-scheduling, in panels (a)–(e). 
+
+78, 86], but treat the two domains separately, whereas ECCS must enforce both constraint sets at once. Without domain knowledge and physical-constraint feedback, general LLMs emit format-valid but infeasible schedules they cannot detect (Figure 2(d)). Two properties make the coupling hard to serve with the tools each side already has. The programs that decide dispatch are exact but must be re-derived whenever the fleet or the objective changes, and their solve time is bounded only in the mean. Compute sched-ulers, in turn, treat electricity as an exogenous price and cannot reason about the physical limits that price stands for. This raises a central question: how can an LLM generate ECCS schedules that are jointly feasible and economically efficient? 
+
+Figure 2(e) presents PowerAtlas , which warm-starts on solved cases, quantifies both-domain violations through deterministic ver-ification, and aligns the policy via Feasibility-Aware Group Relative Policy Optimization (FA-GRPO). Our main contributions: 
+
+• ECCS Task: We jointly formulate generator dispatch and computing-task placement under unified grid-security and service constraints, coupled through power balance and data-center capacity, which enables consistent evaluation of feasibility and economy across models, trained or not. 
+
+• ECBench Dataset: We construct ECBench, 2,000 standardized ECCS instances built from the RTS-GMLC system and real data-center data, each paired with a Gurobi-optimal solution and metrics for grid safety, computing satisfaction, economy, and efficiency, plus its grid-aware evaluator and its code. 
+
+• PowerAtlas Framework: We combine supervised initialization on solved instances with physical verification and FA-GRPO into a model-agnostic plug-in, validated across three backbones from three vendors and stage ablations on the ECBench pool; at inference it is one forward pass, with no solver call. 
+
+## 2 Related Work 
+
+Electricity-Computing Co-Scheduling. Data centers combine high energy use with spatiotemporal flexibility, serving as demand-response resources [ 24 , 84 ]. Early work exploited delay tolerance and geographical workload balancing to cut electricity cost [ 35 , 47 ,52 , 69 ], with grid-responsive compute mapping real-time grid sig-nals to data-center operation [ 70 , 82 ]; recent formulations extend this through hierarchical demand response, multi-energy coordina-tion, and spatial-thermal constraints [ 4, 7, 22 , 36 , 61 ]. System-level approaches coordinate day-ahead commitment, real-time dispatch, and dynamic computing loads via bi-level optimization or reinforce-ment learning [ 14 , 17 , 41 , 51 , 64 ], yet rely on task-specific objec-tives and hard-to-reconfigure solver-in-the-loop pipelines, and no benchmark pairs coupled instances with oracle solutions and joint metrics—gaps that ECBench and PowerAtlas are built to close. 
+
+LLM-Driven Scheduling and Optimization. LLMs generate solu-tions, guide search, and coordinate experts for combinatorial sched-uling and optimization modeling [ 1, 3, 25 , 27 , 73 , 76 ], with struc-tured retrieval and agentic search enabling knowledge-grounded reasoning [ 37 – 40 ], built on chain-of-thought, tool use, and self-reflective agents [ 55 , 60 , 67 , 79 , 80 ] and reinforcement-learning alignment with step-wise verification [ 20 , 32 , 48 , 56 ]. In power systems, LLMs address scheduling [ 46 ], UC, ED, OPF, and rule interpretation [ 6, 12 , 28 , 45 , 54 , 78 ] with security risks [ 53 ], while benchmarks [ 23 , 86 ], topology-aware Transformers [ 9], and physics-consistent pipelines [ 29 ] add verification. Data-driven models also forecast the loads, renewables, and workloads that scheduling con-sumes [ 11 , 13 , 15 , 16 , 31 , 42 – 44 , 49 , 50 , 59 , 65 , 68 , 71 , 77 , 81 ], but predict inputs, not coupled constraint-feasible schedules—so LLM methods stay single-domain, lacking physical-feedback enforce-ment of coupled ECCS constraints, which PowerAtlas supplies via warm-start, verification, and feasibility-aware training. PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 
+
+Figure 3: Task formulation of ECCS: an LLM agent maps an input specification 𝑆 = (𝑆 𝐶 , 𝑆 𝑇 , 𝑆 𝐾 , 𝑆 𝐹 ) to a jointly optimized decision 
+
+𝐷 = (𝐷 𝑃 , 𝐷 𝐶 ) that couples 24-hour power dispatch with cross-data-center compute scheduling, judged by one evaluator. 
+
+## 3 ECCS Task 
+
+We define the ECCS task as generating, with a single LLM agent, an electricity-computing co-scheduling decision that simultaneously satisfies grid-security and task-service constraints, given the grid physical model, the compute-task demands, and domain knowledge. Unlike single-domain scheduling, ECCS must reconcile power-side operation with computing-side placement within one decision. The task thus bridges operational intent expressed in natural language and the strict physical and scheduling constraints of the coupled system, so that the agent produces decisions that are not merely format-valid but physically feasible and economically efficient at the same time, and does so in a single pass over the specification. The input specification 𝑆 = (𝑆 𝐶 , 𝑆 𝑇 , 𝑆 𝐾 , 𝑆 𝐹 ) comprises four parts (Figure 3). The grid physical constraints 𝑆 𝐶 cover DC power-flow and line-capacity limits with per-unit output bounds [𝑃 min , 𝑃 max ]
+
+(minimum and maximum generation), ramping, and minimum up/-down times on the RTS-GMLC system [ 5] (73 buses, 120 lines, and 73 thermal units, of which 6 are agent-controlled and 67 follow eco-nomic dispatch). The task description 𝑆 𝑇 gives, per compute task, its priority, release time, deadline, drop penalty, and resource demand (racks, duration, power, migratability), with 37 tasks per instance. Finally, the knowledge augmentation 𝑆 𝐾 supplies dispatch regula-tions and scheduling standards as priors, while the output format 
+
+𝑆 𝐹 fixes a structured, parseable decision schema for both domains, so that an answer can be read mechanically before it is judged, and a malformed one is rejected before any physics is checked. The agent returns a joint decision 𝐷 = (𝐷 𝑃 , 𝐷 𝐶 ) over two cou-pled domains. The power dispatch 𝐷 𝑃 is the 24-hour schedule of the 5 adjustable non-swing units, each hour set to off or a con-tinuous percentage in [0, 100 ] that maps to [𝑃 min , 𝑃 max ]; the swing unit absorbs the residual so that nodal power balance holds by con-struction. The compute scheduling 𝐷 𝐶 assigns every task to one of 4 data centers (each with 11 racks and idle power 𝑃 idle = 0.25 𝑃 max )as drop or a host and start time (dc , start ). The two decisions are tightly coupled: placing tasks reshapes nodal demand, which in turn constrains the set of dispatch profiles that stay feasible. We formalize ECCS as a constrained cost-minimization over the joint decision. Let 𝐶 (𝐷 ; 𝑆 ) be the total operating cost, summing generation cost, lost load, and drop and migration penalties, and let F ( 𝑆 ) be the feasible set induced by the physical and service constraints. The oracle decision then solves the program 
+
+𝐷 ★ = arg min    
+
+> 𝐷 ∈ F ( 𝑆 )
+
+𝐶 (𝐷 ; 𝑆 ). (1) The set F ( 𝑆 ) collects all decisions satisfying nodal power balance and unit dynamics (equalities) together with line limits, reserve, data-center capacity, and task windows (inequalities). Because solv-ing this program online is costly, PowerAtlas instead learns a policy 
+
+𝜋 𝜃 with parameters 𝜃 that maps a specification directly to a decision, 
+
+𝐷 = 𝜋 𝜃 (𝑆 ), (2) trained so that 𝐷 approaches 𝐷 ★ in both feasibility and cost. This constrained formulation, rather than a likelihood surrogate, under-lies the reward design of Section 5 and the verifier it calls. 
+
+## 4 ECBench 
+
+We build ECBench, a benchmark for training and evaluating ECCS agents, and describe its construction pipeline, its evaluation proto-col, and the four metric families used throughout the paper. 
+
+## 4.1 Dataset Construction 
+
+ECBench is constructed by the four-stage pipeline shown in Figure 4. We first fuse three data sources , RTS-GMLC grid documentation, real data-center operational data, and LLM-assisted generation, into 
+
+2,000 coupled scenario instances , all solved to optimality. Realism is anchored on the data-center side: the rack count (11 per data center) and the peak normalization are calibrated from a real data center, whereas task-level distributions (duration, demand, arrival, deadline, migratability, priority) are synthesized and deliberately relaxed in schedulability so that instances remain non-trivially solvable. The grid side is the RTS-GMLC system, and the instance grid spans representative seasons and days, data-center penetration levels, and random seeds drawn from a fixed range (Table 4). Jiang et al. 
+
+Figure 4: The four-stage construction pipeline of ECBench: coupled scenario instances are synthesized from grid documentation, real data-center data, and LLM-assisted generation; each instance is solved to optimality, verified for physical compliance, and distilled into a retrieval knowledge base, with train and test drawn by generator seed, so the split is reproducible. 
+
+For each scenario, we then generate an optimal schedule with a mixed-integer linear program that jointly models unit commitment (binary on/start/stop variables, per-unit output bounds [𝑃 min , 𝑃 max ],ramping, and minimum up/down times), a linearized DC (direct-current) power flow 𝑓 ℓ = (𝜃 𝑎 −𝜃 𝑏 )/ 𝑥 ℓ (the flow on line ℓ of reactance 
+
+𝑥 ℓ between bus phase angles 𝜃 𝑎 and 𝜃 𝑏 ) bounded by line limits, a spinning-reserve margin, binary task placement, data-center capac-ity and power coupling, and nodal power balance; the objective is generation cost plus the value of lost load and the drop and migration penalties, and it is solved to optimality by the Gurobi solver [ 21 ] in 16 .8 s at the median, 35 .9 s at the 95 th percentile and up to 148 .1 s; Appendix A.2 states the program in full. A subsequent compliance check verifies each (instance, solution) pair with a deterministic physical test (data-center power flow and power balance), retaining only compliant pairs as supervision and retrieval cases. Finally, expert power and compute knowledge is combined with knowledge extracted from solved instances into a retrieval knowledge base of 551 entries; to prevent leakage, this knowledge base and the retrieval corpus are drawn only from the training split. Instances are split by random seed into 1,600 training and 400 test instances; because the split is by seed, training and test are independent and identically distributed (IID), so the test set measures in-distribution generalization on a fresh task pool. 
+
+## 4.2 Benchmark Design 
+
+Each test instance is scored by a deterministic evaluator that fixes the agent’s own dispatch and solves, for every hour 𝑡 of the horizon 
+
+𝑇 = 24 , a nodal DC power-flow feasibility linear program (LP) that minimizes, over the bus set N and line set L, the lost-load, over-generation, and line-overload slacks 𝑝 ↓ 
+
+> 𝑛,𝑡
+
+, 𝑝 ↑ 
+
+> 𝑛,𝑡
+
+, and 𝑓 + 
+
+> ℓ,𝑡
+
+; these slacks and the agent’s decision yield four groups of metrics. The grid violation (Viol, in MWh; lower is better) sums the physi-cal infeasibility of a schedule over all buses, lines, and hours (hourly slacks in MW, summed over the 24 hour horizon of one day), 
+
+Viol =
+
+> 𝑇
+
+∑︁  
+
+> 𝑡 =1
+
+∑︁ 
+
+> 𝑛 ∈ N
+
+ 𝑝 ↓ 
+
+> 𝑛,𝑡
+
++ 𝑝 ↑
+
+> 𝑛,𝑡
+
+ +∑︁  
+
+> ℓ∈ L
+
+𝑓 +
+
+> ℓ,𝑡
+
+
+
++ Viol task , (3) where 𝑝 ↓ 
+
+> 𝑛,𝑡
+
+and 𝑝 ↑ 
+
+> 𝑛,𝑡
+
+are the lost load and over-generation at bus 
+
+𝑛 , 𝑓 + 
+
+> ℓ,𝑡
+
+the overload on line ℓ, and Viol task the MWh-equivalent of task-level hard violations (an hourly MW excess over a one-hour cell); Viol is averaged over the evaluated ECBench instances. The computing satisfaction (higher is better) credits only gen-uinely served tasks P: a task counts if it is not dropped, incurs no hard violation, and never runs during an unpowered hour (lost load above 1 MW). Over the 𝑛 tasks of an instance, each with value 𝑣 𝑖 
+
+(its drop penalty), rack demand 𝑟 𝑖 , and duration 𝑑 𝑖 , we report 
+
+S-cnt = 100 | P |  
+
+> 𝑛
+
+, S-val = 100     
+
+> Í𝑖 ∈P 𝑣 𝑖 Í𝑖 𝑣 𝑖
+
+, S-rh = 100       
+
+> Í𝑖 ∈P 𝑟 𝑖 𝑑 𝑖 Í𝑖 𝑟 𝑖 𝑑 𝑖
+
+. (4) i.e., the served fractions of task count, penalty-weighted value, and rack-hours ( 𝑟 𝑖 𝑑 𝑖 ); we also report tiered rates S-H, S-M, and S-L over the high-, mid-, and low-priority tiers of the task pool. The economy (Cost, in $; lower is better) aggregates the monetary cost of the schedule, namely fuel, unserved energy, the penalty of every task the answer drops, and the overhead of moving work between data centers, summed over the 24 -hour horizon, 
+
+Cost = 𝐶 gen + 𝐶 LOL ∑︁ 𝑛,𝑡 
+
+𝑝 ↓ 
+
+> 𝑛,𝑡
+
++∑︁  
+
+> 𝑖 ∈ D
+
+𝑣 𝑖 + 𝐶 mig , (5) where 𝐶 gen is the generation cost, 𝐶 LOL the value of lost load (VOLL), 
+
+D the set of tasks the answer itself drops, and 𝐶 mig the migration cost. Cost is charged on the submitted dispatch and on D, never on P, so it does not move with the satisfaction convention of Ap-pendix D.1. Finally, the efficiency (Latency, in s; lower is better) is the wall-clock time to produce one schedule, reported as the mean over the evaluated instances; we do not report its spread, and it compares deployment paths rather than model architectures. PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 
+
+## 5 PowerAtlas 
+
+PowerAtlas comprises agent initialization and feasibility-aware end-to-end reinforcement optimization, presented in the following two subsections in the order in which they are applied. 
+
+## 5.1 Agent Initialization 
+
+On each instance, the agent maps the input specification 𝑆 to the joint decision. The specification 𝑆 is a structured prompt built from the hourly grid signal (load, renewable, net load, and aggregate fixed generation) and the task list, and the decision 𝐷 = (𝐷 𝑃 , 𝐷 𝐶 )
+
+is emitted as a single response. The policy 𝜋 𝜃 decodes the decision autoregressively as a single templated token sequence 𝑦 ,
+
+𝜋 𝜃 (𝐷 | 𝑆 ) = 
+
+> |𝑦 |
+
+Ö
+
+> 𝑘 =1
+
+𝜋 𝜃 
+
+ 𝑦 𝑘 | 𝑦 <𝑘 , 𝑆 , (6) where 𝑦 first reasons within <reason>...</reason> , in the chain-of-thought style [ 67 ], and then emits a parseable two-block decision 
+
+<answer>TASKS:... POWER:...</answer> : TASKS gives drop or 
+
+(dc , start ) per task, and POWER a 24-dimensional dispatch per ad-justable unit. Solved cases may optionally be retrieved from the training-only corpus as priors, following the hypergraph retrieval of Graph-R1 [ 37 , 38 ]. PowerAtlas is a model-agnostic plug-in, vali-dated on three backbones from three vendors and tokenizers. 
+
+## 5.2 Feasibility-Aware Policy Alignment (FA-GRPO) 
+
+We align the policy through Feasibility-Aware Group Relative Policy Optimization (FA-GRPO) in two stages, so that it produces feasible and economical joint schedules under hard physical constraints. We first warm-start the policy by full-parameter supervised fine-tuning on compliant, optimally solved instances (𝑆, 𝐷 ★), minimizing the token-level cross-entropy of the templated target response 𝑦 ★,
+
+LSFT (𝜃 ) = − E(𝑆,𝐷 ★ )|𝑦 ★ |∑︁ 
+
+> 𝑘 =1
+
+log 𝜋 𝜃 
+
+ 𝑦 ★ 
+
+> 𝑘
+
+| 𝑦 ★<𝑘 , 𝑆 , (7) which teaches the output format and basic feasible decision patterns. The loss is taken over the response tokens only, so the specification itself contributes no gradient of its own, only context. We then align the warm-started policy by reinforcement learn-ing, casting decision generation as a token-level Markov decision process: a state 𝑠 𝑘 = (𝑆, 𝑦 <𝑘 ) concatenates the specification and the tokens so far, an action 𝑦 𝑘 ∈ V picks the next token, the transi-tion is deterministic ( 𝑠 𝑘 +1 = (𝑠 𝑘 , 𝑦 𝑘 )), and the reward is terminal, equal to 𝑅 (𝜏 ) on the completed response 𝜏 = 𝑦 1: |𝑦 | and zero earlier. FA-GRPO thus maximizes E𝜏 ∼𝜋 𝜃 [𝑅 (𝜏 )] . For each instance 𝑞 , the be-havior policy 𝜋 𝜃 old samples 𝑁 trajectories {𝜏 𝑖 }𝑁 𝑖 =1, and we optimize a critic-free, group-relative objective in the style of GRPO [ 58 ], which replaces the value network of PPO [ 56 ] with a group baseline, fol-lowing Graph-R1 [ 37 ] and consistent with reinforcement-learning alignment of reasoning LLMs [20, 48], giving the objective 
+
+J ( 𝜃 ) = E
+
+"
+
+1
+
+𝑁 
+
+> 𝑁
+
+∑︁ 
+
+> 𝑖 =1
+
+1
+
+|𝜏 𝑖 |∑︁ 𝑡 
+
+min  𝜌 𝜃 ˆ𝐴 𝑖 , clip (𝜌 𝜃 , 1 ± 𝜖 ) ˆ𝐴 𝑖 
+
+
+
+− 𝛽 DKL (𝜋 𝜃 ∥𝜋 ref )
+
+#
+
+,
+
+(8) 
+
+Algorithm 1 FA-GRPO                                                                                                                        
+
+> Input: instances D={ ( 𝑆 (𝑛 ), 𝐷 ★(𝑛 ), 𝑐 ★(𝑛 )) } 𝑀 𝑛 =1; group size 𝑁 ; KL weight 𝛽 ; re-ward weights (𝑤 𝑐 , 𝑤 𝑝 , 𝜂 𝑣 , 𝜂 𝑐 ); VOLL 𝐶 LOL ; penalty 𝑟 0.
+> Output: Aligned policy 𝜋 𝜃 (· | 𝑆 ).1: Stage I (SFT): initialize 𝜃 from a pretrained model; 2: while not converged do
+> 3: sample minibatch B ⊂ D ;4: update 𝜃 ←𝜃 −𝜂 ∇𝜃 LSFT (𝜃 ;B) using Eq. (7); 5: end while
+> 6: freeze 𝜋 ref ←𝜋 𝜃 ;7: Stage II (FA-GRPO):
+> 8: while not converged do
+> 9: sample a batch of instances Q={𝑞 }; set 𝜃 old ←𝜃 ;10: for each 𝑞 ∈ Q do
+> 11: sample 𝑁 trajectories {𝜏 𝑖 }𝑁 𝑖 =1∼𝜋 𝜃 old (· | 𝑆 );12: for each 𝜏 𝑖 do
+> 13: parse 𝐷 𝑖 ; if ill-formed, 𝑅 (𝜏 𝑖 ) ← − 𝑟 0(format gate); 14: else evaluate 𝐷 𝑖 by the feasibility LP: Viol 𝑖 , 𝜅 𝑖 , 𝜙 𝑖 , 𝑐 𝜃,𝑖 ;15: compute 𝑄 compute via Eq. (12) and 𝑄 grid via Eq. (13); 16: aggregate 𝑅 (𝜏 𝑖 )via Eqs. (11) and (14); 17: end for
+> 18: compute ¯𝑅, 𝑠 𝑅 and advantages ˆ𝐴 𝑖 via Eq. (10); 19: update 𝜃 ←arg max 𝜃 J ( 𝜃 )using Eq. (8); 20: end for
+> 21: end while
+
+where 𝜖 is the clipping range and 𝛽 weights the Kullback-Leibler (KL) divergence to the reference policy 𝜋 ref , while the token-level importance ratio and the group-relative advantage are 
+
+𝜌 𝜃 = 𝜋 𝜃 (a(𝑖 ) 
+
+> 𝑡
+
+| s(𝑖 ) 
+
+> 𝑡 −1
+
+)
+
+𝜋 𝜃 old (a(𝑖 ) 
+
+> 𝑡
+
+| s(𝑖 ) 
+
+> 𝑡 −1
+
+) , (9) 
+
+ˆ𝐴 𝑖 = 𝑅 (𝜏 𝑖 ) − mean 𝑗 𝑅 (𝜏 𝑗 )
+
+std 𝑗 𝑅 (𝜏 𝑗 ) , (10) with 𝑅 (𝜏 ) the trajectory reward, which the next paragraph de-rives from the deterministic verification of both domains; Algo-rithm 1 states both stages end to end, verifier included. The reward encodes “satisfy hard constraints first, then reward quality.” Its quality term couples the two domains in one scalar, 
+
+𝑅 quality = 𝑤 𝑐 𝑄 compute + 𝑤 𝑝 𝑄 grid , (11) with domain weights 𝑤 𝑐 , 𝑤 𝑝 . The compute quality term rewards served demand, weighted by value and by count and discounted whenever the schedule is infeasible, however fluent it reads, 
+
+𝑄 compute = 𝜅 𝜙  𝜂 𝑣 S-val + 𝜂 𝑐 S-cnt , (12) where 𝜅 ∈ [ 0, 1] is the task coverage, 𝜙 = 1 if the schedule is feasible and 𝜙 = 𝜙 0 < 1 otherwise, and 𝜂 𝑣 , 𝜂 𝑐 weight the value and count rates. The grid quality folds violations into an equivalent cost, 
+
+𝑄 grid = min 
+
+
+
+1, 𝑐 ★
+
+𝑐 𝜃 + 𝐶 LOL Viol 
+
+
+
+, (13) where 𝑐 ★ is the oracle cost, 𝑐 𝜃 the cost of the agent’s schedule, 𝐶 LOL 
+
+the value of lost load, and Viol the grid violation; when feasible it reduces to the cost efficiency 𝑐 ★/𝑐 𝜃 . Finally, a format gate produces the trajectory reward the policy is optimized against, 
+
+𝑅 (𝜏 ) =
+
+(𝑅 quality , if the output is well-formed, 
+
+− 𝑟 0, otherwise, (14) with a fixed penalty 𝑟 0 > 0, so that feasibility becomes an explicit driver of the policy gradient and the source of the “feasibility-aware” behavior of PowerAtlas, at no added inference cost. Jiang et al. 
+
+Table 1: Main results on ECBench. Method Grid Computing Satisfaction Economy Efficiency Viol (MWh) ↓ Overall Tiered Cost ($) ↓ Latency (s) ↓
+
+S-cnt (%) ↑ S-val (%) ↑ S-rh (%) ↑ S-H (%) ↑ S-M (%) ↑ S-L (%) ↑
+
+DeepSeek-V4-Flash 5,234.2 20.3 23.4 19.0 26.5 20.0 10.0 47,948,178 12.6 DeepSeek-V4-Pro 2,763.4 20.3 22.1 18.1 29.4 20.0 5.0 25,762,501 17.3 
+
+Kimi-K2.6 (fast) 1,212.0 50.0 55.5 51.0 58.8 60.0 25.0 12,392,536 28.3 
+
+Kimi-K2.6 (pro) 1,488.6 54.1 53.4 50.2 58.8 60.0 40.0 14,838,689 34.4 
+
+Qwen3.7-Plus 741.0 79.7 83.1 80.5 88.2 65.0 80.0 9,344,901 31.0 
+
+Qwen3.7-Max 462.6 82.0 86.2 83.1 86.3 96.7 60.0 5,725,763 29.9 
+
+GPT-5.5 445.8 64.3 66.9 63.5 70.6 64.0 54.0 6,068,833 14.1 
+
+Claude Haiku 4.5 543.3 67.6 57.6 65.7 56.9 74.8 78.6 7,548,683 13.9 
+
+Qwen3-4B-Instruct 1,766.9 55.7 50.9 52.1 52.5 61.5 56.0 17,706,710 67.4 
+
+Llama-3.2-3B-Instruct 6,492.1 33.3 33.3 33.3 33.3 33.3 33.3 59,997,272 30.1 
+
+Falcon3-3B-Instruct 11,079.2 7.4 7.4 7.4 7.4 7.5 7.5 101,484,114 19.6 
+
+Table 2: Performance comparison on ECBench before and after applying PowerAtlas. Method Grid Computing Satisfaction Economy Efficiency Viol (MWh) ↓ Overall Tiered Cost ($) ↓ Latency (s) ↓
+
+S-cnt (%) ↑ S-val (%) ↑ S-rh (%) ↑ S-H (%) ↑ S-M (%) ↑ S-L (%) ↑
+
+Qwen3-4B-Instruct 1,766.9 55.7 50.9 52.1 52.5 61.5 56.0 17,706,710 67.4 
+
++ PowerAtlas 274.7 65.9 89.0 67.2 97.2 58.0 3.1 4,671,682 57.2 Llama-3.2-3B-Instruct 6,492.1 33.3 33.3 33.3 33.3 33.3 33.3 59,997,272 30.1 
+
++ PowerAtlas 282.1 98.4 99.7 98.7 100.0 100.0 94.0 3,832,071 18.5 Falcon3-3B-Instruct 11,079.2 7.4 7.4 7.4 7.4 7.5 7.5 101,484,114 19.6 
+
++ PowerAtlas 216.6 91.8 94.3 91.3 96.6 92.5 83.3 3,928,513 18.8 
+
+## 6 Experiments 
+
+We evaluate PowerAtlas on ECBench against frontier and open-weight LLMs (Tables 1–3, Figures 5–6) around five questions: RQ1 
+
+how does it compare with frontier LLMs in feasibility and cost; RQ2 
+
+which components produce the gain; RQ3 where is grid violation removed, and how do joint schedules actually fail; RQ4 how does the policy get there, and does the gain survive across operating conditions without buying feasibility by dropping tasks; and RQ5 
+
+what have we validated in the field, one subsection each. 
+
+## 6.1 Experimental Setup 
+
+ECBench’s 2,000 Gurobi-optimal instances are split by seed into dis-joint train and test pools, with the retrieval corpus drawn only from training. Eight frontier LLMs (Table 1) answer through an OpenAI-compatible API in one zero-shot turn with the same prompt; the three untrained backbones give the before-and-after reference. Ini-tialization is full-parameter fine-tuning, FA-GRPO runs 60 steps, and inference is greedy and solver-free (Appendix C). Satisfaction has two readings and we use both: placement asks whether the service contract is met, grid-aware additionally voids a task whose own hour the answer cannot power; Appendix D.1 maps rows to conventions. A unit or hour left out of an answer counts as offline, so an incomplete dispatch pays for the load it fails to cover, and Latency is wall-clock time along the path a model is served on — API for the frontier models, local vLLM for ours. Frontier rows come from a common high-penetration instance, the open-weight 
+
+Table 3: Ablation study. Configuration Viol (MWh) ↓ S-cnt ↑ S-val ↑ S-rh ↑ Cost ($) ↓               
+
+> PowerAtlas 216.6 91.8 94.3 91.3 3,928,513
+> w/o Initialization 10,730.2 3.3 3.3 3.1 98,353,494 w/o FA-GRPO 9,084.2 20.4 18.0 18.7 83,284,470
+
+rows from the held-out pool on which checkpoints are chosen too, ECBench having no third split; Table 1 orders by magnitude, Table 2 reads before-and-after. Retrieval is training-time only: no reported run, ours or the baselines’, uses in-context cases at all. 
+
+## 6.2 Analysis of PowerAtlas’ Feasibility and Cost (RQ1) 
+
+Frontier LLMs are format-valid but physically infeasible. Ev-ery frontier model emits a parseable answer in the contracted tem-plate, yet violation spans an order of magnitude, from 445 .8 MWh for GPT-5.5 to 5,234 .2 for DeepSeek-V4-Flash: fluency is not admis-sibility. The untrained rows answer usably on a few instances only (Falcon3-3B on 3 of 40 ), so their satisfaction columns collapse to that fraction, which measures answerability, not skill. 
+
+PowerAtlas lets 3B-scale models compete with them. The three backbones reach 216 .6, 274 .7 and 282 .1 MWh over the pool, and on the instance the frontier models answered, 192 .7 MWh for Falcon3-3B and 216 .8 for Qwen3-4B against 445 .8 for GPT-5.5, at $3.21M and $4.17M against $6.07M, with Llama-3.2-3B level with it on violation ( 449 .2 against 445 .8) and ahead on cost. PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 0 20 40 60 80 100 
+
+Value-weighted task satisfaction Sval (%)   
+
+> 10 3
+> 10 4
+> Grid violation (MWh)
+> DeepSeek-V4-Flash
+> DeepSeek-V4-Pro
+> Kimi-K2.6 (fast)
+> Kimi-K2.6 (pro)
+> Qwen3.7-Plus
+> Qwen3.7-Max GPT-5.5
+> Claude Haiku 4.5
+> Qwen3-4B-Instruct
+> Llama-3.2-3B-Instruct
+> Falcon3-3B-Instruct
+> Qwen3-4B-Instruct
+> + PowerAtlas
+> Falcon3-3B-Instruct
+> + PowerAtlas
+> Llama-3.2-3B-Instruct
+> + PowerAtlas
+> bubble size /operating cost
+> Frontier LLM
+> Open-weight base
+> + PowerAtlas
+
+(a) 0      
+
+> 200
+> 400
+> 600
+> Viol (MWh)  morning
+> ramp evening peak
+> Qwen3-4B base
+> Qwen3-4B + PowerAtlas
+> Llama-3.2-3B base
+> Llama-3.2-3B + PowerAtlas
+> Falcon3-3B base
+> Falcon3-3B + PowerAtlas
+> 4812 16 20 24
+
+Hour of day  
+
+> 0
+> 12
+> 24
+> Task viol  24
+> 24
+> 20
+> 9
+> 8
+> 1
+
+(b) Base    
+
+> SFT
+> G20
+> G40
+> G60
+> 0
+> 8k
+> 16k
+> 24k
+> Viol (MWh)
+> 12.0k
+> 4.2k
+> 0
+> 50
+> 100
+> Sval  (%)
+> 6.8
+> 91.6 92.3 93.9 91.5
+
+(c) SFT     
+
+> G20
+> G40
+> G60
+> 85
+> 95
+> 100
+> Satisfaction (%)  SHSMSL
+> 96.9
+> 87.2 88.1
+> 91.9
+> 86.0
+> 99.2
+
+(d) ρ1               
+
+> ρ2
+> ρ4
+> ρ6
+> Wi
+> Sp
+> S1
+> S2
+> Au
+> 0
+> 50
+> 100
+> Sval  (%)  90 96 95 94 93 93 93 97 92
+> 9
+> 18 11
+> 23
+> 00000
+> by penetration (base 6.8) by season (base 6.8)
+> Base + PowerAtlas
+
+(e) 1 10 20 30 40 
+
+Test instance (sorted)  
+
+> 0
+> 8k
+> 16k
+> 24k
+> Viol (MWh)
+> lower on 37/40
+> base
+> + PowerAtlas
+
+(f) 
+
+Figure 5: Results on ECBench. (a) Landscape of violation vs satisfaction (bubble size = cost). (b) Hourly violation and cumulative task violations on one test instance, one line per system. (c) Training dynamics, (d) tier satisfaction across stages, (e) 𝑆 𝑣𝑎𝑙 
+
+by renewable penetration and seasonal scenario, and (f) per-instance base vs shipped checkpoint. Panels (c)–(d) plot the training-side residual and the placement-based rate; their absolute values are not comparable with Tables 1–3. The gain holds across backbones. In Table 2 violation falls by 
+
+84 to 98% and cost by up to 26 × across the three backbones; three vendors improving alike points to the method, not to one model family; the two 3B backbones gain the most, on both axes. 
+
+Feasibility is economy. Because lost load is priced at VOLL, admissibility converts into money, though the VOLL term is 65 –99% 
+
+of every baseline row and 50 –66% of ours, so Cost reads as feasibility priced in dollars rather than as an independent axis. Falcon3-3B lands at 1.98 × the Gurobi optimum, a gap driven by residual lost load rather than by inefficient dispatch. The exact solver is not slower at the median ( 16 .8 s) but reaches 148 .1 s in the tail, whereas the agent’s cost is one forward pass per schedule by construction. 
+
+## 6.3 Analysis of PowerAtlas’ Components (RQ2) 
+
+The two stages buy different things. Table 3 ablates them on Falcon3-3B. Warm-starting clears every malformed dispatch entry and finds a home for 96 .4% of the tasks, yet leaves 9,084 MWh of vio-lation — and since the schedule cannot power them, the grid-aware protocol credits only 20 .4: speaking the language is not respecting the physics. The gain in answerability is what the stage buys: the warm-started model returns a parsable schedule on every instance of the pool, against the handful the untrained backbone manages, which is why the configuration without it never leaves the format penalty and why alignment has anything to grade. From that start, alignment removes a further 98% of the violation and lifts served value to 94 .3 at a twentieth of the cost. Removing initialization instead is decisive — the reward never left the format penalty and advantages were near zero throughout, and the resulting check-point is barely distinguishable from the untrained base — 10 ,730 .2
+
+against 11 ,079 .2 MWh — so alignment inherits the ceiling set by its warm start: it sharpens a policy, it does not teach the format. 
+
+## 6.4 Analysis of PowerAtlas’ Grid Violation (RQ3) 
+
+The whole comparison on one plane. Figure 5(a) plots violation against satisfaction with cost as bubble size: PowerAtlas pulls each backbone down and right by six to fifty times in violation. 
+
+From under-dispatch to load following. For untrained back-bones the residual is almost entirely lost load: units sit at low output, or off all day, and cannot cover the evening peak, which also for-feits the compute score. In Figure 5(b) the trained policy follows the load through both stress windows while the untrained backbone accumulates violation in almost every hour of the day. 
+
+How joint schedules fail. Figure 6 quotes four answers ver-batim, one per layer at which the decision can break: the output contract, where 111 of 120 set-points never appear; power feasibil-ity, where a parsable schedule holds every unit at zero and leaves 
+
+2,825 MWh unserved; the coupling, where GPT-5.5, DeepSeek-V4-Flash and Kimi-K2.6 each overflow a data center’s rack capacity; and the service contract, where tasks land past their deadline or off their home site. Three frontier models break the same constraint on the same instance, in different hours (Appendix E). 
+
+What remains. Averages are inflated by a few extreme in-stances: the mean of 216 .6 MWh sits against a median of 75 .5 MWh, and the residual is still lost load ( 73% , against 8% over-generation, 
+
+1% overload, 17% task-side); congestion is negligible. What is left is therefore a supply problem at the peak, not a routing problem inside the network, where flows stay within limits. Jiang et al. 
+
+FormatVoid Case 1 (Format) empty dispatch block 
+
+(1) Output-contract breakdown: no generator rows 
+
+Falcon3-3B , untrained | m01d15-rho01-s10 
+
+Symptom. A POWER: header with nothing under it. 
+
+POWER: (no generator rows emitted) 
+
+Across the pool 37/40 answers omit generator rows and 111 of the 120 required dispatch levels are missing, so the format gate rejects every rollout and no gradient reaches the policy. 
+
+ZeroDispatch Case 2 (Grid) all units idle for 24 h 
+
+(2) Power-feasibility failure: physically empty schedule 
+
+Falcon3-3B , untrained | m01d15-rho01-s9 
+
+Symptom. Every unit is held at zero for the whole horizon. 
+
+123_STEAM_3: 0, 0, 0, . . . , 0 218_CC_1: 0, 0, 0, . . . , 0 
+
+The schedule parses but is physically empty: the swing unit cannot absorb the load, leaving 2,825 MWh of lost load and no served task at all. 
+
+CapOverflow Case 3 (Coupling) data-center overflow 
+
+(3) Coupling violation: rack capacity C exceeded 
+
+GPT-5.5 , DeepSeek-V4-Flash , Kimi-K2.6 | m01d15-rho06-s10 
+
+Symptom. The dispatch looks professional and tracks the load, 
+
+123_STEAM_3: 50,55,45,50,80,90,90,70, . . . ,100,95,80,70 
+
+yet GPT-5.5 puts 12 racks into DC 1 at hour 5 ( C = 11), and DeepSeek-V4-Flash and Kimi-K2.6 each put 14 into DC 2 at hour 20: same constraint, same instance, three models. 
+
+DeadlineMiss Case 4 (Service) deadline & migratability 
+
+(4) Task-service violation: due time and home DC ignored 
+
+Falcon3-3B , Llama-3.2-3B , untrained | m01d15-rho01-s9 
+
+Symptom. Task 11 is released at hour 8 and due at 14 with duration 2. 
+
+11: dc=1 start=14 # ends at 16 > deadline 14 
+
+Llama-3.2-3B also moves 16 non-migratable tasks off their home data center. Such tasks are placed, and a placement-only score would count them as served. 
+
+Figure 6: Failure cases on ECBench, quoted verbatim from the stored model answers. Power-Compute Co-Dispatch System  Home  Resources  Dispatch  Monitoring  Admin                                                       
+
+> Weather Data Today Tomorrow
+> Irradiance Wind speed
+> Humidity Temperature
+> Real-Time Power Capacity Dispatch
+> No. Node Cap. adj. Time Cum. energy
+> Dalian DC
+> XX PV plant
+> XX wind farm
+> Real-Time Compute Task Dispatch
+> No. Task Data center Time Compute
+> yolo training Dalian DC
+> User-behavior analysis Anshan DC
+> ASR model training Liaoyang DC
+> Provincial Power Response (kW)
+> Load Adjustable Response Remaining
+> Generation Adjustable Response
+> Adj. load: 150.32
+> Resp. load: 120.31
+> Remaining: 165.24
+> Task Scheduling Status
+> Adjustable
+> Responding
+> Remaining
+> DC Compute Utilization Resource use Baidu Cloud
+> AI compute VRAM
+> Cluster Utilization Trend
+> Hourly Daily AI compute VRAM
+> Node Baidu Cloud
+> Wind
+> PV
+> Data Center
+> Cumulative energy: Cumulative tasks: Cumulative revenue:
+> Data Center
+> Thermal Storage
+> Wind Storage PV Thermal Data Center
+> Real-time: mw
+> Adjustable: mw
+> Response: mw
+> Remaining: mw
+> Real-time: mw
+> Adjustable: mw
+> Response: mw
+> Remaining: mw
+> Real-time: mw
+> Adjustable: mw
+> Response: mw
+> Remaining: mw
+> Real-time: mw
+> Adjustable: mw
+> Response: mw
+> Remaining: mw
+> Real-time: mw
+> Adjustable: mw
+> Response: mw
+> Remaining: mw
+
+Figure 7: Operations dashboard of the co-scheduling system on the experimental electricity-computing network. 
+
+## 6.5 Analysis of PowerAtlas’ Robustness (RQ4) 
+
+The alignment budget has an interior optimum. Figure 5(c) traces the stage sequence of a Falcon3-3B run, its left axis the train-ing scorer’s power-balance residual (Appendix D.2): initialization lifts value-weighted satisfaction from 6.8 to 91 .6 but barely moves the median residual, which the RL stage then halves. Beyond step 
+
+40 training over-optimizes, so we keep that checkpoint: step 60 falls back to 91 .5 from the 93 .9 of step 40 , as Figure 5(d) also shows. 
+
+The gain holds across operating conditions. In Figure 5(e) the untrained backbone never exceeds a quarter of the pool in any penetration band or season while the trained policy stays be-tween 89 .8 and 97 .3, and Figure 5(f) puts 37 /40 instances below the diagonal, so no small subset of the pool carries the gain. 
+
+Feasibility is mostly not bought by dropping tasks. Llama-3.2-3B and Falcon3-3B accept nearly everything and fix the power side, keeping every tier above four fifths by the placement reading. Qwen3-4B instead defers selectively — two thirds by count but 
+
+89 .0% by value — and its low-tier rate falls to 3.1: there, feasibility is partly bought by shedding low-priority work, which a value-weighted metric hides; the other two backbones show no such trade, keeping every tier served, which is the behaviour a service contract asks for and the one an operator can plan around. 
+
+## 6.6 Online Deployment (RQ5) 
+
+Setting and operational data. We built an experimental electricity-computing network across three data centers in one province of China, where the agent reads the live facility state and queue as the specification 𝑆 of Section 3 and returns the joint decision for the operator to release (Figure 7); regulation precludes showing operational detail. From these facilities we collected per-rack capacity and power draw, idle and peak consumption, and arrival and duration profiles; the operational record — run counts, acceptance rates, realized savings — sits inside the utility’s reporting boundary, so we report the interface, not the savings. 
+
+Functional validation and scope. Grid-side actions stay un-der the operator’s authority, so power-side schedules are checked against the model of Section 4.2 rather than actuated: what we claim is functional, not a measurement of realized grid savings. 
+
+## 7 Conclusion 
+
+This paper treats electricity-computing co-scheduling as one deci-sion problem for an LLM agent. We formalize ECCS, build ECBench from coupled instances with oracle-optimal solutions, and present PowerAtlas, which warm-starts an agent on solved instances and aligns it with feasibility-aware policy optimization. So equipped, small open-weight backbones match or beat the strongest frontier model on violation and cost, though 216 .6 MWh of mean violation remains, mostly unserved load at the evening peak. Neither stage alone suffices: the warm start buys answerability and the alignment stage buys feasibility, and they have to be applied in that order. 
+
+## 8 Acknowledgments 
+
+This work was supported by the Fundamental Research Funds for the Beijing University of Posts and Telecommunications under Grant 2025TSQY03. The experimental network of Section 6.6 was built with a provincial electric power company in China, which pro-vided scoped access to its data-center facilities without disclosing security-sensitive operational data; we deployed the agent there and validated its performance in operation. PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 
+
+## References 
+
+[1] Henrik Abgaryan, Ararat Harutyunyan, and Tristan Cazenave. 2024. LLMs can Schedule. arXiv preprint. arXiv:2408.06993. doi:10.48550/arXiv.2408.06993 [2] Ankit Aharwar, Ram Naresh, Veena Sharma, and Vineet Kumar. 2023. Unit Commitment Problem for Transmission System, Models and Approaches: A Review. Electric Power Systems Research 223 (2023), 109671. doi:10.1016/j.epsr. 2023.109671 [3] Ali AhmadiTeshnizi, Wenzhi Gao, and Madeleine Udell. 2024. OptiMUS: Scalable Optimization Modeling with (MI)LP Solvers and Large Language Models. In 
+
+Proceedings of the 41st International Conference on Machine Learning (Proceedings of Machine Learning Research, Vol. 235) . PMLR, 577–596. https://proceedings. mlr.press/v235/ahmaditeshnizi24a.html [4] Ahsan Ali and Öznur Özkasap. 2024. Spatial and Thermal Aware Methods for Efficient Workload Management in Distributed Data Centers. Future Generation Computer Systems 153 (2024), 360–374. doi:10.1016/j.future.2023.12.006 [5] Clayton Barrows, Aaron Bloom, Ali Ehlen, Jussi Ikaheimo, Jennie Jorgenson, Dheepak Krishnamurthy, Jessica Lau, Brendan McBennett, Matthew O’Connell, Eugene Preston, Andrea Staid, Gord Stephen, and Jean-Paul Watson. 2019. The IEEE Reliability Test System: A Proposed 2019 Update. IEEE Transactions on Power Systems 35, 1 (2019), 119–127. doi:10.1109/TPWRS.2019.2925557 [6] Fabien Bernier, Jun Cao, Maxime Cordy, and Salah Ghamizi. 2025. PowerGraph-LLM: Novel Power Grid Graph Embedding and Optimization with Large Lan-guage Models. IEEE Transactions on Power Systems 40, 6 (2025), 5483–5486. doi:10.1109/TPWRS.2025.3596774 [7] Yifan Bian, Lirong Xie, Lan Ma, and Hangong Zhang. 2024. A Novel Two-Stage Energy Sharing Method for Data Center Cluster Considering Carbon-Green Certificate Coupling Mechanism. Energy 313 (2024), 133991. doi:10.1016/j.energy. 2024.133991 [8] Boyu Chen, Yanbo Che, Zhihao Zheng, and Shuaijun Zhao. 2023. Multi-Objective Robust Optimal Bidding Strategy for a Data Center Operator Based on Bi-Level Optimization. Energy 269 (2023), 126761. doi:10.1016/j.energy.2023.126761 [9] Kaixuan Chen, Wei Luo, Shunyu Liu, Yaoquan Wei, Yihe Zhou, Yunpeng Qing, Quan Zhang, Yong Wang, Jie Song, and Mingli Song. 2025. Powerformer: A Section-Adaptive Transformer for Power Flow Adjustment. In Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.1 . Association for Computing Machinery, Toronto, ON, Canada, 2204–2215. doi:10.1145/3690624.3709433 [10] Yonghong Chen, Feng Pan, Feng Qiu, Alinson S. Xavier, Tongxin Zheng, Muham-mad Marwali, Bernard Knueven, Yongpei Guan, Peter B. Luh, Lei Wu, Bing Yan, Mikhail A. Bragin, Haiwang Zhong, Anthony Giacomoni, Ross Baldick, Boris Gisin, Qun Gu, Russ Philbrick, and Fangxing Li. 2022. Security-Constrained Unit Commitment for Electricity Market: Modeling, Solution Methods, and Fu-ture Challenges. IEEE Transactions on Power Systems 38, 5 (2022), 4668–4681. doi:10.1109/TPWRS.2022.3213001 [11] Yuning Chen, Kang Yang, Zhiyu An, Brady Holder, Luke Paloutzian, Khaled Bali, and Wan Du. 2024. MARLP: Time-Series Forecasting Control for Agricultural Managed Aquifer Recharge. In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . Association for Computing Machinery. doi:10.1145/3637528.3671533 [12] Yuheng Cheng, Huan Zhao, Xiyuan Zhou, Junhua Zhao, Yuji Cao, Chao Yang, and Xinlei Cai. 2025. A Large Language Model for Advanced Power Dispatch. 
+
+Scientific Reports 15 (2025), 8925. doi:10.1038/s41598-025-91940-x [13] Lingfei Deng, Yunong Wang, Haoran Wang, Xuhua Ma, Xiaoming Du, Xudong Zheng, and Dongrui Wu. 2024. Time-Aware Attention-Based Transformer (TAAT) for Cloud Computing System Failure Prediction. In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . Association for Computing Machinery. doi:10.1145/3637528.3671547 [14] Yingrui Fan and Junbo Zhao. 2026. Harnessing Flexible Spatial and Temporal Data Center Workloads for Grid Regulation Services. arXiv preprint. doi:10. 48550/ARXIV.2602.01508 [15] Xiaomin Fang, Jizhou Huang, Fan Wang, Lingke Zeng, Haijin Liang, and Haifeng Wang. 2020. ConSTGAT: Contextual Spatial-Temporal Graph Attention Network for Travel Time Estimation at Baidu Maps. In Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining . Association for Computing Machinery, 2697–2705. doi:10.1145/3394486.3403320 [16] Zheng Fang, Qingqing Long, Guojie Song, and Kunqing Xie. 2021. Spatial-Temporal Graph ODE Networks for Traffic Flow Forecasting. In Proceedings of the 27th ACM SIGKDD Conference on Knowledge Discovery & Data Mining .Association for Computing Machinery, 364–373. doi:10.1145/3447548.3467430 [17] Yang Fu, Xiaoyan Guo, Yang Mi, Minghan Yuan, Xiaolin Ge, Xiangjing Su, and Zhenkun Li. 2021. The distributed economic dispatch of smart grid based on deep reinforcement learning. IET Generation, Transmission & Distribution 15, 18 (2021), 2645–2658. doi:10.1049/gtd2.12206 [18] Fang Gao, Guojian Wu, Suhang Guo, Wei Dai, and Feng Shuang. 2023. Solving DC Power Flow Problems Using Quantum and Hybrid Algorithms. Applied Soft Computing 137 (2023), 110147. doi:10.1016/j.asoc.2023.110147 [19] Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Ab-hishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schel-ten, Alex Vaughan, et al . 2024. The Llama 3 Herd of Models. arXiv preprint. arXiv:2407.21783. doi:10.48550/arXiv.2407.21783 [20] Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, et al . 2025. DeepSeek-R1 Incentivizes Reasoning in LLMs through Reinforcement Learning. Nature 645, 8081 (2025), 633–638. doi:10.1038/s41586-025-09422-z [21] Gurobi Optimization, LLC. 2024. Gurobi Optimizer Reference Manual. https: //www.gurobi.com. [22] Ouzhu Han, Tao Ding, Miao Yang, Wenhao Jia, Xinran He, and Zhoujun Ma. 2024. A Novel 4-Level Joint Optimal Dispatch for Demand Response of Data Centers with District Autonomy Realization. Applied Energy 358 (2024), 122590. doi:10.1016/j.apenergy.2023.122590 [23] Songqiao Han, Xiyang Hu, Hailiang Huang, Minqi Jiang, and Yue Zhao. 2022. ADBench: Anomaly Detection Benchmark. In Advances in Neural Informa-tion Processing Systems , Vol. 35. Curran Associates, Inc., New Orleans, LA, USA, 32142–32159. https://proceedings.neurips.cc/paper_files/paper/2022/hash/ cf93972b116ca5268827d575f2cc226b-Abstract-Datasets_and_Benchmarks.html [24] Dengshan Hou, Li Wang, Yanru Ma, Longbiao Lyu, Weijie Liu, and Shenghu Li. 2025. Joint Optimal Scheduling of Power Grid and Internet Data Centers Considering Time-of-Use Electricity Price and Adjustable Tasks for Renewable Power Integration. Sustainability 17, 8 (2025), 3374. doi:10.3390/su17083374 [25] Chenyu Huang, Zhengyang Tang, Shixi Hu, Ruoqing Jiang, Xin Zheng, Dongdong Ge, Benyou Wang, and Zizhuo Wang. 2025. ORLM: A Customizable Framework in Training Large Models for Automated Optimization Modeling. Operations Research 73, 6 (2025), 2986–3009. doi:10.1287/opre.2024.1233 [26] International Energy Agency. 2025. Energy and AI . Technical Report. IEA, Paris. https://www.iea.org/reports/energy-and-ai [27] Prachi Jadhav, Hongwei Jin, Ewa Deelman, and Prasanna Balaprakash. 2025. Evaluating the Efficacy of LLM-Based Reasoning for Multiobjective HPC Job Scheduling. In Proceedings of the SC’25 Workshops of the International Conference for High Performance Computing, Networking, Storage and Analysis . 2234–2244. [28] Mengshuo Jia, Zeyu Cui, and Gabriela Hug. 2025. Enhancing LLMs for Power Sys-tem Simulations: A Feedback-driven Multi-agent Framework. IEEE Transactions on Smart Grid (2025). [29] Yongqing Jiang, Jianze Wang, Zhiqi Shen, Zhenghong Lin, Jiayuan Wang, Yi-jian Yang, Kaoshan Dai, and Haoran Luo. 2026. Rethinking Scientific Modeling: Toward Physically Consistent and Simulation-Executable Programmatic Genera-tion. arXiv preprint. arXiv:2602.07083. doi:10.48550/arXiv.2602.07083 [30] Abdullahi Bala Kunya, Adamu Saidu Abubakar, and Samuel Sunday Yusuf. 2023. Review of Economic Dispatch in Multi-Area Power System: State-of-the-Art and Future Prospective. Electric Power Systems Research 217 (2023), 109089. doi:10.1016/j.epsr.2022.109089 [31] Zhonghang Li, Lianghao Xia, Jiabin Tang, Yong Xu, Lei Shi, Long Xia, Dawei Yin, and Chao Huang. 2024. UrbanGPT: Spatio-Temporal Large Language Models. In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . Association for Computing Machinery, 5351–5362. doi:10.1145/ 3637528.3671578 [32] Hunter Lightman, Vineet Kosaraju, Yura Burda, Harrison Edwards, Bowen Baker, Teddy Lee, Jan Leike, John Schulman, Ilya Sutskever, and Karl Cobbe. 2024. Let’s Verify Step by Step. In International Conference on Learn-ing Representations . https://proceedings.iclr.cc/paper_files/paper/2024/hash/ aca97732e30bcf1303bc22ac3924fd16-Abstract-Conference.html [33] Julia Lindberg, Yasmine Abdennadher, Jiaqi Chen, Bernard C. Lesieutre, and Line Roald. 2021. A Guide to Reducing Carbon Emissions through Data Center Geographical Load Shifting. In Proceedings of the Twelfth ACM International Conference on Future Energy Systems . Association for Computing Machinery, Virtual Event, Italy, 430–436. doi:10.1145/3447555.3466582 [34] Julia Lindberg, Bernard C. Lesieutre, and Line A. Roald. 2022. Using Geographic Load Shifting to Reduce Carbon Emissions. Electric Power Systems Research 212 (2022), 108586. doi:10.1016/j.epsr.2022.108586 [35] Shaohui Liu, Sungho Shin, and Deepjyoti Deka. 2026. Watts vs. Bytes: Turning Data Centers into Grid Assets via Storage Compute Co-Optimization. arXiv preprint. arXiv:2605.16190. doi:10.48550/arXiv.2605.16190 [36] Xiaoou Liu. 2024. Research on Collaborative Scheduling of Internet Data Cen-ter and Regional Integrated Energy System Based on Electricity-Heat-Water Coupling. Energy 292 (2024), 130462. doi:10.1016/j.energy.2024.130462 [37] Haoran Luo, Haihong E, Guanting Chen, Qika Lin, Yikai Guo, Fangzhi Xu, Zemin Kuang, Meina Song, Xiaobao Wu, Yifan Zhu, and Anh Tuan Luu. 2026. Graph-R1: Towards Agentic GraphRAG Framework via End-to-End Reinforcement Learning. In Proceedings of the 43rd International Conference on Machine Learning .https://openreview.net/forum?id=YXnFGsSkCC [38] Haoran Luo, Haihong E, Guanting Chen, Yandan Zheng, Xiaobao Wu, Yikai Guo, Qika Lin, Yu Feng, Zemin Kuang, Meina Song, Yifan Zhu, and Anh Tuan Luu. 2025. HyperGraphRAG: Retrieval-Augmented Generation via Hypergraph-Structured Knowledge Representation. In Advances in Neural Information Processing Systems ,Vol. 38. Curran Associates, Inc., San Diego, CA, USA and Mexico City, Mexico, 152206–152234. https://proceedings.neurips.cc/paper_files/paper/2025/hash/ Jiang et al. 
+
+df55ee6e59f8ac4a625219e11fe9ddba-Abstract-Conference.html [39] Haoran Luo, Haihong E, Yikai Guo, Qika Lin, Xiaobao Wu, Xinyu Mu, Wen-hao Liu, Meina Song, Yifan Zhu, and Anh Tuan Luu. 2025. KBQA-o1: Agentic Knowledge Base Question Answering with Monte Carlo Tree Search. In Proceed-ings of the 42nd International Conference on Machine Learning (Proceedings of Machine Learning Research, Vol. 267) . PMLR, Vancouver, Canada, 41177–41199. https://proceedings.mlr.press/v267/luo25d.html [40] Haoran Luo, Haihong E, Zichen Tang, Shiyao Peng, Yikai Guo, Wentai Zhang, Chenghao Ma, Guanting Dong, Meina Song, Wei Lin, Yifan Zhu, and Anh Tuan Luu. 2024. ChatKBQA: A Generate-then-Retrieve Framework for Knowledge Base Question Answering with Fine-tuned Large Language Models. In Findings of the Association for Computational Linguistics: ACL 2024 . Association for Computa-tional Linguistics, Bangkok, Thailand, 2039–2056. doi:10.18653/v1/2024.findings-acl.122 [41] Haoxiang Luo, Kun Yang, Qi Huang, Marco Aiello, and Schahram Dustdar. 2025. A Novel Hierarchical Co-Optimization Framework for Coordinated Task Sched-uling and Power Dispatch in Computing Power Networks. arXiv preprint. doi:10.48550/ARXIV.2508.04015 [42] Yang Luo, Mohan Gao, Zhemeng Yu, Haoyuan Ge, Xiaofeng Gao, Tengwei Cai, and Guihai Chen. 2024. Integrating System State into Spatio Temporal Graph Neural Network for Microservice Workload Prediction. In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . Association for Computing Machinery, 5521–5531. doi:10.1145/3637528.3671508 [43] Ziqing Ma, Wenwei Wang, Tian Zhou, Chao Chen, Bingqing Peng, Liang Sun, and Rong Jin. 2024. FusionSF: Fuse Heterogeneous Modalities in a Vector Quantized Framework for Robust Solar Power Forecasting. In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . Association for Computing Machinery. doi:10.1145/3637528.3671509 [44] Chuizheng Meng, Sirisha Rambhatla, and Yan Liu. 2021. Cross-Node Feder-ated Graph Neural Network for Spatio-Temporal Data Modeling. In Proceedings of the 27th ACM SIGKDD Conference on Knowledge Discovery & Data Mining .Association for Computing Machinery, 1202–1211. doi:10.1145/3447548.3467371 [45] Sina Mohammadi, Ali Hassan, Rouzbeh Haghighi, Van-Hai Bui, and Wencong Su. 2025. Large Language Models for Solving Economic Dispatch Problem. In 
+
+2025 IEEE Energy Conversion Congress and Exposition (ECCE) . IEEE, 1–5. [46] Thomas Mongaillard, Samson Lasaulce, Othman Hicheur, Chao Zhang, Lina Bariah, Vineeth S. Varma, Hang Zou, Qiyang Zhao, and Merouane Debbah. 2024. Large Language Models for Power Scheduling: A User-Centric Approach. In 
+
+Proceedings of the 22nd International Symposium on Modeling and Optimization in Mobile, Ad Hoc, and Wireless Networks . IEEE, Seoul, Republic of Korea, 321–328. [47] Beltus Wiysobunri Nkwawir, M. Ozgur Kayalica, Denizhan Guven, A. Can Du-man, and Hamza Salih Erden. 2025. Carbon-Aware Workload Management in Data Centers: A Multi-Energy Integration Approach. In Proceedings of the 16th ACM International Conference on Future and Sustainable Energy Systems .Association for Computing Machinery, Rotterdam, The Netherlands, 907–914. doi:10.1145/3679240.3735104 [48] Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, John Schulman, Jacob Hilton, Fraser Kelton, Luke Miller, Maddie Simens, Amanda Askell, Peter Welinder, Paul F. Christiano, Jan Leike, and Ryan Lowe. 2022. Training Language Models to Follow Instructions with Human Feedback. In 
+
+Advances in Neural Information Processing Systems , Vol. 35. Curran Associates, Inc., 27730–27744. https://proceedings.neurips.cc/paper_files/paper/2022/hash/ b1efde53be364a73914f58805a001731-Abstract-Conference.html [49] Zheyi Pan, Yuxuan Liang, Weifeng Wang, Yong Yu, Yu Zheng, and Junbo Zhang. 2019. Urban Traffic Prediction from Spatio-Temporal Data Using Deep Meta Learning. In Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining . Association for Computing Machinery, 1720–1730. doi:10.1145/3292500.3330884 [50] Dekang Qi, Xiuwen Yi, Chengjie Guo, Yanyong Huang, Junbo Zhang, Tianrui Li, and Yu Zheng. 2024. Spatio-Temporal Consistency Enhanced Differential Network for Interpretable Indoor Temperature Prediction. In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining .Association for Computing Machinery, 5590–5601. doi:10.1145/3637528.3671608 [51] Jiaju Qi, Lei Lei, Kan Zheng, and Simon X. Yang. 2022. Joint Energy Dispatch and Unit Commitment in Microgrids Based on Deep Reinforcement Learning. arXiv preprint. arXiv:2206.01663. doi:10.48550/arXiv.2206.01663 [52] Ana Radovanović, Ross Koningstein, Ian Schneider, Bokan Chen, Alexandre Duarte, Binz Roy, Diyue Xiao, Maya Haridasan, Patrick Hung, Nick Care, Saurav Talukdar, Eric Mullen, Kendal Smith, MariEllen Cottman, and Walfredo Cirne. 2023. Carbon-Aware Computing for Datacenters. IEEE Transactions on Power Systems 38, 2 (2023), 1270–1280. doi:10.1109/TPWRS.2022.3173250 [53] Jiaqi Ruan, Gaoqi Liang, Huan Zhao, Guolong Liu, Xianzhuo Sun, Jing Qiu, Zhao Xu, Fushuan Wen, and Zhao Yang Dong. 2024. Applying Large Language Models to Power Systems: Potential Security Threats. IEEE Transactions on Smart Grid 
+
+15, 3 (2024), 3333–3336. doi:10.1109/TSG.2024.3373256 [54] Muhammad Sarwar, Muhammad Rizwan, Mubushra Aziz, and Abdul Rehman Sudais. 2025. Large Language Models for Power System Applications: A Com-prehensive Literature Survey. arXiv preprint. arXiv:2512.13004. doi:10.48550/ arXiv.2512.13004 [55] Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Eric Hambro, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. 2023. Toolformer: Language Models Can Teach Themselves to Use Tools. In Advances in Neural Information Processing Systems , Vol. 36. Curran Associates, Inc. https: //openreview.net/forum?id=Yacmpz84TH [56] John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. 2017. Proximal Policy Optimization Algorithms. arXiv preprint. arXiv:1707.06347. doi:10.48550/arXiv.1707.06347 [57] Rana Shahout, Eran Malach, Chunwei Liu, Weifan Jiang, Minlan Yu, and Michael Mitzenmacher. 2025. Don’t Stop Me Now: Embedding-Based Sched-uling for LLMs. In International Conference on Learning Representations (ICLR) . 63345–63368. https://proceedings.iclr.cc/paper_files/paper/2025/file/ 9eb8b5ccb0de594a16548f7c058fdadf-Paper-Conference.pdf [58] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, Y. K. Li, Yu Wu, and Daya Guo. 2024. DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models. arXiv preprint arXiv:2402.03300 (2024). [59] Zezhi Shao, Zhao Zhang, Fei Wang, and Yongjun Xu. 2022. Pre-Training En-hanced Spatial-Temporal Graph Neural Network for Multivariate Time Series Forecasting. In Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . Association for Computing Machinery, 1567–1577. doi:10.1145/3534678.3539396 [60] Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. 2023. Reflexion: Language Agents with Verbal Reinforcement Learning. In Advances in Neural Information Processing Systems , Vol. 36. Curran Associates, Inc., 8634–8652. https://openreview.net/forum?id=vAElhFcKW6 [61] Chengguo Su, Lingshuang Wang, Quan Sui, and Huijun Wu. 2025. Optimal Scheduling of a Cascade Hydro-Thermal-Wind Power System Integrating Data Centers and Considering the Spatiotemporal Asynchronous Transfer of Energy Resources. Applied Energy 377 (2025), 124360. doi:10.1016/j.apenergy.2024.124360 [62] Babak Taheri and Daniel K. Molzahn. 2024. Optimizing Parameters of the DC Power Flow. Electric Power Systems Research 235 (2024), 110719. doi:10.1016/j. epsr.2024.110719 [63] Technology Innovation Institute. 2024. The Falcon 3 Family of Open Models. Technical blog post. https://falcon-lm.github.io/blog/falcon-3/ [64] Haoxiang Wan and Xingpeng Li. 2026. Data Center Spatio-Temporal Load Flexi-bility in Security-Constrained Unit Commitment for Enhanced Grid Efficiency and Reliability. arXiv preprint. arXiv:2605.18517. doi:10.48550/arXiv.2605.18517 [65] Haoyu Wang, Hongke Guo, Zhaoliang Zhu, You Zhang, Yu Zhou, and Xudong Zheng. 2024. BacktrackSTL: Ultra-Fast Online Seasonal-Trend Decomposition with Backtrack Technique. In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . Association for Computing Machinery. doi:10.1145/3637528.3671510 [66] Jiangjiang Wang, Hongda Deng, Yi Liu, Zeqing Guo, and Yongzhen Wang. 2023. Coordinated Optimal Scheduling of Integrated Energy System for Data Center Based on Computing Load Shifting. Energy 267 (2023), 126585. doi:10.1016/j. energy.2022.126585 [67] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed H. Chi, Quoc V. Le, and Denny Zhou. 2022. Chain-of-Thought Prompting Elicits Reasoning in Large Language Models. In Advances in Neural Information Processing Systems , Vol. 35. Curran Associates, Inc., 24824–24837. https://proceedings.neurips.cc/paper_files/paper/2022/hash/ 9d5609613524ecf4f15af0f7b31abca4-Abstract-Conference.html [68] Qingsong Wen, Zhe Zhang, Yan Li, and Liang Sun. 2020. Fast RobustSTL: Effi-cient and Robust Seasonal-Trend Decomposition for Time Series with Complex Patterns. In Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining . Association for Computing Machinery, 2203–2213. doi:10.1145/3394486.3403271 [69] Philipp Wiesner, Ilja Behnke, Dominik Scheinert, Kordian Gontarska, and Lauritz Thamsen. 2021. Let’s Wait Awhile: How Temporal Workload Shifting Can Reduce Carbon Emissions in the Cloud. In Proceedings of the 22nd International Middleware Conference . Association for Computing Machinery, 260–272. doi:10. 1145/3464298.3493399 [70] Chris Williams, Philip Colangelo, Ayse Coskun, Ethan Levine, Andy Neale, Ciaran Roberts, Shayan Sengupta, Nikhil Shirolkar, Varun Sivaram, Sarah Soares, Ethan Tiao, Scott Underwood, Daniel Wilson, Frank Sharp, Luke Wainwright, Harry Petty, Scott Wallace, and Brandon Records. 2026. Power-Flexible AI Data Centers: A New Paradigm for Grid-Responsive Compute. arXiv preprint. arXiv:2606.25098. doi:10.48550/arXiv.2606.25098 [71] Zonghan Wu, Shirui Pan, Guodong Long, Jing Jiang, Xiaojun Chang, and Chengqi Zhang. 2020. Connecting the Dots: Multivariate Time Series Forecasting with Graph Neural Networks. In Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining . Association for Computing Machinery, 753–763. doi:10.1145/3394486.3403118 PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 
+
+[72] Rogier Hans Wuijts, Marjan van den Akker, and Machteld van den Broek. 2024. Effect of Modelling Choices in the Unit Commitment Problem. Energy Systems 
+
+15, 1 (2024), 1–63. doi:10.1007/s12667-023-00564-5 [73] Ziyang Xiao, Dongxiang Zhang, Yangjun Wu, Lilin Xu, Yuan Wang, Xiong-wei Han, Xiaojin Fu, Tao Zhong, Jia Zeng, Mingli Song, and Gang Chen. 2024. Chain-of-Experts: When LLMs Meet Complex Operations Research Problems. In 
+
+International Conference on Learning Representations . OpenReview.net, Vienna, Austria, 48519–48537. https://proceedings.iclr.cc/paper_files/paper/2024/hash/ d45ee77826332c100a1e15f7765b99ff-Abstract-Conference.html [74] Qian Xu, Chutian Yu, Xiang Yuan, Zao Fu, and Hongzhe Liu. 2023. A Privacy-Preserving Distributed Subgradient Algorithm for the Economic Dispatch Prob-lem in Smart Grid. IEEE/CAA Journal of Automatica Sinica 10, 7 (2023), 1625–1627. doi:10.1109/JAS.2022.106028 [75] An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chang Gao, Chengen Huang, Chenxu Lv, et al . 2025. Qwen3 Technical Report. arXiv preprint. arXiv:2505.09388. doi:10.48550/arXiv.2505.09388 [76] Chengrun Yang, Xuezhi Wang, Yifeng Lu, Hanxiao Liu, Quoc V. Le, Denny Zhou, and Xinyun Chen. 2024. Large Language Models as Optimizers. In Interna-tional Conference on Learning Representations . https://openreview.net/forum? id=Bb4VGOWELI [77] Linxiao Yang, Rui Ren, Xinyue Gu, and Liang Sun. 2023. Interactive Generalized Additive Model and Its Applications in Electric Load Forecasting. In Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining .Association for Computing Machinery. doi:10.1145/3580305.3599848 [78] Xu Yang, Chenhui Lin, Yue Yang, Qi Wang, Haotian Liu, Haizhou Hua, and Wenchuan Wu. 2026. Large Language Model Powered Automated Modeling and Optimization of Active Distribution Network Dispatch Problems. IEEE Transactions on Smart Grid 17, 2 (2026), 952–965. doi:10.1109/TSG.2025.3621438 [79] Shunyu Yao, Dian Yu, Jeffrey Zhao, Izhak Shafran, Thomas L. Griffiths, Yuan Cao, and Karthik Narasimhan. 2023. Tree of Thoughts: Deliberate Problem Solving with Large Language Models. In Advances in Neural Information Processing Systems , Vol. 36. Curran Associates, Inc. https://openreview.net/forum?id= 5Xc1ecxO1h [80] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2023. ReAct: Synergizing Reasoning and Acting in Language Mod-els. In International Conference on Learning Representations . https://openreview. net/forum?id=WE_vluYUL-X [81] Junchen Ye, Zihan Liu, Bowen Du, Leilei Sun, Weimiao Li, Yanjie Fu, and Hui Xiong. 2022. Learning the Evolutionary and Multi-Scale Graph Structure for Multivariate Time Series Forecasting. In Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . Association for Computing Machinery, 2296–2306. doi:10.1145/3534678.3539274 [82] Weiqi Zhang, Line A. Roald, and Victor M. Zavala. 2022. Exploring the Impacts of Power Grid Signals on Data Center Operations Using a Receding-Horizon Scheduling Model. arXiv preprint. arXiv:2204.06654. doi:10.48550/arXiv.2204. 06654 [83] Yijia Zhang, Athanasios Tsiligkaridis, Ioannis Ch. Paschalidis, and Ayse K. Coskun. 2024. Data Center and Load Aggregator Coordination Towards Electric-ity Demand Response. Sustainable Computing: Informatics and Systems 42 (2024), 100957. doi:10.1016/j.suscom.2024.100957 [84] Yuanshi Zhang, Bokang Zou, Xu Jin, Yifu Luo, Meng Song, Yujian Ye, Qinran Hu, Qirui Chen, and Antonio Carlos Zambroni. 2025. Mitigating power grid impact from proactive data center workload shifts: A coordinated scheduling strategy integrating synergistic traffic - data - power networks. Applied Energy 
+
+377 (2025), 124697. doi:10.1016/j.apenergy.2024.124697 [85] Haoruo Zhao, Mathieu Tanneau, and Pascal Van Hentenryck. 2022. A Linear Outer Approximation of Line Losses for DC-Based Optimal Power Flow Problems. 
+
+Electric Power Systems Research 212 (2022), 108272. doi:10.1016/j.epsr.2022.108272 [86] Xiyuan Zhou, Huan Zhao, Yuheng Cheng, Yuji Cao, Gaoqi Liang, Guolong Liu, Wenxuan Liu, Yan Xu, and Junhua Zhao. 2024. ElecBench: a Power Dispatch Eval-uation Benchmark for Large Language Models. arXiv preprint. arXiv:2407.05365. doi:10.48550/arXiv.2407.05365 Jiang et al. 
+
+## A ECBench Implementation Details 
+
+This appendix details how ECBench is constructed and specified, the prompts that drive the PowerAtlas agent, and supplementary experiments that did not fit in the main text. All numbers below refer to the released ECBench split unless otherwise noted. 
+
+## A.1 Dataset Construction 
+
+Each ECBench instance couples a power-system model with a data-center workload and is paired with an oracle-optimal decision. (i) Grid side. We build on the RTS-GMLC test system [ 5 ] ( 73 buses, 
+
+120 transmission lines, and 73 thermal units, of which 6 are agent-controlled and 67 follow economic dispatch), and sample a full crossing of 50 representative days spanning all twelve months, four renewable-penetration levels 𝜌 ∈ { 1, 2, 4, 6}%, and 10 random seeds, to obtain hourly load, renewable, net-load, and aggregate fixed-generation profiles over a 24 -hour horizon; one of the six controlled units is the swing unit that absorbs the residual im-balance. (ii) Computing side. Each instance carries 37 computing tasks derived from real data-center traces, each with a priority tier (high/medium/low), a release time, a deadline, a value, and a drop penalty; task power ranges over 1.4–33 .5 MW and duration over 
+
+2–6 hours, and the tier mix across the 74 ,000 tasks of the benchmark is 50 .8% high, 21 .9% medium, 27 .3% low. (iii) Coupling. The two domains are linked through nodal power balance, DC power-flow and line-capacity limits, and per-data-center power capacity, so that task placement reshapes nodal demand and grid state constrains admissible placements. (iv) Oracle labels. Every instance is solved to optimality by the Gurobi MILP solver [ 21 ], yielding the reference decision 𝐷 ★ and reference cost 𝑐 ★ used for both supervised initial-ization and reward normalization. We generate 2,000 instances and split them by random seed into 1,600 training and 400 test; the split is IID, and the retrieval corpus is built only from the training split so that no test instance can leak into retrieval at any stage. 
+
+## A.2 The ECCS Optimization Model 
+
+The oracle decision 𝐷 ★ = (𝐷 ★ 
+
+> 𝑃
+
+, 𝐷 ★ 
+
+> 𝐶
+
+) is the optimal solution of the fol-lowing mixed-integer program; notation follows Section 3, and the exact cost coefficients follow the released solver configuration. Let 
+
+G be the thermal units, L the lines, N the buses, T = {1, . . . , 24 }
+
+the hours, K the tasks, and D the data centers. The decision vari-ables are the dispatch 𝑝 𝑔,𝑡 and commitment 𝑢 𝑔,𝑡 ∈ { 0, 1} of the 6
+
+agent-controlled units, the task placement 𝑥 𝑘,𝑑,𝑡 ∈ { 0, 1} (task 𝑘 
+
+started at hour 𝑡 in data center 𝑑 ), and the drop indicator 𝑧 𝑘 ∈ { 0, 1};the remaining 67 units follow economic dispatch. 
+
+min Í𝑡 
+
+Í𝑔 𝐶 𝑔 (𝑝 𝑔,𝑡 ) + Í𝑘 
+
+ 𝜋 𝑘 𝑚 𝑘 + 𝑣 𝑘 𝑧 𝑘 
+
+ + 𝐶 LOL 
+
+Í𝑡 
+
+Í𝑛 𝑝 ↓ 
+
+> 𝑛,𝑡
+
+, (15) s.t. Í𝑔 𝑝 𝑔,𝑡 + Í𝑛 
+
+ 𝑅 𝑛,𝑡 − 𝑐 𝑛,𝑡 + 𝑝 ↓
+
+> 𝑛,𝑡
+
+ = Í𝑛 
+
+ 𝑑 𝑛,𝑡 + 𝑞 𝑛,𝑡 
+
+, ∀𝑡, (16) 
+
+0 ≤ 𝑐 𝑛,𝑡 ≤ 𝑅 𝑛,𝑡 , ∀𝑛, 𝑡, (17) 
+
+Í𝑔 
+
+ 𝑃 𝑔 𝑢 𝑔,𝑡 − 𝑝 𝑔,𝑡 
+
+ ≥ 𝛾 Í𝑛 𝑑 𝑛,𝑡 , ∀𝑡, (18) 
+
+𝑓 ℓ,𝑡 =  𝜃 𝑎 (ℓ ),𝑡 − 𝜃 𝑏 (ℓ ),𝑡 
+
+/𝑥 ℓ , |𝑓 ℓ,𝑡 | ≤ ¯𝐹 ℓ , ∀ℓ, 𝑡, (19) 
+
+𝜈 𝑛,𝑡 + 𝑝 ↓ 
+
+> 𝑛,𝑡
+
+= Íℓ ∈𝛿 + (𝑛 ) 𝑓 ℓ,𝑡 − Íℓ ∈𝛿 − (𝑛 ) 𝑓 ℓ,𝑡 , ∀𝑛, 𝑡, (20) 
+
+𝑢 𝑔,𝑡 𝑃 𝑔 ≤ 𝑝 𝑔,𝑡 ≤ 𝑢 𝑔,𝑡 𝑃 𝑔 , ∀𝑔, 𝑡, (21) 
+
+|𝑝 𝑔,𝑡 − 𝑝 𝑔,𝑡 −1 | ≤ 𝑅 𝑔 , ∀𝑔, 𝑡, (22) 
+
+𝑞 𝑑,𝑡 = Í𝑘 
+
+Í𝜏 𝑒 𝑘 𝑥 𝑘,𝑑,𝜏 1[𝜏 ≤ 𝑡 < 𝜏 + Δ𝑘 ], ∀𝑑, 𝑡, (23) 
+
+𝑞 𝑑,𝑡 ≤ 𝑄 𝑑 , Í𝑘 
+
+Í𝜏 𝑟 𝑘 𝑥 𝑘,𝑑,𝜏 1[𝜏 ≤ 𝑡 < 𝜏 + Δ𝑘 ] ≤ 𝐶, ∀𝑑, 𝑡, 
+
+(24) 
+
+Í𝑑 
+
+Í¯𝑟 𝑘 −Δ𝑘 +1 
+
+> 𝑡 =𝑟 𝑘
+
+𝑥 𝑘,𝑑,𝑡 + 𝑧 𝑘 = 1, ∀𝑘, (25) 
+
+𝑥 𝑘,𝑑,𝑡 = 0, ∀𝑡, ∀𝑑 ≠ 𝑜 𝑘 with 𝜇 𝑘 = 0. (26) where 𝜈 𝑛,𝑡 = Í𝑔 ∈𝑛 𝑝 𝑔,𝑡 + 𝑅 𝑛,𝑡 −𝑐 𝑛,𝑡 −𝑑 𝑛,𝑡 −𝑞 𝑛,𝑡 is the nodal injection (the sum over 𝑔 ∈ 𝑛 runs over every unit at bus 𝑛 , agent-controlled, swing and economic-dispatch alike), 𝜃 𝑛,𝑡 the bus phase angle with 
+
+𝜃 ref ,𝑡 = 0, 𝑥 ℓ the line reactance, 𝑥 𝑘,𝑑,𝑡 , 𝑧 𝑘 , 𝑢 𝑔,𝑡 ∈ { 0, 1}, 𝐶 𝑔 is the gen-eration cost, 𝜋 𝑘 𝑚 𝑘 a migration penalty, 𝑣 𝑘 the drop penalty, 𝐶 LOL the value of lost load, 𝑝 ↓ 
+
+> 𝑡
+
+the lost load, 𝑞 𝑑,𝑡 the data-center power (drawn at its host bus), and 𝑒 𝑘 /Δ𝑘 /[𝑟 𝑘 , ¯𝑟 𝑘 ] the task power/duration/release– deadline window. Equation (16) enforces system power balance, (19) the DC power-flow and line limits, (21) and (22) the generator operating envelope and ramping, (23) and (24) the data-center load coupling and its capacity, and (25) that each task is scheduled once within its window or dropped, and (26) that a non-migratable task (𝜇 𝑘 = 0) stays at its home data center 𝑜 𝑘 . Here 𝑅 𝑛,𝑡 is the available renewable at bus 𝑛 and 𝑐 𝑛,𝑡 its curtailment, 𝑝 ↓ 
+
+> 𝑛,𝑡
+
+≥ 0 the lost load at bus 𝑛 (priced at 𝐶 LOL in the objective), 𝛾 = 0.03 the spinning-reserve margin, 𝑟 𝑘 the rack demand of task 𝑘 and 𝐶 the rack capacity of a data center. Minimum up- and down-time constraints on 𝑢 𝑔,𝑡 are enforced in the solved program in the usual big-𝑀 form and are omitted here; the released evaluator states them verbatim. Two conventions of the grader are not visible in the program above and are stated here because the primary metric depends on them. First, the MWh-equivalent Viol task of Equation (3) converts task-side hard violations into power: for every (data center, hour) cell whose rack demand exceeds the capacity 𝐶 , the excess racks are charged at the per-rack power draw, and for every cell whose total draw exceeds 𝑄 𝑑 , the excess megawatts are charged directly, whereas window, migratability and invalid-placement violations carry no MW term but void the task for satisfaction. Second, the migration term of (15) is 𝜋 𝑘 𝑚 𝑘 with 𝑚 𝑘 ∈ { 0, 1} indicating that task 𝑘 runs outside 𝑜 𝑘 and 𝜋 𝑘 = 8 𝑟 𝑘 its price in the released cost configuration, so migration is charged in proportion to the racks moved. The program is solved to optimality with Gurobi [ 21 ] to obtain 𝐷 ★ and the reference cost 𝑐 ★.
+
+## A.3 Instance Specification and Metrics 
+
+The input specification 𝑆 = (𝑆 𝐶 , 𝑆 𝑇 , 𝑆 𝐾 , 𝑆 𝐹 ) comprises grid physical constraints 𝑆 𝐶 , the task description 𝑆 𝑇 , retrieved domain knowledge 
+
+𝑆 𝐾 , and the output-format contract 𝑆 𝐹 (Section 3). Table 4 summa-rizes the key parameters. Feasibility and economy are scored by the grid-aware evaluator of Section 4.2: Viol is the total DC power-flow violation (MWh); S-cnt /S-val /S-rh are the served fractions of task count, of penalty-weighted value, and of rack-hours; S-H /S-M /S-L 
+
+are tier-wise satisfaction rates; Cost is the total operating cost in dollars with lost load priced at VOLL; and Latency is the wall-clock decision time, from submitting the prompt to a parsed decision. 
+
+Metric definitions. Let K be the tasks of an instance and Ksrv ⊆ K 
+
+those served (not dropped, violating no hard constraint, and running only in hours their own dispatch can power), and let 𝑣 𝑘 , 𝑟 𝑘 and 𝑑 𝑘 
+
+be the value, rack demand and duration of task 𝑘 . Grid violation is PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 
+
+Table 4: Key parameters of an ECBench instance.                                                 
+
+> Component Value
+> Buses / lines / thermal units 73 /120 /73
+> Agent-controlled units 6(of which 1swing) Economic-dispatch units 67
+> Scheduling horizon 24 hours Scenario grid 50 days ×4𝜌 levels ×10 seeds Renewable penetration 𝜌 {1,2,4,6}%
+> Instances (train / test) 1,600 /400
+> Oracle solver Gurobi 13 .0.2(MILP, exact) Tasks per instance 37 (fixed; 74 ,000 in total) Tier distribution (H/M/L) 50 .8% /21 .9% /27 .3%
+> Task power / duration 1.4–33 .5MW / 2–6hRetrieval corpus 551 entries (train split only)
+
+Equation (3), and the three satisfaction rates are 
+
+S-cnt = 100 |K srv ||K | , S-val = 100 
+
+Í𝑘 ∈ K srv 𝑣 𝑘 
+
+Í𝑘 ∈ K 𝑣 𝑘 
+
+, (27) 
+
+S-rh = 100 
+
+Í𝑘 ∈ K srv 𝑟 𝑘 𝑑 𝑘 
+
+Í𝑘 ∈ K 𝑟 𝑘 𝑑 𝑘 
+
+, (28) that is, the served fractions of task count, of penalty-weighted value, and of rack-hours, while S-H, S-M and S-L are S-cnt restricted to the high-, mid- and low-priority tiers. Cost sums generation cost, migration and drop penalties, and lost load priced at 𝐶 LOL 
+
+(Equation (5)), and Latency is the end-to-end decision time. These definitions match the evaluator of Section 4.2. 
+
+## A.4 The Evaluator’s Hourly Feasibility Program 
+
+Viol is not read off the model’s own arithmetic: every schedule is replayed through an independent per-hour nodal DC feasibility linear program, so a schedule that merely claims balance is still charged for the imbalance it causes. For each hour 𝑡 the evaluator fixes the agent’s dispatch of the five non-swing controlled units and the data-center load implied by its placement, then solves 
+
+min Íℓ ∈ L 𝑓 + 
+
+> ℓ,𝑡
+
++ Í𝑛 ∈ N 
+
+ 𝑝 ↓ 
+
+> 𝑛,𝑡
+
++ 𝑝 ↑
+
+> 𝑛,𝑡
+
+
+
+s.t. 𝜈 𝑛,𝑡 + 𝑝 ↓ 
+
+> 𝑛,𝑡
+
+− 𝑝 ↑ 
+
+> 𝑛,𝑡
+
+= Íℓ ∈𝛿 + (𝑛 ) 𝑓 ℓ,𝑡 − Íℓ ∈𝛿 − (𝑛 ) 𝑓 ℓ,𝑡 ,𝜈 𝑛,𝑡 = 𝑔 fix  
+
+> 𝑛,𝑡
+
++ 𝑔 ctrl  
+
+> 𝑛,𝑡
+
++ 𝑔 sw  
+
+> 𝑛,𝑡
+
++ 𝑅 𝑛,𝑡 − 𝑐 𝑛,𝑡 − 𝑑 𝑛,𝑡 − 𝑞 𝑛,𝑡 ,𝑓 ℓ,𝑡 =  𝜃 𝑎 (ℓ ),𝑡 − 𝜃 𝑏 (ℓ ),𝑡 
+
+/𝑥 ℓ , |𝑓 ℓ,𝑡 | ≤ ¯𝐹 ℓ + 𝑓 + 
+
+> ℓ,𝑡
+
+,𝜃 ref ,𝑡 = 0, 0 ≤ 𝑐 𝑛,𝑡 ≤ 𝑅 𝑛,𝑡 , 0 ≤ 𝑔 sw  
+
+> 𝑡
+
+≤ 𝑃 sw ,
+
+(29) with all slacks non-negative, where 𝜈 𝑛,𝑡 is the nodal injection, 𝑅 𝑛,𝑡 
+
+the available renewable at bus 𝑛 and 𝑐 𝑛,𝑡 its curtailment, and 𝑝 ↓, 𝑝 ↑
+
+and 𝑓 + are the lost-load, over-generation and line-overload slacks of Section 4.2. The swing unit is re-optimised rather than taken from the model, so the reported violation is the residual that no 
+
+swing action can absorb — the part the agent’s own decision made infeasible. Summing the three slack families over the 24 hours gives 
+
+Viol ; the same program supplies the hourly traces of Figure 5(b). Because the program is an LP with a feasible point by construction (all slacks free), it always returns a finite score, which is what lets an untrained backbone be graded on the same scale as a trained one instead of being discarded as a non-answer. 
+
+## A.5 Retrieval Corpus 
+
+The retrieval corpus holds 551 entries: 520 solved ECCS instances, each serialised as its grid regime, task profile, and Gurobi-optimal decision, plus 31 short expert notes on compute scheduling and data-center energy practice. Every case is drawn only from the 
+
+1,600 -instance training split, so no test instance can reach the agent through retrieval at training or inference time. Entries are indexed with the hypergraph retriever of Graph-R1 [ 37 , 38 ]; the retriever serves the training corpus; the reported evaluations run without retrieved cases in 𝑆 𝐾 , affecting training only. 
+
+## B Prompts Used in PowerAtlas 
+
+PowerAtlas serializes each instance into a single structured prompt and decodes the joint decision as one templated response. Figure 8 reproduces the four templates that define the interface: the sched-uling prompt (a), the retrieval query (b), the verifier and reward that score the answer (c), and the target the policy is warm-started on (d). Placeholders in {curly braces} are filled per instance. 
+
+B.1 ECCS scheduling prompt. The agent receives the grid sig-nal, the task list, and (optionally) retrieved solved cases, and must emit a two-block decision: one line per task and one 24 -point trajec-tory per agent-controlled unit. Nothing outside <answer> is scored, so the contract is what the policy is ultimately trained against. 
+
+B.2 Knowledge-retrieval prompt. Solved training cases are retrieved with the hypergraph retriever of Graph-R1 [ 37 , 38 ]; the query encodes the instance’s grid regime and task profile so that priors match the current state. 
+
+B.3 Output parsing and reward. A deterministic verifier parses the <answer> block, replays it through the hourly nodal DC feasi-bility LP, and maps the result to the trajectory reward of Section 5.2 (format gate → 𝑅 quality = 𝑤 𝑐 𝑄 compute + 𝑤 𝑝 𝑄 grid ; malformed outputs receive −𝑟 0). The count term 𝜂 𝑐 is what stops the policy from buying feasibility by dropping cheap tasks: with 𝑆 -val alone, discarding low-value work is nearly free. The grid term mirrors the true ob-jective rather than a cost ratio, so under-generating is immediately expensive and a plan that holds every unit off cannot score. 
+
+B.4 Supervised-initialization target. During warm-start the policy is trained to reproduce the templated serialization of the oracle decision 𝐷 ★. The <reason> field is a short rationale distilled from the solved instance, while only the <answer> block is scored by the verifier; the reasoning around it is left unread. 
+
+## C Training and Implementation Details C.1 Hyperparameters 
+
+Table 5 lists the configuration shared by all three backbones. Warm-start is full-parameter supervised fine-tuning; FA-GRPO then runs critic-free with vLLM-served rollouts, and inference is greedy, single-pass, and never invokes a solver. A rollout may interleave retrieval with generation for up to 8
+
+turns, each retrieval returning the top-5 corpus entries, with a total response budget of 4,096 tokens across turns; tool calls within a turn are issued in parallel. Two details of the reward matter more than their size suggests. First, the group is only 𝑁 = 2: with a batch of 8 instances this keeps the rollout cost tractable on two GPUs, but it also means the group-relative advantage is estimated from a Jiang et al. 
+
+Table 5: PowerAtlas training and inference configuration, as released; the split is seed-reproducible. Setting Value                                                        
+
+> Backbones Qwen3-4B, Llama-3.2-3B, Falcon3-3B Initialization full-parameter SFT SFT epochs / lr / batch 8(16 for Falcon3-3B) / 1×10 −5/16
+> SFT max sequence length 4,096 tokens FA-GRPO steps 60 (shipped: step 40 ; step 20 for Llama-3.2-3B) Advantage estimator GRPO (critic-free) Group size 𝑁 2
+> KL weight 𝛽 / clip 𝜖 1×10 −3(low-variance KL) / 0.2
+> Learning rate / batch size 2×10 −6/8
+> Entropy coefficient 0
+> Prompt / response length 8,192 /2,048 tokens per turn Retrieval top-𝑘 5
+> Reward weights (𝑤 𝑐 , 𝑤 𝑝 )(0.5,0.5)
+> Value/count weights (𝜂 𝑣 , 𝜂 𝑐 )(0.7,0.3)
+> Infeasibility discount 0.5
+> VOLL 𝐶 LOL / format penalty 𝑟 09,000 $/MWh / 0.5
+> Rollout engine / decoding vLLM 0.8.4/ greedy Hardware 2×NVIDIA A800 ( 80 GB)
+
+single pair, so a reward with little within-group variance produces almost no gradient — which is exactly the failure the smooth grid term of Appendix B was introduced to avoid. Second, the format gate is a hard −𝑟 0 rather than a soft penalty, so a policy cannot trade output validity for schedule quality; every gradient the policy receives comes from schedules that actually parse. 
+
+## C.2 Backbones and Baselines 
+
+The three open-weight backbones are Qwen3-4B, Llama-3.2-3B, and Falcon3-3B [ 19 , 63 , 75 ]. The eight frontier baselines (GPT-5.5, Claude Haiku 4.5, DeepSeek-V4-Flash/Pro, Kimi-K2.6 fast/pro, Qwen3.7-Plus/Max) are queried through an OpenAI-compatible API in one zero-shot turn with the same prompt template (Appen-dix B) and identical decoding settings, so that differences reflect the model rather than the harness. Three properties of that harness are worth stating explicitly, because they decide whether the comparison is fair. (i) Same con-tract. Every system, trained or not, receives the identical serialised instance and must answer in the identical TASKS /POWER template; no baseline is given a repair pass or a solver call. (ii) Same grader. 
+
+All outputs are scored by the one evaluator of Appendix A.4, which replays the schedule through its own feasibility program rather than trusting the model’s arithmetic, so a confident but infeasible schedule is charged exactly like a hesitant one. (iii) Same budget. 
+
+The frontier baselines answer in a single turn without the retrieval action, as do ours, which is the protocol they are strongest under: it removes the risk of a multi-turn harness mismatch being read as a capability gap. The untrained open-weight backbones are run under the identical single-turn protocol, so the base-versus-+ PowerAtlas rows of Table 2 differ only in the policy weights. 
+
+## C.3 Reproducibility 
+
+All runs use PyTorch 2.6.0 (CUDA 12 .4), vLLM 0.8.4, Transformers 
+
+4.51 .3, FlashAttention 2.7.4, and Gurobi 13 .0.2 for the oracle labels and the evaluator’s feasibility programs. Warm-start runs on a single GPU and FA-GRPO on two A800s with FSDP; the reference-policy shard is parameter-offloaded, rollouts are served by vLLM at 0.6 GPU memory utilisation, and the retrieval index is served locally so that no run depends on network access. Instances are split by the generator seed rather than by shuffling, so the split is reproducible from the released instance identifiers alone ( m<month>d<day>-rho<level>-s<seed> ). ECBench, the grid-aware evaluator, and the PowerAtlas training code will be released so that all reported numbers can be reproduced end-to-end. The compute bill is modest: warm-start runs on one A800 and FA-GRPO on two, at tens of seconds per warm-start step and about a minute per FA-GRPO step including rollout generation, which puts the full pipeline at one to two GPU-hours per backbone; the released logs carry the exact per-run wall-clock. 
+
+## D Additional Notes and Future Work D.1 Reporting Protocol 
+
+Three conventions behind the tables of Section 6 deserve to be stated in full. (i) Sample size. The open-weight rows — the three untrained backbones and the three PowerAtlas configurations — are averages over the held-out pool. The open-weight rows of Table 1 average the answers stored for that backbone over the held-out pool, and the frontier rows average every run we stored for that model on one common high-penetration instance (ECCS-RTS-m01d15-rho06-s10 ); no run is selected or discarded. The number of stored runs is not uniform across models, so those rows are point estimates to which we attach no dispersion, and the two blocks of Table 1 are not a paired comparison. Differences of a few percent between neighbouring baselines should accordingly not be read as an ordering; the claims of Section 6.2 rest on the order-of-magnitude separations, and on that same instance the shipped checkpoints leave 192 .7, 216 .8 and 449 .2 MWh, so the paired reading of the comparison agrees with the pool-average one for two of the three backbones. (ii) Model selection. ECBench defines a training and a test split only, so the stage and step at which we stop — warm-start epochs, and step 40 of FA-GRPO ( 20 
+
+for Llama-3.2-3B) — is chosen by comparing checkpoints on the same held-out pool that the tables report. The shipped steps are listed in Appendix C, but the trained rows are best-checkpoint numbers under it rather than a blind held-out estimate, and a third split is the clean fix. (iii) Incomplete answers. The evaluator scores a generator or an hour missing from an answer as offline rather than skipping it, so a truncated dispatch is charged the lost load it leaves behind. This is why the untrained rows of Table 1 reach violations an order of magnitude above any frontier model: the penalty is for load left uncovered, not for the missing text. 
+
+(iv) The two satisfaction conventions. The computing satisfaction of Section 4.2 can be read at two strengths, and both appear in this paper. The placement reading asks whether the service contract is met: the task is not dropped, sits inside rack capacity, starts within its window, and respects migratability. The grid-aware reading ad-ditionally voids a task whose own hour the submitted dispatch cannot power, so an answer that places work into a load-shedding hour is not credited for it. The choice moves only the satisfaction columns — Viol and Cost are identical under both, since they are computed from the dispatch and the answer’s own drop set, not from P. The eight frontier rows of Table 1, its Qwen3-4B row, and the two ablation rows of Table 3 are grid-aware; its Falcon3-3B and PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 
+
+Llama-3.2-3B rows, the PowerAtlas rows of Table 2 and Table 3, and the panels of Figure 5(c)–(f) are placement. Where the two read-ings are both available for an untrained backbone they differ by a factor of two to three ( 7.4 against 3.0 for Falcon3-3B, 33 .3 against 
+
+12 .2 for Llama-3.2-3B). Under the grid-aware reading the three PowerAtlas rows read 69 .5/65 .2/62 .9 (Falcon3-3B), 55 .7/73 .0/52 .3
+
+(Qwen3-4B) and 76 .1/74 .1/70 .7 (Llama-3.2-3B) for S-cnt/S-val/S-rh, against 3.0/3.0, 55 .7/50 .9 and 12 .2/11 .8 for the same backbones untrained; the two-stage ordering of Table 3 is unchanged. Report-ing one convention in every row is the clean fix, and the released evaluator computes both readings. 
+
+## D.2 What the Stage Panels Plot 
+
+Figure 5(c)–(d) is computed from the per-instance log of the shipped Falcon3-3B run over the held-out pool, and two conventions there differ from the tables of Section 6. The violation axis is the power-balance residual returned by the training-side scorer, not the nodal DC feasibility program of Appendix A.4: the latter re-optimises the swing unit, so a schedule with a large raw residual can still be largely absorbed and score a much smaller Viol . Satisfaction in those panels is the placement-based rate, taken before the grid-aware filter. The panels are therefore evidence for the shape of the two stages and for the location of the turning point, and their absolute values are not comparable with Table 3. 
+
+## D.3 Limitations and Future Work 
+
+Four limits of this study point directly at the next experiments. Eval-uation scale. Results are reported on a held-out subsample rather than the full test pool; a full-pool evaluation, with the frontier base-lines re-run at the same scale, is the first thing to add. Generalisation. 
+
+The split is by generator seed, so a test instance can share its day and penetration level with training instances; holding out whole months or whole penetration levels would separate scheduling skill from per-regime familiarity. Baselines. The frontier models answer in a single zero-shot turn without in-context cases; a fairer upper bound would give them the same retrieved priors, and a solver capped at the agent’s own latency budget would test the efficiency claim directly rather than against an uncapped solve. Optimisation. 
+
+FA-GRPO runs with a group size of two, which keeps rollout cost tractable but estimates the group-relative advantage from a single pair; larger groups, together with retrieval grounded inside the policy rather than only in the corpus, are the natural next step for the policy itself, and the first change we would make. 
+
+## E Case Study: Four Answers to One Instance 
+
+Aggregates hide how these systems fail. Figure 9 therefore quotes, verbatim from the stored answers, what four of them produced on one instance — m01d15-rho06-s10 , the hardest regime of the pool ( 𝜌 = 6% , 37 tasks, winter evening peak, Gurobi optimum $2.05M) — with the evaluator’s verdict quoted inline. Placements are summarized in the text, and the same 3B backbone appears twice, before and after PowerAtlas. Numbers here score the one stored answer shown, while the Table 1 entry averages that model’s stored runs, so the two differ. 
+
+E.1 DeepSeek-V4-Pro: a professional-looking plan with a unit missing. In Figure 9(a) the profile tracks the load in shape, ramping for the morning and holding the evening peak at full output, and it places 35 of 37 tasks. Two things break it. Only four of the five controlled units appear at all — 221_CC_1 is absent from the answer, so one of the five controllable units is silently forfeited — and every remaining unit is held off through hours 
+
+1–4 and 9–14 , leaving the swing unit alone to carry the night and the midday plateau. The feasibility LP charges 2,291 .6 MWh of lost load for those windows. Under the grid-aware protocol every task scheduled into an unpowered hour is unserved, which is how a plan that places 35 tasks delivers 5.6% of the value: the compute score is destroyed by a power-side omission, which is exactly the coupling the benchmark is built to expose. 
+
+E.2 Qwen3.7-Max: brute force is not feasibility. The opposite failure, in Figure 9(b): almost every unit runs at or near its maximum for almost the whole day. All five units are present and the answer is internally consistent, so satisfaction survives at 70 .3% by count. But 498 .5 MWh is spilled as over-generation while 150 .8 MWh of the peak is still unserved, because output is flat where the net load is not. Fuel burned against a demand that is not there costs money without buying admissibility: 4.1× the optimum, and four tasks dropped on top. 
+
+E.3 Falcon3-3B untrained: the contract itself fails. The same backbone PowerAtlas is built on, asked the same question, emits a header with nothing under it and drops all 37 tasks (Figure 9(c)). Nothing about the grid is even attempted, so the swing unit faces the entire load and 12 ,737 .5 MWh goes unserved — 57 × the optimal cost once lost load is priced at VOLL. This is the failure mode of Figure 6, Case 1, and the reason initialization is not optional: a policy that cannot produce a parsable schedule gives reinforcement learning nothing to grade. 
+
+E.4 Falcon3-3B + PowerAtlas: the shape of the optimum. 
+
+After warm-start and feasibility-aware alignment, the same 3B back-bone answers with all five units, fractional set-points, and a profile whose structure matches the oracle’s — compare Figure 9(d) with the optimum in (e), which also leaves 218_CC_1 offline for the full day, brings 321_CC_1 up at hour 6, and commits the block from hour 17 . The policy has learned which unit to leave out — 218_CC_1 
+
+stays offline all day, as in 𝐷 ★ — when to bring the combined-cycle units up for the morning ramp, and to commit the whole block from hour 17 for the evening peak; it also reproduces the optimum’s de-cision to run 321_CC_1 down at hours 23 –24 . It is not the optimum: it warms three units in hour 1 that 𝐷 ★ leaves off, and 108 .9 MWh of the evening peak still goes unserved, which with three dropped tasks puts it at 1.57 × the optimal cost. That is a schedule an operator can read and repair, produced in one forward pass, by a model two orders of magnitude smaller than the frontier systems above. 
+
+E.5 What the four transcripts share. Three of the four answers fill the two blocks the contract asks for with plausible-looking numbers, and the fourth emits the headers and nothing else, so what separates them is not language but physics. In each case the compute score follows the power side rather than the other way round: this is the coupling the benchmark is built to expose, and the reason a placement-only reading of satisfaction (Appendix D.1) flatters the first two answers, which place work into hours their own dispatch cannot power, and credits them for it. Jiang et al. 
+
+(a) ECCS Scheduling Prompt 
+
+[SYSTEM] You are an electricity-computing co-scheduling agent. Given a 24-hour power-system state and a list of computing tasks, output a single schedule that (1) respects power balance, DC power-flow, and line-capacity limits; (2) honors per-data-center power capacity and each task 's release, deadline, and tier; and (3) minimizes total operating cost. First reason inside <reason>... </reason>, then output ONLY the decision inside <answer>...</answer>. [USER] Grid: RTS-GMLC, {n_bus} buses, {n_line} lines, {n_unit} thermal units. Controllable generators (the swing unit absorbs the residual): {unit_table} Hourly signal h=1..24: load / renewable / net_load / fixed_gen = {profiles} Data centers: {n_dc} DCs, each with capacity C={C} racks, peak power {Pmax_dc} MW, idle power {Pidle} MW. Tasks (one row each): id | origin_dc | release | deadline | duration | demand | power | migratable | priority | drop_penalty | mig_cost {task_rows} Retrieved solved cases (optional priors): {retrieved_cases} CONSTRAINTS - a placed task starts within [release, deadline - duration + 1]; - a non-migratable task runs at its origin DC; a migratable one may run at any DC; - at every DC and hour: active rack-demand <= C, and DC load (idle + task power) <= DC peak power; - generation (fixed + controllable + swing) must cover the grid background plus all data-center power, and each controllable unit must stay within [Pmin, Pmax]. (task 'demand ' = number of racks; task 'power ' = MW draw.) [OUTPUT FORMAT] <reason> ... </reason> <answer> TASKS: <per task> drop | (dc=<id>, start=<hour>) POWER: <per controllable unit> 24 hourly levels, each 'off ' or a number in [0,100] meaning percent between Pmin and Pmax </answer> 
+
+(b) Knowledge Retrieval Query 
+
+[RETRIEVAL QUERY] Season={season}; peak_load={peak}; renewable_share={rshare}; congestion={congested_lines}; task_mix={tier_histogram}; horizon=24h. Return the top-{k} training instances whose (grid regime, task profile) are most similar, each with its Gurobi-optimal TASKS/POWER decision as an in-context prior. 
+
+(c) Verifier and Trajectory Reward 
+
+parse(<answer>) -> {TASKS[], POWER[24 x n_controlled]} if not well_formed: return reward = -r0 # r0 = 0.5 # --- computing side -------------------------------------------------served = eta_v * S-val + eta_c * S-cnt # 0.7 / 0.3 Q_compute = served * coverage * (1 if task_feasible else 0.5) # --- grid side ------------------------------------------------------Viol = sum_h DC_feasibility_LP(POWER_h, TASKS_h).slack # MWh Q_grid = min(1, c*/(c_theta + C_LOL * Viol)) # C_LOL = 9,000 # --- joint ----------------------------------------------------------reward = w_c * Q_compute + w_p * Q_grid 
+
+(d) Supervised Initialization Target 
+
+<reason> Peak net load at h=18; lines {L12,L27} near limit => pre-commit units {g2,g5}; defer low-tier tasks {t7,t9} to off-peak; place high-tier tasks {t1,t3} at release. </reason> <answer> TASKS: t1 (dc=2, start=9); t2 drop; t3 (dc=1, start=14); ... POWER: g1 [p1..p24]; g2 [p1..p24]; ...; g5 [p1..p24] # percent of Pmin..Pmax </answer> 
+
+Figure 8: The four templates that define the PowerAtlas interface: the instance serialization and output contract (a), the retrieval query issued during a rollout (b), the deterministic verifier that turns an answer into the trajectory reward (c), and the warm-start target distilled from the oracle decision (d). PowerAtlas: Towards Electricity-Computing Co-Scheduling for Power Systems 
+
+123_STEAM_3: off,off,off,off,62,100,100,52,off,off,off,off,off,off,38,73,100,100,100,100,100,100,88,51 118_CC_1: off,off,off,off,69,100,100,48,off,off,off,off,off,off,28,78,100,100,100,100,100,100,100,46 218_CC_1: off,off,off,off,72,100,100,55,off,off,off,off,off,off,42,82,100,100,100,100,100,100,95,55 321_CC_1: off,off,off,off,65,100,100,50,off,off,off,off,off,off,32,75,100,100,100,100,100,100,92,49 
+
+(a) DeepSeek-V4-Pro — load-following in shape, but one unit never appears and the night and midday hours are left to the swing unit alone. 
+
+123_STEAM_3: 100,100,80,100,100,100,100,100,85,80,100,100,100,85,100,100,100,100,100,100,100,100,100,100 218_CC_1: 100,100,60,100,100,100,100,100,70,65,100,100,100,70,100,100,100,100,100,100,100,100,100,100 118_CC_1: 80,90,40,80,100,100,100,90,50,45,85,90,90,50,100,100,100,100,100,100,100,100,100,90 321_CC_1: 70,80,30,70,100,100,100,80,40,35,75,80,80,40,100,100,100,100,100,100,100,100,90,80 221_CC_1: off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,100,100,off,off,off,off,off 
+
+(b) Qwen3.7-Max — everything near maximum for almost the whole day, so the schedule spills energy and still misses the peak. 
+
+POWER: (no generator rows emitted; all 37 tasks marked "drop") 
+
+(c) Falcon3-3B, untrained — the output contract itself fails. 
+
+123_STEAM_3: 47.6,33.9,0.0,0.0,86.3,100.0,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0 218_CC_1: off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off 118_CC_1: 42.4,0.0,0.0,0.0,0.0,100.0,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0 321_CC_1: 42.4,0.0,0.0,0.0,0.0,100.0,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100.0,100.0,100.0,100.0,100.0,42.4,off,off 221_CC_1: 42.4,0.0,0.0,0.0,0.0,70.2,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0 
+
+(d) Falcon3-3B + PowerAtlas — five units, fractional set-points, and the commitment pattern of the optimum. 
+
+123_STEAM_3: off,off,off,off,33.8,100,100,0,0,0,0,0,0,0,0,19.5,100,100,100,100,100,100,100,100 218_CC_1: off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off 118_CC_1: off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,off,42.4,100,100,100,100,100,100,100 321_CC_1: off,off,off,off,off,42.4,100,0,0,0,0,0,0,0,0,0,79.2,100,100,100,100,42.4,off,off 221_CC_1: 0,0,0,0,0,88.7,18.4,0,0,0,0,0,0,0,0,0,0,100,100,100,100,100,42.4,off 
+
+(e) The Gurobi optimum 𝐷 ★, for reference; the swing unit is not part of an answer. 
+
+Figure 9: Four answers to one ECBench instance ( m01d15-rho06-s10 ), quoted verbatim from the stored model outputs, with the optimum for reference. Each row is one agent-controlled unit over hours 1–24 , in percent of its operating range; off is shutdown and 0 is minimum stable output.
