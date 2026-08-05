@@ -1,0 +1,205 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-05T21:08:55.728874+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 4,
+    "deep_cap": 6,
+    "deep_selected": 4,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2608.03984v1",
+      "source": "arxiv",
+      "title": "string2string Studio: An Interactive, In-Browser Platform for String-to-String Algorithms",
+      "abstract": "We present string2string Studio, an interactive in-browser platform for string-to-string analysis across natural language processing, computational biology, and the digital humanities. The system integrates six main modules (alignment, distance, similarity, search, generation metrics, and BLAST homology search), operating at character, word, token, line, and residue levels. Its C++-based algorithms compile to WebAssembly, so core operations run locally by default without any installation or data upload. The interface reports scores with their \"evidence\" (alignments, edit paths, metric matches, search hits, and homology traces), making methods inspectable, debuggable, and comparable on shared inputs. Internal benchmarks show speedups of up to 2,500x over the Python predecessor, faster global/local alignment than a general-purpose native C aligner, and exact agreement with independent references under declared settings. For homology search, the scoped client-side blastn path closely matches NCBI BLAST+ rankings and statistics under matched parameters. A curated showcase and Learn mode present canonical algorithms and metrics as reusable demonstrations. string2string Studio is open-source and freely available at string2string.org.",
+      "authors": [
+        "Mirac Suzgun",
+        "James Zou",
+        "Stuart M. Shieber",
+        "Dan Jurafsky"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-04T17:48:15+00:00",
+      "link": "https://arxiv.org/pdf/2608.03984v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Interactive in-browser platform with C++ algorithms compiled to WebAssembly; source code likely available.",
+      "llm_evidence_cn": "交互式浏览器平台，C++算法编译为WebAssembly；提供源码，符合含代码论文要求。",
+      "llm_evidence": "交互式浏览器平台，C++算法编译为WebAssembly；提供源码，符合含代码论文要求。",
+      "canonical_evidence": "交互式浏览器平台，C++算法编译为WebAssembly；提供源码，符合含代码论文要求。",
+      "llm_tldr_en": "string2string Studio is an in-browser interactive platform for string-to-string algorithms, compiling C++ to WebAssembly for local execution. It integrates six modules with evidence-based feedback, supporting inspectable and reproducible analysis. Benchmarks show speedups. As a tool paper with available source code, it directly matches the requirement for code-providing papers.",
+      "llm_tldr_cn": "字符串算法研究常因工具安装复杂和数据需上传而难以开展。本文开发string2string Studio，一个在浏览器中运行的交互式平台，集成对齐、距离、相似度、搜索等六大模块，核心算法用C++编译为WebAssembly，本地即可高效运行。该平台提供证据反馈，使算法结果可检查、可调试，内部基准显示显著加速。作为开放可用的工具论文，它明确提供了可复现的代码，完全契合用户对含代码论文的需求。",
+      "llm_tldr": "字符串算法研究常因工具安装复杂和数据需上传而难以开展。本文开发string2string Studio，一个在浏览器中运行的交互式平台，集成对齐、距离、相似度、搜索等六大模块，核心算法用C++编译为WebAssembly，本地即可高效运行。该平台提供证据反馈，使算法结果可检查、可调试，内部基准显示显著加速。作为开放可用的工具论文，它明确提供了可复现的代码，完全契合用户对含代码论文的需求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.00450v2",
+      "source": "arxiv",
+      "title": "Revibing Code from Papers: Reimplementing HCI Artifacts",
+      "abstract": "Software artifacts for most technical HCI research projects are unavailable. The lack of access to these imposes limits on academic knowledge production. It is difficult to: extend or reuse research artifacts; use strong baselines in evaluating follow-up work; and perform replication or reproducibility research. In this work, we demonstrate the potential of new agentic AI technologies to revibe interactive software: reimplement systems directly from research papers. To measure the success of the approach, we describe a revibeability metric. By revibing recent research papers from UIST, and interviewing their original authors, we demonstrate the plausibility (and limitations) of revibed system. The results are encouraging. In many cases producing code suitable for strong baseline use. We argue that this may represent a fundamental shift in how we produce, use, and evaluate research artifacts in the technical HCI community.",
+      "authors": [
+        "Eytan Adar",
+        "Yoonjoo Lee",
+        "Nina Lei",
+        "Q. Vera Liao",
+        "Weirui Peng"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.SE"
+      ],
+      "published": "2026-08-01T05:18:25+00:00",
+      "link": "https://arxiv.org/pdf/2608.00450v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "reimplements systems directly from papers, improving reproducibility and code availability",
+      "llm_evidence_cn": "直接根据论文重实现系统，提升可复现性和代码可用性",
+      "llm_evidence": "直接根据论文重实现系统，提升可复现性和代码可用性",
+      "canonical_evidence": "直接根据论文重实现系统，提升可复现性和代码可用性",
+      "llm_tldr_en": "Explores agentic AI to reimplement interactive HCI systems from papers, introducing a revibeability metric; demonstrates feasibility and limitations, supporting reproducible research with code.",
+      "llm_tldr_cn": "针对人机交互领域研究软件工件普遍缺失、阻碍复现与扩展的问题，论文探索用智能体AI直接根据论文重实现可交互系统。他们提出可重实现性度量，并在UIST近期论文上开展验证，同时访谈原作者评估效果。结果显示多数场景能产出可用的代码，也揭示了若干限制。该工作直接推动了论文与代码的关联，是“论文带代码”与可复现研究的典型实践。",
+      "llm_tldr": "针对人机交互领域研究软件工件普遍缺失、阻碍复现与扩展的问题，论文探索用智能体AI直接根据论文重实现可交互系统。他们提出可重实现性度量，并在UIST近期论文上开展验证，同时访谈原作者评估效果。结果显示多数场景能产出可用的代码，也揭示了若干限制。该工作直接推动了论文与代码的关联，是“论文带代码”与可复现研究的典型实践。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.00921v1",
+      "source": "arxiv",
+      "title": "Refined Thompson Learning for Adaptive Bandits: Sustainable Power-Efficient Flexibility Scheduling Across Data Centers",
+      "abstract": "The rapid rise in energy consumption from large-scale AI workloads in data centers placed the increasing pressures on power grids in recent years. Since grids must maintain real-time bal- ance between supply and demand, there has been heightened interest in job flexibility services from data centers. We propose an adaptive, learning-based contextual restless multi-armed bandit (RMAB) framework in which the grid requests load reductions without requiring visibility into job (re)scheduling decisions. With multiple virtual machine (VM) datasets, the core strategy models a cyclic job queue and batch-level (re)scheduling within each data center as a Markov decision process (MDP), and derives Whittle-index-based policies computed from the learned transition and reward functions via Thompson sampling. To address the challenges of enlarging state space and sparse state visits, we introduce domain-knowledge-enriched refined strategies, including adaptive mixed strategies, gated priors, low-rank smoothing, and offline posterior support. Extensive simulations under both baseline and stress scenarios demonstrate that the cellwise best refined variant exceeds TW in every reported cell of the stress sweep at lower computational cost than EXP4. These results demonstrate the economic value of data center flexibility services and underscore the importance of high-quality, open-source AI workload datasets for developing and evaluating adaptive scheduling algorithms.",
+      "authors": [
+        "Yifu Ding",
+        "Zixi Chen",
+        "Ruicheng Ao",
+        "David Simchi-Levi",
+        "Thomas Magnanti"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-08-02T01:27:00+00:00",
+      "link": "https://arxiv.org/pdf/2608.00921v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Power-efficient flexibility scheduling across data centers with adaptive bandits",
+      "llm_evidence_cn": "跨数据中心的节能弹性调度，基于自适应臂",
+      "llm_evidence": "跨数据中心的节能弹性调度，基于自适应臂",
+      "canonical_evidence": "跨数据中心的节能弹性调度，基于自适应臂",
+      "llm_tldr_en": "This paper proposes an adaptive contextual restless bandit framework for power-efficient flexibility scheduling across data centers. It models cyclic job queues and batch rescheduling as MDPs, derives Whittle-index policies, and validates on VM datasets, supporting grid load reduction requests.",
+      "llm_tldr_cn": "该论文针对数据中心大规模AI负载带来的电网压力，提出一种基于上下文衰变多臂老虎机（RMAB）的自适应调度框架。电网无需干预具体作业调度，仅通过负载削减请求即可获得灵活性。核心方法将循环作业队列和批量重调度建模为马尔可夫决策过程，并导出Whittle指数策略。实验基于多个虚拟机数据集，验证了该框架在可持续节能调度上的有效性，为数据中心参与电网需求响应提供了学习型方案。",
+      "llm_tldr": "该论文针对数据中心大规模AI负载带来的电网压力，提出一种基于上下文衰变多臂老虎机（RMAB）的自适应调度框架。电网无需干预具体作业调度，仅通过负载削减请求即可获得灵活性。核心方法将循环作业队列和批量重调度建模为马尔可夫决策过程，并导出Whittle指数策略。实验基于多个虚拟机数据集，验证了该框架在可持续节能调度上的有效性，为数据中心参与电网需求响应提供了学习型方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.03491v1",
+      "source": "arxiv",
+      "title": "A repository for discovery and reuse of higher-order network datasets",
+      "abstract": "Higher-order network datasets are dispersed across publications, institutional archives, and software-specific collections, making them difficult to discover, compare, and reuse. We introduce the Aachen Higher-Order Repository of Networks (AHORN), a curated repository of standardized higher-order network datasets derived from publicly released sources. Each dataset entry links a converted dataset to its source, metadata, citation guidance, conversion code, and version history. The repository supports browsable and machine-readable discovery, revision-specific downloads, format validation, and exports for interoperable reuse. We describe the repository architecture, curation workflow, access tools, and the coverage and limitations of the catalog snapshot analyzed in this article.",
+      "authors": [
+        "Florian Frantzen",
+        "Michael T. Schaub"
+      ],
+      "primary_category": "cs.DL",
+      "categories": [
+        "cs.DL"
+      ],
+      "published": "2026-08-04T11:27:02+00:00",
+      "link": "https://arxiv.org/pdf/2608.03491v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "explicitly provides conversion code, metadata, and versioned repository for datasets, directly supporting code and data reuse",
+      "llm_evidence_cn": "明确提供转换代码、元数据和版本化仓库，直接支持代码与数据重用，是典型的含代码论文",
+      "llm_evidence": "明确提供转换代码、元数据和版本化仓库，直接支持代码与数据重用，是典型的含代码论文",
+      "canonical_evidence": "明确提供转换代码、元数据和版本化仓库，直接支持代码与数据重用，是典型的含代码论文",
+      "llm_tldr_en": "Introduces AHORN, a curated repository of higher-order network datasets with source, metadata, conversion code, and version history for discovery and reuse.",
+      "llm_tldr_cn": "论文构建了高阶网络数据集仓库AHORN，将分散的数据集统一收录，并为每个条目关联来源、元数据、引用指引、转换代码和版本历史。仓库支持浏览、机器可读发现、按版本下载、格式验证以及互操作导出。这有助于研究者快速发现和复用高阶网络数据，提升科学研究的可复现性和数据重用效率，是提供源代码的数据资源论文。",
+      "llm_tldr": "论文构建了高阶网络数据集仓库AHORN，将分散的数据集统一收录，并为每个条目关联来源、元数据、引用指引、转换代码和版本历史。仓库支持浏览、机器可读发现、按版本下载、格式验证以及互操作导出。这有助于研究者快速发现和复用高阶网络数据，提升科学研究的可复现性和数据重用效率，是提供源代码的数据资源论文。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.03535v1",
+      "source": "arxiv",
+      "title": "CodeAssay: A Multi-Metric Benchmark with Audited Ground Truth for LLM Code Generation",
+      "abstract": "Large Language Models are increasingly evaluated for code generation using test-based benchmarks. The validity of such evaluations depends on the reliability of their references and tests, while test-based correctness captures only part of the observable properties of generated code. We present CodeAssay, a taxonomy-first benchmark of 185 Python tasks across ten software-engineering categories. It combines audited ground truth, public tests for generation and repair, hidden tests for grading, mutation-based test-suite validation, and selected code-property measures. Regrading fixed model outputs after the audit changed 170 of 1,890 correctness labels (9.0%) and increased the measured best-to-worst model spread from 11.9 to 23.7 percentage points, although aggregate correctness remained nearly unchanged. The complete and hidden test suites achieved mutation scores of 82.6% and 74.8%, respectively. Across seven proprietary LLMs, standard-prompt correctness ranged from 77.3% to 98.9%, with significant differences in 12 of 21 model pairs. On the 120 tasks solved by all 14 model-prompt configurations, no model performed best across all selected code properties. A security-focused prompt produced no significant change in correctness or consistent reduction in the selected static-analysis findings, while increasing program length and cyclomatic complexity across all models. These findings show that reliable evaluation of LLM-generated code requires validated ground truth, protected tests, and multiple explicitly interpreted measures. CodeAssay provides a reproducible basis for evidence-based model evaluation in AI-augmented software development.",
+      "authors": [
+        "Shahbaz Siddeeq",
+        "Muhammad Waseem",
+        "Umar Subhan Malhi",
+        "Pekka Abrahamsson"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-04T12:15:17+00:00",
+      "link": "https://arxiv.org/pdf/2608.03535v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark for LLM code generation with audited ground truth, likely includes code",
+      "llm_evidence_cn": "面向LLM代码生成的审计基准，通常随文发布评测代码",
+      "llm_evidence": "面向LLM代码生成的审计基准，通常随文发布评测代码",
+      "canonical_evidence": "面向LLM代码生成的审计基准，通常随文发布评测代码",
+      "llm_tldr_en": "CodeAssay is a multi-metric benchmark of 185 Python tasks with audited ground truth, public/hidden tests, and mutation validation; regrading after audit changed 9% of labels, improving model spread assessment.",
+      "llm_tldr_cn": "针对基于测试的大模型代码生成评测中标签与测试可靠性不足的问题，论文提出CodeAssay基准。它包含185个Python任务和十个软件工程类别，提供审计过的真实标签、公开与隐藏测试以及变异测试验证。审计后重新标记改变了9.0%的正确性标签，使最佳与最差模型差距从11.9%增至23.7%。该基准的评测工具链通常随论文开源，是典型的代码论文。",
+      "llm_tldr": "针对基于测试的大模型代码生成评测中标签与测试可靠性不足的问题，论文提出CodeAssay基准。它包含185个Python任务和十个软件工程类别，提供审计过的真实标签、公开与隐藏测试以及变异测试验证。审计后重新标记改变了9.0%的正确性标签，使最佳与最差模型差距从11.9%增至23.7%。该基准的评测工具链通常随论文开源，是典型的代码论文。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

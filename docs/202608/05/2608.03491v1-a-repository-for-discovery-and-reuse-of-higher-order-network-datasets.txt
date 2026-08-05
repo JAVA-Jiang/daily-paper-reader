@@ -1,0 +1,246 @@
+Title: A repository for discovery and reuse of higher-order network datasets
+
+URL Source: https://arxiv.org/pdf/2608.03491v1
+
+Published Time: Wed, 05 Aug 2026 00:56:33 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# A repository for discovery and reuse of higher-order network datasets 
+
+# Florian Frantzen 1,∗ and Michael T. Schaub 11Faculty of Computer Science, RWTH Aachen University, Aachen, Germany 
+
+∗Correspondence: frantzen@netsci.rwth-aachen.de 
+
+Higher-order network datasets are dispersed across publications, institutional archives, and software-specific collections, making them difficult to discover, compare, and reuse. We introduce the Aachen Higher-Order Repository of Networks ( AHORN ), a curated repository of standardized higher-order network datasets derived from publicly released sources. Each dataset entry links a converted dataset to its source, metadata, citation guidance, conversion code, and version history. The repository supports browsable and machine-readable discovery, revision-specific downloads, format validation, and exports for interoperable reuse. We describe the repository architecture, curation workflow, access tools, and the coverage and limitations of the catalog snapshot analyzed in this article. 
+
+# 1 Introduction 
+
+Many complex systems contain interactions involving more than two entities 1;2 . Examples include coau-thorship groups 3, protein interaction systems 4, and social contacts 5. Representing these systems only as dyadic graphs can obscure structural and dynamical features created by multi-way relationships 1–5 .Accordingly, higher-order network formalisms, including hypergraphs and simplicial complexes, have been increasingly adopted to analyze the structural and dynamical properties of such systems. Their wider use has increased the need for datasets that can be discovered, interpreted, and reused across domains such as neuroscience, social science, and biology. Curated repositories therefore form an important part of the research infrastructure: they support empirical analysis, reproducible benchmarking, and comparison across heterogeneous datasets. Despite these advances, higher-order datasets remain challenging to discover and reuse in a systematic manner, in tension with the broader objective of ensuring that research data are findable, accessible, interoperable, and reusable 6. In practice, researchers often depend on dispersed sources, personal collections, or labor-intensive reconstruction from raw records. Differences in file formats, metadata conventions, provenance documentation, and versioning further hinder cross-method comparison and reproducible assessment of dataset suitability. In this article, we present AHORN (Aachen Higher-Order Repository of Networks), a curated repository for higher-order network research. AHORN transforms publicly released source datasets into standardized higher-order network artifacts, documents their provenance, and provides access through a web catalog and companion programmatic tooling. 
+
+AHORN implements an open-source workflow for dataset submission, validation, and publication. Its contribution is infrastructural: it provides a repository layer that makes curated higher-order datasets inspectable, citable, and easier to reuse across software ecosystems. Figure 1 summarizes AHORN ’s role in the dataset lifecycle. 1arXiv:2608.03491v1 [cs.DL] 4 Aug 2026 Upstream Datasets                   
+
+> For example:
+> •Social data
+> •Collaboration and review data
+> •Biomedical data
+> Contributor
+> •Dataset Converter
+> •Writes datasheet
+> •Prepares release files
+> Maintainers
+> •Review submissions
+> •Validate metadata
+> •Maintain website
+> Zenodo repository
+> •Versioned data files
+> •Stable, citable DOI
+> •Reproducible retrieval
+> Browsable website
+> •Dataset pages
+> •Metadata and statis-tics
+> •Search and compari-son
+> Consumer / User
+> •Browse statistics
+> •Download and cite data
+> •Reuse in analyses
+
+AHORN platform  
+
+> submit
+> select upload
+> publish
+> link
+> retrieve & cite
+> browse
+
+Figure 1: Overview of the AHORN platform. Contributors transform source datasets into a common exchange format and upload versioned files to Zenodo; maintainers review submissions and publish catalog entries that support discovery, citation, programmatic access through 
+
+ahorn-loader , and downstream reuse. 
+
+1.1 Related Work 
+
+While substantial repositories for higher-order network data remain scarce, several notable initiatives have emerged in recent years. Antelmi et al. 7 introduced the HypergraphRepository , a web-based collection of hypergraph datasets with basic descriptive statistics and visualization capabilities; however, this resource is currently inaccessible. Within the XGI software ecosystem 8, the XGI-DATA initiative provides a complementary resource. Similarly, the recently published hypergraphx-data is maintained as part of the hypergraphx ecosys-tem 9;10 , offering higher-order datasets designed for integration with the associated library. However, both initiatives are organized around their respective software stacks rather than constituting inde-pendent repository infrastructure. While hypergraphx-data provides similar discoverability features through a web interface, XGI datasets are accessible only through their software API. The curated collection maintained by Austin R. Benson is another important source of higher-order network datasets 11 . Although not a repository in the strict sense, it has become an essential reference resource for studies of social, biological, and collaboration networks. Graph repositories are more mature and broader in scope, with established catalogs including 
+
+KONECT 12 , SNAP 13 , ICON 14 , Network Repository 15 , and Netzschleuder 16 . Although some datasets in these collections admit higher-order interpretations, such structure is only implicit and requires explicit reconstruction by end users. Furthermore, these repositories do not provide discovery and access mechanisms tailored to higher-order network analysis. Table 1 summarizes these distinctions. 
+
+# 2 Repository Design 
+
+2.1 Curation Workflow 
+
+AHORN curates datasets derived from publicly released source material rather than collecting new data. Its scope encompasses resources whose interactions can be represented as simplicial complexes, cell complexes, hypergraphs, or related higher-order network formalisms, and whose redistribution is compatible with the upstream license. Candidate datasets must have an identifiable upstream source, sufficient metadata for attribution and reuse, and an inspectable and reproducible conversion path. The existing catalog draws on several source families. Many entries originate from the higher-order network collection by Benson and collaborators 11 , including coauthorship, question-answering, legislative, contact, review, shopping, and recipe datasets. Additional sources include commonly used 2Table 1: Comparison of network repositories with respect to access modality, native support for higher-order data, and software interoperability.                                                  
+
+> Web API
+> ICON ,SNAP ,KONECT ,
+> Network Repository ,
+> Netzschleuder
+> Broad network archive ✓∼∼✗✗∼
+> HypergraphRepository Catalog / index ∼b✗∼✓✗✗
+> XGI-DATA Library data bundle ∼✓✓✓✓XGI
+> hypergraphx-data Library data bundle ✓✓✓✓∼hypergraphx
+> AHORN Standalone repository ✓✓✓✓✓ahorn-loader
+> Repository Repository model
+> Access Dataset Stats
+> Native higher-order
+> Availability Guarantees a
+> Companion library
+> Legend: ✓available; ∼partial or software-specific; ✗not available.
+> aStable, revision-addressable dataset releases backed by long-term archival hosting rather than mutable repository files.
+> bThe URL reported for HypergraphRepository was unavailable when checked on 29 July 2026.
+
+citation and coauthorship benchmark files, graph examples available through NetworkX and lifted to higher-order representations, and triangulated manifold data from the MANTRA 17 benchmark. This mixture gives the repository both broad domain coverage and a practical test bed for converters that must handle different raw formats, metadata conventions, and interaction semantics. Every dataset is processed by a source-specific converter script committed with the repository, ensuring reproducibility and traceability of the provided dataset files. The converters parse the upstream representation, normalize node and interaction identifiers, and write the result in the canonical AHORN 
+
+exchange format. For graph sources, converters lift the source graph to the intended higher-order representation, such as a clique complex, while preserving node and edge attributes. For multi-network or matrix-based sources, preprocessing records additional structure explicitly: the MANTRA converter writes manifold-level network metadata, and the drug-target converter turns interaction and similarity matrices into rank-labeled cells. The recipe data are published both as a combined cooking dataset and as cuisine-specific child datasets, sharing the same converter and source provenance. Datasets are incorporated through an open-source workflow in which contributors submit a converter, a dataset page, and the corresponding dataset file. Loosely inspired by the datasheet framework of Gebru et al. 18 , each dataset page records provenance, collection context, recommended citation, licensing or usage constraints, known limitations, and summary statistics. Maintainers review proposed entries for metadata completeness, converter reproducibility, provenance clarity, validation success, and consistency with repository conventions. Accepted datasets are released as versioned artifacts, with prior releases retained to support stable citation and reproducible analyses in line with established data-citation practices 19 . If errors, upstream changes, or rights-holder objections are reported, maintainers can revise metadata, publish a corrected revision, or remove redistributed files from public access. 
+
+2.2 Access and Data Format 
+
+AHORN exposes repository content through two access routes. The public website provides a browsable catalog with search and filter functions for human discovery. Catalog entries provide source information, provenance, citation guidance, downloadable files, and visual summaries where supported by the metadata. Published revisions are archived as versioned Zenodo records, providing persistent landing pages and revision-addressable access. In parallel with the human-readable web interface, AHORN publishes a machine-readable dataset index at https://ahorn.rwth-aachen.de/api/datasets.json . This endpoint exposes dataset identifiers, titles, tags, and files for programmatic discovery and retrieval. 
+
+AHORN separates citation of the repository infrastructure from citation of individual dataset listings. 3Users who refer to AHORN as a repository or platform should cite this article. Users who analyze a specific dataset should cite the original source publication listed on the AHORN dataset page, possibly together with the corresponding Zenodo record so that the exact dataset version can be identified. Datasets are distributed in a line-based plain-text format, currently version 0.3, with optional gzip compression. The first line contains dataset-level metadata as a JSON object. Subsequent lines define explicit nodes or interactions; an interaction is represented by a comma-separated list of node identifiers, and either record type may be followed by a JSON attribute object. Nodes without attributes can be declared implicitly through their interactions. Multi-network files use JSON marker lines to delimit constituent networks. Standardized attributes include weights and ISO 8601 timestamps, while dataset-specific attributes can represent labels or other source information. The explicit versioning of the format allows the specification to evolve in a controlled manner. Compared with related interchange efforts such as the Hypergraph Interchange Format 20 , the canonical 
+
+AHORN format prioritizes low-friction publication and human readability. For datasets whose structure is covered by the HIF schema, AHORN additionally publishes HIF exports, enabling reuse by HIF-compatible software such as XGI 8, HyperNetX 21 , and SimpleHypergraphs.jl 22 . The full specification, including examples and required fields, is maintained at https://ahorn.rwth-aachen.de/about/format/ .
+
+# 3 Access and Validation 
+
+To facilitate the integration of AHORN into reproducible research workflows, we developed ahorn-loader ,which is provided both as a Python library and as a language-agnostic command-line interface for programmatic repository access. The tool supports two tasks: (i) retrieval of (revision-pinned) datasets and (ii) pre-submission validation of dataset files against AHORN requirements. 
+
+ahorn-loader provides a lightweight interface for browsing the catalog and downloading datasets. Downloads are cached locally, and datasets in the canonical AHORN format can be opened as iterable text streams for direct use in analysis scripts. Where available, other dataset formats can be downloaded through an explicit format switch. Revision-pinned calls allow benchmark workflows to retrieve fixed dataset snapshots without new dataset revisions affecting reproducibility. The built-in validator ensures that datasets adhere to the specification (cf. Section 2.2) and running it is a prerequisite for adding any new dataset to the repository. It checks syntactic validity, proper use of standardized metadata fields, and structural compliance with the dataset format. Automated tests cover both the access API and validator. 
+
+# 4 Repository Coverage 
+
+At the time of writing this article, AHORN contains 83 datasets with 94 revisions. The catalog spans four formalism groups, multiple application domains, and both static and temporal settings, including social contact networks, collaboration and citation data, consumer-review systems, biomedical resources, and geometric benchmark collections. This coverage makes AHORN useful both as a source of individual benchmark files and as a cross-domain corpus. For each dataset, we measured the number of unique nodes, the number of interactions, the interaction-size profile, the mean and maximum interaction size, the share of interactions of size greater than two, the share of unique interaction member sets, as well as the share of active nodes that participate in at least one interaction, the interaction-membership density per node, and the effective number of interaction sizes derived from the entropy of the interaction-size distribution. Repository composition is heterogeneous but centered on datasets that support straightforward higher-order interpretations. Of the 83 datasets, 75 are annotated as hypergraphs, 44 are simplicial complexes, and one is a combinatorial complex (multi-selection possible). Temporal structure is present in 15 datasets. The groups also differ in structural scale: the median maximum interaction size is 5.0
+
+4reviews 
+
+> food
+> communication
+> collaboration
+> social
+> biomedical
+> proximity
+> similarity
+> 0
+> 10
+> 20
+> Count
+
+Domain Distribution    
+
+> node classes node labels edge classes edge labels
+> 0
+> 5
+> 10
+> 15
+
+Metadata Distribution    
+
+> Hypergraph Simplicial Complex Combinatorial Complex Multiple
+
+Figure 2: Catalog-level distributions across datasets, stratified by network type. The left panel depicts the distribution across application domains, whereas the right panel summarizes metadata availability. for simplicial complexes, 30 .0 for hypergraphs, and 81 .0 for datasets with multiple types; the single combinatorial complex reaches 315 .Moreover, metadata coverage is high for the core discovery fields. Figure 2 summarizes the distribution of application domains and the presence of metadata across datasets. Scale varies over several orders of magnitude (Figure 3). The datasets range from 4 to 2 321 767 
+
+nodes and from 3 to 12 741 779 interactions. This breadth reflects both compact benchmarks for method prototyping and larger empirical case studies. The scatter also highlights structurally distinct outliers, including MANTRA collections with many simplices despite small per-instance node sets and large coauthorship or review datasets with millions of nodes and interactions. Typical datasets are nevertheless dominated by small interactions: the median per-dataset share is 23 .6% for size 2 and 
+
+13 .6% for size 3, and generally decreases for larger exact interaction sizes. Additional heterogeneity emerges beyond raw scale. Across the full catalog, the median share of unique interactions is 98 .6%, while the median active-node share is 100 .0%. These medians hide several distinct reuse regimes. The MANTRA collections and the temporal contact datasets are dominated by repeated member sets, with unique-interaction shares between 0.04 % and 11 .9%, whereas benchmarks such as MAG-10 and Drug-Target Interaction contain only unique interaction sets. Likewise, several citation-style datasets contain many declared but inactive nodes in the released file, including PubMed Co-Citation with an active-node share of 19 .5% and CiteSeer Co-Citation with 44 .0%. The effective number of interaction sizes ranges from 1.0 in the fixed-size MANTRA collections to 5.0 in Vegas Bars Reviews (Dance Clubs), showing that the current repository spans both tightly constrained and broadly distributed higher-order interaction patterns. For datasets with node or edge labels, label imbalance 23 is reported in Figure 4. Within that subset, node-labeled datasets span a wide range from 0.007 in Senate Committees to 1218 .1 in MathOverflow Answers, whereas edge-labeled datasets occupy a narrower band between 3.56 and 20 .28 . This view complements the structural profile by showing how concentrated the class distributions are in benchmark-style supervised datasets. The complete dataset catalog is provided as supplementary material. 510 1 10 2 10 3 10 4 10 5 10 6 10 7
+
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Number of Nodes
+> Number of Interactions
+
+Dataset scale       
+
+> Network type Temporal status
+> Hypergraph static
+> Simplicial Complex temporal
+> Combinatorial Complex
+> Multiple
+> 510 15 20
+> 0
+> 10
+> 20
+> Interaction size
+> Median share of interactions (%)
+
+Interaction-size distribution 
+
+Figure 3: Dataset scale and interaction-size distributions across the repository. The Dataset scale 
+
+panel presents individual datasets, stratified by their number of nodes and interactions, with coloring denoting formalism groups and marker shapes differentiating between temporal and static datasets. The Interaction-size distribution panel illustrates the median per-dataset proportion of interactions as a function of interaction size (truncated at 20 ). 
+
+# 5 Discussion 
+
+AHORN provides a curated repository layer for higher-order network data that combines standardized file formats with provenance records, citable and stable versioning, and easy access routes. Together, these components address a practical gap in higher-order network research, where datasets are often reused without a shared mechanism for discovery, revision tracking, or inspection of the derived representation. The repository overview shows that AHORN already spans several distinct settings: compact pedagogical benchmarks, repeated-event temporal datasets, and large collections with millions of nodes or interactions. Because entries are linked to upstream sources and released as stable revisions, they can be compared reproducibly across workflows and libraries. Several limitations remain. Domain coverage is shaped by the availability of public sources, converter effort, documentation quality, and redistribution permissions. Metadata completeness also depends partly on upstream documentation, which is reflected in uneven coverage of citation and licensing information. The catalog summaries treat parent datasets and their derived sub-datasets as separate observations; they therefore describe the repository’s published inventory rather than a set of statistically independent source datasets. The current exchange-format specification does not yet standardize directed interactions or trajectory data. Finally, a dataset page documents the known upstream license or usage conditions but does not grant rights beyond those conditions. 
+
+AHORN is already integrated into TopoNetX 24 , allowing users of that library to access and analyze higher-order datasets through familiar APIs. The publication of HIF exports provides a complementary interoperability route for HIF-compatible libraries and workflows. Further interoperability with commu-nity software and continued expansion of metadata and license coverage should improve reuse while preserving the repository’s focus on transparent curation and stable access. 610 −2 10 0 10 2
+
+> MathOverflow Answers
+> Trivago Clicks
+> Amazon Reviews
+> Walmart Trips
+> Cora Co-Authorship
+> Cora Co-Citation
+> DBLP Co-Authorship
+> CiteSeer Co-Citation
+> PubMed Co-Citation
+> House Bills
+> House Committees
+> Senate Bills
+> Senate Committees
+> 1,218 .12
+> 129 .23
+> 20 .45
+> 7.4
+> 4.27
+> 3.3
+> 2.27
+> 1.27
+> 0.33
+> 0.06
+> 0.04
+> 0.02
+> 0.01
+> Imbalance Degree
+
+Node Labels  
+
+> 10 0.510 1
+> Algebra Questions
+> Geometry Questions
+> Cooking
+> Vegas Bars Reviews
+> MAG-10
+> Madison Restau-rant Reviews
+> Music Blues Reviews
+> 20 .28
+> 15 .28
+> 13 .31
+> 5.33
+> 5.22
+> 4.31
+> 3.56
+> Imbalance Degree
+
+Edge Labels 
+
+Figure 4: Label imbalance degrees (using Euclidean distance) for all datasets with node or edge labels. 
+
+# 6 Data and Code Availability 
+
+The AHORN web platform is accessible at https://ahorn.rwth-aachen.de/ , with machine-readable discovery metadata available at https://ahorn.rwth-aachen.de/api/datasets.json . Dataset pages link to versioned files hosted via Zenodo ( https://zenodo.org/communities/ahorn/ ), preserving individual releases as stable snapshots. The source code for the platform and dataset processing is publicly available at https://github. com/netsci-rwth/ahorn under the GNU Affero General Public License v3.0. The companion Python package ahorn-loader , which provides download and validation functions, is available at https: //github.com/netsci-rwth/ahorn-loader under the MIT License and is distributed via PyPI ( https: //pypi.org/project/ahorn-loader/ ). 
+
+# References 
+
+[1] Battiston, F. et al. Networks beyond pairwise interaction: Structure and dynamics. Physics Reports 874 , 1–92 (2020). [2] Battiston, F. et al. The physics of higher-order interactions in complex systems. Nature Physics 
+
+17 , 1093–1098 (2021). [3] Benson, A. R., Abebe, R., Schaub, M. T., Jadbabaie, A. & Kleinberg, J. Simplicial closure and higher-order link prediction. Proceedings of the National Academy of Sciences of the United States of America 115 , E11221–E11230 (2018). [4] Murgas, K. A., Saucan, E. & Sandhu, R. Hypergraph geometry reflects higher-order dynamics in protein interaction networks. Scientific Reports 12 , 20879 (2022). [5] Neuhäuser, L., Lambiotte, R. & Schaub, M. T. Consensus Dynamics and Opinion Formation on Hypergraphs. In Battiston, F. & Petri, G. (eds.) Higher-Order Systems , 347–376 (Springer International Publishing, Cham, 2022). [6] Wilkinson, M. D. et al. The FAIR Guiding Principles for scientific data management and stewardship. Scientific Data 3, 160018 (2016). 7[7] Antelmi, A., De Vinco, D. & Spagnuolo, C. HypergraphRepository: A Community-Driven and Interactive Hypernetwork Data Collection. In Dewar, M. et al. (eds.) Modelling and Mining Networks , vol. 14671, 159–173 (Springer Nature Switzerland, Cham, 2024). [8] Landry, N. W. et al. XGI: A Python package for higher-order interaction networks. Journal of Open Source Software 8, 5162 (2023). [9] Lotito, Q. F. et al. Hypergraphx: A library for higher-order network analysis. Journal of Complex Networks 11 , cnad019 (2023). [10] Lotito, Q. F., Betti, L., Nortier, B., Montresor, A. & Battiston, F. Hypergraphx-data: A repository for higher-order network data. Journal of Complex Networks 14 , cnag014 (2026). [11] Benson, A. R. Austin R. Benson datasets. https://www.cs.cornell.edu/~arb/data/. [12] Kunegis, J. KONECT: The Koblenz network collection. In Proceedings of the 22nd International Conference on World Wide Web , 1343–1350 (ACM, Rio de Janeiro Brazil, 2013). [13] Leskovec, J. & Krevl, A. SNAP Datasets: Stanford large network dataset collection. http://snap.stanford.edu/data (2014). [14] Clauset, A., Tucker, E. & Sainz, M. The Colorado Index of Complex Networks. https://icon.colorado.edu (2016). [15] Rossi, R. A. & Ahmed, N. K. An Interactive Data Repository with Visual Analytics. ACM SIGKDD Explorations Newsletter 17 , 37–41 (2016). [16] Peixoto, T. P. The Netzschleuder network catalogue and repository (2020). [17] Ballester, R. et al. MANTRA: The manifold triangulations assemblage. In The Thirteenth International Conference on Learning Representations (2025). [18] Gebru, T. et al. Datasheets for Datasets. Communications of the ACM 64 , 86–92 (2021). [19] Data Citation Synthesis Group. Joint Declaration of Data Citation Principles. Tech. Rep., Force11 (2014). [20] Coll, M. et al. HIF: The hypergraph interchange format for higher-order networks (2025). [21] Praggastis, B. et al. HyperNetX: A Python package for modeling complex network data as hypergraphs. Journal of Open Source Software 9, 6016 (2024). [22] Spagnuolo, C. et al. Analyzing, Exploring, and Visualizing Complex Networks via Hypergraphs using SimpleHypergraphs.jl. Internet Mathematics (2020). [23] Ortigosa-Hernández, J., Inza, I. & Lozano, J. A. Measuring the class-imbalance extent of multi-class problems. Pattern Recognition Letters 98 , 32–38 (2017). [24] Hajij, M. et al. TopoX: A Suite of Python Packages for Machine Learning on Topological Domains. 
+
+Journal of Machine Learning Research 25 , 1–8 (2024). 
+
+# Funding 
+
+The authors acknowledge funding by the European Union (ERC, HIGH-HOPeS, 101039827). Views and opinions expressed are however those of the authors only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them. 8Ethics Statement 
+
+This study did not generate new human or animal data. Ethical approval, informed consent, anonymiza-tion, and study-specific governance remain with the original data creators and are described in the corresponding source publications or repository records where applicable. Inclusion in AHORN does not replace the ethical and legal assessment required for a specific downstream use. 9

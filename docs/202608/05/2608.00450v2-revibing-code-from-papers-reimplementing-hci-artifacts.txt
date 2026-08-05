@@ -1,0 +1,1057 @@
+Title: Revibing Code from Papers: Reimplementing HCI Artifacts
+
+URL Source: https://arxiv.org/pdf/2608.00450v2
+
+Published Time: Wed, 05 Aug 2026 00:29:23 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Revibing Code from Papers: Reimplementing HCI Artifacts 
+
+## Eytan Adar 
+
+eadar@umich.edu University of Michigan, Ann Arbor USA 
+
+## Yoonjoo Lee 
+
+yoonjoo@umich.edu University of Michigan, Ann Arbor USA 
+
+## Ning-Er (Nina) Lei 
+
+nnlei@umich.edu University of Michigan, Ann Arbor USA 
+
+## Q. Vera Liao 
+
+veraliao@umich.edu University of Michigan, Ann Arbor USA 
+
+## Weirui Peng 
+
+weiruip@umich.edu University of Michigan, Ann Arbor USA Claude Cursor Gemini 
+
+> Spellburst  Rescribe
+
+Figure 1: Screenshots of two revibed interfaces ( Spellburst [ 1 ] and Rescribe [42 ]) produced by three different agentic environments (Claude Code, Cursor, and Gemini) 
+
+Abstract 
+
+Software artifacts for most technical HCI research projects are un-available. The lack of access to these imposes limits on academic knowledge production. It is difficult to: extend or reuse research artifacts; use strong baselines in evaluating follow-up work; and perform replication or reproducibility research. In this work, we demonstrate the potential of new agentic AI technologies to revibe 
+
+interactive software: reimplement systems directly from research papers. To measure the success of the approach, we describe a re-vibeability metric. By revibing recent research papers from UIST, and interviewing their original authors, we demonstrate the plausi-bility (and limitations) of revibed system. The results are encourag-ing. In many cases producing code suitable for strong baseline use. We argue that this may represent a fundamental shift in how we produce, use, and evaluate research artifacts in the technical HCI community.  
+
+> This work is licensed under a Creative Commons Attribution 4.0 International License.
+> UIST ’26, Detroit, MI, USA
+> ©2026 Copyright held by the owner/author(s). ACM ISBN 979-8-4007-2856-3/2026/11 https://doi.org/10.1145/3830398.3830627
+
+CCS Concepts 
+
+• Human-centered computing → HCI design and evaluation methods ; User interface programming .
+
+Keywords 
+
+Reimplementation, Open Science, Vibe-coding, Revibeability 
+
+ACM Reference Format: 
+
+Eytan Adar, Yoonjoo Lee, Ning-Er (Nina) Lei, Q. Vera Liao, and Weirui Peng. 2026. Revibing Code from Papers: Reimplementing HCI Artifacts. In The 39th Annual ACM Symposium on User Interface Software and Technology (UIST ’26), November 02–05, 2026, Detroit, MI, USA. ACM, New York, NY, USA, 16 pages. https://doi.org/10.1145/3830398.3830627 
+
+1 Introduction 
+
+While artifacts are the key aspect of technical HCI research, they are rarely made available. This limitation means that scientific knowledge production is constrained. The challenge in obtaining or reimplementing artifacts means that a researcher cannot easily extend or reuse technical innovations. Replication or reproducibil-ity studies are impossible to implement. In the context of UIST-type evaluations, new tools cannot be properly evaluated through A-B studies because we do not have access to B, the strong baseline .arXiv:2608.00450v2 [cs.HC] 4 Aug 2026 UIST ’26, November 02–05, 2026, Detroit, MI, USA Adar et al. 
+
+Arguably, the lack of access to artifacts skews knowledge produc-tion towards isolated novelty. That is, since it is harder to claim a contribution when a related system exists—but cannot be directly compared against—researchers might prefer to build in a completely new space. Today, there is very little to motivate the sharing of orig-inal code in technical HCI. There is perhaps even less to motivate reimplementation. Doing so is challenging and often unreward-ing/unrewarded. Creating one artifact was hard enough, let alone trying to replicate another. Agentic programming tools [ 14 , 19 , 35 ] may be changing this landscape. LLM-driven tools such as Microsoft’s Copilot, Google’s Antigravity, Cursor, Anthropic’s Claude Code, and OpenAI’s Codex 1,have become the ‘habitat’ for many developers and researchers. The consequence is that it is now far easier to create certain kinds of technical artifacts. Additionally, it is also far easier to reimplement 
+
+artifacts. Agentic tools allow researchers to effectively reconstruct research artifacts when they are not available. However, the success of reimplementation will be influenced by several factors: namely, the content of the paper, the capabilities of the agentic tools, and the programming skills of the developer (i.e., the person carrying out the reimplementation). Vibe-coding, a narrower agentic programming paradigm introduced by Andrej Karpathy [ 54 ], assumes that a system can be built without the developer touching the code, but only through natural-language prompting. In this paper, we argue for the idea of using vibe-coding, or more specifically revibe -coding, to understand how well a sys-tem can be reimplemented directly from a technical HCI paper by a diverse set of agentic tools. By removing the influence of the developer’s programming skills, we can identify a reimplementa-tion ‘floor.’ That is, we can determine how close we can get to a reimplementation based solely on the content of a paper. In our definition, to revibe (the verb) is to reimplement a software artifact based only on the academic article describing it. A revibe 
+
+(noun) is the reconstructed artifact. The success of a revibe will depend on what it is to be used for (in much the same way as any reimplementation). For example, if we are trying to replicate an experiment or reproduce a result, high fidelity may be necessary. If we are trying to extend the system or use some features of it, we may settle for lower fidelity. In this work, we focus on a middle ground: a sufficient reimplementation of that artifact so that it can serve as a strong baseline . That is, we would like the reimplementation to be sufficiently interaction– or feature–complete so that it can be used in an A-B style test. We propose a specific measure of success, 
+
+revibeability , which uses a structured, system-specific testing rubric to elicit grading judgments as a quality measure. Neither revibing 
+
+nor revibeability requires that the developer touch any code directly. To test this concept, we revibe ten different systems from recent UIST conferences (see Figure 1 for examples). These are software tools that do not have a publicly available implementation. For each of the papers, we revibe them 2-3 times each using Cursor, Gemini, and Claude (a total of 27 reimplementations). We show how 
+
+revibeability rubrics can be automatically constructed and used to measure and improve the revibes. Feeding the graded rubric back to the agent with instructions to fix the system can correct many 
+
+> 1see: https://copilot.microsoft.com/, https://antigravity.google/, https://cursor.com/, https://claude.com/product/claude-code, and https://openai.com/codex/
+
+system issues. With a fixed number of these feedback prompts (𝑁 = 2), we demonstrate that we can achieve 94% revibeability 
+
+(mean, 80% min, and 100% max) on the tested systems. To further evaluate the revibes, we interviewed authors of three of the sampled papers. We also analyze different approaches to create revibeability 
+
+rubrics and perform a qualitative evaluation of the successes and failures in the reimplemented systems. Although imperfect, our results are encouraging. With improve-ments to agentic programming tools and more directed programmer feedback, we might expect even higher-fidelity revibes that can serve as strong baselines and other purposes of academic knowl-edge reproduction. The implications of revibeability of technical HCI papers are significant. In discussion, we describe the potential impact on system evaluation and how revibing (and agentic devel-opment) can support new forms of knowledge construction in the technical HCI field 2.
+
+2 Related Work 
+
+We focus on two related lines of research: the use of AI in re-producing, replicating, or extending scientific work; and work on reproducibility and reimplementation in the HCI community. 
+
+2.1 AI-Driven Replication 
+
+LLMs, and in particular coding agents, have led to a significant body of research in replicating scientific work. However, this is largely in the context of data analysis or algorithmic/AI work. The potential of the approach is compelling for many disciplines. We have seen examples in political science [ 61 ], social sciences [ 26 ], astrophysics [ 64 ], natural language processing [ 62 ], and machine learning [ 27 , 46 ]. Most of these projects can be evaluated directly by contrasting the results from the data analysis or algorithms done by the AI agents with what the original work produces. For example, if the AI created a modeling pipeline based on the paper and the model performance matches that of the original paper, the replication can be considered successful. Various benchmarks have evolved to test (and drive improvement in) AI’s capabilities to reimplement such research. For example, PaperBench is used to test LLM’s capabilities in replicating AI research [ 50 ]. Deep-Reproducer [ 8] demonstrates an improvement on this benchmark with a multi-agent framework using the concept of ‘self-evolving debugging’, achieving a 63.2% replication score. We note that replication in this type of research is easier because evaluation is highly objective and can be automated. PaperBench, for example, uses an ‘LLM-as-judge’ approach for evaluation. The output of technical HCI work is often software with an interface that cannot be evaluated in the same way. Other related approaches use agentic tools to check the con-sistency between the paper and the released software [ 4] or the reproducibility of key results [ 49 ]. A key feature of many agentic systems is their ability to use ‘web tools’ (i.e., access to search en-gines and retrieved results) to build software. For example, an agent may decide to use a specific web framework and will search for code examples or manuals. A more academic version of this is to build a database aligning code and techniques in papers [ 37 , 66 ]. The  
+
+> 2See https://github.com/datamazelab/revibe-public for additional supplementary in-formation and scripts. Revibing Code from Papers: Reimplementing HCI Artifacts UIST ’26, November 02–05, 2026, Detroit, MI, USA
+
+agents can then isolate and reuse parts of the code that implement important functions. Such approaches can enhance scientific devel-opment by improving code [ 39 ] and transforming code repositories into libraries for other use [ 31 ]. Others have attempted to use LLMs to extend existing research with untested hypotheses [ 17 ] or to suggest new research ideas [ 48 ]. However, these have had limited success with current models and approaches. With revibeability , we are specifically interested in vibe-coded development directly from HCI papers. We do not count on the existence of the original code, data, or the availability of automated testing. Addressing these constraints requires the development of alternative ways to guide agentic tools and evaluate their results. We are interested in whether current popular agentic programming tools can perform this task. Rather than just benchmarking their capabilities, we use a small but representative set of UIST papers (𝑁 = 10 ) to also gain a qualitative understanding of how these tools succeed or fail in reimplementation. 
+
+2.2 HCI Reproducibility 
+
+The ACM provides a number of ‘badges’ to encourage open sci-ence [ 2]. This includes: repeatability (same team, same experimental setup); reproducibility (different team, same experimental setup); and replicability (different team, different setup). Additionally, an ‘artifact available’ badge (with sub-types of ‘reusable’ and ‘func-tional’) has also been produced. Different special interest groups and conferences have used these badges on papers. However, HCI in general (and technical HCI specifically) has not adopted these badges (and corresponding goals). The short-lived RepliCHI movement attempted to create specific guidance around this for HCI [ 55 –58 ]. Unfortunately, we continue to see a lack of transparency, replication work, and open science research in HCI [3, 25, 30, 52]. Of particular importance is the lack of sharing of research arti-facts [ 45 ], with some studies showing that only 2-3.5% of authors share their code as open source in CHI [ 16 ]. Reasons for this include “future research value, commercial value, and that they do not make sense outside the original context” [ 53 ]. Researchers are often re-luctant to release code because it requires cleaning, documentation, and maintenance. This is demotivating, in particular, as the work is not often recognized. Revibing provides a potential alternative route for the research community to gain access to the research artifacts without the original code or additional information. However, as we discuss below, there are opportunities for the original authors to support 
+
+revibe with very little additional ‘lift.’ 
+
+3 Reimplementation and Revibeability 
+
+Judging the success of a revibe will depend on the purpose of the reimplementation. If the goal is a replication study, we may not be satisfied with anything less than exact parity of all system features and interactions. If we are looking to extend one system with parts of another, we may only need to measure the quality of the parts we care about. In building a revibe for a strong baseline, a successful reimplementation should include all the key interactive features as described in the original work. Because what counts as key interactive features is system-specific, we propose a general test for revibeability based on a system-specific test rubric. Specifically, for each system paper, we generate a test rubric (described fully in the Methods section below). The rubric is a form of QA testing for the described system. It specifies: the operations a user should perform (e.g., click on this, select that); what the user should expect to see; and what constitutes a failure, success, or something in between. A tester (e.g., the revibe developer in our case, but it can be another person or potentially automated) simply executes these test steps one at a time and reports on what they observe in the revibe .We emphasize that our approach assumes the original source code is not accessible. This is both for practical (we target revibe 
+
+to non-existing code) and experimental reasons (to ensure that the models have not been trained on existing repositories). The consequence is that we cannot directly apply automated test case generators to produce the rubric from the original code (e.g. [ 44 ]). Instead, revibeability rubrics should be constructed from informa-tion available in the paper. After each rubric test is graded as a failure, partial success, or full success, we can understand the disaggregated revibeability of the revibed artifact. That is, which and how many of the features described in the rubric tests are successfully reimplemented (graph-ically depicted in figures such as Figure 4)? We define an aggregated revibeability metric as: 
+
+𝑟𝑒𝑣𝑖𝑏𝑒𝑎𝑏𝑖𝑙𝑖𝑡𝑦 = 𝑤 𝑠 · | 𝑡 𝑠𝑢𝑐𝑐𝑒𝑠𝑠 |+ 𝑤 𝑝 · | 𝑡 𝑝𝑎𝑟𝑡𝑖𝑎𝑙 |+ 𝑤 𝑓 · | 𝑡 𝑓 𝑎𝑖𝑙𝑢𝑟𝑒 |  
+
+> 𝑤 𝑠 ·∗| 𝑡 𝑎𝑙𝑙 |
+
+Where 𝑡 𝑎𝑙𝑙 are all the rubric tests, and 𝑡 𝑠𝑢𝑐𝑐𝑒𝑠𝑠 , 𝑡 𝑝𝑎𝑟𝑡𝑖𝑎𝑙 , and 𝑡 𝑓 𝑎𝑖𝑙𝑢𝑟𝑒 
+
+correspond to the tests that pass, partially pass, or fail (weighted at 
+
+𝑤 𝑠 = 2, 𝑤 𝑝 = 1, and 𝑤 𝑓 = 0, respectively). This represents a simple but direct scoring rule that treats all tests within a class (failure, partial success, or success) the same. Alternative metrics may provide further weighting based on the importance of the tests. For example, one rubric item may represent a particularly critical feature of the system, and we may weight it higher. In addition, a more refined scoring scheme may be used for partial successes (e.g., 0.9, 1.1, etc.). We explore other variants in the Discussion section. We observe a few implications for our choice of measure. First, 
+
+revibeability may be unstable due to the stochastic nature of agentic programming tools. Different runs of the same revibe process on the same model may yield different results. Additionally, as agentic tools integrate new prompts or models, their performance will vary over time. Moreover, different developers may score differently based on their interpretations of failure and success. In this work, we only use one revibe developer to grade and build each system once (per environment). Anecdotally, we found that our rubrics were largely unambiguous. Additionally, when experimenting with different prompts, we found that revibe outputs were largely con-sistent given the same agentic environment and model. 
+
+4 Method 
+
+The specific method we apply to revibe the code and to measure 
+
+revibeability is illustrated in Figure 2. The four main steps for this process involve: extracting text and images from the source docu-ment (step 1 in the Figure); generating a rubric (step 2); performing UIST ’26, November 02–05, 2026, Detroit, MI, USA Adar et al. PDF/HTML Source Source →Markdown Sections + Images System Construction Prompt Version 0
+
+> Feature Check Prompt Debug Prompt* Version 1
+> Rubric Check Rubric 1
+> Rubric Construction Prompt System Update Prompt Version 2
+> Rubric Check Rubric 2
+> System Update Prompt Version 3
+> Unaided Revibe Aided Revibe
+> Rubric Check Rubric 3
+> Abstract.md Introduction.md Related_Work.md System.md
+
+... ... (1) (2) (3) (5) (4) (6) (7) (8) (9) 
+
+> Aided Revibe**
+
+(10) ... 
+
+Figure 2: A figure of the revibe procedure implemented in this paper. The system ‘deconstructs’ the paper into markdown and figures (1). From this, we construct a revibeability rubric for the paper using an automated prompt (2) and create an initial implementation (3). Debugging and feature checks (4 & 5) produce a working implementation. This can then be graded (6) through the rubric. Repeatedly grading and asking the agentic system to update (steps 7-10) improves the revibe .
+
+an unaided revibe (steps 3-6); and performing one or more aided 
+
+revibe procedures (steps 7-10). 
+
+4.1 Text Extraction 
+
+Most modern models have fairly large context windows that can handle an entire academic paper. However, we found that we can reduce token costs and processing time by breaking a paper into chunks based on sections. This allows the agent to focus on sections that describe implementation and interaction details. We apply this process to HTML files (e.g., as produced by the ACM digital library) or to the published PDF. This module is a simple Python script. For PDF processing and image extraction, we use PyMuPDF 3. This procedure ensures that two-column PDFs are processed correctly. The output of this code (Figure 2-(1)) is a set of markdown files (with filenames corresponding to section headers) and images. These are not cleaned in any other way, so some spurious artifacts (e.g., headers and footers) might remain. 
+
+4.2 Rubric Development 
+
+The second step in the revibe pipeline is to create a system-specific scoring rubric to judge the success of the reimplementation (Fig-ure 2-(2)). As we describe in Section 3, the rubric should include a set of tests that correspond to all the key interactive features or interactions described in the original artifact. Each test should specify the operations a tester should perform and the criteria for 
+
+> 3https://pymupdf.readthedocs.io/ and specifically the PyMuPDF4LLM sub-module for text extraction and Fitz for image extraction
+
+failure, success, or partial success. For example, assume a paper indicates that clicking some button X will result in some event Y. A revibeability rubric test will first ask the tester to confirm that button X exists and then indicate what should happen when it is clicked. If the same event (Y) happens, the tester can mark this test as a success. If nothing happens, they should mark this as a failure. The graded rubric can be used to measure the revibeability based on the aggregated metric or disaggregated scores, as described in Section 3. The graded rubric can also be provided back to the agen-tic programming tool for aided revibe to fix the failed features and improve the reimplementation (see below, Section 4.4). To enable standardized testing, we constructed a prompt for generating a revibeability rubric automatically from the paper. This approach has practical implications as it normalizes the types of human input available in aided revibe to improve the reimplementa-tion. Specifically, the input includes only direct feedback on whether the revibe can perform the intended functionalities and does not depend on the tester’s own reading of the paper or their technical skills (vibe coding or otherwise). In practice, there may be different ways to create the rubric. In an ideal scenario, the authors of the original paper would modify the auto-generated rubric to ensure it aligns with their intended system functionalities. They could also label which tests are more important—for example, if they reflect the key contributions of the original artifact—and these tests will be weighted more heavily. Slightly less ideal would be to allow the person revibing to modify the rubric based on their reading of the paper or understanding of the supplementary materials (e.g., a video of the system working). Revibing Code from Papers: Reimplementing HCI Artifacts UIST ’26, November 02–05, 2026, Detroit, MI, USA 
+
+This assumes that the person will perform better than the LLM in either creating the rubric or identifying key features/tests. We iterated on the Rubric Construction Prompt (see step 2 in the Figure) to arrive at the following: 
+
+Based on the contents of the paper and any images determine (see md and png/jpeg/jpg files) a list of key UX elements. Describe a list of manual tests that a human can use to validate the functionality. For example, if a key interaction is "loading" a file by clicking on an "open" button, the instructions might direct the user to navigate to where the button is, click open, and verify that the content was loaded (with instructions on what verification looks like). The instructions should provide a detailed enough rubric on what success, partial success, and failure look like. A human should be able to use this to "grade" how well an implementation meets the description of the system as intended by the authors. Save these instructions to a interaction_validation.md file. The format of the document should be: Test Plan Structure Tests are organized by application (main windows/screens), then cross-application integration, then edge cases. Each test includes: ID: Unique identifier Prerequisites: Required setup Steps: Numbered actions Expected Result: What should happen Success Criteria: Three levels (Full Success / Partial Success / Failure) with descriptions for each Observed result: A blank space where the user can report on success and provide any details on incomplete/incorrect behaviors. 
+
+Note that we do not argue that this is the best such prompt. What it allows for is the construction of evaluation criteria that can be uniformly applied across all revibed artifacts. Two example ‘tests’ for the Spellburst system [ 1 ] are presented in Appendix A.3 (and in the web supplement). Although we evaluated the generation of rubrics with multiple models, we ultimately opted to use rubrics produced by Claude Code ( Sonnet 4.6 ). This produced the most detailed rubric (e.g., 38 tests in one case produced by Claude versus 6 produced by Gemini). While this can potentially create some bias towards systems created by Claude, we ultimately did not see this in the results. 
+
+4.3 Unaided Revibe 
+
+To perform an Unaided Revibe (i.e., without specific guidance from the human), we provide the paper markdown/images to each of the coding tools with the following prompt (Figure 2-(3)): 
+
+You will be implementing the [SystemName] system. This is based on a paper. The paper 's content is split into markdown files and images in the 'paper ' directory. Proceed in the following steps: 
+
+(1) Analyze the features of the system and user interface (use the paper content and images) (2) Create a new implementation of the system that supports all the described features. Create this as a web app if you can, but you can use an alternative approach if the design calls for it (e.g., a Python backend). You may select alternative libraries or languages for implementation that deviate from those used in the paper. (3) When you are done, create a DEVELOPER.md that provides a detailed walkthrough of what a developer needs to know and install to run the system. Also, create a README.md that describes how to launch and use the system. Additional instructions: * You may ask questions if something is unclear but provide alternative choices. * If you need access to an API key, you can check for an available .env file. If the key does not exist, you can leave instructions in the .env file. Notify me, and I will fill it out. * It is ok to use roughly equivalent APIs (e.g., if the API calls for using a OpenAI model and you only have access to Gemini, you can use that) 
+
+The prompt was designed after some iterations (e.g., indicating that equivalent APIs were okay to use and asking the developer if something was unclear). We aimed to provide minimal guidance, allowing the agentic tool to make its own development decisions while also ensuring that agents do not get stuck on specific issues. The human protocol specified that we should answer agentic ques-tions as well as possible with a shallow read of the paper and by going with suggested options when possible. As we discuss below, questions were largely restricted to the approval of steps (e.g., can I install these Python packages?) and not about the paper content. In some cases, the agent would split the task into steps, asking for approval as it went. For example, step 1 would be to implement a draft of the GUI and step 2 would be to improve it. Note that, because our focus is on the reimplementation of soft-ware artifacts with a user interface, there are some inherent limi-tations to the prompt. For example, we ask the agent to produce a web app if possible. In some situations, a software artifact would work better as a library or as a plugin to an existing system (e.g., a Jupyter plugin in the case of mage [ 33 ]). Because our selected papers did not require specific hardware or underlying tools (e.g., an Adobe Photoshop plugin), this prompt worked for our purposes. After the initial codebase is produced, we follow the generated instructions (in README.md) on how to run the code. Any ob-served error messages that prevent the software from running are fed back to the coding environment with the prompt (Figure 2-(4)) to produce 𝑣𝑒𝑟𝑠𝑖𝑜𝑛 0 of the system: 
+
+I have observed the following errors: [error messages] Please debug these and fix them. 
+
+Most often, these were errors where the system did not install a specific package. In a few cases, we observed server or client errors UIST ’26, November 02–05, 2026, Detroit, MI, USA Adar et al. 
+
+(observed in the console or terminal window) that would prevent the system from running. This simple prompt allows the system to correct any obvious problems. We ran this prompt as many times as needed until the application launched (practically, most revisions required a maximum of 2-3 error fixes). No other feedback was provided about bugs. While we used command line versions of the systems, we expect that those agentic environments that can run and test the browser themselves (e.g., Google’s Antigravity) might detect client errors automatically. In piloting, we noticed that some agentic tools prioritized imple-mentation momentum–making simplifying decisions. Their prompts include language such as: Avoid over-engineering. Only make changes that are directly requested or clearly necessary. Keep solutions simple and focused , and Choose the most sensible approach and keep mov-ing. 4. The result was that in some implementations, certain system features might be implemented using simpler algorithms or left to ‘future work.’ To ensure a more complete revibe , we designed one final prompt to ‘complete’ the implementation (Figure 2-(5)): 
+
+> Compare the implemented features to the features described in the paper. Add any missing features.
+
+This produced a 𝑣𝑒𝑟𝑠𝑖𝑜𝑛 1 of the system that was then evaluated using the rubric. Each tester followed the rubric instructions to the best of their ability and graded whether the system fully suc-ceeded, partially succeeded, or failed each of the rubric tests. Any specific observations about GUI behavior were noted in the docu-ment (see the web supplement for examples). The result of this was a first graded rubric, 𝑟𝑢𝑏𝑟𝑖𝑐 1, and an initial measure of revibeability 
+
+(Figure 2-(6)). 
+
+4.4 Aided Revibe 
+
+The graded rubric was provided back to the agentic tool to perform an aided revibe . Clearly, proficient developers could provide further ‘aid’. However, as we note, this approach normalizes feedback and provides us with a revibeability floor. The specific prompt was: 
+
+> I have completed an evaluation of the system and tested its features. Please fix any reported issues in the attached rubric. [@pointer to rubric file]
+
+The output of this step is a new version of the revibe (i.e., 𝑣𝑒𝑟𝑠𝑖𝑜𝑛 2,Figure 2-(7)) that could be evaluated again (Figure 2-(8)) to produce a new graded rubric ( 𝑟𝑢𝑏𝑟𝑖𝑐 2). This process could optionally be repeated (Figure 2-(9,10)) to further improve the revibe .
+
+5 Revibing UIST 
+
+To test the revibing protocol, we started with a set of popular software-focused papers from UIST from 2020 to 2024 (identified on Semantic Scholar based on citations). This time range was selected because: (a) the systems were around long enough to assess their popularity, (b) they were likely to use modern interface approaches, and (c) they were less likely to be vibe-coded themselves (though we cannot eliminate this possibility entirely). 
+
+> 4https://github.com/Piebald-AI/claude-code-system-prompts
+
+We removed papers that had public implementations or required additional hardware (e.g., VR or fabrication-focused systems). This yielded 20 systems (see Appendix A.1). The full 20 were used for experiments on revibeability rubrics (see Section 6.2). From these, we selected 10 for revibing . These were selected roughly randomly. However, we found that many recent UIST papers leverage LLMs as a component of the system (e.g., Spellburst [ 1]). To validate that 
+
+revibing works for non-LLM-centered systems we oversampled these. For each system, the authors (acting as assessors) used the ap-proach described in Section 4. The assessors were a combination of PhD students in CS, postdocs or faculty, all with previous experi-ence in technical HCI systems. While we believe this population to be representative of those likely to revibeability systems, we note that the execution and evaluation of the approach do not require any particular deep technical skills. While we did not per-form a specific calibration, the approach for rubric grading was discussed among the team before revibing began. We utilized three agentic tools for this work: Cursor, Anthropic’s Claude Code, and Google’s Gemini (all with the command line versions). These sys-tems are among the most popular at the time of writing (spring 2026), and we largely used the default models for each of the tools: a combination of Google’s gemini-3.1-pro and gemini-3-flash 
+
+for Gemini; Anthropic’s claude-sonnet-4-6 for Claude, and Ope-nAI’s gpt-5.4-xhigh for Cursor 5.Our protocol used one round of unaided revibe followed by re-vibeability grading. We then applied two rounds of aided revibe ,producing intermediate and final revibeability grading. We note that in this initial study of revibeability , we opted for breadth rather than depth. That is, we did not continue the revibe process until re-vibeability scores ‘saturated.’ However, in most cases, we observed that the performance of pure revibe coding either hit the maximum value or became asymptotic. In addition to the revibe experiments, we interviewed the authors of the Spellburst (one author), B2 (one author), and mage systems (three authors). This was approved by our institutional IRB and took place over Zoom in a 30-40 minute call. The authors were not compensated for this session. They were shown the different reimplementations and asked a number of questions (see the web supplement). We did not explicitly indicate at the start of the session that the systems were created through agentic programming (to avoid biasing the discussion). However, it is likely that the authors could infer what we had done from earlier parts of the interview. Regardless, we described the approach in a debrief at the end. We integrate author comments into the qualitative analysis of revibe 
+
+performance below. 
+
+6 Revibeability Results 
+
+Figure 3 depicts the revibeability performance of our implemen-tations. The dots on each line indicate the revibeability score (as calculated from the equation in Section 4) after each run (unaided, aided 1, and aided 2). All ten systems were revibed with Gemini and Claude. Seven were also revibed using Cursor. The cost of revibing 
+
+varied by system and model, but most automatic revibe loops ran            
+
+> 5For two systems (mage and Spellburst), we also tested Cursor with
+> claude-sonnet-4-6 (see Appendix A.2).
+
+Revibing Code from Papers: Reimplementing HCI Artifacts UIST ’26, November 02–05, 2026, Detroit, MI, USA 0.0 0.2 0.4 0.6 0.8 1.0 B2 CoLadder GenAssist mage Rescribe Sketch-n-Sketch Spellburst EvalGen Vizability XCreation claude cursor gemini Revibeability Scores 
+
+Figure 3: Summary of revibeability scores in our experiments (calculated as the aggregated revibeability score). The color of the lines/dots represents the vibe-coding environment. The size of the dots, from smallest to largest, indicates the 
+
+revibeability score for each run (after the unaided revibe , post-aided revibe 1, post-aided revibe 2). 
+
+in under 30 minutes. The first (unaided) revibe for most systems cost under $15 with the price dropping for second revibes as code was being modified rather than created from scratch. The dominant time cost was in human assessment. The first iteration required 1-2 minutes per test. Subsequent assessments were faster, as tests that succeeded only required a quick confirmation. Revibeability scores were monotonic over runs in almost all cases (𝑟𝑒𝑣𝑖𝑏𝑒𝑎𝑏𝑖𝑙𝑖𝑡𝑦 𝑢𝑛𝑎𝑖𝑑𝑒𝑑 ≤ 𝑟𝑒𝑣𝑖𝑏𝑒𝑎𝑏𝑖𝑙𝑖𝑡𝑦 𝑎𝑖𝑑𝑒𝑑 1 ≤ 𝑟𝑒𝑣𝑖𝑏𝑒𝑎𝑏𝑖𝑙𝑖𝑡𝑦 𝑎𝑖𝑑𝑒𝑑 2). In one case, we saw a decrease from unaided to aided 1 (Gemini for GenAssist), and in three cases, we saw a decrease from aided 1 to aided 2 (GenAssist with Cursor, Sketch-n-Sketch with Claude, and Vizability with Gemini). All negative changes were under .02 (i.e., roughly the same revibeability ). The ‘best-run’—the highest score achieved by any agent after any run for each system—had a mean of 0.939 across all systems (min=0.8, max=1, stdev=0.069). Two systems ( Vizability and XCre-ation ) achieved a perfect revibeability score. Cursor-revibed sys-tems had a mean revibeability of 0.912 (min=0.8, max=1, stdev=0.08). Claude revibes had a mean revibeability of 0.87 (min=0.53, max=1, stdev=0.16). Finally, Gemini performance revibeability had a mean of 0.67 (min=0.33, max=0.94, std=0.18). We find a correlation between the length of the revibeability 
+
+rubric and the maximum score achieved (see Appendix 6.2). With increased rubric complexity, there are naturally more points of possible failure. While it is likely that more complex systems will have longer rubrics, we leave this analysis for future work. Figures 4, 5, 6, 7 reflect the disaggregated revibeability scores for each system we evaluated (the other results are provided in the U
+
+A1
+
+A2
+
+> Claude
+
+U
+
+A1
+
+A2
+
+> Cursor
+> TEST-C01
+> TEST-C02
+> TEST-C03
+> TEST-C04
+> TEST-C05
+> TEST-S01
+> TEST-S02
+> TEST-S03
+> TEST-S04
+> TEST-S05
+> TEST-E01
+> TEST-E02
+> TEST-O01
+> TEST-O02
+> TEST-O03
+> TEST-O04
+> TEST-P01
+> TEST-P02
+> TEST-O05
+> TEST-O06
+> TEST-O07
+> TEST-O08
+> TEST-O09
+> TEST-B01
+> TEST-INT01
+> TEST-INT02
+> TEST-INT03
+> TEST-INT04
+> TEST-EC01
+> TEST-EC02
+> TEST-EC03
+> TEST-EC04
+
+U
+
+A1
+
+A2
+
+> Gemini
+
+Spellburst rubric outcomes
+
+Figure 4: Revibeability performance for Spellburst . Red/Yel-low/Blue correspond to failure, partial success, and full suc-cess fo each test (respectively) U
+
+> A1
+> A2
+> Claude
+> U
+> A1
+> A2
+> Cursor
+> TL-01
+> TL-02
+> TL-03
+> TL-04
+> TL-05
+> TL-06
+> TR-01
+> TR-02
+> TR-03
+> TR-04
+> TR-05
+> DP-01
+> DP-02
+> DP-03
+> DP-04
+> DP-05
+> DP-06
+> DP-07
+> DP-08
+> DP-09
+> RC-01
+> RC-02
+> RN-01
+> RN-02
+> RN-03
+> RN-04
+> RN-05
+> PR-01
+> PR-02
+> PR-03
+> PR-04
+> PR-05
+> CI-01
+> CI-02
+> CI-03
+> EC-01
+> EC-02
+> EC-03
+> EC-04
+> EC-05
+> U
+> A1
+> A2
+> Gemini
+
+Rescribe rubric outcomes
+
+Figure 5: Revibeability performance for Rescribe .U
+
+> A1
+> A2
+> Claude
+> U
+> A1
+> A2
+> Cursor
+> TEST-CORE-01
+> TEST-CORE-02
+> TEST-CORE-03
+> TEST-CORE-04
+> TEST-TABLE-01
+> TEST-TABLE-02
+> TEST-TABLE-03
+> TEST-TABLE-04
+> TEST-TABLE-05
+> TEST-TABLE-06
+> TEST-PLOT-01
+> TEST-PLOT-02
+> TEST-PLOT-03
+> TEST-PLOT-04
+> TEST-PLOT-05
+> TEST-PLOT-06
+> TEST-IMAGE-01
+> TEST-IMAGE-02
+> TEST-IMAGE-03
+> TEST-IMAGE-04
+> TEST-SPLIT-01
+> TEST-SPLIT-02
+> TEST-SPLIT-03
+> TEST-SPLIT-04
+> TEST-CONF-01
+> TEST-CONF-02
+> TEST-CONF-03
+> TEST-CONF-04
+> TEST-SAVE-01
+> TEST-SAVE-02
+> TEST-SAVE-03
+> TEST-CROSS-01
+> TEST-CROSS-02
+> TEST-CROSS-03
+> TEST-CROSS-04
+> TEST-SYNC-01
+> TEST-SYNC-02
+> TEST-SYNC-03
+> TEST-SYNC-04
+> TEST-EDGE-01
+> TEST-EDGE-02
+> TEST-EDGE-03
+> TEST-EDGE-04
+> TEST-EDGE-05
+> TEST-EDGE-06
+> U
+> A1
+> A2
+> Gemini
+
+mage rubric outcomes
+
+Figure 6: Revibeability performance for mage .U
+
+A1
+
+A2
+
+> Claude
+
+U
+
+A1
+
+A2
+
+> Cursor
+> T-01
+> T-02
+> T-03
+> T-04
+> T-05
+> T-06
+> T-07
+> T-08
+> T-09
+> T-10
+> T-11
+> T-12
+> T-13
+> T-14
+> T-15
+> T-16
+> T-17
+> T-18
+> T-19
+> T-20
+> T-21
+> T-22
+> T-23
+> T-24
+> T-25
+> T-26
+
+U
+
+A1
+
+A2
+
+> Gemini
+
+GenAssist rubric outcomes
+
+Figure 7: Revibeability performance for GenAssist .
+
+Appendix). Each row represents a graded rubric (columns are indi-vidual tests). A red cell indicates a failure, yellow is partial success, and blue is full success. The results are grouped by agentic system, with the first row showing results for the unaided revibeability . The two remaining rows, A1 and A2, correspond to results after the first and second aided revibes. UIST ’26, November 02–05, 2026, Detroit, MI, USA Adar et al. 
+
+6.1 Qualitative Results & Failure Analysis 
+
+We reflect on a number of qualitative observations in revibing (graded revibeability rubrics are provided in the web supplement). 
+
+Near Implementations —In some situations, it may be impossi-ble to gain access to certain software or libraries for a perfect revibe .For example, Spellburst used GPT 3.5 to generate p5 code (specifi-cally, gpt-3.5-turbo , which first appeared in 2023). Because we provided the revibe projects with an Anthropic API key (and an indication that they could use an equivalent API), they generated code that called various Anthropic models. Depending on the goal for the revibe , this may not meet our needs. However, a more fun-damental problem is that the previous APIs may no longer exist. As commercial models are retired, it may be impossible to perfectly replicate an implementation. Additionally, some design elements in the original paper (and associated rubric tests) may focus on features that are less relevant for current models or libraries. For example, Spellburst had error handling features (e.g., when generating non-functional p5 code). With improved models, such as the Claude Sonnet 3.5 (2024) or Sonnet 4 (2025), those failures do not appear in revibes. That is, the features designed to account for certain failures at the time the papers were created are no longer relevant. It is not clear that there is any strategy that would improve revibe performance in these cases–key software is simply unavailable. In papers that used LLMs, we found that the agentic systems created their own prompts when none were documented. How-ever, in some cases, even when the prompts were available (e.g., 
+
+EvalGen [ 47 ]), the systems ignored them and wrote their own. This might indicate the need for a more explicit revibe prompt to force the agents to use existing material. 
+
+Failed Features —With mage , we observed that none of the systems completely implemented the drag and drop functionality. Here, plot marks (e.g., bars) could be dragged to a ‘table’ button to construct a filtered table in another notebook cell. This change would likely require modification of the underlying visualization library (the specific details were not obvious in the paper). The closest approach, that implemented by Cursor, allowed for using the native Vega-Lite interactions to select marks and a separate button (without dragging) to create a table. While the capabilities are analogous, the UX deviations might be limitations. Solving this may require prompting the systems to modify underlying libraries as needed. 
+
+Over-implementation —When considering a paper, we found that some revibes over-implemented features. For example, in mage ,the system uses Vega-Lite as a visualization library and discusses the use of Altair (a different API) as future work. Claude actually implemented the Altair version. The mage paper is also constructed in two phases. First, the authors built two interactive displays (one for tables and one for visualizations). After trying these, they asked participants to come up with additional ideas. The authors then im-plemented these as a proof of concept (e.g., image editing, train/test partitioning). These were not part of the original system. However, all three agentic systems implemented all the widgets. A more de-tailed prompt may be needed to focus the agentic system on the original system and not over-implement. 
+
+Focus on Web Applications —The mage and B2 systems are interesting case studies in their target environment. Unlike many of our other revibes, they were not intended to be a web app. Rather, the systems were Jupyter plugins that provided custom widgets and tools that could be invoked for a range of tasks: to visualize the data (e.g., in tables, plots, or confusion matrices) or to export (e.g., images or CSV files). The authors of the mage paper noted specifically that the familiarity of the actual Jupyter notebook was important to them: “I think the fact that we had it in Jupyter, which is a familiar interface to data scientists, yeah, I think made them instantly see, okay, . . . I already know all of this, and now he’s showing me something new on top of that,” In the case of mage, all the agentic systems built a new web app instead of a Jupyter plugin (notably, Cursor offered to build a notebook extension, but not as the default/recommended course of action). The author of B2 had a similar observation about the produced revibes. While largely successful in terms of features, the new ver-sions would not provide the desired experience given the authors’ goals. The author noted that they wanted to create a ‘polished’ artifact that could be deployed within a familiar environment. Ad-ditionally, certain key features in B2 (e.g., reactive cells) worked 
+
+because the system was built on the specific Jupyter infrastructure. The revibe failed to implement this feature in a robust way by cre-ating it from scratch. It remains an interesting question whether a 
+
+revibe that does not meet the authors’ design goals can nonetheless serve as a useful revibe for certain applications. For mage, explicitly removing the prompt text “Create this as a web app if you can, but you can use an alternative approach if the design calls for it (e.g., a Python backend).” led Claude to focus on building a plugin. However, Cursor continued to prefer building its own Web app from scratch. This implementation deviation 
+
+would need to be controlled for if the goal is closer adherence to the original design. For B2, we were able to partially revibe a Jupyter extension by modifying the prompt (see Figure 15). 
+
+Non-UI Features —The revibeability rubric, as constructed, fo-cuses on the interface and interactions. In some of our revibes, a main part of the contribution was in the backend or algorithms. For example, Rescribe has a number of approaches to fit narrated descriptions in videos (e.g., through dynamic programming and opti-mizations). EvalGen also had algorithmic features (e.g., a selectivity-based grading sampler and alignment ranking mechanism). Current 
+
+revibeability rubrics do not directly capture ways of testing these. Rather, they approximate this through interactive features. While the revibes may be ultimately successful, the feedback mechanism was not optimal. Rubrics that allow for other kinds of testing may reduce the number of feedback cycles needed. In some cases, it may be impossible to exactly revibe a system without access to certain models or examples. In testing some of the systems (e.g., Rescribe ), we would have to find example files (e.g., videos). Without access to the exact (or ‘close enough’) examples described in the paper, some systems were harder to test. In some cases, we observed the agentic tools create their own test data (e.g., audio files or images). In the case of Spellburst , the system used fine-tuned examples (for a few shot prompting approach). This data was not available and certainly not revibeable as it used a crowdsourced collection mechanism. The author of the Spellburst 
+
+paper commented specifically on this as a potential issue (at the Revibing Code from Papers: Reimplementing HCI Artifacts UIST ’26, November 02–05, 2026, Detroit, MI, USA 
+
+same time noting that, “the design and interaction paradigm . . . maps pretty much exactly to . . . what we had.”). One revibe we did not complete was for PromptPaint [ 9]. While this system does meet our criteria (largely a software artifact), it utilized Stable Diffusion to produce generative images. While the UI worked, the agentic environment did not have access to the requisite GPUs. The tools would try to use external APIs (e.g., Gemini) as an alternative, but this led to a cascade of errors: recurring API model name changes, streaming incompatibilities with Flask/werkzeug, content policy blocks, and eventually an eventlet/kqueue conflict on macOS. The root cause was the mismatch between the paper’s assumed infrastructure and our available resources. This suggests that revibeability has an implicit dependency on environment parity, and future work could explore how providing richer infrastructure (e.g., GPU access, containerized environments matching original development setups) might expand the scope of what vibe-coding can successfully reproduce. 
+
+Rubric Observations —One thing we noticed was that agentic systems would occasionally confuse ‘partial success’ descriptions as ‘partial failures.’ The difference for a human reader may be clear if they read what defines these criteria in the rubric. For example, it may not be obvious to the agent if ‘code prepended’ should be considered a failure or success if it does not observe the full definition. In fact, we saw that some agents would use the grep 
+
+tool to search for ‘Observed results’ lines in rubric files. Doing so would mean they were not considering the actual test definition lines. In this case, the failure might not be corrected until the tester provides additional clarification (e.g., ‘code prepended incorrectly’). Additional prompt instructions (e.g., ‘consider definitions of success or failure in the rubric’) might lead to better results. A related rubric issue is with ambiguously described features. In some cases, the specific implementation of certain visual features was not clear. This may be due to space constraints, author over-sight, or simply that it was not important. Screenshots of systems, in particular, were often cropped or too small for both the agentic system and tester/developer to read. In these instances, it was diffi-cult to know how the UX should look. Clearly, this is not simply a problem for revibes. However, a better rubric-construction prompt may indicate areas of ambiguity. 
+
+Author Memory —One unanticipated observation from our in-terviews was that authors could not always remember how they implemented a feature or what was in the paper. For example, with 
+
+mage , the details on how certain variables were retained or how drag-and-drop was implemented were not easily recalled. With 
+
+Spellburst , a feature built internally–and which the author recalled as being important–was not actually described in the paper. This points to the possible benefit of creating a revibe or revibeability 
+
+rubric when writing the paper to ensure proper alignment. 
+
+6.2 Rubric Evaluation 
+
+In the experiments described above, we opted to use Claude Code as the generator for revibeability rubrics. In pilot testing, we found that Claude Code produced the most detailed rubrics. To confirm this observation, we took the original 20 systems (see Appendix A.1) collected as potential revibe targets and applied the rubric construc-tion prompt through both Claude Code and Gemini. We measured #Tests, Gemini vs Claude     
+
+> 04812 16 10 30 50
+> #Gemini Tests #Claude Tests
+> Gemini rubric file size (bytes) Claude rubric file size (bytes)
+
+Rubric file size, Gemini vs Claude    
+
+> 04000 8000 12000 30000 50000 70000 10000
+
+Figure 8: A comparison of revibeability rubric test counts and file size. Each dot represents a system. 
+
+the number of tests in each rubric, the number of steps in each test, and the length of the rubric (as a proxy for detail). Figure 8 plots the number of tests per rubric (left) and file length (right). Rubric lengths are weakly correlated (.26 and .25 through Pearson correlations for test count and file sizes, respectively). However, Claude code produces rubrics with 3.5 times as many tests as Gemini (mean of 35.1 tests vs 10.25 tests). Similarly, Claude Code produces rubrics nearly 5 times longer than Gemini (mean of 50694 bytes versus 10570). Finally, Claude Code tests are on average 1.6 times longer than Gemini (4.7 steps versus 2.8 steps). While correlated, test counts, file sizes, and the number of steps in Gemini and Claude-produced rubrics are significantly different ( 𝑝 < 0.001 based on a paired t-test). It is difficult to conclusively determine from the sizes of the rubrics whether one is better than the other. It is possible that there is a ‘core’ set of tests that sufficiently tests core functionality and 
+
+provides enough information to the coding environment to make corrections. The original authors or revibe coders may not be able to identify the optimal subset that satisfies these two constraints. Automated optimization through ablation testing may be a possible approach. While we leave the optimization problem to future work, a simpler bootstrap analysis through resampling (see Appendix A.4) may give better bounds on revibeability scores. The generated in-tervals provide a different collection of tests. It is also possible that additional agentic prompts may be useful in finding overlaps and recommending deletion. For now, over-testing may be reasonable. One possible complication in our approach is that it might in-troduce a confound: Claude Code may identify the same set of interactive features in the paper when creating the rubric as when it produces the revibe . This may lead to it performing better be-cause it also generated the test. However, we note that the prompts for rubric creation are very different from code construction. Ad-ditionally, we found that Cursor produced good revibes with the Claude-crafted rubrics. Given the sophistication and detail in the Claude rubrics, we opted to use them for our study. 
+
+7 Discussion 7.1 Limitations and Future Work 
+
+The work described here is a floor, not a ceiling, for what can be achieved through agentic coding. First, it is also an open question of UIST ’26, November 02–05, 2026, Detroit, MI, USA Adar et al. 
+
+what fraction of historical UIST papers are revibeable. The research team assessed the roughly 210 papers from UIST 2025 and found that 65% were primarily software papers that used off-the-shelf hard-ware and had at least the potential to be revibed. Of the remaining papers, 15% were partially-revibeable. They had both a significant hardware (e.g., novel sensor) and software contribution (e.g., an inference method). The remaining papers were entirely hardware contributions and were likely not revibeable. We can expect that agentic programming environments will only improve over time. The author of B2, who now develops agentic tools, was convinced that most of the missing features in the revibe could be completed with additional prompts. Additionally, in using CLI-based agentic environments, we are already limiting the performance of the tools. Various environments offer automated browsing features that might drive testing and self-correction (e.g., Google Antigravity [ 20 ] or Cursor [ 12 ]). Other approaches to visual GUI testing (e.g., [ 43 ]) may also support automated revibeability testing–allowing for fully un-aided revibes. Better MLLMs/VLMs that can process supplementary videos or images may further improve revibes in the future (e.g., some design decisions are only documented in images). Second, our focus in this work has been on vibe-coding. The developer/tester does not ever touch the code in these reimple-mentations. In actual use, we might expect that researchers will try to complete the reimplementation if the revibe is insufficient. In these cases, we would expect the researcher to guide the cod-ing process towards implementations that match their scientific intent. Naturally, this raises possible risks if researchers are not careful in how they use the approach. Strong scientific integrity and good experimental design will be critical. What are the tradeoffs for incorporating more researcher efforts, and how to best utilize researcher inputs are open questions for future research. Third, the prompts we describe in this paper were developed through piloting. They were designed to be simple on purpose so that we could understand how the agentic environment’s own planning and implementation prompts would work. Future work may try to identify better prompts for revibe , particularly those that work well with specific agentic environments or artifact types. As discussed in the qualitative findings, the prompts we use are effective at producing web applications. We expect that older UIST papers, which are not web-based or have a hardware component, may require tweaks to the prompts. Finally, while we have found that our prompts for rubric construc-tion produce satisfactory results, they can certainly be improved through a combination of author feedback and better automation. When studying the rubric, the author of the B2 system could readily identify those tests that connected to critical system features. This suggests that author involvement is highly advantageous. Target-ing key features is one improvement, but expanding the rubrics beyond web interactions may also be critical. In some cases, the core contribution of a paper may be in a back-end algorithm and not in the UI. Producing revibeability rubrics that can test those fea-tures directly may be necessary. Additionally, there are many ways to create system rubrics (e.g., perceptual, lexical, operational, and compositional [ 38 ]). Better rubric generator prompts may create tests that target different system aspects. 
+
+7.2 Applications of Revibeability 
+
+While we have used revibeability in a very specific way in this paper, we note that there are many possible future applications for the metric. For example: 
+
+• We can compare revibeability scores to determine which agentic system or model works better for revibes (in general or for a specific system). This in itself can become a benchmark task to incentivize future models to improve their revibing capabilities. 
+
+• We can track improvements in revibeability over time as agentic systems change by using the same rubric (i.e., using specific systems as a benchmark). 
+
+• We can provide a revibeability score for any given paper (e.g., by averaging across multiple agentic programming tools), providing a new kind of badge or serving as a reviewing approach 6.
+
+• We can test different variants of the same paper and rank them based on revibeability . This would enable authors to check which version of their paper is sufficiently detailed. 
+
+• A conference can identify and recommend optimal paper features (e.g., ideal length, required sections) based on which features correlate with high revibeability .
+
+7.3 Changing Technical HCI 
+
+Within academia, we often espouse the values of open science [ 11 ], but fail to provide the software needed to make that happen. Sharing software is neither required nor rewarded. In fact, it sometimes cre-ates additional work. Academics who want to deploy code have to worry about maintenance, documentation, and IP issues (see [ 16 ]). In some ways, revibing fixes this. As long as an author checks their paper for revibeability , or provides a revibeability rubric, it becomes far easier for others to build upon. Additionally, we have a tendency to forget prior work in HCI [ 41 ]. Part of forgetting may be due to artifacts becoming harder to find and run. Revibing can make sys-tems evergreen and can work not just on papers but existing code bases. The result is that existing artifacts (revibed or not) can be updated to run in modern environments. Another potential future implication of revibing is that authors may be encouraged to provide sufficient documentation or rubrics for others to reimplement their system. We can find some inspira-tion from the open source community. For example, whenwords [6 ], a library for ‘relative time formatting,’ offers no code. Instead, it pro-vides a human-readable specification and a set of tests. The intent is for developers to provide both of these to an agentic program-ming environment, and the output would be a complex, functional library in the developer’s language of choice. The authors of the library do not offer any particular implementation (though they do note that they have tested their approach on a few languages). Similarly, authors of a paper can provide additional descriptive details of their system (or screenshots) or revibeability rubrics (e.g., in supplementary materials). These can be generated automatically with minimal effort from the authors, just as we use a prompt for automatic rubric generation. Within the UIST community, we have developed a sense of what constitutes a technical contribution and how it should be evalu-ated [ 18 , 22 , 36 , 40 ]. Revibing, as we demonstrate in the paper, may      
+
+> 6Though we emphasize that a low or high score does not indicate anything about the technical sophistication of the work, just how easily we can revibe it. Revibing Code from Papers: Reimplementing HCI Artifacts UIST ’26, November 02–05, 2026, Detroit, MI, USA
+
+challenge these existing norms and practices. For example, it may become more difficult to justify why one does not do more compar-isons with strong baselines when evaluating their work. However, as the possibility for more A-B evaluations increases, so do the pos-sible problems in their implementation [ 15 ]. A strong baseline does not automatically mean it is a valid ‘B’ without additional controls. Furthermore, Alan Dix has argued [ 15 ] for specialization in the HCI community: people who are good at building versus people who are good at experimenting. Until recently, not being able to build meant that it was difficult to run certain kinds of experiments. The feasibility of revibing may break this division and open doors to new kinds of work within the HCI community. For example, people who are good at experiments but not good at building can 
+
+run new kinds of evaluations by reimplementing systems. Revibing approaches may require additional training and the development of community norms. A poorly constructed revibe may appear to outperform a new system, but this may be misleading. Authors would need to carefully argue that the reimplementation is appro-priate. Simply reporting the revibeability score to demonstrate that some implementation is a strong baseline would not be sufficient. In some ways, this is not a new problem. One would need to do this whether the reimplementation was agentic or not. However, there are increased risks if reimplementations through revibe become the norm rather than the exception. We must also consider the possible negative impact that revib-ing may have on HCI research practices. It is possible that if the community is more inclined to use strong baselines, there may be natural incentives to create work that is revibeable (so that it is built upon and cited). This may be undesirable from the community perspective. For example, reviewers might argue to reject a paper because was is not revibeable in some naive way. There are many types of contributions a technical HCI artifact can make and not all are represented in the artifact itself. Just as naive abuse of revibe 
+
+is problematic for authors, it may similarly be problematic for re-viewers. Developing community norms and training for reviewers will also be needed if revibing is normalized. It is also possible that authors may be further disincentivized from releasing their actual artifacts. It is worth noting that our approach for evaluating 
+
+revibeability focuses only on “sufficiently covering intended func-tionalities.” and does not provide a full picture of the gaps between revibed artifacts and the original ones. If any of these gaps are systematic and unattended, they could bias scientific advancement if revibed artifacts are to become an integral part of HCI evaluation. Constant revibing may also raise broader concerns, such as the resource and environmental costs of agentic programming. Many papers in technical HCI are greenfield programming [ 24 ]. That is, they are constructed largely from scratch (modulo libraries and toolkits) and are not part of large codebases (brownfield pro-gramming). There are various systemic and practical reasons why this is the case. We reward novelty and simple proofs-of-concept over hard-coded deployments. It is hard to anticipate the impact of agentic development on this practice going forward. On the one hand, we see an explosion of new contributions because it is far simpler to develop technical artifacts. The result may very well be that we continue to see a vast majority of papers building through vibe-coded greenfield programming. On the other hand, the com-mercial recognition of the importance of brownfield programming may lead to better agentic tools to modify existing, large-scale code-bases. It is possible that this will lead to other ways of producing UIST contributions. Any use of revibing will need to adapt to the kinds of systems we produce. One final consideration for the technical HCI community is how 
+
+revibing may alter the way we train our students. We already use reimplementation as a learning tool [ 5 , 51 ]. Revibing has clear implications for how to structure these kinds of assignments (will reimplementation actually be challenging?). However, it also allows us to develop new kinds of educational materials. For example, students can be tasked with not just reading a paper but revibing 
+
+and extending it. 
+
+8 Conclusions 
+
+In this work, we focus on the possibility of reimplementing techni-cal HCI artifacts through agentic coding. Specifically, we introduce the concept of a revibe (to recreate the system without coding from the paper) and revibeability (a measure of revibing success). We recreate 10 different systems from recent UISTs using three different agentic coding environments. The results are promising. Revibed systems are good reimplementations of many of the original sys-tem’s interface features (and in some cases, perfect). This raises the possibility of using revibed artifacts in evaluation. The possibility of rapid reimplementation opens up other avenues for education and knowledge production in the technical HCI field. 
+
+Acknowledgments 
+
+We would like to thank Paul Resnick and Vidya Setlur for feedback on this project. We are grateful to the authors who participated in our interviews. Finally, we thank the anonymous reviewers for their valuable feedback and suggestions. 
+
+References                    
+
+> [1] Tyler Angert, Miroslav Suzara, Jenny Han, Christopher Pondoc, and Hariharan Subramonyam. 2023. Spellburst: A Node-based Interface for Exploratory Creative Coding with Natural Language Prompts. In Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology (San Francisco, CA, USA)
+> (UIST ’23) . Association for Computing Machinery, New York, NY, USA, Article 100, 22 pages. doi:10.1145/3586183.3606719 [2] Association for Computing Machinery. 2020. Artifact Review and Badging -Current. Retrieved March 21, 2026 from https://www.acm.org/publications/ policies/artifact-review-and-badging-current [3] Nick Ballou, Vivek R. Warriar, and Sebastian Deterding. 2021. Are You Open? A Content Analysis of Transparency and Openness Guidelines in HCI Journals. In
+> Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems
+> (Yokohama, Japan) (CHI ’21) . Association for Computing Machinery, New York, NY, USA, Article 176, 10 pages. doi:10.1145/3411764.3445584 [4] Tim Baumgärtner and Iryna Gurevych. 2026. SciCoQA: Quality Assurance for Scientific Paper–Code Alignment. arXiv preprint arXiv:2601.12910 (2026). [5] Maria Belen Saavedra Rios, Youngsoon Takei, Blade Hicks, Lydia Stamato, Wei Wu, and Jasmine Jones. 2025. "Seems Complicated and Unachievable": A Collab-orative Autoethnography of Design Replication in Undergraduate Research. In
+> Proceedings of the 7th Annual Symposium on HCI Education . 1–11. [6] Drew Breunig. 2026. whenwords: An Open Source Library Without Code. https: //github.com/dbreunig/whenwords [7] Ruei-Che Chang, Yuxuan Liu, and Anhong Guo. 2024. WorldScribe: Towards Context-Aware Live Visual Descriptions. In Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology (Pittsburgh, PA, USA) (UIST ’24) . Association for Computing Machinery, New York, NY, USA, Article 140, 18 pages. doi:10.1145/3654777.3676375 [8] Pengcheng Chen, Ning Yan, Zihan Zhao, Yixiao Lin, Huaibo Chen, Yue Hu, Qinbo Bai, Xiang Li, and Masood S Mortazavi. 2025. Deep-Reproducer: From Paper Understanding to Code Generation. In NeurIPS 2025 Fourth Workshop on Deep Learning for Code .
+
+UIST ’26, November 02–05, 2026, Detroit, MI, USA Adar et al. 
+
+[9] John Joon Young Chung and Eytan Adar. 2023. PromptPaint: Steering Text-to-Image Generation Through Paint Medium-like Interactions. In Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology (San Francisco, CA, USA) (UIST ’23) . Association for Computing Machinery, New York, NY, USA, Article 6, 17 pages. doi:10.1145/3586183.3606777 [10] John Joon Young Chung and Max Kreminski. 2024. Patchview: LLM-powered Worldbuilding with Generative Dust and Magnet Visualization. In Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology 
+
+(Pittsburgh, PA, USA) (UIST ’24) . Association for Computing Machinery, New York, NY, USA, Article 77, 19 pages. doi:10.1145/3654777.3676352 [11] Johanna Cohoon and James Howison. 2021. Norms and open systems in open science. Information & Culture 56, 2 (2021), 115–137. [12] Cursor. 2026. Browser. Retrieved March 14, 2026 from https://cursor.com/docs/ agent/tools/browser [13] Hai Dang, Frederik Brudy, George Fitzmaurice, and Fraser Anderson. 2023. World-Smith: Iterative and Expressive Prompting for World Building with a Generative AI. In Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology (San Francisco, CA, USA) (UIST ’23) . Association for Computing Machinery, New York, NY, USA, Article 63, 17 pages. doi:10.1145/3586183.3606772 [14] Jingzhe Ding, Shengda Long, Changxin Pu, Huan Zhou, Hongwan Gao, Xiang Gao, Chao He, Yue Hou, Fei Hu, Zhaojian Li, et al . 2025. NL2Repo-Bench: Towards Long-Horizon Repository Generation Evaluation of Coding Agents. 
+
+arXiv preprint arXiv:2512.12730 (2025). [15] Alan Dix. 2010. Human–computer interaction: A stable discipline, a nascent science, and the growth of the long tail. Interacting with computers 22, 1 (2010), 13–27. [16] Florian Echtler and Maximilian Häußler. 2018. Open Source, Open Science, and the Replication Crisis in HCI. In Extended Abstracts of the 2018 CHI Conference on Human Factors in Computing Systems (Montreal QC, Canada) (CHI EA ’18) .Association for Computing Machinery, New York, NY, USA, 1–8. doi:10.1145/ 3170427.3188395 [17] Nicholas Edwards, Yukyung Lee, Yujun Audrey Mao, Yulu Qin, Sebastian Schuster, and Najoung Kim. 2025. RExBench: Can coding agents autonomously implement AI research extensions? arXiv preprint arXiv:2506.22598 (2025). [18] James Fogarty. 2017. Code and contribution in interactive systems research. In 
+
+Workshop HCITools: Strategies and Best Practices for Designing, Evaluating and Sharing Technical HCI Toolkits at CHI . 1–4. [19] Yuyao Ge, Lingrui Mei, Zenghao Duan, Tianhao Li, Yujia Zheng, Yiwei Wang, Lexin Wang, Jiayu Yao, Tianyu Liu, Yujun Cai, et al . 2025. A survey of vibe coding with large language models. arXiv preprint arXiv:2510.12399 (2025). [20] Google Antigravity. 2026. Browser. Retrieved March 14, 2026 from https: //antigravity.google/docs/browser [21] Joshua Gorniak, Yoon Kim, Donglai Wei, and Nam Wook Kim. 2024. VizAbility: Enhancing Chart Accessibility with LLM-based Conversational Interaction. In 
+
+Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology (Pittsburgh, PA, USA) (UIST ’24) . Association for Computing Machin-ery, New York, NY, USA, Article 89, 19 pages. doi:10.1145/3654777.3676414 [22] Saul Greenberg and Bill Buxton. 2008. Usability evaluation considered harmful (some of the time). In Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (Florence, Italy) (CHI ’08) . Association for Computing Machinery, New York, NY, USA, 111–120. doi:10.1145/1357054.1357074 [23] Brian Hempel, Justin Lubin, and Ravi Chugh. 2019. Sketch-n-Sketch: Output-Directed Programming for SVG. In Proceedings of the 32nd Annual ACM Sym-posium on User Interface Software and Technology (New Orleans, LA, USA) 
+
+(UIST ’19) . Association for Computing Machinery, New York, NY, USA, 281–292. doi:10.1145/3332165.3347925 [24] Richard Hopkins and Kevin Jenkins. 2008. Eating the IT elephant: Moving from greenfield development to brownfield . Addison-Wesley Professional. [25] Kasper Hornbæk, Søren S Sander, Javier Andrés Bargas-Avila, and Jakob Grue Si-monsen. 2014. Is once enough? On the extent and content of replications in human-computer interaction. In Proceedings of the SIGCHI conference on human factors in computing systems . 3523–3532. [26] Chuxuan Hu, Liyun Zhang, Yeji Lim, Aum Wadhwani, Austin Peters, and Daniel Kang. 2025. REPRO-BENCH: Can Agentic AI Systems Assess the Reproducibility of Social Science Research?. In Findings of the Association for Computational Linguistics: ACL 2025 . 23616–23626. [27] Tianyu Hua, Harper Hua, Violet Xiang, Benjamin Klieger, Sang T Truong, Weixin Liang, Fan-Yun Sun, and Nick Haber. 2025. Researchcodebench: Benchmarking llms on implementing novel machine learning research code. arXiv preprint arXiv:2506.02314 (2025). [28] Ziheng Huang, Sebastian Gutierrez, Hemanth Kamana, and Stephen Macneil. 2023. Memory Sandbox: Transparent and Interactive Memory Management for Conversational Agents. In Adjunct Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology (San Francisco, CA, USA) (UIST ’23 Adjunct) . Association for Computing Machinery, New York, NY, USA, Article 97, 3 pages. doi:10.1145/3586182.3615796 [29] Mina Huh, Yi-Hao Peng, and Amy Pavel. 2023. GenAssist: Making Image Gen-eration Accessible. In Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology (San Francisco, CA, USA) (UIST ’23) . Asso-ciation for Computing Machinery, New York, NY, USA, Article 38, 17 pages. doi:10.1145/3586183.3606735 [30] Tobias Isenberg. 2024. The state of reproducibility stamps for visualization research papers. In 2024 IEEE Evaluation and Beyond-Methodological Approaches for Visualization (BELIV) . IEEE, 97–105. [31] Peter Jansen, Samiah Hassan, and Pragnya Narasimha. 2025. CodeDistiller: Automatically Generating Code Libraries for Scientific Coding Agents. arXiv preprint arXiv:2512.01089 (2025). [32] Hyeonsu B Kang, Tongshuang Wu, Joseph Chee Chang, and Aniket Kittur. 2023. Synergi: A Mixed-Initiative System for Scholarly Synthesis and Sensemaking. In Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology (San Francisco, CA, USA) (UIST ’23) . Association for Computing Machinery, New York, NY, USA, Article 43, 19 pages. doi:10.1145/3586183.3606759 [33] Mary Beth Kery, Donghao Ren, Fred Hohman, Dominik Moritz, Kanit Wong-suphasawat, and Kayur Patel. 2020. mage: Fluid Moves Between Code and Graphical Work in Computational Notebooks. In Proceedings of the 33rd Annual ACM Symposium on User Interface Software and Technology (Virtual Event, USA) 
+
+(UIST ’20) . Association for Computing Machinery, New York, NY, USA, 140–151. doi:10.1145/3379337.3415842 [34] Tae Soo Kim, Yoonjoo Lee, Minsuk Chang, and Juho Kim. 2023. Cells, Gen-erators, and Lenses: Design Framework for Object-Oriented Interaction with Large Language Models. In Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology (San Francisco, CA, USA) (UIST ’23) . As-sociation for Computing Machinery, New York, NY, USA, Article 4, 18 pages. doi:10.1145/3586183.3606833 [35] Sam Lau and Philip J Guo. 2025. The Design Space of LLM-Based AI Coding Assistants: An Analysis of 90 Systems in Academia and Industry. In 2025 IEEE Symposium on Visual Languages and Human-Centric Computing (VL/HCC) . IEEE, 300–313. [36] David Ledo, Steven Houben, Jo Vermeulen, Nicolai Marquardt, Lora Oehlberg, and Saul Greenberg. 2018. Evaluation Strategies for HCI Toolkit Research. In 
+
+Proceedings of the 2018 CHI Conference on Human Factors in Computing Systems 
+
+(Montreal QC, Canada) (CHI ’18) . Association for Computing Machinery, New York, NY, USA, 1–17. doi:10.1145/3173574.3173610 [37] Yujie Luo, Zhuoyun Yu, Xuehai Wang, Yuqi Zhu, Ningyu Zhang, Lanning Wei, Lun Du, Da Zheng, and Huajun Chen. 2025. Executable Knowledge Graphs for Replicating AI Research. arXiv preprint arXiv:2510.17795 (2025). [38] Khalid Majrashi. 2023. Inter-platform consistency inspection method. Interna-tional Journal of Technology and Human Interaction (IJTHI) 19, 1 (2023), 1–20. [39] Chunyu Miao, Henry Peng Zou, Yangning Li, Yankai Chen, Yibo Wang, Fangxin Wang, Yifan Li, Wooseong Yang, Bowei He, Xinni Zhang, et al . 2025. Recode-h: A benchmark for research code development with interactive human feedback. 
+
+arXiv preprint arXiv:2510.06186 (2025). [40] Dan R. Olsen. 2007. Evaluating user interface systems research. In Proceedings of the 20th Annual ACM Symposium on User Interface Software and Technology 
+
+(Newport, Rhode Island, USA) (UIST ’07) . Association for Computing Machinery, New York, NY, USA, 251–258. doi:10.1145/1294211.1294256 [41] Jonas Oppenlaender and Simo Hosio. 2025. Keeping score: A quantitative analysis of how the CHI community appreciates its milestones. In Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems . 1–17. [42] Amy Pavel, Gabriel Reyes, and Jeffrey P. Bigham. 2020. Rescribe: Authoring and Automatically Editing Audio Descriptions. In Proceedings of the 33rd Annual ACM Symposium on User Interface Software and Technology (Virtual Event, USA) 
+
+(UIST ’20) . Association for Computing Machinery, New York, NY, USA, 747–759. doi:10.1145/3379337.3415864 [43] Asrar Qassem, Renee Bryce, and Khalid Alkhaldi. 2025. A Survey on Visual GUI Testing for Automatic Test Case Generation: Tools, AI Techniques, and Emerging Trends (S). 108–113. doi:10.18293/SEKE2025-108 [44] Rudolf Ramler, Georg Buchgeher, and Claus Klammer. 2018. Adapting automated test generation to GUI testing of industry applications. Information and Software Technology 93 (2018), 248–263. [45] Kavous Salehzadeh Niksirat, Lahari Goswami, Pooja SB Rao, James Tyler, Alessan-dro Silacci, Sadiq Aliyu, Annika Aebli, Chat Wacharamanotham, and Mauro Cherubini. 2023. Changes in research ethics, openness, and transparency in empirical studies between CHI 2017 and CHI 2022. In Proceedings of the 2023 CHI conference on human factors in computing systems . 1–23. [46] Minju Seo, Jinheon Baek, Seongyun Lee, and Sung Ju Hwang. 2025. Paper2code: Automating code generation from scientific papers in machine learning. arXiv preprint arXiv:2504.17192 (2025). [47] Shreya Shankar, J.D. Zamfirescu-Pereira, Bjoern Hartmann, Aditya Parameswaran, and Ian Arawjo. 2024. Who Validates the Validators? Aligning LLM-Assisted Evaluation of LLM Outputs with Human Preferences. In 
+
+Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology (Pittsburgh, PA, USA) (UIST ’24) . Association for Computing Machin-ery, New York, NY, USA, Article 131, 14 pages. doi:10.1145/3654777.3676450 [48] Chenglei Si, Tatsunori Hashimoto, and Diyi Yang. 2025. The ideation-execution gap: Execution outcomes of llm-generated versus human research ideas. arXiv Revibing Code from Papers: Reimplementing HCI Artifacts UIST ’26, November 02–05, 2026, Detroit, MI, USA 
+
+preprint arXiv:2506.20803 (2025). [49] Zachary S Siegel, Sayash Kapoor, Nitya Nagdir, Benedikt Stroebl, and Arvind Narayanan. 2024. Core-bench: Fostering the credibility of published research through a computational reproducibility agent benchmark. arXiv preprint arXiv:2409.11363 (2024). [50] Giulio Starace, Oliver Jaffe, Dane Sherburn, James Aung, Jun Shern Chan, Leon Maksin, Rachel Dias, Evan Mays, Benjamin Kinsella, Wyatt Thompson, et al . 2025. PaperBench: Evaluating AI’s Ability to Replicate AI Research. arXiv preprint arXiv:2504.01848 (2025). [51] Uzma Haque Syeda, Laura South, Justin Raynor, Liudas Panavas, David Saffo, Tommy Morriss, Cody Dunne, and Michelle A Borkin. 2024. Vis repligogy: Towards a culture of facilitating replication studies in visualization pedagogy and research. (2024). [52] Jean Vanderdonckt and Radu-Daniel Vatavu. 2025. Context is Key for Repro-ducibility of Empirical Studies in Human-Computer Interaction. In Proceedings of the 3rd ACM Conference on Reproducibility and Replicability . 41–50. [53] Chat Wacharamanotham, Lukas Eisenring, Steve Haroz, and Florian Echtler. 2020. Transparency of CHI Research Artifacts: Results of a Self-Reported Survey. In 
+
+Proceedings of the 2020 CHI Conference on Human Factors in Computing Systems 
+
+(Honolulu, HI, USA) (CHI ’20) . Association for Computing Machinery, New York, NY, USA, 1–14. doi:10.1145/3313831.3376448 [54] Simon Willison. Marc. Not all AI-assisted programming is vibe coding (but vibe coding rocks). Retrieved March 14, 2026 from https://simonwillison.net/2025/ Mar/19/vibe-coding/ [55] Max Wilson, Wendy Mackay, Ed Chi, Michael Bernstein, and Jeffrey Nichols. 2012. RepliCHI SIG: from a panel to a new submission venue for replication. In CHI ’12 Extended Abstracts on Human Factors in Computing Systems (Austin, Texas, USA) (CHI EA ’12) . Association for Computing Machinery, New York, NY, USA, 1185–1188. doi:10.1145/2212776.2212419 [56] Max L. Wilson, Ed H. Chi, Stuart Reeves, and David Coyle. 2014. RepliCHI: the workshop II. In CHI ’14 Extended Abstracts on Human Factors in Computing Systems (Toronto, Ontario, Canada) (CHI EA ’14) . Association for Computing Machinery, New York, NY, USA, 33–36. doi:10.1145/2559206.2559233 [57] Max L. Wilson, Wendy Mackay, Ed Chi, Michael Bernstein, Dan Russell, and Harold Thimbleby. 2011. RepliCHI - CHI should be replicating and validating results more: discuss. In CHI ’11 Extended Abstracts on Human Factors in Comput-ing Systems (Vancouver, BC, Canada) (CHI EA ’11) . Association for Computing Machinery, New York, NY, USA, 463–466. doi:10.1145/1979742.1979491 [58] Max L. L. Wilson, Paul Resnick, David Coyle, and Ed H. Chi. 2013. RepliCHI: the workshop. In CHI ’13 Extended Abstracts on Human Factors in Computing Systems 
+
+(Paris, France) (CHI EA ’13) . Association for Computing Machinery, New York, NY, USA, 3159–3162. doi:10.1145/2468356.2479636 [59] Yifan Wu, Joseph M. Hellerstein, and Arvind Satyanarayan. 2020. B2: Bridging Code and Interactive Visualization in Computational Notebooks. In Proceedings of the 33rd Annual ACM Symposium on User Interface Software and Technology 
+
+(Virtual Event, USA) (UIST ’20) . Association for Computing Machinery, New York, NY, USA, 152–165. doi:10.1145/3379337.3415851 [60] Liwenhan Xie, Chengbo Zheng, Haijun Xia, Huamin Qu, and Chen Zhu-Tian. 2024. WaitGPT: Monitoring and Steering Conversational LLM Agent in Data Analysis with On-the-Fly Code Visualization. In Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology (Pittsburgh, PA, USA) 
+
+(UIST ’24) . Association for Computing Machinery, New York, NY, USA, Article 119, 14 pages. doi:10.1145/3654777.3676374 [61] Yiqing Xu and Leo Yang Yang. 2026. Scaling Reproducibility: An AI-Assisted Workflow for Large-Scale Reanalysis. arXiv preprint arXiv:2602.16733 (2026). [62] Shuo Yan, Ruochen Li, Ziming Luo, Zimu Wang, Daoyang Li, Liqiang Jing, Kaiyu He, Peilin Wu, Juntong Ni, George Michalopoulos, et al . 2025. Lmr-bench: Evaluat-ing llm agent’s ability on reproducing language modeling research. In Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing . 6175– 6197. [63] Zihan Yan, Chunxu Yang, Qihao Liang, and Xiang ’Anthony’ Chen. 2023. XCre-ation: A Graph-based Crossmodal Generative Creativity Support Tool. In Proceed-ings of the 36th Annual ACM Symposium on User Interface Software and Technology 
+
+(San Francisco, CA, USA) (UIST ’23) . Association for Computing Machinery, New York, NY, USA, Article 48, 15 pages. doi:10.1145/3586183.3606826 [64] Christine Ye, Sihan Yuan, Suchetha Cooray, Steven Dillmann, Ian LV Roque, Dalya Baron, Philipp Frank, Sergio Martin-Alvarez, Nolan Koblischke, Frank J Qu, et al . 2025. ReplicationBench: Can AI Agents Replicate Astrophysics Research Papers? arXiv preprint arXiv:2510.24591 (2025). [65] Ryan Yen, Jiawen Stefanie Zhu, Sangho Suh, Haijun Xia, and Jian Zhao. 2024. CoLadder: Manipulating Code Generation via Multi-Level Blocks. In Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology 
+
+(Pittsburgh, PA, USA) (UIST ’24) . Association for Computing Machinery, New York, NY, USA, Article 11, 20 pages. doi:10.1145/3654777.3676357 [66] Xuanle Zhao, Zilin Sang, Yuxuan Li, Qi Shi, Weilun Zhao, Shuo Wang, Duzhen Zhang, Xu Han, Zhiyuan Liu, and Maosong Sun. 2025. Autoreproduce: Automatic ai experiment reproduction with paper lineage. arXiv preprint arXiv:2505.20662 
+
+(2025). [67] Yuheng Zhao, Xueli Shu, Liwen Fan, Lin Gao, Yu Zhang, and Siming Chen. 2026. ProactiveVA: Proactive Visual Analytics with LLM-Based UI Agent. IEEE Transactions on Visualization and Computer Graphics 32, 1 (2026), 451–461. doi:10. 1109/TVCG.2025.3642628 
+
+A Appendix A.1 Systems 
+
+For our rubric experiments, the following papers were used: B2 [ 59 ], 
+
+Cells, Generators, and Lenses [34 ], CoLadder [ 65 ], EvalGen [ 47 ], 
+
+GenAssist [ 29 ], mage [ 33 ], Memory Sandbox [28 ], Patchview [10 ], 
+
+ProactiveVa [ 67 ], Rescribe [ 42 ], Sketch-n-Sketch [ 23 ], Spellburst [ 1], 
+
+Synergi [ 32 ], Vizability [21 ], WaitGPT [60 ], WorldScribe [7], World-Smith [13], and XCreation [63]. U  
+
+> A1
+> A2
+> Claude
+> U
+> A1
+> A2
+> Cursor
+> PT-01
+> PT-02
+> PT-03
+> PT-04
+> PB-01
+> PB-02
+> BO-01
+> BO-02
+> BO-03
+> BO-04
+> BO-05
+> BO-06
+> BO-07
+> BO-08
+> AC-01
+> AC-02
+> AC-03
+> CE-01
+> CE-02
+> CE-03
+> LS-01
+> LS-02
+> SP-01
+> SP-02
+> SP-03
+> HI-01
+> HI-02
+> HI-03
+> SH-01
+> SH-02
+> ER-01
+> ER-02
+> ER-03
+> CI-01
+> CI-02
+> CI-03
+> EC-01
+> EC-02
+> EC-03
+> EC-04
+> EC-05
+> U
+> A1
+> A2
+> Gemini
+> CoLadderrubricoutcomes
+
+Figure 9: Revibeability performance for CoLadder .U
+
+> A1
+> A2
+> Claude
+> T-1.1
+> T-1.2
+> T-1.3
+> T-2.1
+> T-2.2
+> T-2.3
+> T-2.4
+> T-3.1
+> T-3.2
+> T-3.3
+> T-3.4
+> T-3.5
+> T-3.6
+> T-3.7
+> T-4.1
+> T-4.2
+> T-4.3
+> T-4.4
+> T-5.1
+> T-5.2
+> T-5.3
+> T-6.1
+> T-6.2
+> T-7.1
+> T-7.2
+> T-8.1
+> T-9.1
+> T-10.1
+> T-10.2
+> T-10.3
+> T-11.1
+> T-11.2
+> T-11.3
+> T-12.1
+> T-12.2
+> T-12.3
+> T-13.1
+> T-13.2
+> T-13.3
+> T-13.4
+> U
+> A1
+> A2
+> Gemini
+
+B2 rubric outcomes
+
+Figure 10: Revibeability performance for B2 U
+
+> A1
+> A2
+> Claude
+> TEST-01
+> TEST-02
+> TEST-03
+> TEST-04
+> TEST-05
+> TEST-06
+> TEST-07
+> TEST-08
+> TEST-09
+> TEST-10
+> TEST-11
+> TEST-12
+> TEST-13
+> TEST-14
+> TEST-15
+> TEST-16
+> TEST-17
+> TEST-18
+> TEST-19
+> TEST-20
+> TEST-21
+> TEST-22
+> TEST-23
+> TEST-24
+> TEST-25
+> TEST-26
+> TEST-27
+> TEST-28
+> TEST-29
+> TEST-30
+> TEST-31
+> TEST-32
+> TEST-33
+> TEST-34
+> TEST-35
+> U
+> A1
+> A2
+> Gemini
+
+EvalGen rubric outcomes
+
+Figure 11: Revibeability performance for EvalGen U
+
+> A1
+> A2
+> Claude
+> U
+> A1
+> A2
+> Cursor
+> CHART-001
+> CHART-002
+> CHART-003
+> TREE-001
+> TREE-002
+> TREE-003
+> TREE-004
+> TREE-005
+> TREE-006
+> TABLE-001
+> TABLE-002
+> TABLE-003
+> TABLE-004
+> QA-COLD-001
+> QA-COLD-002
+> QA-ANA-001
+> QA-ANA-002
+> QA-ANA-003
+> QA-VIS-001
+> QA-VIS-002
+> QA-CTX-001
+> QA-CTX-002
+> QA-NAV-001
+> QA-NAV-002
+> QA-NAV-003
+> QA-NAV-004
+> INT-001
+> INT-002
+> INT-003
+> INT-004
+> EDGE-001
+> EDGE-002
+> EDGE-003
+> EDGE-004
+> EDGE-005
+> U
+> A1
+> A2
+> Gemini
+
+Vizability rubric outcomes
+
+Figure 12: Revibeability performance Vizability .UIST ’26, November 02–05, 2026, Detroit, MI, USA Adar et al. U  
+
+> A1
+> A2
+> Claude
+> U
+> A1
+> A2
+> Cursor
+> TEST-UI-01
+> TEST-UI-02
+> TEST-UI-03
+> TEST-UI-04
+> TEST-DRW-01
+> TEST-DRW-02
+> TEST-DRW-03
+> TEST-DRW-04
+> TEST-DRW-05
+> TEST-DRW-06
+> TEST-DRW-07
+> TEST-SEL-01
+> TEST-SEL-02
+> TEST-SEL-03
+> TEST-SEL-04
+> TEST-SEL-05
+> TEST-WID-01
+> TEST-WID-02
+> TEST-WID-03
+> TEST-OUT-01
+> TEST-OUT-02
+> TEST-OUT-03
+> TEST-OUT-04
+> TEST-OUT-05
+> TEST-REF-01
+> TEST-FOC-01
+> TEST-FOC-02
+> TEST-FOC-03
+> TEST-FOC-04
+> TEST-FOC-05
+> TEST-UDT-01
+> TEST-UDT-02
+> TEST-REP-01
+> TEST-REP-02
+> TEST-REC-01
+> TEST-REC-02
+> TEST-REC-03
+> TEST-INT-01
+> TEST-INT-02
+> TEST-INT-03
+> TEST-EDG-01
+> TEST-EDG-02
+> TEST-EDG-03
+> TEST-EDG-04
+> TEST-EDG-05
+> U
+> A1
+> A2
+> Gemini
+> Sketch-n-Sketchrubricoutcomes
+
+Figure 13: Revibeability performance for Sketch-n-Sketch .U
+
+A1
+
+A2
+
+> Claude
+> TEST-001
+> TEST-002
+> TEST-003
+> TEST-004
+> TEST-005
+> TEST-006
+> TEST-007
+> TEST-008
+> TEST-009
+> TEST-010
+> TEST-011
+> TEST-012
+> TEST-013
+> TEST-014
+> TEST-015
+> TEST-016
+> TEST-017
+> TEST-018
+> TEST-019
+> TEST-020
+> TEST-021
+
+U
+
+A1
+
+A2
+
+> Gemini
+
+XCreation rubric outcomes
+
+Figure 14: Revibeability performance for XCreation T-1.1
+
+> T-1.2
+> T-1.3
+> T-2.1
+> T-2.2
+> T-2.3
+> T-2.4
+> T-3.1
+> T-3.2
+> T-3.3
+> T-3.4
+> T-3.5
+> T-3.6
+> T-3.7
+> T-4.1
+> T-4.2
+> T-4.3
+> T-4.4
+> T-5.1
+> T-5.2
+> T-5.3
+> T-6.1
+> T-6.2
+> T-7.1
+> T-7.2
+> T-8.1
+> T-9.1
+> T-10.1
+> T-10.2
+> T-10.3
+> T-11.1
+> T-11.2
+> T-11.3
+> T-12.1
+> T-12.2
+> T-12.3
+> T-13.1
+> T-13.2
+> T-13.3
+> T-13.4
+> U
+> A1
+> A2
+> Claude
+
+B2 Extension rubric outcomes
+
+Figure 15: Revibeability performance for B2 (Jupyter Exten-sion version) 
+
+A.2 Model vs Agent 
+
+It is challenging to definitively conclude that one agentic architec-ture is better than another. Because we do not have access to the sys-tem/agent prompts for closed-source systems, the specific impacts of these prompts are hard to disentangle. In Figures 16 and 17, we reiterate the results from Claude (with claude-sonnet-4-6 ) and Cursor ( gpt-5.4-xhigh ) but add Cursor with claude-sonnet-4-6 
+
+to those. 
+
+Figure 16: Comparative revibeability performance for Spell-burst (agent × model) 
+
+Through this experiment, we cannot conclusively say that one system is a better ‘user’ of a particular model or which model is best to use given the same agentic prompts. However, the results do indicate that the internal prompts of the agentic systems can 
+
+Figure 17: Comparative revibeability performance for mage 
+
+(agent × model) 
+
+have an impact on revibe performance, and additional research is warranted. 
+
+A.3 Rubric Example 
+
+Example ‘tests’ produced for the Spellburst system [ 1]. These were produced using Claude Code ( Sonnet 4.6 ). The first represents a simpler test case. The second, which appears towards the end of the rubric, is more complex. 
+
+A.3.1 TEST-S05. 
+
+### TEST-S05 - Node Deletion **ID:** TEST-S05 **Prerequisites:** At least a root node and one child sketch node exist on the canvas. **Steps:** 1. Identify a child sketch node that has a parent node and at least one descendant node. 2. Click the `×` close button in the node 's header. 3. Observe: (a) whether the node is removed, (b) what happens to its descendants, and (c) what happens to the edge connecting parent to descendants. **Expected Result:** The deleted node is removed from the canvas. Its descendants are not deleted - they remain. The descendants are reattached to the deleted node 's parent (so the edge connects the grandparent directly to the grandchildren). The overall graph remains navigable. **Success Criteria:** - **Full Success:** Node disappears; descendants remain and are reattached to the grandparent, preserving the exploration history as described in Section 5.2.3. - **Partial Success:** Node is deleted but descendants are also deleted (cascading delete), or descendants are orphaned (disconnected) rather than reattached. - **Failure:** The x button is absent, clicking it has no effect, or deletion crashes the application. **Observed result:** 
+
+A.3.2 TEST-INT01. 
+
+### TEST-INT01 - Full Exploratory Session (Ash Scenario) **ID:** TEST-INT01 Revibing Code from Papers: Reimplementing HCI Artifacts UIST ’26, November 02–05, 2026, Detroit, MI, USA 
+
+**Prerequisites:** Fresh canvas; LLM backend reachable. Allow approximately 15-20 minutes for this test. **Steps:** 1. Create a root sketch node via `+ New Sketch `.2. Open the code editor and paste in a simple p5.js concentric circles sketch. 3. Verify the output renders (concentric circles visible). 4. From the root node, use Duplicate to create a child; open its code editor and change a numeric parameter (e.g., number of circles). Verify the change renders instantly. 5. From the root node, create a second branch using Duplicate; change a color parameter in this branch. Verify it shows a different color from Step 4 's branch. 6. From the root node, create a Modify operator with the prompt: *"Pretend the circles are the orbit of planets of our solar system. Add some fake planets and a sun."* Click Generate. Verify a new animated sketch with planets is created. 7. On the generated planet sketch, type a partial prompt in a new Modify node and use autocomplete to select a suggestion. Generate. Verify a new child sketch is created. 8. On a subsequent sketch in the topographic/noise branch, use the semantic parameter sliders to adjust parameters. Verify real-time output changes. 9. Select two sketches from different branches and Merge them. Verify a new combined sketch is generated with a merge comment in its code. 10. Use the Extract operator on one sketch to isolate a visual property. 11. Review the overall canvas: verify the auto-layout shows a hierarchical tree from left to right matching the structure in Figure 2. **Expected Result:** By the end of the session, the canvas shows a tree of interconnected sketch and operator nodes. The session mirrors the workflow described in Section 4, producing a range of visually distinct sketches (concentric circles -> planets -> topographic maps -> color gradients -> merged result). All operators functioned correctly during the session. **Success Criteria:** - **Full Success:** All 11 steps complete without error. The resulting canvas resembles Figure 2 in structure (hierarchical, left-to-right). At least 8 distinct sketch nodes are visible. All operators (Modify, Duplicate, Merge, Extract) produced correct results. - **Partial Success:** 7-10 steps complete correctly; 1-2 operators fail or produce unexpected results; canvas structure is approximately tree-like but with some layout issues. - **Failure:** Fewer than 6 steps complete; multiple operators fail; the canvas layout is chaotic; or the session is interrupted by application errors. **Observed result:** 15 20 25 30 35 40 45 50                   
+
+> Rubriclength(numberoftests)
+> 0.76
+> 0.78
+> 0.80
+> 0.82
+> 0.84
+> 0.86
+> 0.88
+> 0.90
+> 0.92
+> 0.94
+> 0.96
+> 0.98
+> 1.00
+> Max revibeability score
+> B2
+> CoLadder
+> GenAssist
+> mage
+> Rescribe
+> Sketch-n-Sketch
+> Spellburst
+> EvalGen
+> VizabilityXCreation
+> Rubriclengthvsmaxrevibeabilityscore
+> (maxscore=-0.00645×tests+1.17139,R²=0.546)
+
+Figure 18: Correlation between best revibeability score and the length of the rubric. 
+
+A.4 Rubric Analysis 
+
+Figure 18 illustrates the correlation between revibeability rubric length and max scores achieved. The data is correlated (Pearson 
+
+𝑟 = −.74 , 𝑝 < .05 ). To test the sensitivity of the results to the revibeability tests generated by the system, we perform a bootstrap analysis (see Figure 19). This was determined by randomly resampling (with replacement) tests from the 3rd run (the last aided revibe). 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 B2 CoLadder GenAssist mage Rescribe Sketch-n-Sketch Spellburst EvalGen Vizability XCreation claude cursor gemini Bootstrapped Revibeability Scores (3rd Run) 
+
+Figure 19: 95% CI calculated on the last run for each system by bootstrapping (1000 resamples) 
+
+A.5 Example Implementation Reports 
+
+The following is Claude’s report after the initial (unaided) revibe 
+
+prompt for the Rescribe system [42] (Sonnet 4.6): UIST ’26, November 02–05, 2026, Detroit, MI, USA Adar et al. 
+
+Rescribe - Implementation Complete The full system is implemented as a web app: What was built Backend (FastAPI + Python) - audio_analysis.py - faster-whisper transcription + librosa gap detection (silence/music/extendable) - nlp_candidates.py - spaCy-based candidate description generation (drops adjectives, prepositional phrases, compounds while protecting film phrases and quoted text) - scoring.py - Claude claude-haiku-4-5-20251001 coherence scoring + informativeness (noun TF-IDF) + edit quality (cut count) - optimizer.py - greedy gap-fitting optimizer for inline/extended/extended-inline modes - renderer.py - pydub audio mixing with edge-tts -> gTTS fallback for TTS - main.py - 11 REST endpoints for the full workflow Frontend (React + TypeScript + Vite) - Upload screen - drag-and-drop video upload - Video panel - player + custom timeline showing speech, gaps (colored by type), draft and rendered descriptions - Transcript pane - time-aligned words + clickable gap blocks; descriptions shown inline in grey - Description pane - cards with thumbnails, text editing, microphone recording, lock controls (text/time/presence), NLP shortening suggestions, and post-render word-level toggling + short/long slider 
+
+Revision post-‘feature check’ prompt: 
+
+Everything builds cleanly. Here 's a summary of all the missing features that were added: ---Features Added Backend algorithmic improvements audio_analysis.py - Beat detection using librosa.beat.tempo - music gaps are now classified as extendable_music only if tempo >= 60 bpm AND duration >= 10s (paper: >=60 bpm, >=30s), rather than a simple duration check - Added transcribe_audio() for transcribing recorded description audio clips to get word-level timestamps nlp_candidates.py - Video-specific phrase protection - scans source transcript + all descriptions for 2/3/4-grams occurring 3+ times with at least one verb/noun; these are kept together and cannot be split - On-screen text prefix detection - text following "text:", "title:", "credit:", "text on screen:", "title card:" prefixes is fully protected from any shortening - Quotation-mark locking - fully quoted text is detected and returned as a single verbatim candidate optimizer.py (complete rewrite) 
+
+- DP-based placement with proper cost function: C(di) + P(di,t,l) per the paper - Placement penalties: speech overlap = $\infty$, previously placed description overlap = $\infty$, within 0.3s of boundary = +10, extension per second (extended-inline) = +1 - Candidate selection - optimizer now receives scored candidates and picks the best (text, placement) pair globally - Locked constraint enforcement - locked_text, locked_time, locked_presence all respected renderer.py - Word-level audio editing (edit_audio_by_word_selection) -cuts recorded audio at word boundaries and concatenates kept segments with short crossfades, so user word selections don 't require re-recording - Improved ambient noise extension using random segment sampling (avoids rhythmic artifacts) main.py - Candidate scoring integrated into render - every render call now generates NLP candidates and scores them with Claude before optimization - Word selection endpoint (POST /descriptions/{id}/word-selection) - saves included words and returns re-cut audio - Batch export endpoint (POST /export-all) - renders inline, extended, and extended-inline from one set of descriptions - Recording transcription - uploaded recordings are transcribed for word timestamps automatically Frontend UI improvements VideoPanel.tsx - Two separate timeline bars: (1) Speech & Descriptions, (2) Gaps showing remaining available time after placed descriptions (full color = remaining, faded = used) TranscriptPane.tsx - Dynamic gap reduction: gap blocks in the transcript visually shrink as descriptions are written into them DescriptionCard.tsx - Double-click time editing - double-click the start time to enter a numeric editor - Quotation mark auto-locking - typing a description in "quotes" automatically sets locked_text - Black/grey word colors - post-render, included words are black, excluded words are light grey (exact paper specification) - Word selection syncs to server - toggling words or moving the slider immediately calls /word-selection and streams back re-cut audio App.tsx - TTS auto-preview during playback - when the video plays past a description 's start time, the pre-generated TTS audio plays automatically alongside the source audio - Export All button - renders all three modes and shows audio players for each
