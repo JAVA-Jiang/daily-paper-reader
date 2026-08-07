@@ -1,201 +1,83 @@
 {
   "mode": "standard",
-  "generated_at": "2026-08-07T01:50:11.149625+00:00",
+  "generated_at": "2026-08-07T20:20:34.125875+00:00",
   "stats": {
     "mode": "standard",
     "tag_count": 1,
-    "deep_divecandidates": 4,
+    "deep_divecandidates": 1,
     "deep_cap": 6,
-    "deep_selected": 4,
-    "quick_candidates": 1,
+    "deep_selected": 1,
+    "quick_candidates": 4,
     "quick_skim_target": 11,
-    "quick_selected": 1
+    "quick_selected": 4
   },
   "deep_dive": [
     {
-      "id": "2608.00538v1",
+      "id": "2608.02004v1",
       "source": "arxiv",
-      "title": "DE-NER : Zero-shot Named Entity Recognition via Dialogue Elicitation of Large Language Models",
-      "abstract": "Recent advancements of zero-shot Named Entity Recognition (NER) establish strong baselines by formulating sequence labeling into question answering where Large Language Models (LLMs) can be naturally adopted. However, existing LLM-based zero-shot NER methods suffer from the limitations of prompt and demonstration engineering. To address these issues with minimal human interventions, we introduce DE-NER, a dialogue elicitation framework which elicits the chatting ability of LLMs to fully extract the knowledge encoded in LLMs. Our experiments demonstrate that the proposed method outperform the competitive baselines in zero-shot settings across multiple benchmarks, with an average improvement of 3.75\\% F1 points. Codes are released in https://github.com/kkkenshi/DE-NER.",
+      "title": "BIP! Ranker: A Software Library for Citation-Based Impact Indicators on Large-Scale Graphs",
+      "abstract": "Scientific impact is multidimensional: overall influence, current popularity, early citation momentum, and field-relative performance each capture a distinct facet of a publication's impact. Yet, in practice, these dimensions are often reduced to a single metric, such as citation count. Open solutions for computing multiple complementary impact indicators at scale remain scarce, particularly for citation graphs as large as those provided by major scholarly databases. We introduce BIP! Ranker, an open-source, Spark-based library for computing citation-based impact indicators at scale, capable of processing citation networks with billions of citations among hundreds of millions of publications.",
       "authors": [
-        "Xuankang Zhang",
-        "Jiangming Liu"
+        "Ilias Kanellos",
+        "Serafeim Chatzopoulos",
+        "Thanasis Vergoulis"
       ],
-      "primary_category": "cs.CL",
+      "primary_category": "cs.DL",
       "categories": [
-        "cs.CL"
+        "cs.DL",
+        "cs.IR"
       ],
-      "published": "2026-08-01T08:46:53+00:00",
-      "link": "https://arxiv.org/pdf/2608.00538v1",
+      "published": "2026-08-03T10:05:26+00:00",
+      "link": "https://arxiv.org/pdf/2608.02004v1",
       "tags": [
-        "keyword:code-paper"
-      ],
-      "llm_score": 9.0,
-      "llm_evidence_en": "Abstract explicitly states codes are released for the proposed DE-NER framework.",
-      "llm_evidence_cn": "摘要明确说明DE-NER框架的代码已发布。",
-      "llm_evidence": "摘要明确说明DE-NER框架的代码已发布。",
-      "canonical_evidence": "摘要明确说明DE-NER框架的代码已发布。",
-      "llm_tldr_en": "DE-NER is a dialogue elicitation framework for zero-shot NER that outperforms baselines across benchmarks and releases its code.",
-      "llm_tldr_cn": "针对现有基于LLM的零样本命名实体识别受提示和示例工程限制的问题，本文提出DE-NER对话引导框架，通过激发LLM的对话能力充分提取知识。实验表明，该方法在多个基准上的零样本设置中平均F1提升3.75个百分点，并发布了代码，便于复现与后续研究。",
-      "llm_tldr": "针对现有基于LLM的零样本命名实体识别受提示和示例工程限制的问题，本文提出DE-NER对话引导框架，通过激发LLM的对话能力充分提取知识。实验表明，该方法在多个基准上的零样本设置中平均F1提升3.75个百分点，并发布了代码，便于复现与后续研究。",
-      "llm_tags": [
-        "query:code-paper"
-      ],
-      "matched_query_tag": "query:code-paper",
-      "matched_query_text": "papers that provide source code",
-      "matched_requirement_id": "req-4",
-      "selection_source": "fresh_fetch"
-    },
-    {
-      "id": "2608.02244v1",
-      "source": "arxiv",
-      "title": "Efficiency and Cost Alignment in Batched LLM Serving via Resource-Fair Scheduling",
-      "abstract": "This paper studies a resource-allocation inefficiency in batched large language model (LLM) serving: heterogeneous requests that share a decode batch impose max-driven computational costs on one another. Because the wall-clock cost of a batch step is largely governed by the largest active KV-cache footprint, a short request co-batched with a long request can experience latency and GPU-resource consumption disproportionate to its own token workload. We formalize this phenomenon as a resource-fair scheduling problem. We develop a mathematical scheduling model that connects within-batch resource fairness to system throughput. The proposed fairness constraint bounds the disparity in decode progress, equivalently KV-cache footprint, among co-batched requests. Based on this model, we design the Insert-Short-Jobs-with-Limit (ISJL) algorithm, a parameterized hybrid batching policy. We prove that ISJL achieves a global competitive-ratio lower bound of $3/4$. We further examine the profit implications of resource-fair scheduling under the token-metered pricing convention used by commercial LLM APIs. Numerical experiments show that ISJL occupies a favorable middle ground between FCFS, which has large batching externalities, and LJF, which is cost-aligned but sacrifices batching flexibility. Thus, ISJL provides a bi-criterion scheduling policy: it maintains high throughput while aligning max-driven batch cost with token-metered revenue.",
-      "authors": [
-        "Dayi Yao",
-        "Zijie Zhou"
-      ],
-      "primary_category": "cs.DC",
-      "categories": [
-        "cs.DC",
-        "eess.SY"
-      ],
-      "published": "2026-08-03T13:55:20+00:00",
-      "link": "https://arxiv.org/pdf/2608.02244v1",
-      "tags": [
+        "keyword:code-paper",
         "query:code-paper"
       ],
       "llm_score": 9.0,
-      "llm_evidence_en": "resource-fair scheduling model for batched LLM serving in GPU clusters",
-      "llm_evidence_cn": "针对GPU集群批量LLM服务的资源公平调度模型",
-      "llm_evidence": "针对GPU集群批量LLM服务的资源公平调度模型",
-      "canonical_evidence": "针对GPU集群批量LLM服务的资源公平调度模型",
-      "llm_tldr_en": "This paper formalizes a resource-fair scheduling problem for batched LLM serving and develops a mathematical model connecting within-batch fairness to system throughput.",
-      "llm_tldr_cn": "批量LLM服务中，不同长度的请求共享解码批次，导致短请求承受不成比例的高延迟和GPU资源消耗，因为批次成本由最大KV缓存占用主导。本文将这一现象形式化为资源公平调度问题，并建立数学模型将批内资源公平性与系统吞吐量联系起来。提出的公平性约束限制了同一批次内请求的解码进度差异，从而削减不公平开销。实验表明该调度方法能够在保持高吞吐的同时显著改善请求间的公平性，为数据中心LLM服务提供了一种成本对齐的调度机制。",
-      "llm_tldr": "批量LLM服务中，不同长度的请求共享解码批次，导致短请求承受不成比例的高延迟和GPU资源消耗，因为批次成本由最大KV缓存占用主导。本文将这一现象形式化为资源公平调度问题，并建立数学模型将批内资源公平性与系统吞吐量联系起来。提出的公平性约束限制了同一批次内请求的解码进度差异，从而削减不公平开销。实验表明该调度方法能够在保持高吞吐的同时显著改善请求间的公平性，为数据中心LLM服务提供了一种成本对齐的调度机制。",
+      "llm_evidence_en": "Open-source Spark-based software library",
+      "llm_evidence_cn": "开源Spark软件库",
+      "llm_evidence": "开源Spark软件库",
+      "canonical_evidence": "开源Spark软件库",
+      "llm_tldr_en": "BIP! Ranker is an open-source Spark-based library that computes multidimensional citation-based impact indicators on billion-scale citation networks, addressing the lack of scalable open solutions for scholarly impact assessment.",
+      "llm_tldr_cn": "面向大规模学术引文网络，现有工具难以同时计算多种互补的引文影响指标。作者提出BIP! Ranker，一个基于Spark的开源软件库，可处理数十亿引用和数亿文献的图数据。它以可复现、可扩展的方式提供总体影响力、流行度、早期引用势头和领域相对表现等多维指标，为科学计量学研究提供了开源基础设施。",
+      "llm_tldr": "面向大规模学术引文网络，现有工具难以同时计算多种互补的引文影响指标。作者提出BIP! Ranker，一个基于Spark的开源软件库，可处理数十亿引用和数亿文献的图数据。它以可复现、可扩展的方式提供总体影响力、流行度、早期引用势头和领域相对表现等多维指标，为科学计量学研究提供了开源基础设施。",
       "llm_tags": [
         "query:code-paper"
       ],
       "matched_query_tag": "query:code-paper",
-      "matched_query_text": "Papers with code for task scheduling in data centers",
-      "matched_requirement_id": "req-7",
-      "selection_source": "fresh_fetch"
-    },
-    {
-      "id": "2607.26566v1",
-      "source": "arxiv",
-      "title": "ServerlessT2I: Efficient Text-to-Image Workflow Serving on a Serverless Platform",
-      "abstract": "Text-to-image (T2I) workflows are increasingly deployed on serverless platforms because users often compose customized workflows and invoke them intermittently. Existing platforms typically deploy each workflow as an opaque GPU function, provisioning, placing, and scaling all constituent models in the workflow together. This monolithic design obscures workflow structure, inflates scaling overhead, forces users to manage low-level GPU coordination, and limits fine-grained fairness in multi-tenant clusters. In this paper, we present ServerlessT2I, a serverless-native system that decomposes a T2I workflow into loosely coupled model functions that can be independently managed and scheduled. By explicitly managing individual model execution, ServerlessT2I enables per-model scaling, declarative workflow composition, transparent GPU-resident communication, and fairness-aware scheduling. To make this decomposition efficient, ServerlessT2I harvests slack GPU memory left idle by compute-bound T2I inference to build a data plane that reduces model loading and data communication overheads. \\sys{} further introduces a fair scheduler for multi-tenant serving. Using production traces, ServerlessT2I sustains up to 2$\\times$ higher request rates than existing T2I workflow serving systems with the same GPU budget; for a fixed request rate, it saves up to 3$\\times$ GPU resources while satisfying service level objectives (SLOs).",
-      "authors": [
-        "Xiaoxiao Jiang",
-        "Suyi Li",
-        "Sheng Yao",
-        "Tianyu Feng",
-        "Lingyun Yang",
-        "Dapeng Nie",
-        "Haoran Yang",
-        "Wei Wang"
-      ],
-      "primary_category": "cs.DC",
-      "categories": [
-        "cs.DC",
-        "cs.AI"
-      ],
-      "published": "2026-07-29T07:39:56+00:00",
-      "link": "https://arxiv.org/pdf/2607.26566v1",
-      "tags": [
-        "query:code-paper"
-      ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "task scheduling of workflow functions on serverless multi-tenant clusters",
-      "llm_evidence_cn": "无服务器多租户集群上的工作流任务调度",
-      "llm_evidence": "无服务器多租户集群上的工作流任务调度",
-      "canonical_evidence": "无服务器多租户集群上的工作流任务调度",
-      "llm_tldr_en": "ServerlessT2I decomposes text-to-image workflows into independently scheduled model functions, reducing scaling overhead and improving fairness on serverless platforms.",
-      "llm_tldr_cn": "现有serverless平台将文本到图像工作流整体部署为不透明GPU函数，导致伸缩开销大、多租户公平性受限，同时要求用户管理底层GPU协调。ServerlessT2I将该工作流拆分为松耦合的模型函数，将它们独立管理和调度，显式控制单个模型执行。这一设计降低了扩展开销、简化了GPU协调，并在多租户集群中实现了更细粒度的公平性。该系统为无服务器工作流的数据中心任务调度提供了一种高效的细粒度方案。",
-      "llm_tldr": "现有serverless平台将文本到图像工作流整体部署为不透明GPU函数，导致伸缩开销大、多租户公平性受限，同时要求用户管理底层GPU协调。ServerlessT2I将该工作流拆分为松耦合的模型函数，将它们独立管理和调度，显式控制单个模型执行。这一设计降低了扩展开销、简化了GPU协调，并在多租户集群中实现了更细粒度的公平性。该系统为无服务器工作流的数据中心任务调度提供了一种高效的细粒度方案。",
-      "llm_tags": [
-        "query:code-paper"
-      ],
-      "matched_query_tag": "query:code-paper",
-      "matched_query_text": "Papers with code for task scheduling in data centers",
-      "matched_requirement_id": "req-7",
-      "selection_source": "fresh_fetch"
-    },
-    {
-      "id": "2607.28223v1",
-      "source": "arxiv",
-      "title": "Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters",
-      "abstract": "GPU cluster operators cannot predict how long pending workloads will wait for admission. Existing systems use greedy heuristics with no formal wait time guarantees. We formalize GPU cluster admission as a multi-class, multi-resource queueing network and prove a structural decomposition: the pending queue partitions into quotable workloads (bounded wait time under stability) and unfeasible workloads (no finite bound without reconfiguration). For quotable workloads, we model each cluster queue as an M/G/k system where the effective server count k is determined by a vector packing reduction; under an explicit stochastic domination assumption, we establish O(1/(1-rho)) wait time scaling. We prove that optimal admission ordering is NP-hard under multi-dimensional resource demands via reduction from vector bin packing. We validate on Kueue, the standard Kubernetes workload queuing system, using CPU, memory, and GPU (via Dynamic Resource Allocation) resources. The vector k_eff correctly identifies bottleneck resource dimensions, Little's Law holds exactly, and the Erlang-C approximation consistently overestimates observed wait times in the conservative direction.",
-      "authors": [
-        "Sohan Kunkerkar"
-      ],
-      "primary_category": "cs.DC",
-      "categories": [
-        "cs.DC"
-      ],
-      "published": "2026-07-30T13:57:45+00:00",
-      "link": "https://arxiv.org/pdf/2607.28223v1",
-      "tags": [
-        "query:code-paper"
-      ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "GPU cluster admission control for data center task scheduling",
-      "llm_evidence_cn": "GPU集群准入控制，面向数据中心任务调度",
-      "llm_evidence": "GPU集群准入控制，面向数据中心任务调度",
-      "canonical_evidence": "GPU集群准入控制，面向数据中心任务调度",
-      "llm_tldr_en": "Proposes queue-theoretic admission control for multi-tenant GPU clusters, proving wait-time bounds and NP-hard optimal ordering. Directly targets data center task scheduling with formal guarantees.",
-      "llm_tldr_cn": "该文针对多租户GPU集群中任务准入等待时间难以预测、现有贪婪启发式缺乏形式化保证的问题，将集群准入形式化为多类多资源排队网络，并证明待处理队列可分解为可报价与不可行两类负载。通过M/G/k建模与向量装箱归约，文章推导了O(1/(1-rho))的等待时间缩放，并证明最优准入排序是NP难的。该研究为数据中心的任务调度与准入控制提供了形式化等待时间保证，既深化了排队论在集群调度中的应用，也为实际系统设计提供了理论依据。",
-      "llm_tldr": "该文针对多租户GPU集群中任务准入等待时间难以预测、现有贪婪启发式缺乏形式化保证的问题，将集群准入形式化为多类多资源排队网络，并证明待处理队列可分解为可报价与不可行两类负载。通过M/G/k建模与向量装箱归约，文章推导了O(1/(1-rho))的等待时间缩放，并证明最优准入排序是NP难的。该研究为数据中心的任务调度与准入控制提供了形式化等待时间保证，既深化了排队论在集群调度中的应用，也为实际系统设计提供了理论依据。",
-      "llm_tags": [
-        "query:code-paper"
-      ],
-      "matched_query_tag": "query:code-paper",
-      "matched_query_text": "Papers with code for task scheduling in data centers",
-      "matched_requirement_id": "req-7",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
       "selection_source": "fresh_fetch"
     }
   ],
   "quick_skim": [
     {
-      "id": "2608.04450v1",
+      "id": "2608.00227v1",
       "source": "arxiv",
-      "title": "CommBench: Can LLMs Write Correct and Efficient GPU Communication Code?",
-      "abstract": "Training and serving large language models (LLMs) rely heavily on high-performance GPU communication, yet implementing efficient GPU communication primitives requires deep expertise in GPU architectures, networking hardware, and distributed communication patterns, making them particularly challenging for code generation models. We present CommBench, a comprehensive benchmark for GPU communication programming, consisting of over 100 expert-curated tasks spanning point-to-point communication, collective operations, expert-parallel communication, compute--communication fusion, and communication utility functions, with reference implementations either written by GPU communication experts or distilled from production codebases. We further introduce a cheat-resistant evaluation framework that automatically compiles, executes, and validates generated code on multi-GPU systems, and a unified metric that jointly measures functional correctness and communication performance. Evaluating leading frontier and open-source code generation models on both intra-node NVLink and inter-node RDMA platforms reveals that even the strongest model, GPT-5.5, correctly implements and achieves competitive performance on only 30.7\\% of the benchmark tasks. Our results expose a substantial gap between current LLMs and expert-written GPU communication code, establishing CommBench as a challenging benchmark for advancing AI-assisted systems programming.",
+      "title": "Source Code Authorship Attribution Does Not Generalize from Competitions to Classrooms",
+      "abstract": "Source code authorship attribution aims to identify the author of a program fragment from its writing style. We fine-tune the pre-trained transformer CodeBERT on three sources of data: publicly available Google Code Jam (GCJ) submissions from an open Kaggle repository, a curated GCJ archive, and institutional coursework datasets collected at a technical university. On multi-round GCJ data, CodeBERT reaches 92.6% Top-1 accuracy for 10 authors and retains 70.7% Top-1 (88.2% Top-10) for 1000 authors. On the examined coursework datasets, the same pipeline performs at or below the corresponding chance baselines: 0.2% Top-1 on a closed-assignment dataset of 690 authors and 0.06% Top-1 on open-ended assignments evaluated over 812 authors. A companion multi-model benchmark provides consistent cross-model evidence across additional dataset configurations, indicating that the observed performance gap is not specific to CodeBERT and persists across the evaluated model families. We analyze dataset and task properties that plausibly explain this gap and argue that GCJ-based benchmarks overestimate the practical applicability of authorship attribution in educational settings unless they are validated on the target coursework context.",
       "authors": [
-        "Shuang Ma",
-        "Yuyi Li",
-        "Yihan Zhang",
-        "Hezhi Xie",
-        "Danyang Chen",
-        "Shuyang Ji",
-        "Ziming Mao",
-        "Cheng Ji",
-        "Ansha Prashanth",
-        "Wenting Yang",
-        "Yiran Wang",
-        "Chihan Cui",
-        "Pei Yu Lin",
-        "Ion Stoica",
-        "Yang Zhou"
+        "Serhii Yemets",
+        "Marek Horváth"
       ],
-      "primary_category": "cs.DC",
+      "primary_category": "cs.SE",
       "categories": [
-        "cs.DC"
+        "cs.SE"
       ],
-      "published": "2026-08-05T04:55:21+00:00",
-      "link": "https://arxiv.org/pdf/2608.04450v1",
+      "published": "2026-07-31T19:15:43+00:00",
+      "link": "https://arxiv.org/pdf/2608.00227v1",
       "tags": [
-        "keyword:code-paper"
+        "keyword:code-paper",
+        "query:code-paper"
       ],
-      "llm_score": 6.0,
-      "llm_evidence_en": "likely provides source code and reference implementations for GPU communication benchmark",
-      "llm_evidence_cn": "为GPU通信基准提供源码与参考实现",
-      "llm_evidence": "为GPU通信基准提供源码与参考实现",
-      "canonical_evidence": "为GPU通信基准提供源码与参考实现",
-      "llm_tldr_en": "CommBench is a benchmark with over 100 expert-curated GPU communication programming tasks and reference implementations, assessing whether LLMs can generate correct and efficient code.",
-      "llm_tldr_cn": "GPU通信是大模型训练与推理的关键，但编写高性能通信代码需要深厚专业知识。本文提出CommBench基准，包含100多个专家精选的GPU通信编程任务及参考实现，系统性评测大模型生成通信代码的正确性与效率。该基准为代码生成模型在高性能计算领域提供了标准化评估工具，并公开了可复用的任务集与代码。",
-      "llm_tldr": "GPU通信是大模型训练与推理的关键，但编写高性能通信代码需要深厚专业知识。本文提出CommBench基准，包含100多个专家精选的GPU通信编程任务及参考实现，系统性评测大模型生成通信代码的正确性与效率。该基准为代码生成模型在高性能计算领域提供了标准化评估工具，并公开了可复用的任务集与代码。",
+      "llm_score": 7.0,
+      "llm_evidence_en": "Empirical study of source code authorship attribution with CodeBERT, likely providing open-source code and data; matches code-paper requirement.",
+      "llm_evidence_cn": "使用CodeBERT进行源代码作者归属的实证研究，数据和代码可能开源，符合含代码论文需求。",
+      "llm_evidence": "使用CodeBERT进行源代码作者归属的实证研究，数据和代码可能开源，符合含代码论文需求。",
+      "canonical_evidence": "使用CodeBERT进行源代码作者归属的实证研究，数据和代码可能开源，符合含代码论文需求。",
+      "llm_tldr_en": "Fine-tunes CodeBERT for source code authorship attribution, finding high accuracy on competitions but chance-level on classrooms, indicating poor generalization.",
+      "llm_tldr_cn": "源代码作者归属任务旨在从编程风格识别程序作者，但现有研究大多基于比赛数据。本文使用CodeBERT在Google Code Jam和课堂作业数据集上微调，发现比赛场景下10作者Top-1达92.6%，而在真实课堂数据上仅0.2%左右，与随机基线持平。结果表明基于竞赛数据训练的模型难以泛化到真实教学场景，源代码归属研究需重视数据分布差异。文章很可能提供可复现的代码与数据。",
+      "llm_tldr": "源代码作者归属任务旨在从编程风格识别程序作者，但现有研究大多基于比赛数据。本文使用CodeBERT在Google Code Jam和课堂作业数据集上微调，发现比赛场景下10作者Top-1达92.6%，而在真实课堂数据上仅0.2%左右，与随机基线持平。结果表明基于竞赛数据训练的模型难以泛化到真实教学场景，源代码归属研究需重视数据分布差异。文章很可能提供可复现的代码与数据。",
       "llm_tags": [
         "query:code-paper"
       ],
@@ -203,7 +85,124 @@
       "matched_query_text": "papers that provide source code",
       "matched_requirement_id": "req-4",
       "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.03860v1",
+      "source": "arxiv",
+      "title": "SciRet: A Compute-Aware Empirical Study of Retrieval and Reranking for Scientific RAG",
+      "abstract": "We introduce SciRet, a compute-aware empirical study of retrieval-augmented generation for scientific question answering over CORD-19. Rather than proposing a new model, we evaluate a fixed scientific RAG pipeline across three corpus scales: 1,034 chunks (1K papers), 5,160 chunks (5K papers), and 15,480 chunks (15K papers). The pipeline combines sentence-window chunking, BM25, BGE-M3 dense retrieval, reciprocal rank fusion, optional cross-encoder reranking, and grounded answer generation. Across these settings, hybrid retrieval is more robust than either sparse-only or dense-only retrieval in our setting, reaching Recall@10 of 1.000 at 1K and 15K. In contrast, an MS MARCO-trained cross-encoder reranker reduces precision on the scientific corpus, suggesting that domain mismatch can outweigh the benefits of stronger query-passage interaction. Generation faithfulness measured with RAGAS increases with corpus scale in our setup. Retrieval evaluation uses pseudo-relevance labels derived from the hybrid system, so we treat the results as controlled comparative evidence rather than a benchmark claim. We release code, indexes, and evaluation outputs to support replication and follow-up studies.",
+      "authors": [
+        "Kaysarul Anas Apurba",
+        "Md. Hasibul Hasan",
+        "Rofiqul Alam Shehab",
+        "Asab Azad"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.IR",
+        "cs.PF"
+      ],
+      "published": "2026-08-04T16:04:07+00:00",
+      "link": "https://arxiv.org/pdf/2608.03860v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Compute-aware empirical study of scientific RAG, likely reproducible with open-source pipeline, fitting reproducible-research-with-code requirement.",
+      "llm_evidence_cn": "对科学RAG进行计算感知的实证研究，流水线可能开源复现，符合可复现研究需含代码的要求。",
+      "llm_evidence": "对科学RAG进行计算感知的实证研究，流水线可能开源复现，符合可复现研究需含代码的要求。",
+      "canonical_evidence": "对科学RAG进行计算感知的实证研究，流水线可能开源复现，符合可复现研究需含代码的要求。",
+      "llm_tldr_en": "Introduces SciRet, a compute-aware empirical study showing hybrid retrieval is more robust than sparse/dense alone in scientific RAG across corpus scales.",
+      "llm_tldr_cn": "本文提出SciRet，一个计算感知的实证研究，在三种不同语料规模下系统评估固定科学RAG流水线（包括分块、BM25与稠密检索、融合、可选重排与生成）。结果表明混合检索比单独稀疏或稠密检索更稳健，1K与15K规模下Recall@10达到1.0，而基于MS MARCO训练的重排器在科学文献上会降低精确率。该研究为科学问答检索系统的可复现比较提供了基准与参考实现。",
+      "llm_tldr": "本文提出SciRet，一个计算感知的实证研究，在三种不同语料规模下系统评估固定科学RAG流水线（包括分块、BM25与稠密检索、融合、可选重排与生成）。结果表明混合检索比单独稀疏或稠密检索更稳健，1K与15K规模下Recall@10达到1.0，而基于MS MARCO训练的重排器在科学文献上会降低精确率。该研究为科学问答检索系统的可复现比较提供了基准与参考实现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
       "quick_tier": "6"
+    },
+    {
+      "id": "2608.04195v1",
+      "source": "arxiv",
+      "title": "SONAR: Task-Aware Code Summary Evaluation for LLM Consumers Without References",
+      "abstract": "Source code summaries have traditionally been evaluated from a human developer's perspective, with quality determined by how closely they resemble developer-written references and how well they align with human preferences. But this overlooks a growing reality: LLM-based tools and agents increasingly consume code summaries as inputs for software engineering (SE) tasks, and what makes a summary useful for a consuming agent on a task remains largely unexplored. To bridge this gap, we propose SONAR, a reference-free framework that evaluates source code summaries along four dimensions: Correctness, Abstraction, Conciseness, and Fluency. Rather than optimizing for a pre-written \"gold standard\", SONAR introduces a novel code regeneration-based approach that uses a summary to regenerate code and leverages that reconstruction as a quality signal of the summary. This provides an empirical grounding that requires neither a reference summary nor the subjective judgment of humans or LLMs. We evaluate SONAR's dimensions on their ability to influence LLM performance across four downstream SE tasks. We find that Correctness, followed by Abstraction, significantly correlates with LLM performance, with correlations up to 14X higher than the best baseline. Conciseness and Fluency, though widely valued by human developers, remain mostly insignificant to an LLM consumer, suggesting that what makes a summary useful is task- and consumer-dependent. Through a large-scale evaluation of 11 popular LLMs using SONAR, we further identify the strengths and weaknesses of different models across each quality dimension, while offering insights to facilitate future research on task-aware summarization.",
+      "authors": [
+        "Simantika Bhattacharjee Dristi",
+        "Matthew B. Dwyer"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-04T19:54:45+00:00",
+      "link": "https://arxiv.org/pdf/2608.04195v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Proposes a new framework (SONAR) for code summary evaluation, likely with open-source implementation; directly matches papers-with-source-code requirement.",
+      "llm_evidence_cn": "提出代码摘要评估新框架SONAR，很可能附带开源实现，直接符合含源代码论文的需求。",
+      "llm_evidence": "提出代码摘要评估新框架SONAR，很可能附带开源实现，直接符合含源代码论文的需求。",
+      "canonical_evidence": "提出代码摘要评估新框架SONAR，很可能附带开源实现，直接符合含源代码论文的需求。",
+      "llm_tldr_en": "Presents SONAR, a reference-free framework for task-aware code summary evaluation using code regeneration, assessing correctness, abstraction, conciseness, and fluency.",
+      "llm_tldr_cn": "现有代码摘要评估多以人类开发者视角与参考摘要相似度衡量，忽视LLM工具与代理作为消费方的实际任务需求。为此提出SONAR，一种无需参考答案的评估框架，从正确性、抽象性、简洁性和流畅性四个维度衡量代码摘要，并采用基于代码再生的新颖评价方式。该方法无需预设的金标准，更贴合LLM消费场景，为代码摘要评估提供了新范式，相关实现很可能开源供复现。",
+      "llm_tldr": "现有代码摘要评估多以人类开发者视角与参考摘要相似度衡量，忽视LLM工具与代理作为消费方的实际任务需求。为此提出SONAR，一种无需参考答案的评估框架，从正确性、抽象性、简洁性和流畅性四个维度衡量代码摘要，并采用基于代码再生的新颖评价方式。该方法无需预设的金标准，更贴合LLM消费场景，为代码摘要评估提供了新范式，相关实现很可能开源供复现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.04270v1",
+      "source": "arxiv",
+      "title": "CURATE: Leveraging LLM Agents to Compose, Catalog, and Deploy Reproducible Workflows",
+      "abstract": "Agentic code generation has shown promise in automating and accelerating software development by utilizing Large Language Models (LLMs) to generate, test, and deploy code. For engineers and scientists, such systems have the potential to accelerate the development of applied and scientific workflows while reducing barriers to entry in domains that have yet to fully realize their benefits. However, a key gap remains: existing coding agents primarily focus on code generation and do not address the entire workflow lifecycle, including deployment and sharing. As a result, users develop and stitch modules independently while managing deployment on their own. To address this gap, we propose CURATE - Composition, User-in-the-loop, Reuse, and Automated Task Execution - a novel human-in-the-loop multi-agent system that uses LLM agents to manage and develop composable workflows across their entire lifecycle. A key feature of the system is a catalog that allows for the storage and reuse of modules across workflows. Module catalogs provide a foundation that can be expanded to support FAIR principles by facilitating the sharing and reuse of curated modules and subgraphs. We demonstrate the feasibility of our system with an initial prototype using Claude Opus 4.8, comprising 6 experiments: reproducing and adapting 4 workflows derived from the SeBS-Flow benchmark suite, and automating the development and scaling of a workflow that leverages a complex mechanistic model in environmental engineering used to simulate anaerobic digestion.",
+      "authors": [
+        "Nolan Cutler",
+        "Chia-Chen Kuo",
+        "Nanda Velugoti",
+        "Kathryn Newhart",
+        "Renato Figueiredo"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.MA"
+      ],
+      "published": "2026-08-04T23:01:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.04270v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "LLM agents compose, catalog, and deploy reproducible workflows, enabling code artifact sharing and reproducibility",
+      "llm_evidence_cn": "LLM智能体组合、编目并部署可复现工作流，支持代码工件共享与可复现性",
+      "llm_evidence": "LLM智能体组合、编目并部署可复现工作流，支持代码工件共享与可复现性",
+      "canonical_evidence": "LLM智能体组合、编目并部署可复现工作流，支持代码工件共享与可复现性",
+      "llm_tldr_en": "Current coding agents focus on code generation but neglect deployment and sharing, hindering reproducible workflows. CURATE uses LLM agents with user-in-the-loop composition, reuse, and automation to compose, catalog, and deploy reproducible workflows, closing the lifecycle gap and accelerating applied and scientific workflow development.",
+      "llm_tldr_cn": "现有编码智能体主要生成代码，缺乏部署与共享支持，导致可复现工作流构建困难。本文提出CURATE系统，在用户参与下利用LLM智能体完成工作流的组合、编目与部署，并支持模块复用与自动部署。该系统面向工程师与科学家，补齐了工作流生命周期中部署与分享的缺口，降低应用开发门槛。",
+      "llm_tldr": "现有编码智能体主要生成代码，缺乏部署与共享支持，导致可复现工作流构建困难。本文提出CURATE系统，在用户参与下利用LLM智能体完成工作流的组合、编目与部署，并支持模块复用与自动部署。该系统面向工程师与科学家，补齐了工作流生命周期中部署与分享的缺口，降低应用开发门槛。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
     }
   ]
 }

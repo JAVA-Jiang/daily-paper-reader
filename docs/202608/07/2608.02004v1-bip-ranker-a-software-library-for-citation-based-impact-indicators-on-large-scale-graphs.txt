@@ -1,0 +1,222 @@
+Title: BIP! Ranker: A Software Library for Citation-Based Impact Indicators on Large-Scale Graphs
+
+URL Source: https://arxiv.org/pdf/2608.02004v1
+
+Published Time: Tue, 04 Aug 2026 02:11:21 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# BIP! Ranker: A Software Library for Citation-Based Impact Indicators on Large-Scale Graphs 
+
+## Ilias Kanellos 1,† Serafeim Chatzopoulos 2,∗ Thanasis Vergoulis 2
+
+> 1
+
+Independent Researcher, Athens, Greece 2IMSI, Athena Research Center, Athens, Greece 
+
+> †
+
+Work conducted while affiliated with IMSI, ATHENA RC. ∗Corresponding author: schatz@athenarc.gr 
+
+Abstract. Scientific impact is multidimensional: overall influence, current popularity, early citation momentum, and field-relative performance each capture a distinct facet of a publication’s impact. Yet, in practice, these dimensions are often reduced to a single metric, such as citation count. Open solutions for computing multiple complementary impact indicators at scale remain scarce, particularly for citation graphs as large as those provided by major scholarly databases. We introduce BIP! Ranker, an open-source, Spark-based library for computing citation-based impact indicators at scale, capable of processing citation networks with billions of citations among hundreds of millions of publications. 
+
+Keywords: impact indicators, citation networks, paper ranking, digital libraries 
+
+# 1 Introduction 
+
+Citation analysis plays a central role in scientific knowledge discovery and scientometrics. Modern scholarly discovery ser-vices often combine keyword relevance with citation-based in-dicators to rank search results and help users navigate the vast volume of research indexed in their databases. Citation-based indicators are also valuable for a wide range of scientometric analyses involving scientific impact estimation, including the identification of emerging fields or the study of scientific col-laboration and knowledge diffusion. In most cases, a simple indicator, such as citation count, is used as a proxy for scientific impact. However, scientific impact is inherently multidimensional. Total citation count re-flects only a publication’s cumulative influence from its pub-lication date to the present, and cannot capture other impor-tant dimensions in many contexts, such as current popularity, early citation momentum, or impact relative to the norms of its research field. For example, biology and mathematics have markedly different citation distributions, making raw citation counts difficult to compare across disciplines. Likewise, when identifying recent research trends, total citation count is an inadequate indicator: citations received many years ago are not reliable proxies for a work’s current attention, and recently published papers cannot be meaningfully compared with older publications that have had much more time to accumulate ci-tations. Over the past decades, several indicators have been in-troduced to capture these distinct dimensions of scientific im-pact. Examples include RAM [1], ECM [1], and AttRank [2] for popularity and FWCI [3] for accounting for disciplinary differences in citation practices. However, despite evidence of their usefulness in a variety of experiments [4], many of these indicators have not been widely adopted by scientific knowledge-discovery systems and re-main uncommon in scientometric analyses. Although some software libraries support the calculation of simple metrics, such as total citation count, reliable open-source implementa-tions of more advanced indicators remain scarce. Even for ci-tation counts, most systems and analyses rely on precomputed values provided by well-established scholarly datasets. These values are frequently generated using restricted or propri-etary software, with limited disclosure of the data-processing choices and assumptions that determine them. This lack of transparency can compromise the reproducibility and inter-pretability of downstream systems and analyses. Turning to advanced indicators, even the relatively few available open-source implementations often cannot scale to the largest cita-tion networks, containing billions of citations across hundreds of millions of publications, like those available through open scholarly datasets such as the OpenAIRE Graph [5] and Ope-nAlex [6]. In this paper, we present BIP! Ranker , an open-source soft-ware library for the scientometrics and bibliometrics commu-nity that enables the efficient computation of publication-level, citation-based impact scores on large-scale citation networks. It implements a diverse set of indicators capturing influence, popularity, citation momentum, and field-normalised impact, enabling scholarly search and discovery services to present multiple complementary views of research impact. 
+
+# 2 Related Work 
+
+The literature has introduced a range of impact indicators capturing different aspects of scientific impact, such as At-tRank [2] and RAM/ECM [1]. The papers introducing such indicators do not always release open implementations, and when they do, these are typically not designed to scale to large citation graphs. Moreover, they exist as separate, indepen-dently maintained implementations, so building a system that computes multiple indicators means hand-picking and inte-grating implementations from different sources. BIP! Ranker instead brings multiple indicator families together in a single, open-source library that scales to large citation networks, re-moving the need for this ad hoc integration. General-purpose graph processing tools implement funda-1arXiv:2608.02004v1 [cs.DL] 3 Aug 2026 mental algorithms such as PageRank but are not designed specifically for scholarly impact computation. Single-node libraries, including NetworkX [7] and igraph [8], are con-venient for prototyping, but their in-memory execution lim-its applicability to citation networks with millions of nodes and billions of citations. Distributed frameworks such as Apache Spark’s GraphX [9] address this scalability limita-tion but offer only general-purpose graph primitives, leav-ing domain-specific implementations to application develop-ers. BIP! Ranker builds on distributed graph computation while adding the layers required for scalable scholarly impact analysis: a shared citation-graph representation, tested compu-tation parameters and conventions, and execution mechanisms for computing multiple validated impact indicators. On the other hand, interactive citation analysis tools such as VOSviewer [10], CitNetExplorer [11], and the bibliometrix 
+
+R package [12] target exploratory analysis and visualisation rather than large-scale computation, typically assuming data that fits on a single machine. They also lack a production-oriented interface for computing and integrating multiple indi-cators. 
+
+# 3 Library Description 
+
+## 3.1 Main Components and Interface 
+
+Figure 1 illustrates BIP! Ranker’s main components, along with their inputs and outputs. The Citation Network Analy-sis component operates directly on the citation network, com-puting all citation-based impact indicators described in Sec-tion 3.2. It is implemented as a series of Apache Spark (PyS-park) scripts that can run on a computational cluster to anal-yse very large citation networks, producing publication-level scores together with percentile-based impact classes. Both in-put and output files are stored on a distributed HDFS storage. The Field Normalisation component derives field-normalised indicators by combining the citation-based scores produced by the Citation Network Analysis component with a provided publication-to-field mapping. It computes Field-Weighted Citation Impact (FWCI) [3] and field-specific impact classes for all indicators produced by the Citation Network Analysis component. The component is also im-plemented in Spark and its inputs and outputs are stored on HDFS. 
+
+## 3.2 Implemented Indicators 
+
+BIP! Ranker implements citation-based impact indicators spanning the major indicator families summarised in Table 1. Indicators in the Influence family capture a publication’s over-all, long-term scientific impact, based on its complete citation history. Indicators in the Popularity family reflect the atten-tion a publication receives today, thereby addressing the bias against recently published articles caused by citation lag [13]. Indicators in the Impulse family capture the momentum an ar-ticle gains in its early years, distinguishing publications that at-tract attention soon after publication from “hidden gems” that Citation Network   
+
+> Analysis
+> Apache Spark cluster
+> Distributed execution
+> Field Normalisation
+> HDFS
+> Distributed storage
+> HDFS
+> Distributed storage
+> Citation Network
+> Publication -to -field
+> Mappings
+> Citation -based
+> Indicators & Classes
+> FWCI, FWCI (N) &
+> Field Classes
+
+Figure 1: BIP! Ranker’s inputs, main components, and out-puts. gain recognition with delay. Finally, Field-normalised indica-tors adjust citation scores relative to the relevant research field, thereby reducing the effect of differences in citation practices across research areas. The following paragraphs provide fur-ther details on each implemented citation-based impact indi-cator. 
+
+Citation Count (CC) The most widely used impact indica-tor, CC aggregates the citations a publication has received over its entire citation history. Formally, the CC score of publica-tion i is given by 
+
+CC i = ∑
+
+> j
+
+Ai, j (1) where A is the adjacency matrix of the citation graph, i.e., 
+
+Ai, j = 1 if publication j cites publication i, and Ai, j = 0 other-wise. It offers a simple, cumulative proxy for overall influence, though it treats every citation as equally important regardless of the impact of the citing works. 
+
+PageRank BIP! Ranker implements the standard random-surfer PageRank formulation [14], exposing the damping fac-tor and convergence threshold as configurable parameters, with default values chosen to perform well on citation net-works. The score of publication i is computed as 
+
+PR i = α ∑
+
+> j
+
+Pi, j PR j + ( 1 − α) 1
+
+|V | (2) where P is the stochastic transition matrix (the column-normalised version of A), α ∈ [0, 1] is the damping factor, and |V | is the number of publications (vertices) in the cita-tion graph. The indicator propagates scores across the cita-tion graph, assigning greater influence to citations originating from highly cited publications. As an influence indicator, it Table 1: Citation-based impact indicators implemented in BIP! Ranker.              
+
+> Family Indicators Implementation Script
+> Influence CC, PageRank CC.py ,PageRank.py
+> Popularity RAM, ECM, AttRank TAR.py ,AttRank.py
+> Impulse iCC CC.py
+> Field-normalised FWCI, N-year FWCI TopicClassesAndFWCI.py
+
+2complements the previously discussed CC by considering the network’s entire structure rather than only direct citation in-links. This helps identify foundational publications that may not be highly cited themselves but are cited by influential, highly cited publications. To support large-scale computation of this indicator, the implementation checkpoints intermediate Spark DataFrames during iterations, preventing excessive lin-eage growth and enabling processing of large citation graphs. 
+
+RAM and ECM RAM and ECM implement the time-aware citation model of Ghosh et al. [1], which discounts citations by the recency of the citing paper. RAM applies this weighting directly to individual incoming citations, effectively extending CC with a recency-based decay factor: 
+
+RAM i = ∑
+
+> j
+
+Ri, j, Ri, j =
+
+(
+
+γ tc−t j if j cites i
+
+0 otherwise, (3) where R is the Retained Adjacency Matrix, γ ∈ (0, 1) is a decay parameter, tc is the current year, and t j is the publication year of citing article j. ECM generalises this approach to entire citation chains, weighing each chain by both its length and the age of the citations composing it: 
+
+ECM i = ∑
+
+> jH
+
+# ∑
+
+> h=1
+
+λ h 
+
+Rh  
+
+> i,j
+
+(4) where Rh denotes the h-th power of the retained adjacency matrix R, λ ∈ (0, 1] is a chain-length attenuation parameter that discounts longer citation chains, and H is the maximum chain length considered. RAM represents the single-hop case (H = 1) of ECM’s chain-based propagation, allowing both in-dicators to share a common computation pipeline. 
+
+AttRank AttRank [2] extends PageRank by modifying its teleportation component to incorporate attention signals de-rived from publication and citation recency. The AttRank score of publication i is computed as 
+
+AttRank i = α ∑
+
+> j
+
+Pi, j AttRank j +β ·Att (i)+ γ ·c·e−ρ (tc−ti) (5) where α + β + γ = 1 with α, β , γ ∈ [0, 1], Att (i) is a recent attention-based score reflecting publication i’s share of cita-tions in recent years, ti is its publication year, tc is the current year, c is a normalisation constant, and P is the stochastic tran-sition matrix. AttRank captures short-term scientific attention while preserving the graph-based score propagation mecha-nism of PageRank. It is classified as a popularity measure, complementing the time-aware citation indicators RAM and ECM. 
+
+“Incubation” Citation Count (iCC) iCC is a time-restricted variant of CC that counts only the citations a pub-lication receives within a fixed window of N years after its publication (typically a small value, e.g., N = 3), rather than over its entire citation history: 
+
+iCC (N) 
+
+> i
+
+= ∑  
+
+> j:tj≤ti+N
+
+Ai, j (6) where A is the adjacency matrix and ti, t j are the publica-tion years of the cited and citing papers, respectively. It thus captures a publication’s early citation momentum (“impulse”), during an initial citation window. Since iCC restricts the cita-tion window considered by CC, it follows the same underlying computation approach while applying an additional temporal constraint. All the aforementioned indicators are implemented as Apache Spark (PySpark) scripts that produce publication-level scores, together with categorical, percentile-based classes: publications are ranked in descending order according to their indicator scores and assigned to one of five classes—Top 0.01%, Top 0.1%, Top 1%, Top 10%, or Average (the remain-ing 90%)—reflecting their relative standing within the under-lying publication collection. Such classes are commonly used by scientific discovery services to offer users a more intuitive way to assess a publication’s standing. Beyond the global percentile-based classes, BIP! Ranker also provides field-level impact classes. Publications are first assigned to their relevant research fields using mappings pro-vided as input. The percentile-assignment procedure is then applied independently within each field-specific publication set. This allows publications to be assessed relative to other papers in the same field, reducing the effect of differences in citation practices across research areas. Moreover, the citation-based indicators (CC and iCC) can be combined with publication-to-field mappings in a sec-ond processing stage to compute field-normalised indicators. Specifically, Field-Weighted Citation Impact (FWCI) is com-puted following its standard definition [3]: FWCI i = CC i
+
+E[CC | di, yi, fi] (7) where di, yi, and fi denote the document type, publication year, and assigned research field of publication i, respectively. The denominator therefore represents the expected citation count for publications sharing the same document type, publication year, and research field. In addition, BIP! Ranker provides an N-year FWCI variant that applies the same normalisation procedure while restricting both observed and expected citations to those received within the first N years after publication: FWCI (N) 
+
+> i
+
+= iCC (N)
+
+> i
+
+EiCC (N) | di, yi, fi
+
+ (8) where iCC (N) 
+
+> i
+
+denotes the N-year incubation citation count of publication i, as defined in Eq. 6. 
+
+## 3.3 Large-Scale Distributed Processing 
+
+BIP! Ranker is designed to compute citation-based indicators over publication collections that exceed the capacity of a single 3machine. By exploiting Apache Spark’s distributed processing model, it can process citation networks containing hundreds of millions of publications and billions of citation relationships, including networks of the scale encountered in large scholarly knowledge graphs. To demonstrate this capability, we executed the indicator-compu-tation pipeline on a citation network extracted from the OpenAIRE Graph [5] comprising 385M publications and 2.1B citation relationships. The experiments were performed on an Apache Spark cluster managed by Hadoop YARN, with 32 worker nodes providing a total of 2.44 TB of memory and 1,280 vCPUs. The framework completed both simple aggregation-based indicators and iterative graph-based algorithms at this scale. Citation Count (CC) was computed in approximately 24 min-utes, while PageRank and AttRank completed in approxi-mately 79 and 72 minutes, respectively. These results illustrate that BIP! Ranker can leverage distributed computing resources to support the practical computation of citation-based indica-tors over large-scale scholarly networks. 
+
+# 4 Usage Example 
+
+BIP! Ranker can be executed locally or in a distributed Spark environment. Detailed installation instructions, software re-quirements, and command-line arguments are available in the project’s README file. 1 It also includes a demonstration pipeline that executes the complete workflow on a sample ci-tation graph: 
+
+> python run_demo.py
+
+Each indicator script operates directly on the citation-graph representation described in Section 3. For example, Citation Count and PageRank can be computed as follows: 
+
+> python CC.py <graph_path> <num_partitions> python PageRank.py <graph_path> <alpha> \ <convergence_error> <checkpoint_dir> \ <num_partitions> <mode>
+
+The resulting indicator scores can subsequently be com-bined with publication-to-field mappings to compute topic-level impact classes and field-normalised indicators: 
+
+> python TopicClassesAndFWCI.py \ --scores-file <scores.tsv> \ --concepts-file <pub-to-fields.tsv> \ --output-dir <output_dir>
+
+The complete documentation describes all available scripts, configuration options, input/output formats, and deployment scenarios. 
+
+> 1https://github.com/athenarc/Bip-Ranker/blob/main/README.md
+
+# 5 Availability 
+
+BIP! Ranker is publicly available on GitHub 2 under the GNU General Public License v2 (GPL-2.0). The software version discussed in this paper corresponds to GitHub release v2.0.0 3
+
+and is permanently archived on Zenodo [15]. The repository includes the source code, sample data, documentation, and a minimal example workflow to reproduce the software de-scribed in this paper. The source code is maintained under version control using Git. 
+
+# 6 Impact and Reuse 
+
+Target users. BIP! Ranker is intended for researchers and practitioners who develop scientific knowledge-discovery ser-vices or conduct scientometric analyses on large-scale pub-lication collections. By providing a unified implementation of multiple citation-based indicators, it eliminates the need to reimplement them. 
+
+Reproducibility. Each implemented indicator directly fol-lows the corresponding definition presented in Section 3.2. To-gether with the open-source implementation, this enables re-searchers to examine, validate, and reproduce analyses con-ducted using the library. Rather than relying on ready-made citation metrics from scholarly databases, whose calculation procedures may not be transparent, researchers can use BIP! Ranker to compute well-documented and reproducible indica-tors for their own publication collections. 
+
+Operational use. BIP! Ranker constitutes the computa-tional backend of several scholarly services developed by our group, including BIP! Finder [16], BIP4COVID19 [17], BIP! DB [18], and BIP! Scholar [19]. These systems collectively demonstrate the applicability of the library across literature search, researcher assessment, and domain-specific discovery services. In particular, BIP! DB publishes BIP! Ranker’s indi-cator scores computed based on the OpenAIRE Graph [5] as an openly available dataset on Zenodo. 4
+
+Adoption. BIP! Ranker’s outputs are also integrated into independent scholarly infrastructures. The OpenAIRE Graph [5] incorporates the computed impact scores and per-centile classes into its production workflow, exposing them through the Graph dataset, 5 APIs, and OpenAIRE Explore. 6
+
+These indicators support ranking functionalities and provide impact information alongside research products. Furthermore, the ELIXIR-supported bio.tools registry [20] displays impact indicators, computed by BIP! Ranker, on software records, demonstrating reuse of the generated metrics beyond the orig-inal BIP! ecosystem. 
+
+Maintenance and sustainability. BIP! Ranker is main-tained by the Scientific Knowledge and Data Management (SKnow) Lab at Athena Research Center. The public source 
+
+> 2https://github.com/athenarc/Bip-Ranker
+> 3https://github.com/athenarc/Bip-Ranker/releases/tag/v2.0.0
+> 4BIP! DB: https://doi.org/10.5281/zenodo.4386934
+> 5OpenAIRE Graph dataset: https://doi.org/10.5281/zenodo.3516917
+> 6OpenAIRE Explore: https://explore.openaire.eu/
+
+4code repository and open-source licensing facilitate access, re-producibility, and future extensions by the research commu-nity. 
+
+# 7 Conclusion 
+
+We presented BIP! Ranker, an open-source library for com-puting complementary citation-based impact indicators over large-scale citation graphs. BIP! Ranker contributes a common computational framework for the scalable, consistent integra-tion of established bibliometric measures spanning influence, popularity, impulse, and field-normalised impact. Its value is demonstrated through the sustained use in BIP! Services and the adoption by independent infrastructures, including Ope-nAIRE and bio.tools. BIP! Ranker thus provides a reusable, field-aware foundation for scholarly ranking, discovery, and research assessment. 
+
+# References 
+
+[1] Rumi Ghosh, Tsung-Ting Kuo, Chun-Nan Hsu, Shou-De Lin, and Kristina Lerman. Time-aware ranking in dynamic citation networks. In Proceedings of the IEEE International Conference on Data Mining Workshops (ICDMW) , pages 373–380, 2011. [2] Ilias Kanellos, Thanasis Vergoulis, Dimitris Sacharidis, Theodore Dalamagas, and Yannis Vassiliou. Ranking pa-pers by their short-term scientific impact. In Proceedings of the 37th IEEE International Conference on Data En-gineering (ICDE) , pages 1997–2002. IEEE, 2021. [3] Amrita Purkayastha, Eleonora Palmaro, Holly J Falk-Krzesinski, and Jeroen Baas. Comparison of two article-level, field-independent citation metrics: Field-weighted citation impact (fwci) and relative citation ratio (rcr). 
+
+Journal of informetrics , 13(2):635–642, 2019. [4] Ilias Kanellos, Thanasis Vergoulis, Dimitris Sacharidis, Theodore Dalamagas, and Yannis Vassiliou. Impact-based ranking of scientific publications: A survey and experimental evaluation. IEEE Transactions on Knowl-edge and Data Engineering , 33(4):1567–1584, 2019. [5] Paolo Manghi, Claudio Atzori, Alessia Bardi, Miriam Baglioni, Jochen Schirrwagen, Harry Dimitropoulos, Sandro La Bruzzo, Ioannis Foufoulas, Andrea Mannocci, Marek Horst, Andreas Czerniak, Katerina Iatropoulou, Argiro Kokogiannaki, Michele De Bonis, Michele Ar-tini, Antonis Lempesis, Alexandros Ioannidis, Natalia Manola, Pedro Principe, Thanasis Vergoulis, Serafeim Chatzopoulos, and Dimitris Pierrakos. Openaire graph dataset, December 2022. URL https://doi.org/10.5281/ zenodo.7488618. A new version of this dataset is pub-lished every 6 months. The content available on the OpenAIRE EXPLORE and CONNECT portals might be more up-to- date with respect to the data you find here. [6] Jason Priem, Heather Piwowar, and Richard Orr. Ope-nAlex: A fully-open index of scholarly works, au-thors, venues, institutions, and concepts. arXiv preprint arXiv:2205.01833 , 2022. [7] Aric Hagberg and Drew Conway. Networkx: Network analysis with python. URL: https://networkx.github.io ,1031, 2020. [8] Maintainer Gabor Csardi et al. Package ‘igraph’. Last accessed , 3(09):2013, 2013. [9] Joseph E Gonzalez, Reynold S Xin, Ankur Dave, Daniel Crankshaw, Michael J Franklin, and Ion Stoica. 
+
+{GraphX }: Graph processing in a distributed dataflow framework. In 11th USENIX symposium on operating systems design and implementation (OSDI 14) , pages 599–613, 2014. [10] Nees Jan Van Eck and Ludo Waltman. Software survey: Vosviewer, a computer program for bibliometric map-ping. Scientometrics , 84(2):523–538, 2010. [11] Nees Jan Van Eck and Ludo Waltman. Citnetexplorer: A new software tool for analyzing and visualizing citation networks. Journal of Informetrics , 8(4):802–823, 2014. [12] Massimo Aria and Corrado Cuccurullo. bibliometrix: An r-tool for comprehensive science mapping analysis. Jour-nal of Informetrics , 11(4):959–975, 2017. [13] Virgil P Diodato and Peter Gellatly. Dictionary of biblio-metrics . Routledge, 2013. [14] Lawrence Page, Sergey Brin, Rajeev Motwani, and Terry Winograd. The pagerank citation ranking: Bringing or-der to the web. In Proc. of the 7th International World Wide Web Conf.–1998 , 1999. [15] Ilias Kanellos, Thanasis Vergoulis, Claudio Atzori, Andrea Mannocci, Serafeim Chatzopoulos, Sandro La Bruzzo, Natalia Manola, and Paolo Manghi. Bip! ranker, July 2026. URL https://doi.org/10.5281/zenodo. 21721600. [16] Thanasis Vergoulis, Serafeim Chatzopoulos, Ilias Kanel-los, Panagiotis Deligiannis, Christos Tryfonopoulos, and Theodore Dalamagas. Bip! finder: Facilitating scientific literature search by exploiting impact-based ranking. In 
+
+Proceedings of the 28th ACM International Conference on Information and Knowledge Management (CIKM) ,pages 2937–2940, 2019. [17] Thanasis Vergoulis, Ilias Kanellos, Serafeim Chat-zopoulos, Danae Pla Karidi, and Theodore Dalamagas. Bip4covid19: Releasing impact measures for articles rel-evant to covid-19. Quantitative Science Studies , 2(4): 1447–1465, 2022. [18] Thanasis Vergoulis, Ilias Kanellos, Claudio Atzori, An-drea Mannocci, Serafeim Chatzopoulos, Sandro La 5Bruzzo, Natalia Manola, and Paolo Manghi. Bip! db: A dataset of impact measures for scientific publications. In 
+
+Companion Proceedings of the Web Conference (WWW) ,pages 456–460, 2021. [19] Thanasis Vergoulis, Ilias Kanellos, Serafeim Chatzopou-los, Andrea Mannocci, Paolo Manghi, Konstantinos Vi-chos, and Natalia Manola. BIP! Scholar: A service to facilitate fair researcher assessment. In Proceedings of the ACM/IEEE Joint Conference on Digital Libraries (JCDL) , pages 1–5, 2022. [20] Jon Ison et al. The bio.tools registry of software tools and data resources for the life sciences. Genome Biology , 20: 164, 2019. 6

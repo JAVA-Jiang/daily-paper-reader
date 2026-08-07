@@ -1,0 +1,317 @@
+Title: Source Code Authorship Attribution Does Not Generalize from Competitions to Classrooms
+
+URL Source: https://arxiv.org/pdf/2608.00227v1
+
+Published Time: Tue, 04 Aug 2026 00:10:47 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+Open Computer Science 2026; 1(1):1–12 
+
+# Research Article Open Access 
+
+# Serhii Yemets and Marek Horváth* 
+
+# Source Code Authorship Attribution Does Not Generalize from Competitions to Classrooms 
+
+Abstract: Source code authorship attribution aims to iden-tify the author of a program fragment from its writing style. We fine-tune the pre-trained transformer CodeBERT on three sources of data: publicly available Google Code Jam (GCJ) submissions from an open Kaggle repository, a cu-rated GCJ archive, and institutional coursework datasets collected at a technical university. On multi-round GCJ data, CodeBERT reaches 92.6% Top-1 accuracy for 10 au-thors and retains 70.7% Top-1 (88.2% Top-10) for 1000 authors. On the examined coursework datasets, the same pipeline performs at or below the corresponding chance baselines: 0.2% Top-1 on a closed-assignment dataset of 690 authors and 0.06% Top-1 on open-ended assignments eval-uated over 812 authors. A companion multi-model bench-mark provides consistent cross-model evidence across addi-tional dataset configurations, indicating that the observed performance gap is not specific to CodeBERT and persists across the evaluated model families. We analyze dataset and task properties that plausibly explain this gap and ar-gue that GCJ-based benchmarks overestimate the practical applicability of authorship attribution in educational set-tings unless they are validated on the target coursework context. 
+
+Keywords: source code authorship attribution, code stylom-etry, programming education, benchmark generalization, CodeBERT, Google Code Jam 
+
+# 1 Introduction 
+
+Programmers develop individual habits in naming, inden-tation, decomposition, and the way they revise a solution, and some of these habits persist across the programs they write. Source code authorship attribution is the task of recovering the author of a fragment from these stylistic traces, and it has long been applied in software forensics, malware analysis, and disputes over code ownership. In ed-ucation the problem has recently gained new urgency: with 
+
+Serhii Yemets, Technical University of Košice, Letná 9, 042 00 Košice, Slovakia, E-mail: serhii.yemets@student.tuke.sk 
+
+*Corresponding author: Marek Horváth, Technical Uni-versity of Košice, Letná 9, 042 00 Košice, Slovakia, E-mail: marek.horvath@tuke.sk 
+
+the spread of large language models capable of generating working solutions to programming assignments, instructors increasingly need tools that can verify whether a submis-sion is consistent with the personal style of the student who submitted it. Authorship attribution is therefore a plausi-ble screening technology, but only if its evidence survives the constraints of real coursework. Classical approaches to source code attribution rely on hand-crafted stylometric features such as identifier naming conventions, indentation, layout metrics, and n-gram fre-quencies [8, 9, 10]. Deep learning promised to remove the feature engineering step: neural networks learn discrimina-tive representations of coding style directly from raw code, and reported results are impressive. Convolutional and re-current models identify hundreds of authors with over 90% accuracy [3], and pre-trained transformers for code such as 
+
+CodeBERT [1] provide contextual embeddings that further simplify the pipeline. However, nearly all of these results share a common experimental foundation: the Google Code Jam (GCJ) cor-pus. GCJ is attractive because thousands of programmers solve the same tasks, so a classifier cannot exploit differ-ences in program functionality and is forced to model style. At the same time, GCJ participants are experienced, self-selected programmers who write substantial, algorithmi-cally rich solutions under time pressure and without com-mon instructor-provided templates. These properties make GCJ an unusually favorable environment for stylometry, and it is an open question whether accuracy measured there says anything about performance on the data instruc-tors actually possess: coursework submitted by first- and second-year students. This paper addresses that question directly. We eval-uate the same authorship-attribution framing on three sources of data with distinct provenance. The first is a publicly available GCJ dataset retrieved from an open Kag-gle repository, from which we build the large multi-round configurations used for the scaling study. The second is a curated GCJ archive based on individual contest rounds. The third comprises institutional coursework datasets col-lected at a technical university; a companion benchmark [17] supplies secondary evidence across additional dataset arXiv:2608.00227v1 [cs.SE] 31 Jul 2026 2
+
+configurations and model families. The first two sources share the same competitive nature and are analyzed jointly as the competitive programming family, while the course-work data represent the educational setting targeted by the study. Our contribution is threefold. First, we replicate and extend the strong GCJ results, scaling a fine-tuned CodeBERT classifier from 10 to 1000 authors while re-taining high Top-1 and Top-10 accuracy. Second, apply-ing the same primary CodeBERT pipeline to the exam-ined coursework datasets, we show that performance ap-proaches or falls below the corresponding chance baselines. Third, we use the companion benchmark to test whether the same pattern is visible beyond CodeBERT, finding con-sistent evidence across character-, token-, recurrent, and transformer-based model families. The following research questions guide the study: – RQ1: How does the accuracy of a fine-tuned code transformer scale with the number of candidate au-thors on competitive programming data? – RQ2: Does accuracy obtained on competitive pro-gramming corpora transfer to institutional coursework under the same primary CodeBERT pipeline? – RQ3: Is the observed behavior specific to one architec-ture, or does it persist across unrelated model families? – RQ4: Which properties of educational datasets limit the applicability of deep learning-based authorship at-tribution? 
+
+# 2 Related Work 
+
+Research on source code authorship attribution spans more than three decades and has passed through several method-ological eras. The earliest work framed the problem as soft-ware forensics and relied on manually designed metrics. Krsul and Spafford proposed more than fifty measurements grouped into program layout, style, and structure metrics, and reported that twenty-nine programmers could be at-tributed with roughly seventy-three percent accuracy [10]. This line established the central assumption of the field, namely that a programmer leaves a consistent stylistic fin-gerprint, while also exposing its fragility: layout features are easily erased by code formatters, and inexperienced au-thors have often not yet settled into a stable style. A second generation of methods moved from hand-picked metrics to n-gram profiles. Frantzeskou et al. in-troduced the Source Code Author Profile (SCAP) ap-proach, which represents each author by their most fre-quent byte-level n-grams and compares an unknown sam-ple to these profiles using a simplified profile intersection measure [8]. The method is language-independent, compu-tationally simple, and effective even when only a few short programs per author are available. Burrows et al. subse-quently unified and compared the competing feature-based techniques on a common footing, evaluating n-gram and metric representations with several information-retrieval ranking functions over a corpus of student programming assignments [9]. Two of their observations directly antici-pate our own findings: the problem domain of the software strongly affects attribution accuracy, and a programmer’s coding style drifts over time regardless of the requirements being coded. The current dominant benchmark was established by Caliskan-Islam et al., who introduced a Code Stylometry Feature Set combining lexical, layout, and syntactic fea-tures extracted from abstract syntax trees, produced by a fuzzy parser able to handle incomplete code, and classi-fied with random forests [2]. Their system de-anonymized 1,600 Google Code Jam programmers with roughly ninety-four percent accuracy and, in doing so, made GCJ the de facto standard benchmark for the task [5]. The same work reported two properties that make GCJ especially favor-able for stylometry: coding style is largely preserved across competition years, and solutions to more difficult problems are easier to attribute, because skilled programmers write more distinctive code. Deep learning subsequently removed the manual feature-engineering step. Abuhamad et al. proposed DL-CAIS, a language-oblivious model that feeds TF-IDF-weighted code n-grams into a deep recurrent network and reports 92-97% accuracy at scales ranging from about 1,600 up to 8,903 GCJ authors [3]. Alsulami et al. instead oper-ated directly on program structure, traversing abstract syn-tax trees with LSTM and bidirectional LSTM networks and attributing seventy Python authors with close to eighty-nine percent accuracy [4]. More recently, transformer mod-els pre-trained on large code corpora, such as CodeBERT 
+
+[1], which is built on the BERT architecture [11, 13], have allowed attribution to be cast as straightforward sequence classification through fine-tuning. Character-level convolu-tional networks [12] offer a lightweight, from-scratch alter-native that operates below the token level and is robust to out-of-vocabulary tokens and misspellings. Alongside these advances, a critical literature has ques-tioned whether benchmark accuracy reflects real-world per-formance. Kalgutkar et al. survey the field and note its re-liance on clean, single-author datasets, observing that com-petition corpora such as GCJ have been criticized for their artificial setup, and that the anonymization required to share student data typically removes comments, one of the most discriminative features [5]. Dauber et al. show that in-3
+
+dividual small, incomplete code fragments are substantially harder to attribute, although aggregating several fragments linked to the same account restores high accuracy [7]. Most directly, Bogomolov et al. demonstrate that models with high accuracy on existing datasets degrade sharply when evaluated on more realistic data, and they introduce the notion of a work context to capture the project- and team-specific factors that attribution models fail to generalize across [6]. A recent programmer-attribution survey reaches the same methodological diagnosis from a broader map-ping perspective: the field is dominated by closed-world attribution, a small number of benchmarks, and compara-tively little work on behavioral evidence, verification, and reproducibility [15]. Our study extends this critical line to the educational domain, whose distinctive properties include immature and rapidly evolving style, shared assignment templates, and short tasks. We directly compare a fixed CodeBERT at-tribution pipeline across competitive-programming and in-stitutional coursework data under a task-holdout proto-col, and use companion cross-model evidence to examine whether the pattern persists beyond one architecture. 
+
+# 3 Datasets 
+
+Our experiments draw on two contrasting families of data: competitive programming submissions, which represent the favorable conditions under which deep attribution models are often evaluated, and institutional coursework, which represents the conditions instructors face in the examined courses. This section describes both, together with the con-test structure and data-quality considerations that distin-guish them. 
+
+# 3.1 Competitive Programming Data (GCJ) 
+
+The competitive part of our experiments draws on archived Google Code Jam submissions (2018-2022) from two sources of distinct provenance, used for two complemen-tary purposes. The first source is the public Kaggle dataset 
+
+Google Code Jam dataset (jur1cek/gcj-dataset ), from which we use multi-round configurations for the scaling study [14]. Being community-maintained, it is compara-tively noisy, with occasional duplicate, truncated, or mis-labeled entries, but it provides many solutions per author across multiple rounds. From it we build the three scaling configurations by selecting the 10, 500, and 1000 most ac-tive authors. This selection creates a favorable high-volume setting and is treated as a limitation when interpreting transfer to coursework. The second source is a curated set of additional single-round GCJ configurations: GCJ 2022 with 10 tasks per author (636 authors) and GCJ 2018 with 10 tasks per author (1000 authors). We fixed the number of solutions per author at ten deliberately, as a compro-mise between training cost and accuracy. In all configura-tions each solution is labeled with the participant’s handle, and participants across a round solve identical tasks, which prevents the classifier from using task semantics as a short-cut. The multi-round and single-round configurations differ both in provenance and in per-author code volume, so their comparison is interpreted as descriptive rather than as an isolated causal test of either factor. 
+
+# 3.2 Student Coursework Datasets 
+
+The student datasets consist of coursework submissions collected at a technical university, covering introductory C programming, Java-based object-oriented tasks, and re-lated programming coursework. Before analysis, student identifiers and repository-level identifiers were replaced with salted hashes and metadata was normalized; identi-fiers occurring inside the submitted source code were not modified as part of this anonymization step. This cor-pus belongs to a broader line of educational source-code analysis in which static analysis, code-quality feedback, and learning analytics are used to study how novice pro-grammers develop over repeated assignments [16]. For the primary CodeBERT experiments we use two assignment-type datasets. The first is a closed-assignment dataset (690 authors, 2,345 submissions across four fully speci-fied C/C++ tasks), in which each assignment is a single task with one expected solution. The second is an open-assignment dataset (812 authors, 2,487 submissions across five C/C++/Java tasks), consisting of free-form projects in which students choose their own design and enjoy greater freedom of individual expression. For triangulation, we also use secondary evidence from the companion benchmark [17], which includes the closed and open datasets, compe-tition subsets (Google Code Jam and Kick Start, including pre- and post-LLM-period splits), and further coursework partitions by author count, programming language, project size, and number of files per author. Because the datasets consist of educational materials reused across course edi-tions, the raw submissions cannot be released publicly; the anonymized version is stored on institutional infrastructure and available to researchers on reasonable request. 4                           
+
+> Tab. 1: Core evaluation datasets.
+> Dataset Authors Samples Tasks/lang. Source
+> GCJ multi 10–1000 –multiple rounds /mixed Kaggle GCJ 2022 636 6360 10 tasks / mixed Curated GCJ 2018 1000 10000 10 tasks / mixed Curated Closed 690 2345 4 tasks / C/C++ Inst. Open 812 2487 5tasks /C/C++/Java Inst.
+
+The two competitive sources and the student source differ in exactly the dimensions that matter for stylom-etry. GCJ authors are experienced volunteers producing substantial contest solutions; students are novices produc-ing shorter, assignment-constrained programs whose style is still forming. This contrast between competitive and ed-ucational data is the object of study rather than a nuisance variable to be removed. 
+
+# 3.3 Contest Structure and Data Quality 
+
+Because our competitive data come from two Google pro-gramming contests, Google Code Jam and Kick Start, it is worth noting how their structure shapes the resulting code. Google Code Jam was a multi-round elimination con-test in which participants solved time-boxed algorithmic problems with accepted submissions judged against hid-den tests. This format means that a GCJ solution is usu-ally written by an experienced, self-selected programmer in a contest setting, often with recurring personal routines for input-output handling, templates, macros, and decomposi-tion. Kick Start differs in one important respect: it is a series of independent three-hour rounds held throughout the year, open to everyone with no pre-qualification and no single overall winner. Its problem format closely mirrors Code Jam [14], and in practice the two contests are similar in the kind of algorithmic tasks they pose. Both therefore yield substantial, time-constrained, single-author solutions that are favorable for stylometric analysis. We do not treat the two contests as evidence about programmer identity in general. They are used as favor-able competitive-programming baselines whose production context differs sharply from coursework. Empirically, the observed differences across companion configurations are driven more by the amount and structure of available code than by the specific contest label (Section 5.4). Table 2 summarizes the expected direction of these dif-ferences. The table is not used as a scoring instrument;                                           
+
+> Tab. 2: Dataset properties relevant to authorship signal.
+> Property Competitive data Coursework data
+> Authors Experienced, self-selected par-ticipants Novice students in ashared curricu-lum Tasks Algorithmic prob-lems with room for personal scaffold-ing Constrained as-signments, often tied to the same examples and interfaces Volume Multiple substan-tial solutions for active authors Fewer and shorter submissions per author Stability More mature pro-gramming habits across rounds Style may evolve across tasks and semesters Shared code Limited common code beyond prob-lem format Specifications, templates, skele-tons, and instruc-tor examples may overlap Labels Contest account usually maps to one participant Submission labels may be affected by collaboration, copying, or outside help
+
+rather, it makes explicit which assumptions are being car-ried from one data context to another when competitive-programming results are interpreted as evidence for educa-tional use. In stylometric terms, competitive data tend to increase stable between-author variation, while coursework data often increase within-author variation and between-author similarity at the same time. This distinction matters because source code attribu-tion is not only a model-selection problem. A classifier needs repeated, author-associated regularities that remain visible after task-specific tokens and solution logic are con-trolled for. Competitive benchmarks often provide many such regularities: personal input-output wrappers, debug-ging idioms, preferred data structures, and repeated de-composition patterns. Coursework can suppress the same signal when all students are solving a small number of highly similar exercises, especially if the assignment design encourages a narrow set of acceptable solutions. The comparison also clarifies the role of the open-assignment dataset. Open projects should, in principle, give students more freedom to express individual design habits. Their poor full-pool result is therefore not explained only by over-constrained task statements. It suggests that author-associated signal in educational settings can remain weak even when assignment form is less rigid, because 5
+
+novice style development, changing languages, small per-author history, and imperfect labels still operate together. 
+
+# 4 Methodology 
+
+We evaluate a primary CodeBERT pipeline and use a com-panion benchmark as secondary cross-model evidence. The goal is not to prove that modeling choices are irrelevant, but to test whether the competition-coursework gap remains visible under the evaluated architectures and task-holdout protocol. 
+
+# 4.1 Models 
+
+Our primary model is CodeBERT (microsoft/ codebert-base ) [1], a RoBERTa-style transformer pre-trained on paired natural language and source code. We attach a linear classification head with one output per candidate author and fine-tune the full network for multi-class sequence classification. Inputs are tokenized with the native CodeBERT tokenizer, truncated from the end when necessary, and padded to 512 tokens. Training uses the AdamW optimizer with a learning rate of 2 × 10 −5,weight decay 0.01, batch size 8 per device, and 3-5 epochs depending on configuration, on dual NVIDIA T4 GPUs. All primary CodeBERT experiments use the same pre-processing and training implementation: the Kaggle GCJ scaling sets, the curated single-round GCJ sets, and the coursework datasets. As architecturally different evidence, we report acharacter-level convolutional network (char-CNN) [12] trained from scratch for up to 12-14 epochs with model selection on validation accuracy. The companion bench-mark reported in Section 5.4 uses the same task-holdout idea and evaluates a broader set of model families [17]. Alongside the character-level CNN it includes token-level convolutional networks, recurrent models in both unidi-rectional (LSTM) and bidirectional (BiLSTM) form, and transformer encoders used both as fine-tuned classifiers and as fixed feature extractors with mean pooling. The bench-mark uses common split definitions and evaluation metrics, while model-specific preprocessing necessarily differs across architectures. 
+
+# 4.2 Evaluation Protocol 
+
+Evaluation uses a task-holdout protocol. For each author, the available tasks are partitioned so that the tasks used for testing are disjoint from those used for training. Every author is therefore evaluated only on solutions to tasks the model never saw that author solve, which reduces the risk that the classifier exploits task-specific patterns instead of author-associated style. The primary experiments use a fixed split for each configuration; authors with too few retained tasks are excluded. Comments are stripped where they might leak author names. We report Top-1 and Top-10 accuracy, following the practical scenario in which the system proposes a shortlist of candidate authors to an in-structor rather than a single verdict. The Top-10 value for the 10-author setting is therefore reported only for com-pleteness, since the correct author must be inside a ten-candidate shortlist. Random-guess Top-1 baselines ( 1/𝑁 
+
+for 𝑁 authors) are provided for reference. The companion benchmark additionally reports chance-adjusted Top-1 accuracy and proxy verification ROC-AUC [17]. Chance adjustment subtracts the random-guess baseline from observed Top-1, which helps compare candidate sets of different sizes. The proxy verification task asks whether two fragments share an author rather than naming the author outright; this formulation is closer to educational review practice, where the relevant question is often whether a submission is compatible with a declared student’s previous work rather than which student should be accused. These companion metrics are interpreted as secondary evidence rather than as part of the primary CodeBERT comparison. 
+
+# 4.3 Interpretive Framing 
+
+The primary experiments are closed-set identification ex-periments: every test sample is assumed to have been writ-ten by one of the candidate authors known to the model. This is a standard formulation in authorship-attribution re-search, but it is stronger than the situation faced in teach-ing practice. In a real course, an instructor often asks a nar-rower question: whether a submitted program is consistent with a student’s own previous work, whether it resembles another student’s work, or whether it deserves closer hu-man review. A closed-set classifier can still be informative for such workflows, but only if its Top-𝑘 shortlist and con-fidence behavior are reliable enough to reduce rather than create investigative noise. For that reason, we interpret Top-1 accuracy conser-vatively. High Top-1 performance on a clean benchmark shows that a model can recover author-associated regular-ities under that benchmark’s assumptions. Low Top-1 per-formance on coursework does not prove that no authorship signal exists, but it does show that the evaluated pipeline 6
+
+cannot recover a useful signal at the full candidate-pool scale. Top-10 accuracy is included because a shortlist is closer to how an instructor might use a tool; however, a useful shortlist still needs to be much smaller and more accurate than random review, especially when the conse-quences of a false suspicion are serious. The companion verification and abstention analyses are therefore important as qualitative checks. Verification asks a more deployable same-author question, while ab-stention tests whether the model can identify cases where it is sufficiently confident to be useful. In the companion benchmark, contest data provide such a high-confidence re-gion, but the full coursework datasets do not. This makes the negative result more relevant than raw Top-1 alone: the weakness is not merely that the model ranks the cor-rect author second or third, but that confidence does not recover a reliable operating regime on the most realistic coursework configurations. Finally, all results are interpreted at the dataset-configuration level. The companion benchmark contains 26 configurations, but several are derived from related source corpora by changing author count, language, project size, or per-author file count. They are useful for triangulat-ing mechanisms, not for claiming 26 independent replica-tions. This distinction is important for the manuscript’s evidential logic: the primary contribution is the controlled transfer test with CodeBERT, while the companion bench-mark checks whether the same direction of evidence sur-vives changes in model family and dataset configuration. 
+
+# 5 Results 
+
+We organize the results around the four research questions. We first establish how accuracy scales with the number of candidate authors on competitive data (RQ1), then test whether that accuracy transfers to institutional coursework (RQ2), check whether the observed behavior is specific to a single architecture (RQ3), and finally interpret dataset properties that may explain the performance gap (RQ4). 
+
+# 5.1 Scaling on Competitive Programming Data (RQ1) 
+
+Table 3 and Figure 1 summarize CodeBERT performance on the multi-round GCJ configurations. With 10 authors the model reaches 92.6% Top-1, and Top-10 accuracy is trivially 100% since only ten candidates exist. Scaling to 500 and 1000 authors reduces Top-1 accuracy to about   
+
+> 10 authors 500 authors 1000 authors
+
+0
+
+50 
+
+100 92 .6    
+
+> 69 .970 .7
+> 100
+> 87 .988 .2
+> Accuracy (%)
+> Top-1 Top-10
+> Fig. 1: CodeBERT accuracy on multi-round GCJ data as the number of candidate authors grows.
+
+70%, while Top-10 accuracy remains near 88%. Given ran-dom baselines of 0.2% and 0.1% respectively, the model performs far above chance and reliably narrows 1000 can-didates down to a shortlist of ten. The lower half of Table 3 and Figure 2 show Code-BERT accuracy on the single-round GCJ configurations, where each author has only about ten solutions. Here Top-1 accuracy is 27.9% for GCJ 2022 (636 authors) and 11.3% for GCJ 2018 (1000 authors), with Top-10 accuracy of 51.2% and 36.5% respectively. Compared with the multi-round setting, where the 1000 most active authors reach 70.7% Top-1, this is a substantial drop, even though the task is still competitive programming. The comparison sug-gests that previously reported high GCJ accuracy depends partly on the availability of many solutions per author, and declines once each author is represented by only a small number of files. We note one caveat: the multi-round and single-round configurations also differ in provenance, since the former come from the public Kaggle repository and the latter from a curated GCJ archive, so differences in cura-tion, author selection, and contest years may contribute to the gap alongside per-author volume. 
+
+# 5.2 Limited Transfer to Institutional Coursework (RQ2) 
+
+Table 4 and Figure 3 report the same CodeBERT pipeline applied to the coursework datasets. On the closed-assignment dataset of 690 authors, where every task is fully specified, Top-1 accuracy reaches only 0.2%, close to the 0.14% random baseline, and validation loss increases monotonically during training. This pattern is consistent with memorization of training files rather than transfer-able author-associated signal. The open-assignment dataset provides an important check because students design their own projects and have 7
+
+Tab. 3: CodeBERT on GCJ configurations. Accuracy values are percentages. 
+
+Configuration Authors Epochs Top-1 (%) Top-10 (%) Random Top-1 (%) 
+
+GCJ multi-round, most active 10 4 92.6 100.0 10.0 GCJ multi-round, most active 500 3 69.9 87.9 0.20 GCJ multi-round, most active 1000 5 70.7 88.2 0.10 GCJ 2022, 10 tasks/author 636 5 27.9 51.2 0.16 GCJ 2018, 10 tasks/author 1000 5 11.3 36.5 0.10 
+
+multi-round 1000 auth. 
+
+GCJ2022 636 auth. 
+
+GCJ2018 1000 auth. 
+
+0
+
+20 
+
+40 
+
+60 
+
+80 
+
+100 
+
+> 70 .7
+> 27 .9
+> 11 .3
+> 88 .2
+> 51 .2
+> 36 .5
+> Accuracy (%)
+
+Top-1 Top-10 
+
+Fig. 2: CodeBERT accuracy on multi-round versus single-round (≈10 solutions per author) GCJ configurations. 
+
+Tab. 4: CodeBERT on student coursework. Values are percent-ages; both full-scale datasets are near or below their random baselines. 
+
+Dataset Authors Top-1 (%) Top-10 (%) 
+
+Closed 690 0.2 1.6 Open 812 0.06 0.84 
+
+greater freedom of implementation. Evaluated over all 812 authors, however, the model reaches only 0.06% Top-1 and 0.84% Top-10, both below the corresponding random base-lines (0.12% and 1.23%). An earlier run on a reduced pool of 100 authors had reached 11.3% Top-1; the full-scale re-sult suggests that this signal does not scale to the complete candidate pool. As on the closed dataset, validation loss rises monotonically throughout training, which is consis-tent with memorization rather than stable cross-task attri-bution. 
+
+# 5.3 Cross-Model Evidence (RQ3) 
+
+Figure 4 compares the char-CNN baseline on size-matched subsets of both families. On GCJ 2021 the char-CNN reaches 94.8%, 93.9%, and 89.2% Top-1 accuracy for 100, 200, and 500 authors; on the coursework subsets of identical 
+
+Closed 690 auth. 
+
+Open 812 auth. 
+
+0
+
+0.5
+
+1
+
+1.5
+
+2   
+
+> 0.2
+> 6·10 −2
+> 1.6
+> 0.84
+> 0.14 0.12
+> Accuracy (%)
+
+Top-1 Top-10 Random Top-1 
+
+Fig. 3: CodeBERT on the full-scale coursework datasets com-pared with random Top-1 baselines. 
+
+sizes it achieves only 17.6%, 11.9%, and 7.7%. In the com-panion benchmark (Table 5) the same qualitative pattern appears across additional configurations: competitive pro-gramming subsets retain high attribution accuracy, while coursework-derived configurations show substantially lower Top-1 accuracy, with the two full assignment sets near their chance baselines [17]. Increasing the number of files per stu-dent from 5 to 15 raises Top-1 accuracy only from 4.3% to 7.8%, whereas the analogous increase on GCJ 2020, from 5 to 13 solutions per author, lifts it from 53.5% to 93.7%. These results indicate that the observed performance gap is not specific to CodeBERT and persists across the evalu-ated model families. 
+
+# 5.4 Companion Extended Benchmark Across Dataset Dimensions 
+
+The following analysis is secondary evidence drawn from the companion benchmark [17]. Its role is to assess whether the pattern observed in the primary CodeBERT experi-ments persists across additional dataset configurations and model families, not to serve as an independent replica-tion. The benchmark applies a task-holdout protocol to 26 evaluation configurations spanning contest, synthetic, and coursework-derived settings, and reports the best-8
+
+100 authors 200 authors 500 authors 
+
+0
+
+50 
+
+100 94 .8 93 .9 89 .2 
+
+> 17 .6
+> 11 .97.7
+> Top-1 Accuracy (%)
+
+GCJ 2021 (competitive) Student submissions 
+
+Fig. 4: Char-CNN Top-1 accuracy on size-matched competitive (GCJ 2021) and student subsets. 
+
+performing model for each configuration. Table 5 lists representative configurations, while Table 6 summarizes ranges by data context. 
+
+0 20 40 60 80 100  
+
+> Open tasks
+> Closed tasks
+> Java
+> Small proj.
+> C
+> Course 500
+> Course 100
+> Python
+> GCJ20 5/file
+> GCJ21 500
+> KS19
+> GCJ21 100
+> GCJ22
+> KS21 99
+> 95 .8
+> 94 .8
+> 92 .5
+> 89 .2
+> 53 .5
+> 37
+> 17 .6
+> 7.7
+> 4.4
+> 3.5
+> 1.7
+> 0.3
+> 0.2
+
+Best-model Top-1 accuracy (%) 
+
+> Competitive
+> Student
+
+Fig. 5: Representative companion-benchmark Top-1 accuracy [17]. 
+
+The companion evidence is consistent with the primary CodeBERT comparison, but it also shows that the course-work side is not uniform. The two full assignment datasets approach the chance baseline, whereas some smaller or language-specific coursework subsets retain limited author-associated signal: the Python course reaches 37.0% Top-1, and the 100-author coursework subset reaches 17.6% Top-1 and 0.80 verification ROC-AUC. These values remain far below the corresponding contest configurations, but they should not be described as chance-level results. 
+
+Tab. 5: Selected companion configurations from [17]. Values are percentages except AUC. 
+
+Context Configuration Authors T1 T10 AUC 
+
+Contest KS 2021 100 99.0 99.6 1.00 Contest GCJ 2022 100 95.8 98.8 1.00 Contest GCJ21, 500 auth. 500 89.2 95.9 1.00 Contest GCJ20, 5files/auth. 210 53.5 72.2 0.93 Synthetic Control corpus 100 43.0 85.7 0.96 Coursework Python course 500 37.0 62.7 0.93 Coursework 100 authors 100 17.6 46.9 0.80 Coursework 500 authors 500 7.7 24.0 0.78 Coursework C course 500 4.4 18.8 0.73 Coursework Java course 97 1.7 10.0 0.49 Assign. Closed tasks 690 0.3 1.5 0.50 Assign. Open projects 812 0.2 0.9 0.50 
+
+Tab. 6: Context-level ranges in the companion benchmark [17]. 
+
+Context Cfg. T1 range T10 range AUC range 
+
+Contest 12 53.5–99.0 72.2–99.6 0.93–1.00 Synthetic 1 43.0 85.7 0.96 Coursework subsets 11 1.7–37.0 6.6–62.7 0.47–0.93 Full assignments 2 0.2–0.3 0.9–1.5 0.50 
+
+Tab. 7: Training-length sensitivity averaged over the companion configurations [17]. Model checkpoints are selected by validation performance. 
+
+Model Ep. T1 T5 T10 AUC 
+
+char-CNN 5 43.1 49.8 53.2 0.80 char-CNN 8 45.8 53.3 57.3 0.82 char-CNN 12 47.4 54.3 58.2 0.83 transf. 3 41.4 49.4 53.6 0.81 transf. 5 45.2 53.4 57.5 0.83 
+
+Several dimensions narrow the plausible explanations. The pre- and post-LLM-period GCJ configurations remain comparable, so the observed gap is not explained by the calendar period alone. Per-author volume matters within contest data: increasing GCJ 2020 from five to thirteen solutions per author raises Top-1 accuracy from 53.5% to 93.7%. The analogous coursework comparison, from five to fifteen files per author, raises Top-1 only from 4.3% to 7.8%. Language and project-size partitions show the same pattern: Python coursework is the strongest student sub-set but remains below the contest configurations, while C, Java, and project-size subsets remain much lower. To-gether, these results suggest that dataset and task char-acteristics impose a stronger limitation than the choice among the evaluated architectures. A confidence-based abstention analysis in the same benchmark sharpens this interpretation. When the model is 9
+
+allowed to answer only on its most confident cases, contest configurations approach near-perfect retained accuracy, in-dicating a usable high-confidence operating region. Course-work configurations benefit much less, and the closed as-signment set does not recover useful accuracy under ab-stention. This asymmetry matters for deployment, because an integrity tool must know when to remain silent, and the examined coursework data provide little evidence of a reliable confidence region. 
+
+# 5.5 Dataset Properties and Plausible Explanations for the Performance Gap (RQ4) 
+
+Based on the observed dataset characteristics and prior literature, we identify several factors that may contribute to the lower performance on coursework data. These factors should be interpreted as plausible mechanisms rather than independently established causal effects. 
+
+Directly documented dataset properties. 
+
+– Author skill and style maturity. GCJ datasets con-tain code from experienced programmers, whereas the coursework corpus consists mostly of early-study pro-gramming assignments. Developing command of a lan-guage can produce more uniform, textbook-like code with fewer stable idiosyncratic habits. – Task size and complexity. Contest tasks are algo-rithmic problems that often contain recurring personal scaffolding and substantial implementations. Course assignments are shorter and more constrained, limiting the number of informative features available within a 512-token window. – Shared templates and specifications. Students commonly work from the same task statements, exam-ples, expected interfaces, and in some cases templates. This raises between-author similarity and weakens the contrast that a classifier needs. – Task- and language-dependent profiles. A stu-dent’s code may vary across C/C++ and Java assign-ments, and across open projects versus constrained ex-ercises. This can split one experimental label into sev-eral apparent styles. 
+
+Plausible sources of additional variability or label noise. 
+
+– Style evolution during study. Students actively de-velop their programming practices during a course se-quence, so code written at different stages may not express a stable cross-task profile. – Deliberate style modification. Some students may alter naming, structure, or formatting when they know submissions are inspected, but this study does not measure such behavior directly. – Collaboration and copying. Coursework labels are based on submission records, not independently veri-fied authorship. Collaboration, copying, or external as-sistance can weaken the correspondence between the label and the actual source of the code. – Different revision conditions. Contest solutions are produced under time limits, whereas coursework may be rewritten, formatted, or edited over a longer period. The direction and size of this effect are not isolated here, but it plausibly changes the observed signal. These mechanisms help interpret the internal ordering of the results without turning the study into a causal analysis. The single-round GCJ results (Section 5.1) show that per-author code volume accounts for part of the gap: with only about ten solutions per author, Top-1 accuracy on compet-itive data already falls to 11-28%. The remaining difference between those GCJ configurations and the full assignment datasets is consistent with the documented coursework con-straints above, especially shared tasks, short submissions, developing student profiles, and imperfect labels. 
+
+# 6 Discussion 
+
+Taken together, the results show that the strong attribu-tion accuracy reported on competitive programming data should not be read as a general capability of deep attribu-tion models. The same CodeBERT pipeline that separates a thousand Google Code Jam programmers performs at or below chance baselines on the examined full-scale course-work datasets, and the companion benchmark shows that this gap persists across the evaluated model families. The most defensible interpretation is therefore narrower than a universal claim about source code authorship: contest data expose a stronger and more repeatable author-associated signal than the examined coursework data under the eval-uated protocols. The practical implication for academic integrity tool-ing is direct. Accuracy figures published on GCJ must not be used by themselves to justify deployment on course-work submissions. In the examined institutional setting, full-scale closed and open assignment datasets do not sup-port reliable closed-set attribution. If used at all, attribu-tion should serve only as a weak screening signal in a Top-𝑘 
+
+shortlist or verification-support workflow with mandatory human review, and never as sole evidence in an academic misconduct case [17]. 10 
+
+This does not make competitive-programming data useless. GCJ remains valuable for controlled experiments because many authors solve shared problems and because large author pools can be constructed without exposing student records. Its weakness is ecological rather than tech-nical: it is a favorable benchmark for measuring whether a representation can exploit clear author-associated signal, but it is not a proxy for the institutional setting in which attribution evidence would be used. A stronger benchmark-ing practice would therefore report not only accuracy, but also author-selection criteria, tasks per author, files per au-thor, average fragment length, held-out task definitions, and the degree of shared scaffolding. Without those de-tails, two datasets with the same number of authors can represent substantially different attribution problems. The results also argue against treating model architec-ture as the main bottleneck. CodeBERT and the char-CNN differ strongly in their inductive biases: one relies on a pre-trained contextual token representation, the other learns character patterns from scratch. The companion bench-mark extends this comparison to token CNNs, recurrent networks, and transformer encoders. None of these evalu-ated choices removes the gap between contest and course-work configurations. A better model may still improve the absolute numbers, but the more important question is whether the input data contain enough stable, author-associated evidence for the intended decision. In the exam-ined coursework setting, final source files alone appear to be a weak evidence source. The companion benchmark broadens the comparison from two primary coursework datasets to a wider map of dataset configurations. It does not show that coursework code is universally unidentifiable, but it does show that the examined student-derived configurations contain sub-stantially less transferable author-associated signal than contest configurations. Some reduced coursework subsets retain limited signal, especially in Python and smaller can-didate pools, whereas the two full assignment datasets approach chance. This points to a dataset- and task-formulation problem under the evaluated modeling ap-proaches, and suggests that progress in education is likely to require richer contextual evidence such as repository-visible process behavior, code-quality profiles, calibrated verification, and retrieval tools that help instructors inspect the relevant context rather than stronger classifiers applied only to the final artifact [17, 18]. An educational system built from these findings should therefore start from review support rather than accusation. The relevant user is not a classifier that must output a single author, but an instructor who needs to compare a submission with a student’s previous work, inspect similar code fragments, and decide whether there is a pedagogically meaningful reason to ask follow-up questions. In that set-ting, attribution scores should be calibrated, accompanied by nearest-neighbor examples or repository-level evidence, and explicitly marked as non-conclusive. The privacy re-quirements are also different from public contest analysis: coursework data contain reused educational materials and student records, so the raw submissions cannot be treated as an open benchmark. In this study, student and repos-itory identifiers were pseudonymized, no personally iden-tifiable information is reported, and the institutional data are available only under appropriate restrictions from the corresponding author. The negative result is also useful for assessment design. If instructors want authorship-style evidence to be mean-ingful, they need longitudinal and diverse programming histories: multiple tasks, multiple contexts, and enough opportunities for stable personal habits to emerge. Very small tasks, heavily scaffolded exercises, and sudden lan-guage switches are good for teaching specific concepts, but they are poor material for attribution. This does not mean such assignments should be changed to help classifiers. It means that any integrity workflow relying on style must account for the educational purpose and structure of the assignments from which the evidence is drawn. 
+
+# 7 Limitations and Threats to Validity 
+
+Several limitations qualify our findings. First, the course-work corpus originates from a single institution and a spe-cific set of courses; other curricula may induce more or less stylistic diversity. Second, the multi-round GCJ scal-ing configurations deliberately select the most active au-thors, creating a favorable high-volume benchmark. The single-round GCJ configurations partly bridge this by fix-ing about ten solutions per author, but a perfectly matched comparison is impossible because the contest and course-work populations differ in more than one dimension. Third, hold-out evaluation within one course context may still overestimate real-world deployment performance, since de-ployment would involve code written months after the training data, possibly after a student’s style has evolved. Fourth, hyperparameters were tuned modestly; more ag-gressive optimization or substantially different representa-tions could improve coursework performance, so our claim is limited to the evaluated CodeBERT pipeline and com-panion model families. 11 
+
+Fifth, author labels in coursework are based on submis-sion records and may be affected by collaboration, copying, or external assistance, placing an upper bound on mea-surable attribution accuracy. This is not only a measure-ment limitation, but also an ethical constraint on interpre-tation: a mismatch between a submission and a model’s learned representation of a student cannot by itself estab-lish authorship, originality, intent, or misconduct. Sixth, the raw coursework submissions cannot be released pub-licly because they contain educational materials reused across course editions; this limits external reproducibility even though the anonymized institutional data can be re-quested under institutional restrictions. A further threat is provenance: the multi-round competitive data and the cu-rated single-round GCJ archive come from different repos-itories, so curation differences may contribute to part of the competitive-side variation. Finally, the mechanisms dis-cussed in Section 5.5 are plausible explanations grounded in observed dataset properties and prior work, not inde-pendently randomized causal tests. 
+
+# 8 Conclusions 
+
+This study asked whether the strong published perfor-mance of deep learning-based source code authorship at-tribution transfers from competitive programming to in-stitutional coursework. Using the same primary Code-BERT pipeline evaluated with a task-holdout protocol and Top-𝑘 metrics, we confirmed high performance on multi-round Google Code Jam data (92.6% Top-1 for 10 au-thors; 70.7% Top-1 and 88.2% Top-10 for 1000 authors), but observed at-or-below-baseline performance on the two full-scale coursework datasets: 0.2% Top-1 on the closed-assignment dataset of 690 authors and 0.06% Top-1 on the open-assignment dataset of 812 authors. A character-level CNN baseline showed the same direction on size-matched subsets (89-95% on GCJ versus 8-18% on coursework), and the companion benchmark provided consistent cross-model evidence across additional configurations (RQ1-RQ3). The most plausible explanation is not a single failed model, but the combination of dataset and task charac-teristics in the examined coursework setting (RQ4). Docu-mented properties include novice and developing author profiles, shared task specifications, shorter submissions, task-dependent style, and language-dependent variation. Additional label noise may arise from collaboration, copy-ing, external assistance, or deliberate style modification, although those mechanisms are interpretive rather than di-rectly isolated in this study. Open-ended projects are espe-cially informative: despite greater design freedom, perfor-mance falls below the random Top-1 baseline when eval-uated over the full pool of 812 authors, after appearing stronger only in a reduced 100-author setting. We draw two recommendations. For researchers, GCJ should be treated as a favorable benchmark rather than evidence of direct transfer to coursework; claims of practi-cal applicability should be validated on the target educa-tional context, with Top-𝑘 and verification metrics reported alongside Top-1. For educators, attribution models should currently be used, if at all, only as review-prioritization aids with mandatory human oversight, never as standalone evidence of misconduct. Future work should therefore move toward style-stability modeling across semesters, calibrated verification, and hybrid evidence that combines learned em-beddings, repository-visible behavior, code-quality meta-data, and instructor-facing retrieval over the student’s pro-gramming history [17, 18]. 
+
+# References 
+
+[1] Feng F., Guo X., Tang D., Duan N., Feng X., Gong M., et al., CodeBERT: A Pre-Trained Model for Pro-gramming and Natural Languages, In: Findings of the Association for Computational Linguistics: EMNLP 2020, 2020 [2] Caliskan-Islam A., Harang R., Liu A., Narayanan A., Voss C., Yamaguchi F., et al., De-anonymizing Pro-grammers via Code Stylometry, In: Proceedings of the 24th USENIX Security Symposium, 2015 [3] Abuhamad M., AbuHmed T., Mohaisen A., Nyang D., Large-Scale and Language-Oblivious Code Au-thorship Identification, In: Proceedings of the 2018 ACM SIGSAC Conference on Computer and Commu-nications Security (CCS), 2018 [4] Alsulami B., Dauber E., Harang R., Mancoridis S., Greenstadt R., Source Code Authorship Attribution Using Long Short-Term Memory Based Networks, In: Computer Security - ESORICS 2017, LNCS vol. 10492, 2017 [5] Kalgutkar V., Kaur R., Gonzalez H., Stakhanova N., Matyukhina A., Code Authorship Attribution: Meth-ods and Challenges, ACM Computing Surveys, 2019, 52(1) [6] Bogomolov E., Kovalenko V., Rebryk Y., Bacchelli A., Bryksin T., Authorship Attribution of Source Code: A Language-Agnostic Approach and Applicability in Software Engineering, In: Proceedings of ESEC/FSE, 2021 12 
+
+[7] Dauber E., Caliskan A., Harang R., Shearer G., Weis-man M., Nelson F., et al., Git Blame Who? Stylistic Authorship Attribution of Small, Incomplete Source Code Fragments, Proceedings on Privacy Enhancing Technologies, 2019, 2019(3) [8] Frantzeskou G., Stamatatos E., Gritzalis S., Katsikas S., Effective Identification of Source Code Authors Using Byte-Level Information, In: Proceedings of the 28th International Conference on Software Engineer-ing (ICSE), 2006 [9] Burrows S., Uitdenbogerd A.L., Turpin A., Compar-ing Techniques for Authorship Attribution of Source Code, Software: Practice and Experience, 2014, 44(1) [10] Krsul I., Spafford E.H., Authorship Analysis: Identify-ing the Author of a Program, Computers and Security, 1997, 16(3) [11] Devlin J., Chang M.-W., Lee K., Toutanova K., BERT: Pre-training of Deep Bidirectional Transform-ers for Language Understanding, In: Proceedings of NAACL-HLT 2019, 2019 [12] Zhang X., Zhao J., LeCun Y., Character-level Con-volutional Networks for Text Classification, In: Ad-vances in Neural Information Processing Systems 28 (NeurIPS), 2015 [13] Vaswani A., Shazeer N., Parmar N., Uszkoreit J., Jones L., Gomez A.N., et al., Attention Is All You Need, In: Advances in Neural Information Processing Systems 30 (NeurIPS), 2017 [14] jur1cek, Google Code Jam dataset, Kaggle dataset, https://www.kaggle.com/datasets/jur1cek/gcj-dataset (accessed 2026); Google, Coding Competi-tions Archive: Code Jam and Kick Start, GitHub repository, https://github.com/google/coding-competitions-archive (accessed 2026) [15] Horváth M., Pietriková E., Spinellis D., Bridging Be-havioral Biometrics and Source Code Stylometry: A Survey of Programmer Attribution, arXiv preprint arXiv:2603.11150, 2026 [16] Horváth M., Pietriková E., Gurbáľ F., et al., Person-alized Learning Analytics Through Static Code Anal-ysis in Computer Science Education, Acta Informat-ica Pragensia, 2026, 15(1), 54–71, https://doi.org/10. 18267/j.aip.283 [17] Horváth M., Evaluating Static and Process Evidence for Code Authorship in Programming Education, arXiv preprint arXiv:2607.07400, 2026 [18] Horváth M., Pietriková E., Evaluating Semantic and Quality-Aware Retrieval for Source Code Repositories, arXiv preprint arXiv:2607.09161, 2026
