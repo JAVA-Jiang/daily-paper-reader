@@ -1,0 +1,284 @@
+Title: DE-NER : Zero-shot Named Entity Recognition via Dialogue Elicitation of Large Language Models
+
+URL Source: https://arxiv.org/pdf/2608.00538v1
+
+Published Time: Tue, 04 Aug 2026 00:32:24 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+## DE-NER : Zero-shot Named Entity Recognition via Dialogue Elicitation of Large Language Models 
+
+Xuankang Zhang 
+
+Yunnan University 
+
+zhangxuankang@stu.ynu.edu.cn 
+
+Jiangming Liu *
+
+Yunnan University 
+
+jiangmingliu@ynu.edu.cn 
+
+Abstract 
+
+Recent advancements of zero-shot Named En-tity Recognition (NER) establish strong base-lines by formulating sequence labeling into question answering where Large Language Models (LLMs) can be naturally adopted. How-ever, existing LLM-based zero-shot NER meth-ods suffer from the limitations of prompt and demonstration engineering. To address these is-sues with minimal human interventions, we in-troduce DE-NER, a dialogue elicitation frame-work which elicits the chatting ability of LLMs to fully extract the knowledge encoded in LLMs. Our experiments demonstrate that the proposed method outperform the competitive baselines in zero-shot settings across multi-ple benchmarks, with an average improvement of 3.75% F1 points. Codes are released in 
+
+https://github.com/kkkenshi/DE-NER .
+
+1 Introduction 
+
+Large Language Models (LLMs) demonstrate re-markable zero-shot generalization across a wide range of NLP tasks (Brown et al., 2020). Recent advancements of zero-shot Named Entity Recogni-tion (NER) transform the traditional sequence la-beling into the tasks where LLMs can be naturally adopted, such as question-answering (Wei et al., 2023), template generation (Cui et al., 2021), and instruction designing (Wang et al., 2023). However, existing methods rely on labor-intensive prompt engineering or in-context learning with demonstra-tions that are sensitive to human design. Recent research in broader NLP domains shift towards dialogue-based paradigms (Liang et al., 2024; Li et al., 2023). By allowing models to en-gage in multi-turn interactions, these frameworks can clarify implicit information and integrate con-text effectively (Shinn et al., 2023). Andukuri et al. (2024) show that teaching models to ask clarify-ing questions significantly improves their ability 
+
+> *
+
+*Corresponding author. Current Limitations  DE -NER       
+
+> LLMs
+> Input Text
+> Elicitation
+> via dialogues
+> Apple released new products.
+> Input Text
+> Apple: ？？
+> Prediction
+> Apple: ORG
+> Prediction
+> Apple released new products.
+
+Figure 1: Conventional NER methods and our proposed DE-NER framework. 
+
+to elicit latent constraints and resolve ambiguity in reasoning tasks. The interactive capability of LLMs holds the key to addressing the precision and boundary challenges in zero-shot NER. Motivated by the success of interaction with LLMs, we explore whether LLMs can improve their own ability to extract entities by engaging in dialogues with LLMs. To this end, we intro-duce DE-NER , a Dialogue Elicitation of LLMs for zero-shot NER . As shown in Figure 1, previ-ous single-turn paradigms struggle with high un-certainty, while our framework elicits the LLMs by self-play to clarify the implicit boundary infor-mation that is required by NER. For each iteration, a questioner generates questions that can be an-swered by a roleplayer, and a final responser model integrates the entire dialogue to refine NER predic-tions without any human engagement. This process automatically elicits the model to reduce ambiguity in entity boundaries without relying on external knowledge bases or manual annotations. We evaluate our method on CoNLL03, WikiGold, and GENIA in zero-shot settings. Our proposed models demonstrate that the strong NER ability for challenging domain-specific entities by outperforming the conventional zero-shot prompting methods. The main contributions are summarized as follows: • We present a novel Dialogue Elicitation of arXiv:2608.00538v1 [cs.CL] 1 Aug 2026 LLMs for zero-shot NER without depending on external retrieval or knowledge bases. • We propose an efficient dialogue trajectory optimization method to enable DE-NER ask clarifying elicited questions to LLMs that can response correctly for NER. • Experimental results show that the proposed model outperforms the competitive baselines across benchmarks in zero-shot settings. 
+
+2 Related Work 
+
+2.1 Zero-Shot Named Entity Recognition Prompt-Based Early LLM-based methods for-mulate NER as a template-based generation task (Cui et al., 2021; Ding et al., 2022) or a question-answering task (Wei et al., 2023), converting la-bel descriptions into natural language queries to achieve extraction. More recent works fine-tune LLMs on diverse task collections to explicitly fol-low zero-shot extraction instructions (Wang et al., 2023). However, they suffer from prompt sensitiv-ity where minor variations in instruction wording can lead to unstable predictions. 
+
+Self-annotated Demonstrations A recent trend involves converting zero-shot tasks into dynamic few-shot settings by generating demonstrations. ReverseNER (Wang et al., 2024) constructs a re-liable example library by reversing the generation process from entity definitions, while LLMaAA (Zhang et al., 2023) utilizes LLMs as active anno-tators to synthesize pseudo-labels. Although these generate-then-retrieve pipelines alleviate the lack of supervision, they incur computational overhead due to the requirement for offline data synthesis. 
+
+Knowledge-Enhanced This line of work en-hances zero-shot NER by incorporating external knowledge, such as label semantics, ontology de-scriptions, or structured resources, to support entity grounding and type disambiguation (Liang et al., 2020; Jin et al., 2024; Cocchieri et al., 2025). These methods leverage descriptive knowledge rather than labeled instances, enabling annotation-free inference. Instead, our approach resolves ambigu-ity through multi-turn dialogues without accessing external knowledge sources. 
+
+2.2 Interactive Reasoning with LLMs Chain of Thought Reasoning CoT encourages LLMs to generate intermediate rationale before final prediction. This paradigm adapts to NER to enhance contextual understanding and few-shot generalization (Wei et al., 2022). Recent works (Xu and OuYang, 2023) propose multi-task instruc-tion frameworks that integrate reasoning steps to guide entity extraction. Li et al. (2024) combine retrieval mechanisms with chain-of-thought rea-soning to boost performance on complex medical entities. However, the methods generally operate as a static generation process without any feedback from users, leading the challenge of error accumu-lation. 
+
+Agent Interaction Recent studies extend in-teractive LLMs to agent-based reasoning, self-refinement, and multi-agent collaboration (Shinn et al., 2023; Liang et al., 2024). This paradigm has recently been explored in information ex-traction, where agents are used for cross-agent debate in zero-shot extraction (Lu et al., 2025) or for document-level extraction with external tools (Li et al., 2025). Different from these post-refinement frameworks, DE-NER localizes agent interaction to entity-level clarification, where a trainable Questioner proactively asks about type ambiguity, missed entities, and type errors before final prediction 
+
+3 DE-NER 
+
+We propose a novel model for zero-shot NER that elicits LLMs to accomplish the task with self-play. As shown in Figure 2, the proposed DE-NER con-sists of three functional roles implemented by large language models: a Questioner ( Q), a Roleplayer (P) and a Responser ( R). The Questioner is re-sponsible for raising clarifying questions; the Role-player provides answers based on the dialogue his-tory. After several rounds of question answering, the Responser outputs the final predictions. The self-play pipeline of question and answer is without any human interactions. 
+
+3.1 Interaction with LLMs 
+
+Given an input sentence x = {x1, . . . , x n}, the goal of NER is to predict a corresponding se-quence of entities ˆy = {y1, . . . , y m}. We formu-late zero-shot NER as a dialogue-driven inference process. The Responser first produces an initial zero-shot NER prediction without any dialogue context ˆy(0) = R(x). This preliminary prediction serves as a hypothesis that will be examined and × 𝐾  Question 𝑞 𝓉 
+
+Answer a 𝓉 
+
+Questioner  Roleplayer Dialogue 
+
+𝒟 𝓉 
+
+Responser 
+
+Responser 
+
+Output 
+
+Input 
+
+ŷ 0 𝒟 𝑘 Figure 2: Framework of DE-NER. 
+
+refined through interaction. The dialogue history is initialized as an empty set, D(0) = ∅.
+
+For each dialogue turn t ∈ {1, . . . , N },the Questioner generates a clarification ques-tion by conditioning on the initial prediction and the dialogue history accumulated so far: 
+
+q(t) = Q ˆy(0) , D(t−1) ; θ. The Roleplayer an-swers each clarification question by ground-ing its response strictly in the input sentence: 
+
+a(t) = P q(t), D(t−1) . Each question–answer pair 
+
+(q(t), a (t)) is appended to the dialogue history: 
+
+D(t) = D(t−1) ∪ { (q(t), a (t))}.
+
+Given N clarification turns of interactions, the Responser produces the final NER prediction by conditioning on both the input sentence and the full dialogue history: ˆy(N ) = R(x, D(N )). Through this structured interaction process, the model is able to surface implicit constraints in the input text, revise earlier decisions, and correct entity bound-aries or types before producing the final zero-shot NER output. 
+
+3.2 Training with Dialogue Trajectory 
+
+To enhance the Questioner ability to ask effec-tive questions under a zero-shot setting, we pro-pose a self-training strategy that constructs super-vision signals from dialogue trajectories. Given an unlabeled corpus, we sample a set of sen-tences {xi}. For each sentence, we indepen-dently run the dialogue-based inference proce-dure K times with a high temperature to en-courage diverse questioning strategies: Ti =
+
+{(D(N )
+
+i, 1 , ˆy(N )
+
+i, 1 ), . . . , (D(N )
+
+i,K , ˆy(N )
+
+i,K )}, where D(N )
+
+i,k 
+
+represents the sequence of question-answer pairs in the k-th run, and ˆy(N )
+
+i,k is the resulting entity prediction. We derive a high-confidence pseudo-label 
+
+˜yi via entity-level majority voting: ˜yi =Vote  {ˆy(N )
+
+i,k }Kk=1 
+
+, where Vote( ·) denotes an en-tity span and its associated type appear in more than half of the K predictions.                                                                                                                                 
+
+> Model NLOC. ORG. PER. MISC AVG. CoNLL03
+> Prompt –72.08 ±0.82 58.92 ±2.19 91.15 ±1.63 21.17 ±7.34 70.58 ±1.29 Base 271.34 ±0.76 61.35 ±1.77 93.60 ±0.32 42.21 ±7.88 72.28 ±0.94 371.52 ±0.67 61.65 ±1.37 93.92 ±0.30 22.22 ±6.05 70.78 ±0.20 470.08 ±0.87 62.32 ±1.19 93.44 ±0.22 19.35 ±4.07 70.72 ±0.35 DE-NER 272.86 ±0.22 63.08 ±2.39 93.69 ±0.78 49.59 ±3.87 73.96 ±0.92 372.55 ±0.26 64.11 ±2.33 93.73 ±0.52 44.82 ±8.04 73.85 ±0.99 471.87 ±0.16 65.08 ±2.27 94.20 ±0.41 49.12 ±0.81 74.35 ±0.39 WikiGold
+> Prompt –80.34 ±1.36 69.53 ±1.17 91.72 ±1.23 36.14 ±1.54 71.55 ±1.14 Base 280.93 ±0.06 71.95 ±1.42 92.09 ±1.21 42.90 ±6.15 73.53 ±1.26 379.79 ±1.46 70.72 ±0.27 91.86 ±0.50 40.10 ±1.40 72.43 ±0.59 480.18 ±1.44 69.11 ±0.82 91.62 ±1.27 40.73 ±2.99 71.98 ±0.89 DE-NER 282.76 ±0.89 71.65 ±1.15 92.28 ±0.52 49.89 ±5.11 74.97 ±1.26
+> 381.56 ±0.96 70.58 ±1.03 91.88 ±0.61 48.35 ±3.49 74.04 ±0.91 481.17 ±0.76 70.52 ±2.09 92.32 ±0.61 46.64 ±5.30 73.53 ±1.41
+> Model NDNA RNA LINE. TYPE. PROT. AVG. GENIA
+> Prompt –21.36 46.15 43.94 51.35 54.80 47.65 Base 233.62 ±2.09 48.08 ±2.72 45.55 ±0.35 51.93 ±2.44 57.97 ±0.25 51.48 ±0.09 330.16 ±2.60 45.64 ±2.45 42.98 ±1.58 48.69 ±0.70 59.03 ±2.68 50.61 ±1.06 429.95 ±2.85 46.89 ±2.67 44.19 ±0.35 49.26 ±0.16 57.43 ±0.74 50.02 ±0.13 DE-NER 228.78 ±1.41 49.33 ±2.76 44.80 ±1.22 53.31 ±1.21 59.16 ±0.95 51.70 ±0.01
+> 327.52 ±0.20 45.30 ±2.92 44.86 ±2.34 50.95 ±0.75 58.62 ±0.23 50.68 ±0.18 425.33 ±1.62 51.05 ±12.65 42.21 ±1.40 49.91 ±1.34 58.68 ±0.49 50.09 ±0.08
+
+Table 1: Results(%) with GPT-3.5-Turbo on CoNLL03, WikiGold , GENIA respectively. The best scores are 
+
+bold .
+
+Finally, we identify the optimal dialogue trajec-tory D∗
+
+i by maximizing the overlap with the pseudo-label: D∗
+
+i = arg max D(N ) 
+
+> i,k
+
+∈T i
+
+Overlap (ˆ y(N )
+
+i,k , ˜yi).The Questioner is optimized according to D∗
+
+i =
+
+{(q(1) , a (1) ), . . . , (q(N ), a (N ))}, while the Role-player and the Responser remain frozen. The training loss minimizes the negative log-likelihood of generating the clarification question q(t) at each dialogue turn t ∈ (1 , N ): Ltrain =
+
+− 1
+
+N
+
+PNt=1 log pθ
+
+ q(t) | x, D(t−1) , where pθ(·) is the probability of generating question of q(t) by the questioner Q.
+
+4 Experiments 
+
+We carry out experiments on zero-shot standard benchmarks of CoNLL03 (Sang and De Meul-der, 2003), WikiGold (Balasuriya et al., 2009) and GENIA (Ohta et al., 2002) spanning general and biomedical domains. Prompt Base DE-NER Mistral-7B-instruct-v0.2 36.85 48.59 25.56 GPT-3.5-Turbo 70.58 72.28 73.96 GPT-4o-mini 75.54 75.81 76.21 
+
+Table 2: Results(%) on CoNLL03 of the models for various LLMs.                                                               
+
+> Model NkLOC. ORG. PER. MISC AVG.
+> Prompt ––72.08 ±0.82 58.92 ±2.19 91.15 ±1.63 21.17 ±7.34 70.58 ±1.29 DE-NER 2072.86 ±0.22 63.08 ±2.39 93.69 ±0.78 49.59 ±3.87 73.96 ±0.92 273.70 ±0.75 62.27 ±2.86 92.48 ±1.31 39.66 ±4.35 73.24 ±0.36 572.97 ±0.43 63.62 ±2.32 92.94 ±1.17 38.29 ±6.49 73.41 ±1.38 DE-NER 3072.55 ±0.26 64.11 ±2.33 93.73 ±0.52 44.82 ±8.04 73.85 ±0.99 273.15 ±2.69 62.38 ±2.63 92.61 ±1.22 42.01 ±6.69 73.39 ±1.78 572.64 ±1.30 64.01 ±2.32 92.52 ±1.57 33.68 ±8.18 72.96 ±2.46 DE-NER 4071.87 ±0.16 65.08 ±2.27 94.20 ±0.41 49.12 ±0.81 74.35 ±0.39
+> 272.66 ±0.90 62.36 ±1.60 93.08 ±1.30 37.32 ±2.26 72.97 ±1.23 573.34 ±1.02 62.21 ±1.12 92.86 ±0.70 33.17 ±4.05 72.73 ±0.80
+
+Table 3: Results(%) on CoNLL03 of DE-NER based on GPT-3.5-Turbo with numbers of demonstrations. The best scores are bold .
+
+4.1 Baselines and Settings 
+
+All baselines utilize the same base model for entity prediction to ensure fair comparison. Prompt is instructed to extract entities directly from the input text without any dialogue interaction or external examples. Base adopts a questioner to generate multi-turn questions without any self-training. DE-NER is our proposed model where the questioner is optimized using the dialogue trajectories selected via the voting process. We use Mistral-7B-Instruct-v0.2 as the ques-tioner, while both the Roleplayer and the Responser are implemented using GPT-3.5-Turbo. We take 
+
+N ∈ { 2, 3, 4} rounds of clarification dialogue. The temperature is 0.8 for questioners and 0.2 for role-player and responser with 3 runs. 1
+
+4.2 Results Main Result Tables 1 show the results on CoNLL03, WikiGold, and GENIA, respectively. Base achieves consistent gains over the Prompt, validating the effectiveness of multi-turn interac-tion while DE-NER yields the best performance by obtaining 74.35, 74.97 and 51.70 F1 scores on CoNLL03, WikiGold and GENIA, respectively. 
+
+Entity Type Table 1 shows that DE-NER is ben-eficial for entities with high ambiguity, such as the MISC in CoNLL03 and WikiGold, with im-provements of 27.95 scores and 13.75 scores, re-spectively. Additionally, for domain-specific entity, 
+
+> 1
+
+Detailed prompts can be found in Appendix A. 
+
+DE-NER achieves notable improvements on DNA (+7.42), Cell_type (+1.96), and Protein (+4.36). 
+
+4.3 Analysis and Discuss Scaling Law We base Roleplayer and Responser to LLMs with different sizes and keep Questioner unchanged to investigate the effect of scaling law on our models. As shown in Table 2, the perfor-mance of the DE-NER based on smaller language model (Mistral-7B-instruct-v0.2) significantly de-creases, while the performance increases if the model based on larger language model (GPT-4o-mini), suggesting that our models follow and are heavily affected by the scaling law. We conclude that although the learnable questioner is small, the performance of our models can be enhanced as the knowledge of theEMNLP frozen Roleplayer and Responser increases. 
+
+In-Context Demonstrations We equip our model with several demonstrations for k-shot ( k ∈{2, 5}) NER by in-context learning. The demon-strations are randomly sampled from the high-quality dialogue trajectories D∗ 
+
+> i
+
+selected in Sec-tion 3.2. As shown in Table 3, demonstrations cannot improve DE-NER. As the number of demon-stration increases, the performance decreases con-sistently. The main reason is that DE-NER explic-itly trained to perform instance-specific reasoning is limited to static in-context demonstrations of encouraging the model to focus on fixed surface features derived from a small set of examples. We conclude that LLMs know what LLMs need to ac-complish tasks, which could be lagged by manual interferences. 
+
+5 Conclusion 
+
+We propose a dialogue elicitation of LLMs frame-work for zero-shot Named Entity Recognition that elicit large language models to correctly gener-ate responses about named entities. The proposed framework consisting of a learnable questioner, a frozen roleplayer and a frozen responser self-plays to effectively resolves latent ambiguity of named entity recognition without requiring annotated data or manual demonstrations. Additionally, we pro-pose the training with dialogue trajectories to make the model to ask clarifying questions that can ef-fectively elicit LLMs to output correct answers. Experiments carried out on standard benchmarks demonstrate that our proposed model consistently outperforms the competitive baselines. Limitations 
+
+Despite the promising results achieved by our dialogue-based interaction framework, several lim-itations remain to be addressed in future work: • This work focuses on zero-shot named entity recognition, and the proposed DE-NER has not yet been evaluated on other information extraction tasks or more diverse domains. • Our experiments are mainly conducted with relatively strong large language models, and the effectiveness of the proposed method on smaller models remains an open question. 
+
+References 
+
+Chinmaya Andukuri, Jan-Philipp Fränken, Tobias Ger-stenberg, and Noah D. Goodman. 2024. Star-gate: Teaching language models to ask clarifying questions. 
+
+ArXiv , abs/2403.19154. Dominic Balasuriya, Nicky Ringland, Joel Nothman, Tara Murphy, and James R Curran. 2009. Named entity recognition in wikipedia. In Proceedings of the 2009 workshop on the people’s web meets NLP: Collaboratively constructed semantic resources (Peo-ple’s Web) , pages 10–18. Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, Sandhini Agarwal, Ariel Herbert-Voss, Gretchen Krueger, T. J. Henighan, Rewon Child, Aditya Ramesh, Daniel M. Ziegler, Jeff Wu, Clemens Winter, and 12 others. 2020. Language models are few-shot learners. ArXiv , abs/2005.14165. Alessio Cocchieri, Marcos Martínez Galindo, Gia-como Frisoni, Gianluca Moro, Claudio Sartori, and Giuseppe Tagliavini. 2025. ZeroNER: Fueling zero-shot named entity recognition via entity type descrip-tions. In Findings of the Association for Computa-tional Linguistics: ACL 2025 , pages 15594–15616, Vienna, Austria. Association for Computational Lin-guistics. Leyang Cui, Yu Wu, Jian Liu, Sen Yang, and Yue Zhang. 2021. Template-based named entity recognition us-ing bart. In Findings .Ning Ding, Yulin Chen, Xu Han, Guangwei Xu, Xi-aobin Wang, Pengjun Xie, Haitao Zheng, Zhiyuan Liu, Juanzi Li, and Hong-Gee Kim. 2022. Prompt-learning for fine-grained entity typing. In Findings of the Association for Computational Linguistics: EMNLP 2022 , pages 6888–6901, Abu Dhabi, United Arab Emirates. Association for Computational Lin-guistics. Qiao Jin, Yifan Yang, Qingyu Chen, and Zhiyong Lu. 2024. Genegpt: Augmenting large language models with domain tools for improved access to biomedical information. Bioinformatics , 40(2):btae075. Bin Li, Jannis Conen, and Felix Aller. 2025. Aid-agent: An llm-agent for advanced extraction and integration of documents. In Proceedings of the 1st Workshop for Research on Agent Language Models (REALM 2025) , pages 80–88. G. Li, Hasan Hammoud, Hani Itani, Dmitrii Khizbullin, and Bernard Ghanem. 2023. Camel: Communica-tive agents for "mind" exploration of large language model society. In Neural Information Processing Systems .Mingchen Li, Huixue Zhou, Han Yang, and Rui Zhang. 2024. Rt: a retrieving and chain-of-thought frame-work for few-shot medical named entity recognition. 
+
+Journal of the American Medical Informatics Associ-ation , 31(9):1929–1938. Chen Liang, Yue Yu, Haoming Jiang, Siawpeng Er, Rui-jia Wang, Tuo Zhao, and Chao Zhang. 2020. Bond: Bert-assisted open-domain named entity recognition with distant supervision. In Proceedings of the 26th ACM SIGKDD international conference on knowl-edge discovery & data mining , pages 1054–1064. Tian Liang, Zhiwei He, Wenxiang Jiao, Xing Wang, Yan Wang, Rui Wang, Yujiu Yang, Shuming Shi, and Zhaopeng Tu. 2024. Encouraging divergent thinking in large language models through multi-agent debate. In Proceedings of the 2024 conference on empiri-cal methods in natural language processing , pages 17889–17904. Meng Lu, Yuzhang Xie, Zhenyu Bi, Shuxiang Cao, and Xuan Wang. 2025. Crossagentie: Cross-type and cross-task multi-agent llm collaboration for zero-shot information extraction. In Findings of the Associa-tion for Computational Linguistics: ACL 2025 , pages 13953–13977. Tomoko Ohta, Yuka Tateisi, Jin-Dong Kim, Hideki Mima, and Junichi Tsujii. 2002. The genia corpus: An annotated research abstract corpus in molecular biology domain. In Proceedings of the human lan-guage technology conference , pages 73–77. Morgan Kaufmann Publishers Inc. San Francisco. Erik Tjong Kim Sang and Fien De Meulder. 2003. In-troduction to the conll-2003 shared task: Language-independent named entity recognition. In Proceed-ings of the seventh conference on Natural language learning at HLT-NAACL 2003 , pages 142–147. Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. 2023. Re-flexion: Language agents with verbal reinforcement learning. Advances in Neural Information Process-ing Systems , 36:8634–8652. Anbang Wang, Difei Mei, Zhichao Zhang, Xiuxiu Bai, Ran Yao, Zewen Fang, Min Hu, Zhirui Cao, Haitao Sun, Yifeng Guo, and 1 others. 2024. Reversener: A self-generated example-driven framework for zero-shot named entity recognition with large language models. arXiv preprint arXiv:2411.00533 .Xiao Wang, Weikang Zhou, Can Zu, Han Xia, Tianze Chen, Yuansen Zhang, Rui Zheng, Junjie Ye, Qi Zhang, Tao Gui, and 1 others. 2023. Instructuie: Multi-task instruction tuning for unified information extraction. arXiv preprint arXiv:2304.08085 .Zihan Wang, Ziqi Zhao, Yougang Lyu, Zhumin Chen, Maarten de Rijke, and Zhaochun Ren. 2025. A coop-erative multi-agent framework for zero-shot named entity recognition. In Proceedings of the ACM on Web Conference 2025 , pages 4183–4195. Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia, Ed Chi, Quoc V Le, Denny Zhou, and 1 others. 2022. Chain-of-thought prompting elic-its reasoning in large language models. Advances in neural information processing systems , 35:24824– 24837. Xiang Wei, Xingyu Cui, Ning Cheng, Xiaobin Wang, Xin Zhang, Shen Huang, Pengjun Xie, Jinan Xu, Yufeng Chen, Meishan Zhang, and 1 others. 2023. Chatie: Zero-shot information extraction via chatting with chatgpt. arXiv preprint arXiv:2302.10205 .Tingyu Xie, Qi Li, Yan Zhang, Zuozhu Liu, and Hong-wei Wang. 2024. Self-improving for zero-shot named entity recognition with large language models. In 
+
+Proceedings of the 2024 Conference of the North American Chapter of the Association for Computa-tional Linguistics: Human Language Technologies (Volume 2: Short Papers) , pages 583–593, Mexico City, Mexico. Association for Computational Lin-guistics. WenJie Xu and JianQuan OuYang. 2023. A multi-task instruction with chain of thought prompting gener-ative framework for few-shot named entity recogni-tion. In International conference on artificial neural networks , pages 1–15. Springer. Ruoyu Zhang, Yanzeng Li, Yongliang Ma, Ming Zhou, and Lei Zou. 2023. Llmaaa: Making large lan-guage models as active annotators. arXiv preprint arXiv:2310.19596 .
+
+A Prompt Templates 
+
+We show the prompts use in this work in Table 4 , Table 5 and Tabel 6. 
+
+B Comparison Baselines 
+
+We compare DE-NER with several representative zero-shot NER methods. The comparison results are reported in Table 7. • Prompt-based This baseline directly prompts the LLM for zero-shot entity recognition with-out dialogue interaction or demonstrations. • Self-Improving (Xie et al., 2024). This method constructs reliable self-annotated demonstrations from an unlabeled corpus via self-consistency. • CMAS (Wang et al., 2025). This method uses a cooperative multi-agent framework with self-annotation, type-related feature extrac-tion, demonstration discrimination, and final prediction. • ReverseNER (Wang et al., 2024). This method builds an example library by revers-ing the NER process from entity definitions to labeled sentences. 
+
+Table 7: Results(%) on CoNLL03, WikiGold, and GE-NIA.                         
+
+> Method CoNLL03 WikiGold GENIA AVG.
+> Prompt-based 70.58 71.55 47.65 63.26 Self-Improving 74.51 73.98 52.06 66.85 CMAS –76.23 50.00 –ReverseNER (GPT-4o mini) 77.78 78.45 ––
+> DE-NER (Ours) 74.35 74.97 51.70 67.01
+
+C Results on Additional Benchmarks 
+
+We further evaluate DE-NER on the MIT-Restaurant dataset to reduce the potential contam-ination risk of widely used NER benchmarks and to test the method. Table 8 reports results with both closed-source and open-source LLMs as Role-player and Responser. 
+
+D Case Study 
+
+Table 9 shows that the prediction on GENIA across different models. In the first example, prompt-based model recognize DCs as a cell_type, but fail to detect Sp1 while DE-NER identity correctly Sp1 as protein via dialogue interaction with LLMs of Prompts of Questioner model       
+
+> You are an expert in Named Entity Recognition (NER). Review the dialogue history. Then generate exactly ONE clarifying question that will most improve the accuracy of the NER result. Text: {} Preliminary NER result: {} Dialogue History: {}
+> Requirements:
+> - Output only one question. - Do not repeat questions in the dialogue history. - Your question should directly address one of the following issues in the preliminary NER result:
+> •[Entity Type Ambiguity]: If an entity’s type is uncertain.
+> •[Entity Boundary Conflict]: If the span of an entity is unclear.
+> •[Missed Entity]: If a potential entity might have been omitted.
+> •[Entity Type Error]: If an entity might be mislabeled.
+
+Table 4: Prompt template for the Questioner model. 
+
+Prompts of Roleplayer model 
+
+You are an expert in Named Entity Recognition (NER). Dialogue History:{} Your task is review the dialogue history, answer the question:{} 
+
+Table 5: Prompt template for the Roleplayer model. 
+
+Prompts of Responser model 
+
+You are an expert in Named Entity Recognition (NER). You should refer to the dialogue history as contextual information to improve entity recognition accuracy. Text: {} Preliminary NER result: {} Dialogue History: {} Given the entity label set is: [’DNA’, ’RNA’, ’protein’,’cell_line’,’cell_type’]. Based on the given entity label set, according to the genia annotation guidelines, please recognize the named entities in the given text. Provide answer in the following JSON format: [’Entity Name’: ’Entity Label’]. If there is no entity in the text, return the following empty list: [] 
+
+Table 6: Prompt template for the Responser model. Entity sets from GENIA are displayed. 
+
+raising a question of "What is the biological role of Sp1 in the given context?" to elicit LLMs to make corrections. In the second examples, prompt-based model fails to detect any entity (TR and TREp) while DE-NER correctly both of them by clari-fying the definition of named entity. In the third examples, DE-NER can correct the entity type via further clarify questions. These examples show two typical effects of dialogue elicitation: recovering missed entities, clarifying error entity types. The generated clarification questions guide the model to revisit the initial prediction and use its internal knowledge more effectively for zero-shot NER. Table 8: Results(%) with closed-source LLMs and open-source LLMs on MIT-Restaurant dataset. The best scores are bold .
+
+Model N AME. CUI. DISH HOUR LOC. PRI. RAT. Name. Overall GPT-4o-mini 
+
+Prompt – 9.90 39.39 26.67 15.38 27.49 33.33 36.07 66.67 35.12 Base 2 20.33 ±0.91 41.78 ±1.43 39.03 ±0.48 21.56 ±3.66 29.26 ±2.21 38.98 ±1.57 41.60 ±1.81 68.10 ±0.51 40.00 ±0.65 3 19.88 ±1.58 41.79 ±2.64 36.15 ±1.71 24.71 ±0.25 29.85 ±0.72 37.66 ±1.99 40.00 ±2.18 68.30 ±2.51 39.93 ±0.59 4 21.95 ±3.39 38.97 ±1.93 33.63 ±2.01 23.24 ±3.79 29.70 ±1.03 40.60 ±1.20 39.10 ±3.67 69.70 ±0.70 39.72 ±0.55 DE-NER 2 19.94 ±2.61 45.10 ±2.64 47.33 ±1.88 18.95 ±3.46 33.52 ±2.88 40.19 ±0.33 39.70 ±1.33 70.30 ±0.93 42.43 ±1.06 
+
+3 20.04 ±3.22 43.79 ±0.53 46.11 ±3.46 18.19 ±4.65 33.19 ±0.79 40.20 ±3.39 38.25 ±1.89 71.48 ±0.50 42.24 ±0.41 4 18.53 ±6.16 43.75 ±1.69 43.90 ±3.21 19.37 ±4.92 33.74 ±2.23 39.80 ±1.72 37.80 ±1.52 71.46 ±0.76 42.05 ±0.51 
+
+Qwen3-14B 
+
+Prompt – 21.24 66.67 43.18 18.87 30.91 44.12 36.07 83.24 47.85 Base 2 45.43 ±2.95 71.99 ±0.69 63.94 ±2.89 32.55 ±0.99 36.20 ±1.10 60.51 ±0.44 47.29 ±0.40 70.07 ±0.36 54.29 ±0.44 
+
+3 43.71 ±4.72 70.86 ±0.07 63.23 ±1.92 32.71 ±4.26 35.45 ±0.59 59.92 ±2.92 44.75 ±2.32 71.53 ±1.82 53.79 ±1.20 4 42.01 ±2.62 71.25 ±1.38 63.43 ±2.81 33.92 ±5.17 37.14 ±1.63 58.69 ±4.39 45.54 ±0.80 70.81 ±1.74 53.90 ±1.49 DE-NER 2 44.77 ±1.94 69.85 ±1.18 62.39 ±0.57 27.06 ±1.67 35.78 ±0.85 57.85 ±1.90 39.18 ±2.72 75.53 ±1.09 53.81 ±0.69 3 45.04 ±2.66 69.56 ±1.93 62.39 ±0.57 27.15 ±2.84 35.65 ±0.89 57.26 ±0.92 39.20 ±0.33 75.64 ±0.60 53.67 ±0.63 4 44.14 ±1.22 70.13 ±0.85 62.73 ±0.96 25.80 ±2.14 36.19 ±0.86 57.26 ±0.92 38.38 ±1.75 75.81 ±0.81 53.76 ±0.08 
+
+Input Sentence Baseline Prediction Dialogue Interaction DE-NER Prediction 
+
+However, [DCs] cell_type lack 
+
+[Sp1] cell_type , which may explain the failure of HIV-1 to replicate in purified DCs. {"DCs": "cell_type"} Q: What is the biological role of Sp1 in the given context? A: Sp1 is a transcription factor regulating gene expression. {"DCs": "cell_type"}, {"Sp1": "protein"} At high concentration of NE, all of the [TR] protein bound to [TREp] DNA was more greatly retarded than in the absence of NE. [] Q: What specific compound is referred to as NE in the text? A: NE is norepinephrine, a neurotransmitter likely affecting TR binding to TREp. {"TR": "protein"}, {"TREp": "DNA"} Human immunodeficiency virus [vpr product] protein is a [virion-associated regulatory protein] protein .{’Human immunodeficiency virus’: ’protein’}, {’vpr product’: ’protein’}, {’virion-associated regulatory protein’: ’protein’} Q: What is the type of "Human immunodeficiency virus" in the text? A: The entity Human immunodeficiency virus in the text is a virus, not a protein. {’vpr product’: ’protein’}, {’virion-associated regulatory protein’: ’protein’} 
+
+Table 9: GENIA dataset examples show baseline NER prediction, dialogue interaction, and DE-NER prediction.

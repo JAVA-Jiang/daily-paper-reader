@@ -1,0 +1,209 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-07T01:50:11.149625+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 4,
+    "deep_cap": 6,
+    "deep_selected": 4,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2608.00538v1",
+      "source": "arxiv",
+      "title": "DE-NER : Zero-shot Named Entity Recognition via Dialogue Elicitation of Large Language Models",
+      "abstract": "Recent advancements of zero-shot Named Entity Recognition (NER) establish strong baselines by formulating sequence labeling into question answering where Large Language Models (LLMs) can be naturally adopted. However, existing LLM-based zero-shot NER methods suffer from the limitations of prompt and demonstration engineering. To address these issues with minimal human interventions, we introduce DE-NER, a dialogue elicitation framework which elicits the chatting ability of LLMs to fully extract the knowledge encoded in LLMs. Our experiments demonstrate that the proposed method outperform the competitive baselines in zero-shot settings across multiple benchmarks, with an average improvement of 3.75\\% F1 points. Codes are released in https://github.com/kkkenshi/DE-NER.",
+      "authors": [
+        "Xuankang Zhang",
+        "Jiangming Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-01T08:46:53+00:00",
+      "link": "https://arxiv.org/pdf/2608.00538v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Abstract explicitly states codes are released for the proposed DE-NER framework.",
+      "llm_evidence_cn": "摘要明确说明DE-NER框架的代码已发布。",
+      "llm_evidence": "摘要明确说明DE-NER框架的代码已发布。",
+      "canonical_evidence": "摘要明确说明DE-NER框架的代码已发布。",
+      "llm_tldr_en": "DE-NER is a dialogue elicitation framework for zero-shot NER that outperforms baselines across benchmarks and releases its code.",
+      "llm_tldr_cn": "针对现有基于LLM的零样本命名实体识别受提示和示例工程限制的问题，本文提出DE-NER对话引导框架，通过激发LLM的对话能力充分提取知识。实验表明，该方法在多个基准上的零样本设置中平均F1提升3.75个百分点，并发布了代码，便于复现与后续研究。",
+      "llm_tldr": "针对现有基于LLM的零样本命名实体识别受提示和示例工程限制的问题，本文提出DE-NER对话引导框架，通过激发LLM的对话能力充分提取知识。实验表明，该方法在多个基准上的零样本设置中平均F1提升3.75个百分点，并发布了代码，便于复现与后续研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.02244v1",
+      "source": "arxiv",
+      "title": "Efficiency and Cost Alignment in Batched LLM Serving via Resource-Fair Scheduling",
+      "abstract": "This paper studies a resource-allocation inefficiency in batched large language model (LLM) serving: heterogeneous requests that share a decode batch impose max-driven computational costs on one another. Because the wall-clock cost of a batch step is largely governed by the largest active KV-cache footprint, a short request co-batched with a long request can experience latency and GPU-resource consumption disproportionate to its own token workload. We formalize this phenomenon as a resource-fair scheduling problem. We develop a mathematical scheduling model that connects within-batch resource fairness to system throughput. The proposed fairness constraint bounds the disparity in decode progress, equivalently KV-cache footprint, among co-batched requests. Based on this model, we design the Insert-Short-Jobs-with-Limit (ISJL) algorithm, a parameterized hybrid batching policy. We prove that ISJL achieves a global competitive-ratio lower bound of $3/4$. We further examine the profit implications of resource-fair scheduling under the token-metered pricing convention used by commercial LLM APIs. Numerical experiments show that ISJL occupies a favorable middle ground between FCFS, which has large batching externalities, and LJF, which is cost-aligned but sacrifices batching flexibility. Thus, ISJL provides a bi-criterion scheduling policy: it maintains high throughput while aligning max-driven batch cost with token-metered revenue.",
+      "authors": [
+        "Dayi Yao",
+        "Zijie Zhou"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "eess.SY"
+      ],
+      "published": "2026-08-03T13:55:20+00:00",
+      "link": "https://arxiv.org/pdf/2608.02244v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "resource-fair scheduling model for batched LLM serving in GPU clusters",
+      "llm_evidence_cn": "针对GPU集群批量LLM服务的资源公平调度模型",
+      "llm_evidence": "针对GPU集群批量LLM服务的资源公平调度模型",
+      "canonical_evidence": "针对GPU集群批量LLM服务的资源公平调度模型",
+      "llm_tldr_en": "This paper formalizes a resource-fair scheduling problem for batched LLM serving and develops a mathematical model connecting within-batch fairness to system throughput.",
+      "llm_tldr_cn": "批量LLM服务中，不同长度的请求共享解码批次，导致短请求承受不成比例的高延迟和GPU资源消耗，因为批次成本由最大KV缓存占用主导。本文将这一现象形式化为资源公平调度问题，并建立数学模型将批内资源公平性与系统吞吐量联系起来。提出的公平性约束限制了同一批次内请求的解码进度差异，从而削减不公平开销。实验表明该调度方法能够在保持高吞吐的同时显著改善请求间的公平性，为数据中心LLM服务提供了一种成本对齐的调度机制。",
+      "llm_tldr": "批量LLM服务中，不同长度的请求共享解码批次，导致短请求承受不成比例的高延迟和GPU资源消耗，因为批次成本由最大KV缓存占用主导。本文将这一现象形式化为资源公平调度问题，并建立数学模型将批内资源公平性与系统吞吐量联系起来。提出的公平性约束限制了同一批次内请求的解码进度差异，从而削减不公平开销。实验表明该调度方法能够在保持高吞吐的同时显著改善请求间的公平性，为数据中心LLM服务提供了一种成本对齐的调度机制。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.26566v1",
+      "source": "arxiv",
+      "title": "ServerlessT2I: Efficient Text-to-Image Workflow Serving on a Serverless Platform",
+      "abstract": "Text-to-image (T2I) workflows are increasingly deployed on serverless platforms because users often compose customized workflows and invoke them intermittently. Existing platforms typically deploy each workflow as an opaque GPU function, provisioning, placing, and scaling all constituent models in the workflow together. This monolithic design obscures workflow structure, inflates scaling overhead, forces users to manage low-level GPU coordination, and limits fine-grained fairness in multi-tenant clusters. In this paper, we present ServerlessT2I, a serverless-native system that decomposes a T2I workflow into loosely coupled model functions that can be independently managed and scheduled. By explicitly managing individual model execution, ServerlessT2I enables per-model scaling, declarative workflow composition, transparent GPU-resident communication, and fairness-aware scheduling. To make this decomposition efficient, ServerlessT2I harvests slack GPU memory left idle by compute-bound T2I inference to build a data plane that reduces model loading and data communication overheads. \\sys{} further introduces a fair scheduler for multi-tenant serving. Using production traces, ServerlessT2I sustains up to 2$\\times$ higher request rates than existing T2I workflow serving systems with the same GPU budget; for a fixed request rate, it saves up to 3$\\times$ GPU resources while satisfying service level objectives (SLOs).",
+      "authors": [
+        "Xiaoxiao Jiang",
+        "Suyi Li",
+        "Sheng Yao",
+        "Tianyu Feng",
+        "Lingyun Yang",
+        "Dapeng Nie",
+        "Haoran Yang",
+        "Wei Wang"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.AI"
+      ],
+      "published": "2026-07-29T07:39:56+00:00",
+      "link": "https://arxiv.org/pdf/2607.26566v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "task scheduling of workflow functions on serverless multi-tenant clusters",
+      "llm_evidence_cn": "无服务器多租户集群上的工作流任务调度",
+      "llm_evidence": "无服务器多租户集群上的工作流任务调度",
+      "canonical_evidence": "无服务器多租户集群上的工作流任务调度",
+      "llm_tldr_en": "ServerlessT2I decomposes text-to-image workflows into independently scheduled model functions, reducing scaling overhead and improving fairness on serverless platforms.",
+      "llm_tldr_cn": "现有serverless平台将文本到图像工作流整体部署为不透明GPU函数，导致伸缩开销大、多租户公平性受限，同时要求用户管理底层GPU协调。ServerlessT2I将该工作流拆分为松耦合的模型函数，将它们独立管理和调度，显式控制单个模型执行。这一设计降低了扩展开销、简化了GPU协调，并在多租户集群中实现了更细粒度的公平性。该系统为无服务器工作流的数据中心任务调度提供了一种高效的细粒度方案。",
+      "llm_tldr": "现有serverless平台将文本到图像工作流整体部署为不透明GPU函数，导致伸缩开销大、多租户公平性受限，同时要求用户管理底层GPU协调。ServerlessT2I将该工作流拆分为松耦合的模型函数，将它们独立管理和调度，显式控制单个模型执行。这一设计降低了扩展开销、简化了GPU协调，并在多租户集群中实现了更细粒度的公平性。该系统为无服务器工作流的数据中心任务调度提供了一种高效的细粒度方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.28223v1",
+      "source": "arxiv",
+      "title": "Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters",
+      "abstract": "GPU cluster operators cannot predict how long pending workloads will wait for admission. Existing systems use greedy heuristics with no formal wait time guarantees. We formalize GPU cluster admission as a multi-class, multi-resource queueing network and prove a structural decomposition: the pending queue partitions into quotable workloads (bounded wait time under stability) and unfeasible workloads (no finite bound without reconfiguration). For quotable workloads, we model each cluster queue as an M/G/k system where the effective server count k is determined by a vector packing reduction; under an explicit stochastic domination assumption, we establish O(1/(1-rho)) wait time scaling. We prove that optimal admission ordering is NP-hard under multi-dimensional resource demands via reduction from vector bin packing. We validate on Kueue, the standard Kubernetes workload queuing system, using CPU, memory, and GPU (via Dynamic Resource Allocation) resources. The vector k_eff correctly identifies bottleneck resource dimensions, Little's Law holds exactly, and the Erlang-C approximation consistently overestimates observed wait times in the conservative direction.",
+      "authors": [
+        "Sohan Kunkerkar"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-07-30T13:57:45+00:00",
+      "link": "https://arxiv.org/pdf/2607.28223v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "GPU cluster admission control for data center task scheduling",
+      "llm_evidence_cn": "GPU集群准入控制，面向数据中心任务调度",
+      "llm_evidence": "GPU集群准入控制，面向数据中心任务调度",
+      "canonical_evidence": "GPU集群准入控制，面向数据中心任务调度",
+      "llm_tldr_en": "Proposes queue-theoretic admission control for multi-tenant GPU clusters, proving wait-time bounds and NP-hard optimal ordering. Directly targets data center task scheduling with formal guarantees.",
+      "llm_tldr_cn": "该文针对多租户GPU集群中任务准入等待时间难以预测、现有贪婪启发式缺乏形式化保证的问题，将集群准入形式化为多类多资源排队网络，并证明待处理队列可分解为可报价与不可行两类负载。通过M/G/k建模与向量装箱归约，文章推导了O(1/(1-rho))的等待时间缩放，并证明最优准入排序是NP难的。该研究为数据中心的任务调度与准入控制提供了形式化等待时间保证，既深化了排队论在集群调度中的应用，也为实际系统设计提供了理论依据。",
+      "llm_tldr": "该文针对多租户GPU集群中任务准入等待时间难以预测、现有贪婪启发式缺乏形式化保证的问题，将集群准入形式化为多类多资源排队网络，并证明待处理队列可分解为可报价与不可行两类负载。通过M/G/k建模与向量装箱归约，文章推导了O(1/(1-rho))的等待时间缩放，并证明最优准入排序是NP难的。该研究为数据中心的任务调度与准入控制提供了形式化等待时间保证，既深化了排队论在集群调度中的应用，也为实际系统设计提供了理论依据。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.04450v1",
+      "source": "arxiv",
+      "title": "CommBench: Can LLMs Write Correct and Efficient GPU Communication Code?",
+      "abstract": "Training and serving large language models (LLMs) rely heavily on high-performance GPU communication, yet implementing efficient GPU communication primitives requires deep expertise in GPU architectures, networking hardware, and distributed communication patterns, making them particularly challenging for code generation models. We present CommBench, a comprehensive benchmark for GPU communication programming, consisting of over 100 expert-curated tasks spanning point-to-point communication, collective operations, expert-parallel communication, compute--communication fusion, and communication utility functions, with reference implementations either written by GPU communication experts or distilled from production codebases. We further introduce a cheat-resistant evaluation framework that automatically compiles, executes, and validates generated code on multi-GPU systems, and a unified metric that jointly measures functional correctness and communication performance. Evaluating leading frontier and open-source code generation models on both intra-node NVLink and inter-node RDMA platforms reveals that even the strongest model, GPT-5.5, correctly implements and achieves competitive performance on only 30.7\\% of the benchmark tasks. Our results expose a substantial gap between current LLMs and expert-written GPU communication code, establishing CommBench as a challenging benchmark for advancing AI-assisted systems programming.",
+      "authors": [
+        "Shuang Ma",
+        "Yuyi Li",
+        "Yihan Zhang",
+        "Hezhi Xie",
+        "Danyang Chen",
+        "Shuyang Ji",
+        "Ziming Mao",
+        "Cheng Ji",
+        "Ansha Prashanth",
+        "Wenting Yang",
+        "Yiran Wang",
+        "Chihan Cui",
+        "Pei Yu Lin",
+        "Ion Stoica",
+        "Yang Zhou"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-08-05T04:55:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.04450v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "likely provides source code and reference implementations for GPU communication benchmark",
+      "llm_evidence_cn": "为GPU通信基准提供源码与参考实现",
+      "llm_evidence": "为GPU通信基准提供源码与参考实现",
+      "canonical_evidence": "为GPU通信基准提供源码与参考实现",
+      "llm_tldr_en": "CommBench is a benchmark with over 100 expert-curated GPU communication programming tasks and reference implementations, assessing whether LLMs can generate correct and efficient code.",
+      "llm_tldr_cn": "GPU通信是大模型训练与推理的关键，但编写高性能通信代码需要深厚专业知识。本文提出CommBench基准，包含100多个专家精选的GPU通信编程任务及参考实现，系统性评测大模型生成通信代码的正确性与效率。该基准为代码生成模型在高性能计算领域提供了标准化评估工具，并公开了可复用的任务集与代码。",
+      "llm_tldr": "GPU通信是大模型训练与推理的关键，但编写高性能通信代码需要深厚专业知识。本文提出CommBench基准，包含100多个专家精选的GPU通信编程任务及参考实现，系统性评测大模型生成通信代码的正确性与效率。该基准为代码生成模型在高性能计算领域提供了标准化评估工具，并公开了可复用的任务集与代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

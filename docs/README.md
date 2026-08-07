@@ -6,37 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-05
-- 运行时间：2026-08-05 21:14:03 UTC
+- 最新运行日期：2026-08-07
+- 运行时间：2026-08-07 01:55:44 UTC
 - 运行状态：成功
 - 本次总论文数：5
 - 精读区：4
 - 速读区：1
 
 ### 今日简报（AI）
-今日推荐5篇论文，精读4篇、速读1篇，重点聚焦字符串算法工具与代码复现实践。  
-最值得看的是《string2string Studio》（9.0分）的交互式平台设计，以及《Revibing Code from Papers》（8.0分）对HCI神器复现方法的探讨。  
-普通读者可优先精读这两篇高分论文，速读《CodeAssay》作为LLM代码生成评测的补充参照。
-- 详情：[/202608/05/README](/202608/05/README)
+今日精读聚焦大模型两篇高分论文：零样本命名实体识别与批处理调度优化，另速读一篇GPU通信代码生成评测。最值得关注的是DE-NER通过对话引导提升NER零样本能力，以及资源公平调度兼顾效率与成本。建议普通读者优先了解LLM在实体识别和调度中的实际应用潜力，可结合自身场景验证。
+- 详情：[/202608/07/README](/202608/07/README)
 
 ### 精读区论文标签
-1. [string2string Studio: An Interactive, In-Browser Platform for String-to-String Algorithms](/202608/05/2608.03984v1-string2string-studio-an-interactive-in-browser-platform-for-string-to-string-algorithms)  
+1. [DE-NER : Zero-shot Named Entity Recognition via Dialogue Elicitation of Large Language Models](/202608/07/2608.00538v1-de-ner--zero-shot-named-entity-recognition-via-dialogue-elicitation-of-large-language-models)  
    标签：评分：9.0/10、query:code-paper
-   evidence：交互式浏览器平台，C++算法编译为WebAssembly；提供源码，符合含代码论文要求。
-2. [Revibing Code from Papers: Reimplementing HCI Artifacts](/202608/05/2608.00450v2-revibing-code-from-papers-reimplementing-hci-artifacts)  
+   evidence：摘要明确说明DE-NER框架的代码已发布。
+2. [Efficiency and Cost Alignment in Batched LLM Serving via Resource-Fair Scheduling](/202608/07/2608.02244v1-efficiency-and-cost-alignment-in-batched-llm-serving-via-resource-fair-scheduling)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：针对GPU集群批量LLM服务的资源公平调度模型
+3. [ServerlessT2I: Efficient Text-to-Image Workflow Serving on a Serverless Platform](/202608/07/2607.26566v1-serverlesst2i-efficient-text-to-image-workflow-serving-on-a-serverless-platform)  
    标签：评分：8.0/10、query:code-paper
-   evidence：直接根据论文重实现系统，提升可复现性和代码可用性
-3. [Refined Thompson Learning for Adaptive Bandits: Sustainable Power-Efficient Flexibility Scheduling Across Data Centers](/202608/05/2608.00921v1-refined-thompson-learning-for-adaptive-bandits-sustainable-power-efficient-flexibility-scheduling-across-data-centers)  
+   evidence：无服务器多租户集群上的工作流任务调度
+4. [Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters](/202608/07/2607.28223v1-queue-theoretic-admission-control-for-multi-tenant-gpu-clusters)  
    标签：评分：8.0/10、query:code-paper
-   evidence：跨数据中心的节能弹性调度，基于自适应臂
-4. [A repository for discovery and reuse of higher-order network datasets](/202608/05/2608.03491v1-a-repository-for-discovery-and-reuse-of-higher-order-network-datasets)  
-   标签：评分：8.0/10、query:code-paper
-   evidence：明确提供转换代码、元数据和版本化仓库，直接支持代码与数据重用，是典型的含代码论文
+   evidence：GPU集群准入控制，面向数据中心任务调度
 
 ### 速读区论文标签
-1. [CodeAssay: A Multi-Metric Benchmark with Audited Ground Truth for LLM Code Generation](/202608/05/2608.03535v1-codeassay-a-multi-metric-benchmark-with-audited-ground-truth-for-llm-code-generation)  
+1. [CommBench: Can LLMs Write Correct and Efficient GPU Communication Code?](/202608/07/2608.04450v1-commbench-can-llms-write-correct-and-efficient-gpu-communication-code)  
    标签：评分：6.0/10、query:code-paper
-   evidence：面向LLM代码生成的审计基准，通常随文发布评测代码
+   evidence：为GPU通信基准提供源码与参考实现
 
 
 <div class="dpr-home-promo-card">

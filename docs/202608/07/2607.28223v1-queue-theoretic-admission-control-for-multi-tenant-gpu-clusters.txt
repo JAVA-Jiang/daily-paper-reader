@@ -1,0 +1,528 @@
+Title: Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters
+
+URL Source: https://arxiv.org/pdf/2607.28223v1
+
+Published Time: Fri, 31 Jul 2026 01:05:30 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters 
+
+## Sohan Kunkerkar 
+
+Red Hat United States skunkerk@redhat.com 
+
+## Abstract 
+
+GPU cluster operators cannot predict how long pending workloads will wait for admission. Existing systems use greedy heuristics with no formal wait time guarantees. We formalize GPU cluster admission as a multi-class, multi-resource queueing network and prove a structural decompo-sition: the pending queue partitions into quotable workloads (bounded wait time under stability) and unfeasible work-loads (no finite bound without reconfiguration). For quotable workloads, we model each cluster queue as an M/G/ 𝑘 system where the effective server count 𝑘 is determined by a vector packing reduction; under an explicit stochastic domination assumption, we establish 𝑂 (1/( 1 − 𝜌 )) wait time scaling. We prove that optimal admission ordering is NP-hard un-der multi-dimensional resource demands via reduction from vector bin packing. We validate on Kueue, the standard Ku-bernetes workload queuing system, showing that the Erlang-C approximation consistently overestimates observed wait times (a conservative direction) in the moderate utilization regime. 
+
+## 1 Introduction 
+
+GPU cluster utilization is low: industry reports put average utilization at 5–30% across enterprise GPU clusters [ 18 ]. Op-erators cannot predict whether a submitted workload will wait minutes or hours for admission. Production batch work-load queuing systems—Kueue [ 4], Slurm [ 5 ], and proprietary schedulers—use greedy admission heuristics with no formal performance guarantees. Recent work has applied queueing theory to GPU infer-ence serving , where request scheduling within a single model deployment benefits from classical results. Mitzenmacher and Shahout [ 1] survey learning-augmented scheduling with predictions, and Dai et al. [ 2 ] prove throughput-optimality for batched LLM serving. However, these results address a fundamentally different problem: scheduling requests within 
+
+a serving instance, not scheduling workloads across a multi-tenant cluster with quotas, resource flavors, topology con-straints, and preemption. The cluster admission problem is harder for three rea-sons. First, admission requires vector packing : each workload demands a multi-dimensional resource vector (GPU count, memory, network bandwidth), and admission requires all dimensions to fit simultaneously. Second, the pending queue contains a mixture of workloads that can eventually be admit-ted (if other workloads complete) and workloads that cannot 
+
+be admitted under the current cluster configuration. Third, preemption creates feedback loops where evicted workloads re-enter the queue, invalidating the independent-arrivals assumption of classical models. We address these challenges with three contributions: 1. Quotable/Unfeasible Partition Theorem. We prove that the pending queue decomposes into a quotable 
+
+partition (where queueing theory applies and wait times are bounded) and an unfeasible partition (where no finite bound exists). This decomposition is neces-sary for accurate wait time estimation: any model that mixes both partitions produces unbounded prediction error (§3.2). 2. Wait Time Bounds. For quotable workloads, we as-sume stochastic domination by an M/G/ 𝑘 reference system with effective server count determined by vec-tor packing (Modeling Assumption 1), establishing 
+
+𝑂 (1/( 1 − 𝜌 )) wait time scaling. We provide a practi-cal modified Erlang-C approximation accounting for multi-resource packing and preemption feedback (§3.5). 3. NP-Hardness of Optimal Admission. We prove that optimal admission ordering—minimizing total weighted wait time—is NP-hard under multi-resource vector packing, and show that MIG packing alone (fixed profile sizes) is tractable (Proposition 2). This pinpoints dimensionality, not GPU partitioning, as the source of computational hardness (§4). We validate on Kueue, the standard Kubernetes workload queuing system (§5), using CPU/memory and GPU resources via Dynamic Resource Allocation (DRA). Measurements con-firm internal consistency (Little’s Law ratio = 1.000 ) and show that the vector 𝑘 eff correctly identifies the bottleneck resource dimension (memory or GPU), while a scalar esti-mate misses it entirely. The Erlang-C approximation overes-timates observed wait times by 2.3–18 ×—conservative but too loose for point prediction. A simple EMA baseline gives better point accuracy; the Erlang-C approximation’s value is as an a priori bound requiring no historical observations. arXiv:2607.28223v1 [cs.DC] 30 Jul 2026 Preprint, 2026, Sohan Kunkerkar 
+
+## 2 Background and Motivation 
+
+2.1 GPU Cluster Admission Architecture 
+
+We describe the admission architecture of Kueue [ 4], the reference implementation for Kubernetes batch workload queuing, managing admission across CPU, memory, GPU, and other resource types. The architecture is representative of production batch schedulers including Slurm and propri-etary cloud schedulers. 
+
+Resource Model. A cluster is organized into a hierar-chy of Cohorts , ClusterQueues (CQs), and LocalQueues (LQs). Each CQ has a nominal quota specifying guaranteed capacity across multiple ResourceFlavors (e.g., NVIDIA A100, H100, or MIG profiles like 1g.10gb). Each flavor-resource pair (𝑓 , 𝑟 )
+
+defines one dimension of the capacity vector. CQs within a Cohort may borrow unused capacity from sibling CQs, subject to borrowing and lending limits. 
+
+Admission Pipeline. The scheduler operates in discrete cycles. Each cycle: (1) dequeues one head workload per CQ, (2) takes an immutable snapshot of cluster state, (3) computes resource flavor assignments via greedy matching, (4) orders workloads by priority or fair-share usage, (5) admits work-loads greedily in order, updating the snapshot, and (6) re-queues unadmitted workloads. 
+
+Two Pending Pools. Unadmitted workloads are placed in one of two pools: 
+
+• The active heap : workloads eligible for the next sched-uling attempt, ordered by priority and timestamp. 
+
+• The inadmissible set : workloads that failed admission and will not be retried until cluster state changes (e.g., a workload completes or a CQ is reconfigured). 
+
+Scheduling Disciplines. Two disciplines govern head-of-line behavior: StrictFIFO blocks all workloads behind an inad-missible head (classic head-of-line blocking). BestEffortFIFO 
+
+moves inadmissible heads to the inadmissible set, allowing subsequent workloads to proceed. 
+
+2.2 Why Existing Queueing Theory Doesn’t Apply Directly 
+
+Classical queueing results (M/M/ 𝑘 , M/G/1, etc.) assume: (1) scalar resource requirements, (2) homogeneous servers, and (3) in-dependent arrivals. GPU cluster admission violates all three: 1. Vector resources. Admission requires fitting a 𝑑 -dimensional request vector against a 𝑑 -dimensional capacity vector. This is vector bin packing, which has no APTAS for 
+
+𝑑 ≥ 2 [6]. 2. Heterogeneous flavors. Different ResourceFlavors have different capacity vectors and node affinity con-straints. A workload may fit flavor 𝑓 1 but not 𝑓 2.3. Preemption feedback. Preempted workloads re-enter the queue with backoff counters and modified ordering metadata, creating state-dependent arrivals. 
+
+2.3 The Wait Time Estimation Gap 
+
+The Kubernetes Enhancement Proposal for workload vis-ibility (KEP-168) explicitly excluded wait time estimation: “we don’t have the means to estimate wait time at the mo-ment” [ 19 ]. Users see “Pending” with no indication of whether admission is minutes or hours away. This gap has motivated multiple community feature requests [20–22]. We show that the gap is not merely an engineering omis-sion but a consequence of a missing theoretical foundation: without the quotable/unfeasible partition, any wait time es-timate is meaningless because it averages over workloads with finite and infinite expected wait. 
+
+## 3 Queueing Model 
+
+3.1 System Definition Definition 1 (GPU Cluster Admission System) . A GPU Clus-ter Admission System is a tuple S = (Q , F , R, C, W) where: 
+
+• Q = {𝑞 1, . . . , 𝑞 𝑚 } is a set of cluster queues. 
+
+• F = {𝑓 1, . . . , 𝑓 𝑛 } is a set of resource flavors. 
+
+• R = {𝑟 1, . . . , 𝑟 𝑑 } is a set of resource types (e.g., GPU count, GPU memory, CPU, system memory). 
+
+• C : Q × F × R → R≥0 is the capacity function, where 
+
+C( 𝑞, 𝑓 , 𝑟 ) is the nominal quota of resource 𝑟 in flavor 𝑓 
+
+for queue 𝑞 .
+
+• W is the set of workload classes, where each class 𝑗 ∈ W 
+
+is characterized by: 
+
+– A resource demand function d𝑗 : F × R → R≥0,specifying the resources required per flavor. 
+
+– An arrival process with rate 𝜆 𝑗 .
+
+– A service time distribution 𝑆 𝑗 with mean E[𝑆 𝑗 ] and coefficient of variation 𝐶 𝑆 𝑗 .
+
+Definition 2 (Admission) . A workload of class 𝑗 is admitted 
+
+to queue 𝑞 via flavor 𝑓 when: 
+
+∀ 𝑟 ∈ R : d𝑗 (𝑓 , 𝑟 ) ≤ Available (𝑞, 𝑓 , 𝑟 ) (1) 
+
+where Available (𝑞, 𝑓 , 𝑟 ) = C( 𝑞, 𝑓 , 𝑟 )− Usage (𝑞, 𝑓 , 𝑟 )+ Borrowed (𝑞, 𝑓 , 𝑟 )
+
+is the currently unused capacity including borrowed resources from the cohort. 
+
+Definition 3 (Potential Available Capacity) . The potential available capacity of queue 𝑞 for flavor 𝑓 and resource 𝑟 is: PotAvail (𝑞, 𝑓 , 𝑟 ) = C( 𝑞, 𝑓 , 𝑟 ) + MaxBorrow (𝑞, 𝑓 , 𝑟 ) (2) 
+
+where MaxBorrow (𝑞, 𝑓 , 𝑟 ) is the maximum borrowable capac-ity from the cohort hierarchy, bounded by lending and borrow-ing limits. This represents the capacity available if all other workloads in the cohort were to complete. 
+
+3.2 The Quotable/Unfeasible Partition Definition 4 (Quotable and Unfeasible Workloads) . A pend-ing workload of class 𝑗 targeting queue 𝑞 is: 
+
+• Quotable if there exists a flavor 𝑓 ∈ F such that d𝑗 (𝑓 , 𝑟 ) ≤ 
+
+PotAvail (𝑞, 𝑓 , 𝑟 ) for all 𝑟 ∈ R .Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters Preprint, 2026, 
+
+• Unfeasible otherwise. 
+
+Theorem 1 (Partition Necessity) . Let P be a pending queue where a fraction 𝛼 > 0 of workloads are unfeasible (the re-mainder quotable with finite expected wait 𝜇 𝑊 < ∞). For any wait time estimator ˆ𝑊 : P → R≥0 that does not distinguish quotable from unfeasible workloads (i.e., ˆ𝑊 depends only on observable queue position and resource request, not on feasi-bility classification), the expected mean absolute error over a random workload 𝑤 drawn uniformly from P satisfies: 
+
+E | ˆ𝑊 (𝑤 ) − 𝑊 (𝑤 )|  ≥ 𝛼 · ( 𝑀 − 𝜇 𝑊 )
+
+for any finite estimator cap 𝑀 = max 𝑤 ˆ𝑊 (𝑤 ) < ∞, and equals 
+
+∞ for estimators without a finite cap. In either case, the error grows without bound as the horizon increases. Proof. Partition P into quotable set P𝑄 (fraction 1 − 𝛼 ) and unfeasible set P𝑈 (fraction 𝛼 ). For 𝑤 ∈ P 𝑈 , 𝑊 (𝑤 ) = ∞ by Definition 4: no amount of waiting yields admission without reconfiguration. If ˆ𝑊 has a finite cap 𝑀 , then for unfeasible workloads | ˆ𝑊 (𝑤 ) − 𝑊 (𝑤 )| = ∞, and the expected error over a random workload is at least 𝛼 · ∞ = ∞.To make the bound constructive, consider a truncated model where unfeasible workloads eventually leave the queue after a timeout 𝑇 . Then unfeasible workloads have true wait 
+
+𝑊 = 𝑇 , and the estimator error on the unfeasible fraction is at least 𝛼 · | 𝑇 − 𝑀 |. As 𝑇 → ∞ (no timeout), the error diverges. Even with a practical timeout, the error contribu-tion from the unfeasible fraction is 𝛼 · ( 𝑇 − 𝑀 ) when 𝑇 > 𝑀 ,which dominates the 𝑂 (𝜎 𝑊 ) estimation error achievable on quotable workloads. Alternatively, if ˆ𝑊 outputs ∞ for some workloads, it must do so without the quotable/unfeasible label (by assumption). For any threshold-based strategy outputting ∞ for workloads with resource request above some cutoff, there exist quotable workloads with large requests (near the capacity limit) that are misclassified, incurring infinite error on those quotable workloads. Some form of feasibility classification is therefore neces-sary for bounded-error wait time estimation; the quotable/unfeasible partition based on potential available capacity (Definition 4) is a natural such classification. □
+
+3.3 Effective Server Count 
+
+The key modeling challenge is determining 𝑘 eff : how many workloads can a CQ serve simultaneously given its multi-dimensional capacity? 
+
+Definition 5 (Effective Server Count) . For a queue 𝑞 serving a single workload class 𝑗 with demand vector d𝑗 , the effective server count is: 
+
+𝑘 eff (𝑞, 𝑗 ) = max  
+
+> 𝑓 ∈ F 𝑗
+
+min  
+
+> 𝑟 ∈ R
+
+ C( 𝑞, 𝑓 , 𝑟 )
+
+d𝑗 (𝑓 , 𝑟 )
+
+
+
+(3) 
+
+where F𝑗 ⊆ F is the set of flavors compatible with class 𝑗 
+
+(satisfying node affinity and taint constraints). 
+
+For multiple workload classes, 𝑘 eff depends on the class mix. We use the dominant resource approximation: 
+
+𝑘 eff (𝑞 ) = min  
+
+> 𝑟 ∈ R
+
+ C( 𝑞, 𝑓 ∗, 𝑟 )
+
+Í𝑗 𝜙 𝑗 · d𝑗 (𝑓 ∗, 𝑟 )
+
+
+
+(4) where 𝜙 𝑗 = 𝜆 𝑗 /Í𝑗 ′ 𝜆 𝑗 ′ is the class proportion and 𝑓 ∗ =
+
+arg min 𝑓 𝑘 eff (𝑞, 𝑓 ) is the bottleneck flavor. 
+
+Proposition 1 (Vector Packing Loss) . For 𝑑 ≥ 2 resource dimensions, the effective server count satisfies: 
+
+𝑘 eff ≤ 1
+
+𝑑 
+
+> 𝑑
+
+∑︁  
+
+> 𝑟 =1
+
+𝐶 𝑟 
+
+¯𝑑 𝑟 
+
+
+
+(5) 
+
+where 𝐶 𝑟 is the capacity in dimension 𝑟 and ¯𝑑 𝑟 is the mean demand. Equality holds only when all demand vectors are aligned (proportional across dimensions). Proof. By the vector packing constraint, each admitted work-load must fit in all dimensions simultaneously. The per-dimension capacity ⌊𝐶 𝑟 / ¯𝑑 𝑟 ⌋ is an upper bound assuming dimension 𝑟 is the bottleneck. The minimum over dimen-sions gives 𝑘 eff . The arithmetic mean of per-dimension capac-ities is an upper bound on this minimum, with equality only when all dimensions are equally constrained (proportional demands). □
+
+3.4 M/G/ 𝑘 Domination and Wait Time Finiteness Modeling Assumption 1 (M/G/ 𝑘 Domination). 
+
+Let 𝑊 real denote the wait time of a quotable work-load in the real system (with vector packing, pre-emption feedback, and scheduling policy). Let 𝑊 M/G/k 
+
+denote the wait time in an M/G/ 𝑘 queue with 
+
+𝑘 = 𝑘 eff (𝑞 ) servers (Definition 5), arrival rate 
+
+𝜆 eff = 𝜆 + 𝜇 𝑝 where 𝜆 = Í𝑗 𝜆 𝑗 is the total arrival rate (including preemption feedback rate 𝜇 𝑝 ), and service time distribution 𝑆 . We assume: 
+
+𝑊 real ≤st 𝑊 M/G/k 
+
+where ≤st denotes stochastic ordering. 
+
+Justification. We argue that the real system is no worse than the M/G/ 𝑘 reference by examining each structural dif-ference. A formal coupling construction on a common prob-ability space remains open; the following is a plausibility argument that we validate empirically in §5. 
+
+(i) Vector packing. The real system admits a workload only when all 𝑑 resource dimensions fit. 𝑘 eff is defined as the minimum over all dimensions (Definition 5), so the M/G/ 𝑘 
+
+reference has at most 𝑘 eff servers. In the real system, some workloads may fit in dimensions where others do not, allow-ing slightly more concurrent service than the worst-case 𝑘 eff .Thus the real system has 𝑘 real eff ≥ 𝑘 eff , and M/G/ 𝑘 with 𝑘 = 𝑘 eff 
+
+dominates. 
+
+(ii) Preemption feedback. We account for preemption by inflating the arrival rate to 𝜆 eff = 𝜆 + 𝜇 𝑝 , treating preempted Preprint, 2026, Sohan Kunkerkar 
+
+workloads as new arrivals with i.i.d. service times drawn from the original distribution 𝑆 . For workloads with check-pointing, the remaining service time after preemption is strictly shorter than a fresh draw from 𝑆 , making the i.i.d. reference conservative. For restart-from-scratch workloads, the re-entering job has the same service time as before, intro-ducing positive autocorrelation in the arrival stream. This autocorrelation can increase queue lengths beyond the i.i.d. case, potentially violating the domination direction. We re-strict the domination claim to systems with checkpoint-based preemption or low preemption rates ( 𝜇 𝑝 ≪ 𝜆 ); the restart-from-scratch case requires analysis under correlated arrivals (e.g., GI/GI/ 𝑘 ) which we leave to future work. 
+
+(iii) Scheduling policy. The M/G/ 𝑘 reference uses FCFS. Under BestEffortFIFO, blocked workloads are moved aside, avoiding head-of-line blocking—this can only reduce wait times relative to FCFS (where a blocked head delays all sub-sequent workloads). Under StrictFIFO, head-of-line blocking increases wait times beyond FCFS, meaning the M/G/ 𝑘 /FCFS reference underestimates wait times for StrictFIFO queues. We restrict the domination claim to BestEffortFIFO; for Strict-FIFO, the M/G/ 𝑘 reference is optimistic rather than conser-vative. 
+
+Sufficient conditions. Modeling Assumption 1 is sup-ported when three conditions hold: (1) the scheduling dis-cipline is BestEffortFIFO (avoiding head-of-line blocking), (2) preemption is checkpoint-based or infrequent ( 𝜇 𝑝 ≪ 𝜆 ), and (3) arrivals are approximately Poisson. The assumption may fail under StrictFIFO (where head-of-line blocking in-creases wait times beyond FCFS) or high-rate restart-from-scratch preemption (where autocorrelated re-entries can ex-ceed i.i.d. wait times). We treat this as a modeling assump-tion and validate it empirically rather than claiming a formal proof. 
+
+Theorem 2 (Quotable Wait Time Finiteness) . For a quotable workload of class 𝑗 in queue 𝑞 , under the stability condition 
+
+𝜌 𝑞 < 1 where 
+
+𝜌 𝑞 = 𝜆 eff · E[𝑆 ]
+
+𝑘 eff (𝑞 )
+
+with 𝜆 eff = 𝜆 + 𝜇 𝑝 (preemption-adjusted arrival rate), the expected wait time E[𝑊 𝑞 ( 𝑗 )] is finite. Proof. Under Modeling Assumption 1, 𝑊 real ≤st 𝑊 M/G/k . Un-der 𝜌 𝑞 < 1, the M/G/ 𝑘 reference queue is positive recur-rent [ 7 ] and all moments of 𝑊 M/G/k are finite. Stochastic dom-ination preserves finiteness of expectations, so E[𝑊 real ] ≤ 
+
+E[𝑊 M/G/k ] < ∞. □
+
+3.5 Wait Time Bounds 
+
+A key difficulty in multi-server queueing is that no practical closed-form upper bound on E[𝑊 𝑞 ] is known for M/G/ 𝑘 
+
+with 𝑘 > 1. Gupta et al. [ 9 ] proved that any approximation using only the first two moments of the service distribution has a worst-case ratio growing as 𝜌 −√2(𝑘 +1) between the maximum and minimum achievable E[𝑊 𝑞 ]—two-moment formulas are fundamentally limited for multi-server queues. Li and Goldberg [ 10 ] proved the first multi-server Kingman bound: under FCFS with finite (2 + 𝜖 )-moment service times, 
+
+E[𝑊 𝑞 ] = 𝑂 (1/( 1 − 𝜌 )) , but with prefactors too large for practical prediction. We therefore present a proven structural bound (Theo-rem 3) establishing the correct asymptotic scaling, and a 
+
+practical approximation (Equation 7) for actual wait time estimation, validated empirically in §5. 
+
+Theorem 3 (Wait Time Scaling) . For quotable workloads in queue 𝑞 under FCFS with effective server count 𝑘 = 𝑘 eff (𝑞 ),utilization 𝜌 < 1, and service times with finite (2 + 𝜖 )-th moment, the expected wait time satisfies: 
+
+E[𝑊 𝑞 ] = 𝑂 
+
+ 11 − 𝜌 
+
+
+
+(6) 
+
+That is, E[𝑊 𝑞 ] is finite and grows at most inversely with the capacity slack 1 − 𝜌 .Proof. Under Modeling Assumption 1, the quotable partition of queue 𝑞 is dominated by an M/G/ 𝑘 queue with 𝑘 = 𝑘 eff (𝑞 )
+
+servers. Apply the multi-server Kingman bound of Li and Goldberg [ 10 ], which establishes E[𝑊 𝑞 ] ≤ 𝐶 (𝜖, 𝑘 )/( 1 − 𝜌 )
+
+for a constant 𝐶 (𝜖, 𝑘 ) depending on the moment index and server count. The scaling holds for the real system by sto-chastic domination. □
+
+While Theorem 3 establishes the correct scaling, the con-stant 𝐶 (𝜖, 𝑘 ) is too large for prediction. For practical use, we employ the standard M/M/ 𝑘 correction: 
+
+Approximation 1. (Modified Erlang-C Wait Time Esti-mate.) For quotable workloads with effective server count 𝑘 ,utilization 𝜌 , and service time coefficient of variation 𝐶 𝑆 :
+
+ˆ𝑊 𝑞 = 𝐶 (𝑘, 𝜌 )
+
+| {z }
+
+> Erlang-C
+
+· E[𝑆 ]
+
+𝑘 (1 − 𝜌 )
+
+| {z } 
+
+> M/M/ 𝑘 wait
+
+· 𝐶 2 
+
+> 𝑆
+
++ 12
+
+| {z }
+
+> variability correction
+
+(7) where 𝐶 (𝑘, 𝜌 ) = 𝑃 (wait > 0) is the Erlang-C probability 
+
+𝐶 (𝑘, 𝜌 ) = (𝑘𝜌 )𝑘 /𝑘 !
+
+(𝑘𝜌 )𝑘 /𝑘 ! + ( 1 − 𝜌 ) Í𝑘 −1 
+
+> 𝑛 =0
+
+(𝑘𝜌 )𝑛 /𝑛 ! (8) This is the Cosmetatos-Tijms approximation [ 11 ], which interpolates between the exact M/M/ 𝑘 result ( 𝐶 𝑆 = 1) and the exact M/D/ 𝑘 result ( 𝐶 𝑆 = 0). The approximation is well-studied for classical M/G/ 𝑘 queues [ 11 ] but has no proven error guarantee. In our setting—where BestEffortFIFO de-parts from FCFS and 𝑘 eff is a worst-case estimate—we observe 2.3–18 × overestimation (§5). Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters Preprint, 2026, 
+
+Accounting for Preemption Feedback. Preempted work-loads re-enter the queue with rate 𝜇 𝑝 . The effective arrival rate becomes 𝜆 eff = 𝜆 + 𝜇 𝑝 . Substituting into the utilization formula: 
+
+𝜌 eff = (𝜆 + 𝜇 𝑝 ) · E[𝑆 ]
+
+𝑘 (9) The stability condition becomes 𝜌 eff < 1, which is more restrictive than the no-preemption case. 
+
+Accounting for Cohort Borrowing. When queue 𝑞 can borrow from siblings in a cohort, the effective capacity in-creases. Let 𝐵 (𝑞, 𝑓 , 𝑟 ) denote the expected available borrowed capacity (a function of sibling utilization). The effective server count with borrowing: 
+
+𝑘 + 
+
+> eff
+
+(𝑞 ) = min 
+
+> 𝑟
+
+ C( 𝑞, 𝑓 ∗, 𝑟 ) + E[𝐵 (𝑞, 𝑓 ∗, 𝑟 )] 
+
+¯𝑑 𝑟 
+
+
+
+(10) This gives a tighter bound in under-utilized cohorts and degrades gracefully as sibling utilization increases. 
+
+Priority Classes. For a system with 𝑃 priority classes where class 𝑝 preempts class 𝑝 ′ < 𝑝 , we use the standard preemptive-priority M/G/ 𝑘 result: the wait time for class 𝑝 
+
+depends only on the load from classes ≥ 𝑝 :
+
+𝜌 𝑝 =
+
+Í𝑝 ′ ≥𝑝 𝜆 𝑝 ′ · E[𝑆 𝑝 ′ ]
+
+𝑘 (11) 
+
+## 4 NP-Hardness of Optimal Admission 
+
+We now show that the admission problem is computationally hard. We first observe that MIG packing with fixed profiles is tractable, then show that adding multi-resource vectors with topology affinity makes the problem NP-hard. 
+
+Definition 6 (GPU Topology-Aware Admission with Parti-tioning (GTAP)) . Given: 
+
+• A set of GPU nodes N connected by a topology graph 
+
+𝐺 = (N , 𝐸 ) where edges represent NVLink connections. 
+
+• A set of MIG partition profiles Π for each GPU (e.g., 1g.10gb, 2g.20gb, 3g.40gb, 7g.80gb for A100). 
+
+• A set of workloads W, each with a multi-dimensional resource demand vector d𝑤 ∈ R𝑑  
+
+> ≥0
+
+(GPU compute, GPU memory, CPU, system memory) and optional topology affinity constraints (e.g., all GPUs on the same NVLink domain). Admission consumes capacity from a shared quota pool: each admitted workload’s demand vector is subtracted from the available capacity. 
+
+Decide: Can all workloads in W be simultaneously admit-ted? 
+
+Proposition 2 (Fixed-Profile MIG Packing is Tractable) .
+
+When resource demands are one-dimensional (GPU memory only), the MIG profile set |Π| is a fixed constant, and there are no topology constraints, GTAP is solvable in polynomial time. Proof. With |Π| fixed profile sizes, each GPU has at most 
+
+𝑂 (| Π||Π| ) distinct valid partitionings—a constant. The num-ber of workload types by profile is at most |Π|. A dynamic programming formulation over (GPU index, counts of re-maining workloads per type) has state space polynomial in 
+
+|W| . □
+
+Theorem 4 (NP-Hardness of Multi-Resource GTAP) . GTAP is NP-hard when workloads have multi-dimensional resource demands ( 𝑑 ≥ 2), even without topology constraints. Proof sketch. We reduce from 𝑑 -dimensional vector bin pack-ing, which is strongly NP-hard for 𝑑 ≥ 2 [6 ]. Given an instance with 𝑛 items of 𝑑 -dimensional sizes and 𝑚 unit-capacity bins: 
+
+• Create 𝑚 GPU nodes, each with capacity vector (1, 1, . . . , 1) ∈ 
+
+R𝑑 .
+
+• Create 𝑛 workloads with demand vectors matching the item sizes. 
+
+• Fix a single MIG profile (full GPU, no partitioning). All workloads are simultaneously admissible iff the vector bin packing instance has a solution. Since 𝑑 -dimensional vector bin packing is strongly NP-hard [6], GTAP is NP-hard. □
+
+Corollary 1 (Topology Increases Hardness) . GTAP remains NP-hard with topology affinity constraints, since the uncon-strained problem is already hard. Adding constraints (e.g., re-quiring NVLink-connected GPUs) can only increase the hard-ness. 
+
+Corollary 2 (Optimal Admission Ordering) . In the static case where all workloads are available at 𝑡 = 0, choosing the admission sequence that minimizes total weighted wait time is NP-hard under multi-resource demands. Proof. If optimal static ordering were polynomial, we could solve GTAP by checking whether the optimal ordering achieves zero total wait (simultaneous admission of all workloads), contradicting NP-hardness. □
+
+Proposition 2 and Theorem 4 together pinpoint the source of hardness: it is not MIG partitioning (fixed profiles, polyno-mial), but the multi-dimensional vector packing inherent in multi-resource admission. This is precisely the structure our queueing model captures via the effective server count 𝑘 eff 
+
+(Definition 5), which reduces the multi-dimensional problem to a scalar quantity amenable to M/G/ 𝑘 analysis. 
+
+## 5 Evaluation 
+
+We validate our queueing model on Kueue v0.19.0 using controlled workload injection on a local Kubernetes cluster. 
+
+5.1 Experimental Setup 
+
+Cluster Configuration. We deploy a 4-node Kubernetes 1.36 cluster (1 control plane, 3 workers) using kind [ 23 ]. A single ClusterQueue cq-eval is configured with 2 CPU Preprint, 2026, Sohan Kunkerkar 
+
+Table 1. Mapping of queueing parameters to Kueue metrics.                
+
+> Parameter Kueue Metric
+> Arrival rate 𝜆 rate(kueue_admitted_workloads_total) ∗
+> Service time 𝑆 kueue_execution_time_seconds
+> Queue length 𝐿 𝑞 kueue_pending_workloads{status=active}
+> In-service 𝐿 𝑠 kueue_admitted_active_workloads
+> Wait time 𝑊 𝑞 kueue_admission_wait_time_seconds
+> Utilization 𝜌 resource_usage / nominal_quota
+> Preemption rate 𝜇 𝑝 rate(kueue_preempted_workloads_total)
+
+nominal quota and no borrowing, yielding 𝑘 eff = ⌊2.0/0.5⌋ =
+
+4 effective servers for 500m CPU workloads. BestEffortFIFO scheduling is enabled. 
+
+Workload Generator. We submit Kubernetes Jobs with Poisson inter-arrival times and exponentially distributed service times (mean 20s). Each job requests 500m CPU and 64Mi memory. We sweep the target utilization 𝜌 from 0.3 to 0.92 by adjusting the arrival rate 𝜆 = 𝜌 ·𝑘 eff /E[𝑆 ], submitting 80 jobs per utilization level. 
+
+Metrics Collection. We extract timing data directly from Kueue Workload object conditions (creation timestamp, ad-mission timestamp, completion timestamp), giving exact per-workload wait times without Prometheus aggregation loss. Table 1 shows the correspondence to production Prometheus metrics. 
+
+> ∗
+
+In steady state ( 𝜌 < 1), admission throughput equals arrival rate by flow balance. We restrict our analysis to 𝜌 < 0.95 .
+
+5.2 Partition Non-Vacuity 
+
+When 5% of submitted workloads request resources exceed-ing the ClusterQueue’s potential available capacity (20 CPU against a 2 CPU quota), 50% of pending workloads are in Kueue’s inadmissible set at measurement time. The inadmis-sible set is a superset of the truly unfeasible partition (some workloads are temporarily inadmissible but quotable), so this is an upper bound on the unfeasible fraction. The non-zero fraction confirms that the quotable/unfeasible partition (Theorem 1) is non-vacuous in practice: a non-trivial fraction of pending workloads cannot be admitted without cluster reconfiguration. 
+
+5.3 Little’s Law Validation 
+
+As a consistency check, we verify that Little’s Law ( 𝐿 = 𝜆 ·𝑊 )holds on observed Kueue data. We compute 𝐿 obs as the time-averaged number of waiting workloads (integrated from arrival/admission event timestamps) and 𝜆 · 𝑊 from the observed arrival rate and mean wait time. Across all utilization levels with 𝜌 obs < 0.95 , the ratio 
+
+𝐿 obs /( 𝜆 · 𝑊 ) equals 1.000 (to three decimal places), confirm-ing that the queueing model is internally consistent with observed Kueue behavior. At 𝜌 obs = 0.95 the ratio is 0.950, 
+
+Table 2. Wait time prediction across utilization levels. 𝑘 eff =
+
+4, truncated exponential service times (mean 20s, observed mean 21–25s, 𝐶 𝑆 ≈ 0.8–1.0), 80 jobs per level.                                          
+
+> 𝜌 tgt 𝜌 obs ˆ𝑊 𝑞 (s) 𝑊 𝑞 (s) Ratio Little 0.30 0.27 0.7 0.04 18 ×1.000 0.50 0.64 5.0 1.2 4.1 ×1.000 0.65 0.72 7.9 3.5 2.3 ×1.000 0.75 †1.16 —49.7 —0.836 0.85 0.95 88.9 11.0 8.1 ×0.950 0.92 †1.23 —42.1 —0.785
+> †Transient overload: 𝜌 obs >1over 80 jobs. Erlang-C is undefined; real system absorbs the burst through transient queueing.
+
+and above 𝜌 = 1.0 (transient overload) the ratio degrades to 0.79–0.84, as expected when the steady-state assumption is violated. 
+
+5.4 Wait Time Prediction Accuracy 
+
+We compare predicted E[𝑊 𝑞 ] from the modified Erlang-C ap-proximation (Equation 7) against observed mean wait times, and against an exponential moving average (EMA) baseline (𝛼 = 0.3) that predicts wait time from recent history. Table 2 shows the Erlang-C approximation consistently overestimates observed wait times by 2.3–18 × across the stable regime ( 𝜌 obs < 1). The overestimation is largest at low 
+
+𝜌 (18 × at 𝜌 = 0.27 , where observed waits are near zero and the model predicts 0.7s) and tightest in the moderate regime (2.3 × at 𝜌 = 0.72 ). At 𝜌 obs > 1, the formula is undefined and the model provides no prediction. The overestimation has three sources: (1) BestEffortFIFO avoids head-of-line blocking, producing shorter waits than the FCFS assumption in M/G/ 𝑘 ; (2) the Cosmetatos-Tijms variability correction is calibrated for the M/M/ 𝑘 to M/D/ 𝑘 
+
+range, not for the truncated exponential distribution used here; and (3) the dominant-resource 𝑘 eff is a worst-case esti-mate that understates the actual concurrency. 
+
+Why conservative, and can we do better? The overes-timation is structural, not accidental: 𝑘 eff is a lower bound on actual concurrency (vector packing allows more concur-rent workloads when demands are not perfectly aligned), and BestEffortFIFO produces shorter waits than the FCFS assumption in M/G/ 𝑘 . A tighter bound would require either (a) a scheduling discipline-specific analysis (no M/G/ 𝑘 results exist for BestEffortFIFO), or (b) a sharper 𝑘 eff that accounts for the actual workload mix rather than the worst-case bot-tleneck dimension. Both are open problems. The Erlang-C approximation is not a proven upper bound—it is an empiri-cally conservative estimate under the conditions tested. 
+
+Comparison with EMA baseline. In a separate exper-iment at 𝜌 obs ≈ 0.9 (64 workloads, 15s mean service), the Erlang-C MAE was 18.2s versus the EMA baseline’s ( 𝛼 = 0.3)Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters Preprint, 2026, 
+
+Table 3. Vector packing: scalar vs. multi-dimensional 𝑘 eff .The scalar CPU-only estimate ( 𝑘 = 8) overestimates capacity and therefore underestimates queueing delay; the vector estimate ( 𝑘 = 4, memory-bottlenecked) correctly identifies the binding dimension. 80 jobs/level.                
+
+> 𝜌 tgt 𝜌 vec ˆ𝑊 𝑘 =4ˆ𝑊 𝑘 =8𝑊 𝑞 Bottleneck 0.50 0.60 3.2 0.0 2.4 memory 0.70 0.77 10.7 0.1 2.5 memory
+
+MAE of 6.8s. The EMA baseline wins on point prediction ac-curacy because it adapts to recent observations. However, the Erlang-C approximation is an a priori prediction requiring only the arrival rate, service time distribution, and quota—it does not need historical wait time observations. This makes it suitable for capacity planning (“what will wait times be if we add this workload class?”) where no historical data ex-ists. The EMA is better for real-time estimation of a running system. 
+
+5.5 Scheduling Latency 
+
+The continuous M/G/ 𝑘 model assumes instantaneous ad-mission decisions. In Kueue, the scheduler runs in a loop (wait.UntilWithBackoff ), processing all eligible heads each iteration. The time between a workload becoming eligible and the next scheduler iteration depends on current load and is not a fixed interval. At low utilization, this scheduling latency dominates observed wait times (observed 𝑊 𝑞 ≈ 0.04 sat 𝜌 = 0.27 ). At moderate-to-high utilization, queueing de-lays dominate and the scheduling latency is negligible. 
+
+5.6 Vector Packing Validation 
+
+To test the multi-dimensional 𝑘 eff reduction (Definition 5), we configure a ClusterQueue with asymmetric quotas: 4 CPU and 2Gi memory. Workloads request 500m CPU and 512Mi memory, giving: 
+
+𝑘 eff (CPU ) = ⌊4/0.5⌋ = 8
+
+𝑘 eff (mem ) = ⌊2048 /512 ⌋ = 4
+
+𝑘 eff (vector ) = min (8, 4) = 4
+
+Table 3 shows the result. The scalar CPU-only 𝑘 eff = 8
+
+predicts near-zero wait time ( ˆ𝑊 < 0.1s) because 𝜌 CPU ≈ 0.3—it does not see the memory bottleneck. The vector 𝑘 eff = 4
+
+correctly identifies memory as the binding dimension and predicts ˆ𝑊 = 3.2s at 𝜌 = 0.50 , overestimating the observed 2.4s by 33%. At 𝜌 = 0.70 , the overestimate widens to 4.3 ×
+
+(10.7s predicted vs. 2.5s observed) as the Erlang-C formula becomes more sensitive near the stability boundary. A third run at 𝜌 target = 0.85 produced 𝜌 obs > 1 and is excluded (same treatment as Table 2 †). Without the multi-dimensional 
+
+𝑘 eff reduction, the model misses the bottleneck entirely and underestimates wait times by > 95 %. 
+
+Table 4. GPU resource validation via DRA. The GPU-bottlenecked 𝑘 eff = 4 correctly identifies GPU as the binding dimension; the CPU-only 𝑘 eff = 16 misses the bottleneck. 30 jobs/level.                     
+
+> 𝜌 tgt 𝜌 GPU ˆ𝑊 𝑘 =4ˆ𝑊 𝑘 =16 𝑊 𝑞 Little 0.50 0.81 16.8 0.0 4.8 1.000 0.70 0.76 9.3 0.0 1.5 1.000 0.85 0.80 11.9 0.0 4.3 1.000
+
+The 2D experiment validates the single-class 𝑘 eff (Defini-tion 5). The multi-class dominant-resource extension (Equa-tion 4), which weights demand by class proportion 𝜙 𝑗 , is a standard DRF-style approximation [ 24 ] not separately tested here. 
+
+GPU resource validation. To validate with GPU resources, we configure Kueue’s DRA (Dynamic Resource Allocation) integration with a simulated GPU driver (dra-example-driver) providing 8 GPUs per node across 3 nodes. The ClusterQueue quota is set to 4 GPUs, 8 CPU, and 8Gi memory. Each work-load requests 1 GPU (via ResourceClaimTemplate), 500m CPU, and 256Mi memory, giving 𝑘 eff (GPU ) = 4, 𝑘 eff (CPU ) = 16 ,
+
+𝑘 eff (vector ) = 4.Table 4 confirms the same pattern as the CPU/memory ex-periment (Table 3): the scalar CPU-only estimate misses the GPU bottleneck entirely ( ˆ𝑊 = 0), while the vector 𝑘 eff = 4
+
+overestimates by 2.5–3.5 × (conservative direction). Little’s Law holds exactly. The queueing model is resource-type-agnostic: the same 𝑘 eff reduction works whether the bottle-neck is memory or GPU quota. MIG partitioning and NVLink topology constraints introduce additional structure not exer-cised here. 
+
+## 6 Related Work 
+
+Queueing Theory for GPU Scheduling. Mitzenmacher and Shahout [ 1] survey learning-augmented scheduling with predictions, identifying open problems in multi-server sys-tems. Dai et al. [ 2] prove throughput-optimality for batched LLM scheduling. Wang and Grosof [ 3 ] derive novel lower bounds on M/G/ 𝑘 response time. All focus on inference-level scheduling; we address the cluster admission layer. 
+
+GPU Cluster Schedulers. Tiresias [ 12 ] applies multi-level feedback queues from queueing theory to GPU job scheduling but does not derive wait time bounds. Shock-wave [ 14 ] provides fair GPU allocation without queueing-theoretic analysis. HiveD [ 13 ] introduces topology-aware virtual private clusters but does not consider MIG or queue-ing models. Lu et al. [ 17 ] use predictive multi-dimensional resource scheduling for GPU utilization but rely on ML pre-diction rather than queueing theory. Preprint, 2026, Sohan Kunkerkar 
+
+Fair Resource Allocation. Dominant Resource Fairness [ 24 ]defines max-min fairness for multi-resource environments and is the theoretical basis for Kueue’s fair-sharing mecha-nism. Themis [ 27 ] achieves finish-time fairness for ML train-ing. Gandiva [ 25 ] exploits GPU time-slicing for locality and packing. Pollux [ 28 ] co-optimizes cluster scheduling with per-job hyperparameters. Gavel [ 26 ] provides heterogeneity-aware fair scheduling across GPU types. None derive queueing-theoretic wait time bounds. 
+
+MIG Scheduling. Villarrubia et al. [ 15 ] study moldable MIG scheduling with a 7/4 approximation for single-GPU packing. Our GTAP extends to multi-resource vector packing with topology. KRYPTON [ 16 ] uses MIG for isolation but does not address scheduling optimality. 
+
+Vector Bin Packing. Chekuri and Khanna [ 6 ] prove no APTAS exists for 𝑑 ≥ 2 dimensions. We connect this hardness to the effective server count in queueing models. 
+
+## 7 Limitations 
+
+Our model makes several simplifying assumptions that should be understood when applying the results in practice. 
+
+Poisson Arrivals. We assume Poisson arrivals (the “M” in M/G/ 𝑘 ). Real workload arrival processes exhibit bursti-ness (e.g., batch submissions, periodic cron jobs) that may violate this assumption. The GI/GI/ 𝑘 extension of Li and Goldberg [ 10 ] covers general inter-arrival times but with even larger constants. 
+
+Admission Fair Sharing (AFS).. When AFS is enabled, admission ordering is by usage share rather than FIFO. This violates the FCFS assumption underlying the M/G/ 𝑘 model. Our bounds apply to non-AFS clusters or within a single LocalQueue (where AFS does not reorder). Extending to AFS ordering requires a processor-sharing or generalized-processor-sharing model. 
+
+Concurrent Admission. By default, Kueue admits one workload per ClusterQueue per scheduler iteration. The alpha-stage ConcurrentAdmission feature gate allows paral-lel flavor assignment but does not change the per-iteration admission count. Our M/G/ 𝑘 model assumes continuous service; the per-iteration scheduling latency introduces ad-ditional delay at low utilization. 
+
+Unmodeled Features. Several production features are outside our model’s scope: Topology-Aware Scheduling (TAS) 
+
+adds placement constraints beyond vector packing. Elastic jobs have variable resource demands. waitForPodsReady adds a post-admission delay before the workload is considered running. Hierarchical cohorts create multi-level borrowing relationships not captured by our single-level borrowing model. Admission checks (e.g., resource flavor validation, ad-mission webhooks) add per-workload overhead not included in service time. 
+
+Arrival Rate Measurement. As noted in §5, we approxi-mate arrival rate using admission throughput. This is valid under steady state but underestimates true arrivals under sat-uration. A dedicated arrival counter would improve accuracy for 𝜌 > 0.95 .
+
+## 8 Discussion and Open Problems 
+
+Online Competitive Admission. Our bounds are steady-state. An online competitive analysis of Kueue’s greedy ad-mission against an optimal offline scheduler remains open. 
+
+Fair-Share Convergence. Kueue’s Dominant Resource Share mechanism implements a variant of DRF. Whether the usage-based admission ordering converges under dynamic arrivals and departures is an open control-theoretic question. 
+
+Predictive Admission. Mitzenmacher’s framework for scheduling with predictions could be extended to admission control: given predicted service times, can we improve wait time bounds? Our model provides the foundation for such analysis. 
+
+## 9 Conclusion 
+
+We presented the first formal wait time bounds for GPU clus-ter admission control. Our central result—the quotable/unfeasible partition theorem—shows that accurate wait time estimation requires distinguishing workloads that can eventually be admitted from those that cannot. For quotable workloads, under an explicit stochastic domination assumption (Mod-eling Assumption 1), we modeled the system as an M/G/ 𝑘 
+
+reference queue with effective server count determined by vector packing, establishing 𝑂 (1/( 1 − 𝜌 )) wait time scaling and providing a practical modified Erlang-C approximation. We proved that optimal admission ordering is NP-hard under multi-resource vector packing, pinpointing dimensionality (not MIG partitioning) as the source of hardness. Experi-ments on Kueue v0.19.0 with CPU, memory, and GPU (via DRA) resources confirm that the vector 𝑘 eff correctly identi-fies bottleneck dimensions and that the Erlang-C approxima-tion consistently overestimates in the conservative direction, though with 2.3–18 × looseness that limits its use as a point predictor. All model parameters are derivable from existing Kueue metrics. Our work provides the theoretical foundation for practical wait time estimation in GPU clusters—a capability that pro-duction systems have lacked despite years of user demand. We hope this encourages further application of queueing theory to the cluster admission layer, where significant open problems remain. Queue-Theoretic Admission Control for Multi-Tenant GPU Clusters Preprint, 2026, 
+
+AI Tool Disclosure. AI tools were used for literature search, prose editing, and LaTeX formatting. All theoretical contributions (proofs, model design, experimental method-ology) are the authors’ original work. 
+
+## References 
+
+[1] M. Mitzenmacher and N. Shahout. Queueing, predictions, and LLMs. 
+
+Stochastic Systems , 2025. arXiv:2503.07545. [2] J. G. Dai, T. Deng, Y. Li, and T. Peng. Throughput-optimal scheduling algorithms for LLM inference and AI agents. arXiv:2504.07347, 2025. [3] Z. Wang and I. Grosof. Novel lower bounds on M/G/k scheduling. arXiv:2502.08804, 2025. [4] Kubernetes-sigs. Kueue: Kubernetes-native job queueing. https:// kueue.sigs.k8s.io/ , 2024. [5] A. B. Yoo, M. A. Jette, and M. Grondona. SLURM: Simple Linux utility for resource management. In JSSPP , 2003. [6] C. Chekuri and S. Khanna. On multidimensional packing problems. 
+
+SIAM J. Comput. , 33(4):837–851, 2004. [7] J. Kiefer and J. Wolfowitz. On the theory of queues with many servers. 
+
+Trans. Amer. Math. Soc. , 78:1–18, 1955. [8] V. Gupta and T. Osogami. On Markov-Krein characterization of the mean waiting time in M/G/k and other queueing systems. Queueing Systems , 68:339–352, 2011. [9] V. Gupta, M. Harchol-Balter, J. G. Dai, and B. Zwart. On the inapprox-imability of M/G/K: Why two moments of job size distribution are not enough. Queueing Systems , 64(1):5–48, 2010. [10] Y. Li and D. A. Goldberg. Simple and explicit bounds for multiserver queues with 1/( 1 − 𝜌 ) scaling. Math. Oper. Res. , 50(2):813–837, 2024. [11] H. C. Tijms. A First Course in Stochastic Models . Wiley, 2003. [12] J. Gu, M. Chowdhury, K. G. Shin, et al. Tiresias: A GPU cluster manager for distributed deep learning. In NSDI , 2019. [13] H. Zhao, Z. Han, Z. Yang, et al. HiveD: Sharing a GPU cluster for deep learning with guarantees. In OSDI , 2020. [14] P. Zheng, et al. Shockwave: Fair and efficient cluster scheduling for dynamic adaptation in machine learning. In NSDI , 2023. [15] J. Villarrubia, L. Costero, F. D. Igual, and K. Olcoz. Leveraging multi-instance GPUs through moldable task scheduling. J. Parallel Dis-trib. Comput. , 204, 2025. [16] S. Zhang, A. Xu, Q. Chen, H. Zhao, W. Cui, Z. Wang, Y. Li, L. Xiao, and M. Guo. Efficient performance-aware GPU sharing with compatibility and isolation through kernel space interception. In ATC , 2025. [17] Y. Lu, D. He, T. Ma, Z. Liu, L. Ruan, J. Jiang, and Y. Wu. Bridging the GPU utilization gap: Predictive multi-dimensional resource scheduling for AI workloads. In EuroSys , 2026. [18] Cast AI. 2026 state of Kubernetes optimization report. Technical report, 2026. [19] KEP-168: Workload visibility. Kubernetes Enhancement Proposal, 2023. [20] Kueue Issue #13159: Workload wait time estimation. https://github. com/kubernetes-sigs/kueue/issues/13159 , 2026. [21] Kueue Issue #10124: Users need wait time. https://github.com/ kubernetes-sigs/kueue/issues/10124 , 2025. [22] Kueue Issue #10614: Admission estimation for MultiKueue. https: //github.com/kubernetes-sigs/kueue/issues/10614 , 2025. [23] Kubernetes-sigs. kind: Kubernetes in Docker. https://kind.sigs.k8s.io/ ,2024. [24] A. Ghodsi, M. Zaharia, B. Hindman, A. Konwinski, S. Shenker, and I. Stoica. Dominant resource fairness: Fair allocation of multiple re-source types. In NSDI , 2011. [25] W. Xiao, R. Bhardwaj, R. Ramjee, M. Sivathanu, et al. Gandiva: Intro-spective cluster scheduling for deep learning. In OSDI , 2018. [26] D. Narayanan, K. Santhanam, F. Kazhamiaka, A. Phanishayee, and M. Zaharia. Heterogeneity-aware cluster scheduling policies for deep learning workloads. In OSDI , 2020. [27] K. Mahajan, A. Balasubramanian, A. Singhvi, S. Venkataraman, et al. Themis: Fair and efficient GPU cluster scheduling. In NSDI , 2020. [28] A. Qiao, S. K. Choe, S. J. Subramanya, W. Neiswanger, et al. Pollux: Co-adaptive cluster scheduling for goodput-optimized deep learning. In OSDI , 2021.

@@ -1,0 +1,595 @@
+Title: CommBench: Can LLMs Write Correct and Efficient GPU Communication Code?
+
+URL Source: https://arxiv.org/pdf/2608.04450v1
+
+Published Time: Thu, 06 Aug 2026 00:29:28 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# CommBench: Can LLMs Write Correct and Efficient GPU Communication Code? 
+
+Shuang Ma 1, Yuyi Li 1, Yihan Zhang 1, Hezhi Xie 1, Danyang Chen 4,Shuyang Ji 3, Ziming Mao 2, Cheng Ji 3, Ansha Prashanth 1, Wenting Yang 5,Yiran Wang 3, Chihan Cui 6, Pei Yu Lin 1, Ion Stoica 2, Yang Zhou 1
+
+> 1
+
+University of California, Davis 
+
+> 2
+
+University of California, Berkeley  
+
+> 3
+
+University of Illinois at Urbana-Champaign  
+
+> 4
+
+The Chinese University of Hong Kong 
+
+> 5
+
+University of California, San Diego 
+
+> 6
+
+University of Wisconsin–Madison 
+
+Abstract 
+
+Training and serving large language models (LLMs) rely heavily on high-performance GPU communication, yet im-plementing efficient GPU communication primitives requires deep expertise in GPU architectures, networking hardware, and distributed communication patterns, making them partic-ularly challenging for code generation models. We present CommBench, a comprehensive benchmark for GPU com-munication programming, consisting of over 100 expert-curated tasks spanning point-to-point communication, col-lective operations, expert-parallel communication, compute– communication fusion, and communication utility functions, with reference implementations either written by GPU com-munication experts or distilled from production codebases. We further introduce a cheat-resistant evaluation framework that automatically compiles, executes, and validates generated code on multi-GPU systems, and a unified metric that jointly measures functional correctness and communication perfor-mance. Evaluating leading frontier and open-source code gen-eration models on both intra-node NVLink and inter-node RDMA platforms reveals that even the strongest model, GPT-5.5, correctly implements and achieves competitive perfor-mance on only 30.7% of the benchmark tasks. Our results expose a substantial gap between current LLMs and expert-written GPU communication code, establishing CommBench as a challenging benchmark for advancing AI-assisted systems programming. 
+
+1 Introduction 
+
+GPU communication, including both standalone communi-cation primitives and communication-computation fusion, has become a cornerstone of modern large language model (LLM) training and inference. As LLMs continue to scale in model size, context length, and deployment, distributed exe-cution increasingly relies on efficient inter-GPU communica-tion for tensor, pipeline, expert, and context parallelism, dis-tributed optimization, and KV-cache transfer (Shoeybi et al. 2020; Narayanan et al. 2021; DeepSeek-AI 2025; Kwon et al. 2023; Zhao et al. 2026). Consequently, communication has emerged as a major performance bottleneck: it can account for 43.6% of forward-pass time when training a production Mixture-of-Experts (MoE) model and up to 47% of end-to-end model execution time in distributed MoE workloads (Jin et al. 2026; Zhang et al. 2025). Driven by the rapid evolution of LLM systems and GPU architectures, the demand for high-performance GPU communication programming continues to grow. Although widely adopted libraries such as NCCL provide efficient im-plementations of common communication primitives, they are designed as general-purpose abstractions and cannot always capture workload-specific optimizations required by modern LLM systems (NVIDIA Corporation 2026c; Hwang et al. 2026). Consequently, many industrial LLM frameworks maintain customized communication stacks to support architecture-aware optimizations, communication-computation fusion, and emerging execution paradigms (DeepSeek-AI 2025; Zhao et al. 2025; Qin et al. 2025). Mean-while, modern accelerators such as NVIDIA Hopper, Black-well, and AMD Instinct GPUs continue to increase com-putational throughput, making communication efficiency in-creasingly critical for sustaining hardware utilization. This trend has motivated GPU-initiated communication mecha-nisms that reduce CPU involvement and enable lower-latency execution (Markthub et al. 2022; Hamidouche et al. 2025). Furthermore, emerging LLM architectures, such as MoE, introduce highly irregular and fine-grained communication patterns that are poorly served by traditional collective com-munication libraries, driving the development of specialized communication systems and kernels (DeepSeek-AI 2025; Jin et al. 2026; Zhang et al. 2025). GPU communication programming is substantially more challenging than single-GPU programming for three key reasons. First, it requires specialized expertise spanning GPU kernel optimization, distributed systems, networking, and accelerator architectures (NVIDIA Corporation 2026b,c; Hwang et al. 2026; Hamidouche et al. 2025). Second, de-velopers must coordinate computation and communication across multiple devices over complex and failure-prone in-terconnects while ensuring both correctness and high perfor-mance, making implementation and debugging significantly more difficult than single-device programs (Hoefler and Belli 2015; Zhao et al. 2025; Jin et al. 2026; Zhang et al. 2025). Finally, unlike conventional code generation benchmarks, GPU communication lacks large-scale, realistic, and faith-fully executable datasets, limiting both the development and arXiv:2608.04450v1 [cs.DC] 5 Aug 2026 evaluation of coding models in this domain (Jimenez et al. 2024; Jain et al. 2024; Zhuo et al. 2025). Despite its growing importance, GPU communication pro-gramming remains largely unexplored by existing LLM cod-ing benchmarks. Widely adopted benchmarks, including Ker-nelBench, ComputeEval, and TritonBench, primarily evalu-ate single-GPU code generation tasks (Ouyang et al. 2025; NVIDIA Corporation 2026a; Li et al. 2025a). None of them assesses whether LLMs can generate correct and efficient GPU communication programs, which require coordinating multiple GPUs, orchestrating communication over hetero-geneous interconnects, and tightly coupling communication with computation. Consequently, existing benchmarks fail to evaluate emerging GPU communication tasks such as imple-menting communication primitives (e.g., MSCCL++ chan-nels and collective interfaces), GPU-initiated networking, and communication-computation fusion kernels (e.g., fused AllGather–GEMM pipelines spanning NVLink and Infini-Band). To bridge this gap, we present CommBench , the first comprehensive benchmark for LLM-generated GPU com-munication code across diverse interconnects, program-ming abstractions, and GPU vendors. CommBench com-prises over 100 GPU communication problems with ref-erence implementations, covering representative industry-scale multi-GPU communication workloads derived from real-world development. It spans point-to-point communica-tion, collective operations, expert-parallel communication, communication–computation fusion, and utility functions. The benchmark is constructed from expert-written imple-mentations and carefully distilled production code from widely used GPU communication frameworks, including MSCCL++, NCCL, NVSHMEM, DeepEP, ThunderKittens, vLLM, and SGLang (Hwang et al. 2026; NVIDIA Corpora-tion 2026c,e; Zhao et al. 2025; Spector et al. 2024; Kwon et al. 2023; Zheng et al. 2024). We evaluate leading frontier and open-source code generation models using a cheat-resistant evaluation harness on real hardware spanning both intra-node NVLink and inter-node RDMA environments (NVIDIA Cor-poration 2026d; Linux RDMA Project 2026), and provide detailed analyses of their strengths and failure modes. Our results reveal that even the strongest model, GPT-5.5, cor-rectly solves and achieves competitive performance on only 30.7% of CommBench tasks. 
+
+2 CommBench and Framework Structure 
+
+2.1 Benchmark Structure 
+
+CommBench consists of a collection of independently exe-cutable examples, currently comprising more than 100 GPU communication tasks. Table 1 summarizes the composition of the benchmark. Each example includes a problem spec-ification and a reference implementation. Some examples implement complete communication functionalities, such as point-to-point and collective communication interfaces or MoE expert-parallel dispatch and combine kernels, while others provide reusable communication primitives, such as MSCCL++ communication channels. Based on our expe-rience developing high-performance GPU communication Table 1: Composition of CommBench ( N = 101 examples). Each panel partitions the full benchmark; percentages are computed over all examples and may not sum to exactly 100% due to rounding.                                                       
+
+> Task category Library
+> #%#%Collective 32 31.7 ThunderKittens 24 23.8 Utilities 25 24.8 libibverbs 17 16.8 Fusion 19 18.8 CUDA Runtime 14 13.9 P2P 16 15.8 MSCCL++ 12 11.9 EP 98.9 vLLM 98.9
+> Difficulty DeepEP 87.9 Easy 28 27.7 NCCL Device API 55.0 Medium 52 51.5 NCCL 44.0 Hard 21 20.8 NVSHMEM 44.0
+> Setup SGLang 44.0 Bare-metal 31 30.7 Library-based 70 69.3
+
+libraries, we manually categorize each example into one of three difficulty levels: Easy , Medium , and Hard .The benchmark covers five representative categories of GPU communication programming: (1) Point-to-Point (P2P) , which implements communication between pairs of devices; (2) Collective , including operations such as AllReduce, AllGather, ReduceScatter, Broadcast, and All-to-All; (3) Expert Parallel (EP) , which implements sparse, non-uniform communication patterns for MoE training and inference; (4) Communication–Computation Fusion ,which overlaps communication with computation (e.g., fused AllGather–GEMM kernels); and (5) Utilities , including sup-porting components such as connection establishment, mem-ory registration, synchronization, and topology discovery. To ensure both realism and diversity, CommBench com-bines expert-written implementations with production code distilled from state-of-the-art GPU communication libraries and LLM serving frameworks, including CUDA Runtime, li-bibverbs, MSCCL++, NCCL, NVSHMEM, DeepEP, NCCL Device API, ThunderKittens, vLLM, and SGLang. 
+
+2.2 Evaluation Framework 
+
+We develop an automated evaluation framework that executes generated programs on real hardware and supports iterative refinement through execution feedback. The framework is carefully designed to ensure faithful evaluation by prevent-ing models from modifying the evaluation environment or circumventing the intended verification procedure. 
+
+Example Structure. Each benchmark example consists of three components. First, each example includes a problem specification con-taining the task description together with a partially com-pleted source file, where the implementation is replaced with 
+
+// TODO while preserving the original function signatures and interfaces. Models are required to complete only the designated implementation regions. During evaluation, we verify that no code outside these editable regions has been modified, preventing models from bypassing the intended task. Second, a reference implementation provides a high-quality, expert-written solution implemented in Python, CUDA, HIP, or C++. The reference implementation is ac-companied by a randomized test harness that validates both correctness and performance. To avoid benchmark contam-ination, reference implementations are excluded from the public benchmark release and are never exposed to evaluated models. Finally, a hidden build-and-execution script compiles and executes each solution under a controlled environment. Because the compilation process is entirely managed by the evaluation framework, generated programs are restricted to the intended software stack and cannot introduce unautho-rized dependencies. 
+
+Iterative Refinement. The framework optionally supports multi-round code refinement. If the user-configured max-imum refinement round is greater than one, compilation errors, runtime failures, or performance statistics from the previous execution are incorporated into the next prompt as execution feedback. 
+
+3 Experiments 
+
+3.1 Experimental Setup 
+
+Experimental Platforms We evaluate CommBench on three representative GPU clusters spanning both NVIDIA and AMD ecosystems as well as intra-node and inter-node communication. The first platform consists of a sin-gle node equipped with 8 NVIDIA B300 GPUs intercon-nected via NVLink. The second platform comprises NVIDIA GH200 nodes connected through 400 Gb/s InfiniBand using ConnectX-7 NICs and BlueField-3 DPUs, enabling inter-node RDMA evaluation. The third platform consists of AMD Instinct MI325X nodes interconnected by Infinity Fabric (XGMI) within each node and 400 Gb/s RoCE across nodes. Together, these platforms allow CommBench to evaluate GPU communication programs over realistic NVLink, In-finiBand, and RoCE communication paths on both CUDA and ROCm/HIP software stacks. 
+
+Model Configuration We evaluate GPT-5.5, Gemini-3.1-Pro-Preview, Claude Opus 4.7, GLM-5.1, Kimi-K2.6, DeepSeek-V4-Pro, and Qwen3.7-Max (OpenAI 2026; Google 2026; Anthropic 2026; Zhipu AI 2026; Moonshot AI 2026; DeepSeek-AI 2026; Alibaba Cloud 2026). Unless otherwise specified, all models are executed using their de-fault reasoning modes and decoding parameters, including temperature, top-p, and other model-specific settings. GPT-5.5 and DeepSeek-V4-Pro use medium reasoning effort; Gemini-3.1-Pro-Preview uses high ; Claude Opus 4.7 uses adaptive thinking; and GLM-5.1 and Kimi-K2.6 use their de-fault thinking modes. Qwen3.7-Max is evaluated with think-ing disabled to avoid excessive inference latency and timeout failures. No model-specific prompt engineering or hyperpa-rameter tuning is applied. 
+
+3.2 Evaluation Metrics 
+
+We evaluate generated programs from four complementary perspectives: correctness, performance, efficiency, and cost. 
+
+Pass Rate. Pass Rate measures the fraction of benchmark tasks whose generated implementations compile success-fully, execute correctly, and pass all correctness checks. 
+
+PASS+Good. PASS+Good reports the fraction of bench-mark tasks whose generated implementations are both cor-rect and performant, achieving at least 95% of the reference implementation’s performance. Performance is evaluated us-ing the primary efficiency metric appropriate for each task, such as latency or throughput. 
+
+GM-Speedup. For each passing benchmark task, we com-pute a speedup score by taking the geometric mean of the generated-to-reference performance ratio across all evaluated input sizes. For metrics where lower values are better (e.g., latency), we first convert them to their reciprocals so that higher values consistently indicate better performance. The overall GM-Speedup is the geometric mean of these per-task scores over all passing examples. Using the geometric mean across input sizes ensures that each workload contributes equally regardless of its absolute throughput, preventing large workloads from dominating the aggregate metric. 
+
+Quality-Weighted Pass Rate. Because GM-Speedup is computed only over passing examples, it does not account for a model’s overall success rate. Consequently, a model that solves more (and often more challenging) tasks may achieve a lower GM-Speedup despite exhibiting stronger overall capa-bility. To jointly capture correctness coverage and generated code quality, we define the Quality-Weighted Pass Rate as follows: 
+
+Pass × GM = PassRate × GM -Speedup 
+
+as our primary ranking metric, jointly capturing correct-ness coverage and generated code quality. 
+
+Cost. For proprietary models, we additionally report the average API cost (USD) per benchmark example. 
+
+Performance Categories Following common benchmark-ing practice, we categorize the performance of each correct implementation into four levels according to its speed relative to the reference implementation: 
+
+• Better : at least 20% faster than the reference; 
+
+• Comparable : within [−5% , +20%] of the reference; 
+
+• Degraded : between −40% and −5% ;
+
+• Severely Degraded : more than 40% slower than the ref-erence. 
+
+3.3 Results 
+
+Overall Results. Table 2 summarizes the overall perfor-mance of the evaluated models on CommBench. GPT-5.5 achieves the strongest results, with the highest Quality-Weighted Pass Rate of 0.467, Pass Rate of 57.4%, and PASS+Good rate of 30.7%, substantially outperforming the Table 2: Overall results on CommBench. Models are ranked by the proposed Quality-Weighted Pass Rate , which jointly measures correctness coverage and generated code quality. Higher is better for all metrics except Price. 
+
+Model Quality-Weighted Pass PASS+Good GM-Speedup Open Price Pass Rate ↑ Rate (%) ↑ (%) ↑ ↑ Source ($) ↓
+
+GPT-5.5 0.467 57.4 30.7 0.813 No 1.91 Gemini-3.1-Pro-Preview 0.305 36.6 25.7 0.832 No 0.26 Claude Opus 4.7 0.282 33.7 20.8 0.836 No 0.21 GLM-5.1 0.281 29.7 17.8 0.947 Yes 0.63 Kimi-K2.6 0.275 30.7 18.8 0.895 Yes 0.10 Qwen3.7-Max 0.269 26.7 15.8 1.008 No 0.03 DeepSeek-V4-Pro 0.197 19.8 12.9 0.995 Yes 0.02 Easy Medium Hard 
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> Number of examples
+> 16
+> 31
+> 11
+> 11
+> 13
+> 6
+> 1
+> 8
+> 4
+> 57%
+> (n=28)
+> 60%
+> (n=52)
+> 52%
+> (n=21)
+> PASS
+> FAIL (compile)
+> FAIL (execution)
+> FAIL (API timeout)
+
+(a) GPT-5.5 Easy Medium Hard  
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> Number of examples
+> 4
+> 16
+> 22
+> 21
+> 19
+> 2
+> 15
+> 2
+> 14%
+> (n=28)
+> 31%
+> (n=52)
+> 0%
+> (n=21)
+> PASS
+> FAIL (compile)
+> FAIL (execution)
+> FAIL (API timeout)
+
+(b) DeepSeek-V4-Pro 
+
+Figure 1: Pass rate by human-annotated difficulty level. other models. Notably, the best-performing model does not necessarily achieve the highest GM-Speedup. A stronger model may solve a broader set of tasks, including more chal-lenging ones, but with degraded performance on some of them, thereby lowering its average speedup. In contrast, a lower-ranked model may succeed only on relatively easy tasks while achieving performance comparable to the ref-erence implementations, resulting in a higher GM-Speedup. Overall, current models can occasionally generate highly op-timized GPU communication code, but they still struggle to do so reliably across diverse tasks. 
+
+3.4 Analysis: Top vs. Bottom Models 
+
+To better understand the sources of performance variation on CommBench, we conduct a detailed comparison between the highest- and lowest-scoring models, GPT-5.5 (Quality-Weighted Pass Rate 0.467) and DeepSeek-V4-Pro (Quality-Weighted Pass Rate 0.197). We analyze their behavior along four axes: difficulty level, task type, library coverage, and the runtime performance of the generated code. 
+
+Difficulty Breakdown. Human-annotated difficulty does not always coincide with the difficulty a model actually ex-periences (Figure 1). DeepSeek-V4-Pro performs poorly even on Easy examples (14%), a weakness largely attributable to gaps in library-specific API knowledge. For libraries such as MSCCL++ and ThunderKittens, the model lacks the inter-face semantics needed to invoke APIs correctly, and it there-fore fails on examples that require only a handful of function calls to realize otherwise straightforward functionality. At the Hard end of the spectrum, many examples ask the model to implement communication primitives essentially from scratch (e.g., AllReduce over NVLink or RDMA), which Easy Medium Hard 
+
+> 0
+> 10
+> 20
+> 30
+> PASS examples
+> 3
+> 10
+> 15
+> 3
+> 2
+> 7
+> 3
+> 3
+> 5
+> n=12
+> n=28
+> n=11
+> better
+> degraded
+> comparable
+> severely degraded
+> better
+> 3 (6%)
+> comparable
+> 28 (55%)
+> degraded
+> 12 (24%)
+> severely degraded
+> 8 (16%)
+
+(a) GPT-5.5 Easy Medium Hard 
+
+> 0
+> 10
+> 20
+> PASS examples
+> 11
+> 11
+> 4
+> n=1
+> n=16
+> n=0
+> better
+> degraded
+> comparable
+> severely degraded
+> better
+> 1 (6%)
+> comparable
+> 12 (71%)
+> degraded
+> 4 (24%)
+
+(b) DeepSeek-V4-Pro 
+
+Figure 2: Distribution of performance categories over passing examples. We count only examples that report meaningful performance metrics. exposes DeepSeek-V4-Pro’s limited capability on complex GPU communication and computation tasks. 
+
+Performance Quality Among Passing Examples. 
+
+Among passing examples, GPT-5.5 exhibits the widest qual-ity spread (Figure 2): eight severely degraded cases (16% of the 51 passing examples with meaningful performance measurements), all concentrated in Medium and Hard examples. Because this distribution is computed only over passing examples, tasks that GPT-5.5 successfully compiles and executes, albeit with degraded performance, may simply fail to compile or run under DeepSeek-V4-Pro and therefore never appear in its performance distribution. 
+
+Tag and Library Coverage. GPT-5.5 dominates on Col-lective tasks (66% vs. 22%) and is the only model with mean-ingful coverage of specialized libraries: MSCCL++ (17%), the NCCL Device API (40%), and ThunderKittens (54%). DeepSeek-V4-Pro is competitive on NCCL (100%) and on P2P tasks, but scores 0% across all three specialized libraries (Figure 3). For widely adopted libraries such as vLLM, NCCL, and NVSHMEM, both models perform well. 25%  
+
+> 50%
+> 75%
+> 66%
+> Collective
+> (n=32)
+> 56%
+> Utilities
+> (n=25)
+> 47% Fusion
+> (n=19)
+> 69%
+> P2P
+> (n=16)
+> 33%
+> EP
+> (n=9)
+> 25%
+> 50%
+> 75%
+> 100%
+> NCCL
+> (n=4)
+> vllm
+> (n=9)
+> cuda-runtime
+> (n=14)
+> nvshmem
+> (n=4)
+> sglang
+> (n=4)
+> thunderkittens
+> (n=24)
+> ibverbs
+> (n=17)
+> nccl-device-api
+> (n=5)
+> deepep
+> (n=8)
+> mscclpp
+> (n=12) 100%
+> 100%
+> 86%
+> 75%
+> 75%
+> 54%
+> 47%
+> 40%
+> 25%
+> 17%
+
+(a) GPT-5.5 25%    
+
+> 50%
+> 75%
+> 22%
+> Collective
+> (n=32)
+> 32%
+> Utilities
+> (n=25)
+> 0% Fusion
+> (n=19)
+> 19%
+> P2P
+> (n=16)
+> 22%
+> EP
+> (n=9)
+> 25%
+> 50%
+> 75%
+> 100%
+> NCCL
+> (n=4)
+> nvshmem
+> (n=4)
+> vllm
+> (n=9)
+> cuda-runtime
+> (n=14)
+> deepep
+> (n=8)
+> ibverbs
+> (n=17)
+> mscclpp
+> (n=12)
+> nccl-device-api
+> (n=5)
+> sglang
+> (n=4)
+> thunderkittens
+> (n=24) 100%
+> 50%
+> 44%
+> 43%
+> 25%
+> 12%
+> 0%
+> 0%
+> 0% 0%
+
+(b) DeepSeek-V4-Pro 
+
+Figure 3: Per-tag and per-library pass rates. Table 3: Cumulative passing examples for DeepSeek-V4-Pro across five self-correction rounds. 
+
+Round Cumulative PASS Pass Rate New this round 1 20 19.8% 2 28 27.7% +8 
+
+3 32 31.7% +4 
+
+4 34 33.7% +2 
+
+5 42 41.6% +8 
+
+Effect of Iterative Refinement. Due to budget constraints, GPT-5.5 is evaluated with a single generation round. De-spite its weaker first-round performance, DeepSeek-V4-Pro costs only about 1% as much per example ($0.02 vs. $1.91), making multi-round self-correction economically viable. As shown in Table 3 and Figure 4, five rounds more than double its pass rate (from 20 to 42 examples, or 19.8% to 41.6%) and improve its pass rate on Medium-difficulty commodity-library tasks from 31% to 60%. However, they do not un-lock Hard examples or specialized libraries (MSCCL++: 0%; ThunderKittens: 4%), which require missing domain knowledge. Thus, DeepSeek-V4-Pro with retries is reason-able when tasks use commodity libraries (NCCL, vLLM, CUDA Runtime, and NVSHMEM) and a retry budget is ac-ceptable. 
+
+Cost-Matched Comparison. We select the three strongest models and repeat the comparison under an approximately equal dollar budget: the two cheaper models, Claude Opus 4.7 and Gemini-3.1-Pro-Preview, are permitted substantially more rounds in which to correct and tune their code, whereas GPT-5.5 is restricted to a single round.As in Table 4, once spend rather than rounds is held fixed, both cheaper models overtake GPT-5.5 by a wide margin on the Quality-Weighted Pass Rate ( 0.690 and 0.689 versus 0.467 ), and the gap is driven by both of its factors: they pass more examples (61.4% Easy Medium Hard 
+
+0
+
+20 
+
+40 
+
+60 
+
+80 
+
+> Number of examples
+> 4
+> 16
+> 22
+> 21
+> 19
+> 2
+> 15
+> 2
+> 14%
+> (n=28)
+> 31%
+> (n=52)
+> 0%
+> (n=21)
+> PASS
+> FAIL (compile)
+> FAIL (execution)
+> FAIL (API timeout)
+
+(a) max rounds = 1 Easy Medium Hard 
+
+0
+
+20 
+
+40 
+
+60 
+
+80  
+
+> Number of examples
+> 8
+> 31
+> 3
+> 20
+> 12
+> 18
+> 9
+> 29%
+> (n=28)
+> 60%
+> (n=52)
+> 14%
+> (n=21)
+> PASS
+> FAIL (compile)
+> FAIL (execution)
+> FAIL (API timeout)
+
+(b) max rounds = 5 
+
+Figure 4: DeepSeek-V4-Pro difficulty breakdown with a sin-gle round versus five refinement rounds. Easy Medium Hard 
+
+0
+
+20 
+
+40  
+
+> PASS examples
+> 434
+> 19
+> 1
+> 2
+> 4
+> n=5
+> n=29
+> n=3
+
+better 
+
+degraded 
+
+comparable 
+
+severely degraded better 
+
+> 7 (19%)
+> comparable
+> 23 (62%)
+> degraded
+> 3 (8%)
+> severely degraded
+> 4 (11%)
+
+(a) Performance among passing examples 25%  
+
+> 50%
+> 75%
+> 38%
+> Collective
+> (n=32)
+> 56%
+> Utilities
+> (n=25)
+> 11% Fusion
+> (n=19)
+> 69%
+> P2P
+> (n=16)
+> 33%
+> EP
+> (n=9)
+> 25%
+> 50%
+> 75%
+> 100%
+> NCCL
+> (n=4)
+> nvshmem
+> (n=4)
+> vllm
+> (n=9)
+> cuda-runtime
+> (n=14)
+> ibverbs
+> (n=17)
+> deepep
+> (n=8)
+> sglang
+> (n=4)
+> nccl-device-api
+> (n=5)
+> thunderkittens
+> (n=24)
+> mscclpp
+> (n=12) 100%
+> 100%
+> 100%
+> 86%
+> 47%
+> 25%
+> 25%
+> 20%
+> 4%
+> 0%
+
+(b) Tag and library coverage 
+
+Figure 5: DeepSeek-V4-Pro with five refinement rounds. Table 4: Cost-matched comparison of the three strongest models. 
+
+Model Quality-Weighted Pass Rate ↑
+
+Pass Rate (%) ↑
+
+PASS+ Good (%) ↑
+
+GM-Speedup 
+
+↑
+
+Claude Opus 4.7 0.690 61.4 37.6 1.125 
+
+Gemini-3.1-Pro-Preview 0.689 66.3 45.5 1.039 GPT-5.5 0.467 57.4 30.7 0.813 
+
+and 66.3% versus 57.4%) and the code they eventually pro-duce is faster (GM-Speedup 1.125 and 1.039 versus 0.813 ). Iterative refinement thus buys more than correctness. Rounds that begin as compile-and-crash repairs end as performance tuning, so the additional budget also lifts the quality of the code that already passed. 
+
+3.5 Case Studies 
+
+We now examine three representative examples, one from each difficulty level, that illustrate distinct failure modes: an Easy task passed by the only two models, a Medium task failed by every model despite requiring only straightforward API usage, and a Hard task failed by every model because it combines a niche library with minimal algorithmic guidance. 
+
+Case 1: Partial Pass on ThunderKittens AllToAll. 
+
+This example (Easy; Collective; thunderkittens )asks the model to implement a BF16 multi-GPU All-ToAll kernel using the ThunderKittens library, employ-ing the Tensor Memory Accelerator (TMA) for tile-level data movement between GPU shards over NVLink. Only two small device-side kernels must be written: 
+
+all_to_all::kernel (TMA-load one tile from the lo-cal input, then TMA-store it to the destination device’s output shard) and all_to_all_barrier::kernel (a one-line barrier_all synchronization). All host scaffolding is provided. Both kernels are under ten lines and require only calls to existing ThunderKittens interfaces. The root cause of failure is therefore ThunderKittens-specific API knowledge: correct type scoping, the correct tma::load_async argument signature, and the shared_allocator::allocate 
+
+template usage. ThunderKittens is a niche research library with minimal training-data coverage, which leads models to mis-scope types, hallucinate non-existent APIs, or supply wrong argument forms (Table 5). 
+
+Case 2: A Task Every Model Failed. This example (Medium; Utilities; cuda-runtime ) asks the model to im-plement intra-CTA producer/consumer synchronization us-ing a Hopper/Blackwell shared-memory mbarrier with a non-blocking try_wait probe, a pattern used in persistent-kernel tile pipelines (e.g., CUTLASS and Mirage) to over-lap data arrival with computation without stalling the warp scheduler. The model must implement three inline-PTX device helpers ( initialize_barrier , arrive ,
+
+try_wait_barrier ) and a benchmark kernel body. This task requires only the use of a small set of well-defined mbarrier interfaces, which is exactly the kind of API memorization at which LLMs are expected to excel. However, mbarrier is Hopper-specific PTX introduced in 
+
+sm_90 , and models appear to lack sufficient training data for these instructions, making them prone to mis-remembering argument counts, ordering, or address-space requirements (Table 6). 
+
+Case 3: A Niche-Library API with No Algorithmic Hints. 
+
+This example (Hard; Collective; mscclpp ) asks the model to implement the fastest intra-node AllToAll kernel us-ing MSCCL++ MemoryChannel primitives. The template provides no algorithmic description, only a minimal com-ment (“implement the fastest All to All CUDA kernel”) and a set of empty // TODO stubs. The model must produce one GPU kernel ( alltoall2 ) that uses MemoryChannel for direct peer writes, together with the full host-side All2All 
+
+class (constructor, buffer allocation, channel setup, launch, correctness verification, and barrier). The task thus requires implementing a functionally com-plete, semantically correct intra-node AllToAll from scratch, all consistent with the MSCCL++ MemoryChannel inter-face contract and with no algorithmic hints. This is difficult even for an expert programmer unfamiliar with MSCCL++. Every model failed at compile time: MSCCL++ headers and class interfaces are largely absent from training data, causing models to hallucinate non-existent header paths and method signatures before reaching any algorithmic logic (Table 7). 
+
+4 Related Work 
+
+LLMs for GPU and parallel code generation. LLMs have shown substantial promise in code generation, program repair, and performance optimization, motivating growing efforts to improve their ability to generate efficient GPU programs. Earlier learning-based approaches such as Babel-Tower (Wen et al. 2022) studied the translation of sequential programs into CUDA. More recent systems improve GPU kernel generation and optimization through domain-specific post-training (Fisches et al. 2025; Kong et al. 2025; Li et al. 2025b; Woo et al. 2026), agentic execution and profiling feedback (Wei et al. 2025; Dong et al. 2025; Du et al. 2025; Sun et al. 2026; Jaber and Jaber 2026; Gai et al. 2026), evo-lutionary and structured search (Ran et al. 2026; Cao et al. 2026; Wiedemann et al. 2026; Du et al. 2026), or reinforce-ment learning (Baronio et al. 2025; Li et al. 2026; Su et al. 2026; Liu et al. 2026; Dai et al. 2026; Zhu et al. 2026b). Most of these systems focus on single-GPU computation. Broader efforts target MPI code generation (Schneider et al. 2024; Valero-Lara et al. 2026), parallel computing (Kaplan et al. 2026), and general HPC code optimization (Kadosh et al. 2024; Chaturvedi et al. 2024; Hayashi et al. 2026). CUCo (Varadharajan et al. 2026) is more directly related to multi-GPU communication, using an agentic workflow to transform host-driven CUDA and NCCL programs into compute–communication co-designed kernels. 
+
+Benchmarks for LLM-Generated GPU and parallel code. 
+
+Existing benchmarks evaluate LLM-generated parallel and GPU programs at several levels. ParEval (Nichols et al. 2024) covers scientific and parallel programming across multiple programming models, while KernelBench (Ouyang et al. 2025) provides a widely adopted evaluation of function-ally correct and performant GPU kernels generated from PyTorch workloads. Subsequent benchmarks extend this setting along several dimensions: ComputeEval (NVIDIA Corporation 2026a), robust-kbench (Lange et al. 2025), and CUDAEval (Gong et al. 2025) broaden evaluation be-yond PyTorch operators to more general CUDA program-ming tasks; TritonBench (Li et al. 2025a) and Kernel-BenchX (Wang et al. 2026) focus on Triton generation; Multi-KernelBench (Wen et al. 2025) extends evaluation across het-erogeneous accelerators; FlashInfer-Bench (Xing et al. 2026) and Atrex-Bench (Yang et al. 2026) incorporate serving traces and production-oriented inference workloads; while CUDABench (Zhu et al. 2026a) and SOL-ExecBench (Lin et al. 2026) assess performance relative to hardware-aware efficiency targets. Despite these extensions, most bench-marks predominantly focus on single-device computation. While ParallelKernelBench (Chan et al. 2026), the closest concurrent work, focuses on rewriting PyTorch programs with NCCL operations into optimized intra-node NVLink kernels, CommBench spans both intra- and inter-node com-munication across broader workloads, including collectives, MoE expert-parallel communication, and communication– Table 5: Per-model outcomes on the ThunderKittens AllToAll example (Case 1). 
+
+Model Rounds Outcome Perf. vs. Ref. Failure Pattern GPT-5.5 1 PASS Comparable (−0.23% )—Claude Opus 4.7 1 PASS Comparable (+0 .17% )—Gemini-3.1-Pro-Preview 1 Compile error — Used shared_tile without the required namespace qualifier. Kimi-K2.6 1 Compile error — Used the same unqualified shared_tile reference. GLM-5.1 1 Compile error — Passed an incompatible type to 
+
+shared_allocator::allocate .Qwen3.7-Max 1 Compile error — Passed incompatible argument types to 
+
+tma::load_async .DeepSeek-V4-Pro 5 Compile/link error — Round 1: Hallucinated unsupported ThunderKittens synchronization and TMA APIs. 
+
+Rounds 2–5: Repeatedly produced invalid CUDA/C++ code due to incorrect program structure, API usage, and type handling. 
+
+Table 6: Per-model outcomes on the GPU Barrier Within a CTA example (Case 2). 
+
+Model Rounds Outcome Failure Pattern GPT-5.5 1 Deadlock The consumer executes before the producers because of warp branch ordering; without a kProbeBound guard, the kernel hangs indefinitely. Claude Opus 4.7 1 Correctness FAIL The consumer executes before the producers and incorrectly applies phase ˆ= 1, although mbarrier.init resets the parity to zero in each iteration. Gemini-3.1-Pro-Preview 1 Correctness FAIL The consumer executes before the producers, exits through kProbeBound ,and reads an uninitialized tile. Kimi-K2.6 1 Compile error Hallucinated a nonexistent CUDA intrinsic. GLM-5.1 1 Runtime error Used inconsistent inline-assembly operand indices. Qwen3.7-Max 1 Correctness FAIL Used the wrong PTX register constraint, specifying "l" instead of "r" .DeepSeek-V4-Pro 5 Compile error 
+
+Round 1: Used an incorrect PTX register constraint. 
+
+Round 2: Omitted the destination operand required by mbarrier.arrive .
+
+Round 3: Retained the same incomplete mbarrier.arrive instruction. 
+
+Round 4: Failed to correct the missing destination operand despite compiler feedback. 
+
+Round 5: Repeated the same invalid PTX instruction and remained unable to compile. 
+
+Table 7: Per-model outcomes on the MSCCL++ AllToAll example (Case 3). 
+
+Model Rounds Outcome Failure Pattern GPT-5.5 1 Compile error Included several MSCCL++ headers but omitted the header defining 
+
+MemoryChannel ; it also referenced an incorrect class name. Claude Opus 4.7 1 Compile error Hallucinated unsupported MSCCL++ APIs. Gemini-3.1-Pro-Preview 1 Compile error Hallucinated unsupported MSCCL++ APIs. Kimi-K2.6 1 Compile error Hallucinated unsupported MSCCL++ APIs. GLM-5.1 1 Compile error Hallucinated unsupported MSCCL++ APIs. Qwen3.7-Max 1 Compile error Hallucinated unsupported MSCCL++ APIs. DeepSeek-V4-Pro 5 Compile error Round 1: Used MSCCL++ types without including the required headers, leaving the namespace undefined. 
+
+Rounds 2–5: Invented a different nonexistent MSCCL++ header in each refinement round. computation fusion. Existing benchmarks provide limited coverage of GPU communication code across diverse pro-gramming abstractions, inter-node communication via RoCE and InfiniBand, and cross-vendor accelerator ecosystems spanning NVIDIA and AMD. 
+
+5 Discussion 
+
+Post-training for knowledge-related failures. Many CommBench failures are knowledge-related: models hallu-cinate headers, types, and method signatures, even on Easy tasks requiring few API calls. Coverage drops sharply on specialized libraries, with most models solving few or no tasks from MSCCL++, ThunderKittens, and the NCCL De-vice API. Multi-round correction offers limited relief be-cause compiler feedback can repair familiar code but cannot provide unseen interface semantics; improvements therefore concentrate on common libraries and easier tasks. A promis-ing remedy is targeted post-training on CommBench-style data. Supervised fine-tuning on expert-written communica-tion code can teach correct headers, type scoping, and signa-tures underrepresented in web corpora, while reinforcement learning against the executable harness can reward both cor-rectness and efficiency. Complementarily, retrieval augmen-tation can supply documentation, headers, and API signa-tures at inference time, grounding generation in the actual interface contract. 
+
+References 
+
+Alibaba Cloud. 2026. Model Lifecycle and Updates: Qwen3.7-Max. Alibaba Cloud Model Studio Documenta-tion. Anthropic. 2026. Introducing Claude Opus 4.7. Anthropic. Baronio, C.; Marsella, P.; Pan, B.; Guo, S.; and Alberti, S. 2025. Kevin: Multi-Turn RL for Generating CUDA Kernels. arXiv:2507.11948. Cao, S.; Mao, Z.; Gonzalez, J. E.; and Stoica, I. 2026. K-Search: LLM Kernel Generation via Co-Evolving Intrinsic World Model. arXiv:2602.19128. Chan, W.; Paek, N.; Guo, S.; Arora, S.; and Fu, D. Y. 2026. ParallelKernelBench: Can LLMs Write Fast Multi-GPU Ker-nels? alphaXiv. Chaturvedi, A.; Nichols, D.; Singh, S.; and Bhatele, A. 2024. HPC-Coder-V2: Studying Code LLMs Across Low-Resource Parallel Languages. arXiv:2412.15178. Dai, W.; Wu, H.; Yu, Q.; Gao, H.-a.; Li, J.; Jiang, C.; et al. 2026. CUDA Agent: Large-Scale Agentic RL for High-Performance CUDA Kernel Generation. arXiv:2602.24286. DeepSeek-AI. 2025. DeepSeek-V3 Technical Report. arXiv:2412.19437. DeepSeek-AI. 2026. DeepSeek V4 Preview Release. DeepSeek API Documentation. Dong, J.; Yang, Y.; Liu, T.; Wang, Y.; Qi, F.; Tarokh, V.; et al. 2025. STARK: Strategic Team of Agents for Refining Kernels. arXiv:2510.16996. Du, H.; Ge, Q.; Hu, J.; Yang, A.; Cai, Z.; Huang, Z.; et al. 2026. Kernel-Smith: A Unified Recipe for Evolutionary Ker-nel Optimization. arXiv:2603.28342. Du, J.; Yuan, Q.; Zhang, Z.; Yi, Y.; Hu, J.; Chen, W.; et al. 2025. AKG kernel Agent: A Multi-Agent Framework for Cross-Platform Kernel Synthesis. arXiv:2512.23424. Fisches, Z. V.; Paliskara, S.; Guo, S.; Zhang, A.; Spisak, J.; Cummins, C.; et al. 2025. KernelLLM: Making Kernel Development More Accessible. Software release. Gai, J.; Zhang, S.; Bostrom, K.; Huang, J.; Patil, V.; Fang, H.; et al. 2026. Optimizing CUDA like a Human: Micro-Profiling Tools as Expert Surrogates for LLM-Based GPU Kernel Optimization. arXiv:2606.26453. Gong, J.; Wei, Z.; Chen, J.; Liu, C.; and Li, H. 2025. From Large to Small: Transferring CUDA Optimization Expertise via Reasoning Graph. arXiv:2510.19873. Google. 2026. Gemini 3.1 Pro Preview. Gemini API Docu-mentation. Hamidouche, K.; Bachan, J.; Markthub, P.; Gootzen, P.-J.; Agostini, E.; Jeaugey, S.; et al. 2025. GPU-Initiated Net-working for NCCL. arXiv:2511.15076. Hayashi, S.-i.; Morita, K.; Mukunoki, D.; Hoshino, T.; and Katagiri, T. 2026. VibeCodeHPC: An Agent-Based Itera-tive Prompting Auto-Tuner for HPC Code Generation Using LLMs. arXiv:2510.00031. Hoefler, T.; and Belli, R. 2015. Scientific benchmarking of parallel computing systems: twelve ways to tell the masses when reporting performance results. In SC .Hwang, C.; Cheng, P.; Dathathri, R.; Jangda, A.; Maleki, S.; Musuvathi, M.; et al. 2026. MSCCL++: Rethinking GPU Communication Abstractions for AI Inference. In ASPLOS .Jaber, J.; and Jaber, O. 2026. AutoKernel: Autonomous GPU Kernel Optimization via Iterative Agent-Driven Search. arXiv:2603.21331. Jain, N.; Han, K.; Gu, A.; Li, W.-D.; Yan, F.; Zhang, T.; et al. 2024. LiveCodeBench: Holistic and Contamina-tion Free Evaluation of Large Language Models for Code. arXiv:2403.07974. Jimenez, C. E.; Yang, J.; Wettig, A.; Yao, S.; Pei, K.; Press, O.; et al. 2024. SWE-bench: Can Language Models Resolve Real-World GitHub Issues? arXiv:2310.06770. Jin, C.; Jiang, Z.; Bai, Z.; Zhong, Z.; Liu, J.; Li, X.; et al. 2026. MegaScale-MoE: Large-Scale Communication-Efficient Training of Mixture-of-Experts Models in Produc-tion. In EuroSys .Kadosh, T.; Hasabnis, N.; Vo, V. A.; Schneider, N.; Krien, N.; Capota, M.; et al. 2024. MonoCoder: Domain-Specific Code Language Model for HPC Codes and Tasks. arXiv:2312.13322. Kaplan, E.; Bitan, T.; Ghrayeb, L.; Chen, L.; Yotam, T.; Hasabnis, N.; et al. 2026. ParaCodex: A Profiling-Guided Autonomous Coding Agent for Reliable Parallel Code Gen-eration and Translation. arXiv:2601.04327. Kong, L.; Wei, J.; Shen, H.; and Wang, H. 2025. Con-CuR: Conciseness Makes State-of-the-Art Kernel Genera-tion. arXiv:2510.07356. Kwon, W.; Li, Z.; Zhuang, S.; Sheng, Y.; Zheng, L.; Yu, C. H.; et al. 2023. Efficient Memory Management for Large Language Model Serving with PagedAttention. In SOSP .Lange, R. T.; Sun, Q.; Prasad, A.; Faldor, M.; Tang, Y.; and Ha, D. 2025. Towards Robust Agentic CUDA Kernel Bench-marking, Verification, and Optimization. arXiv:2509.14279. Li, J.; Li, S.; Gao, Z.; Shi, Q.; Li, Y.; Wang, Z.; et al. 2025a. TritonBench: Benchmarking Large Language Model Capa-bilities for Generating Triton Operators. arXiv:2502.14752. Li, S.; Wang, Z.; He, Y.; Li, Y.; Shi, Q.; Li, J.; et al. 2025b. AutoTriton: Automatic Triton Programming with Reinforce-ment Learning in LLMs. arXiv:2507.05687. Li, X.; Wang, A.; Wang, G.; Li, J.; and Shum, C. 2026. CUDA-L1: Improving CUDA Optimization via Contrastive Reinforcement Learning. arXiv:2507.14111. Lin, E.; Modi, S.; Hari, S. K. S.; Huang, Q.; Ye, Z.; Qin, N.; et al. 2026. SOL-ExecBench: Speed-of-Light Benchmark-ing for Real-World GPU Kernels Against Hardware Limits. arXiv:2603.19173. Linux RDMA Project. 2026. rdma-core: RDMA Core Userspace Libraries and Daemons. GitHub repository. Liu, W.; Xu, J.; Li, Y.; Zheng, L.; Li, T.; Liu, Q.; et al. 2026. Dr. Kernel: Reinforcement Learning Done Right for Triton Kernel Generations. arXiv:2602.05885. Markthub, P.; Dinan, J.; Potluri, S.; and Howell, S. 2022. Improving Network Performance of HPC Systems Using NVIDIA Magnum IO, NVSHMEM, and GPUDirect Async. NVIDIA Technical Blog. Moonshot AI. 2026. Kimi K2.6. Kimi API Documentation. Narayanan, D.; Shoeybi, M.; Casper, J.; LeGresley, P.; Pat-wary, M.; Korthikanti, V.; et al. 2021. Efficient large-scale language model training on GPU clusters using megatron-LM. In SC .Nichols, D.; Davis, J. H.; Xie, Z.; Rajaram, A.; and Bhatele, A. 2024. Can Large Language Models Write Parallel Code? In HPDC .NVIDIA Corporation. 2026a. ComputeEval: A Benchmark for Evaluating LLM-Generated CUDA Code. Online. NVIDIA Corporation. 2026b. CUDA Programming Guide. NVIDIA Corporation. NVIDIA Corporation. 2026c. NVIDIA Collective Commu-nications Library (NCCL). NVIDIA Developer. NVIDIA Corporation. 2026d. NVIDIA NVLink and NVLink Switch. NVIDIA. NVIDIA Corporation. 2026e. NVSHMEM. NVIDIA De-veloper. Accessed: 2026-07-26. OpenAI. 2026. GPT-5.5 System Card. OpenAI System Card. Ouyang, A.; Guo, S.; Arora, S.; Zhang, A. L.; Hu, W.; Ré, C.; et al. 2025. KernelBench: Can LLMs Write Efficient GPU Kernels? arXiv:2502.10517. Qin, R.; Li, Z.; He, W.; Cui, J.; Ren, F.; Zhang, M.; et al. 2025. Mooncake: Trading More Storage for Less Computation — A KVCache-centric Architecture for Serving LLM Chatbot. In FAST .Ran, D.; Xie, S.; Ji, M.; Liu, A.; Wu, M.; Cao, Y.; et al. 2026. KernelBand: Steering LLM-based Kernel Optimization via Hardware-Aware Multi-Armed Bandits. arXiv:2511.18868. Schneider, N.; Hasabnis, N.; Vo, V. A.; Kadosh, T.; Krien, N.; Capotă, M.; et al. 2024. MPIrigen: MPI Code Generation through Domain-Specific Language Models. arXiv:2402.09126. Shoeybi, M.; Patwary, M.; Puri, R.; LeGresley, P.; Casper, J.; and Catanzaro, B. 2020. Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Paral-lelism. arXiv:1909.08053. Spector, B. F.; Arora, S.; Singhal, A.; Fu, D. Y.; and Ré, C. 2024. ThunderKittens: Simple, Fast, and Adorable AI Kernels. arXiv:2410.20399. Su, S.; Li, X.; Wang, A.; Wang, G.; Li, J.; and Shum, C. 2026. CUDA-L2: Surpassing cuBLAS Performance for Matrix Multiplication through Reinforcement Learning. arXiv:2512.02551. Sun, Q.; Han, J.; Li, T.; Tang, Z.; Chen, S.; Yang, F.; et al. 2026. KernelSkill: A Multi-Agent Framework for GPU Ker-nel Optimization. arXiv:2603.10085. Valero-Lara, P.; Young, A.; Naughton III, T.; Engelmann, C.; Geist, A.; Vetter, J. S.; et al. 2026. ChatMPI: LLM-Driven MPI Code Generation for HPC Workloads. In HPCAsia .Varadharajan, Y. S. V.; Hu, B.; Agarwal, S.; and Akella, A. 2026. CUCo: An Agentic Framework for Compute and Communication Co-design. arXiv:2603.02376. Wang, H.; Zhang, J.; Jiang, K.; Wang, H.; Chen, J.; and Zhu, J. 2026. KernelBenchX: A Comprehensive Benchmark for Evaluating LLM-Generated GPU Kernels. arXiv:2605.04956. Wei, A.; Sun, T.; Seenichamy, Y.; Song, H.; Ouyang, A.; Mirhoseini, A.; et al. 2025. Astra: A Multi-Agent System for GPU Kernel Performance Optimization. arXiv:2509.07506. Wen, Y.; Guo, Q.; Fu, Q.; Li, X.; Xu, J.; Tang, Y.; et al. 2022. BabelTower: Learning to Auto-parallelized Program Translation. In ICML .Wen, Z.; Zhang, Y.; Li, Z.; Liu, Z.; Xie, L.; and Zhang, T. 2025. MultiKernelBench: A Multi-Platform Benchmark for Kernel Generation. arXiv:2507.17773. Wiedemann, N.; Leboutet, Q.; Paulitsch, M.; Wofk, D.; and Ummenhofer, B. 2026. KernelFoundry: Hardware-aware evolutionary GPU kernel optimization. arXiv:2603.12440. Woo, J.; Zhu, S.; Nie, A.; Jia, Z.; Wang, Y.; and Park, Y. 2026. TritonRL: Training LLMs to Think and Code Triton Without Cheating. arXiv:2510.17891. Xing, S.; Zhai, Y.; Jiang, A.; Dong, Y.; Wu, Y.; Ye, Z.; et al. 2026. FlashInfer-Bench: Building the Virtuous Cycle for AI-driven LLM Systems. arXiv:2601.00227. Yang, L.; Wang, Y.; Liang, S.; Yang, L.; Ying, D.; You, C.; et al. 2026. Are LLM-Generated GPU Kernels Production-Ready? A Trace-Driven Benchmark and Optimization Agent. arXiv:2607.14541. Zhang, S.; Zheng, N.; Lin, H.; Jiang, Z.; Bao, W.; Jiang, C.; et al. 2025. Comet: Fine-grained Computation-communication Overlapping for Mixture-of-Experts. arXiv:2502.19811. Zhao, C.; Zhou, S.; Zhang, L.; Deng, C.; Xu, Z.; Liu, Y.; et al. 2025. DeepEP: an efficient expert-parallel communication library. Online. Zhao, Y.; Nie, X.; Zhu, K.; Ma, S.; Lai, Z.; Hao, H.; Zhou, Y.; Kasikci, B.; and Stoica, I. 2026. Unleashing Scalable Context Parallelism for Foundation Models Pre-Training via FCP. In 
+
+Proceedings of Machine Learning and Systems . MLSys. Zheng, L.; Yin, L.; Xie, Z.; Sun, C.; Huang, J.; Yu, C. H.; et al. 2024. SGLang: efficient execution of structured language model programs. In NeurIPS .Zhipu AI. 2026. GLM-5.1: Towards Long-Horizon Tasks. Zhipu AI. Zhu, J.; Chen, W.; Fan, Q.; Ren, Z.; Wu, J.; Chai, X. Z.; et al. 2026a. CUDABench: Benchmarking LLMs for Text-to-CUDA Generation. arXiv:2603.02236. Zhu, X.; Peng, S.; Guo, J.; Chen, Y.; Guo, Q.; Wen, Y.; et al. 2026b. QiMeng-kernel: macro-thinking micro-coding paradigm for LLM-based high-performance GPU kernel gen-eration. In AAAI .Zhuo, T. Y.; Vu, M. C.; Chim, J.; Hu, H.; Yu, W.; Widyasari, R.; et al. 2025. BigCodeBench: Benchmarking Code Gener-ation with Diverse Function Calls and Complex Instructions. arXiv:2406.15877.
