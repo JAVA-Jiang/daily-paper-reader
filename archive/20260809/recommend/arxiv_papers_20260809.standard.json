@@ -1,0 +1,218 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-09T20:08:25.496792+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.05060v1",
+      "source": "arxiv",
+      "title": "RepairFormer: Automated Repair of Structured Inputs Using Transformers",
+      "abstract": "Structured input files such as JSON, DOT, OBJ, INI, S-expression, and TinyC are widely used in software systems, but small corruptions can cause parsers to reject otherwise useful data. Repairing such inputs is important because malformed configuration, program, and data files can interrupt testing, analysis, deployment, and downstream automation even when most of the original content remains intact. Existing repair techniques can produce structurally valid inputs, but they often rely on deletion or repeated search, which may lose original content and result in semantic incorrectness. This paper presents RepairFormer, a transformer-based framework for structured input repair. The approach formulates repair as a supervised sequence generation task and uses format tags, oracle validation, and boundary-localized repair to generate valid outputs while preserving content. The boundary workflow focuses generation on the detected fault region, reducing the input size, and supporting repair of longer files. In evaluation, RepairFormer achieves a 88% in repair and 94% in recovery, showing strongest content preservation when repairs are successful. Additional experiments on our benchmark shows RepairFormer repairs 97.57% and recovers 94.29% with 5x faster runtime compared to state of the art.",
+      "authors": [
+        "Ovi Paul",
+        "Tom J King",
+        "Ali Shokri"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-08-05T17:08:31+00:00",
+      "link": "https://arxiv.org/pdf/2608.05060v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Transformer-based repair framework, likely with public implementation",
+      "llm_evidence_cn": "基于Transformer的修复框架，可能提供公开实现",
+      "llm_evidence": "基于Transformer的修复框架，可能提供公开实现",
+      "canonical_evidence": "基于Transformer的修复框架，可能提供公开实现",
+      "llm_tldr_en": "RepairFormer formulates structured input repair as supervised sequence generation using transformers, retaining original content to fix corrupted JSON/DOT/INI files. It improves semantic correctness over deletion-based methods.",
+      "llm_tldr_cn": "结构化输入文件（如JSON、DOT、INI）一旦损坏，会造成解析失败并中断下游自动化流程。现有修复方法常通过删除或搜索生成结构有效但语义不正确的输入。本文提出RepairFormer，将修复任务建模为带监督的序列生成，使用Transformer在保留原始内容的同时重建有效输入。实验表明该方法在结构和语义正确性上优于传统修复方法，为配置和程序文件的自动修复提供了新思路。",
+      "llm_tldr": "结构化输入文件（如JSON、DOT、INI）一旦损坏，会造成解析失败并中断下游自动化流程。现有修复方法常通过删除或搜索生成结构有效但语义不正确的输入。本文提出RepairFormer，将修复任务建模为带监督的序列生成，使用Transformer在保留原始内容的同时重建有效输入。实验表明该方法在结构和语义正确性上优于传统修复方法，为配置和程序文件的自动修复提供了新思路。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.00280v1",
+      "source": "arxiv",
+      "title": "Benchmarking LLMs on File System Design and Implementation: The Good, The Bad, and The Ugly",
+      "abstract": "Large Language Models (LLMs) are fundamentally transforming computer system research and development. As we employ LLMs in file system (fs) development, it is essential to understand their capabilities, limitations, and operational efficiency for domain-specific tasks. We present φ-Bench, an LLM benchmarking framework for fs-specific tasks. To facilitate benchmarking, we develop six types of tasks in φ-Bench: basic understanding, basic implementation, performance modeling, debugging, optimization, and new feature development. Each type emphasizes different LLM capabilities: instruction following, knowledge recall, reasoning, or coding. To create high-quality tasks while achieving broad coverage with minimal human effort, we develop a new AI-assisted task generation pipeline in addition to expert-written and textbook-adapted tasks. With 505 tasks in φ-Bench, we conduct an empirical study with both open source (DeepSeek-V4-Flash, GLM-5.1, and MiniMax-M2.7) and proprietary (Claude-Opus-4.7, GPT-5.2, and Gemini-3.1-Pro) LLMs. Our study discloses the model efficiency for different tasks, causes of failed fs tasks, and techniques for mitigating LLM failures. We will open source φ-Bench to facilitate public research on using LLMs for fs development.",
+      "authors": [
+        "Yuqi Xue",
+        "Daixuan Li",
+        "Jian Huang"
+      ],
+      "primary_category": "cs.OS",
+      "categories": [
+        "cs.OS",
+        "cs.SE"
+      ],
+      "published": "2026-07-31T20:31:32+00:00",
+      "link": "https://arxiv.org/pdf/2608.00280v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Same φ-Bench framework, likely includes code",
+      "llm_evidence_cn": "相同φ-Bench基准框架，可能附带代码",
+      "llm_evidence": "相同φ-Bench基准框架，可能附带代码",
+      "canonical_evidence": "相同φ-Bench基准框架，可能附带代码",
+      "llm_tldr_en": "Presents φ-Bench, an LLM benchmarking framework for file system tasks with six task types, using AI-assisted generation to cover capabilities from basic understanding to new feature development. Likely provides code.",
+      "llm_tldr_cn": "该文提出φ-Bench，用于系统评估LLM在文件系统设计与实现中的能力。它包含基础理解、基础实现、性能建模、调试、优化和新功能开发六类任务，并通过AI辅助生成高质量任务。每一类任务侧重不同的LLM能力，如指令跟随、知识回忆、推理或编码。该框架有利于在较少人工投入下实现广泛覆盖，为LLM在该领域的实证评估提供支撑。",
+      "llm_tldr": "该文提出φ-Bench，用于系统评估LLM在文件系统设计与实现中的能力。它包含基础理解、基础实现、性能建模、调试、优化和新功能开发六类任务，并通过AI辅助生成高质量任务。每一类任务侧重不同的LLM能力，如指令跟随、知识回忆、推理或编码。该框架有利于在较少人工投入下实现广泛覆盖，为LLM在该领域的实证评估提供支撑。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.00280v2",
+      "source": "arxiv",
+      "title": "Benchmarking LLMs on File System Design and Implementation",
+      "abstract": "Large Language Models (LLMs) are fundamentally transforming computer system research and development. As we employ LLMs in file system (fs) development, it is essential to understand their capabilities, limitations, and operational efficiency for domain-specific tasks. We present φ-Bench, an LLM benchmarking framework for fs-specific tasks. To facilitate benchmarking, we develop six types of tasks in φ-Bench: basic understanding, basic implementation, performance modeling, debugging, optimization, and new feature development. Each type emphasizes different LLM capabilities: instruction following, knowledge recall, reasoning, or coding. To create high-quality tasks while achieving broad coverage with minimal human effort, we develop a new AI-assisted task generation pipeline in addition to expert-written and textbook-adapted tasks. With 505 tasks in φ-Bench, we conduct an empirical study with both open source (DeepSeek-V4-Flash, GLM-5.1, and MiniMax-M2.7) and proprietary (Claude-Opus-4.7, GPT-5.2, and Gemini-3.1-Pro) LLMs. Our study discloses the model efficiency for different tasks, causes of failed fs tasks, and techniques for mitigating LLM failures. We will open source φ-Bench to facilitate public research on using LLMs for fs development.",
+      "authors": [
+        "Yuqi Xue",
+        "Daixuan Li",
+        "Jian Huang"
+      ],
+      "primary_category": "cs.OS",
+      "categories": [
+        "cs.OS",
+        "cs.SE"
+      ],
+      "published": "2026-07-31T20:31:32+00:00",
+      "link": "https://arxiv.org/pdf/2608.00280v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM benchmarking framework for file systems with AI-assisted task generation, likely includes code",
+      "llm_evidence_cn": "面向文件系统的LLM基准框架，可能附带代码",
+      "llm_evidence": "面向文件系统的LLM基准框架，可能附带代码",
+      "canonical_evidence": "面向文件系统的LLM基准框架，可能附带代码",
+      "llm_tldr_en": "φ-Bench is an LLM benchmarking framework for file system design and implementation with six task types, using AI-assisted generation for broad coverage. It evaluates LLM coding and reasoning capabilities in a domain-specific setting.",
+      "llm_tldr_cn": "大型语言模型正被引入文件系统设计与实现，但其在领域任务上的能力、局限和效率仍不清楚。本文提出φ-Bench基准框架，包含基础理解、基础实现、性能建模、调试、优化和新功能开发六类任务，并通过AI辅助任务生成在较少人工投入下获得广泛覆盖。每类任务分别考验指令跟随、知识回忆、推理或编码能力，可用于系统评估LLM在文件系统开发中的综合表现。",
+      "llm_tldr": "大型语言模型正被引入文件系统设计与实现，但其在领域任务上的能力、局限和效率仍不清楚。本文提出φ-Bench基准框架，包含基础理解、基础实现、性能建模、调试、优化和新功能开发六类任务，并通过AI辅助任务生成在较少人工投入下获得广泛覆盖。每类任务分别考验指令跟随、知识回忆、推理或编码能力，可用于系统评估LLM在文件系统开发中的综合表现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.03451v1",
+      "source": "arxiv",
+      "title": "DataSpace: Benchmarking Data Agents for Verifiable Analytics over Heterogeneous Workspaces",
+      "abstract": "Data agents enable natural-language analytics over organizational workspaces, where relevant evidence may be scattered across databases, structured files, long documents, and multimedia. Existing benchmarks largely isolate structured querying, retrieval, or open-ended analysis, leaving heterogeneous evidence discovery, complete tabular outputs, and deterministic evaluation insufficiently unified. We introduce DataSpace, a benchmark in which data agents produce verifiable tabular results from task-local heterogeneous workspaces. It contains 410 cross-language tasks and 7,439 artifacts totaling 15.01 GB across CSV, JSON, SQLite, Markdown, PDF, and video. DataSpace also served as the official evaluation benchmark for the KDD Cup 2026 Data Agents for Complex Data Analysis competition. Each agent receives only a question and workspace and returns the complete requested tabular result. We construct DataSpace with DataSpace-Builder, an execution-grounded framework comprising cross-language transformation, constraint-aware relational sampling, modality routing and artifact rendering, and human review and task repair by 11 domain experts. A deterministic evaluator performs header-invariant column alignment, type- and precision-aware normalization, and order-aware row comparison. Across six recently released frontier multimodal models and five widely used agent harnesses, the best accuracy reaches 66.34%, while harness choice creates a 15.36-point spread with the backbone fixed. Multimodal evidence integration and joins consistently reduce accuracy across all six backbones. These results show that DataSpace remains unsaturated and identify key challenges for improving data-agent reliability.",
+      "authors": [
+        "Boyan Li",
+        "Zhuowen Liang",
+        "Yupeng Xie",
+        "Xiaotian Lin",
+        "Tianqi Luo",
+        "Xinyu Liu",
+        "Yizhang Zhu",
+        "Zhangyang Peng",
+        "Yuan Li",
+        "Zhengxuan Zhang",
+        "Jiayi Zhang",
+        "Nan Tang",
+        "Guoliang Li",
+        "Yuyu Luo"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-04T10:48:11+00:00",
+      "link": "https://arxiv.org/pdf/2608.03451v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Benchmark for data agents with likely code and data release",
+      "llm_evidence_cn": "数据智能体基准测试，可能附带代码和数据",
+      "llm_evidence": "数据智能体基准测试，可能附带代码和数据",
+      "canonical_evidence": "数据智能体基准测试，可能附带代码和数据",
+      "llm_tldr_en": "DataSpace is a benchmark with 410 cross-language tasks and 7,439 heterogeneous artifacts requiring data agents to produce verifiable tabular results, serving as KDD Cup 2026 official evaluation.",
+      "llm_tldr_cn": "针对数据智能体在异构工作空间中进行可验证分析缺乏统一基准的问题，提出DataSpace。基准包含410个跨语言任务、7439个工件共15.01GB，覆盖CSV、JSON、SQLite、Markdown、PDF和视频等格式。数据智能体需要生成可验证的表格结果。DataSpace已作为KDD Cup 2026官方评测基准，为数据智能体评价提供了标准化平台。",
+      "llm_tldr": "针对数据智能体在异构工作空间中进行可验证分析缺乏统一基准的问题，提出DataSpace。基准包含410个跨语言任务、7439个工件共15.01GB，覆盖CSV、JSON、SQLite、Markdown、PDF和视频等格式。数据智能体需要生成可验证的表格结果。DataSpace已作为KDD Cup 2026官方评测基准，为数据智能体评价提供了标准化平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.06041v1",
+      "source": "arxiv",
+      "title": "LangChoiceBench: Measuring and Explaining Programming-Language Choice in LLMs",
+      "abstract": "Large language models (LLMs) have been shown to exhibit strong Python preferences when generating project-level code, but there is currently no systematic way to measure this behaviour across new models. To bridge this gap, we introduce LangChoiceBench, a project-level code-generation benchmark for measuring Python preference, recommendation-implementation consistency, and language diversity. LangChoiceBench covers 28 projects across seven software areas where Python is often a poor default. We evaluate 25 diverse LLMs and find that Python remains heavily over-selected, recommendation-implementation consistency is low, and smaller open-weight models generally show stronger Python preference and lower language diversity. We further analyse 9,826 reasoning traces and find that most Python choices are automatic or driven primarily by ease, rather than explicit consideration of project requirements. In a smaller but important set of cases, models fabricate contextual support for choosing Python - a failure mode we call phantom evidence - or produce code that contradicts the language selected in their own reasoning.",
+      "authors": [
+        "Lukas Twist",
+        "Twm Stone",
+        "Helen Yannakoudakis",
+        "Jie M. Zhang"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.CL"
+      ],
+      "published": "2026-08-06T13:52:16+00:00",
+      "link": "https://arxiv.org/pdf/2608.06041v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Benchmark for measuring programming-language choice in LLMs, likely provides evaluation code",
+      "llm_evidence_cn": "针对LLM代码生成语言选择的基准，可能提供评估代码",
+      "llm_evidence": "针对LLM代码生成语言选择的基准，可能提供评估代码",
+      "canonical_evidence": "针对LLM代码生成语言选择的基准，可能提供评估代码",
+      "llm_tldr_en": "LangChoiceBench measures Python preference in LLM project-level code generation across 28 projects and 25 models, revealing strong over-selection and low consistency. It provides a systematic way to evaluate language diversity.",
+      "llm_tldr_cn": "现有LLM在项目级代码生成中表现出强烈的Python偏好，但缺乏系统性测量手段。本文提出LangChoiceBench基准，覆盖7个软件领域的28个项目，测量Python偏好、推荐与实现一致性以及语言多样性。在25个LLM上的评估显示，Python仍被高度过度选择，推荐一致性低，且小规模开放权重模型更偏好Python。该基准为解释和改善LLM的编程语言选择行为提供了量化工具。",
+      "llm_tldr": "现有LLM在项目级代码生成中表现出强烈的Python偏好，但缺乏系统性测量手段。本文提出LangChoiceBench基准，覆盖7个软件领域的28个项目，测量Python偏好、推荐与实现一致性以及语言多样性。在25个LLM上的评估显示，Python仍被高度过度选择，推荐一致性低，且小规模开放权重模型更偏好Python。该基准为解释和改善LLM的编程语言选择行为提供了量化工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
