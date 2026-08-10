@@ -6,36 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-09
-- 运行时间：2026-08-09 20:11:41 UTC
+- 最新运行日期：2026-08-10
+- 运行时间：2026-08-10 21:01:45 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：0
-- 速读区：5
+- 本次总论文数：6
+- 精读区：2
+- 速读区：4
 
 ### 今日简报（AI）
-今日筛选5篇论文，无精读，完成5篇速读；其中3篇重点涉及Transformer结构化输入修复与LLM文件系统设计实现评测。最值得关注：RepairFormer展现Transformer在结构化输入自动修复上的潜力，两项LLM文件系统基准测试则揭示其性能的“好、坏、丑”多面性。建议优先浏览RepairFormer修复机制，再看文件系统评测中的失败案例，可为后续深入了解“LLM+系统”交叉方向打基础。
-- 详情：[/202608/09/README](/202608/09/README)
+今日共读6篇论文，精读2篇、速读4篇，重点聚焦LLM地理任务基准与语法约束解码。最值得关注的是GeoBenchLLM（9.0分）——一个评估大模型地理能力的综合基准，以及基于解析器栈分类的高效约束解码方法（8.0分）。建议优先精读GeoBenchLLM，了解地理任务评测设计；若对生成效率感兴趣，可进一步探索约束解码方向。
+- 详情：[/202608/10/README](/202608/10/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [GeoBenchLLM: A Comprehensive Benchmark for Evaluating LLMs on Geo-Related Tasks](/202608/10/2608.07411v1-geobenchllm-a-comprehensive-benchmark-for-evaluating-llms-on-geo-related-tasks)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：论文明确提供GitHub代码仓库，直接符合含代码论文的要求。
+2. [Efficient Grammar-Constrained Decoding via Parser Stack Classification](/202608/10/2608.03065v1-efficient-grammar-constrained-decoding-via-parser-stack-classification)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：PSC 方法面向源代码等结构化输出，实现高效文法约束解码，很可能开源实现
 
 ### 速读区论文标签
-1. [RepairFormer: Automated Repair of Structured Inputs Using Transformers](/202608/09/2608.05060v1-repairformer-automated-repair-of-structured-inputs-using-transformers)  
+1. [Oasis: Hiding the Cost of Querying Parquet Files in the Datapath](/202608/10/2608.02268v1-oasis-hiding-the-cost-of-querying-parquet-files-in-the-datapath)  
    标签：评分：7.0/10、query:code-paper
-   evidence：基于Transformer的修复框架，可能提供公开实现
-2. [Benchmarking LLMs on File System Design and Implementation: The Good, The Bad, and The Ugly](/202608/09/2608.00280v1-benchmarking-llms-on-file-system-design-and-implementation-the-good-the-bad-and-the-ugly)  
+   evidence：数据中心查询处理系统论文，可能附带源码，且与数据中心相关
+2. [Search, Inspect, Fetch: Exploiting Boolean Retrieval for Deep-Research Agents](/202608/10/2608.02751v1-search-inspect-fetch-exploiting-boolean-retrieval-for-deep-research-agents)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：提出新检索接口，实现代码可能开源
+3. [OctoLong: Mid-Training On Cross-Repository Code Contexts Enhances Long-Context Modeling](/202608/10/2608.05141v1-octolong-mid-training-on-cross-repository-code-contexts-enhances-long-context-modeling)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：OctoLong 流程与开放语言模型可能附带了源代码
+4. [RepoProbe: Benchmarking Architecture-Aware Repository Comprehension with Checklists](/202608/10/2608.04783v2-repoprobe-benchmarking-architecture-aware-repository-comprehension-with-checklists)  
    标签：评分：6.0/10、query:code-paper
-   evidence：相同φ-Bench基准框架，可能附带代码
-3. [Benchmarking LLMs on File System Design and Implementation](/202608/09/2608.00280v2-benchmarking-llms-on-file-system-design-and-implementation)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：面向文件系统的LLM基准框架，可能附带代码
-4. [DataSpace: Benchmarking Data Agents for Verifiable Analytics over Heterogeneous Workspaces](/202608/09/2608.03451v1-dataspace-benchmarking-data-agents-for-verifiable-analytics-over-heterogeneous-workspaces)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：数据智能体基准测试，可能附带代码和数据
-5. [LangChoiceBench: Measuring and Explaining Programming-Language Choice in LLMs](/202608/09/2608.06041v1-langchoicebench-measuring-and-explaining-programming-language-choice-in-llms)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：针对LLM代码生成语言选择的基准，可能提供评估代码
+   evidence：仓库理解基准，可能附带开源评估代码
 
 
 <div class="dpr-home-promo-card">

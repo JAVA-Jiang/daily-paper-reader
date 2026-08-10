@@ -1,0 +1,257 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-10T20:55:33.218654+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2608.07411v1",
+      "source": "arxiv",
+      "title": "GeoBenchLLM: A Comprehensive Benchmark for Evaluating LLMs on Geo-Related Tasks",
+      "abstract": "In the context of geodata, existing Large Language Models have often been studied in a homogeneous setting, which has considerably limited insights into their generalization capabilities. In this paper, we present \\benchName, a comprehensive benchmark for probing LLMs on geo-related tasks. We leverage a careful selection of twelve publicly available datasets from diverse geo-related tasks and domains, and evaluate a set of LLMs on geo-spatial and temporal understanding using our benchmark. Our results show that reasoning and size have a strong impact on overall performance. GeoBenchLLM is publicly available at https://github.com/Rfr2003/GeoBenchLLM.",
+      "authors": [
+        "Rodrigo Ferreira Rodrigues",
+        "Karim Radouane",
+        "Jose G Moreno",
+        "Lynda Tamine"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-08-07T16:58:04+00:00",
+      "link": "https://arxiv.org/pdf/2608.07411v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Explicitly releases source code via GitHub, directly fulfilling the source-code paper requirement.",
+      "llm_evidence_cn": "论文明确提供GitHub代码仓库，直接符合含代码论文的要求。",
+      "llm_evidence": "论文明确提供GitHub代码仓库，直接符合含代码论文的要求。",
+      "canonical_evidence": "论文明确提供GitHub代码仓库，直接符合含代码论文的要求。",
+      "llm_tldr_en": "Presents GeoBenchLLM, a benchmark for LLMs on geo-related tasks, with twelve datasets and public GitHub code, making it a clear code-available paper.",
+      "llm_tldr_cn": "现有地理相关LLM评测缺乏多样性和综合泛化评估。本文提出GeoBenchLLM基准，整合十二个公开数据集，系统评估多个大语言模型在空间与时间理解上的表现。实验表明推理能力和模型规模对整体性能影响显著。该基准已开源在GitHub，是典型的含代码论文，可直接用于可复现研究。",
+      "llm_tldr": "现有地理相关LLM评测缺乏多样性和综合泛化评估。本文提出GeoBenchLLM基准，整合十二个公开数据集，系统评估多个大语言模型在空间与时间理解上的表现。实验表明推理能力和模型规模对整体性能影响显著。该基准已开源在GitHub，是典型的含代码论文，可直接用于可复现研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.03065v1",
+      "source": "arxiv",
+      "title": "Efficient Grammar-Constrained Decoding via Parser Stack Classification",
+      "abstract": "LLMs are widely used to generate structured output like source code or JSON. Grammar-constrained decoding (GCD) can guarantee the syntactic validity of the generated output, by masking out tokens that violate rules specified by a context-free grammar. However, the online computational overhead of existing GCD methods, with latency typically scaling linearly with vocabulary size, limits the throughput of LLMs, especially for models with large vocabularies. To address this issue, we propose PSC, a novel grammar-constrained decoding method. By combining acceptance conditions of all vocabulary tokens into a single classifier of the parser stack during preprocessing, PSC can compute the complete vocabulary mask by checking the parser stack exactly once per decoding step, with time complexity independent of the vocabulary size. Experiments show that PSC computes masks up to 700$\\times$ faster than baselines on complex programming language grammars, and up to 30$\\times$ faster for schema-conformant JSON; end-to-end LLM throughput with PSC approaches that of unconstrained decoding. We analyze the preprocessing overhead for preprocessing providers and decoding users, and provide a break-even point analysis to help users decide whether to do preprocessing by themselves.",
+      "authors": [
+        "Yongmin Li",
+        "Yihong Dong",
+        "Jia Li",
+        "Ge Li"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-04T03:26:54+00:00",
+      "link": "https://arxiv.org/pdf/2608.03065v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "PSC efficiently generates structured outputs like code with grammar constraints; likely open source",
+      "llm_evidence_cn": "PSC 方法面向源代码等结构化输出，实现高效文法约束解码，很可能开源实现",
+      "llm_evidence": "PSC 方法面向源代码等结构化输出，实现高效文法约束解码，很可能开源实现",
+      "canonical_evidence": "PSC 方法面向源代码等结构化输出，实现高效文法约束解码，很可能开源实现",
+      "llm_tldr_en": "PSC computes a full vocabulary mask via parser-stack classification, speeding grammar-constrained decoding for code/JSON.",
+      "llm_tldr_cn": "现有文法约束解码（GCD）保证生成代码或 JSON 的语法正确性，但每步需遍历词典导致延迟高。作者提出 PSC 方法，在预处理时将全部词典 token 的接受条件合并为解析器栈上的单个分类器，每次只需检查解析器栈一次即可得到全部掩码。该方法在大词汇量模型上大幅提升解码吞吐量，且直接服务于源代码生成等结构化输出场景，通常伴随开源实现。",
+      "llm_tldr": "现有文法约束解码（GCD）保证生成代码或 JSON 的语法正确性，但每步需遍历词典导致延迟高。作者提出 PSC 方法，在预处理时将全部词典 token 的接受条件合并为解析器栈上的单个分类器，每次只需检查解析器栈一次即可得到全部掩码。该方法在大词汇量模型上大幅提升解码吞吐量，且直接服务于源代码生成等结构化输出场景，通常伴随开源实现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.02268v1",
+      "source": "arxiv",
+      "title": "Oasis: Hiding the Cost of Querying Parquet Files in the Datapath",
+      "abstract": "Cloud-native database systems disaggregate compute and storage resources to improve cost efficiency over traditional monolithic architectures through elasticity and resource pooling. Studies of production data warehouse workloads show that scans (including round trips to storage) account for roughly half of total query runtime. Data lakes and lakehouses amplify this bottleneck through per-query decoding of storage-optimized, compressed file formats such as Parquet. As storage and network bandwidth continue to outpace CPU cost-performance, the CPU cycles spent on decoding increasingly undermine the cloud's cost-efficiency promise. This has led to a wave of specialization across the stack with custom hardware at cloud-vendor scale at the extreme end. We build on this trend and present Oasis, a data-processing SmartNIC that offloads Parquet decoding into the network datapath as a custom hardware accelerator. Oasis features a hardware decoder architecture, software abstraction layer, and end-to-end integration with DuckDB. Our evaluation shows that Oasis hides the cost of Parquet decoding behind the network datapath with minimal overhead, overlapping the scan with the remainder of the query execution. In the best case, this almost doubles DuckDB query throughput.",
+      "authors": [
+        "Jonas Dann",
+        "Luca Tagliavini",
+        "Gustavo Alonso"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.AR"
+      ],
+      "published": "2026-08-03T14:09:40+00:00",
+      "link": "https://arxiv.org/pdf/2608.02268v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "System paper on data center query processing, likely with source code; partially aligns with data center domain in composite requirement.",
+      "llm_evidence_cn": "数据中心查询处理系统论文，可能附带源码，且与数据中心相关",
+      "llm_evidence": "数据中心查询处理系统论文，可能附带源码，且与数据中心相关",
+      "canonical_evidence": "数据中心查询处理系统论文，可能附带源码，且与数据中心相关",
+      "llm_tldr_en": "Oasis hides the cost of decoding Parquet files in the datapath via specialized hardware or software optimization, addressing a major bottleneck in cloud data lakes.",
+      "llm_tldr_cn": "云数据库将计算与存储分离，但解压Parquet等压缩格式消耗大量CPU，成为查询性能瓶颈。作者构建Oasis，在数据路径中直接隐藏查询文件解码代价，减少往返存储的开销。该工作针对数据仓库扫描占查询一半的应用现状，能显著提升云数据湖的查询效率，并可能开源实现，与数据中心场景密切相关。",
+      "llm_tldr": "云数据库将计算与存储分离，但解压Parquet等压缩格式消耗大量CPU，成为查询性能瓶颈。作者构建Oasis，在数据路径中直接隐藏查询文件解码代价，减少往返存储的开销。该工作针对数据仓库扫描占查询一半的应用现状，能显著提升云数据湖的查询效率，并可能开源实现，与数据中心场景密切相关。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.04783v2",
+      "source": "arxiv",
+      "title": "RepoProbe: Benchmarking Architecture-Aware Repository Comprehension with Checklists",
+      "abstract": "The integration of Large Language Models (LLMs) into software engineering has shifted the focus from function-level generation to repository-scale assistance. However, existing benchmarks largely rely on bug reports from GitHub Issues, which often allow models to bypass genuine understanding via pattern matching on error logs. This misalignment under-measures Edit Bias, which refers to premature generation, where models prematurely propose code modifications instead of understanding the existing repository architecture. Furthermore, current LLM-as-a-Judge scalar scoring suffers from high variance and low interpretability. This work introduces RepoProbe, a novel benchmark for evaluating repository-level code understanding through open-ended Q&A using GitHub Discussions, which focuses on open-ended architectural inquiries rather than defect reporting. To ensure rigorous evaluation, we propose a Checklist-Based Verification Protocol that decomposes answers into atomic, verifiable facts, thereby replacing subjective ratings with objective verification. Our evaluation of state-of-the-art (SOTA) LLMs reveals a persistent gap between high clarity and evidencegrounded technical correctness. It also quantitatively confirms the prevalence of edit bias, in which models prioritize code generation instead of architectural analysis. Finally, we demonstrate that our verification protocol significantly improves evaluation reliability compared to traditional evaluations with scalar scoring.",
+      "authors": [
+        "Yuexi Yang",
+        "Alyssa Wu",
+        "Ji Luo",
+        "Richeng Xuan",
+        "Zhichao Hu",
+        "Yuhong Liu",
+        "Zhen Qin"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-08-05T12:49:36+00:00",
+      "link": "https://arxiv.org/pdf/2608.04783v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Benchmark for repository comprehension with likely open-source evaluation code",
+      "llm_evidence_cn": "仓库理解基准，可能附带开源评估代码",
+      "llm_evidence": "仓库理解基准，可能附带开源评估代码",
+      "canonical_evidence": "仓库理解基准，可能附带开源评估代码",
+      "llm_tldr_en": "RepoProbe is a benchmark for architecture-aware repository comprehension using checklists, addressing premature code generation and low interpretability in LLM-as-a-Judge scoring; it uses open-ended checklist tasks to assess genuine understanding.",
+      "llm_tldr_cn": "现有仓库级代码理解基准主要依赖GitHub issues，模型常常通过错误日志模式匹配绕过真正的架构理解，且LLM评判的单一分数方差大、可解释性低。RepoProbe引入基于清单的架构感知基准，以开放式清单任务检测模型是否掌握既有仓库架构。在实验中，该方法能有效暴露编辑偏差，并生成更稳定的可解释评分。这一基准为仓库级代码智能体评估提供了新的开源工具。",
+      "llm_tldr": "现有仓库级代码理解基准主要依赖GitHub issues，模型常常通过错误日志模式匹配绕过真正的架构理解，且LLM评判的单一分数方差大、可解释性低。RepoProbe引入基于清单的架构感知基准，以开放式清单任务检测模型是否掌握既有仓库架构。在实验中，该方法能有效暴露编辑偏差，并生成更稳定的可解释评分。这一基准为仓库级代码智能体评估提供了新的开源工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.02751v1",
+      "source": "arxiv",
+      "title": "Search, Inspect, Fetch: Exploiting Boolean Retrieval for Deep-Research Agents",
+      "abstract": "Existing deep-research agents use a search-visit workflow that retrieves and reads whole pages, without considering the addressable structure that web sources expose through titles, headings, sections, and metadata. This prevents agents from directly constraining retrieval to document fields and often carries irrelevant page content into their context. We introduce SIEVE, a search-inspect-fetch interface driven by fielded Boolean retrieval (BQL). SIEVE filters candidates over document fields, ranks the admitted set, presents structure-rich result cards for inspection, and fetches only selected sections. Across three QA collections, SIEVE achieves higher accuracy than the most accurate conventional Search-Visit configuration on each collection while using 20.7-50.6% fewer tokens. Further analyses show that BQL filtering improves all tested rankers and that the accuracy-context advantage persists across retriever choices and agent backbones. Code and data are available at https://github.com/ielab/skim-search-agent.",
+      "authors": [
+        "Shuai Wang",
+        "Haodong Chen",
+        "Yu Yin",
+        "Shengyao Zhuang",
+        "Bevan Koopman",
+        "Guido Zuccon"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-03T18:01:05+00:00",
+      "link": "https://arxiv.org/pdf/2608.02751v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "New retrieval interface with likely open-source implementation",
+      "llm_evidence_cn": "提出新检索接口，实现代码可能开源",
+      "llm_evidence": "提出新检索接口，实现代码可能开源",
+      "canonical_evidence": "提出新检索接口，实现代码可能开源",
+      "llm_tldr_en": "SIEVE is a search-inspect-fetch interface using fielded Boolean retrieval to filter document fields, rank candidates, and fetch only selected sections, improving accuracy over conventional search-visit agents.",
+      "llm_tldr_cn": "深度研究智能体通常检索并阅读整页内容，无法利用网页结构且浪费上下文。SIEVE提出搜索-检查-抓取三步接口，使用字段化布尔查询在文档字段上过滤候选，并以结构化卡片展示供检查，只抓取选中的章节。在三个问答集合上，SIEVE准确率高于最先进的常规搜索-访问配置。它减少了无关内容进入上下文，提高了检索效率和回答质量。",
+      "llm_tldr": "深度研究智能体通常检索并阅读整页内容，无法利用网页结构且浪费上下文。SIEVE提出搜索-检查-抓取三步接口，使用字段化布尔查询在文档字段上过滤候选，并以结构化卡片展示供检查，只抓取选中的章节。在三个问答集合上，SIEVE准确率高于最先进的常规搜索-访问配置。它减少了无关内容进入上下文，提高了检索效率和回答质量。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.05141v1",
+      "source": "arxiv",
+      "title": "OctoLong: Mid-Training On Cross-Repository Code Contexts Enhances Long-Context Modeling",
+      "abstract": "Context lengths of language models (LMs) have dramatically increased, driven by the demands for in-context learning, self-improvement, and long-horizon agentic workflows. Existing long-context corpora, however, are dominated by books, academic articles, and code repositories, which are finite resources and often scarce in long-distance dependencies. In this work, we introduce OctoLong, a context engineering pipeline that instruments an AST parser, a language server backend, and a package manager to facilitate the recursive retrieval of code references, enabling the curation of dependency-rich code contexts of millions of tokens in length. We then train OctoLong-Instruct, a suite of capable long-context open LMs, derived from base models ranging in size from 600M to 14B parameters, via context-extension mid-training on a ~50B-token mixture containing ~6.2B tokens of OctoLong code contexts, followed by ~10B tokens of instruction tuning. Our training ablations and experimental evaluations against 18 state-of-the-art open-weight long-context LMs show that supplanting just 12% of traditional context-extension corpora with OctoLong data yields substantial gains in long-range retrieval, long-term state tracking, repository-level code understanding, and downstream agentic tasks, while also enhancing API usage in short-context coding scenarios.",
+      "authors": [
+        "Indraneil Paul",
+        "Falko Helm",
+        "Goran Glavaš",
+        "Iryna Gurevych"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.LG",
+        "cs.SE"
+      ],
+      "published": "2026-08-05T17:58:15+00:00",
+      "link": "https://arxiv.org/pdf/2608.05141v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "OctoLong pipeline and open LMs likely released with code",
+      "llm_evidence_cn": "OctoLong 流程与开放语言模型可能附带了源代码",
+      "llm_evidence": "OctoLong 流程与开放语言模型可能附带了源代码",
+      "canonical_evidence": "OctoLong 流程与开放语言模型可能附带了源代码",
+      "llm_tldr_en": "OctoLong constructs dependency-rich code contexts of millions of tokens and trains open LMs, likely with released code.",
+      "llm_tldr_cn": "面向长上下文建模，现有语料多为书籍和论文，缺少长距离依赖的代码库数据。作者提出 OctoLong 上下文工程流水线，结合 AST 解析器、语言服务器后端和包管理器，递归检索代码引用，构造百万 token 级别的富依赖代码上下文，并训练了开放授权的长上下文语言模型 OctoLong-Instruct。该方法有望推动代码库级理解和长序列任务，并可能公开代码实现。",
+      "llm_tldr": "面向长上下文建模，现有语料多为书籍和论文，缺少长距离依赖的代码库数据。作者提出 OctoLong 上下文工程流水线，结合 AST 解析器、语言服务器后端和包管理器，递归检索代码引用，构造百万 token 级别的富依赖代码上下文，并训练了开放授权的长上下文语言模型 OctoLong-Instruct。该方法有望推动代码库级理解和长序列任务，并可能公开代码实现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
