@@ -1,0 +1,402 @@
+Title: Performance and Cost-Aware Cache Provisioning
+
+URL Source: https://arxiv.org/pdf/2608.09820v1
+
+Published Time: Tue, 11 Aug 2026 02:35:55 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Performance and Cost-Aware Cache Provisioning 
+
+## Ridwanul Tanvir and George Kesidis Computer Science & Engineering Dept, Electrical Engineering Dept Pennsylvania State University University Park, PA, 16802, USA 
+
+## {rpt5409,gik2 }@psu.e.du 
+
+Abstract 
+
+While traditional cache policy evaluations fix capacity—often at 0.1% of the dataset—and measure the resulting hit rate, practical edge-cloud deployments require balancing both storage and computational overhead as billed resources. Consequently, system operators frequently focus on a different objective: determining the minimum cache size needed to satisfy a specific Service-Level Objective (SLO) hit-rate. This paper explores this SLO-centric paradigm by analyzing the minimum capacity and execution time each policy requires to hit a defined target. Additionally, we show that dynamically adjusting the segment ratio in segmented policies based on historical workload patterns enhances efficiency. Through evaluations across real-world and synthetic traces, we present a novel hybrid segmented policy that reduces capacity requirements while keeping processing costs low. 
+
+# 1 Introduction 
+
+Modern cache deployments must balance service performance against the resources reserved to obtain that performance. Production cache engines expose this tradeoff directly: memory, flash space, and computation to implement cache replacement (eviction) policies are provisioned resources, while applications impose performance requirements on latency, throughput, or hit rate [6]. Related work has also studied SLO-driven cache sizing, dynamic cache reallocation, and cache sharing (including object apportionment) across services [8, 16, 29, 41]. Complementary caching problems include online service placement, distributed data access, content placement in cache networks, dependency-aware caching, caching of dynamic content, and semantic response caching [14, 19, 21, 25, 30, 40, 43]. The conventional evaluation question asks, for a fixed cache size, which replacement policy obtains the highest hit rate [4, 20, 38, 42]? That view is important, but it does not directly answer a provisioning question faced by an operator (user): for a required target hit rate (user Service-Level Objective (SLO)), how much cache capacity does each policy need (what is its cost)? We study this SLO-aware viewpoint by treating the target object hit-rate as an explicit requirement and comparing policies by the minimum resident cache capacity needed to satisfy it. Content caches are typically located at edge or near-edge cloud platforms whose resources are much more expensive than in remote cloud platforms housing the origin servers of the content. Reducing required cache capacity has benefits beyond a single billing model. On private or shared servers, a smaller cache leaves more DRAM, SSD space, or disk capacity for colocated applications and other services. In cloud deployments, a lower memory or storage requirement may also permit a smaller virtual-machine configuration, a lower storage allocation, or a less expensive caching tier. These two benefits are related but distinct: one is resource availability for other work, and the other is monetary cost in an elastic deployment. The pricing implication must be interpreted carefully. Cloud resources are often allocated in coarse units, and a small reduction in cache capacity does not necessarily produce an immediate proportional cost reduction. The granularity of allocation, the frequency with which resources can be resized or released, and the placement of the cache all matter. Remote cloud sites may offer large resource pools but coarse instance boundaries. Content caches often reside at the network edge or near edge. Near-edge deployments may offer more capacity than the edge with higher access latency, and edge deployments may have more limited and costlier memory, storage, and compute resources with finer granularity. Thus, edge and near-edge systems 1arXiv:2608.09820v1 [cs.PF] 10 Aug 2026 motivate careful resource accounting, while production traces with large working sets may not be able to achieve a high hit rate using relatively small amounts of edge-cloud resources, particularly memory. Let B denote resident cache capacity and let E denote computational effort such as CPU time, metadata processing, or history-management overhead. For a target hit rate η (the operator’s/user’s performance SLO), an idealized SLO aware objective is min  
+
+> B,E
+
+P (B, E ) subject to H(B) ≥ η, (1) where P (B, E ) denotes a deployment-specific resource loss cost SLO over storage and computation that is specified by and “internal to” the operator/user. In this paper, we simply take P = B, the resident cache capacity. Under this objective, a policy that reaches the same performance SLO with less resident capacity, less computation, or both is preferable under the resource-aware view. We explain at the end of Section 3.1 below how problem 1 is a kind of inverse of that addressed by the working-set approximation for caches [17]. Computation is part of this cost even when end-to-end latency is dominated by (and can be pipelined with) memory, disk, or network I/O. Replacement policies differ in the amount of metadata they maintain, the work performed on hits, and the work needed to choose victims to evict on misses. These differences matter for shared servers and are especially relevant in constrained deployments where both memory and compute are valuable. Recent production-oriented cache designs explicitly account for hit-path metadata cost and implementation complexity [6, 37, 38, 42]. We therefore report not only capacity requirements but also execution cost when comparing policies. Workloads also change over time. Web and object-cache workloads are often skewed, heavy-tailed, and sensitive to changes in object popularity and reuse [3, 4, 6, 9, 27, 36]. A fixed cache-policy parameter may therefore perform well during one interval and poorly during another. This paper focuses on adapting the internal segment ratio r of segmented caching policies while keeping the total cache capacity fixed. The adaptation is causal: each decision uses only observations from completed request blocks and does not use future requests, future reuse distances, offline phase labels, or counterfactual cache states. A study of dynamic adaptation of the total cache capacity B is left for future work. 
+
+Contributions. This paper makes five contributions. First, it presents an SLO-aware evaluation methodology that compares policies by the minimum cache capacity required to achieve a target hit rate. Second, it applies this methodology to multiple caching-policy families under a common experimental frame-work. Third, it introduces GAMP, a segmented caching policy designed to obtain strong hit-rate performance with low required cache capacity and practical computational overhead for a range of SLOs and workloads. Fourth, it studies causal adaptation of the segment ratio r using past workload observations. Fifth, it evalu-ates both resident-capacity requirements and policy execution cost, reflecting that deployed caches consume storage and computation. 
+
+This paper is organized as follows. Section 2 introduces the cache model, policy families, and GAMP. Section 3 explains workloads, and SLO-aware evaluation methodology. Section 4 studies segmented caching, the need to adapt r, and causal r-adaptation, together with the main experimental comparisons of minimum cache size and computational overhead in Section 5. In Section 6, we discuss practical memory pricing issues in edge clouds. The final section concludes and discusses future work. 
+
+# 2 Background, Policy Families, and Evaluation Methodology 
+
+A content cache stores data objects so that later requests can be served without accessing a slower backend such as a remote service, lower cache tier, disk, or origin store. Hierarchical web-cache models, production cache engines, and cache-replacement surveys describe this common structure across deployment settings [4,6,10,20]. Practical caching engines maintain a cached-object store, an index, replacement-policy metadata, and allocation machinery [6]. A request is a hit if the object is resident when the request arrives and a miss 
+
+otherwise. On a miss, an admission rule decides whether the fetched object enters the cache; if the cache is full, the replacement policy selects one or more resident victims. The resident payload is distinct from policy metadata. A resident entry contains the cached object and the metadata needed to manage it. A ghost entry contains only an identifier for a recently evicted object. A request that matches a ghost entry is still a miss because the payload is not resident. The match is nevertheless useful because it provides causal evidence that an evicted object returned and may deserve 2more protection if it is admitted again. Throughout this paper, ghost queues do not count toward resident capacity B [23, 26, 38]. Many policies divide resident capacity into a probationary region and a protected region. The proba-tionary, or cold, region receives newly admitted objects and filters objects that do not demonstrate reuse. The protected, or hot, region stores objects with stronger reuse evidence. The terms cold and hot describe functional roles only; policies differ in the events that move an object from cold to hot and in whether ghost entries influence that movement [22–24,26,38]. Prior work has also studied cache admission, reuse prediction, learned replacement, workload-aware eviction, and scalable cache implementation [5,7,18,31,33,35]. Related studies examine caching in key-value service, edge, file-system, and flash-backed storage settings [11,28,34,39]. 
+
+## 2.1 Policy Families 
+
+The evaluated policies fall into three families. A (not segmented) pure policy applies one replacement rule to the entire resident cache and has no resident partition parameter. FIFO maintains insertion order and evicts the oldest resident irrespective of use, i.e., a hit does not refresh the object or change its position (eviction rank). This makes FIFO inexpensive on the hit path, but it can evict frequently reused objects if they happen to be old. LRU instead orders objects by most recent access and evicts the Least Recently Used object. It is related to the classical working-set view of locality, but every hit must update recency metadata, which can create synchronization and memory-access overhead in high-throughput caches [4, 15, 17, 38, 42]. SIEVE is also a pure policy, but it avoids LRU’s hit-path reordering [42]. It keeps cached objects in insertion order, attaches one visited bit to each cached object, and maintains a persistent eviction hand. A hit sets the visited bit and leaves the object in place. When eviction is needed, the hand scans from older objects toward newer objects. If the hand finds a visited object, it clears the bit and gives the object another chance; the first unvisited object encountered is evicted. Thus SIEVE records reuse on the hit path with a bit write, and performs the retention decision later on the eviction path. This gives reused objects lazy protection while allowing objects with no observed reuse to be removed quickly. A segmented-pure policy divides resident capacity among regions with different roles. SLRU uses multiple LRU segments: new objects enter a cold segment, hits move objects toward more protected segments, and evictions are taken from the coldest nonempty segment [24]. 2Q separates short-term recency from longer-term reuse using a resident FIFO cold queue, a nonresident ghost queue, and an LRU hot queue [23]. A new object enters the cold queue. A hit while it is still resident in cold does not move it to hot; only after the object leaves cold and later returns through the ghost history is it admitted into the hot queue. This rule prevents a short burst or single correlated reference from immediately receiving long-term protection. ARC is a segmented LRU policy with online adaptation [26]. It keeps two resident LRU lists: one for recently seen objects and one for objects with stronger frequency evidence. It also keeps two nonresident ghost lists recording objects evicted from those resident lists. A hit in the recency ghost list indicates that the recency side was too small, while a hit in the frequency ghost list indicates that the frequency side was too small. ARC uses those ghost hits to adjust the target split between its two resident lists, so the policy can shift capacity between recency and frequency without seeing future requests. S3-FIFO is a segmented FIFO–FIFO policy designed to retain FIFO’s low metadata-update cost while filtering one-hit objects [38]. It has a small resident FIFO cold queue, a larger resident FIFO hot queue, and a nonresident FIFO ghost queue. Newly admitted objects enter the cold queue with a small counter. Hits increment the counter but do not change FIFO order. When an object reaches the tail of cold, it moves to hot only if its counter shows sufficient reuse; otherwise the payload is evicted and the identifier enters the ghost queue. A later request for a ghosted object is still a miss, but the ghost hit admits the returning object directly to hot. In the hot queue, counter-based reinsertion gives reused objects additional protection while preserving FIFO-style ordering. A segmented-blended policy keeps the parent policy’s admission and movement rules but replaces one resident replacement primitive with another. Prior work uses this composition to construct segmented policies such as ARC-SIEVE and 2Q-SIEVE by replacing selected LRU components with SIEVE [42]. ARC-SIEVE retains ARC’s resident cold list, ghost histories, and adaptive target update, but uses SIEVE for replacement in the hot region. 2Q-SIEVE retains 2Q’s FIFO cold queue and ghost-hit admission rule, but uses SIEVE instead of LRU for the hot queue. S3-FIFO-SIEVE follows the same idea for S3-FIFO: it keeps S3-FIFO’s cold FIFO filter and ghost admission behavior, but manages the hot segment with SIEVE rather 3Figure 1: GAMP architecture. Requests enter a FIFO cold segment before either being evicted into metadata-only ghost histories or promoted into a SIEVE-managed hot segment. The mode-based promotion controller uses causal signals from cold hits, ghost returns, and hit-rate feedback. Ghost entries contain identifiers only and do not count toward resident capacity B.than FIFO. 
+
+## 2.2 Ghost-Aware Mode-based Promotion (GAMP) 
+
+GAMP is the proposed segmented-blended policy in this paper. Its resident structure is FIFO–SIEVE: newly admitted objects enter a FIFO cold segment, and protected objects are stored in a SIEVE-managed hot segment. If r is the resident fraction assigned to cold, then cold and hot segment sizes are 
+
+|C|max = ⌈rB ⌉, |H|max = B − | C|max . (2) GAMP also maintains metadata-only ghost histories for objects evicted from resident segments. These ghost histories cannot serve requests and are not counted as resident capacity. GAMP differs from a simple FIFO–SIEVE blend in its promotion rule. In the initial conservative mode, a missed object enters cold unless it returns through a ghost history, in which case it is admitted directly to hot. A resident hit in cold increments a small reuse counter but does not immediately move the object. When the object reaches the FIFO tail of cold, GAMP promotes it to hot only if the counter meets the current promotion threshold; otherwise the payload is evicted and the object identifier enters a ghost history. Hits in hot are handled by SIEVE’s visited-bit mechanism, so hot objects receive lazy protection without LRU-style movement on every hit. GAMP’s mode-based behavior changes how aggressively objects are promoted or admitted to hot, but the signals remain causal. The policy uses observations already seen in the request stream, including resident hits, evictions, and ghost returns. It does not use future requests, future reuse distances, phase labels, or offline replay results. This design separates three concerns. FIFO cold admission provides an inexpensive filter for newly observed objects. SIEVE hot replacement reduces hit-path reordering overhead while still protecting objects with observed reuse. Ghost-aware modes use nonresident return evidence to decide when the policy should become more aggressive about admitting or promoting objects to hot. Section 4 evaluates how this policy family interacts with the SLO-aware minimum-capacity objective. 4Table 1: Policy roles used in the evaluation. Ghost entries contain identifiers only and do not count toward resident capacity B.                    
+
+> Policy Resident organization Reuse or adaptation signal FIFO One FIFO queue Hits do not change order LRU One LRU list Hits refresh recency SIEVE One queue with visited bits Eviction hand gives lazy protection SLRU Multiple LRU segments Hits move objects toward protected segments 2Q FIFO cold, LRU hot Cold ghost hit admits to hot ARC LRU cold, LRU hot Ghost hits adapt the target split S3-FIFO FIFO cold, FIFO hot Counters and ghost hits move objects to hot S3-FIFO-SIEVE FIFO cold, SIEVE hot S3-FIFO admission with SIEVE hot eviction GAMP FIFO cold, SIEVE hot Ghost-aware modes adjust promotion behavior
+
+Table 2: Summary of the traces used in the experiments. 
+
+Trace # Objects (N) # Requests 
+
+META Trace 1 12.26 million 45.62 million META Trace 2 35.04 million 96.68 million META Trace 3 29.03 million 88.47 million Synthetic Trace 1 100,000 10.00 million Synthetic Trace 2 1.00 million 10.00 million 
+
+# 3 Experimental Setup 
+
+## 3.1 Workloads 
+
+We use three production traces from Meta [27]. Each trace is processed in chronological order, and Cache Capacity is herein reported in objects. Results for versions of considered cache replacement policies for variable-length objects are omitted here for lack of space. We also use two controlled synthetic Poisson traces, with independent object selection for each query, to isolate nonstationary popularity. The two synthetic traces each consist of three Zipf phases, with object popularities sampled according to a Zipf distribution. The Zipf exponent changes across the phases as follows: 
+
+α : 1.6 → 0.6 → 1.6. (3) The high-skew phases concentrate requests on a smaller hot set, while the low-skew phase spreads requests across a broader part of the catalog. Because the catalog remains fixed, these workloads test adaptation to changing popularity rather than changing key space [9] seen in the production traces. Note that a Poisson query process with the objective of each query independently selected from the 
+
+same object-popularity distribution (so the process is stationary) is a.k.a. the Independent Reference Model (IRM). Under the IRM for the pure LRU policy, a “working-set” approximation can be used to numerically estimate the cache-hit probability hi for each object i given the cache capacity B [17]. The average hit probability can then be estimated as H = PNi=1 hivi where vi > 0 is the (e.g., Zipf) popularity of object i (of 
+
+N total objects) normalized so that PNi=1 vi = 1. (More recent work extends working-set approximations to networks of caches, e.g., [10,32], where we note that caches with segmented policies can be viewed as tandem caches.) So, problem (1) is the inverse of the working-set approximation: For LRU, given H = η,1
+
+B ≈ N η [objects] .
+
+> 1
+
+When object i has length ℓi bytes, then B ≈ PNi=1 ℓihi bytes, where the hit probability of object i is hi = 1 − exp( −xit), 
+
+xi ∝ vi is the mean query rate of object i, and (in an asymptotic regime, common eviction time) t > 0 solves N η = PNi=1 hi.
+
+53.2 SLO-Aware Evaluation 
+
+Let π be a cache replacement policy, η ∈ (0 , 1) be a target hit rate, and Ii ∈ { 0, 1} indicate whether request 
+
+i is a hit. The full-trace hit rate is 
+
+Hπ = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+Ii. (4) A run satisfies the SLO only if Hπ ≥ η. We include the warm-up period in all reported results: every run starts from an empty cache and is measured from the first request through the end of the trace. For each policy–trace–target combination, the offline minimum fixed-capacity baseline is 
+
+B⋆π,η = min {B ∈ N : Hπ (B) ≥ η}. (5) For policies with an explicitly studied partition parameter, the search also optimizes over the declared fixed parameter grid. This baseline is offline and non-causal because it uses repeated full-trace replays to find the smallest feasible constant capacity. It is not an online deployment method; it is a reference against which causal adaptive methods can be compared. The adaptive experiments process the trace once in chronological order using a continuous cache instance. The controller may update its control variables only after observing a completed request block. Decisions for the next block may use past requests, hits, misses, admissions, evictions, and current cache state, but may not use future requests, future block statistics, phase labels, or counterfactual replays. This causal boundary is central to the paper. 
+
+# 4 Dynamic Adaptation of Cache-Policy Hyperparameters 
+
+This section develops a causal rule for adapting a cache-policy segment ratio r while keeping the total Cache Capacity B fixed. The rule is not tied to one replacement policy. It applies to any segmented cache design that exposes a probationary region, a protected region, and past-only feedback about whether the current split is filtering too aggressively or reserving too much space for new objects. S3-FIFO is used below as a motivating instantiation because its cold fraction is explicit and its ghost history provides a direct causal signal; the controller itself is a general segment-ratio adaptation mechanism. 
+
+## 4.1 Motivating Sensitivity of the Segment Ratio 
+
+Consider a segmented policy π with fixed Cache Capacity B, a probationary/cold segment C, and a pro-tected/hot segment H. The segment ratio r sets 
+
+|C|max = ⌈rB ⌉, |H|max = B − | C|max . (6) A larger r gives newly admitted objects more time in C to demonstrate reuse before eviction. A smaller r
+
+reserves more of the same fixed Cache Capacity for objects that have already accumulated reuse evidence. Thus r is an internal capacity allocation decision, not a change to the total cache size. Fig. 2 uses S3-FIFO only as a motivating example of this broader issue. The minimum capacity needed to reach the same hit-rate target can vary substantially with r. On META Trace 1, moving away from the default split can substantially reduce the capacity needed to meet the same SLO. For any segmented policy 
+
+π and fixed partition r, the reference quantity is 
+
+Bπ
+
+> min
+
+(r, η ) = min {B ∈ N : Hπ (B, r ) ≥ η}. (7) The best tested value r⋆ is selected by minimizing this quantity over the tested grid. This fixed-r sweep is non-causal because it uses repeated full-trace replay to choose r⋆. The goal of dynamic r is to replace this offline parameter selection with an online rule that changes the split during a single chronological pass. 60.05 0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 0.95 1.00 
+
+Fixed r 
+
+> 0100 200 300 400 500 600
+> Minimum cache capacity B *(η) [objects]
+
+Target hit-rate SLO, η = 0.50 
+
+> Other tested r Default r = 0.10 Minimum cache capacity
+
+Figure 2: Fixed-r sensitivity of S3-FIFO on META Trace 1 for a representative target hit-rate SLO. Each bar reports the minimum Cache Capacity B, counted in objects, required to satisfy the same hit-rate SLO for one fixed cold-segment fraction r. The visible spread across fixed partitions motivates an online controller that adapts r using only past observations from the chronological request stream. Fixed-r
+
+> Cache Capacity Dynamic-r
+> Cache Capacity 039.0K 39.2K 39.5K 39.8K 40.0K
+> META Trace 1
+> Fixed-r
+> Cache Capacity Dynamic-r
+> Cache Capacity 012.45M 12.50M 12.55M 12.60M 12.65M
+> META Trace 2
+> Fixed-r
+> Cache Capacity Dynamic-r
+> Cache Capacity 04.30M 4.32M 4.34M 4.36M 4.38M
+> META Trace 3
+
+Required Cache Capacity at Target Hit Rate η = 0.60 
+
+> Each panel uses a truncated y-axis for readability.
+> Required Cache Capacity,  B
+
+Figure 3: Required Cache Capacity for a representative high target hit-rate SLO under the best fixed-r
+
+baseline and the dynamic-r controller on three META traces. Cache Capacity is counted in objects; each replay keeps the total capacity B fixed while the dynamic controller adapts only the internal segment ratio 
+
+r. Each panel uses a truncated vertical axis for readability. 
+
+## 4.2 A Policy-Agnostic Dynamic-r Rule 
+
+The controller keeps total B fixed and updates only the allocation between C and H after each chronological request block. The block length is fixed before the experiment, so the update frequency is not chosen using future trace behavior. During block k, the policy runs normally and records past-only counters. Let Mk be the number of cache misses, Gk the number of metadata-history matches, ACk the number of admissions to 
+
+C, DCk the number of objects that leave C without promotion to H, RHk the number of cache hits served by 
+
+H, Rk the total number of cache hits, and Lk the number of requests in the block. These counters form two directional pressures. A history match means that an object removed from C
+
+7was requested again while its identifier remained in metadata, suggesting that C may be too small. The raw pressure to increase r is 
+
+P raw  
+
+> k
+
+= Gk
+
+Mk + 1 , (8) where the added one handles blocks with no misses. Evidence for decreasing r comes from C occupancy that does not lead to promotion while H serves most cache hits: 
+
+Uk = DCk
+
+ACk + 1 , Qk = RHk
+
+Rk + 1 , W raw  
+
+> k
+
+= UkQk. (9) A larger W raw  
+
+> k
+
+indicates that newly admitted objects are consuming space in C without observed reuse, while H is responsible for most useful cache service. The controller smooths the two directional signals with first-order EWMAs, 
+
+Ik = αP raw  
+
+> k
+
++ (1 − α)Ik−1, (10) 
+
+Dk = αW raw  
+
+> k
+
++ (1 − α)Dk−1, (11) and uses their difference 
+
+Ek = Ik − Dk (12) as the signed evidence for changing the split. Positive evidence indicates that C should receive more of B;negative evidence indicates that H should receive more of B. With threshold θ, step size ∆ r, and allowed interval [ rmin , r max ], the proposed next split is 
+
+erk+1 =
+
+
+
+min( rk + ∆ r, r max ), Ek > θ, 
+
+max( rk − ∆r, r min ), Ek < −θ, rk, |Ek| ≤ θ. 
+
+(13) The threshold gives hysteresis: the controller changes r only when the evidence is large enough to overcome block-level noise. To avoid using a predefined cooling schedule, the controller also derives a temperature from observed hit-rate performance. The block hit rate is 
+
+hk = Rk
+
+Lk
+
+, (14) and the smoothed hit rate is 
+
+hk = αh k + (1 − α)hk−1. (15) The controller uses Tmax when hk < η and Tmin otherwise. For an evidence-supported proposal, the accep-tance probability is 
+
+pk = 11 + exp 
+
+
+
+− |Ek| − θTk
+
+ . (16) A random draw uk ∼ U (0 , 1) accepts the proposed split only when |Ek| > θ and uk < p k; otherwise r
+
+is retained. Randomness therefore affects only whether to accept an evidence-supported proposal, not the direction of the change. 
+
+## 4.3 Causality and Outcomes 
+
+The adaptation rule is causal. The decision for block k + 1 uses only requests, hits, misses, admissions, promotions, evictions, metadata-history matches, and queue state observed through block k. It does not use future requests, next-access times, reuse distances, trace phase labels, offline selection by workload identity, or counterfactual cache states. The rule also does not change the capacity budget: B is fixed during a run, while Eq. (6) reallocates Cache Capacity between the two segments. The experiments below use one representative segmented policy to instantiate the required causal signals: a controllable split between C and H, a metadata-only history signal for objects that were removed from 80.10 0.20 0.30 0.40 0.50 0.60           
+
+> Target hit-rate SLO, η
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> 10 4
+> 10 5
+> 10 6
+> 10 7
+> Minimum cache capacity  B*(η) [objects]  (a) All SLO targets (log scale)
+> Total unique objects 0.1% of unique objects
+> 020k 40k 60k 80k
+> Minimum cache capacity B*[objects]
+> LRU FIFO SIEVE ARC ARC-SIEVE 2Q SLRU 2Q-SIEVE S3-FIFO S3-FIFO-SIEVE GAMP
+> 58.1k 82.0k 46.2k 43.6k 47.4k 41.3k 47.1k 37.7k 39.2k 38.8k 30.9k
+> (b) η= 0.60 (linear scale)
+
+Figure 4: Minimum fixed cache capacity on META Trace 1. Panel (a) reports B⋆(η) for all evaluated policies across the target object hit-rate SLOs using a logarithmic scale. The horizontal reference lines indicate the total number of unique objects in the trace and 0 .1% of that total. Panel (b) shows the cache-capacity comparison at η = 0 .60 using a linear scale. Hatched bars identify the policy requiring the minimum cache capacity at each SLO. 
+
+C, and past-only counters for admissions, promotions, and hits. This choice is an evaluation instance of the update rule, not a restriction of the method. Across all three META traces, dynamic r has little effect at very low targets, where the minimum cache is already small, but it reduces the required Cache Capacity at higher targets while maintaining the same hit-rate objective. The reductions are most meaningful in the regimes where the SLO is stringent enough that capacity differences translate into material provisioning cost. These results demonstrate the value of adapting the segment ratio online; they should be read as evidence for the general causal rule rather than as a limitation to one policy. Fig. 3 gives the corresponding high-target comparison across all three META traces. In these experiments, Cache Capacity is counted as the number of objects rather than bytes; the variable-length object case is discussed separately in Section 6. On META Trace 2, the dynamic controller saves 90,747 cache objects while achieving the same target hit rate of η = 0 .60. Using the measured average object size for META Trace 2, approximately 21.8 MB, this object-count reduction is roughly two terabytes under the trace-level physical-scale estimate. 
+
+# 5 Experimental Results 
+
+## 5.1 META Trace 1 
+
+We next compare replacement policies by the minimum fixed Cache Capacity B⋆ needed to reach each target hit rate on META Trace 1. This is a non-causal baseline because B⋆ is obtained by repeated full-trace replay and binary search. Its purpose is not deployment; it is a common reference for asking which policy satisfies the same SLO with less Cache Capacity. Across target hit rates, no single pre-GAMP baseline is the clear winner: simple policies are strongest at some low-SLO points, while segmented and SIEVE-based policies become more competitive as the target increases. This cross-target variation motivates GAMP’s use of a SIEVE-managed hot segment rather than relying on one fixed existing policy. Figs. 4 and 5 add GAMP to the comparison: at the higher target hit rates, GAMP requires the lowest minimum fixed Cache Capacity among the evaluated policies, and its wall-clock overhead remains below ARC-SIEVE, 2Q, 2Q-SIEVE, S3-FIFO, and S3-FIFO-SIEVE. Because every policy processes the same request trace, the reported total wall-clock times compare computational overhead under a common request count; per-request processing time follows by dividing by that same count. The key point of Fig. 5 is therefore not merely that one policy has a smaller B⋆: the capacity advantage is 90.10 0.20 0.30 0.40 0.50 0.60  
+
+> Target hit-rate SLO, η
+> 0123456
+> Wall-Clock Time (sec)
+
+Figure 5: GAMP execution-overhead comparison on META Trace 1. The figure reports wall-clock time at the selected minimum fixed Cache Capacity values. Since all policies process the same request trace and therefore the same number of requests, total wall-clock time provides a fair comparison of computational overhead; equivalently, average processing time per request is obtained by dividing each reported wall-clock time by the common request count. Across the shown targets, GAMP has lower overhead than ARC-SIEVE, 2Q, 2Q-SIEVE, S3-FIFO, and S3-FIFO-SIEVE. achieved without making the implementation the slowest option in the comparison. 
+
+## 5.2 META Trace 2 
+
+Fig. 6 shows a much harder provisioning regime on META Trace 2 than on META Trace 1. The measured 
+
+B⋆(η) values rise by several orders of magnitude as the target increases, and the curve crosses the 0 .1%-of-unique-objects reference between η = 0 .30 and η = 0 .40. Thus, high hit-rate SLOs require caching a large resident object set on this trace. This behavior is consistent with a flatter popularity distribution. Within this measured provisioning task, GAMP is tied with the best policy at the lowest target and then requires the least Cache Capacity for the remaining targets. 
+
+## 5.3 META Trace 3 
+
+Fig. 7 provides a second high-scale META-trace case. The low-SLO region again has small absolute capacity requirements, so the policy differences are operationally limited there. Once the target reaches the mid-to-high range, the bars move from tens or hundreds of objects to thousands, then millions of objects. This should be interpreted as an SLO sensitivity result: a small increase in the required hit rate can imply a large increase in provisioned cache capacity. The figure does not by itself identify the cause of that sensitivity, but it shows where policy choice becomes economically important. In that regime, GAMP remains among the lowest-capacity choices, including the best result at the higher targets. 
+
+## 5.4 Synthetic Traces 
+
+Fig. 8 complements the META traces with a controlled non-stationary workload. At low targets, the required cache sizes are close to the bottom of the tested range, so policy differences are small in absolute terms. Once the target exceeds η = 0 .60, the required capacity increases sharply, and the policy choice again becomes a provisioning decision rather than a minor implementation detail. GAMP remains in the low-capacity group across this harder regime, supporting the same conclusion observed on the META traces. The histogram for the second synthetic trace is very similar to Fig. 8. Therefore, we omit the standalone plot and instead include both synthetic traces in Fig. 9 below. Despite the tenfold difference in catalog size, the two synthetic traces exhibit similar relative policy performance. 10 0.10 0.20 0.30 0.40 0.50 0.60 
+
+# Target hit-rate SLO, η
+
+## 10 1
+
+## 10 3
+
+## 10 5
+
+## 10 7
+
+> Minimum cache capacity  B *(η) [objects]
+
+# META Trace 2 
+
+Total unique objects 0.1% of unique objects Figure 6: Minimum fixed Cache Capacity on META Trace 2. Each bar reports B⋆(η), counted in objects, for one evaluated policy at a target object hit-rate SLO. The vertical axis is logarithmic so that low- and high-target regimes can be compared in the same panel. 
+
+## 5.5 Cross-Trace Comparison 
+
+Fig. 9 compares the provisioning requirements of the five workloads under the same target hit-rate SLO. The large variation in B⋆ reflects differences in request concentration and effective working-set size. When object popularity is highly concentrated, a relatively small cache can retain the frequently requested objects and achieve the target hit rate. In contrast, a flatter popularity distribution spreads requests across a larger working set and therefore requires substantially more cache capacity to satisfy the same SLO. Accordingly, META Trace 2 requires the largest cache capacities, followed by META Trace 3, whereas META Trace 1 and the two synthetic traces require considerably smaller capacities at η = 0 .50. Notably, although Synthetic Trace 2 contains ten times as many objects as Synthetic Trace 1, their required capacities at this target are nearly identical, indicating that catalog size alone does not determine B⋆; the concentration of requests within the catalog is also critical. Despite these workload-dependent differences, GAMP requires the minimum B⋆
+
+on all five traces, indicating that its capacity advantage persists across workloads with substantially different provisioning requirements. 
+
+## 5.6 Traditional Fixed-Capacity Comparison 
+
+The preceding experiments evaluate cache provisioning by determining the minimum capacity B⋆ required to satisfy a target hit rate. We complement that analysis with the traditional fixed-capacity comparison, in which every policy receives the same cache capacity B and is evaluated by the resulting object hit rate. This comparison represents deployments in which the cache budget has already been selected, for example because of hardware, memory, or operational constraints, and the remaining question is which policy uses that fixed capacity most effectively. Fig. 10 reports this comparison for META Trace 1. The left panel evaluates all eleven policies at cache capacities equal to 0 .01%, 0 .1%, 1%, and 10% of the distinct-object population. As expected, the hit rate increases with cache capacity for every policy. However, GAMP achieves the highest observed hit rate at each evaluated capacity, as indicated by the hatched bars. Thus, GAMP’s advantage in the minimum-B⋆
+
+experiments is not solely a consequence of the capacity search procedure: it also remains the strongest policy 11 0.10 0.20 0.30 0.40 0.50 0.60 
+
+# Target hit-rate SLO, η
+
+## 10 1
+
+## 10 3
+
+## 10 5
+
+## 10 7
+
+> Minimum cache capacity  B *(η) [objects]
+
+# META Trace 3 
+
+Total unique objects 0.1% of unique objects Figure 7: Minimum fixed Cache Capacity on META Trace 3. Each bar reports B⋆(η), counted in objects, for one evaluated policy at a target object hit-rate SLO. The logarithmic vertical axis emphasizes how quickly capacity requirements grow as the target hit rate increases. when all policies are given an identical cache budget. Because the differences among several policies are difficult to distinguish in the grouped capacity sweep, the right panel provides an expanded policy-by-policy view at B = 0 .1%. At this commonly used fixed-capacity operating point, GAMP again achieves the highest object hit rate. This traditional comparison therefore complements the minimum-capacity results: the latter measures provisioning efficiency for a target performance level, whereas Fig. 10 measures the performance obtained from an already provisioned cache. We also performed the same fixed-capacity comparison on META Traces 2 and 3 and both synthetic traces for B ∈ { 0.01% , 0.1% , 1% , 10% }. For each evaluated workload, GAMP attains the highest hit rate at all fixed-capacity settings. 
+
+# 6 Discussion: Practical Capacity Provisioning and Pricing at the Edge 
+
+TABLE III 
+
+Representative edge and near-edge resource prices. Exact availability and prices may depend on region and service configuration.                            
+
+> Service Example allocation and price Billing unit AWS Wavelength EC2 4 GB: $0.056/hour; 16 GB: $0.224/hour instance-hour [2] AWS Wavelength EBS provisioned volume: about $0.15/GB-month GB-month [2] Akamai shared CPU 1 GB RAM, 1 vCPU, 25 GB SSD: $5/month or $0.0075/hour VM-month/hour [1] Akamai dedicated CPU 4 GB RAM, 2 vCPUs, 40 GB SSD: $36/month or $0.05/hour VM-month/hour [1] Akamai high memory 24 GB RAM, 2 vCPUs, 20 GB SSD: $60/month or $0.09/hour VM-month/hour [1] Cloudflare Workers 128 MB/isolate; 30M CPU-ms included; $0.02/million CPU-ms after that CPU-ms [13] Cloudflare Workers KV 1 GB stored data included; $0.50/GB-month after that GB-month + ops [12]
+
+The above evaluations report resident Cache Capacity B in objects. With variable-length objects, phys-ical capacity is measured in bytes and depends on the object lengths. Therefore, translating object-count reductions to byte-scale savings is approximate and depends on the workload (trace). 12 0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 
+
+# Target hit-rate SLO, η
+
+10 0
+
+10 1
+
+10 2
+
+10 3
+
+10 4
+
+10 5
+
+> Minimum cache capacity  B *(η) [objects]
+
+# Synthetic Trace 1 
+
+Total unique objects 0.1% of unique objects Figure 8: Minimum fixed cache capacity on Synthetic Trace 1. Each bar reports B⋆(η), counted in objects, for one evaluated policy at a target object hit-rate SLO. The synthetic trace includes higher target values, 
+
+η = 0 .70, 0 .80, and 0 .90, to stress the policies under stricter provisioning requirements. The mapping from physical capacity to monetary cost is also deployment-specific. Edge and near-edge platforms expose different resource models, including virtual machines with bundled RAM, compute, and local storage; serverless execution environments with fixed per-isolate memory limits; and managed storage services billed according to stored data and operations. Table 3 gives representative public pricing examples. These offerings are not directly interchangeable; rather, they illustrate that the resource represented by B
+
+may be provisioned and billed differently across deployment architectures. In particular, reducing B does not necessarily reduce the provider bill proportionally: the deployment may remain in the same tier, although memory or storage is freed. Direct monetary saving occurs when the reduction permits a smaller tier, removes an instance or replica, or decreases usage-metered storage. Using the two-terabyte saving discussed in Section 4.3, the AWS Wavelength EBS example price in Table 3 gives about 2 × 1024 × $0 .15 ≈ $307 per cache replica per month, before replication, operations, and regional price variation. Thus, P = B is a provider-independent resource-cost proxy; an exact monetary function 
+
+P (B, E ) depends on the deployment platform, resource type, replication level, and pricing tier. Nevertheless, a memory resource that is shared by different user services forming a system may overall perform better if the cache process occupies less memory, thus making more memory available to the other services, even if this does not result in a cost-savings (recall the related discussion in Section 1). 
+
+# 7 Conclusions and Future Work 
+
+For different operator/user-specified hit rates, we evaluated several pure and segmented policies in terms of their cost, particularly their required capacity (amount of memory), but also their computational complexity. This approach better aligns with how users/operators engage the cloud, particularly the edge or near-edge cloud for the context of a content cache. We also proposed a hybrid-segmented policy GAMP and a causal segment-ratio adaptation rule for responding to the non-stationary most-popular (i.e., working) set of objects. The performance study was conducted on three qualitatively different, week-long benchmark META traces and two controlled non-stationary synthetic traces. GAMP was shown to have the least cache capacity requirement across wide ranges of user-specified hit-rates and query workloads, with competitive 13 META Trace 1 META Trace 2 META Trace 3 Synthetic Trace 1 Synthetic Trace 2 
+
+Trace 
+
+> 10 1
+> 10 2
+> 10 3
+> 10 4
+> 10 5
+> 10 6
+> Minimum cache capacity  B * [objects]
+
+Required cache capacity at target hit-rate SLO η = 0.50 Figure 9: Cross-trace comparison of the minimum cache capacity B⋆ required to satisfy the target hit-rate SLO η = 0 .50. Each group corresponds to one of the five workloads, and the bars represent the eleven evaluated caching policies. The vertical axis is logarithmic because the required capacities differ by several orders of magnitude across the workloads. Policy colors are consistent with the preceding figures, and hatched bars identify the policy requiring the minimum cache capacity. computational overhead per query. The foregoing policies are readily adapted to the case of variable-length objects where cache capacity will thus be measured in a unit/quanta of memory, e.g., megabytes. (Recall the footnote at the end of Section 3.1.) One basic approach is to scale-down by its length ℓ the eviction-rank ρ of a cached object, i.e., ρ/ℓ .Thus, if there are two objects of very different lengths but nearly equal rank, the longer object is evicted first. In future work, we will produce a similar performance study for such policies. In future work, we will also produce a performance study wherein the cache capacity is also dynamically adapted. Here we naturally expect the time-average of a good approach will be slightly larger than the “non-causal” capacity minima reported above, but the variance will, however, depend on the dynamism of the working set. 
+
+# References 
+
+[1] Akamai Technologies, Inc., “Compute instance plan types,” [Online]. Available: https://techdocs. akamai.com/cloud-computing/docs/compute-instance-plan-types . Accessed: Jul. 31, 2026. [2] Amazon Web Services, Inc., “AWS Wavelength pricing,” [Online]. Available: https://aws.amazon. com/wavelength/pricing/ . Accessed: Jul. 31, 2026. [3] B. Atikoglu, Y. Xu, E. Frachtenberg, S. Jiang, and M. Paleczny, “Workload analysis of a large-scale key-value store,” in Proc. ACM SIGMETRICS , 2012, pp. 53–64 [4] A. Balamash and M. Krunz, “An overview of web caching replacement algorithms,” IEEE Communi-cations Surveys & Tutorials , vol. 6, no. 2, 2004. [5] N. Beckmann, H. Chen, and A. Cidon, “LHD: Improving cache hit rate by maximizing hit density,” in 
+
+Proc. USENIX NSDI , 2018, pp. 389–403. [6] B. Berg, D. S. Berger, S. McAllister, I. Grosof, S. Gunasekar, J. Lu, M. Uhlar, J. Carrig, N. Beckmann, M. Harchol-Balter, and G. R. Ganger, “The CacheLib caching engine: Design and experiences at scale,” in Proc. USENIX OSDI , 2020, pp. 753–768. 14 B = 0.01% B = 0.1% B = 1% B = 10%      
+
+> Cache Capacity
+> 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7
+> Object Hit Rate
+> META Trace 1: hit rate by cache capacity
+> 0.50 0.52 0.54 0.56 0.58 0.60
+> Hit Rate
+> LRU FIFO SIEVE ARC ARC-SIEVE 2Q SLRU 2Q-SIEVE S3-FIFO S3-FIFO-SIEVE GAMP 0.565 0.558 0.573 0.574 0.575 0.578 0.574 0.579 0.578 0.578 0.582
+> META Trace 1: hit rate by policy at B = 0.1%
+
+Figure 10: Traditional fixed-cache-capacity comparison on META Trace 1. The left panel reports the object hit rate of each policy when all policies are assigned the same cache capacity, B ∈ { 0.01% , 0.1% , 1% , 10% },expressed as a percentage of the distinct-object population. The right panel enlarges the comparison at 
+
+B = 0 .1%, where the small differences among policies are more readily visible. In each comparison, hatching identifies the policy with the highest observed hit rate. GAMP achieves the highest hit rate at every evaluated capacity, showing that its minimum-capacity advantage is consistent with the conventional fixed-budget evaluation. [7] D. S. Berger, R. K. Sitaraman, and M. Harchol-Balter, “AdaptSize: Orchestrating the hot object memory cache in a content delivery network,” in Proc. USENIX NSDI , 2017, pp. 483–498. [8] D. S. Berger, B. Berg, T. Zhu, S. Sen, and M. Harchol-Balter, “RobinHood: Tail latency aware caching: Dynamic reallocation from cache-rich to cache-poor,” in Proc. USENIX OSDI , 2018, pp. 195–212. [9] L. Breslau, P. Cao, L. Fan, G. Phillips, and S. Shenker, “Web caching and Zipf-like distributions: Evidence and implications,” in Proc. IEEE INFOCOM , 1999. [10] H. Che, Y. Tung, and Z. Wang, “Hierarchical web caching systems: Modeling, design and experimental results,” IEEE Journal on Selected Areas in Communications , vol. 20, no. 7, 2002. [11] X. Chen, L. Zhu, L. Zheng, L. Cheng, J. Zhang, X. Yang, D. Zhang, X. Liu, X. Lu, X. Yi, I. Khalil, A. Y. Zomaya, H. Zhou, and C. Wu, “TurboCache: Empowering switch-accelerated key-value caches with accurate and fast cache updates,” in Proc. IEEE INFOCOM , 2025, pp. 1–10. [12] Cloudflare, Inc., “Workers KV pricing,” [Online]. Available: https://developers.cloudflare.com/ kv/platform/pricing/ . Accessed: Jul. 31, 2026. [13] Cloudflare, Inc., “Cloudflare Workers limits,” [Online]. Available: https://developers.cloudflare. com/workers/platform/limits/ . Accessed: Jul. 31, 2026. [14] J. Dallot, A. Jafari Fesharaki, M. Pacut, and S. Schmid, “Dependency-aware online caching,” in Proc. IEEE INFOCOM , 2024. [15] A. Dan and D. Towsley, “An approximate analysis of the LRU and FIFO buffer replacement schemes,” 
+
+SIGMETRICS Performance Evaluation Review , vol. 18, pp. 143–152, 1990. [16] M. Dehghan, W. Chu, P. Nain, and D. Towsley, “Sharing LRU cache resources among content providers: A utility-based approach,” IEEE/ACM Transactions on Networking , vol. 27, no. 2, 2019. [17] P. J. Denning and S. C. Schwartz, “Properties of the working-set model,” Communications of the ACM ,vol. 15, no. 3, pp. 191–198, 1972. 15 B = 0.01% B = 0.1% B = 1% B = 10% 
+
+> Cache Capacity
+> 0246810 12
+> Wall-Clock Time (seconds)
+
+META Trace 1: wall-clock time by cache capacity Figure 11: Wall-clock time for the traditional fixed-cache-capacity comparison on META Trace 1. Each policy processes the complete trace at the same cache capacities, B ∈ { 0.01% , 0.1% , 1% , 10% }, expressed as percentages of the distinct-object population. Policies follow the same left-to-right order and color mapping as in Fig. 10. Wall-clock time measures the total execution time for processing the trace and serves as a proxy for computational overhead. [18] G. Einziger, R. Friedman, and B. Manes, “TinyLFU: A highly efficient cache admission policy,” ACM Transactions on Storage , vol. 13, no. 4, 2017. [19] S. Fan, I.-H. Hou, and V. S. Mai, “Dynamic regret of randomized online service caching in edge com-puting,” in Proc. IEEE INFOCOM , 2023. [20] G. Hasslinger, M. Okhovatzadeh, K. Ntougias, F. Hasslinger, and O. Hohlfeld, “An overview of analysis methods and evaluation results for caching strategies,” Computer Networks , vol. 228, 2023. [21] S. Ioannidis and E. Yeh, “Adaptive caching networks with optimality guarantees,” in Proc. ACM SIG-METRICS , 2016, pp. 113–124. [22] S. Jiang and X. Zhang, “LIRS: An efficient low inter-reference recency set replacement policy to improve buffer cache performance,” in Proc. ACM SIGMETRICS , 2002, pp. 31–42. [23] T. Johnson and D. Shasha, “2Q: A low overhead high performance buffer management replacement algorithm,” in Proc. VLDB , 1994, pp. 439–450. [24] R. Karedla, J. S. Love, and B. G. Wherry, “Caching strategies to improve disk system performance,” 
+
+Computer , vol. 27, no. 3, pp. 38–46, 1994. [25] X. Liu, B. Atalar, X. Dai, J. Zuo, S. Wang, J. C. S. Lui, W. Chen, and C. Joe-Wong, “Semantic caching for low-cost LLM serving: From offline learning to online adaptation,” in Proc. IEEE INFOCOM , 2026. [26] N. Megiddo and D. S. Modha, “ARC: A self-tuning, low overhead replacement cache,” in Proc. USENIX FAST , pp. 115–130, 2003. [27] Meta Platforms, Inc., “Evaluating SSD hardware for Facebook workloads,” CacheLib documentation, 2026. [Online]. Available: https://cachelib.org/docs/Cache_Library_User_Guides/Cachebench_ FB_HW_eval/ . Accessed: Apr. 30, 2026. [28] L. Pan, L. Wang, S. Chen, and F. Liu, “Retention-aware container caching for serverless edge comput-ing,” in Proc. IEEE INFOCOM , 2022, pp. 1069–1078. 16 [29] Q. Pu, H. Li, M. Zaharia, A. Ghodsi, and I. Stoica, “FairRide: Near-optimal, fair cache sharing,” in 
+
+Proc. USENIX NSDI , 2016. [30] G. Quan, X. Lin, and X. Wang, “Optimal caching for dynamic content through strategic information sharing,” in Proc. IEEE INFOCOM , 2026. [31] L. V. Rodriguez, F. Yusuf, S. Lyons, E. Paz, R. Rangaswami, J. Liu, M. Zhao, and G. Narasimhan, “Learning cache replacement with CACHEUS,” in Proc. USENIX FAST , 2021, pp. 341–354. [32] E. Rosensweig, J. Kurose and D. Towsley, “Approximate models for general cache networks,” in Proc. IEEE INFOCOM , March 2010. [33] Z. Song, D. S. Berger, K. Li, and W. Lloyd, “Learning relaxed Belady for content distribution network caching,” in Proc. USENIX NSDI , 2020, pp. 529–544. [34] H. Xiao, J. Li, Y. Ren, R. Wang, and X. Zhang, “CDCache: Space-efficient flash caching via compression-before-deduplication,” in Proc. IEEE INFOCOM , 2024, pp. 861–870. [35] J. Yang, Z. Mao, Y. Yue, and K. V. Rashmi, “GL-Cache: Group-level learning for efficient and high-performance caching,” in Proc. USENIX FAST , 2023, pp. 115–134. [36] J. Yang, Y. Yue, and K. V. Rashmi, “A large scale analysis of hundreds of in-memory cache clusters at Twitter,” in Proc. USENIX OSDI , 2020, pp. 191–208. [37] J. Yang, Y. Yue, and K. V. Rashmi, “Segcache: A memory-efficient and scalable in-memory key-value cache for small objects,” in Proc. USENIX NSDI , 2021, pp. 503–518. [38] J. Yang, Y. Zhang, Z. Qiu, Y. Yue, and K. V. Rashmi, “FIFO queues are all you need for cache eviction,” in Proc. ACM SOSP , 2023, pp. 130–149. [39] C. Zhang, H. Tan, G. Li, Z. Han, S. H.-C. Jiang, and X. Li, “Online file caching in latency-sensitive systems with delayed hits and bypassing,” in Proc. IEEE INFOCOM , 2022, pp. 1059–1068. [40] J. Zhang and E. Yeh, “Congestion-aware routing and content placement in elastic cache networks,” in 
+
+Proc. IEEE INFOCOM , 2024, pp. 1471–1480. [41] Q. Zhang, P. A. Bernstein, D. S. Berger, and B. Chandramouli, “Redy: Remote dynamic memory cache,” arXiv:2112.12946, 2021. [42] Y. Zhang, J. Yang, Y. Yue, Y. Vigfusson, and K. V. Rashmi, “SIEVE is simpler than LRU: An efficient turn-key eviction algorithm for web caches,” in Proc. USENIX NSDI , 2024. [43] T. Zuo, X. Tang, and B.-S. Lee, “A randomized caching algorithm for distributed data access,” in Proc. IEEE INFOCOM , 2024, pp. 851–860. 17

@@ -1,0 +1,361 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-11T21:12:25.955296+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 4,
+    "deep_cap": 6,
+    "deep_selected": 4,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2608.08994v1",
+      "source": "arxiv",
+      "title": "Guardian Crawler: Retrieval-First Knowledge Discovery with Bounded LLM Augmentation for Noisy Web Intelligence",
+      "abstract": "Retrieving relevant evidence from noisy web data is challenging, particularly in sensitive domains containing incomplete reports, heterogeneous language, and irrelevant content. We present Guardian Crawler, a reproducible retrieval-first testbed for controlled experiments on knowledge discovery and evidence-grounded summarization over synthetic web-like corpora. The architecture combines BM25 retrieval with risk-aware, embedding-augmented, and hybrid reranking, followed by constrained retrieval-augmented generation with explicit document citations. Experiments on a synthetic 900-document corpus and 10 queries produced the highest descriptive retrieval scores under risk-based reranking, with P@10 = 1.00 and NDCG@10 = 0.94, compared with 0.94 and 0.81 for BM25. The best hybrid and BM25+Semantic configurations reached NDCG@10 values of 0.94 and 0.88, respectively. All 41 evaluable generated bullets passed the lexical coverage threshold; an automated LLM judge classified 36 as supported, one as partially supported, and four as unsupported. These results demonstrate the feasibility of Guardian Crawler as a controlled testbed but do not establish statistical superiority, human-validated faithfulness, or transfer to live-web investigative environments.",
+      "authors": [
+        "Joshua Castillo",
+        "Santosh Nukavarapu",
+        "Ravi Mukkamala"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.AI",
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-08-10T01:28:11+00:00",
+      "link": "https://arxiv.org/pdf/2608.08994v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Reproducible testbed explicitly aligns with retrieving reproducible research papers with open source code",
+      "llm_evidence_cn": "可复现测试平台直接对应检索含开源代码的可复现研究论文的需求",
+      "llm_evidence": "可复现测试平台直接对应检索含开源代码的可复现研究论文的需求",
+      "canonical_evidence": "可复现测试平台直接对应检索含开源代码的可复现研究论文的需求",
+      "llm_tldr_en": "Guardian Crawler is a reproducible retrieval-first testbed combining BM25 with reranking and constrained RAG for evidence-grounded summarization on noisy web corpora, achieving high retrieval scores.",
+      "llm_tldr_cn": "针对噪声网络数据中的证据检索与摘要难题，本文提出可复现的检索优先测试平台Guardian Crawler。该方法将BM25检索与风险感知、嵌入增强和混合重排序结合，并采用带引用的受限检索增强生成。在合成900篇文档和10条查询上，风险感知重排序获得P@10为1.00和最高的NDCG@1，验证了其有效性与可复现性，为噪声域知识发现提供了开源基准。",
+      "llm_tldr": "针对噪声网络数据中的证据检索与摘要难题，本文提出可复现的检索优先测试平台Guardian Crawler。该方法将BM25检索与风险感知、嵌入增强和混合重排序结合，并采用带引用的受限检索增强生成。在合成900篇文档和10条查询上，风险感知重排序获得P@10为1.00和最高的NDCG@1，验证了其有效性与可复现性，为噪声域知识发现提供了开源基准。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.09308v1",
+      "source": "arxiv",
+      "title": "Beyond the Limits: Flexible and Congestion-Aware Cluster Scheduling for the Cloud",
+      "abstract": "Workload scheduling in cloud environments often relies on simplistic assumptions about application resource needs and hardware utilization. Overlooking application-level performance objectives and hardware resource contention that leads to inefficient resource usage and degraded performance. This paper addresses two key limitations of current approaches. First, unnecessarily strict enforcement of service level objectives (SLOs) often leads to resource underutilization and poor energy efficiency. Second, lack of congestion awareness in shared resources such as last-level cache (LLC) and memory bandwidth. In this paper, we propose two complementary strategies to address these limitations: (i) integrating soft SLO limits that allow controlled overcommitment and tolerate minor, transient violations to improve cluster efficiency, and (ii) introducing resource-aware scheduling and rescheduling based on real-time congestion insights for shared resources such as last-level cache (LLC) and memory bandwidth. Our results show that soft SLO limits reduce corrective rescheduling actions by 49% compared to hard-limit approaches while maintaining acceptable performance guarantees. Additionally, resource-aware scheduling decreases node-level congestion by 8% and further mitigates SLO violations, demonstrating the effectiveness of incorporating application-level flexibility and hardware-level insights into scheduling and rescheduling decisions.",
+      "authors": [
+        "Oliver Larsson",
+        "Thijs Metsch",
+        "Cristian Klein",
+        "Erik Elmroth"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-08-10T08:53:41+00:00",
+      "link": "https://arxiv.org/pdf/2608.09308v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Cluster scheduling for cloud data centers, directly addresses task scheduling with congestion awareness",
+      "llm_evidence_cn": "面向云数据中心的集群调度，直接涉及任务调度与拥塞感知",
+      "llm_evidence": "面向云数据中心的集群调度，直接涉及任务调度与拥塞感知",
+      "canonical_evidence": "面向云数据中心的集群调度，直接涉及任务调度与拥塞感知",
+      "llm_tldr_en": "Proposes soft SLO limits and congestion-aware scheduling for cloud clusters to improve utilization and energy efficiency.",
+      "llm_tldr_cn": "针对云环境集群调度中SLO严格导致资源利用率低、共享资源拥塞导致性能下降的问题，该论文提出两种互补策略：整合软SLO限制以允许受控超用，并引入对末级缓存和内存带宽等共享资源的拥塞感知。实验表明所提方法在满足应用性能目标的同时能提高资源利用率与能效。该工作为数据中心任务调度提供了弹性与拥塞感知的新思路。",
+      "llm_tldr": "针对云环境集群调度中SLO严格导致资源利用率低、共享资源拥塞导致性能下降的问题，该论文提出两种互补策略：整合软SLO限制以允许受控超用，并引入对末级缓存和内存带宽等共享资源的拥塞感知。实验表明所提方法在满足应用性能目标的同时能提高资源利用率与能效。该工作为数据中心任务调度提供了弹性与拥塞感知的新思路。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.08883v1",
+      "source": "arxiv",
+      "title": "AquiLLM: An Architecture for Supporting Tacit Knowledge Capture in Research Groups",
+      "abstract": "Recent advances in retrieval-augmented generation (RAG) and large language models (LLMs) enable researchers to integrate AI into scientific workflows. However, using proprietary commercial AI systems raises concerns about transparency, reproducibility and privacy, which are essential for scientific practices. To this end, AquiLLM was developed as an open-source modular RAG-LLM framework using open-weight models, designed to support research groups in capturing tacit knowledge. In this work, we present a series of architectural improvements and feature enhancements to AquiLLM, including local embedding and reranking, multimodal capabilities, OpenAI-compatible inference interfaces, user interface improvements, semantic and episodic memory capabilities, and skills support. These enhancements were informed by discussions with domain experts, including astrophysicists and environmental researchers, and represent a step toward AI systems more closely aligned with scientific research practices.",
+      "authors": [
+        "Jack Stark",
+        "Srinath Saikrishnan",
+        "Vikram Seenivasan",
+        "Bernie Boscoe",
+        "Andrew Lizarraga",
+        "Tuan Do"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-09T19:45:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.08883v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Open-source modular RAG-LLM framework, explicitly open-source",
+      "llm_evidence_cn": "开源模块化RAG-LLM框架，明确开源",
+      "llm_evidence": "开源模块化RAG-LLM框架，明确开源",
+      "canonical_evidence": "开源模块化RAG-LLM框架，明确开源",
+      "llm_tldr_en": "AquiLLM is an open-source modular RAG-LLM framework with local embedding, reranking, and memory enhancements for reproducible research workflows.",
+      "llm_tldr_cn": "针对科研中使用专有AI系统带来的可复现性与隐私问题，该论文提出开源模块化RAG-LLM框架AquiLLM，采用开放权重模型，支持本地嵌入与重排、多模态、语义与情景记忆等特性。框架旨在辅助科研团队捕获隐性知识。通过开源实现增强透明性和可复现性。该工作为科研AI工作流提供了可定制的基础设施。",
+      "llm_tldr": "针对科研中使用专有AI系统带来的可复现性与隐私问题，该论文提出开源模块化RAG-LLM框架AquiLLM，采用开放权重模型，支持本地嵌入与重排、多模态、语义与情景记忆等特性。框架旨在辅助科研团队捕获隐性知识。通过开源实现增强透明性和可复现性。该工作为科研AI工作流提供了可定制的基础设施。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.08170v1",
+      "source": "arxiv",
+      "title": "Beyond the Grid: Cost, Carbon, and Capital Requirements of On-Site Power Technologies for AI Data Centers",
+      "abstract": "Interconnection queues, not electricity prices, now govern where data centers can be built, and the standard levelized-cost comparison answers a question no developer faces: it assumes a load profile, freezes the grid price while modeling the demand that moves it, and quotes busbar costs a facility cannot buy. This paper evaluates nine on-site supply technologies against a delivered grid whose price is endogenous to projected data-center demand, on a complete-site basis that retains standby charges, with measured GPU training load, delivered fuel prices, production-pathway carbon, and statutory 45V and 48E incentive mechanics. Nothing beats the wire: gas combined cycle produces at 47 USD/MWh but costs about 114 USD per megawatt-hour of complete site energy against a 92 USD grid; four-hour storage is physically capped near 18 percent of annual energy and, charged at the margin, dirtier than the grid; hydrogen from grid-priced power fails on cost and carbon together. An investment inversion converts these findings into capital terms: conversion-hardware learning buys nothing, because free hardware still exceeds the grid for every low-carbon arm, while global electrolyser deployment on sited sub-20 USD/MWh power brings PEM hydrogen power to about 2.2 times the grid at 300 billion USD and 1.9 times at 1 trillion USD (2.7 and 2.3 for the hydrogen engine), with a carbon reduction of roughly 85 percent (6.8-fold) against grid-power production. Grid parity is not purchasable at any budget. On-site supply is an access and depth product; most current investment targets the wrong term.",
+      "authors": [
+        "Eliseo Curcio"
+      ],
+      "primary_category": "econ.EM",
+      "categories": [
+        "econ.EM",
+        "eess.IV"
+      ],
+      "published": "2026-08-08T14:56:44+00:00",
+      "link": "https://arxiv.org/pdf/2608.08170v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Directly about AI data centers and power technologies; matches composite domain; likely has modeling code",
+      "llm_evidence_cn": "直接研究AI数据中心与供电技术，匹配综合领域，可能带有建模代码",
+      "llm_evidence": "直接研究AI数据中心与供电技术，匹配综合领域，可能带有建模代码",
+      "canonical_evidence": "直接研究AI数据中心与供电技术，匹配综合领域，可能带有建模代码",
+      "llm_tldr_en": "Analyzes on-site power technologies for AI data centers under endogenous grid prices, showing grid power remains cheaper than on-site generation. Uses measured GPU load and policy incentives for a complete-site cost assessment.",
+      "llm_tldr_cn": "数据中心建设如今受制于电网并网排队而非单纯电价，传统成本比较方法忽略了这一现实。该研究以实测GPU负载、交付燃料价格及政策激励为输入，对九种现场供电技术与内生电价下的网电进行完整场地评估。结果显示燃气联合循环发电虽度电成本较低，但包含备用费用等后并不划算。这为AI数据中心供电决策提供了重要参考，可能附带模型代码。",
+      "llm_tldr": "数据中心建设如今受制于电网并网排队而非单纯电价，传统成本比较方法忽略了这一现实。该研究以实测GPU负载、交付燃料价格及政策激励为输入，对九种现场供电技术与内生电价下的网电进行完整场地评估。结果显示燃气联合循环发电虽度电成本较低，但包含备用费用等后并不划算。这为AI数据中心供电决策提供了重要参考，可能附带模型代码。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.03794v1",
+      "source": "arxiv",
+      "title": "Evaluating LLMs in Database Scenarios: A Lifecycle Benchmark for Assessing Their Potential in Core Database Tasks",
+      "abstract": "Large Language Models (LLMs) are transforming database interaction paradigms, evolving from simple query translators to autonomous database administrators (DBAs). However, current evaluation benchmarks remain disproportionately fixated on Text-to-SQL tasks, neglecting the holistic Database Lifecycle-from initial schema design to post-deployment maintenance. This narrow focus fails to capture the diverse capabilities required for real-world database management. To bridge this gap, we introduce DBLifeBench, the first benchmark to evaluate LLMs across five critical lifecycle phases: Design, Implementation, Operation, Debugging, and Maintenance. Furthermore, addressing the cognitive mismatch between ambiguous natural language and complex SQL logic, we propose Progressive-Text2SQL, a novel task utilizing structured reasoning graphs to mimic human iterative problem-solving. Our extensive evaluation reveals a critical insight: while general-purpose models demonstrate balanced performance, specialized Text-to-SQL models suffer from ``catastrophic forgetting'' in non-coding phases like design and maintenance. DBLifeBench serves as a foundational step toward evaluating and building true full-stack database intelligence.",
+      "authors": [
+        "Shunfan Zheng",
+        "Dongsheng Shi",
+        "Yue Li",
+        "Xin Yi",
+        "Linlin Wang",
+        "Gerard de Melo"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-04T15:10:09+00:00",
+      "link": "https://arxiv.org/pdf/2608.03794v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Introduces DBLifeBench, a benchmark likely accompanied by source code",
+      "llm_evidence_cn": "提出DBLifeBench基准，通常附带源代码",
+      "llm_evidence": "提出DBLifeBench基准，通常附带源代码",
+      "canonical_evidence": "提出DBLifeBench基准，通常附带源代码",
+      "llm_tldr_en": "Introduces DBLifeBench, the first benchmark evaluating LLMs across five database lifecycle phases, filling the gap beyond Text-to-SQL.",
+      "llm_tldr_cn": "针对现有LLM数据库评估过于聚焦Text-to-SQL而忽视完整数据库生命周期的问题，该论文提出DBLifeBench基准，覆盖设计、实现、运维、调试与维护五个阶段，评估LLM在核心数据库任务中的实际能力。该基准填补了数据库生命周期评估的空白，并为LLM在数据库领域的研究提供了测试平台。",
+      "llm_tldr": "针对现有LLM数据库评估过于聚焦Text-to-SQL而忽视完整数据库生命周期的问题，该论文提出DBLifeBench基准，覆盖设计、实现、运维、调试与维护五个阶段，评估LLM在核心数据库任务中的实际能力。该基准填补了数据库生命周期评估的空白，并为LLM在数据库领域的研究提供了测试平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.05478v1",
+      "source": "arxiv",
+      "title": "GenGA: Editable and Data-Grounded Graphical Abstract Generation for Academic Papers",
+      "abstract": "Graphical Abstracts (GAs) visually summarize the key findings of academic papers, playing a crucial role in facilitating the understanding of research content. Recently, advancements in vision-language models and image generation models have enabled the automatic generation of scientific figures based on paper content. However, most conventional methods output the generated results as raster graphics, making post-editing (e.g., text modification and layout changes) highly difficult. This poses a significant challenge, as they are unsuitable for the iterative figure revision process inherent in paper writing and peer review. To tackle these challenges, we define the novel task of generating editable GAs from paper content and propose GenGA, a new GA generation framework that directly produces figures in vector format. By generating figures as a collection of vector elements with a hierarchical structure, GenGA produces outputs that can be seamlessly imported into existing drawing tools for intuitive, element-level editing. Furthermore, we introduce the Structural Independence Coefficient (SIC), a metric that quantifies the editing simplicity of a figure based on the degree to which local modifications propagate to other elements. Experimental results show that GenGA achieves superior editing simplicity compared to conventional methods, and even surpasses human-authored GAs in conciseness and semantic alignment. We also validate SIC as an effective metric correlated with manual editing costs. This study fundamentally redefines GA generation as an editable vector graphic generation problem grounded in the practical workflows of researchers, significantly promoting effective scientific communication.",
+      "authors": [
+        "Takuro Kawada",
+        "Shunsuke Kitada",
+        "Hitoshi Iyatomi"
+      ],
+      "primary_category": "cs.GR",
+      "categories": [
+        "cs.GR",
+        "cs.CL",
+        "cs.CV",
+        "cs.HC",
+        "cs.LG",
+        "cs.MM"
+      ],
+      "published": "2026-08-05T23:53:02+00:00",
+      "link": "https://arxiv.org/pdf/2608.05478v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Proposes a generation framework; may have code",
+      "llm_evidence_cn": "提出生成框架，可能附带代码",
+      "llm_evidence": "提出生成框架，可能附带代码",
+      "canonical_evidence": "提出生成框架，可能附带代码",
+      "llm_tldr_en": "Unlike raster outputs, GenGA produces editable vector-like graphical abstracts grounded in paper data, supporting text and layout changes. This novel task advances automatic scientific figure generation.",
+      "llm_tldr_cn": "自动生成图形摘要常为不可编辑的光栅图，难以适应论文修改流程。GenGA提出新任务：根据论文内容生成可编辑、数据驱动的图形摘要，支持文本与布局的修改。这使得自动化图形摘要能无缝融入写作和同行评审环节。该工作为学术视觉摘要生成提供了新的方向，并可能开源模型代码。",
+      "llm_tldr": "自动生成图形摘要常为不可编辑的光栅图，难以适应论文修改流程。GenGA提出新任务：根据论文内容生成可编辑、数据驱动的图形摘要，支持文本与布局的修改。这使得自动化图形摘要能无缝融入写作和同行评审环节。该工作为学术视觉摘要生成提供了新的方向，并可能开源模型代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.07954v1",
+      "source": "arxiv",
+      "title": "KGCache: Amortized Subgraph Retrieval for KG Reasoning with LLMs",
+      "abstract": "Large language models can answer knowledge-intensive questions more reliably when they are grounded with knowledge graphs, but systems such as Think-on-Graph and Reasoning-on-Graph repeatedly query the same graph neighborhoods across different questions. In this work, we study this repeated retrieval in Knowledge Graph Question Answering~(KGQA) workloads and propose KGCache, an in-memory cache for one-hop knowledge graph neighborhoods. KGCache is designed to be compatible with both iterative traversal (ToG) and one shot planning (RoG) KGQA paradigms. KGCache is placed between the KGQA engine and the backend serving the KG, so repeated entity requests can be served from cache instead of issuing new KG queries. We evaluate KGCache on WebQSP and CWQ using LRU, LFU, and a trace-aware Oracle policy. Our analysis shows that both datasets contain substantial entity reuse among starting entities and entities reached during traversal. We also explore semantic caching for similar queries, which shows additional hit-rate gains on WebQSP and needs further accuracy testing on CWQ. Entity caching accelerates KG retrieval by up to $1.91\\times$, while semantic-context caching achieves up to $1.06\\times$ full-system speedup in the evaluated WebQSP configurations, with each hit being up to $3.73\\times$ faster.",
+      "authors": [
+        "Uros Stanic",
+        "Changcheng Yuan",
+        "Sabuj Laskar",
+        "Ariful Azad"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-08T06:36:24+00:00",
+      "link": "https://arxiv.org/pdf/2608.07954v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Caching system; likely has code",
+      "llm_evidence_cn": "缓存系统，很可能有代码",
+      "llm_evidence": "缓存系统，很可能有代码",
+      "canonical_evidence": "缓存系统，很可能有代码",
+      "llm_tldr_en": "KGCache caches one-hop KG neighborhoods to reduce repeated entity queries in KGQA workloads, improving efficiency. It is compatible with both traversal and planning based KGQA paradigms.",
+      "llm_tldr_cn": "知识图谱问答系统（如Think-on-Graph）常对相同邻域反复查询，造成冗余成本。KGCache设计了一个内存缓存层，用于存储单跳知识图谱邻域，可兼容迭代遍历与一次性规划两类KGQA范式。在WebQSP和CWQ数据集上的实验显示，它能有效减少后端查询次数。该工作为KGQA系统提供轻量级加速方法，并可能附带代码。",
+      "llm_tldr": "知识图谱问答系统（如Think-on-Graph）常对相同邻域反复查询，造成冗余成本。KGCache设计了一个内存缓存层，用于存储单跳知识图谱邻域，可兼容迭代遍历与一次性规划两类KGQA范式。在WebQSP和CWQ数据集上的实验显示，它能有效减少后端查询次数。该工作为KGQA系统提供轻量级加速方法，并可能附带代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.09260v1",
+      "source": "arxiv",
+      "title": "SafeQL: Search-based Refinement for Safe and Efficient LLM-based Text-to-SQL",
+      "abstract": "Large language models (LLMs) have advanced Text-to-SQL by enabling natural language interfaces to databases without task-specific fine-tuning. However, existing LLM-based systems remain unreliable, often generating SQL queries that are invalid under the database schema, referencing non-existent tables, attributes, functions, or values. Such errors persist because interactions with the database management system (DBMS) are typically limited to error messages, leaving it in a largely passive role during query refinement. This paper proposes SafeQL, \\textit{a search-based refinement paradigm that redefines the role of the DBMS as an active guide in the refinement process}. Instead of regenerating entire queries after execution failure, SafeQL interprets DBMS feedback to incrementally repair only the erroneous components. Each refinement step is formulated as a guided search within a \\textit{safe query space}, where candidate queries are progressively validated through DBMS execution, thereby converging to an executable query and preventing repeated regeneration of errors. Experiments on the Bird and Spider benchmarks show that SafeQL significantly improves execution accuracy and efficiency compared to regeneration-based methods.",
+      "authors": [
+        "Geonho Lee",
+        "Min-Soo Kim"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T08:16:17+00:00",
+      "link": "https://arxiv.org/pdf/2608.09260v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Proposes a system; likely has open-source implementation",
+      "llm_evidence_cn": "提出系统，可能提供开源实现",
+      "llm_evidence": "提出系统，可能提供开源实现",
+      "canonical_evidence": "提出系统，可能提供开源实现",
+      "llm_tldr_en": "SafeQL proposes a search-based refinement paradigm that turns the DBMS into an active guide for fixing invalid LLM-generated SQL, improving reliability and reducing regeneration cost.",
+      "llm_tldr_cn": "现有LLM文本到SQL系统常生成无效查询，而DBMS只被动返回错误。SafeQL定义了一种搜索式精炼范式，使DBMS成为精炼过程的主动引导者，利用执行反馈迭代修正查询。在相关基准上的实验显示其显著提升SQL的有效性和效率。该工作为构建更可靠的文本到SQL接口提供了新方法，并可能附带源代码。",
+      "llm_tldr": "现有LLM文本到SQL系统常生成无效查询，而DBMS只被动返回错误。SafeQL定义了一种搜索式精炼范式，使DBMS成为精炼过程的主动引导者，利用执行反馈迭代修正查询。在相关基准上的实验显示其显著提升SQL的有效性和效率。该工作为构建更可靠的文本到SQL接口提供了新方法，并可能附带源代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.09820v1",
+      "source": "arxiv",
+      "title": "Performance and Cost-Aware Cache Provisioning",
+      "abstract": "While traditional cache policy evaluations fix capacity - often at 0.1% of the dataset - and measure the resulting hit rate, practical edge-cloud deployments require balancing both storage and computational overhead as billed resources. Consequently, system operators frequently focus on a different objective: determining the minimum cache size needed to satisfy a specific Service-Level Objective (SLO) hit-rate. This paper explores this SLO-centric paradigm by analyzing the minimum capacity and execution time each policy requires to hit a defined target. Additionally, we show that dynamically adjusting the segment ratio in segmented policies based on historical workload patterns enhances efficiency. Through evaluations across real-world and synthetic traces, we present a novel hybrid segmented policy that reduces capacity requirements while keeping processing costs low.",
+      "authors": [
+        "Ridwanul Tanvir",
+        "George Kesidis"
+      ],
+      "primary_category": "cs.PF",
+      "categories": [
+        "cs.PF"
+      ],
+      "published": "2026-08-10T16:39:57+00:00",
+      "link": "https://arxiv.org/pdf/2608.09820v1",
+      "tags": [
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "SLO-centric cache provisioning in edge-cloud data centers; resource scheduling relevant but not task scheduling",
+      "llm_evidence_cn": "面向SLO的边缘云数据中心缓存供给，与资源调度相关但非任务调度本身",
+      "llm_evidence": "面向SLO的边缘云数据中心缓存供给，与资源调度相关但非任务调度本身",
+      "canonical_evidence": "面向SLO的边缘云数据中心缓存供给，与资源调度相关但非任务调度本身",
+      "llm_tldr_en": "This paper reframes cache evaluation as SLO-oriented provisioning: finding the minimum cache size and execution time to meet a target hit-rate, plus dynamic segment-ratio adjustment under historical workload patterns, validated on real and synthetic traces.",
+      "llm_tldr_cn": "传统缓存评测固定容量并衡量命中率，但实际边缘云部署中存储和计算都是收费资源，运营者更关注满足SLO命中率所需的最小缓存容量。本文系统分析各策略达到目标命中率所需的最小容量与执行时间，并提出依据历史负载模式动态调整分段策略比例的方法。基于真实与合成迹线的实验表明，这种SLO为中心的缓存供给框架能有效节省资源成本，为数据中心缓存资源调度提供了可借鉴的优化思路。",
+      "llm_tldr": "传统缓存评测固定容量并衡量命中率，但实际边缘云部署中存储和计算都是收费资源，运营者更关注满足SLO命中率所需的最小缓存容量。本文系统分析各策略达到目标命中率所需的最小容量与执行时间，并提出依据历史负载模式动态调整分段策略比例的方法。基于真实与合成迹线的实验表明，这种SLO为中心的缓存供给框架能有效节省资源成本，为数据中心缓存资源调度提供了可借鉴的优化思路。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

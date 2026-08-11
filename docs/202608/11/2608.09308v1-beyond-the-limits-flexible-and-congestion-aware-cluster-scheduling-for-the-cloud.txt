@@ -1,0 +1,382 @@
+Title: Beyond the Limits: Flexible and Congestion-Aware Cluster Scheduling for the Cloud
+
+URL Source: https://arxiv.org/pdf/2608.09308v1
+
+Published Time: Tue, 11 Aug 2026 02:03:13 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# Beyond the Limits: Flexible and Congestion-Aware Cluster Scheduling for the Cloud 
+
+Oliver Larsson 
+
+Dept. of Computing Science Ume˚ a University, Sweden olars@cs.umu.se 
+
+Thijs Metsch 
+
+Unaffiliated Germany tmetsch@engjoy.eu 
+
+Cristian Klein 
+
+Dept. of Computing Science Ume˚ a University, Sweden cklein@cs.umu.se 
+
+Erik Elmroth 
+
+Dept. of Computing Science Ume˚ a University, Sweden elmroth@cs.umu.se This work has been submitted for possible publication. Copyright may be transferred without notice, after which this version may no longer be accessible. 
+
+Abstract —Workload scheduling in cloud environments often relies on simplistic assumptions about application resource needs and hardware utilization. Overlooking application-level perfor-mance objectives and hardware resource contention that leads to inefficient resource usage and degraded performance. This paper addresses two key limitations of current approaches. First, unnecessarily strict enforcement of service level objectives (SLOs) often leads to resource underutilization and poor energy effi-ciency. Second, lack of congestion awareness in shared resources such as last-level cache (LLC) and memory bandwidth. In this paper, we propose two complementary strategies to address these limitations: (i) integrating soft SLO limits that allow controlled overcommitment and tolerate minor, transient viola-tions to improve cluster efficiency, and (ii) introducing resource-aware scheduling and rescheduling based on real-time congestion insights for shared resources such as last-level cache (LLC) and memory bandwidth. Our results show that soft SLO limits reduce corrective rescheduling actions by 49% compared to hard-limit approaches while maintaining acceptable performance guaran-tees. Additionally, resource-aware scheduling decreases node-level congestion by 8% and further mitigates SLO violations, demonstrating the effectiveness of incorporating application-level flexibility and hardware-level insights into scheduling and rescheduling decisions. 
+
+Index Terms —Cloud native orchestration, Kubernetes schedul-ing, Performance-aware rescheduling, Service level objectives (SLOs), Soft SLO limits, Resource-aware scheduling, Shared resource contention, Workload buoyancy 
+
+I. I NTRODUCTION 
+
+Cluster computing systems are essential to modern data pro-cessing, enabling scalable and resilient execution of workloads across datacenters and beyond. Effective resource manage-ment and placement of workloads is critical to maintaining performance, efficiency, and resiliency [1], [2]. Kubernetes, 1
+
+the de facto standard for container orchestration, employs a heuristic scheduling approach: workloads are placed on nodes based on static, user-defined resource requests and current node allocations [3], [4]. While simple and efficient, this greedy strategy ignores application-level performance metrics and resource characteristics beyond CPU and memory. In practice, application owners care more about application-level performance and service level objectives (SLOs) than about raw resource quantities, a principle captured by intent-driven orchestration [5]. Furthermore, congestion in shared 
+
+> 1https://kubernetes.io
+
+resources such as the last-level cache (LLC) and memory bandwidth can significantly degrade performance [6], [7], yet current schedulers provide no mechanism for expressing such resource requirements. Consequently, current heuristic scheduling approaches often result in suboptimal workload placements, harming application performance and energy ef-ficiency due to suboptimal hardware utilization [8]. This paper addresses two key limitations we have identified in scheduling approaches for cloud native environments: 1) Current SLO-based scheduling treats objectives as hard limits, often leaving cluster resources underutilized to ac-commodate transient load spikes without violating SLOs. 2) Existing approaches fail to leverage hardware-level in-sights, such as LLC and memory bandwidth contention, to inform scheduling and rescheduling decisions. 
+
+1) Soft SLO Limits: Several studies have enhanced the scheduling process by incorporating application-level metrics and actual performance numbers into the decision-making process [2], [9], [10], [11]. Many such approaches also enable rescheduling of workloads based on dynamic performance metrics and resource usage patterns [8], [10]. Even so, most approaches fail to consider the service level indicators (SLIs) and SLOs of the workloads being scheduled. Those who do (e.g. Da Silva et al. [12]) treat SLOs as hard limits, expecting an immediate penalty upon breach. While this may be suitable in certain scenarios, it carries the risk of enforcing cluster underutilization that leads to poor energy efficiency in the real world due to the inherent variability in workloads and hardware performance, especially under peak loads and tran-sient spikes. Therefore, instead of taking immediate corrective action, we here investigate the benefits and consequences of using “soft” SLO limits with defined margins that allow con-trolled overcommitment and brief, minor violations, reducing overhead while preserving acceptable performance guarantees. 
+
+2) Scheduling with Resource Insight: Previous studies have demonstrated the negative impact of congestion over shared system resources such as LLC and memory bandwidth on application performance [6], [7]. To the best of our knowl-edge, no existing scheduling approaches leverage insights into current hardware resource congestion to inform scheduling de-cisions in cloud native environments. Therefore, we propose a scheduling and rescheduling approach that leverages individual resource pressure insights, enabling informed decisions about arXiv:2608.09308v1 [cs.DC] 10 Aug 2026 workload placement and migration based on current contention levels in individual resources. To achieve this, we build upon the concept of workload buoyancy, a framework for capturing application resource sensitivity insights at runtime [13]. 
+
+A. Summary of Contributions 
+
+In this paper, we address two key gaps in existing cluster scheduling approaches for cloud environments. We propose complementary scheduling and rescheduling strategies that leverage soft SLO limits and workload buoyancy to improve application-aware workload scheduling and to reduce resource congestion and its negative impact on application performance and energy efficiency. We make the following contributions:  
+
+> •
+
+We integrate soft SLO limits into the scheduling and rescheduling process in orchestrated container environ-ments and investigate its effects on cluster efficiency and application performance.  
+
+> •
+
+We introduce a novel scheduling and rescheduling ap-proach that leverages shared resource congestion insights through workload buoyancy, enabling informed decisions about workload placement and migration based on current contention levels in individual hardware resources.  
+
+> •
+
+Our approaches are implemented as extensions to the Ku-bernetes scheduler and descheduler, demonstrating their practical applicability in cloud native environments. Through a comprehensive experimental evaluation using representative workloads, we demonstrate the effectiveness of our proposed approaches. Using our soft SLO limit approach, we reduce the average SLO violation size compared to a baseline Kubernetes configuration, while using 49% fewer corrective rescheduling actions compared to a hard SLO limit approach. Additionally, by incorporating resource congestion awareness into scheduling decisions, we reduce overall node resource congestion by 8% while reducing SLO violations. II. B ACKGROUND 
+
+Scheduling workloads is a critical aspect of modern com-puting systems. Efficient placement directly impacts resource utilization, energy efficiency, and system performance [3], [4]. 
+
+A. Cloud Native Scheduling and Descheduling 
+
+Kubernetes uses a typical two-phase scheduling process for workloads [8]. After a workload is created, the scheduler decides which cluster node should host and run the workload. These workloads, called Pods, are scheduled individually in isolation. The first phase, filtering, eliminates nodes that are deemed unfeasible for the Pod based on various constraints such as resource requests, node taints, and affinity rules. Should no nodes be feasible targets, the Pod remains unsched-uled until a suitable node becomes available. The second phase, scoring, ranks all feasible nodes using various scoring functions to determine the most suitable node. The node with the highest score is selected as the target for the Pod, which is then bound to that node. A node’s score is typically based on resource availability, load balancing, and availability considerations [3]. Kubernetes does not support any form of rescheduling natively. However, the descheduler 2 is an add-on component that provides similar functionality. It periodically evaluates the cluster state and identifies Pods that would benefit from being evicted and rescheduled. Such Pods are deleted from their current node. This triggers the managing replication controller to create a new instance of the Pod, which is scheduled once again, effectively allowing the scheduler to make a new placement decision under current cluster conditions [8]. Both the scheduler and descheduler are extensible through extension points that can modify their behavior during filter-ing and scoring. This enables the implementation of custom scheduling and descheduling strategies that can leverage ad-ditional insights and metrics beyond the default ones [8]. 
+
+B. Workload Slack and Margins 
+
+In the domain of applications, performance is typically quantified using SLIs such as tail latency, throughput, or availability, depending on the nature of the application. In many cases, targets or limits are set in the form of SLOs that define acceptable SLI performance thresholds. The per-formance slack of a workload is a measure of the headroom available during operation. It is often defined as the difference between the actual performance and the SLO target in some SLI [14]. Therefore, a workload with high slack can tolerate more resource contention without violating its SLOs, while a workload with low or negative slack is more sensitive to additional load and resource contention as it is close to breaching, or have already breached, its SLO. Generally, workloads will operate with a certain degree of slack such that they can handle transient spikes in demand or resource contention without breaching their SLOs. This means that there are generally resources and performance overhead available, left underutilized during normal operation to ensure reliable performance under spiking conditions. Cluster opera-tors aim to minimize this waste by operating workloads closer to their limits without jeopardizing their SLO compliance [15]. 
+
+C. Resource Awareness and Workload Buoyancy 
+
+In the heterogeneous and dynamic environments of modern cloud computing, workloads exhibit varying degrees of sen-sitivity to different resources. Some will be limited by CPU, others by memory bandwidth, cache size, network I/O, or other factors [16]. For example, a plethora of research has shown that efficient allocation of last-level cache (LLC) can have a significant impact on application performance [2], [7], [15]. Only a very limited set of studies have explored the idea of scheduling based on such a broader set of resource considera-tions [3]. This can be partly attributed to the inherent complex-ity of accurately modeling and predicting workload behavior under varying resource conditions, including challenges asso-ciated with profiling and monitoring resource usage. 
+
+> 2https://github.com/kubernetes-sigs/descheduler
+
+1) Workload Buoyancy: The concept of workload buoyancy 
+
+was recently proposed by Larsson et al. as a measure of how well a workload can maintain its performance in the face of resource contention and load variability that attempts to capture the resource characteristics of workloads and nodes in a holistic manner [13]. A workload’s buoyancy score is computed from resource scores , a measure of its sensitivity to various resources, and its performance slack. It is a composite metric that is computed online without requiring any prior profiling of the workload or its resource usage patterns. It is able to provide insight into how well the resource utilization of a node can be increased without negatively impacting its workloads. More specifically, a buoyancy score is a value in the range (−∞ , 1] where a positive value indicates that the workload has some degree of slack and can tolerate some additional resource contention, while a negative value indicates that the workload is already breaching its SLOs and is highly sensitive to additional contention. A buoyancy score close to 0 indicates that the workload has little slack and is sensitive to contention, while a score close to 1 indicates that the workload has high slack and is less sensitive to contention. The buoyancy score of a workload is a composite metric that integrates resource scores across multiple resource dimensions (e.g. CPU, LLC, memory bandwidth). Each resource score is a value in the range [0 , 1] , and reflects the workload’s sensitivity to contention for that specific resource. A resource score close to 0 indicates low sensitivity to contention for that resource, while a score close to 1 indicates high sensitivity and a likely bottleneck. Such scores allow for a more nuanced understand-ing of workload behavior, and comparison across different workloads that exhibit different resource usage behavior. III. P ROBLEM STATEMENT 
+
+Current cluster workload scheduling approaches primarily focus on major system resources such as CPU and memory when making scheduling decisions. Even when application-level metrics such as SLIs are considered, they are typically incorporated in one of two ways: They are either treated as optimization objectives to be maximized or minimized, or as hard constraints that must be satisfied. In practice, many services have performance targets that could be treated as soft limits, allowing for controlled tolerance of transient breaches. However, existing schedulers lack mechanisms to exploit this flexibility. This raises two key questions: 1) What are the effects of treating SLOs as soft limits? 2) Can such flexibility be integrated into scheduling deci-sions to reduce unnecessary rescheduling actions? Additionally, current scheduling strategies overlook the complex interactions between workloads and shared resources beyond CPU and memory, such as LLC and memory band-width. These resources significantly influence performance in multi-tenant environments where workloads compete for shared capacity. While workload buoyancy has been shown to capture these interactions in node-level resource allocation contexts [13], its potential for cluster-level scheduling remains unexplored. This leads to yet another question: 3) Can workload buoyancy and its resource score com-ponents be effectively leveraged to improve scheduling decisions in cloud native environments? 
+
+1) Considerations: Scheduling and rescheduling of work-loads is one way to address SLO breaches caused by re-source contention, but it is not the only solution. In scenarios involving increased load, application-level mechanisms such as autoscaling (e.g. horizontal pod autoscaling) may also be effective. However, such approaches solve the problem by increasing the resources available to the workload, which may not be possible or desirable from the perspective of energy and cost. We show that issues can be mitigated without strictly increasing workload resources available. IV. S OLUTION DESIGN 
+
+To address the outlined challenges, we propose a two-part scheduling solution. The first component introduces temporal stability by treating SLO violations as soft limits, while the second incorporates resource contention insights into schedul-ing and descheduling decisions through buoyancy awareness. 
+
+A. Soft Limits and Margins 
+
+Under stable conditions, a workload currently in breach of its SLO will most likely remain in breach if resource contention and workload load levels remain unchanged. In the view of an individual worker node, rescheduling one or more workloads to another node is required to restore SLO compliance. In real systems with varying conditions however, simply taking a momentary snapshot of the system state and workload performance may lead to excessive rescheduling actions should such breaches be transient in nature. If a breach is small and short-lived, it may in many cases be tolerated without significant impact on the user experience, while the cost of a corresponding rescheduling action may be non-trivial. Therefore, we propose treating SLOs as soft limits with an associated margin. Within the confines of this margin, SLO breaches are tolerated without triggering rescheduling actions. Only when the breach is significant enough in relation to this margin, will rescheduling actions be triggered. This concept is inspired by electrical fuses, where small overloads are tolerated for short periods of time, while larger overloads will cause the fuse to blow almost instantly [17]. To evaluate this, we propose using a simple moving average to smooth out transient breaches, where each workload has an associated SLO slack st at some time t. Assuming a discrete time series, we define the average SLO slack over a lookback window of w discrete time steps up to time t as 
+
+st(w) = 1
+
+w
+
+> w−1
+
+X
+
+> i=0
+
+st−i. (1) We then use this average-over-time slack as basis for schedul-ing and rescheduling decisions. A larger lookback window 
+
+w will provide a larger margin and toleration to transient breaches, while a smaller window will be more sensitive to small breaches of SLO. Even with larger windows however, sustained breaches will eventually lead to rescheduling actions 0 50 100 150 200 250 300 Time    
+
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5 Signal Value
+> Effect of Lookback Window on Average-Over-Time
+> Raw Signal
+> w= 5
+> w= 20
+> w= 60
+> Fig. 1: Illustration of lookback window size on average-over-time. Short windows respond rapidly to sudden changes, while longer windows produce smoother but delayed responses. The raw signal value is randomly generated for illustrative purposes, with major changes at specified time steps.
+
+as the average slack will decrease over time. A lookback window of w = 1 will effectively treat SLOs as hard limits. Fig. 1 illustrates the effects of different window sizes w.
+
+B. Buoyancy-Aware Scheduling and Descheduling 
+
+The resource insights buoyancy provide may be used at different phases of the workload lifecycle. During scheduling, buoyancy metrics can inform both the filtering and scoring phases of the scheduling process. During filtering, node-level buoyancy scores may be used to identify unfeasible nodes that cannot accommodate additional resource demands. Later during scoring, buoyancy scores may be used to rank feasible nodes based on their current resource usage and contention levels. Nodes with larger buoyancy scores, indicating lower contention, may be prioritized for workload placement. More specifically, we propose a buoyancy-aware scheduling strategy that incorporates buoyancy metrics into the filtering and scoring phases of the scheduling process. During filtering, we evaluate nodes based on their node-level buoyancy scores to determine whether they can accommodate additional work-loads. We do this by setting a threshold buoyancy score, below which nodes are considered unfeasible for new workload placements. This ensures that workloads are only scheduled on nodes with sufficient resource availability and low contention. Here, we experimentally select a threshold buoyancy of 0.1,meaning that nodes with a buoyancy score below 0.1 are excluded from consideration during scheduling. During scoring, feasible nodes are ranked based on their buoyancy scores. Nodes with higher buoyancy scores, indi-cating lower contention, are prioritized during scheduling. We know that the buoyancy score Bn of a node n is a real number in the range (−∞ , 1] , where a value < 0 indicates that the node is oversubscribed. In our scoring function, we compute the buoyancy-based score Sn for each feasible node n as 
+
+Sn =
+
+(
+
+⌈Bn × 10 ⌉, Bn > 00, Bn ≤ 0. (2) I.e., nodes with a buoyancy score > 0 are assigned a score in the range [1 , 10] , whereas nodes with a buoyancy score ≤ 0
+
+are assigned a score of 0. This scoring function ensures that nodes with higher buoyancy scores are prioritized for workload placement, while nodes with low or negative buoyancy scores are deprioritized. With the previous filtering step, nodes with negative buoyancy scores should not be considered at all. However, including them in the scoring function provides the freedom of using different threshold values during filtering, or to leave out the filtering completely if desired. Furthermore, we also propose a buoyancy-aware deschedul-ing strategy that leverages buoyancy metrics to identify and evict workloads from oversubscribed nodes. Initially, we use the node-level buoyancy score to identify if a node is in a state where a descheduling action is warranted. Specifically, if a node’s buoyancy score falls below a certain threshold (e.g., 
+
+0), it indicates that the node is oversubscribed and would benefit from descheduling action. Once an oversubscribed node is identified, its most contested resource is selected based on the node-level resource scores. The node’s workloads are then ranked based on their individual resource scores for that specific resource, where the workload with the largest resource score for the contested resource is evicted. In summary, we achieve our buoyancy-aware scheduling and descheduling strategy by integrating buoyancy awareness in the following mechanisms: (1) node filtering to exclude unfea-sible nodes, (2) scoring feasible nodes, and (3) descheduling workloads from oversubscribed nodes. 
+
+C. Complementary Nature of the Two Approaches 
+
+While both proposed mechanisms influence scheduling be-havior, they address different aspects of cluster management and are intended to complement rather than replace one another. Soft limits is a mechanism that influences when cor-rective scheduling actions should be taken, whereas buoyancy-aware scheduling determines how those actions should be carried out. The former introduces temporal stability by pre-venting corrective actions in response to short-lived or insignif-icant SLO violations, while the latter improves the quality of corrective actions by incorporating information about resource contention and workload sensitivity. Combining the two mechanisms enables the scheduler to avoid unnecessary corrective actions during transient perfor-mance fluctuations while still making informed scheduling decisions when sustained resource contention requires inter-vention. This separation of concerns allows each mechanism to address a distinct limitation of conventional resource-based scheduling without introducing conflicting objectives. V. E XPERIMENTAL SETUP 
+
+We evaluated our approach using experiments in a con-trolled emulated environment that closely replicates real-world conditions, complemented by a virtualized multi-node cluster simulation to assess our scheduling strategy. This section outlines the experimental platform, workloads, and simulation. The experimental platform consists of a single server acting as the node under test within a Kubernetes cluster, running our custom scheduling and descheduling components. Control-plane services, monitoring, and load generation were isolated on separate systems to avoid interference. The hardware spec-ifications of the test node are summarized in TABLE I. TABLE I: Experimental platform hardware configuration.                 
+
+> Component Specification CPU Intel Xeon Silver 4309Y
+> Operating System Ubuntu 24.04 (kern. 6.8)
+> Sockets 1
+> Processors (Physical / Logical) 8 / 16
+> Frequency (Base / Max Turbo) 2.8 GHz / 3.6 GHz
+> L3 Cache (LLC) 12 MiB, 12 ways
+> Memory (Capacity / Speed) 128 GiB / 2666 MT/s
+> Storage 1 TB NVME SSD
+> Network 10 Gbps TABLE II: Description of workloads.
+> Workload Description
+> Moses Statistical machine translation Img-dnn Image recognition Xapian Online search Nginx Web server Memcached Key-value store
+
+A. Workloads 
+
+We used a diverse set of workloads in our emulation envi-ronment, covering various application domains and resource usage patterns. TABLE II summarizes the workloads. Moses, Img-dnn, and Xapian were adapted from the Tailbench bench-mark suite [18] and provide representative data-driven applica-tions with latency requirements. Nginx 3 and Memcached 4 are widely used latency critical applications with a lighter, more cache-sensitive resource profile. Together, these workloads represent a broad spectrum of modern cloud applications. Load was generated using a custom open-loop load genera-tor that records request latencies and success rates and exports these metrics to Prometheus. For Moses, Img-dnn, and Xapian, we used the same load configurations, i.e. problem space and request patterns, as in Tailbench [18]. The Nginx web server hosted 10 6 static 1KB HTML pages that were requested using HTTP GET requests, while the Memcached key-value store was loaded with 10 5 key-value pairs with a value size of 200B that were similarly requested using get commands. The request distribution to both the Nginx and Memcached services were generated using a Zipf distribution. In order to properly dimension the workloads and their resource demands, we performed a series of sizing experi-ments. Each workload was executed on the node under test in isolation while varying its CPU allocation and load intensity. This allowed us to identify “knees” in the performance curves similarly to previous studies, where additional load leads to significant performance degradation [15], [16]. These results were then used to determine load levels and performance targets (SLOs) for each workload during the main experiments. Specifically, we selected the load as 80% of the knee load, and set the SLO as 150% of the measured 99 th percentile tail latency at the knee load. See Fig. 2 for results. 
+
+> 3https://nginx.org
+> 4https://memcached.org
+
+B. Experiment Design 
+
+Even though workload scheduling and re-scheduling is a cluster-level problem, the core of our approaches focus on node-by-node mechanisms and resource awareness. Thus, to better understand and evaluate the effectiveness of our approach, we first observed a single node in isolation. In a real world scenario, the workloads of a cluster would be distributed across the cluster’s available worker nodes. However, any workload not scheduled on the node under evaluation is assumed to be placed somewhere else and thus ignored. There are two main components we evaluate, each at a different time in the Pod lifecycle. First, we evaluate the filtering component at scheduling time. This component is responsible for admission control, i.e. evaluating the feasibility of scheduling a Pod on the node given the current resource usage and availability. Second, we evaluate the descheduling component, responsible for identifying needed rescheduling actions when the node becomes overloaded, or resources become stranded. Identified Pods are then evicted, triggering the cluster’s scheduler to re-schedule to other nodes as needed. To emulate new Pods being created in the cluster, due to workload scaling or new workload arrivals, we periodically create a new Pod at random from the set of defined workloads. This Pod then goes through the scheduling process, where our filtering component is evaluated. Should the node not be considered feasible for the Pod, it is simply discarded. Otherwise, it is scheduled on the node, and starts executing. Over time, as workloads are scheduled on the node, resource contention may arise, triggering the descheduling component and evictions as needed. This cycle is illustrated in Fig. 3. Each workload is created with a random load pattern to emulate different load variations in real-world workloads. The patterns used during our experiments are shown in Fig. 4. Repeating this experiment multiple times with different ran-dom seeds allows us to gather a sufficient amount of data to evaluate our approach. We initially perform a baseline experiment where no resource-aware scheduling is performed. I.e. Pods are scheduled as long as sufficient resources are available, regardless of the actual resource usage patterns. 
+
+C. Simulation Environment 
+
+In addition to the single-node experiments, we also cre-ated a virtual cluster simulation environment to evaluate our scheduling strategy in a multi-node context, as inspired by evaluation methods of similar studies [9], [19]. This simulation is implemented on top of kind ,5 a Kubernetes-in-Docker solution that allows us to create a virtual Kubernetes cluster using containerized nodes. The benefits of this approach are twofold. First, it allows us to easily create and manage multi-node cluster environments of varying sizes. Second, it allows us to run real Kubernetes components, including our custom scheduler and descheduler, in our simulated environment. To achieve this, we create kind clusters with a single control-plane node and varying numbers of worker nodes. We              
+
+> 5https://github.com/kubernetes-sigs/kind 01k 2k
+> 10 1
+> 10 2
+> 10 3moses
+> 01k 2k
+> 10 1
+> 10 2
+> 10 3
+> imgdnn
+> 500 1k 1.5k
+> 10 1
+> 10 2
+> 10 3
+> xapian
+> 20k 40k 60k
+> 10 1
+> 10 2
+> nginx
+> 050k 100k 150k 200k
+> 10 1
+> memcached
+> 1 CPU
+> 2 CPUs
+> 3 CPUs
+> 4 CPUs
+> 5 CPUs
+> 6 CPUs P99 Latency (ms) Request Rate (RPS)
+
+Fig. 2: Sizing experiments for different workloads. We see clear differences in performance between core allocations for Moses, Img-dnn, and Xapian. In the case of Nginx and Memcached, they do not benefit from additional CPU allocation above 2 cores, indicating that they are bottlenecked by other resources. It is worth noting the effects of core pinning and simultaneous multithreading that are visible in the Moses and Xapian cases, where performance increases are larger when going from an even to an odd number of cores as another physical core is engaged.      
+
+> Scheduling Workloads Pod Creation Filtering Scoring Execution Patterns Unfeasible Evicted Pod Deletion
+
+Fig. 3: Illustration of experiment cycle. New Pods are created periodically using a random combination of workload type, size, and load pattern. It then passes through filtering and scoring before eventually starting execution should schedule be successful. It remains running on the node unless it is evicted by the descheduler, at which point it is terminated and deleted.     
+
+> 0.75
+> 1.00
+> 1.25
+> Workload Request Pattern Scalars
+> 0.75
+> 1.00
+> 1.25
+> 0.75
+> 1.00
+> 1.25 Scalar
+> 0.75
+> 1.00
+> 1.25
+> 060 120 180 240 Time (s)
+> 0.75
+> 1.00
+> 1.25
+
+Fig. 4: Workload request patterns used in experiments. The scalar of the pattern is multiplied with the base load of the workload to create varying load levels over time. Each pattern is repeated every 240 seconds. 
+
+then deploy our custom scheduler and descheduler components to the control-plane node, together with Prometheus which is used for monitoring and data collection. We then simulate the experiment through the use of mock workloads. Each workload is represented as a lightweight Pod that periodically reports fictive metrics on resource usage and other values of interest to Prometheus. The reported values are generated based on metrics collected from the single-node experiments, ensuring that the simulated workloads behave similarly to their real-world counterparts. Gaussian noise with a standard deviation of 5% is added to the reported values to emulate real-world variability. Fig. 5 shows an overview of both the emulation and simulation environments and their differences.              
+
+> Emulation Phys. Host Phys. Host Assumed Existance K8s Cluster Control Plane Worker Worker Worker
+> Simulation Phys. Host Container Container Container Container
+> kind
+> K8s Cluster Control Plane Worker Worker Worker
+
+Fig. 5: Overview of the real-world emulation and cluster simulation envi-ronments. The simulation extends the emulation by creating multiple worker nodes using kind , and using mock workloads that report fictive resource usage based on data collected from the emulation environment. 
+
+VI. E VALUATION 
+
+In order to ensure a comprehensive evaluation of our pro-posed solutions, we ask a series of questions that we aim to answer through our experiments: 1) Does our SLO-based rescheduling approach improve SLO compliance without major reductions in resource utilization while treating SLOs as hard limits? 2) Can soft SLO limits effectively reduce the rescheduling actions required compared to a hard-limit approach? 3) How do different lookback window sizes and eviction thresholds for soft SLO limits affect the performance of our soft-limit approach? 4) Does buoyancy-aware scheduling reduce resource con-tention and improve SLO compliance compared to a baseline Kubernetes scheduler? 5) How does buoyancy-aware scheduling perform in larger cluster environments compared to a single-node setup? We set out to answer questions 1, 2, and 3 in Section VI-A, and questions 4 and 5 in Section VI-B. 
+
+A. Soft Limits and Margins 
+
+To evaluate the effectiveness of soft SLO limits with mar-gins, we performed the emulation experiment under different 0                       
+
+> 25
+> 50
+> 75
+> 100 Allocated CPU (%)  Workload SLO Slack
+> 0
+> 5000
+> 10000 SLO Violation (%)
+> K8s No Lookback 30s Lookback 60s Lookback
+> 0
+> 10
+> 20
+> 30 Corrective Evictions
+> 0
+> 25
+> 50
+> 75
+> 100 SLO Compliance (%)
+> 0
+> 50
+> 100
+> 150 SLO Violation (%) (Scaled)
+> Fig. 6: Comparison of scheduling using different lookback window sizes for SLO soft limits. This figure shows the aggregated results from 25 runs, where each data point is a momentary snapshot of the system state during the experiment. While the standard Kubernetes configuration tends to schedule a slightly larger fraction of workloads successfully, less than 75% of workloads comply with their SLOs. Our approach using soft SLO limits with margins improves SLO compliance significantly, and in the events that workloads do not comply, the degree of violation is significantly reduced (by up to two orders of magnitude) compared to the standard Kubernetes scheduler. TABLE III: Averages from SLO soft limit experiment comparing different lookback window sizes. Shows values from the same experiment as in Fig. 6.
+> Average K8s 0s 30s 60s
+> Allocated CPU (%) 83.00 65.88 65.60 61.33 SLO Compliant (%) 65.18 98.18 97.48 92.25 Size of Violation (%) 2510 13.64 21.73 21.97 Evictions 0.00 10.53 7.88 5.30
+
+lookback window sizes w. For simplicity and ease of com-parison, we treat the lookback window w as a window in wall clock time. This is later mapped to discrete time steps based on the sampling interval used for monitoring workload performance and computing SLO slack. Workloads that have an average-over-time slack s < 0 were evicted, reducing node interference and making space for other workloads on the node. We compare different lookback sizes in Fig. 6. Observing the results, we see that Kubernetes will generally schedule a slightly larger fraction of workloads successfully compared to our approach, see TABLE III. While doing so, however, only 65% of workloads comply with their SLOs on average, and when they do not, the degree of violation is on average two orders of magnitude larger. In contrast, using our SLO-driven approach without lookback, a much greater fraction of workloads complies with their SLOs, and when they do not, the degree of violation is greatly reduced. Comparing lookback window sizes, we observe that awindow size increase allows the system to find steady states using fewer rescheduling actions. Moving from no lookback                   
+
+> 030s 60s SLO Lookback Window
+> -0.2 -0.1 0 Eviction Threshold  94.11 97.43 91.57 98.65 95.16 92.75 98.18 97.48 92.25 Avg. Workloads in Compliance (%)
+> 030s 60s SLO Lookback Window
+> 16.99 26.77 29.53 13.18 11.17 57.84 13.64 21.73 21.97 Avg. SLO Violation Size (%)
+> 92
+> 93
+> 94
+> 95
+> 96
+> 97
+> 98
+> 20
+> 30
+> 40
+> 50
+> Fig. 7: Same experiment as in Fig. 6, but exploring different lookback window sizes and eviction thresholds. The eviction threshold defines the value of average-over-time slack sbelow which workloads are evicted. Results are once again aggregated over 25 experiment runs.
+
+to a 60-second window reduces the evictions from 10 .5 to 
+
+5.3 on average, a decrease of 49%. However, doing so also slightly increases the size of transient violations, and reduces the total allocated workload count slightly. In this experiment, this is due to the fact that as fewer rescheduling actions are taken, fewer workload combinations are explored, meaning the system may settle in a less optimal state. Still, if we compare the allocated CPU values with the SLO compliance ratios, we get that 54% worth of system CPU is used by workloads in compliance on average by Kubernetes, while the worst case using our approach (60s lookback) achieves 57% CPU usage within SLO compliance. We achieve this while reducing the size of an average SLO violation. Furthermore, we performed additional experiments to ex-plore the effects of using different eviction thresholds. Instead of evicting workloads when their average-over-time slack 
+
+s < 0, we explored the effects of using other thresholds (e.g., 
+
+s < −0.1, s < −0.2) to further tune the sensitivity of the rescheduling mechanism. The results are shown in Fig. 7. The experiments show that the “ 0s” lookback case performs best in terms of absolute compliance. That is to be expected as it does not tolerate any transient violations. However, we can also see that a lookback window of 30 s achieves very similar compliance ratios while reducing the number of rescheduling actions required. We may also note that adjusting the lookback size and the eviction threshold have similar effects on the number of workloads that manages to comply with their SLOs. However, it is largely the size of the lookback window that determines the degree of SLO violation when workloads do not comply, whereas the eviction threshold has less effect on this aspect. This indicates that an increased lookback window indeed allows larger transient breaches without trig-gering rescheduling actions and that significant and sustained breaches will trigger rescheduling actions eventually. 
+
+1) Summary: In evaluation of our soft-limit approach we have seen that using soft limits for SLOs is an effective strategy of maintaining SLO compliance while reducing the number of rescheduling actions required to do so compared to a hard limit approach. By tuning the lookback window size and eviction threshold, system operators may further adjust the 20  
+
+> 40
+> 60
+> 80 Allocated CPU (%)
+> Buoyancy-Based Scheduling
+> 0.0
+> 0.2
+> 0.4
+> 0.6 Node Resource Scores  CPU Score
+> LLC Score
+> MBW Score
+> K8s Buoyancy
+> 0
+> 5
+> 10 Evictions
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100 SLO Compliance (%)
+> Fig. 8: Buoyancy-aware scheduling experiment results. Results are aggregated from 25 experiment runs. We see that the buoyancy-aware scheduling strategy significantly reduces the number of SLO violations compared to the Kuber-netes baseline. This is achieved through a lower resource congestion overall, as indicated by the lower resource scores. This is achieved using just a few corrective evictions.
+
+sensitivity of the rescheduling mechanism to transient SLO breaches, allowing them to find a suitable balance between system stability and SLO compliance. 
+
+B. Buoyancy Based Scheduling 
+
+We first evaluated our buoyancy-aware scheduling strategy in the single-node experimental setup introduced in Sec-tion V-B. This emulation allows us to gain an understanding of how our approach performs in isolation, without the added complexity of a full cluster environment. While this setup does not capture the full dynamics of a multi-node cluster, nor does it allow us to evaluate the effects of the scoring phase, it provides valuable insights into the effectiveness of our filtering and descheduling mechanisms in the context of individual nodes. Results are presented in Fig. 8. From the results, we observe that buoyancy-aware schedul-ing reduces the total number of workloads admitted to the node compared to the Kubernetes baseline. While doing so, however, it improves SLO compliance, with over 93% of workloads meeting their SLOs compared to just 65% under the Kubernetes baseline. Furthermore, we can observe the resource congestion, as represented by the node-level resource scores, also decrease substantially in CPU and the memory bandwidth, while slightly increasing in the LLC score. As LLC is the least contended resource throughout this experiment, it is expected that it will become more contended as CPU and memory bandwidth contention is reduced. On average, the resource scores showed a 0.08 decrease, indicating a notable reduction in overall resource contention on the node. This may be viewed as a decrease in total resource saturation by approximately 8% of available resources. As a final observation, we note  
+
+> 0
+> 50
+> 100 SLO Compliance (%)  Simulated Experiment
+> 1 Node
+> 8 Nodes
+> 32 Nodes
+> -2
+> 0Buoyancy Score
+> 0.0
+> 0.2
+> 0.4
+> 0.6 CPU Score
+> 0.025
+> 0.050
+> 0.075
+> 0.100 LLC Score
+> 0.0
+> 0.1
+> 0.2
+> 0.3 MBW Score
+> K8s Buoyancy
+> 0
+> 5
+> 10
+> 15 Evictions
+> Fig. 9: Simulated experiment results for cluster sizes of 1, 8, and 32 nodes. As cluster size increases, the benefits of buoyancy-aware scheduling become more pronounced as fewer workloads experience SLO violations, while resource congestion through workload buoyancy remains comparable.
+
+that the buoyancy-aware scheduling approach achieves these improvements using just a few corrective evictions. While this experiment demonstrates buoyancy-aware scheduling in a single-node context, it does not capture the benefits of the scoring phase of the scheduling process. 
+
+1) Cluster Simulation: To evaluate the full buoyancy-aware scheduling strategy, including scoring, we additionally per-formed an evaluation using the simulated cluster environment. This simulation allows us to model a multi-node cluster and observe how the benefits of buoyancy-aware scheduling manifest at the cluster level. This experiment is repeated for cluster sizes of 1, 8, and 32 nodes to both validate the single-node results and observe how the approach scales. The results of this experiment are presented in Fig. 9. In the simulated cluster environment, we can observe similar SLO compliance numbers in the single node case compared to the emulated single-node experiment we saw in Fig. 8. Here, we may also observe that as the cluster size increases, a larger proportion of workloads comply with their SLOs in both the baseline, and the buoyancy case. This indicates that both scheduling strategies benefit from the increased flexibility of a larger number of nodes available during scheduling. However, the buoyancy-aware approach, with its resource contention insight, is able to take better advantage of this flexibility, resulting in increased in SLO compliance in larger clusters. Furthermore, we see similar resource contention behavior as the single-node experiment showed, across all cluster sizes. This, in combination with greatly improved buoyancy scores indicates that the buoyancy-aware scheduling strategy is effec-tive at reducing resource contention across the cluster, leading to improved workload performance. 
+
+2) Summary: In both the single-node emulation experiment and the multi-node cluster simulation, we have demonstrated the effectiveness of our buoyancy-aware scheduling strategy. Through the use of buoyancy metrics in filtering, scoring, and descheduling, we have shown decreases in resource contention, resulting in improvements in SLO compliance compared to the Kubernetes baseline. VII. L IMITATIONS AND THREATS TO VALIDITY 
+
+As it stands, our proposed approaches of using soft SLO limits and workload buoyancy provide a good basis for scheduling and rescheduling mechanisms on the operational level. Outside the scope for this work, however, we acknowl-edge that there are several opportunities for further exploration using these approaches in other contexts. For example, they may be used to improve and provide insights to workload scaling mechanisms, both horizontal and vertical. Furthermore, workload buoyancy and resource scores pro-vide insight into which resources are most contended for a given node. In this paper, we have not considered the resource usage characteristics of a Pod during scheduling. Doing so would allow for more informed decisions regarding workload placement based on the specific resource demands of that workload. However, this would require some notion of a resource usage profile of the workload being scheduled, which may not be available or feasible to obtain. 
+
+A. Threats to Validity 
+
+Throughout the evaluation of our proposed approaches, care was taken to ensure the validity and reliability of our results. We acknowledge, however, that there are potential threats, both external and internal, which we outline in this section. 
+
+1) External Threats: Our implementation and evaluation builds upon, and integrates with, several existing software technologies. Cloud native technologies such as Kubernetes, Prometheus, and Kind provide a solid foundation for our work and evaluation, but also introduce potential risks to its long-term validity. As these technologies evolve, there is a risk that our implementation may become incompatible or require significant modifications to function correctly. Similarly, our evaluation relies upon extension points in the Kubernetes scheduler and descheduler that may change in future versions, potentially impacting the future applicability of our results. 
+
+2) Internal Threats: Our emulation-based evaluation ap-proach introduces several potential internal threats to validity. First, due to hardware availability limitations, our evaluation was conducted by observing a single worker node in iso-lation while making assumptions about other nodes in the cluster. This approach may not fully capture the complexities of a multi-node cluster environment, potentially impacting the generalizability of our results. However, we ensured the experiment was as realistic as possible within these constraints. To reason about cluster-level behavior, we used simulation techniques to approximate cluster dynamics based on obser-vations from a single node. While we took care to ensure the accuracy of these approximations, there is a risk that they may not fully capture the nuances of real-world cluster behavior. Finally, our evaluation was conducted in a controlled en-vironment, which may not fully reflect the variability and unpredictability of real-world deployments. VIII. R ELATED WORK 
+
+1) Application Aware Scheduling: Many scheduling ap-proaches have been proposed that leverage application-level metrics and performance indicators to inform scheduling de-cisions. Giannakopoulos et al. [20] attempt to schedule and load-balance applications based on performance predictions. Similarly, Carvalho et al. [11] improve scheduling decisions by predicting the quality of experience (QoE) of applications. Da Silva et al. [12] propose a QoS-driven scheduler that make use of workload priorities and application-level metrics to in-form scheduling decisions. They follow the service level agree-ment (SLA) penalty models of major cloud providers during scheduling. Furthermore, Owl [21] leverages application-level performance profiling of hot function-as-a-service functions to improve workload placement and reduce congestion. These works demonstrate the benefits of application-aware scheduling. However, they consider performance targets as strict requirements that should never be broken. We believe that by allowing more flexibility, schedulers can make better decisions that lead to improved system utilization over time. 
+
+2) Resource Aware Partitioning and Scheduling: There is no shortage of resource management studies that demonstrate clear improvements to workload performance by partitioning shared system resources [7]. Partitioning of LLC and memory bandwidth have shown significant improvements through re-duced interference [15], [22], [23]. Even so, such insights have been left unexplored in the context of cluster scheduling. Re-source aware scheduling proposals have considered resource domains such as CPU, memory, network, and disk to great effect using different approaches. Zeus [2] and Rhythm [24] leverage different workload priorities in combination with resource awareness to improve scheduling decisions. Some use heuristics to guide scheduling decisions [9], [19], while others use learning-based approaches [25] to adapt to dynamic environments. Nautilus [10] is one proposal that does consider resource contention during scheduling. However, similar to other works, the focus is on traditional resources such as CPU, memory, and I/O, not shared resources in the memory subsystem. Zeus [2] is one exception to the lack of LLC integration as it partitions LLC to preemptively provide cache isolation. However, the approach does not leverage insight into the actual LLC pressure of the application or node. There is a notable gap in the literature on incorporating memory subsystem congestion awareness into cluster schedul-ing, despite evidence that shared resource contention can significantly impact application performance. IX. C ONCLUSIONS 
+
+In this paper, we have identified two key gaps in current workload scheduling research. First, we highlighted an appar-ent lack of flexibility in existing SLO-based scheduling ap-proaches, leading to rigid and suboptimal resource allocations to provide sufficient headroom to meet transient workload spikes. We introduced a novel approach that tolerates short-term SLO breaches in a “fuse”-like manner, treating SLOs like soft limits. Using our approach, the size of the average SLO violation decreased by two orders of magnitude compared to a baseline Kubernetes configuration, while using 49% fewer rescheduling actions compared to a hard SLO limit approach. Second, we observed that existing approaches does not address or leverage insights from congestion in shared memory subsystem resources. To address this gap, we proposed a scheduling and rescheduling approach that leverages insight into resource congestion through the use of workload buoy-ancy metrics. By incorporating these metrics into scheduling decisions, we reduced overall node resource congestion by 8% and drastically reduced SLO violations. ACKNOWLEDGEMENTS 
+
+Funding for this project was provided in part by the Knut and Alice Wallenberg Foundation under grant KAW 2019.0352 and by the eSSENCE Programme under the Swedish Government’s Strategic Research Initiative. Genera-tive AI (including ChatGPT and Copilot) was used to improve language and readability in the preparation of this work. The authors remain solely responsible for its contents. REFERENCES [1] M. Tirmazi et al., “Borg: The next generation,” in Proceedings of the 15th European Conference on Computer Systems (EuroSys) , Apr. 2020. 
+
+> DOI
+
+: 10.1145/3342195.3387517 [2] X. Zhang, L. Li, Y. Wang, E. Chen, and L. Shou, “Zeus: Improving resource efficiency via workload colocation for massive kubernetes clusters,” IEEE Access , 2021. DOI : 10.1109/ACCESS.2021.3100082 [3] C. Carri´ on, “Kubernetes scheduling: Taxonomy, ongoing issues and challenges,” ACM Computing Surveys , 2022. DOI : 10.1145/3539606 [4] Z. Rejiba and J. Chamanara, “Custom scheduling in kubernetes: A sur-vey on common problems and solution approaches,” ACM Computing Surveys , Jun. 2022. DOI : 10.1145/3544788 [5] Y. Sharma, D. Bhamare, N. Sastry, B. Javadi, and R. Buyya, “SLA management in intent-driven service management systems: A taxon-omy and future directions,” ACM Computing Surveys , Jun. 22, 2023. 
+
+> DOI
+
+: 10.1145/3589339 [6] P. Sohal, M. Bechtel, R. Mancuso, H. Yun, and O. Krieger, “A closer look at intel resource director technology (RDT),” in Proceedings of the 30th International Conference on Real-Time Networks and Systems ,Jun. 2022. DOI : 10.1145/3534879.3534882 [7] O. Larsson, T. Metsch, C. Klein, and E. Elmroth, “Hardware-level QoS enforcement features: Technologies, use cases, and research challenges,” ACM Computing Surveys , 2025. DOI : 10.1145/3774317 [8] O. Larsson, C. Klein, and E. Elmroth, “The impact of directed pod eviction on kubernetes resource utilization,” in IEEE International Conference on Service-Oriented System Engineering (SOSE) , Jul. 2023. DOI : 10.1109/SOSE58276.2023.00016 [9] A. Marchese and O. Tomarchio, “Enhancing the kubernetes platform with a load-aware orchestration strategy,” SN Computer Science , no. 3, Feb. 2025. DOI : 10.1007/s42979-025-03712-z [10] K. Fu et al., “QoS-aware and resource efficient microservice deploy-ment in cloud-edge continuum,” in IEEE International Parallel and Distributed Processing Symposium (IPDPS) , May 2021. DOI : 10.1109/ IPDPS49936.2021.00102 [11] M. Carvalho and D. F. Macedo, “QoE-aware container scheduler for co-located cloud environments,” in IFIP/IEEE International Sympo-sium on Integrated Network Management (IM) , May 2021. [12] G. F. Da Silva, F. Brasileiro, R. Lopes, F. Morais, M. Carvalho, and D. Turull, “QoS-driven scheduling in the cloud,” Journal of Internet Services and Applications , 2020. DOI : 10.1186/s13174-020-00129-0 [13] O. Larsson, T. Metsch, C. Klein, and E. Elmroth, Workload buoyancy: Keeping apps afloat by identifying shared resource bottlenecks , Feb. 26, 2026. DOI : 10.48550/arXiv.2602.22852 [14] D. Lo, L. Cheng, R. Govindaraju, P. Ranganathan, and C. Kozyrakis, “Heracles: Improving resource efficiency at scale,” in Proceedings of the 42nd Annual International Symposium on Computer Architecture ,Jun. 2015. DOI : 10.1145/2749469.2749475 [15] S. Chen, C. Delimitrou, and J. F. Mart´ ınez, “PARTIES: QoS-aware resource partitioning for multiple interactive services,” in International Conference on Architectural Support for Programming Languages and Operating Systems , 2019. DOI : 10.1145/3297858.3304005 [16] T. Patel and D. Tiwari, “CLITE: Efficient and QoS-aware co-location of multiple latency-critical jobs for warehouse scale computers,” in IEEE International Symposium on High Performance Computer Architecture (HPCA) , Feb. 2020. DOI : 10.1109/HPCA47549.2020.00025 [17] S.-Y. Lee et al., “Simplified thermal model of semiconductor fuse for DC distribution system,” in 10th International Conference on Power Electronics (ICPE) and ECCE Asia , May 2019. DOI : 10 . 23919 / ICPE2019-ECCEAsia42246.2019.8797178 [18] H. Kasture and D. Sanchez, “Tailbench: A benchmark suite and evaluation methodology for latency-critical applications,” in IEEE International Symposium on Workload Characterization (IISWC) , Sep. 2016. DOI : 10.1109/IISWC.2016.7581261 [19] M. Zambianco, S. Cretti, and D. Siracusa, “Disruption-aware microser-vice re-orchestration for cost-efficient multi-cloud deployments,” IEEE Transactions on Services Computing , Sep. 2025. DOI : 10.1109/TSC. 2025.3604373 [20] P. Giannakopoulos, B. van Knippenberg, K. C. Joshi, N. Calabretta, and G. Exarchakos, “Performance-aware scheduling and load balancing for edge/cloud systems,” in IEEE International Conference on Cloud Engineering (IC2E) , Sep. 2025. DOI : 10.1109/IC2E65552.2025.00047 [21] H. Tian, S. Li, A. Wang, W. Wang, T. Wu, and H. Yang, “Owl: Performance-aware scheduling for resource-efficient function-as-a-service cloud,” in Proceedings of the 13th Symposium on Cloud Computing , Nov. 2022. DOI : 10.1145/3542929.3563470 [22] R. Chen, H. Shi, Y. Li, X. Liu, and G. Wang, “OLPart: Online learning based resource partitioning for colocating multiple latency-critical jobs on commodity computers,” in Proceedings of the 18th European Conference on Computer Systems (EuroSys) , May 2023. 
+
+> DOI
+
+: 10.1145/3552326.3567490 [23] W. Tang, S. Fu, Y. Ke, Q. Peng, and F. Gao, “Themis: Fair memory subsystem resource sharing with differentiated QoS in public clouds,” in Proceedings of the 51st International Conference on Parallel Pro-cessing , Jan. 2023. DOI : 10.1145/3545008.3545064 [24] L. Zhao et al., “Rhythm: Component-distinguishable workload deploy-ment in datacenters,” in Proceedings of the 15th European Conference on Computer Systems (EuroSys) , Apr. 2020. DOI : 10.1145/3342195. 3387534 [25] Z. Jian et al., “DRS: A deep reinforcement learning enhanced ku-bernetes scheduler for microservice-based system,” Software: Practice and Experience , 2024. DOI : 10.1002/spe.3284

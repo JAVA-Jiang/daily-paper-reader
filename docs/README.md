@@ -6,38 +6,47 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-10
-- 运行时间：2026-08-10 21:01:45 UTC
+- 最新运行日期：2026-08-11
+- 运行时间：2026-08-11 21:18:02 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：2
-- 速读区：4
+- 本次总论文数：9
+- 精读区：4
+- 速读区：5
 
 ### 今日简报（AI）
-今日共读6篇论文，精读2篇、速读4篇，重点聚焦LLM地理任务基准与语法约束解码。最值得关注的是GeoBenchLLM（9.0分）——一个评估大模型地理能力的综合基准，以及基于解析器栈分类的高效约束解码方法（8.0分）。建议优先精读GeoBenchLLM，了解地理任务评测设计；若对生成效率感兴趣，可进一步探索约束解码方向。
-- 详情：[/202608/10/README](/202608/10/README)
+今日共读9篇论文，精读4篇、速读5篇，重点关注检索优先的知识发现与云集群调度两大方向。最值得精读的是《Guardian Crawler》（噪声网页智能，9.0分）和《Beyond the Limits》（云集群感知调度，9.0分），前者解决LLM在杂乱网络中的增强边界，后者面向云端灵活拥堵调度。建议普通读者优先了解这两篇的核心方法，再按需翻阅数据库LLM评测、图形摘要生成等速读内容。
+- 详情：[/202608/11/README](/202608/11/README)
 
 ### 精读区论文标签
-1. [GeoBenchLLM: A Comprehensive Benchmark for Evaluating LLMs on Geo-Related Tasks](/202608/10/2608.07411v1-geobenchllm-a-comprehensive-benchmark-for-evaluating-llms-on-geo-related-tasks)  
+1. [Guardian Crawler: Retrieval-First Knowledge Discovery with Bounded LLM Augmentation for Noisy Web Intelligence](/202608/11/2608.08994v1-guardian-crawler-retrieval-first-knowledge-discovery-with-bounded-llm-augmentation-for-noisy-web-intelligence)  
    标签：评分：9.0/10、query:code-paper
-   evidence：论文明确提供GitHub代码仓库，直接符合含代码论文的要求。
-2. [Efficient Grammar-Constrained Decoding via Parser Stack Classification](/202608/10/2608.03065v1-efficient-grammar-constrained-decoding-via-parser-stack-classification)  
+   evidence：可复现测试平台直接对应检索含开源代码的可复现研究论文的需求
+2. [Beyond the Limits: Flexible and Congestion-Aware Cluster Scheduling for the Cloud](/202608/11/2608.09308v1-beyond-the-limits-flexible-and-congestion-aware-cluster-scheduling-for-the-cloud)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：面向云数据中心的集群调度，直接涉及任务调度与拥塞感知
+3. [Beyond the Grid: Cost, Carbon, and Capital Requirements of On-Site Power Technologies for AI Data Centers](/202608/11/2608.08170v1-beyond-the-grid-cost-carbon-and-capital-requirements-of-on-site-power-technologies-for-ai-data-centers)  
    标签：评分：8.0/10、query:code-paper
-   evidence：PSC 方法面向源代码等结构化输出，实现高效文法约束解码，很可能开源实现
+   evidence：直接研究AI数据中心与供电技术，匹配综合领域，可能带有建模代码
+4. [AquiLLM: An Architecture for Supporting Tacit Knowledge Capture in Research Groups](/202608/11/2608.08883v1-aquillm-an-architecture-for-supporting-tacit-knowledge-capture-in-research-groups)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：开源模块化RAG-LLM框架，明确开源
 
 ### 速读区论文标签
-1. [Oasis: Hiding the Cost of Querying Parquet Files in the Datapath](/202608/10/2608.02268v1-oasis-hiding-the-cost-of-querying-parquet-files-in-the-datapath)  
+1. [Evaluating LLMs in Database Scenarios: A Lifecycle Benchmark for Assessing Their Potential in Core Database Tasks](/202608/11/2608.03794v1-evaluating-llms-in-database-scenarios-a-lifecycle-benchmark-for-assessing-their-potential-in-core-database-tasks)  
    标签：评分：7.0/10、query:code-paper
-   evidence：数据中心查询处理系统论文，可能附带源码，且与数据中心相关
-2. [Search, Inspect, Fetch: Exploiting Boolean Retrieval for Deep-Research Agents](/202608/10/2608.02751v1-search-inspect-fetch-exploiting-boolean-retrieval-for-deep-research-agents)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：提出新检索接口，实现代码可能开源
-3. [OctoLong: Mid-Training On Cross-Repository Code Contexts Enhances Long-Context Modeling](/202608/10/2608.05141v1-octolong-mid-training-on-cross-repository-code-contexts-enhances-long-context-modeling)  
-   标签：评分：7.0/10、query:code-paper
-   evidence：OctoLong 流程与开放语言模型可能附带了源代码
-4. [RepoProbe: Benchmarking Architecture-Aware Repository Comprehension with Checklists](/202608/10/2608.04783v2-repoprobe-benchmarking-architecture-aware-repository-comprehension-with-checklists)  
+   evidence：提出DBLifeBench基准，通常附带源代码
+2. [GenGA: Editable and Data-Grounded Graphical Abstract Generation for Academic Papers](/202608/11/2608.05478v1-genga-editable-and-data-grounded-graphical-abstract-generation-for-academic-papers)  
    标签：评分：6.0/10、query:code-paper
-   evidence：仓库理解基准，可能附带开源评估代码
+   evidence：提出生成框架，可能附带代码
+3. [KGCache: Amortized Subgraph Retrieval for KG Reasoning with LLMs](/202608/11/2608.07954v1-kgcache-amortized-subgraph-retrieval-for-kg-reasoning-with-llms)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：缓存系统，很可能有代码
+4. [SafeQL: Search-based Refinement for Safe and Efficient LLM-based Text-to-SQL](/202608/11/2608.09260v1-safeql-search-based-refinement-for-safe-and-efficient-llm-based-text-to-sql)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：提出系统，可能提供开源实现
+5. [Performance and Cost-Aware Cache Provisioning](/202608/11/2608.09820v1-performance-and-cost-aware-cache-provisioning)  
+   标签：评分：6.0/10、query:code-paper
+   evidence：面向SLO的边缘云数据中心缓存供给，与资源调度相关但非任务调度本身
 
 
 <div class="dpr-home-promo-card">
