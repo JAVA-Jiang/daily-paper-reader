@@ -1,0 +1,444 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-12T21:04:24.929104+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 8,
+    "quick_skim_target": 11,
+    "quick_selected": 8
+  },
+  "deep_dive": [
+    {
+      "id": "2608.10934v1",
+      "source": "arxiv",
+      "title": "Understanding the Architecture of Coding Agents: An Exploratory Study Using a Research Prototype",
+      "abstract": "Coding agents have rapidly emerged as the primary interface for AI-assisted software development. However, despite their growing adoption, relatively little is known about their internal architecture, and no systematic architectural description comparable to those available for compilers or operating systems currently exists. This paper addresses this gap by documenting the main architectural components of coding agents, explaining their responsibilities, interactions, and execution flow. To support this effort, we also present Ark (Agent Research Kit), a minimal open-source coding agent designed for research and education that preserves the essential architectural mechanisms of modern coding agents while emphasizing simplicity and clarity. We also introduce ArkBench, a lightweight benchmark comprising ten representative software maintenance and evolution tasks. Using gpt-5.4-mini, Ark successfully solved 8 of the 10 tasks while requiring modest token consumption. Finally, we compare the architecture of Ark with those of state-of-the-art coding agents using a recently proposed architectural taxonomy. We hope that both Ark and ArkBench provide a practical foundation for teaching, research, and experimentation on coding agents.",
+      "authors": [
+        "Marco Tulio Valente"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-11T14:02:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.10934v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "presents Ark, a minimal open-source coding agent",
+      "llm_evidence_cn": "提出Ark，一个极简开源编码代理",
+      "llm_evidence": "提出Ark，一个极简开源编码代理",
+      "canonical_evidence": "提出Ark，一个极简开源编码代理",
+      "llm_tldr_en": "This paper documents the architecture of coding agents and introduces Ark, a minimal open-source coding agent for research and education, preserving essential architectural mechanisms while emphasizing simplicity.",
+      "llm_tldr_cn": "针对当前编码代理内部架构缺乏系统性描述的问题，该论文详细阐述了编码代理的主要组件、职责、交互及执行流程。为支撑这一描述，论文提出了Ark，一个极简的开源编码代理，面向研究与教育，保留现代编码代理的核心架构机制但强调简单性。通过提供开源的Ark，论文使研究者能够理解和学习编码代理的架构设计，并为后续构建和改造编码代理提供了可复用的研究原型。",
+      "llm_tldr": "针对当前编码代理内部架构缺乏系统性描述的问题，该论文详细阐述了编码代理的主要组件、职责、交互及执行流程。为支撑这一描述，论文提出了Ark，一个极简的开源编码代理，面向研究与教育，保留现代编码代理的核心架构机制但强调简单性。通过提供开源的Ark，论文使研究者能够理解和学习编码代理的架构设计，并为后续构建和改造编码代理提供了可复用的研究原型。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.10963v1",
+      "source": "arxiv",
+      "title": "REAP: Relation-Aware Elicitation and Parsing for Closed-Book Knowledge Base Construction from LLMs",
+      "abstract": "We present the REAP system for the AKBC Shared Task 2026 on constructing knowledge bases from language models in a closed-book setting, subject to a budget of at most 32B parameters and no model fine-tuning. Our system combines structured chain-of-thought reasoning, relation-specific query strategies, and a reasoning-based empty-set gate to elicit parametric knowledge, followed by direct extraction into valid JSON arrays. On the test set, the system, built on the Mistral-Small-24B-Instruct-2501 model, achieves a macro-F1 score of 0.62, with particularly strong results on countryLandBordersCountry (F1 = 0.95), companyTradesAtStockExchange (F1 = 0.73), and hasArea (F1 = 0.77). Our code is publicly available at https://github.com/yammdd/AKBC-Shared-Task-2026.",
+      "authors": [
+        "Thanh-Dan Bui",
+        "Thanh-Trung Do",
+        "Tuan-Phong Nguyen"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-11T14:28:50+00:00",
+      "link": "https://arxiv.org/pdf/2608.10963v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Explicitly states code is publicly available",
+      "llm_evidence_cn": "明确声明代码公开可用",
+      "llm_evidence": "明确声明代码公开可用",
+      "canonical_evidence": "明确声明代码公开可用",
+      "llm_tldr_en": "REAP constructs knowledge bases from LLMs in a closed-book setting using relation-aware elicitation and structured parsing, achieving macro-F1 0.62 on the test set, with publicly available code.",
+      "llm_tldr_cn": "闭卷设置下从大语言模型构建知识库面临参数预算和细粒度关系提取的挑战。本文提出REAP系统，结合结构化思维链、关系特定查询策略和基于推理的空集门控，并直接提取为JSON数组。在AKBC 2026共享任务测试集上取得0.62的宏F1，尤其在国界和公司上市等关系上表现突出。代码已公开，便于复现和扩展。",
+      "llm_tldr": "闭卷设置下从大语言模型构建知识库面临参数预算和细粒度关系提取的挑战。本文提出REAP系统，结合结构化思维链、关系特定查询策略和基于推理的空集门控，并直接提取为JSON数组。在AKBC 2026共享任务测试集上取得0.62的宏F1，尤其在国界和公司上市等关系上表现突出。代码已公开，便于复现和扩展。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.08512v1",
+      "source": "arxiv",
+      "title": "Time Present and Time Past: Benchmarking Large Language Models on Temporally Evolving Document Understanding",
+      "abstract": "Evolving documents, such as laws, tax codes, and software documentation, are amended, replaced, and sometimes reverted over time, so a question has different correct answers at different dates. In contrast to encyclopedic knowledge, where an old fact is simply overwritten, an amendment is itself an official text that states what it replaces and when it takes effect, and the earlier version stays correct for its validity period. The central challenge is therefore version resolution, that is, identifying the version in force on the queried date. Existing temporal QA datasets treat time only as an annotation, so version resolution stays untested. We present TIDE, an expert-verified benchmark of 3,050 QA pairs over 644 official customs instruments issued between 1969 and 2025 by the Government of Bangladesh, covering eight task types over deeply code-mixed documents that are heterogeneous in layout and dated in two calendars. In addition, we evaluate nine recent LLMs under a single protocol across parametric, gold-context, and retrieval access, scored by a three-judge LLM council with a hard date gate separating correct meaning from correct time. The best macro-averaged accuracy is only 68.5%. Resolving a version from an implicit date reaches 59.7%, and detecting that the supplied version does not govern the query reaches only 26.7%. Models are more likely to find correct versions than to reject incorrect ones, and they tend to follow a confident parametric answer over the supplied authoritative text. All code and data are available at https://github.com/icsetepa44/TIDE",
+      "authors": [
+        "Mahbub E Sobhani",
+        "Md. Faiyaz Abdullah Sayeedi",
+        "Fahmid Hasan Chowdhury",
+        "Md Adnan Arefeen",
+        "Farig Sadeque",
+        "Md. Faizul Bari",
+        "Swakkhar Shatabda"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-09T06:17:41+00:00",
+      "link": "https://arxiv.org/pdf/2608.08512v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "expert-verified benchmark with data and code likely",
+      "llm_evidence_cn": "专家验证的基准测试，附有数据与代码",
+      "llm_evidence": "专家验证的基准测试，附有数据与代码",
+      "canonical_evidence": "专家验证的基准测试，附有数据与代码",
+      "llm_tldr_en": "TIDE is an expert-verified benchmark of 3,050 QA pairs over 644 evolving documents, testing LLMs' version resolution ability with a likely open-source codebase for reproducibility.",
+      "llm_tldr_cn": "现有时间问答数据集仅把时间当作标注，无法测试文档版本解析能力。本文构建TIDE基准，包含644篇动态文档和3050个问答对，对LLM在不同生效日期的版本解析能力进行评测。该基准以数据和代码形式发布，支持研究者复现与对比。TIDE填补了时间演化文档理解评测的空缺，为后续研究提供了标准化测试平台。",
+      "llm_tldr": "现有时间问答数据集仅把时间当作标注，无法测试文档版本解析能力。本文构建TIDE基准，包含644篇动态文档和3050个问答对，对LLM在不同生效日期的版本解析能力进行评测。该基准以数据和代码形式发布，支持研究者复现与对比。TIDE填补了时间演化文档理解评测的空缺，为后续研究提供了标准化测试平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.09072v1",
+      "source": "arxiv",
+      "title": "A Unified Issue Resolution Benchmark for Requirement Clarification, Planning, and Code Generation for Coding Agents",
+      "abstract": "Large language model-powered coding agents are increasingly used to modify existing code repositories, for example, by adding features or fixing bugs. Yet existing repository-level benchmarks typically evaluate only whether the final patch passes tests. Satisfying a user request requires a long chain of interdependent reasoning and decisions: an agent must recover explicit and implicit requirements, formulate a repository-grounded implementation plan, and translate it into correct code. A pass/fail outcome cannot characterize how an unsuccessful trajectory diverges from the requirements and implementation process needed for a correct patch. To address this gap, we introduce SWE-RPG, a repository-level benchmark that combines executable patch evaluation with validated ground-truth references (GTs) for (1) Requirement Clarification and (2) Implementation Planning. These intermediate GTs support retrospective, GT-aligned diagnosis of complete coding-agent trajectories across clarification, planning, code generation, and artifact submission. SWE-RPG comprises 163 tasks from 31 Python and Java repositories, including 113 bug fixes and 50 feature additions. We evaluate 3 coding agents, including Claude Code, Codex, and OpenCode, with 6 large language model backends, including Claude-Sonnet-5 and GPT-5.6-Terra. Results show that the evaluated popular coding agents still struggle to implement user requests in existing repositories, achieving an average resolved rate of only 31.5% on SWE-RPG. Intermediate-GT diagnosis further identifies implicit requirement recovery as the main bottleneck, accounting for 24.5%--46.0% of agent runs. This result suggests implicit-requirement recovery as a key candidate direction for improving coding agents. The benchmark data and evaluation code are available at https://github.com/Xin-Zhou-smu/SWE-RPG-Bench.",
+      "authors": [
+        "Xin Zhou",
+        "Chun Yong Chong",
+        "Kisub Kim",
+        "Yun Peng",
+        "Rui Shu",
+        "Zihan Wu",
+        "Xu Han",
+        "Guowen Yuan",
+        "Zeyang Zhuang",
+        "Jounghoon Kim",
+        "Jeongjin Ju",
+        "Seongmin Ju",
+        "Taein Yoon",
+        "David Lo"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T03:22:04+00:00",
+      "link": "https://arxiv.org/pdf/2608.09072v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Benchmark for code generation, likely with open-source code",
+      "llm_evidence_cn": "面向代码生成的基准，可能附带开源代码",
+      "llm_evidence": "面向代码生成的基准，可能附带开源代码",
+      "canonical_evidence": "面向代码生成的基准，可能附带开源代码",
+      "llm_tldr_en": "Introduces SWE-RPG, a repository-level benchmark for coding agents that evaluates requirement clarification, planning, and code generation, providing a more granular evaluation than pass/fail tests.",
+      "llm_tldr_cn": "现有仓库级基准仅以最终补丁是否通过测试来评估编码智能体，无法刻画需求澄清、规划与代码生成的完整推理链。本文提出SWE-RPG仓库级基准，显式评估这一过程中的多阶段决策。它有助于诊断失败轨迹的偏差环节，为编码智能体研究提供更细粒度的评估框架，并预计随论文发布代码。",
+      "llm_tldr": "现有仓库级基准仅以最终补丁是否通过测试来评估编码智能体，无法刻画需求澄清、规划与代码生成的完整推理链。本文提出SWE-RPG仓库级基准，显式评估这一过程中的多阶段决策。它有助于诊断失败轨迹的偏差环节，为编码智能体研究提供更细粒度的评估框架，并预计随论文发布代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.03397v1",
+      "source": "arxiv",
+      "title": "MMLongBench-Doc-V2: A Corrected-Annotation, Semantics-Aware Revision of MMLongBench-Doc",
+      "abstract": "MMLongBench-Doc is a long-document QA benchmark of 1,082 questions over 135 PDFs. Two properties of it push measured scores away from the quantity they are meant to capture: the reference metric compares extracted answers, so 1,358,000 loses to 1358000; and a non-trivial share of ground-truth annotations are wrong, ambiguous, or incomplete --- concentrated, because of how they were found, in exactly the questions capable systems answer correctly. MMLongBench-Doc-V2 corrects 106 annotations, each published with the page and arithmetic that settle it, and replaces the string metric with a pinned LLM judge asked whether a response means the reference. Ten questions whose document ships under the wrong filename are removed rather than counted wrong, along with one duplicated question, leaving 1,071 questions over 134 documents. The most reusable contribution is a decision procedure for when an empty set key may be widened and when widening would destroy a deliberate negative sample; applied to all 208 rows, it widened 14. V2 scores are not comparable with published V1 numbers. The corrected corpus, the per-entry correction record and the evaluation harness are available at https://github.com/VectifyAI/MMLongBench-Doc-V2.",
+      "authors": [
+        "Mingtian Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-04T09:51:54+00:00",
+      "link": "https://arxiv.org/pdf/2608.03397v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark revision, likely provides code and data",
+      "llm_evidence_cn": "基准修订版，可能附带代码与数据",
+      "llm_evidence": "基准修订版，可能附带代码与数据",
+      "canonical_evidence": "基准修订版，可能附带代码与数据",
+      "llm_tldr_en": "MMLongBench-Doc-V2 corrects 106 annotations in the long-document QA benchmark, replaces string metric with a pinned LLM judge, and removes mislabeled questions, improving evaluation reliability.",
+      "llm_tldr_cn": "针对MMLongBench-Doc基准中标注错误和指标误判问题，论文发布修订版MMLongBench-Doc-V2。它修正了106条标注并公开修正依据，同时用固定的LLM评判替换字符串匹配指标，并删除文件名有误的10个问题。这些改进显著提升了长文档问答评测的准确性和鲁棒性，使基准更真实地反映模型能力，为可复现评测提供了重要参照。",
+      "llm_tldr": "针对MMLongBench-Doc基准中标注错误和指标误判问题，论文发布修订版MMLongBench-Doc-V2。它修正了106条标注并公开修正依据，同时用固定的LLM评判替换字符串匹配指标，并删除文件名有误的10个问题。这些改进显著提升了长文档问答评测的准确性和鲁棒性，使基准更真实地反映模型能力，为可复现评测提供了重要参照。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.04783v1",
+      "source": "arxiv",
+      "title": "RepoProbe: Benchmarking Architecture-Aware Repository Comprehension with Checklists",
+      "abstract": "The integration of Large Language Models (LLMs) into software engineering has shifted the focus from function-level generation to repository-scale assistance. However, existing benchmarks largely rely on bug reports from GitHub Issues, which often allow models to bypass genuine understanding via pattern matching on error logs. This misalignment under-measures Edit Bias, which refers to premature generation, where models prematurely propose code modifications instead of understanding the existing repository architecture. Furthermore, current LLM-as-a-Judge scalar scoring suffers from high variance and low interpretability. This work introduces RepoProbe, a novel benchmark for evaluating repository-level code understanding through open-ended Q&A using GitHub Discussions, which focuses on open-ended architectural inquiries rather than defect reporting. To ensure rigorous evaluation, we propose a Checklist-Based Verification Protocol that decomposes answers into atomic, verifiable facts, thereby replacing subjective ratings with objective verification. Our evaluation of state-of-the-art (SOTA) LLMs reveals a persistent gap between high clarity and evidencegrounded technical correctness. It also quantitatively confirms the prevalence of edit bias, in which models prioritize code generation instead of architectural analysis. Finally, we demonstrate that our verification protocol significantly improves evaluation reliability compared to traditional evaluations with scalar scoring.",
+      "authors": [
+        "Yuexi Yang",
+        "Alyssa Wu",
+        "Ji Luo",
+        "Richeng Xuan",
+        "Zhichao Hu",
+        "Yuhong Liu",
+        "Zhen Qin"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-08-05T12:49:36+00:00",
+      "link": "https://arxiv.org/pdf/2608.04783v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Benchmark for repository-level code understanding, likely with code",
+      "llm_evidence_cn": "面向仓库级代码理解的基准，可能附带代码",
+      "llm_evidence": "面向仓库级代码理解的基准，可能附带代码",
+      "canonical_evidence": "面向仓库级代码理解的基准，可能附带代码",
+      "llm_tldr_en": "RepoProbe is a benchmark for architecture-aware repository comprehension using checklists, measuring Edit Bias and providing more interpretable scores than LLM-as-a-Judge.",
+      "llm_tldr_cn": "现有仓库级代码理解基准多依赖GitHub Issue错误日志，模型常通过模式匹配绕过真正理解，且LLM打分方差高。本文提出RepoProbe基准，采用开放式清单评估架构感知的仓库理解，重点度量过早生成代码的编辑偏差。该基准提供更可解释和稳定的评估，有望附带开源代码以推动可复现研究。",
+      "llm_tldr": "现有仓库级代码理解基准多依赖GitHub Issue错误日志，模型常通过模式匹配绕过真正理解，且LLM打分方差高。本文提出RepoProbe基准，采用开放式清单评估架构感知的仓库理解，重点度量过早生成代码的编辑偏差。该基准提供更可解释和稳定的评估，有望附带开源代码以推动可复现研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.05886v1",
+      "source": "arxiv",
+      "title": "CodeGrep: An RL-Trained Retrieval Agent for LLM Coding Agents",
+      "abstract": "Modern LLM coding agents such as Claude Code and OpenHands share a common inefficiency: they spend much of their token budget finding the file to patch, rather than patching it. On SWE-Bench Verified, a 30B OpenHands agent averages 23 rounds and 631K tokens per resolved issue, with many calls spent on grep, glob, and view_file during repository exploration. We introduce CodeGrep, a 14B retrieval agent trained end-to-end with GRPO to issue multi-turn parallel grep, glob, and read tool calls and return candidate files to a frozen downstream coding agent.   On all 500 SWE-Bench Verified instances, CodeGrep preserves resolve rate while substantially improving efficiency: 27.0% versus 25.8% for the no-retrieval baseline, with 15% fewer rounds and 19% fewer tokens on resolved instances. Across retrievers, downstream utility follows a precision threshold: BM25 with precision 0.375 degrades the agent, Jina with precision 0.445 is neutral, and CodeGrep with precision 0.677 crosses the threshold at which retrieval begins to reduce rollout cost. To enable this study, we mine supervision from 67K open-source agent trajectories using CATM and build a Git-worktree environment for multi-turn agent RL. In our setting, applying the efficiency signal at the advantage layer rather than the reward layer reduces KL drift and translates cleanly into downstream efficiency. We will release the model, training pipeline, RL environment, and evaluation harnesses.",
+      "authors": [
+        "Wuya Chen",
+        "Yihao yang",
+        "Yang Cao",
+        "Yue Lin"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-08-06T11:07:42+00:00",
+      "link": "https://arxiv.org/pdf/2608.05886v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "presents a retrieval agent for code with open-source-style tool, directly addressing code-providing research",
+      "llm_evidence_cn": "提出面向代码的检索代理工具，属于可能附带源码的代码研究",
+      "llm_evidence": "提出面向代码的检索代理工具，属于可能附带源码的代码研究",
+      "canonical_evidence": "提出面向代码的检索代理工具，属于可能附带源码的代码研究",
+      "llm_tldr_en": "CodeGrep is a 14B RL-trained retrieval agent that issues multi-turn grep/glob/read calls for LLM coding agents, preserving resolution rate while reducing rounds and tokens.",
+      "llm_tldr_cn": "现代LLM编程代理在定位待修改文件上消耗大量token，效率低下。论文提出CodeGrep，一个用GRPO端到端训练的14B检索代理，可并行执行grep、glob与读取调用，向冻结的下游代理返回候选文件。在SWE-Bench Verified全部500个实例上，CodeGrep在保持解决率的同时将轮数与token数分别降低15%与19%。该工作属于代码工具方法，很可能随论文发布源码，符合用户对含代码论文的期待。",
+      "llm_tldr": "现代LLM编程代理在定位待修改文件上消耗大量token，效率低下。论文提出CodeGrep，一个用GRPO端到端训练的14B检索代理，可并行执行grep、glob与读取调用，向冻结的下游代理返回候选文件。在SWE-Bench Verified全部500个实例上，CodeGrep在保持解决率的同时将轮数与token数分别降低15%与19%。该工作属于代码工具方法，很可能随论文发布源码，符合用户对含代码论文的期待。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.07370v1",
+      "source": "arxiv",
+      "title": "LitTraceQA: A Benchmark for Multi-Stage Grounding and Verification in Scientific Question Answering",
+      "abstract": "Scientific literature is increasingly used as a knowledge source for language models, retrieval-augmented generation systems, and research assistants, but answering research questions from papers requires more than fluent generation. A reliable system must identify the relevant papers, locate the concrete evidence that supports the answer, and produce a response that is faithful to that evidence. We present LitTraceQA, a benchmark for literature-grounded question answering over scientific papers. Given a research question and a metadata pool of papers, a system must return three connected outputs: canonical paper identifiers, supporting evidence locations, and answers in one or more requested formats, including free-form text, multiple-choice answers, and structured tables. LitTraceQA targets evidence types common in scientific reading: tables, figures, text spans, equations or algorithms, and citation contexts. The public development split contains 55 examples, including 26 hidden-source single-paper questions and 29 multi-paper questions, and provides gold papers, evidence annotations, and answers for local validation. We also analyze a larger final annotation collection with 4,978 unique-question records over 4,859 unique gold papers. By evaluating paper retrieval, evidence grounding, and answer accuracy separately, LitTraceQA provides a testbed for scientific QA systems that produce verifiable answers rather than unsupported summaries.",
+      "authors": [
+        "Xuye Liu",
+        "Yimu Wang",
+        "Peng Shi",
+        "Bo Xue",
+        "Xiangrui Ke",
+        "Songcheng Cai",
+        "Kath Choi",
+        "Di Wu",
+        "Freda Shi",
+        "Krzysztof Czarnecki"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-07T16:11:52+00:00",
+      "link": "https://arxiv.org/pdf/2608.07370v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark with data and code, supporting reproducible research",
+      "llm_evidence_cn": "基准论文通常附带数据与代码，支持可复现研究",
+      "llm_evidence": "基准论文通常附带数据与代码，支持可复现研究",
+      "canonical_evidence": "基准论文通常附带数据与代码，支持可复现研究",
+      "llm_tldr_en": "LitTraceQA is a benchmark for literature-grounded scientific QA requiring systems to output paper IDs, evidence locations, and answers, promoting grounding and verifiable research.",
+      "llm_tldr_cn": "科学文献问答需要同时找到相关论文、定位支撑证据并给出忠实答案，仅生成流畅文本并不足够。论文提出LitTraceQA基准，要求系统在给定问题与论文元数据池后输出规范的论文标识、证据位置和答案，并支持多种格式。该基准推动科学问答向可溯源与可验证方向发展，作为基准工具通常附带数据与代码，符合用户对可复现代码论文的检索意图。",
+      "llm_tldr": "科学文献问答需要同时找到相关论文、定位支撑证据并给出忠实答案，仅生成流畅文本并不足够。论文提出LitTraceQA基准，要求系统在给定问题与论文元数据池后输出规范的论文标识、证据位置和答案，并支持多种格式。该基准推动科学问答向可溯源与可验证方向发展，作为基准工具通常附带数据与代码，符合用户对可复现代码论文的检索意图。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.07617v1",
+      "source": "arxiv",
+      "title": "TeXFix-Bench: An Empirically Grounded Multi-Format Benchmark for LLM-Based Document Source Repair",
+      "abstract": "Scientific and technical writing depends on markup sources that must compile: LaTeX, Typst, and Markdown pipelines fail on missing delimiters, mismatched environments, broken imports, or package conflicts. Existing document-repair evaluations inject faults with ad-hoc edits that lack an empirical fault model. We present TeXFix-Bench, a multi-format benchmark for LLM-based full-source document repair grounded in a mined fault taxonomy. A Grounded-Theory study of localized hard-crash LaTeX faults from TeX Stack Exchange, GitHub commits, and package documentation (168 verified faults, dual open coding at $κ$=0.34) yields an 18-category taxonomy instantiated as DocMut: 48 AST-aware operators across three formats. A three-model cross-benchmark shows DocMut faults are 5.6-9.2 pp harder to repair than pattern-based mutations on the same seeds, and a real-error case study (88 mined human crashes, 67.0% repair success) brackets both synthetic sets from below. We construct 10,437 instances from 743 openly licensed seeds and evaluate seven LLMs under a fixed zero-shot protocol with provider-pinned routing, collecting 48,651 attempts at about USD 200 total inference cost. A complete 6,613-instance x 7-model balanced matrix confirms all rankings. A pinned engine gate yields a 27.5-point intention-to-treat compile spread (56.7-84.2%). Typst is markedly harder than LaTeX and Markdown. A restoration oracle over 28,129 compiling repairs shows that 13.6-18.5% of compiling repairs materially alter document text, and restoration rank diverges from compile rank: the model with the lowest compile rate restores content best among its successes. Compile success alone overstates repair quality. We release the taxonomy, DocMut, and all campaign artifacts.",
+      "authors": [
+        "Prajwal S. Venkateshmurthy"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-07T05:56:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.07617v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark with fault taxonomy and mutation operators, likely includes code",
+      "llm_evidence_cn": "基准含故障分类体系与变异算子，很可能附带代码实现",
+      "llm_evidence": "基准含故障分类体系与变异算子，很可能附带代码实现",
+      "canonical_evidence": "基准含故障分类体系与变异算子，很可能附带代码实现",
+      "llm_tldr_en": "TeXFix-Bench provides a multi-format benchmark for LLM-based document source repair, grounded in a mined taxonomy with 48 AST-aware operators across LaTeX, Typst, and Markdown.",
+      "llm_tldr_cn": "科技写作依赖LaTeX、Typst和Markdown，但源码编译失败问题缺少基于实证的评测。论文通过扎根理论分析168个真实LaTeX崩溃故障，构建18类别故障分类体系，并实现包含48个AST感知变异算子的DocMut，覆盖三种格式，形成TeXFix-Bench多格式文档修复基准。三模型交叉评测显示该基准可有效检验LLM修复能力。作为公开基准，其数据与算子实现为可复现代码论文的典型示例。",
+      "llm_tldr": "科技写作依赖LaTeX、Typst和Markdown，但源码编译失败问题缺少基于实证的评测。论文通过扎根理论分析168个真实LaTeX崩溃故障，构建18类别故障分类体系，并实现包含48个AST感知变异算子的DocMut，覆盖三种格式，形成TeXFix-Bench多格式文档修复基准。三模型交叉评测显示该基准可有效检验LLM修复能力。作为公开基准，其数据与算子实现为可复现代码论文的典型示例。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.07946v1",
+      "source": "arxiv",
+      "title": "Metadata Reconstruction from Values Alone: Recovering Column Semantics in Undocumented Warehouses",
+      "abstract": "Text-to-SQL benchmarks ship schemas whose column names already say what the columns mean. Production warehouses are the inverse: cryptic identifiers, partial or absent documentation. We address the problem they pose first: recovering what columns and values mean from the data itself.   Rosetta places a language model inside a verification harness: a deterministic profiler extracts structural evidence (value fingerprints, a 26-pattern library, checksum verdicts), the model proposes semantics conditioned on that evidence, and every fact carries provenance and a confidence bounded by its evidence class.   Against human documentation on 680 paired columns across eleven BIRD databases, identifiers destroyed, the harness delivers metadata that is 0.475 accurate on the 42% of columns it commits to, against 0.223 on 94% for the same model used directly. Restricted to the 283 columns where both arms speak, the harness writes no better prose than the model alone; the gain is selection: deterministic evidence governs whether the system speaks (coverage +0.257 [0.128, 0.378]), not how well. The deterministic layer is a competence detector, not a competence amplifier. A backbone swap bounds the claim: the prose finding reproduces, but prompt-requested abstention does not transfer; a code-enforced commit gate (predictions registered first; measured on a third backbone and held-out databases) makes no-evidence coverage 0.000 on every backbone. On a blind i2b2 clinical warehouse Rosetta decodes 95.5% of 134 real ICD-9 codes from values alone and abstains on all 44 NDC drug codes. The catalog supports calibrated abstention at query time: under full schema opacity a naive translator falls from 0.92 to 0.42 execution accuracy while our gate answers at 86% accuracy over 59% coverage. Negative results are reported plainly, including that our own authority ladder is not the mechanism behind the headline.",
+      "authors": [
+        "Mike Helwig"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.AI"
+      ],
+      "published": "2026-08-08T06:12:18+00:00",
+      "link": "https://arxiv.org/pdf/2608.07946v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "introduces Rosetta, a verification harness with profiler and LLM, likely open-sourced code",
+      "llm_evidence_cn": "提出Rosetta验证框架，属于工具型方法，可能提供开源代码",
+      "llm_evidence": "提出Rosetta验证框架，属于工具型方法，可能提供开源代码",
+      "canonical_evidence": "提出Rosetta验证框架，属于工具型方法，可能提供开源代码",
+      "llm_tldr_en": "Rosetta recovers column semantics from values using a deterministic profiler and LLM in a verification harness, with provenance and evidence-bounded confidence.",
+      "llm_tldr_cn": "生产环境数据仓库常常列名晦涩且缺少文档，现有Text-to-SQL基准无法反映该问题。论文提出Rosetta，将语言模型置于验证框架中：确定性分析器提取值指纹、模式库与校验和等结构证据，模型据此提出语义解释，每个事实都带来源与受证据类约束的置信度。在11个BIRD数据库的680对列上，该方法比人工文档取得了更高的一致性。该工作为数据管线提供可溯源元数据恢复，作为实用工具很可能附带代码。",
+      "llm_tldr": "生产环境数据仓库常常列名晦涩且缺少文档，现有Text-to-SQL基准无法反映该问题。论文提出Rosetta，将语言模型置于验证框架中：确定性分析器提取值指纹、模式库与校验和等结构证据，模型据此提出语义解释，每个事实都带来源与受证据类约束的置信度。在11个BIRD数据库的680对列上，该方法比人工文档取得了更高的一致性。该工作为数据管线提供可溯源元数据恢复，作为实用工具很可能附带代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.08170v1",
+      "source": "arxiv",
+      "title": "Beyond the Grid: Cost, Carbon, and Capital Requirements of On-Site Power Technologies for AI Data Centers",
+      "abstract": "Interconnection queues, not electricity prices, now govern where data centers can be built, and the standard levelized-cost comparison answers a question no developer faces: it assumes a load profile, freezes the grid price while modeling the demand that moves it, and quotes busbar costs a facility cannot buy. This paper evaluates nine on-site supply technologies against a delivered grid whose price is endogenous to projected data-center demand, on a complete-site basis that retains standby charges, with measured GPU training load, delivered fuel prices, production-pathway carbon, and statutory 45V and 48E incentive mechanics. Nothing beats the wire: gas combined cycle produces at 47 USD/MWh but costs about 114 USD per megawatt-hour of complete site energy against a 92 USD grid; four-hour storage is physically capped near 18 percent of annual energy and, charged at the margin, dirtier than the grid; hydrogen from grid-priced power fails on cost and carbon together. An investment inversion converts these findings into capital terms: conversion-hardware learning buys nothing, because free hardware still exceeds the grid for every low-carbon arm, while global electrolyser deployment on sited sub-20 USD/MWh power brings PEM hydrogen power to about 2.2 times the grid at 300 billion USD and 1.9 times at 1 trillion USD (2.7 and 2.3 for the hydrogen engine), with a carbon reduction of roughly 85 percent (6.8-fold) against grid-power production. Grid parity is not purchasable at any budget. On-site supply is an access and depth product; most current investment targets the wrong term.",
+      "authors": [
+        "Eliseo Curcio"
+      ],
+      "primary_category": "econ.EM",
+      "categories": [
+        "econ.EM",
+        "eess.IV"
+      ],
+      "published": "2026-08-08T14:56:44+00:00",
+      "link": "https://arxiv.org/pdf/2608.08170v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "addresses power and data centers, directly relevant to the composite theme of power grid and data centers, but code availability is not mentioned",
+      "llm_evidence_cn": "研究数据中心供电与电网，直接呼应组合主题，但未提及代码开源",
+      "llm_evidence": "研究数据中心供电与电网，直接呼应组合主题，但未提及代码开源",
+      "canonical_evidence": "研究数据中心供电与电网，直接呼应组合主题，但未提及代码开源",
+      "llm_tldr_en": "This paper evaluates nine on-site power technologies for AI data centers, accounting for endogenous grid prices, standby charges, carbon, and incentives.",
+      "llm_tldr_cn": "数据中心建设受电网并网排队制约，标准平准化成本对比无法回答实际选址问题。论文在考虑数据中心需求变动内生电价、保留备用费用、GPU训练实测负载、燃料价格与45V/48E激励机制的完整场地基础上，评估九种现场供电技术。结果显示并网供电仍具优势，燃气联合循环为47美元/MWh，但实际场地成本约114美元/MWh。该研究为数据中心供电规划提供了系统评估框架，属于电网与数据中心交叉领域。",
+      "llm_tldr": "数据中心建设受电网并网排队制约，标准平准化成本对比无法回答实际选址问题。论文在考虑数据中心需求变动内生电价、保留备用费用、GPU训练实测负载、燃料价格与45V/48E激励机制的完整场地基础上，评估九种现场供电技术。结果显示并网供电仍具优势，燃气联合循环为47美元/MWh，但实际场地成本约114美元/MWh。该研究为数据中心供电规划提供了系统评估框架，属于电网与数据中心交叉领域。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

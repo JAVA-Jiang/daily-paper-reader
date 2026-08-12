@@ -1,0 +1,496 @@
+Title: LitTraceQA: A Benchmark for Multi-Stage Grounding and Verification in Scientific Question Answering
+
+URL Source: https://arxiv.org/pdf/2608.07370v1
+
+Published Time: Mon, 10 Aug 2026 01:06:12 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# LIT TRACE QA: A B ENCHMARK FOR MULTI -S TAGE 
+
+# GROUNDING AND VERIFICATION IN SCIENTIFIC 
+
+# QUESTION ANSWERING 
+
+Xuye Liu 1 Yimu Wang 1 Peng Shi 2 Bo Xue 3 Xiangrui Ke 1
+
+Songcheng Cai 1 Kath Choi 1 Di Wu 4 Freda Shi 1 Krzysztof Czarnecki 1
+
+> 1
+
+University of Waterloo 2Amazon 3City University of Hong Kong 4University of Amsterdam 
+
+ABSTRACT 
+
+Scientific literature is increasingly used as a knowledge source for language mod-els, retrieval-augmented generation systems, and research assistants, but answer-ing research questions from papers requires more than fluent generation. A reli-able system must identify the relevant papers, locate the concrete evidence that supports the answer, and produce a response that is faithful to that evidence. We present LitTraceQA, a benchmark for literature-grounded question answering over scientific papers. Given a research question and a metadata pool of papers, a sys-tem must return three connected outputs: canonical paper identifiers, supporting evidence locations, and answers in one or more requested formats, including free-form text, multiple-choice answers, and structured tables. LitTraceQA targets evidence types common in scientific reading: tables, figures, text spans, equations or algorithms, and citation contexts. The public development split contains 55 examples, including 26 hidden-source single-paper questions and 29 multi-paper questions, and provides gold papers, evidence annotations, and answers for local validation. We also analyze a larger final annotation collection with 4,978 unique-question records over 4,859 unique gold papers. By evaluating paper retrieval, ev-idence grounding, and answer accuracy separately, LitTraceQA provides a testbed for scientific QA systems that produce verifiable answers rather than unsupported summaries. 
+
+1 INTRODUCTION 
+
+Scientific literature is increasingly used as an external knowledge source for language models, retrieval-augmented generation systems, and research assistants (Lewis et al., 2020). However, answering research questions from papers is not simply a matter of generating fluent summaries: systems must recover information distributed across full papers and provide concrete evidence for their answers (Dasigi et al., 2021). A reliable system must first identify the relevant papers, then locate the specific evidence that supports the answer, and finally produce a response that is faithful to that evidence (Gao et al., 2023). This process is especially important in scientific domains, where answers often depend on exact benchmark numbers, experimental settings, figure trends, algorithmic details, or citation contexts (Dasigi et al., 2021; Pramanick et al., 2024). Existing question answering benchmarks often focus on answer correctness alone, or they provide the source document in advance. Recent scientific QA resources make important progress on in-dividual pieces of the problem: M3SciQA evaluates multimodal, multi-document scientific QA over paper clusters (Li et al., 2024); LitSearch focuses on realistic scientific literature retrieval queries (Ajith et al., 2024); AirQA evaluates academic-paper QA with multiple question types and instance-level evaluation functions (Huang et al., 2025); and ResearchQA scales scholarly QA with survey-mined queries and rubrics (Yifei et al., 2025). Grounded visual benchmarks such as VISTAQA and view-level evidence identification show that answer correctness can hide evidence-selection failures when grounding is not measured explicitly (Nasr Azadani et al., 2026; Wang et al., 2026). These settings leave open a central challenge for literature-grounded reasoning: can a model 1arXiv:2608.07370v1 [cs.CL] 7 Aug 2026 1 Paper collection       
+
+> Recent papers and metadata
+> PDF pool
+> Source venues
+> ICML ICLR NeurIPS
+> ACL ICCV NAACL CVPR
+> 2
+
+Task design        
+
+> Task family
+> Multi-paper Single-paper
+> Evidence type
+> Text Table Figure Eq. Citation
+> Answer format MC Free form Table
+> 3
+
+Grounded sample  
+
+> Construct one checkable trace
+> Question q
+> One or more source papers required
+> P
+
+Relevant paper(s)   
+
+> Canonical paper identifiers
+> EEvidence localization
+> Typed source and locator
+> A
+
+Grounded answer   
+
+> Gold trace: P* + E* + a*
+> 4
+
+Model challenge      
+
+> Closed-book hardness filter
+> Same question q
+> GPT Claude Gemma
+> wrong partial wrong
+> Retain cases that expose difficulty
+> 5
+
+Dataset assembly  
+
+> Validate, deduplicate, merge
+> Validated trace
+> Include in final collection
+> Failed check
+> Review or regenerate
+> LitTraceQA
+> 4,978 final records
+> Unique questions after validation
+> Final collection scale 4,978
+> unique questions
+> 4,859
+> gold papers
+> 8,612
+> paper-question links
+> 64.85% multi-paper · five typed evidence categories
+> LitTraceQA evaluation chain
+> Score each stage separately to localize failure.
+> 1 Paper retrieval
+> Relevant paper IDs (P)
+> 2 Evidence grounding
+> Typed evidence locators (E)
+> 3 Answer generation
+> Requested answer (a)
+
+Text span 2 papers 
+
+> What exact gains do DUO and ISA report?
+> DUO · paper 1
+> “average improvements of
+> +2.2 AP3D|R40” ISA · paper 2
+> “SSP + ISA 63.0 → 70.3”
+> Gold answer
+> +2.2; 63.0 → 70.3
+
+Table 3 papers     
+
+> What gains are reported by Diff2I2P, DAC, and BLiM+CPN?
+> Method Reported gain
+> Diff2I2P over 7% DAC +10.01% mAP BLiM+CPN +6.4 R@1
+> Gold answer
+> >7%; +10.01% mAP; +6.4 R@1
+
+Figure 2 papers  
+
+> How much do FVP and ISP improve on real-world tasks?
+> Average success-rate improvement
+> 28% 42.5%
+> FVP ISP
+> Gold answer
+> FVP: 28% across 12 tasks ISP: 42.5% across 4 tasks
+
+Equation / algorithm     
+
+> 3 papers
+> Which mechanism does each spatial-vision paper define?
+> A3GS AdaIN into 3DGS latents
+> BadVideo
+> zt= √ᾱ tz0+ √(1−ᾱ t) ε
+> Polarization burst SR
+> shot/read sensor noise
+> Gold answer
+> AdaIN; forward diffusion; shot/read sensor noise
+
+Citation context 
+
+> 2 papers
+> Which cited works support the two compression claims?
+> Paper 1 · OBS → quantization
+> “Frantar and Alistarh (2022) adapt the OBS framework...”
+> Paper 2 · toxicity reduction
+> “Xu and Hu (2022) find...”
+> Gold answer · option C
+> Frantar & Alistarh (2022); Xu & Hu (2022)
+
+Agent workflow  
+
+> Structured annotation lane
+> 1
+
+Build sample  
+
+> Choose research question
+> 2
+
+Select papers  
+
+> Recover relevant papers
+> 3
+
+Define task  
+
+> Family, evidence, format
+> 4
+
+Construct QA  
+
+> Write answer and trace
+> 5
+
+Verify evidence  
+
+> Check paper membership
+> 6
+
+Challenge models  
+
+> Test closed-book failure
+> 7
+
+Merge record 
+
+> Preserve structured fields
+> Structured output
+> question · papers evidence · answer challenge trace
+> LitTraceQA record
+
+Figure 1: LitTraceQA constructs literature-grounded QA examples as traceable chains from paper retrieval to typed evidence grounding and final answer generation. The top row summarizes col-lection, task design, grounded construction, closed-book model challenge, and validation; compact vector marks identify source venues, evidence types, and the GPT, Claude, and Gemma challengers. The middle strip states the three-stage evaluation contract, the bottom row gives examples from five scientific evidence types, and the right lane summarizes the structured annotation workflow. recover the right papers from a large paper pool, identify the evidence inside those papers, and generate an answer whose claims can be checked? We introduce LitTraceQA, a benchmark and shared-task development set for literature-grounded question answering. Each example is organized around a research question. The system receives the question and a paper metadata pool, and must return three outputs: the relevant paper identifiers, supporting evidence locations, and the final answer. LitTraceQA is designed to evaluate the complete chain from retrieval to evidence grounding to answer generation, rather than treating citations or evidence as optional explanations after the answer has already been produced. LitTraceQA emphasizes evidence types that appear frequently in scientific papers and that can be evaluated in a reproducible way. The benchmark focuses on five primary evidence types: tables, figures, text spans, equations or algorithms, and citation contexts. These categories cover common scientific reading behaviors, such as comparing reported numbers across papers, reading trends from figures, extracting method or setting descriptions from prose, interpreting formal procedures, and understanding how papers position themselves relative to prior work. Figure 1 summarizes the benchmark scope. It follows the paper-overview style used in recent aca-demic QA benchmarks: the left side maps the task space and evidence categories, while the right side shows the trace bottleneck that answer-only evaluation misses. LitTraceQA requires the re-sponse trace to be correct at all three levels. A model can fail because it misses the paper, because it finds the paper but not the evidence, or because it finds the evidence but still produces the wrong answer. The public development split contains 55 examples, including 26 hidden-source single-paper ques-tions and 29 multi-paper questions. It covers all five primary evidence types, with 17 table-grounded questions, 15 figure-grounded questions, 9 text-span questions, 7 equation-or-algorithm questions, and 7 citation-context questions. Although the public split is compact, it provides the complete task format for participants to build data loaders, tune prompts or systems, and validate submissions before evaluation on a hidden test set. This paper makes three contributions. First, we define a literature-grounded QA task that explicitly separates paper retrieval, evidence grounding, and answer generation. Second, we provide annota-tions over diverse scientific evidence types, including non-textual and semi-structured sources such 2as tables and figures. Third, we support multiple answer formats, allowing the same framework to evaluate free-form synthesis, multiple-choice decisions, and structured comparison tables. We fur-ther report an audit of a larger local annotation collection to characterize the distributional profile and release requirements for scaling LitTraceQA. 
+
+2 RELATED WORK 
+
+Question answering over scientific papers. Early scientific-document QA benchmarks already recognized that research papers are not ordinary short documents. QASPER asks information-seeking questions over NLP papers and includes supporting evidence for answers (Dasigi et al., 2021). QASA studies more advanced questions over AI and machine-learning articles and empha-sizes evidence-based reasoning over full papers (Lee et al., 2023). Recent multimodal and artifact-centered datasets extend this line: M3SciQA targets multimodal, multi-document scientific QA over paper clusters (Li et al., 2024); SPIQA focuses on figures and tables in scientific papers (Praman-ick et al., 2024); and SCITAT studies scientific tables and text with diverse reasoning types (Zhang et al., 2025). AirQA further evaluates academic-paper QA with single-document, multi-document, retrieval, and comprehensive QA settings (Huang et al., 2025). LitTraceQA is aligned with these efforts in treating scientific papers as structured, multi-artifact documents, but it makes the answer trace explicit at the level of paper identifiers and typed evidence items. 
+
+Scientific literature retrieval and synthesis. A second line of work evaluates whether systems can find, rank, and synthesize scientific literature. LitSearch provides realistic literature-search queries for scientific retrieval (Ajith et al., 2024). Scientific representation and corpus resources such as S2ORC and SciRepEval support broader text mining, ranking, and search tasks over schol-arly documents (Lo et al., 2020; Singh et al., 2023). Retrieval-augmented systems such as PaperQA and OpenScholar show how scientific QA can be framed as an evidence-backed literature-synthesis problem over large paper collections (L´ ala et al., 2023; Asai et al., 2024). ResearchQA similarly evaluates scholarly long-form QA at scale using survey-derived queries and rubrics (Yifei et al., 2025). LitTraceQA differs in its output contract: instead of asking for only a long-form synthesis or a ranked paper list, it asks for the relevant papers, the typed evidence objects, and a checkable answer. 
+
+Evidence, attribution, and scientific verification. Scientific claim verification and evidence ex-traction provide a closely related view of grounding. SciFact asks systems to retrieve scientific abstracts and identify rationales that support or refute expert-written claims (Wadden et al., 2020). Evidence Inference studies treatment-comparison prompts over clinical-trial articles and requires supporting evidence for inferred results (DeYoung et al., 2020). More general attribution bench-marks ask whether generated answers are properly supported by cited sources. Attributed QA for-malizes answer attribution as an evaluation problem for large language models (Bohnet et al., 2022), while ALCE evaluates citation-supported generation along fluency, correctness, and citation-quality dimensions (Gao et al., 2023). In visual domains, VISTAQA evaluates joint visual QA and pixel-level evidence (Nasr Azadani et al., 2026), and view-level evidence identification separates view selection from answer generation in multi-view settings (Wang et al., 2026). LitTraceQA brings this attribution perspective into scientific-paper QA: the evidence unit is not a generic passage alone, but a typed paper artifact such as a table, figure, text span, equation or algorithm, or citation context. 
+
+3 TASK DEFINITION AND DESIGN GOALS 
+
+LitTraceQA is a traceable literature-grounded QA task over a fixed paper metadata pool. The input contains a stable ‘query id‘, the natural-language ‘question‘, and requested ‘answer types‘; multiple-choice inputs additionally expose the option set, and table-answer inputs expose the table schema used for row alignment. The system must return three connected outputs: canonical paper identifiers from the pool, evidence locations inside those papers, and the requested answer compo-nents. Let P be the released paper pool. Given a question q, a system returns a set of relevant paper 3Table 1: Component-level comparison with related scientific QA datasets and retrieval benchmarks. A checkmark indicates that the component is an explicit output or evaluation target; a triangle indi-cates partial or implicit support. LitTraceQA is the only benchmark in this comparison that combines paper retrieval, multi-paper QA, typed artifact evidence, checkable answers, strict trace evaluation, and closed-book hardness filtering.                                                                                           
+
+> Benchmark Paper ret. Multi paper Typed evid. Checkable ans. Strict trace Hardness Primary limitation rela-tive to LitTraceQA QASPER ✗✗▲✗▲✗Given-paper QA; evi-dence is not a retrieval output. QASA ✗✗▲✗▲✗Full-paper reasoning without paper-pool re-trieval. M3SciQA ▲✓✓✗▲✗Multimodal QA, but not a strict paper–evidence– answer trace. SPIQA ✗✗✓✗▲✗Figure/table QA with the paper context largely given. SCITAT ✗✗✓✓▲✗Table-text reasoning, not retrieval-grounded paper QA. AirQA ✓✓✓▲▲✗Broad QA settings, but no closed-book hardness-filtered MC/table trace. LitSearch ✓✗✗✗✗✗Retrieval benchmark without evidence or answer generation. ResearchQA ▲✓▲✗✗✗Long-form scholarly QA with rubric-based assess-ment.
+> LitTraceQA ✓✓✓✓✓✓Paper IDs, typed evi-dence, and answer are jointly required.
+
+identifiers ˆP , a set of typed evidence items ˆE, and an answer ˆa:
+
+ˆP = {ˆp1, . . . , ˆpm}, (1) 
+
+ˆE = {ˆe1, . . . , ˆen}, (2) 
+
+ˆa = Answer( q, ˆP , ˆE). (3) The gold record contains ‘gold papers‘, ‘evidence‘, and ‘answer‘. A gold paper stores ‘paper id‘, title, venue, and year. Each evidence item stores an ‘evidence id‘, the supporting ‘paper id‘, a ‘source type‘, the evidence text or value, and a locator. The public scorer uses coarse locators: page plus table ID for tables, page plus figure ID for figures, and page-level locations for text spans, equations or algorithms, and citation contexts. Richer fields such as row, column, section, region, equation ID, algorithm step, or cited paper can appear as annotation detail, but the task does not require systems to reproduce every fine-grained field. The task is organized by three orthogonal schema axes. First, ‘task family‘ specifies whether the question is ‘hidden source single paper‘, where one relevant paper must be recovered from the pool, or ‘multi paper‘, where the answer depends on evidence from multiple papers. Second, ‘pri-mary evidence type‘ identifies the main source type: table, figure, text span, equation or algorithm, citation context, and, in the schema, paper summary. Third, ‘answer types‘ specifies whether the answer is free-form, multiple choice, a structured table, or a combination of these components. The public LitTraceQA development split uses this full schema and contains free-form, multiple-choice, and structured-table answer components. The larger local LitTraceQA annotation collec-tion analyzed in this paper uses the same core trace fields and currently restricts final answers to multiple-choice and structured-table formats to make automatic checking more reproducible during data scaling. 
+
+Hidden-source single-paper QA. In this family, the question does not give the answer-bearing paper ID. The system must recover the paper from the metadata pool and then ground the answer inside that paper. This setting is close to full-paper QA benchmarks such as QASPER and QASA, 4Table 2: Representative hard LitTraceQA annotation examples selected from the local collection. Each row is a coherent multi-paper question whose answer requires evidence from more than one gold paper, rather than unrelated single-paper subquestions. Complete annotation cards are provided in Appendix B. 
+
+Primary evidence / answer Coherent question sample Gold evidence used Gold answer and observed failure Figure + table Two robot manipulation policy pa-pers: compare the real-world success-rate improvement and number of real-world tasks for FVP and Image-to-Sphere Policy. FVP uses Figure 1 context and ab-stract text; Image-to-Sphere uses its introduction and Figure 1 caption. FVP: 28% over 12 real-world tasks; Image-to-Sphere Policy: 42.5% over 4 real-world tasks. All three challenger models filled only 1/5 checked cells correctly. Table-style metric comparison + ta-ble Three retrieval papers: align the head-line gain reported by Diff2I2P, DAC, and BLiM+CPN across registration, open-set 3D retrieval, and text-video retrieval. Each answer row is grounded in the corresponding paper’s abstract-level result sentence, with an addi-tional DAC context span. Diff2I2P: over 7% registration-recall gain on 7-Scenes; DAC: +10.01% mAP over four open-set 3DOR datasets; BLiM+CPN: 6.4 R@1 average gain. All challenger models returned much smaller or mismatched gains. Text span + table Two inference-time adaptation papers: extract the headline quantitative gain for DUO on KITTI and ISA on the SSP baseline. DUO requires the introduction sen-tence giving +2.2 AP3D |R40 on KITTI; ISA requires the overview value “SSP + ISA 63.0 → 70.3”. DUO: +2.2 AP3D |R40 in the Car cat-egory; ISA on SSP: 63.0 → 70.3. All challenger models produced plausible but wrong gains such as +5.75 or +7.9. Eq./alg. + table Three spatial-vision papers: compare the exact noise-feature injection or noise-modeling mechanism defined by A3GS, BadVideo, and polarization burst SR. A3GS supplies the AdaIN injec-tion operator; BadVideo supplies the forward diffusion noising equa-tion; polarization burst SR sup-plies the rejected Gaussian-noise assumption and replacement sensor model. AdaIN for 3DGS latent style injection; 
+
+zt = √ ¯αtz0 + √1 − ¯αtϵ, ϵ ∼N (0 , 1) ; reject additive white Gaus-sian noise in Stokes components in fa-vor of shot/read sensor noise. All chal-lenger models missed the row-level match. Citation context + MC Two LLM-compression papers: iden-tify which cited works are used for OBS-to-quantization adaptation and for toxicity reduction under knowl-edge distillation. One related-work citation context comes from self-calibration quan-tization; the other comes from the inference-acceleration bias paper. Gold option C: Frantar and Alistarh (2022) for OBS-to-quantization; Xu and Hu (2022) for monotonic toxic-ity reduction in GPT-2. All challenger models selected option A, confusing later GPTQ/SparseGPT-style citations with the cited source. 
+
+but it adds a retrieval step and requires the output paper ID to be checkable (Dasigi et al., 2021; Lee et al., 2023). A question may ask for a number in a table, a figure reading, an experimental setting, or a textual claim; the answer is only valid if the retrieved paper and evidence locator also match. 
+
+Multi-paper QA. In this family, the gold set contains multiple papers. The model must align evidence across papers rather than solve independent single-paper questions. Typical examples compare methods under a shared benchmark, reconcile values reported in different tables or figures, or identify a prior work cited by more than one paper. This family is motivated by multi-document scientific QA resources such as M3SciQA (Li et al., 2024), but LitTraceQA makes the paper set, evidence items, and final answer jointly visible to the evaluator. 
+
+Typed evidence grounding. Scientific-paper QA fails in different ways depending on the evi-dence source. A table question may require a row and column value; a figure question may require reading a plotted bar or caption; a text-span question may depend on an implementation detail; an equation-or-algorithm question may depend on a hyperparameter, update rule, or algorithm step; and a citation-context question may depend on how a paper names or uses prior work. LitTraceQA preserves this source type in ‘primary evidence type‘ and in every evidence item so that errors in grounding can be diagnosed separately from errors in answer wording. 
+
+Answer formats. The schema supports free-form, multiple-choice, and table answers. Multiple choice is useful when the evidence determines one discrete option, and the submitted answer is the option letter. Structured tables are used when the answer aligns multiple papers, methods, datasets, metrics, or settings; row-key columns define how predictions are matched to gold rows. Free-form answers appear in the public LitTraceQA development split, while the local LitTraceQA collection analyzed below uses multiple choice and table answers only. This difference is intentional: the re-5a Final collection statistics                                   
+
+> Statistic Count Share Collection scale
+> Unique questions 4,978 –Unique gold papers 4,859 –Gold-paper links 8,612 –Mean papers / question 1.73 –Mean evidence / question 2.62 –
+> Question scope
+> Multi-paper questions 3,228 64.85% Single-paper questions 1,750 35.15%
+> Answer format
+> Multiple choice 3,029 60.8% Structured table 1,949 39.2%
+> Primary evidence
+> Table 1,339 26.9% Figure 1,132 22.7% Text span 933 18.7% Equation / algorithm 819 16.5% Citation context 755 15.2%
+> Closed-book hardness
+> All challengers wrong 3,080 61.9% One challenger correct 1,898 38.1%
+
+b
+
+> n=4,978
+> Table 1,339 (26.9%) Figure 1,132 (22.7%) Text span 933 (18.7%) Equation / algorithm 819 (16.5%) Citation context 755 (15.2%)
+
+Corpus composition             
+
+> Outer to inner: primary evidence →scope →answer format →hardness
+> Scope Multi-paper 64.85% Single-paper 35.15%
+> Answer Multiple choice 60.8% Structured table 39.2%
+> Hardness All wrong 61.9% One correct 38.1%
+
+Figure 2: LitTraceQA corpus statistics and composition. The left table reports exact counts and shares for the 4,978 unique-question records; the right concentric chart integrates primary evidence type in the outer ring with question scope, answer format, and closed-book hardness in succes-sive inner rings. Multi-paper questions constitute 64.85% of the collection, and all closed-book challengers fail on 61.9% of records. Closed-book outcomes describe construction-time hardness metadata rather than retrieval-augmented baseline performance. lease schema remains general, while the local collection prioritizes automatically checkable answer formats. The benchmark is guided by four design goals. G1: schema fidelity. The paper describes the same core record contract used by the public LitTraceQA release and the local LitTraceQA annotations: question, answer types, gold papers, typed evidence, and answer. G2: trace diagnostics. Evaluation should separate paper retrieval, evidence grounding, and answer correctness so that a fluent but unsupported answer is not counted as fully correct. G3: scientific evidence coverage. The data should cover tables, figures, text spans, equations or algorithms, and citation contexts rather than reduce paper QA to paragraph extraction. G4: scalable quality control. The construction process should keep the trace fields machine-checkable, validate evidence membership, and, for the local collection, filter for questions that closed-book challenger models cannot answer reliably. 
+
+4 DATASET CONSTRUCTION 
+
+LitTraceQA is released as a benchmark and shared-task development set over a paper metadata pool. The public split provides the task contract: questions, gold relevant papers, evidence annotations, and answers. PDFs are not redistributed with the dataset; systems operate over the released metadata and any paper access available under the original publishers’ terms. To scale beyond the compact public development split, we use a generate–ground–challenge construction process. Paper metadata and local text caches provide source material; an open-book generator proposes candidate questions and gold annotations; automated grounding checks verify that evidence is attached to the declared papers; and closed-book challenger models test whether the question can be answered without ac-cess to the papers. Figure 2 summarizes the scale and composition of the resulting collection; the paragraphs below detail the individual construction stages. 
+
+Source selection. The metadata pool provides paper identifiers, titles, authors, abstracts, venues, years, and available source links. The larger local source pool contains 27,487 paper metadata records from recent machine learning, computer vision, and natural language processing venues. Candidate papers are selected from title and abstract information, and a paper must have a local text 6a Trace output contract 
+
+> Evaluation input
+> Question q
+> Paper metadata pool P answer format + schema
+> QA system
+> returns one trace
+> System outputs
+> Predicted papers
+> paper IDs
+> score
+> Gold papers P*
+> canonical IDs
+> Predicted evidence
+> source type + locator
+> score
+> Gold evidence E*
+> normalized locations
+> Predicted answer
+> requested components
+> score
+> Gold answer a*
+> requested format Each predicted component is scored against its corresponding gold target.
+
+b Separated scoring  
+
+> Paper retrieval
+> Target: canonical paper IDs
+> Precision / Recall / F1 Ranked: Recall@K
+> Evidence grounding
+> Target: paper + type + locator
+> Coarse exact match / F1
+> Answer correctness
+> Target: requested format
+> MC accuracy · text exact match
+> Table row F1 · cell accuracy
+> AND Joint success
+> all three components correct
+> Strict conjunction, not an average of component scores
+
+c Oracle diagnostic ladder             
+
+> Downward: upstream bottlenecks are removed
+> 1End-to-end
+> question + paper pool retrieve papers ground evidence answer
+> isolates full-system behavior
+> 2Oracle paper
+> gold papers given
+> gold papers ground evidence answer
+> removes paper retrieval bottleneck
+> 3Oracle evidence
+> gold evidence given gold papers gold evidence answer removes grounding bottleneck
+> Trace components: paper retrieval evidence grounding answer correctness gold / oracle
+
+Figure 3: LitTraceQA evaluation protocol. Systems return a trace consisting of paper identifiers, ev-idence locations, and answers. Metrics are reported separately for paper retrieval, evidence ground-ing, and answer correctness, while strict joint success requires all components to be correct. Oracle-paper and oracle-evidence settings provide a diagnostic ladder for isolating retrieval, grounding, and answer-generation failures. cache before it can support an internally generated instance. This requirement keeps generation tied to inspectable paper content rather than to title-only metadata. 
+
+Open-book generation. For each candidate instance, the generator receives paper text and a tar-get evidence category. It produces a self-contained question, a set of gold papers, typed evidence items, and a final answer. The target evidence category rotates across tables, figures, text spans, equations or algorithms, and citation contexts. Answer formats are constrained to multiple choice and structured tables, which makes automatic checking more feasible than open-ended free-form answers. 
+
+Grounding and filtering. After generation, each candidate passes evidence membership and grounding checks. Evidence must refer to a declared gold paper, and distinctive text or values should be recoverable from the local paper text. The same question is then given to closed-book challenger models without paper context. Instances whose answers can be guessed reliably without retrieval are filtered out; the retained collection records whether all challenger models were wrong or whether one challenger model answered correctly. 
+
+Annotation schema. Each record stores the question, primary evidence type, answer type, gold papers, evidence items, answer, generation metadata, model attempts, difficulty label, and verifica-tion metadata. Evidence items include a paper identifier, a source type, evidence text or value, a locator, and grounding strings. The locator field is flexible in the current collection because different evidence types require different anchors, but release-quality evaluation will require more normaliza-tion. Figure 3 shows how this trace contract maps to component-level scores and oracle diagnostic settings. 
+
+5 DATASET CHARACTERISTICS 
+
+We aggregate the local annotation files and collapse exact repeated question texts from cumula-tive intermediate checkpoints before reporting corpus-level statistics. The resulting final collection contains 4,978 unique-question records over 4,859 unique gold papers and 8,612 gold-paper links. Figure 2 gives the compact table-and-chart summary of question scope, primary evidence, answer 7Venue Gold-paper links (%) Relative frequency ICCV 2025 4,187 (48.6%) NAACL 2025 972 (11.3%) ACL 2025 925 (10.7%) ICLR 2025 443 (5.1%) ICML 2025 438 (5.1%) CVPR 2025 436 (5.1%) ECCV 2024 408 (4.7%) NeurIPS 2025 404 (4.7%) EMNLP 2025 399 (4.6%) 
+
+Figure 4: Venue distribution by gold-paper link. The current collection is concentrated in recent vision and NLP venues, indicating a clear target domain but also a venue-balance limitation. format, and closed-book hardness. Figure 4 separately reports venue coverage, which is not repre-sented in the record-level corpus profile. 
+
+Coverage. The collection contains all five intended primary evidence types: 1,339 table-based questions (26.9%), 1,132 figure-based questions (22.7%), 933 text-span questions (18.7%), 819 equation-or-algorithm questions (16.5%), and 755 citation-context questions (15.2%). Evidence items are more mixed than primary task labels: a table-centered question may still require supporting prose, and a figure-centered question may require caption text or citation context. 
+
+Answer formats and hardness. The final collection contains 3,029 multiple-choice instances (60.8%) and 1,949 structured-table instances (39.2%). The difficulty labels show that 3,080 in-stances (61.9%) were answered incorrectly by all closed-book challenger models, while 1,898 in-stances (38.1%) were answered correctly by exactly one challenger. These labels do not replace retrieval-augmented evaluation, but they provide an initial hardness check: many questions are not reliably answerable from model memory alone. 
+
+Source diversity. The collection uses 4,859 unique gold papers and 8,612 gold-paper links. Most gold-paper links come from 2025 papers, with a smaller number from 2024. The venue distribution is concentrated in ICCV, NAACL, and ACL, with additional links from ICML, ECCV, EMNLP, NeurIPS, CVPR, and ICLR (Figure 4). This concentration is a property of the current annotation collection and should be treated as a limitation or as a deliberate domain focus. 
+
+6 EVALUATION PROTOCOL 
+
+Figure 3 summarizes the output contract, separated metrics, strict joint criterion, and oracle diag-nostic settings. LitTraceQA should be evaluated with separated metrics rather than a single answer score. Paper retrieval is evaluated over canonical paper identifier sets, with question-level pre-cision, recall, and F1 macro-averaged across questions; ranked variants such as Recall@K, MRR, MAP, or nDCG can be reported when systems return ordered lists. Evidence grounding is evalu-ated over normalized evidence locations comprising the paper identifier, evidence source type, page number, and an object identifier when the evidence type supports one. Coarse exact match checks complete locator tuples, while set-level precision, recall, and F1 can supplement it when predictions contain multiple evidence items. For table evidence, the object identifier is the table ID; for figure evidence, it is the figure ID; for text spans, equation-or-algorithm evidence, and citation contexts, the page-level location is used as the coarse grounding target. Answer correctness follows the re-quested answer components: accuracy for multiple-choice answers, exact match for short free-form answers in the public evaluator, and row-level F1 plus macro- and micro-averaged cell accuracy for structured tables. Joint success requires the paper, evidence, and answer components all to be correct; it is a strict conjunction rather than an average of component scores. This separation is essential for diagnosis. A model that answers correctly but retrieves the wrong paper has not solved retrieval-grounded QA. A model that retrieves the right paper but cites an irrelevant evidence item has not solved grounding. A model that retrieves and grounds correctly 8but produces the wrong table value has failed answer generation. Reporting these stages separately allows LitTraceQA to distinguish retrieval failures, grounding failures, and reasoning or formatting failures. The benchmark can support several evaluation settings. In the full end-to-end setting, the model receives only the question and the paper pool. In an oracle paper setting, the model receives the gold papers and must identify evidence and answer. In an oracle evidence setting, the model receives the gold evidence and must answer. These settings form a diagnostic ladder: end-to-end performance measures complete capability, while oracle variants isolate the contribution of retrieval and evidence localization. They define diagnostic evaluation conditions rather than additional model results. 
+
+7 CORPUS ANALYSIS 
+
+The corpus statistics suggest three findings about the current state of the benchmark. 
+
+Finding 1: LitTraceQA mostly measures cross-paper retrieval, but not exclusively. 3,228 in-stances require at least two gold papers, accounting for 64.85% of the final collection. The remaining 1,750 instances (35.15%) are still useful for paper-internal grounding, but they should be reported separately or filtered when the evaluation claim is specifically about multi-paper reasoning. 
+
+Finding 2: Evidence grounding is heterogeneous. The collection contains 5,673 text-span ev-idence items (43.5%), 2,103 table evidence items (16.1%), 1,905 citation-context evidence items (14.6%), 1,720 equation-or-algorithm evidence items (13.2%), and 1,647 figure evidence items (12.6%). This distribution means the benchmark does not reduce scientific QA to paragraph ex-traction. It requires models to handle multiple paper artifact types and to connect them to answer formats. 
+
+Finding 3: Closed-book hardness filtering changes the benchmark target. Every final record contains verification metadata. The hardness labels show 3,080 instances (61.9%) for which all challenger models were wrong without paper context and 1,898 instances (38.1%) for which one challenger was correct. This supports the intended evaluation target: the benchmark should reward retrieval-grounded systems rather than systems that answer from memory. At the same time, these labels are not leaderboard results because the challenger models were not evaluated with paper retrieval. 
+
+Finding 4: The release needs balancing and normalization. The final collection has no dupli-cate question text under the current duplicate check, but it contains 918 repeated gold-paper sets, 1,750 single-paper instances (35.15%), and 72 instances with fewer than two evidence items (1.4%). Venue coverage is also uneven. These are not flaws in the task definition, but they are release de-cisions: the authors should either define filtered subsets or explicitly position the benchmark as covering both single-paper grounding and multi-paper retrieval-grounded QA. 
+
+8 LIMITATIONS AND RELEASE REQUIREMENTS 
+
+The current collection is strong enough to support a benchmark-development paper, but several items remain necessary for a final benchmark release. First, the flexible evidence locator schema should be normalized so that grounding can be scored automatically across tables, figures, equations, al-gorithms, citation contexts, and text spans. Second, the benchmark should define official splits or public/hidden evaluation partitions. Third, the single-paper subset should be handled deliberately, either as a separate diagnostic subset or as data to filter for a strictly multi-paper track. Fourth, licensing and redistribution status must be documented for metadata, paper text, and released an-notations. Fifth, baseline retrieval-augmented systems should be evaluated under the same paper, evidence, answer, and joint metrics proposed above. Human quality control is another open requirement. The current collection contains automated gen-eration, grounding, and challenger-verification metadata, but a submission-ready benchmark should also document human review or expert spot-check procedures. If multiple annotators are used, inter-annotator agreement should be reported for evidence type, evidence locator, answer format, and final 9answer correctness. If the benchmark remains primarily semi-automated, the release should disclose which checks are automatic and which properties are not guaranteed. 
+
+9 CONCLUSION 
+
+LitTraceQA reframes scientific-paper QA as a traceable retrieval-grounding problem. Instead of asking only whether a system can produce an answer, it asks whether the system can find the rele-vant papers, locate typed evidence, and answer in the requested format. The public development split contains 55 examples with gold paper, evidence, and answer annotations. The larger local annotation collection contains 4,978 final unique-question records over 4,859 unique gold papers, covers five evidence categories, and records closed-book hardness metadata for every instance. The next step is to turn this annotation collection into an official benchmark release with normalized locators, offi-cial splits, documented licensing, human quality-control evidence, and baseline retrieval-augmented evaluations. 
+
+REFERENCES 
+
+Anirudh Ajith, Mengzhou Xia, Alexis Chevalier, Tanya Goyal, Danqi Chen, and Tianyu Gao. Lit-Search: A retrieval benchmark for scientific literature search, 2024. URL https://arxiv. org/abs/2407.18940 . Accepted to EMNLP 2024. Akari Asai, Jacqueline He, Rulin Shao, Weijia Shi, Amanpreet Singh, Joseph Chee Chang, Kyle Lo, Luca Soldaini, Sergey Feldman, Mike D’Arcy, David Wadden, Matt Latzke, Minyang Tian, Pan Ji, Shengyan Liu, Hao Tong, Bohao Wu, Yanyu Xiong, Luke Zettlemoyer, Graham Neubig, Dan Weld, Doug Downey, Wen-tau Yih, Pang Wei Koh, and Hannaneh Hajishirzi. OpenScholar: Synthesizing scientific literature with retrieval-augmented lms, 2024. URL https://arxiv. org/abs/2411.14199 .Bernd Bohnet, Vinh Q. Tran, Pat Verga, Roee Aharoni, Daniel Andor, Livio Baldini Soares, Massimiliano Ciaramita, Jacob Eisenstein, Kuzman Ganchev, Jonathan Herzig, Kai Hui, Tom Kwiatkowski, Ji Ma, Jianmo Ni, Lierni Sestorain Saralegui, Tal Schuster, William W. Cohen, Michael Collins, Dipanjan Das, Donald Metzler, Slav Petrov, and Kellie Webster. Attributed question answering: Evaluation and modeling for attributed large language models, 2022. URL 
+
+https://arxiv.org/abs/2212.08037 .Pradeep Dasigi, Kyle Lo, Iz Beltagy, Arman Cohan, Noah A. Smith, and Matt Gardner. A dataset of information-seeking questions and answers anchored in research papers. In Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies , 2021. doi: 10.48550/arXiv.2105.03011. URL 
+
+https://arxiv.org/abs/2105.03011 .Jay DeYoung, Eric Lehman, Ben Nye, Iain J. Marshall, and Byron C. Wallace. Evidence inference 2.0: More data, better models. In Proceedings of the 19th SIGBioMed Workshop on Biomedical Language Processing , 2020. doi: 10.48550/arXiv.2005.04177. URL https://arxiv.org/ abs/2005.04177 .Tianyu Gao, Howard Yen, Jiatong Yu, and Danqi Chen. Enabling large language models to generate text with citations. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing , 2023. doi: 10.48550/arXiv.2305.14627. URL https://arxiv.org/ abs/2305.14627 .Tiancheng Huang, Ruisheng Cao, Yuxin Zhang, Zhangyi Kang, Zijian Wang, Chenrun Wang, Yijie Luo, Hang Zheng, Lirong Qian, Lu Chen, and Kai Yu. AirQA: A comprehensive qa dataset for ai research with instance-level evaluation, 2025. URL https://arxiv.org/abs/2509. 16952 . Accepted to ICLR 2026. Jakub L´ ala, Odhran O’Donoghue, Aleksandar Shtedritski, Sam Cox, Samuel G. Rodriques, and Andrew D. White. PaperQA: Retrieval-augmented generative agent for scientific research, 2023. URL https://arxiv.org/abs/2312.07559 .10 Yoonjoo Lee, Kyungjae Lee, Sunghyun Park, Dasol Hwang, Jaehyeon Kim, Hong-In Lee, and Moontae Lee. QASA: Advanced question answering on scientific articles. In Proceedings of the 40th International Conference on Machine Learning , volume 202 of Proceedings of Machine Learning Research , pp. 19036–19052. PMLR, 2023. URL https://proceedings.mlr. press/v202/lee23n.html .Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich K¨ uttler, Mike Lewis, Wen-tau Yih, Tim Rockt¨ aschel, Sebastian Riedel, and Douwe Kiela. Retrieval-augmented generation for knowledge-intensive nlp tasks. In Proceedings of the 34th International Conference on Neural Information Processing Systems , pp. 9459–9474, 2020. Chuhan Li, Ziyao Shangguan, Yilun Zhao, Deyuan Li, Yixin Liu, and Arman Cohan. M3SciQA: A multi-modal multi-document scientific qa benchmark for evaluating foundation models, 2024. URL https://arxiv.org/abs/2411.04075 .Kyle Lo, Lucy Lu Wang, Mark Neumann, Rodney Kinney, and Daniel S. Weld. S2ORC: The semantic scholar open research corpus. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics , 2020. doi: 10.48550/arXiv.1911.02782. URL 
+
+https://arxiv.org/abs/1911.02782 .Mozhgan Nasr Azadani, Yimu Wang, Yongpeng Zhu, Lihong Chen, Milan Ganai, Sean Sedwards, Marco Pavone, and Krzysztof Czarnecki. VISTAQA: Benchmarking joint visual question answer-ing and pixel-level evidence, 2026. URL https://arxiv.org/abs/2605.20676 .Shraman Pramanick, Rama Chellappa, and Subhashini Venugopalan. Spiqa: A dataset for multi-modal question answering on scientific papers. In Advances in Neural Information Processing Systems , volume 37, pp. 118807–118833, 2024. Amanpreet Singh, Mike D’Arcy, Arman Cohan, Doug Downey, and Sergey Feldman. SciRepEval: A multi-format benchmark for scientific document representations. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing , 2023. doi: 10.48550/arXiv. 2211.13308. URL https://arxiv.org/abs/2211.13308 .David Wadden, Shanchuan Lin, Kyle Lo, Lucy Lu Wang, Madeleine van Zuylen, Arman Cohan, and Hannaneh Hajishirzi. Fact or fiction: Verifying scientific claims. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing , 2020. doi: 10.48550/arXiv. 2004.14974. URL https://arxiv.org/abs/2004.14974 .Yimu Wang, Yee Man Choi, Barry Zhang, Mozhgan Nasr Azadani, Sean Sedwards, and Krzysztof Czarnecki. Where does the answer come from? benchmarking view-level visual evidence iden-tification in multi-view mllms for autonomous driving, 2026. URL https://arxiv.org/ abs/2606.09644 .Li S. Yifei, Allen Chang, Chaitanya Malaviya, and Mark Yatskar. ResearchQA: Evaluating scholarly question answering at scale across 75 fields with survey-mined questions and rubrics, 2025. URL 
+
+https://arxiv.org/abs/2509.00496 .Xuanliang Zhang, Dingzirui Wang, Baoxin Wang, Longxu Dou, Xinyuan Lu, Keyan Xu, Dayong Wu, and Qingfu Zhu. SCITAT: A question answering benchmark for scientific tables and text covering diverse reasoning types. In Findings of the Association for Computational Linguistics: ACL 2025 , pp. 3859–3881, Vienna, Austria, 2025. Association for Computational Linguistics. URL https://aclanthology.org/2025.findings-acl.199/ .
+
+A REPRODUCIBILITY NOTES 
+
+The corpus statistics in this draft are generated from the local LitTraceQA annotation directory. Be-fore statistics are exported, exact repeated question texts from cumulative intermediate checkpoints are collapsed. The main paper therefore reports the final unique-question collection: records with different question text are counted as distinct instances, while exact duplicate question texts are re-moved from corpus-level counts. The generated artifacts are stored under the local analysis directory as JSON, CSV, Markdown, and LaTeX macro files. 11 B REPRESENTATIVE ANNOTATION EXAMPLES 
+
+This appendix gives compact but complete paper-facing annotation cards for the examples summa-rized in Table 2. For readability, we omit local file names and use sample labels rather than internal collection filenames. Each card reports the collected task fields, gold papers, evidence items, answer object, generation metadata, verification metadata, and the wrong-answer behavior observed during closed-book challenger validation. For space, raw challenger outputs are rendered as compact an-swer strings: the predicted values, choices, and cited works are preserved, while surrounding JSON formatting is omitted. B.1 SAMPLE A: F IGURE -G ROUNDED ROBOT MANIPULATION COMPARISON 
+
+Collected task fields. Task family: multi paper . Primary evidence type: figure . Answer type: table . Difficulty after verification: all models wrong . The question asks: “For these two diffusion-based robot manipulation policy papers, report the average success-rate improvement each method claims and the exact number of real-world evaluation tasks used to compute the real-world figure: FVP (built on DP3 across its real tasks) versus the Image-to-Sphere Policy across its real-world tasks.” 
+
+Gold papers. 
+
+• iccv2025 00015 , 4D Visual Pre-training for Robot Learning , ICCV 2025. • neurips2025 00005 , 3D Equivariant Visuomotor Policy Learning via Spherical Projection ,NeurIPS 2025. 
+
+Collected evidence. 
+
+1. ev 001 : iccv2025 00015 , source type figure , page 1, Abstract/Figure 1 context. Evi-dence value: “Across twelve real-world manipulation tasks, FVP boosts the average success rate of 3D Diffusion Policy (DP3) for these tasks by 28%.” Search needles include “boosts the av-” and “twelve real-world manipulation tasks”. 2. ev 002 : iccv2025 00015 , source type text span , page 1, Abstract. Evidence value re-peats the task-count and 28% improvement span for FVP. Search needles include “for these” and “tasks by 28%”. 3. ev 003 : neurips2025 00005 , source type text span , page 2, Introduction contributions. Evidence value: “We validate our method through extensive experiments, achieving an average success rate improvement of 11.6% over twelve simulation tasks and 42.5% across four real-world tasks.” Search needles include “42.5% across four real-world tasks”. 4. ev 004 : neurips2025 00005 , source type figure , page 1, Figure 1 caption. Evidence value identifies the Image-to-Sphere Policy as an SO(3)-equivariant policy learning framework based on a single eye-in-hand RGB image. Search needles include “first SO(3)-equivariant” and “eye-in-hand RGB image”. 
+
+Gold answer object. The table schema has row key method and answer columns 
+
+real world improvement and num real world tasks . The rows are: FVP (on DP3), 28%, 12; and Image-to-Sphere Policy (ISP), 42.5%, 4. 
+
+Generation and verification traces. The sample was generated by 
+
+us.anthropic.claude-opus-4-8 at 2026-07-13T19:37:16.875054+00:00 .The verifier is generate loop ; verification at 2026-07-13T19:37:16.875095+00:00 
+
+marked Claude, ChatGPT, and Gemini as failures under the model mapping 
+
+us.anthropic.claude-opus-4-8 , openai.gpt-5.5 , and google.gemma-4-31b .The challenger attempts each parsed only 1/5 checked table cells correctly. • Claude raw wrong output : FVP about 25% over 4 real-world tasks; Image-to-Sphere Policy about 18% over 6 real-world tasks. 12 • ChatGPT raw wrong output : FVP about 11 percentage points over DP3 with 6 real-world tasks; Image-to-Sphere Policy about 17 percentage points with 4 real-world tasks. • Gemini raw wrong output : FVP approximately 15.3% over 18 real-world tasks; Image-to-Sphere Policy approximately 20% over 10 real-world tasks. 
+
+Error analysis. All three models recognized that the question asks for two robot policy papers, but they answered from plausible prior-like memory rather than the cited figure/abstract evidence. The failure is mainly an exact evidence-grounding error: the correct cells require copying 28%/12 from the FVP evidence and 42.5%/4 from the Image-to-Sphere evidence. B.2 SAMPLE B: C ROSS -P APER RETRIEVAL METRIC ALIGNMENT 
+
+Collected task fields. Task family: multi paper . Primary evidence type: table . Answer type: table . Difficulty after verification: all models wrong . The question asks for three headline retrieval gains: Diff2I2P registration-recall improvement on 7-Scenes, DAC average mAP gain over prior arts across four open-set 3D object retrieval datasets, and the average R@1 margin by which BLiM with CPN outperforms previous state of the art on four text-video retrieval benchmarks. 
+
+Gold papers. 
+
+• iccv2025 00559 , Diff2I2P: Differentiable Image-to-Point Cloud Registration with Diffusion Prior , ICCV 2025. • iccv2025 00540 , Describe, Adapt and Combine: Empowering CLIP Encoders for Open-set 3D Object Retrieval , ICCV 2025. • iccv2025 00253 , Bidirectional Likelihood Estimation with Multi-Modal Large Language Models for Text-Video Retrieval , ICCV 2025. 
+
+Collected evidence. 
+
+1. ev 001 : iccv2025 00559 , source type text span , Abstract. Evidence value: “achieving over 7% improvement in registration recall on the 7-Scenes benchmark.” Search needle: “over 7% improvement in registration recall on the 7-Scenes benchmark”. 2. ev 002 : iccv2025 00540 , source type text span , Abstract. Evidence value: “DAC sig-nificantly surpasses prior arts by an average of +10.01% mAP on four open-set 3DOR datasets.” Search needle: “by an average of +10.01% mAP on four open-set 3DOR”. 3. ev 003 : iccv2025 00253 , source type text span , Abstract. Evidence value: “our BLiM equipped with CPN outperforms previous state-of-the-art models by 6.4 R@1 on average.” Search needle: “outperforms previous state-of-the-art models by 6.4 R@1 on average”. 4. ev 004 : iccv2025 00540 , source type text span , Abstract. Evidence value states that DAC synergizes a CLIP model with a multi-modal large language model; it records method context for the DAC row. 
+
+Gold answer object. The table schema uses method as the row key and stores reported gain 
+
+plus benchmark or setting . The rows are: Diff2I2P, over 7%, registration recall on 7-Scenes; DAC, +10.01% mAP, average over four open-set 3DOR datasets; and BLiM+CPN, 6.4 R@1, aver-age over four text-video retrieval benchmarks. 
+
+Generation and verification traces. The sample was generated by 
+
+us.anthropic.claude-opus-4-8 at 2026-06-30T21:29:51.484207+00:00 .The verifier is generate loop ; verification at 2026-06-30T21:29:51.484241+00:00 
+
+marked Claude, ChatGPT, and Gemini as failures. Each challenger parsed only 1/6 checked cells correctly. • Claude raw wrong output : Diff2I2P about 13.5% registration recall improvement; DAC roughly 4–5% mAP; BLiM+CPN about 2.6 R@1. • ChatGPT raw wrong output : Diff2I2P about 12.2 percentage points; DAC about 5.5 mAP points; BLiM+CPN about 2.7 R@1 points. 13 • Gemini raw wrong output : Diff2I2P 1.2%; DAC 3.5% mAP; BLiM+CPN 2.1 R@1. 
+
+Error analysis. The wrong outputs have the right surface form–three retrieval papers and three metric-like numbers–but none preserves the abstract-level claims. This is a cross-paper alignment failure: each answer row must be tied to a different paper, and approximate retrieval-metric memory is not enough to recover over 7%, +10.01% mAP, and 6.4 R@1. B.3 SAMPLE C: I NFERENCE -T IME ADAPTATION GAINS 
+
+Collected task fields. Task family: multi paper . Primary evidence type: text span . An-swer type: table . Difficulty after verification: all models wrong . The question asks for the headline quantitative gains reported by two inference-time adaptation papers: the average AP3D |R40 improvement in the Car category that DUO reports on KITTI, and the cross-domain few-shot segmentation gain that Informative Structure Adaptation reports when applied to the SSP baseline. 
+
+Gold papers. 
+
+• iccv2025 00067 , Adaptive Dual Uncertainty Optimization: Boosting Monocular 3D Object Detection under Test-Time Shifts , ICCV 2025. • iccv2025 00063 , Adapting In-Domain Few-Shot Segmentation to New Domains without Source Domain Retraining , ICCV 2025. 
+
+Collected evidence. 
+
+1. ev 001 : iccv2025 00067 , source type text span , Introduction. Evidence value: “achiev-ing state-of-the-art results with average improvements of +2.2 AP3D |R40 in the Car category.” Search needles include “average improvements of +2.2 AP3D |R40 in the Car” and “13 corruption shift types”. 2. ev 002 : iccv2025 00067 , source type text span , Introduction. Evidence value records that the method is evaluated on KITTI with 13 corruption shift types. 3. ev 003 : iccv2025 00063 , source type text span , Figure 1 overview. Evidence value: “SSP + ISA 63.0 → 70.3.” Search needles include “SSP + ISA” and “Informative Structure Adaptation”. 4. ev 004 : iccv2025 00063 , source type text span , Figure 1 overview. Evidence value: “PANet + ISA 55.1 → 61.8.” This auxiliary row records the same figure’s cross-domain context. 
+
+Gold answer object. The table schema uses method as the row key and stores paper focus ,
+
+dataset or baseline , and reported gain . The rows are: DUO, monocular 3D object detection test-time adaptation, KITTI Car category, +2.2 AP3D |R40; and ISA on SSP, cross-domain few-shot segmentation, SSP baseline, 63.0 → 70.3. 
+
+Generation and verification traces. The sample was generated by 
+
+us.anthropic.claude-opus-4-8 at 2026-06-30T20:47:43.331910+00:00 .The verifier is generate loop ; verification at 2026-06-30T20:47:43.331982+00:00 
+
+marked all three challenger models as failures. Each attempt parsed 0/3 checked cells correctly. • Claude raw wrong output : DUO approximately +5.27% AP3D |R40 in the Car category; ISA about +6.6% mIoU on SSP. • ChatGPT raw wrong output : DUO +5.75 AP3D |R40 on KITTI Car; ISA on SSP +7.9 mIoU. • Gemini raw wrong output : DUO +2.4% AP3D |R40; ISA +3.8% mIoU over SSP. 
+
+Error analysis. The DUO value is not a generic percentage gain; the gold span states an average improvement of +2.2 AP3D |R40. The ISA row is also not simply a computed mIoU delta; the annotation asks for the reported overview value 63.0 → 70.3. The models therefore failed both exact span retrieval and answer-format alignment. 14 B.4 SAMPLE D: E QUATION AND ALGORITHM GROUNDING ACROSS SPATIAL VISION 
+
+Collected task fields. Task family: multi paper . Primary evidence type: 
+
+equation algorithm . Answer type: table . Difficulty after verification: 
+
+all models wrong . The question asks which exact noise-feature-injection or noise-modeling mechanism each of three spatial vision papers defines: the operator used to inject style features into 3DGS latents, the forward-diffusion noising equation used by the text-to-video backdoor model, and the noise-model assumption that the polarization burst super-resolution work rejects. 
+
+Gold papers. 
+
+• iccv2025 00043 , A3GS: Arbitrary Artistic Style into Arbitrary 3D Gaussian Splatting , ICCV 2025. • iccv2025 00212 , BadVideo: Stealthy Backdoor Attack against Text-to-Video Generation ,ICCV 2025. • iccv2025 00223 , Benchmarking Burst Super-Resolution for Polarization Images: Noise Dataset and Analysis , ICCV 2025. 
+
+Collected evidence. 
+
+1. ev 001 : iccv2025 00043 , source type equation algorithm , Introduction/Method. Evidence value: “we utilize Adaptive Instance Normalization (AdaIN) to inject features from the target style image into the latents of the 3D Gaussian scene.” Search needles include “Adap-tive Instance Normalization (AdaIN) to inject features” and “into the latents of the 3D Gaussian scene”. 2. ev 002 : iccv2025 00212 , source type equation algorithm , Section 3.1 preliminaries. Evidence value: zt = √¯αtz0 + √1 − ¯αtϵ, ϵ ∼ N (0 , 1) . Search needles target the √¯αtz0 and √1 − ¯αtϵ terms. 3. ev 003 : iccv2025 00223 , source type equation algorithm , Introduction. Evidence value: “assumptions that noise follows an additive white Gaussian distribution in the Stokes vector components.” Search needles include “additive white Gaussian distribution” and “in the Stokes vector components”. 4. ev 004 : iccv2025 00223 , source type equation algorithm , Introduction. Evidence value: “based on a shot and read noise model of polarization sensors.” Search needles include “shot and read noise model of polarization sensors” and “with minimal assumptions”. 
+
+Gold answer object. The table schema uses paper as the row key and stores 
+
+noise or injection mechanism . The rows are: A3GS uses AdaIN to inject features into 3D Gaussian scene latents; BadVideo uses zt = √¯αtz0 + √1 − ¯αtϵ with ϵ ∼ N (0 , 1) ; and polar-ization burst SR rejects additive white Gaussian noise in Stokes vector components and instead uses a shot/read noise model of polarization sensors. 
+
+Generation and verification traces. The sample was generated by 
+
+us.anthropic.claude-opus-4-8 at 2026-06-30T21:02:36.372763+00:00 .The verifier is generate loop ; verification at 2026-06-30T21:02:36.372871+00:00 
+
+marked Claude, ChatGPT, and Gemini as failures. Each parsed 0/3 checked cells correctly. • Claude raw wrong output : AdaIN for style statistics; a standard DDPM-style equation using 
+
+xt and x0; a broad polarization noise description rather than the exact rejected assumption and replacement sensor model. • ChatGPT raw wrong output : an expanded AdaIN formula AdaIN( c, s ); q(xt | x0) =
+
+N (xt; √¯αtx0, (1 − ¯αt)I); a generic noise-model statement. • Gemini raw wrong output : “additive bias or AdaIN” for the 3DGS row; a standard forward-diffusion equation in xt; a broad claim that the polarization paper rejects Gaussian/noisy assump-tions. 15 Error analysis. This sample exposes a partial-credit trap. The raw responses mention concepts related to the gold answer, but the benchmark checks the exact paper-row correspondence: A3GS requires AdaIN into 3DGS latents, BadVideo requires the paper’s zt noising equation, and the po-larization paper requires the contrast between additive white Gaussian noise in Stokes components and a shot/read sensor-noise model. Generic diffusion notation or unanchored noise descriptions do not satisfy the annotation. B.5 SAMPLE E: C ITATION -C ONTEXT REASONING IN LLM C OMPRESSION 
+
+Collected task fields. Task family: multi paper . Primary evidence type: 
+
+citation context . Answer type: multiple choice . Difficulty after verification: 
+
+all models wrong . The question asks which work is cited by the self-calibration quantization paper for adapting the Optimal Brain Surgeon framework to quantization, and which work is cited by the inference-acceleration-bias paper for showing that knowledge distillation causes a monotonic reduction in toxicity in GPT-2. 
+
+Gold papers. 
+
+• naacl2025 00963 , Self-calibration for Language Model Quantization and Pruning , NAACL 2025. • naacl2025 01064 , The Impact of Inference Acceleration on Bias of LLMs , NAACL 2025. 
+
+Collected evidence. 
+
+1. ev 001 : naacl2025 00963 , source type citation context , Section 2.1 Model Compression–Quantization. Evidence value: “In a separate line of work, Frantar and Alistarh (2022) adapt the OBS framework to quantization. GPTQ (Frantar et al., 2023) builds upon this work to enable second-order low-bit quantization for LLMs.” Search needles include “Frantar and Alistarh (2022) adapt the OBS framework to quantization”. 2. ev 002 : naacl2025 01064 , source type citation context , Section 2 Related Work. Evidence value: “Xu and Hu (2022) find that knowledge distillation causes a monotonic reduc-tion in toxicity in GPT-2, though it shows only small improvements in reducing bias on counter-factual embedding-based datasets.” Search needles include “monotonic reduction in toxicity in GPT-2”. 3. ev 003 : naacl2025 00963 , source type citation context , Section 2.1 Model Compression–Pruning. Evidence value: “SparseGPT (Frantar and Alistarh, 2023) presents an approximate weight reconstruction approach, enabling efficient LLM pruning without compro-mising performance.” This auxiliary citation context helps distinguish pruning from the OBS-to-quantization citation. 
+
+Gold answer object. The answer options are: A, Frantar et al. (2023) / Gonc ¸alves and Strubell (2023); B, Dettmers et al. (2022) / Hong et al. (2024); C, Frantar and Alistarh (2022) / Xu and Hu (2022); and D, LeCun et al. (1989) / Jaiswal et al. (2024). The gold answer is C. 
+
+Generation and verification traces. The sample was generated by 
+
+us.anthropic.claude-opus-4-8 at 2026-06-29T00:58:07.311535+00:00 .The verifier is generate loop ; verification at 2026-06-29T00:58:07.311561+00:00 
+
+marked Claude, ChatGPT, and Gemini as failures. All three parsed answer A. • Claude raw wrong output : answer A, citing GPTQ/Frantar et al. (2023) for OBS-related quan-tization and Gonc ¸alves and Strubell (2023) for the toxicity/distillation claim. • ChatGPT raw wrong output : answer A, with cited-paper IDs resembling 
+
+frantar-etal-2023-gptq and goncalves-strubell-2023-compression .• Gemini raw wrong output : answer A, citing a Frantar 2023 SparseGPT-style work and a Gonc ¸alves 2023 toxicity/compression work. 16 Error analysis. The models identified the broader literature areas but missed the local citation re-lation. The self-calibration paper cites Frantar and Alistarh (2022) as the work adapting OBS to quantization, while GPTQ is described as building on that work; the bias paper cites Xu and Hu (2022) for monotonic toxicity reduction. The error is therefore citation-attribution drift, not a failure to understand model compression in general. 17
