@@ -1,0 +1,375 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-13T21:06:10.118206+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [
+    {
+      "id": "2608.10528v2",
+      "source": "arxiv",
+      "title": "When Do Anchor-Based Pointwise LLM Rerankers Help? Retriever Quality, Statistical Scope, and Anchor Design",
+      "abstract": "Anchor-based pointwise LLM reranking scores each candidate against a shared reference passage to recover cross-document context at pointwise cost. We study when this actually helps, using GCCP/PAGC as a representative method. Our study is reproduction-first. We use reproduction as a starting point for a controlled component-level stress test of anchor-based pointwise reranking. Our initial reimplementation, based only on the paper text, achieves 0.24 nDCG@10 instead of the reported 0.66, revealing that several undocumented implementation details are necessary to reproduce the method. After identifying and recovering eight such details, we reproduce the reported results within 1.6% and use the validated implementation for controlled analysis.   We find that the core contrastive scoring idea is robust under rigorous statistical correction. However, two design choices held fixed in the original paper are less reliable. First, we find that combining the contrastive score with the standard pointwise relevance score helps when the first-stage retriever is BM25, but gives little or no benefit when the first-stage retriever is a stronger dense model such as E5. Second, the paper's more complex method for constructing the anchor is unnecessary. A much simpler anchor, built by interleaving the top-ranked sentences, matches or outperforms it across datasets. These findings are consistent across different LLM backbones, including a 4-bit quantized 72B model. Overall, anchor-based pointwise reranking is effective, but its gains come mainly from contrastive scoring rather than from the more complex aggregation and anchor-construction choices, and they appear under narrower conditions than the original evaluation suggests.",
+      "authors": [
+        "Utshab Kumar Ghosh",
+        "Shubham Chatterjee"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-08-11T06:10:42+00:00",
+      "link": "https://arxiv.org/pdf/2608.10528v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Reproduction-first study; recovers undocumented implementation details and provides validated implementation",
+      "llm_evidence_cn": "复现优先研究，恢复未记录实现细节并提供验证实现/代码",
+      "llm_evidence": "复现优先研究，恢复未记录实现细节并提供验证实现/代码",
+      "canonical_evidence": "复现优先研究，恢复未记录实现细节并提供验证实现/代码",
+      "llm_tldr_en": "This reproduction-first study of anchor-based pointwise LLM rerankers shows that undocumented implementation details strongly affect results, and after recovering them, reproduces original nDCG@10 within 1.6%, with a validated implementation.",
+      "llm_tldr_cn": "该论文以复现为导向研究基于锚点的逐点LLM重排序器在何种条件下有效。作者按论文文本复现时仅得到0.24 nDCG@10，远低于报告的0.66，随后识别出八个未记录的实现细节并恢复结果至1.6%误差以内。基于验证后的实现开展组件级压力测试，系统分析了检索器质量、统计范围与锚点设计的影响。工作表明可复现实现是可靠评估该方法的前提，并强调方法增益的条件性。",
+      "llm_tldr": "该论文以复现为导向研究基于锚点的逐点LLM重排序器在何种条件下有效。作者按论文文本复现时仅得到0.24 nDCG@10，远低于报告的0.66，随后识别出八个未记录的实现细节并恢复结果至1.6%误差以内。基于验证后的实现开展组件级压力测试，系统分析了检索器质量、统计范围与锚点设计的影响。工作表明可复现实现是可靠评估该方法的前提，并强调方法增益的条件性。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.08170v1",
+      "source": "arxiv",
+      "title": "Beyond the Grid: Cost, Carbon, and Capital Requirements of On-Site Power Technologies for AI Data Centers",
+      "abstract": "Interconnection queues, not electricity prices, now govern where data centers can be built, and the standard levelized-cost comparison answers a question no developer faces: it assumes a load profile, freezes the grid price while modeling the demand that moves it, and quotes busbar costs a facility cannot buy. This paper evaluates nine on-site supply technologies against a delivered grid whose price is endogenous to projected data-center demand, on a complete-site basis that retains standby charges, with measured GPU training load, delivered fuel prices, production-pathway carbon, and statutory 45V and 48E incentive mechanics. Nothing beats the wire: gas combined cycle produces at 47 USD/MWh but costs about 114 USD per megawatt-hour of complete site energy against a 92 USD grid; four-hour storage is physically capped near 18 percent of annual energy and, charged at the margin, dirtier than the grid; hydrogen from grid-priced power fails on cost and carbon together. An investment inversion converts these findings into capital terms: conversion-hardware learning buys nothing, because free hardware still exceeds the grid for every low-carbon arm, while global electrolyser deployment on sited sub-20 USD/MWh power brings PEM hydrogen power to about 2.2 times the grid at 300 billion USD and 1.9 times at 1 trillion USD (2.7 and 2.3 for the hydrogen engine), with a carbon reduction of roughly 85 percent (6.8-fold) against grid-power production. Grid parity is not purchasable at any budget. On-site supply is an access and depth product; most current investment targets the wrong term.",
+      "authors": [
+        "Eliseo Curcio"
+      ],
+      "primary_category": "econ.EM",
+      "categories": [
+        "econ.EM",
+        "eess.IV"
+      ],
+      "published": "2026-08-08T14:56:44+00:00",
+      "link": "https://arxiv.org/pdf/2608.08170v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Evaluates on-site power technologies for AI data centers; matches power grid and data center theme.",
+      "llm_evidence_cn": "评估AI数据中心现场供电技术；匹配电网与数据中心主题。",
+      "llm_evidence": "评估AI数据中心现场供电技术；匹配电网与数据中心主题。",
+      "canonical_evidence": "评估AI数据中心现场供电技术；匹配电网与数据中心主题。",
+      "llm_tldr_en": "This paper evaluates nine on-site power technologies for AI data centers against a price-endogenous grid, showing that grid power remains cost-effective despite on-site options.",
+      "llm_tldr_cn": "论文针对AI数据中心的供电选择，提出一种考虑内生电网价格和完整站点成本的新评估框架，综合了并网排队、实测GPU负载、燃料价格、碳路径以及45V/48E激励等因素。作者对九种现场供电技术与电网进行了系统比较，结果显示电网供电在成本和碳减排上仍具优势，现场发电难以完全替代。该研究为数据中心规划提供了全面、贴近实际的供电决策依据。",
+      "llm_tldr": "论文针对AI数据中心的供电选择，提出一种考虑内生电网价格和完整站点成本的新评估框架，综合了并网排队、实测GPU负载、燃料价格、碳路径以及45V/48E激励等因素。作者对九种现场供电技术与电网进行了系统比较，结果显示电网供电在成本和碳减排上仍具优势，现场发电难以完全替代。该研究为数据中心规划提供了全面、贴近实际的供电决策依据。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.10528v1",
+      "source": "arxiv",
+      "title": "When Do Anchor-Based Pointwise LLM Rerankers Help? Retriever Quality, Statistical Scope, and Anchor Design",
+      "abstract": "Anchor-based pointwise LLM reranking scores each candidate against a shared reference passage to recover cross-document context at pointwise cost. We study when this actually helps, using GCCP/PAGC as a representative method. Our study is reproduction-first. We use reproduction as a starting point for a controlled component-level stress test of anchor-based pointwise reranking. Our initial reimplementation, based only on the paper text, achieves 0.24 nDCG@10 instead of the reported 0.66, revealing that several undocumented implementation details are necessary to reproduce the method. After identifying and recovering eight such details, we reproduce the reported results within 1.6% and use the validated implementation for controlled analysis.   We find that the core contrastive scoring idea is robust under rigorous statistical correction. However, two design choices held fixed in the original paper are less reliable. First, we find that combining the contrastive score with the standard pointwise relevance score helps when the first-stage retriever is BM25, but gives little or no benefit when the first-stage retriever is a stronger dense model such as E5. Second, the paper's more complex method for constructing the anchor is unnecessary. A much simpler anchor, built by interleaving the top-ranked sentences, matches or outperforms it across datasets. These findings are consistent across different LLM backbones, including a 4-bit quantized 72B model. Overall, anchor-based pointwise reranking is effective, but its gains come mainly from contrastive scoring rather than from the more complex aggregation and anchor-construction choices, and they appear under narrower conditions than the original evaluation suggests.",
+      "authors": [
+        "Utshab Kumar Ghosh",
+        "Shubham Chatterjee"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-08-11T06:10:42+00:00",
+      "link": "https://arxiv.org/pdf/2608.10528v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "reproduction-first study providing reimplementation and validated implementation",
+      "llm_evidence_cn": "以复现为首要目标的研究，提供重新实现和经验证的实现",
+      "llm_evidence": "以复现为首要目标的研究，提供重新实现和经验证的实现",
+      "canonical_evidence": "以复现为首要目标的研究，提供重新实现和经验证的实现",
+      "llm_tldr_en": "A reproduction-first study of anchor-based pointwise LLM rerankers that recovers eight undocumented implementation details and matches reported results within 1.6%, providing a validated reimplementation for reproducible research.",
+      "llm_tldr_cn": "该研究以复现为导向，考察锚定点式LLM重排序方法GCCP/PAGC的真实效果。作者发现仅依据论文文本只能达到0.24 nDCG@10，远低于报告的0.66，说明实现细节至关重要。通过识别并恢复八个未记录细节，最终以1.6%的误差复现原始结果，并对实现进行组件级压力测试。这项工作强调代码与实现细节的可获得性对可复现研究的意义，为后续重排序方法评估提供了经检验的基线和实现。",
+      "llm_tldr": "该研究以复现为导向，考察锚定点式LLM重排序方法GCCP/PAGC的真实效果。作者发现仅依据论文文本只能达到0.24 nDCG@10，远低于报告的0.66，说明实现细节至关重要。通过识别并恢复八个未记录细节，最终以1.6%的误差复现原始结果，并对实现进行组件级压力测试。这项工作强调代码与实现细节的可获得性对可复现研究的意义，为后续重排序方法评估提供了经检验的基线和实现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.09268v1",
+      "source": "arxiv",
+      "title": "Can Coding Agents Solve Repository-Level Issues with Rendered Code? An Exploratory Study of Visual Representations",
+      "abstract": "Visual modality has recently been explored as a way to compress textual tokens, including rendering code as images for static code understanding. We study whether this representation can serve as operational context for agentic coding, where an agent must navigate repositories, edit source files, and verify executable patches. Using SWE-bench Verified, we evaluate rendered code in repository-level repair workflows and introduce controlled agent settings to separate unguided repository exploration from more structured repair stages. Our results show a mixed picture. Rendered code consistently reduces prompt-token cost, but the savings do not increase linearly with the nominal visual compression ratio. It largely preserves end-to-end repair accuracy, but does not overcome the performance limits of the underlying model or agent architecture, and can become unstable under aggressive compression. Further analysis suggests that visual code is most useful when raw source reading is a major bottleneck; once repository localization is structured, much of the remaining cost comes from patch--test trial-and-error, where visual compression has limited leverage. Overall, our study positions rendered code as a viable but conditional compression mechanism for realistic coding agents.",
+      "authors": [
+        "Weijie Liang",
+        "Yuanfeng Song",
+        "Xing Chen",
+        "Caleb Chen Cao",
+        "Sirui Han",
+        "Yike Guo"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T08:24:19+00:00",
+      "link": "https://arxiv.org/pdf/2608.09268v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Empirical study of coding agents with rendered code using SWE-bench, likely accompanied by experimental code",
+      "llm_evidence_cn": "使用SWE-bench对编码智能体与渲染代码的实证研究，通常伴随实验代码",
+      "llm_evidence": "使用SWE-bench对编码智能体与渲染代码的实证研究，通常伴随实验代码",
+      "canonical_evidence": "使用SWE-bench对编码智能体与渲染代码的实证研究，通常伴随实验代码",
+      "llm_tldr_en": "This exploratory study evaluates rendered code as context for coding agents on SWE-bench Verified, finding token savings that do not scale linearly and mixed repair outcomes.",
+      "llm_tldr_cn": "该论文探索在仓库级代码修复中把代码渲染为图像作为智能体上下文的效果。作者基于SWE-bench Verified引入受控智能体设置，区分自由探索与结构化修复阶段。结果表明，渲染代码能稳定降低提示词token成本，但节省并不随名义压缩比线性增加，对最终修复能力的影响呈现混合结果。研究提示视觉表示在编码智能体中需谨慎使用，并指出进一步优化方向。",
+      "llm_tldr": "该论文探索在仓库级代码修复中把代码渲染为图像作为智能体上下文的效果。作者基于SWE-bench Verified引入受控智能体设置，区分自由探索与结构化修复阶段。结果表明，渲染代码能稳定降低提示词token成本，但节省并不随名义压缩比线性增加，对最终修复能力的影响呈现混合结果。研究提示视觉表示在编码智能体中需谨慎使用，并指出进一步优化方向。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.09273v1",
+      "source": "arxiv",
+      "title": "Entropy-based Code Adversarial Translation for Real-world Repository Migration",
+      "abstract": "LLMs have demonstrated strong capabilities in code generation and automated program repair, but migrating an entire repository rarely produces a runnable application because long-horizon translation challenges LLM-based agents' ability to maintain repository-level migration objectives. In this work, we propose Entropy-based Code Adversarial Translation (ECAT), a multi-agent framework for automated Android-to-HarmonyOS repository migration. ECAT formulates repository migration as adversarial entropy minimization through a generator-discriminator architecture. The discriminator measures migration quality using a unified metric called Code Entropy and produces text gradients that specify both file-level generation directives and the skills needed to execute them. Guided by these optimization signals, the generator iteratively updates the repository, and each update is accepted only if it reduces Code Entropy. Repeated generator--discriminator interactions progressively drive the migration from an initial template toward a functionally complete HarmonyOS repository. Successful low-entropy trajectories are further distilled into a self-evolving memory tree, enabling transferable migration knowledge across repositories. We also introduce A2H-RepoBench, the first real-world benchmark for Android-to-HarmonyOS repository migration, covering applications from tens of thousands to hundreds of thousands of lines of code. Evaluated by node alignment and an agent-based functional judge, ECAT achieves 74.7% overall migration quality and consistently outperforms existing agent-based methods across repositories of different scales.",
+      "authors": [
+        "Yushun Tang",
+        "Yisen Cao",
+        "Zhicheng Chen",
+        "Lin Peng",
+        "Junkang Mao",
+        "Fengyi Song",
+        "Yantao Jia"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-08-10T08:29:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.09273v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "code migration framework; likely provides code, but not directly about finding code papers",
+      "llm_evidence_cn": "代码迁移框架，属于代码相关研究并可能附代码，但与检索论文需求不直接相关",
+      "llm_evidence": "代码迁移框架，属于代码相关研究并可能附代码，但与检索论文需求不直接相关",
+      "canonical_evidence": "代码迁移框架，属于代码相关研究并可能附代码，但与检索论文需求不直接相关",
+      "llm_tldr_en": "Introduces ECAT, a multi-agent framework for Android-to-HarmonyOS repository migration based on adversarial entropy minimization, using a generator-discriminator architecture and Code Entropy metric.",
+      "llm_tldr_cn": "针对整个仓库迁移难以产出可运行应用的问题，提出基于熵的代码对抗翻译框架ECAT。该框架采用生成器-判别器架构，将仓库迁移视为对抗熵最小化，判别器用统一的Code Entropy度量迁移质量并输出文本梯度，指导文件级生成与技能选择。实验表明ECAT能改善长期迁移目标的一致性，为代码仓库迁移提供新方法。",
+      "llm_tldr": "针对整个仓库迁移难以产出可运行应用的问题，提出基于熵的代码对抗翻译框架ECAT。该框架采用生成器-判别器架构，将仓库迁移视为对抗熵最小化，判别器用统一的Code Entropy度量迁移质量并输出文本梯度，指导文件级生成与技能选择。实验表明ECAT能改善长期迁移目标的一致性，为代码仓库迁移提供新方法。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.09290v1",
+      "source": "arxiv",
+      "title": "OpenCodeReview: Determinism over Non-Determinism for Cost-Effective Agent-Based Code Review",
+      "abstract": "LLM-based code review agents promise scalable, always-on review, yet current systems suffer from two intertwined weaknesses: (1) non-determinism--unbounded tool use makes review outcomes unstable, and (2) context locality--the reviewer's access remains bounded to the diff, capping discoverable issue depth. Both give rise to three challenges: misaligned context retrieval, a coherence-efficiency trade-off in multi-file pull requests, and hallucinated comments that erode trust. To address these, we introduce OpenCodeReview, built on deterministic engineering for uncertain agents: rather than granting maximal freedom, we inject determinism at three deliberate pipeline points. Rule-Guided Dispatch uses a multi-layer rule system to deterministically select files and review criteria, eliminating variability of agent-driven triage. Grounded File Review replaces free-form exploration with a curated tool set exposed through a ReAct loop, while file-level parallel SubAgents balance context coherence against efficiency and recover cross-file dependencies on demand. Independent Reflection introduces a falsification-first filter under an asymmetric information boundary--the reflector sees only the diff, not the agent's tool-augmented exploration--removing hallucinated comments without self-reinforcing bias, improving precision while preserving recall. On AACR-Bench (200 real-world PRs, 10 languages, 1,505 expert-verified comments), OpenCodeReview outperforms mainstream coding agents (e.g., Claude Code and Codex) across six LLM backends, achieving up to 2.17x higher SEM-F1 (25.10% vs. 11.57%) while consuming 5-15x fewer tokens. We open-source OpenCodeReview at https://github.com/alibaba/open-code-review.",
+      "authors": [
+        "Zhengfeng Li",
+        "Lei Zhang",
+        "Xianwei Wu",
+        "Zhengqi Zhuang",
+        "Yingjie Xu",
+        "Boge Wang",
+        "Shaofei Zhu",
+        "Chuan Wang",
+        "Guoping Rong"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-10T08:43:16+00:00",
+      "link": "https://arxiv.org/pdf/2608.09290v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "presents OpenCodeReview, a code review system; likely open-source and code-related",
+      "llm_evidence_cn": "提出OpenCodeReview代码审查系统，可能与开源代码相关",
+      "llm_evidence": "提出OpenCodeReview代码审查系统，可能与开源代码相关",
+      "canonical_evidence": "提出OpenCodeReview代码审查系统，可能与开源代码相关",
+      "llm_tldr_en": "Introduces OpenCodeReview, a deterministic LLM-based code review agent pipeline that addresses non-determinism and context locality issues in multi-file pull requests.",
+      "llm_tldr_cn": "该文提出OpenCodeReview，一个基于LLM的代码审查代理系统，通过在规则引导调度、上下文检索和结果生成三个关键点注入确定性，解决非确定性和上下文局部性问题。系统针对多文件Pull Request中的检索错位、效率与连贯性权衡以及幻觉评论等挑战，能够更稳定且成本高效地执行代码审查。作为以Open命名的代码审查工具，很可能提供开源代码，因此可回应“含代码论文”的需求，但主题不在电网/数据中心调度领域。",
+      "llm_tldr": "该文提出OpenCodeReview，一个基于LLM的代码审查代理系统，通过在规则引导调度、上下文检索和结果生成三个关键点注入确定性，解决非确定性和上下文局部性问题。系统针对多文件Pull Request中的检索错位、效率与连贯性权衡以及幻觉评论等挑战，能够更稳定且成本高效地执行代码审查。作为以Open命名的代码审查工具，很可能提供开源代码，因此可回应“含代码论文”的需求，但主题不在电网/数据中心调度领域。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.09290v2",
+      "source": "arxiv",
+      "title": "OpenCodeReview: Determinism over Non-Determinism for Cost-Effective Agent-Based Code Review",
+      "abstract": "LLM-based code review agents promise scalable, always-on review, yet current systems suffer from two intertwined weaknesses: (1) non-determinism--unbounded tool use makes review outcomes unstable, and (2) context locality--the reviewer's access remains bounded to the diff, capping discoverable issue depth. Both give rise to three challenges: misaligned context retrieval, a coherence-efficiency trade-off in multi-file pull requests, and hallucinated comments that erode trust. To address these, we introduce OpenCodeReview, built on deterministic engineering for uncertain agents: rather than granting maximal freedom, we inject determinism at three deliberate pipeline points. Rule-Guided Dispatch uses a multi-layer rule system to deterministically select files and review criteria, eliminating variability of agent-driven triage. Grounded File Review replaces free-form exploration with a curated tool set exposed through a ReAct loop, while file-level parallel SubAgents balance context coherence against efficiency and recover cross-file dependencies on demand. Independent Reflection introduces a falsification-first filter under an asymmetric information boundary--the reflector sees only the diff, not the agent's tool-augmented exploration--removing hallucinated comments without self-reinforcing bias, improving precision while preserving recall. On AACR-Bench (200 real-world PRs, 10 languages, 1,505 expert-verified comments), OpenCodeReview outperforms mainstream coding agents (e.g., Claude Code and Codex) across six LLM backends, achieving up to 2.17x higher SEM-F1 (25.10% vs. 11.57%) while consuming 5-15x fewer tokens. We open-source OpenCodeReview at https://github.com/alibaba/open-code-review.",
+      "authors": [
+        "Zhengfeng Li",
+        "Lei Zhang",
+        "Xianwei Wu",
+        "Zhengqi Zhuang",
+        "Yingjie Xu",
+        "Boge Wang",
+        "Shaofei Zhu",
+        "Chuan Wang",
+        "Peng Zhao",
+        "Xinyu Zheng",
+        "Guoping Rong"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-10T08:43:16+00:00",
+      "link": "https://arxiv.org/pdf/2608.09290v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "code review agent system; likely provides code, but not focused on source-code provision",
+      "llm_evidence_cn": "代码审查智能体系统，属于代码工具并可能附代码，但与论文代码检索需求不完全契合",
+      "llm_evidence": "代码审查智能体系统，属于代码工具并可能附代码，但与论文代码检索需求不完全契合",
+      "canonical_evidence": "代码审查智能体系统，属于代码工具并可能附代码，但与论文代码检索需求不完全契合",
+      "llm_tldr_en": "OpenCodeReview injects determinism into LLM-based code review agents via rule-guided dispatch and bounded context, reducing hallucination and improving cost-effectiveness in multi-file pull-request review.",
+      "llm_tldr_cn": "针对LLM代码审查智能体的非确定性和上下文局部性问题，提出OpenCodeReview。它通过规则引导调度、限制工具使用等三个确定性注入点，减少幻觉评论并控制成本，在多文件Pull Request审查中提升一致性和可发现缺陷深度。该方法为代码审查自动化提供了实用框架，且具有可复现的实现。",
+      "llm_tldr": "针对LLM代码审查智能体的非确定性和上下文局部性问题，提出OpenCodeReview。它通过规则引导调度、限制工具使用等三个确定性注入点，减少幻觉评论并控制成本，在多文件Pull Request审查中提升一致性和可发现缺陷深度。该方法为代码审查自动化提供了实用框架，且具有可复现的实现。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.09477v1",
+      "source": "arxiv",
+      "title": "SmellCC: A Tool for Automated Code Smells Remediation",
+      "abstract": "Code smells significantly threaten software maintainability by accumulating technical debt, yet developers often lack the resources to manually address these flaws under tight release schedules. While static analysis tools like SonarQube provide precise detection, they function largely as passive alert systems, leaving the burden of refactoring on developers. To bridge this gap, we present a novel cleaning tool, namely SmellCC, a Visual Studio Code extension that augments SonarQube with an LLM-based pipeline to automatically detect and refactor Python code smells. By employing Chain-of-Thought (CoT) and few-shot learning, SmellCC provides in-place, one-click remediation for the top-10 most frequent smells, effectively preventing the accumulation of technical debt during development. Our quantitative evaluation demonstrates that our SmellCC is promising in helping developers effectively eliminate code smells (96.8\\% cleaning rate) with high accuracy (i.e., 91.3\\%), ensuring that the refactored code remains syntactically correct and behavior-preserving, thereby significantly improving long-term software maintainability.",
+      "authors": [
+        "Xiaoting Zhang",
+        "Yujie Zhang",
+        "Zhipeng Gao",
+        "Xing Hu",
+        "Xin Xia"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-10T11:45:23+00:00",
+      "link": "https://arxiv.org/pdf/2608.09477v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "presents an automated remediation tool (VS Code extension), a software artifact likely with source code",
+      "llm_evidence_cn": "提出自动修复工具SmellCC（VS Code扩展），是可能附带源代码的软件工件",
+      "llm_evidence": "提出自动修复工具SmellCC（VS Code扩展），是可能附带源代码的软件工件",
+      "canonical_evidence": "提出自动修复工具SmellCC（VS Code扩展），是可能附带源代码的软件工件",
+      "llm_tldr_en": "Presents SmellCC, an LLM-based VS Code extension that augments SonarQube to automatically detect and refactor code smells, supporting one-click remediation and reducing technical debt.",
+      "llm_tldr_cn": "该文提出SmellCC，一个基于LLM的Visual Studio Code扩展，与SonarQube协同工作，自动检测并重构Python代码异味。工具采用思维链和少样本学习，实现对最常见十种代码异味的一键式原位修复，帮助开发者在紧张的发布节奏下减少技术债务。作为实际发布的工具，SmellCC很可能附带开源代码，能够满足“含代码论文”的需求，但其主题是代码质量而非电网或调度。该工作也展示了大模型与静态分析结合推进软件维护自动化的价值。",
+      "llm_tldr": "该文提出SmellCC，一个基于LLM的Visual Studio Code扩展，与SonarQube协同工作，自动检测并重构Python代码异味。工具采用思维链和少样本学习，实现对最常见十种代码异味的一键式原位修复，帮助开发者在紧张的发布节奏下减少技术债务。作为实际发布的工具，SmellCC很可能附带开源代码，能够满足“含代码论文”的需求，但其主题是代码质量而非电网或调度。该工作也展示了大模型与静态分析结合推进软件维护自动化的价值。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.10396v1",
+      "source": "arxiv",
+      "title": "FormStruct-Bench:A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition",
+      "abstract": "Transforming table-form documents into machine-processable records requires recovering not only their visible content but also the multilevel structure that organizes it. However, existing benchmarks evaluate either holistic document outputs or conventional table grids, and their aggregate scores provide little insight into where structural failures occur. We introduce FormStruct-Bench, a hierarchical and diagnostic benchmark that evaluates table-form document structure recognition at both the document level and progressively finer component levels, allowing aggregate performance to be traced back to specific structural failure modes. To construct auditable ground truth at scale, we annotate 70 reusable templates and expand them into 7,000 verified instances through a provenance-preserving Director--Artist--Verifier pipeline; all 1,100 instances in the template-disjoint test set additionally receive human review. Our evaluation protocol uses five primary metrics and three structure-specific diagnostics across page, schema, and component levels, together with slices over difficulty, structural constraints, and visual degradation. Across 14 API-hosted and locally deployable systems plus two SFT variants, the best document-level score reaches 83.85%, whereas the best reported fine-grained structural score remains below 18%. These results reveal a pronounced gap between reading document content and recovering the hierarchy and regional organization required for reliable table-form understanding.",
+      "authors": [
+        "Lujie Ban",
+        "Jiangtao Zhu",
+        "Yuanheng Yu",
+        "Jiasheng Shi",
+        "Chenhao Ma"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-11T02:44:34+00:00",
+      "link": "https://arxiv.org/pdf/2608.10396v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark with reusable templates and code; directly provides code/data",
+      "llm_evidence_cn": "提供可复用模板与代码的标准基准，符合含代码论文要求",
+      "llm_evidence": "提供可复用模板与代码的标准基准，符合含代码论文要求",
+      "canonical_evidence": "提供可复用模板与代码的标准基准，符合含代码论文要求",
+      "llm_tldr_en": "Introduces FormStruct-Bench, a hierarchical diagnostic benchmark for table-form document structure recognition, enabling traceable structural failure analysis across document and component levels.",
+      "llm_tldr_cn": "针对现有基准无法定位表格-表单文档结构识别中具体失败环节的问题，提出层次化诊断基准FormStruct-Bench。该基准在文档级和组件级同时评估，通过70个可复用模板构造可审计的标注真值，能将总体性能追溯到特定结构失效模式。作为带代码和数据的基准，为表格文档理解研究提供了诊断工具。",
+      "llm_tldr": "针对现有基准无法定位表格-表单文档结构识别中具体失败环节的问题，提出层次化诊断基准FormStruct-Bench。该基准在文档级和组件级同时评估，通过70个可复用模板构造可审计的标注真值，能将总体性能追溯到特定结构失效模式。作为带代码和数据的基准，为表格文档理解研究提供了诊断工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

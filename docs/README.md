@@ -6,53 +6,47 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-12
-- 运行时间：2026-08-12 21:13:14 UTC
+- 最新运行日期：2026-08-13
+- 运行时间：2026-08-13 21:11:48 UTC
 - 运行状态：成功
-- 本次总论文数：11
-- 精读区：3
-- 速读区：8
+- 本次总论文数：9
+- 精读区：2
+- 速读区：7
 
 ### 今日简报（AI）
-今日11篇论文聚焦AI编码代理与知识抽取，精读2篇高分研究揭示架构分析与关系解析新方法；速读覆盖统一问题解析基准与文档理解修正数据集。最值得关注编码代理架构的实证剖析及REAP关系感知抽取方案，均获9分高评价。建议普通读者优先精读这两篇，把握LLM应用层面的核心进展。
-- 详情：[/202608/12/README](/202608/12/README)
+今日精读2篇、速读7篇，聚焦AI数据中心供电技术与LLM重排序方法。最值得看：现场电源方案的碳排放与资本需求，以及Anchor式重排序在何种检索质量下才有效。普通读者可先关注数据中心电力可持续性，再了解重排序的性能边界。
+- 详情：[/202608/13/README](/202608/13/README)
 
 ### 精读区论文标签
-1. [Understanding the Architecture of Coding Agents: An Exploratory Study Using a Research Prototype](/202608/12/2608.10934v1-understanding-the-architecture-of-coding-agents-an-exploratory-study-using-a-research-prototype)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：提出Ark，一个极简开源编码代理
-2. [REAP: Relation-Aware Elicitation and Parsing for Closed-Book Knowledge Base Construction from LLMs](/202608/12/2608.10963v1-reap-relation-aware-elicitation-and-parsing-for-closed-book-knowledge-base-construction-from-llms)  
-   标签：评分：9.0/10、query:code-paper
-   evidence：明确声明代码公开可用
-3. [Time Present and Time Past: Benchmarking Large Language Models on Temporally Evolving Document Understanding](/202608/12/2608.08512v1-time-present-and-time-past-benchmarking-large-language-models-on-temporally-evolving-document-understanding)  
+1. [Beyond the Grid: Cost, Carbon, and Capital Requirements of On-Site Power Technologies for AI Data Centers](/202608/13/2608.08170v1-beyond-the-grid-cost-carbon-and-capital-requirements-of-on-site-power-technologies-for-ai-data-centers)  
    标签：评分：8.0/10、query:code-paper
-   evidence：专家验证的基准测试，附有数据与代码
+   evidence：评估AI数据中心现场供电技术；匹配电网与数据中心主题。
+2. [When Do Anchor-Based Pointwise LLM Rerankers Help? Retriever Quality, Statistical Scope, and Anchor Design](/202608/13/2608.10528v2-when-do-anchor-based-pointwise-llm-rerankers-help-retriever-quality-statistical-scope-and-anchor-design)  
+   标签：评分：8.0/10、query:code-paper
+   evidence：复现优先研究，恢复未记录实现细节并提供验证实现/代码
 
 ### 速读区论文标签
-1. [A Unified Issue Resolution Benchmark for Requirement Clarification, Planning, and Code Generation for Coding Agents](/202608/12/2608.09072v1-a-unified-issue-resolution-benchmark-for-requirement-clarification-planning-and-code-generation-for-coding-agents)  
+1. [When Do Anchor-Based Pointwise LLM Rerankers Help? Retriever Quality, Statistical Scope, and Anchor Design](/202608/13/2608.10528v1-when-do-anchor-based-pointwise-llm-rerankers-help-retriever-quality-statistical-scope-and-anchor-design)  
    标签：评分：7.0/10、query:code-paper
-   evidence：面向代码生成的基准，可能附带开源代码
-2. [MMLongBench-Doc-V2: A Corrected-Annotation, Semantics-Aware Revision of MMLongBench-Doc](/202608/12/2608.03397v1-mmlongbench-doc-v2-a-corrected-annotation-semantics-aware-revision-of-mmlongbench-doc)  
+   evidence：以复现为首要目标的研究，提供重新实现和经验证的实现
+2. [Can Coding Agents Solve Repository-Level Issues with Rendered Code? An Exploratory Study of Visual Representations](/202608/13/2608.09268v1-can-coding-agents-solve-repository-level-issues-with-rendered-code-an-exploratory-study-of-visual-representations)  
    标签：评分：6.0/10、query:code-paper
-   evidence：基准修订版，可能附带代码与数据
-3. [RepoProbe: Benchmarking Architecture-Aware Repository Comprehension with Checklists](/202608/12/2608.04783v1-repoprobe-benchmarking-architecture-aware-repository-comprehension-with-checklists)  
+   evidence：使用SWE-bench对编码智能体与渲染代码的实证研究，通常伴随实验代码
+3. [Entropy-based Code Adversarial Translation for Real-world Repository Migration](/202608/13/2608.09273v1-entropy-based-code-adversarial-translation-for-real-world-repository-migration)  
    标签：评分：6.0/10、query:code-paper
-   evidence：面向仓库级代码理解的基准，可能附带代码
-4. [CodeGrep: An RL-Trained Retrieval Agent for LLM Coding Agents](/202608/12/2608.05886v1-codegrep-an-rl-trained-retrieval-agent-for-llm-coding-agents)  
+   evidence：代码迁移框架，属于代码相关研究并可能附代码，但与检索论文需求不直接相关
+4. [OpenCodeReview: Determinism over Non-Determinism for Cost-Effective Agent-Based Code Review](/202608/13/2608.09290v1-opencodereview-determinism-over-non-determinism-for-cost-effective-agent-based-code-review)  
    标签：评分：6.0/10、query:code-paper
-   evidence：提出面向代码的检索代理工具，属于可能附带源码的代码研究
-5. [LitTraceQA: A Benchmark for Multi-Stage Grounding and Verification in Scientific Question Answering](/202608/12/2608.07370v1-littraceqa-a-benchmark-for-multi-stage-grounding-and-verification-in-scientific-question-answering)  
+   evidence：提出OpenCodeReview代码审查系统，可能与开源代码相关
+5. [OpenCodeReview: Determinism over Non-Determinism for Cost-Effective Agent-Based Code Review](/202608/13/2608.09290v2-opencodereview-determinism-over-non-determinism-for-cost-effective-agent-based-code-review)  
    标签：评分：6.0/10、query:code-paper
-   evidence：基准论文通常附带数据与代码，支持可复现研究
-6. [TeXFix-Bench: An Empirically Grounded Multi-Format Benchmark for LLM-Based Document Source Repair](/202608/12/2608.07617v1-texfix-bench-an-empirically-grounded-multi-format-benchmark-for-llm-based-document-source-repair)  
+   evidence：代码审查智能体系统，属于代码工具并可能附代码，但与论文代码检索需求不完全契合
+6. [SmellCC: A Tool for Automated Code Smells Remediation](/202608/13/2608.09477v1-smellcc-a-tool-for-automated-code-smells-remediation)  
    标签：评分：6.0/10、query:code-paper
-   evidence：基准含故障分类体系与变异算子，很可能附带代码实现
-7. [Metadata Reconstruction from Values Alone: Recovering Column Semantics in Undocumented Warehouses](/202608/12/2608.07946v1-metadata-reconstruction-from-values-alone-recovering-column-semantics-in-undocumented-warehouses)  
+   evidence：提出自动修复工具SmellCC（VS Code扩展），是可能附带源代码的软件工件
+7. [FormStruct-Bench:A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition](/202608/13/2608.10396v1-formstruct-bencha-hierarchical-and-diagnostic-benchmark-for-table-form-document-structure-recognition)  
    标签：评分：6.0/10、query:code-paper
-   evidence：提出Rosetta验证框架，属于工具型方法，可能提供开源代码
-8. [Beyond the Grid: Cost, Carbon, and Capital Requirements of On-Site Power Technologies for AI Data Centers](/202608/12/2608.08170v1-beyond-the-grid-cost-carbon-and-capital-requirements-of-on-site-power-technologies-for-ai-data-centers)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：研究数据中心供电与电网，直接呼应组合主题，但未提及代码开源
+   evidence：提供可复用模板与代码的标准基准，符合含代码论文要求
 
 
 <div class="dpr-home-promo-card">

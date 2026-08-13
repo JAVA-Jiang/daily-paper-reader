@@ -1,0 +1,819 @@
+Title: FormStruct-Bench:A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition
+
+URL Source: https://arxiv.org/pdf/2608.10396v1
+
+Published Time: Wed, 12 Aug 2026 00:35:41 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+# FormStruct-Bench: A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition 
+
+# Lujie Ban 1, Jiangtao Zhu 1, Yuanheng Yu 2, Jiasheng Shi 1, Chenhao Ma ∗1
+
+1 The Chinese University of Hong Kong, Shenzhen, 2 University of Washington Shenzhen, China {lujieban,jiangtaozhu}@link.cuhk.edu.cn, yuanhy@uw.edu, {shijiasheng,machenhao}@cuhk.edu.cn 
+
+## Abstract 
+
+Transforming table-form documents into machine-processable records requires recovering not only their visible content but also the mul-tilevel structure that organizes it. However, existing benchmarks evaluate either holistic document outputs or conventional table grids, and their aggregate scores provide little insight into where structural failures occur. We introduce FormStruct-Bench, a hi-erarchical and diagnostic benchmark that evaluates table-form document structure recognition at both the document level and progressively finer component levels, allowing aggregate perfor-mance to be traced back to specific structural failure modes. To construct auditable ground truth at scale, we annotate 70 reusable templates and expand them into 7,000 verified instances through a provenance-preserving Director–Artist–Verifier pipeline; all 1,100 instances in the template-disjoint test set additionally receive hu-man review. Our evaluation protocol uses five primary metrics and three structure-specific diagnostics across page, schema, and component levels, together with slices over difficulty, structural con-straints, and visual degradation. Across 14 API-hosted and locally deployable systems plus two SFT variants, the best document-level score reaches 83.85%, whereas the best reported fine-grained struc-tural score remains below 18%. These results reveal a pronounced gap between reading document content and recovering the hier-archy and regional organization required for reliable table-form understanding. 
+
+## CCS Concepts 
+
+• Applied computing → Document analysis ; • Computing methodologies → Artificial intelligence .
+
+## Keywords 
+
+table-form documents, document structure recognition, form un-derstanding, diagnostic evaluation, multimodal benchmarking 
+
+ACM Reference Format: 
+
+Lujie Ban 1, Jiangtao Zhu 1, Yuanheng Yu 2, Jiasheng Shi 1, Chenhao Ma ∗1.2027. FormStruct-Bench: A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition. In Proceedings of 33rd ACM 
+
+> Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for components of this work owned by others than the author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org.
+> KDD ’27, San Jose, CA
+> © 2027 Copyright held by the owner/author(s). Publication rights licensed to ACM. ACM ISBN 978-1-4503-XXXX-X/2027/08 https://doi.org/XXXXXXX.XXXXXXX
+
+SIGKDD Conference on Knowledge Discovery and Data Mining (KDD ’27). 
+
+ACM, New York, NY, USA, 20 pages. https://doi.org/XXXXXXX.XXXXXXX 
+
+## 1 Introduction 
+
+Documents are a primary carrier of real-world information and an essential source of data for automated information process-ing [3, 39]. Among them, forms constitute a particularly important document class, providing standardized interfaces through which organizations collect, validate, and exchange information [16, 31]. Table-form documents, such as application, tax, and medical-intake forms, organize such information through table-like layouts and are central to record ingestion [15, 31], compliance auditing [4], and automated workflow execution [7, 34]. Their information is en-coded not only in visible text but also in structure: a page is divided into semantic sections, a section may carry its own local grid, and checkboxes and other widgets take their meaning from the fields and labels they are linked to (Figure 1) [1, 18]. Consequently, trans-forming a table-form document into reliable, machine-processable records requires recovering these structures rather than merely reading the visible text. APPLICATION FORM          
+
+> A. Personal Information Name Bob Gender Male Female B. Table Region + Merged Field spanning header Column Column Column
+> long cell spanning multiple columns
+> Age 28 ID A-102
+> Region Field Group Relation Edge Widget Group Region-local Grid
+
+Figure 1: An example table-form document with its structural annotation: semantic regions, a region-local grid, field and widget groups, and relation edges. 
+
+This transformation is a central goal of document understand-ing [3, 39]. With the rise of LLMs, document understanding has advanced rapidly from localized text and field extraction toward end-to-end document parsing and structured generation, with mod-els jointly reasoning over visual, textual, and layout signals [14, 17, 30, 37]. In parallel, Table Structure Recognition (TSR) has focused on the precise reconstruction of conventional table layouts, includ-ing row–column topology, cell spans, and explicit grid or markup representations [8, 32, 33, 45]. However, table-form documents fall between these two lines of research. Document understanding extracts fields and answers questions over forms but rarely requires faithful reconstruction arXiv:2608.10396v1 [cs.CV] 11 Aug 2026 KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+Table 1: Comparison of structural targets and diagnostic ca-pabilities. △ denotes partial or indirect support.                                                              
+
+> Benchmark Grid structure Full-page layout Form elements Structural relations Component metrics Diagnostic slices SciTSR [8] ✓×××××
+> PubTabNet [45] ✓×××××
+> PubTables-1M [32] ✓△××△×
+> FUNSD [16] ×✓✓✓△×
+> DocILE [31] △✓✓△△×
+> SRFUND [21] △✓✓✓✓×
+> Image2Struct [30] △✓△△××
+> OmniDocBench [25] ✓✓××△△
+> VAREX [5] ××✓×✓✓
+> FormStruct-Bench ✓✓✓✓✓✓
+
+of the underlying structure, whereas TSR reconstructs structure precisely but confines its output to a single row–column grid, leav-ing fields, widgets, and their semantic relations outside its scope. Recognizing table-form documents demands both: the geometric precision of TSR, applied to the hierarchical and relational organi-zation studied in document understanding. We term this problem table-form document structure recognition (Figure 1). This broader recognition target also creates a distinct evaluation challenge. Ex-isting benchmarks typically evaluate either document-level under-standing through question answering, information extraction, and holistic document parsing [22, 25, 31], or conventional table recon-struction through canonical grid and markup recovery [8, 32, 33, 45], but neither benchmark family fully captures the joint structural requirements of table-form documents, as summarized in Table 1. Current benchmarks therefore do not provide an adequate basis for evaluating table-form document structure recognition. More specifically, the missing component is diagnostic evalua-tion: current benchmarks often report whether a predicted structure matches the target, but not the root cause of the failure. For example, a visa or medical form may place personal information, eligibility questions, checkboxes, and signature fields in different regions of the same page; the value of one field is often determined not only by nearby text, but also by its section, option group, and relation to distant labels. Therefore, current evaluations make it difficult to answer a question Q : when a model fails on a table-form docu-ment, which part of the structure caused the failure? Answering this question requires fine-grained structural annotations, which are difficult to obtain reliably from automatic LLM labeling, while instance-level human annotation is difficult to scale. To answer question Q , we introduce FormStruct-Bench, a hier-archical and diagnostic benchmark for table-form document struc-ture recognition. The key idea is to evaluate table-form documents as structured pages rather than as a single flattened table or a bag of extracted fields. Each sample is represented through a hierar-chy of page regions, region-local grids, field and widget groups, and relation edges (Figure 1), which allows evaluation to isolate different structural failure modes. This representation also raises a data-construction requirement: the labels must remain consistent, traceable, and verifiable across document instances. To make the labels auditable, FormStruct-Bench decouples annotation from gen-eration: human annotators construct reusable structural templates, and a multi-agent generation pipeline expands each template into verified instances while preserving provenance for the source tem-plate, constraints, visual parameters, and verification outcomes. This design couples the reliability of human annotation with the scalability of automatic generation. The same hierarchical representation also defines the evaluation protocol. Instead of reducing each prediction to a single table-level similarity score, FormStruct-Bench assesses whether a model re-covers each major structural component, scoring predictions at the document level and at progressively finer component levels so that an overall score can be traced back to specific structural failures. It then stratifies these component scores by difficulty, structural constraints, and visual perturbations to expose where each model’s capability boundary lies. Our contributions are summarized as follows: 
+
+• We construct FormStruct-Bench, a benchmark for table-form doc-ument structure recognition, using 70 reusable human-annotated templates and 7,000 verified generated instances with auditable provenance. 
+
+• We provide a diagnostic evaluation protocol that combines document-level scoring with finer component-level analysis. 
+
+• We benchmark 14 API-hosted and locally deployable systems plus two SFT variants, revealing a substantial gap between content recovery and structural recognition: the best document-level score exceeds 80%, while all reported fine-grained structural scores remain below 18%, with further degradation on relation-dense, grid-heavy, and visually corrupted cases. 
+
+## 2 Dataset Construction 
+
+We construct FormStruct-Bench by converting human-annotated table-form documents into reusable structural templates and ex-panding each template through a Director–Artist–Verifier pipeline (Figure 2). This design scales instance generation while preserving exact labels, diagnostic constraints, and provenance. 
+
+## 2.1 Table-Form Document Structure Recognition 
+
+We define the prediction target of table-form document structure recognition as follows. 
+
+Definition 1 (Table-Form Document Structure Recognition) . Given a table-form document image 𝐼 , the task is to predict ˆS = 𝑓 (𝐼 ), S =  R, {G 𝑟 }𝑟 ∈ R , {F 𝑟 }𝑟 ∈ R , {W 𝑓 }𝑓 ∈ F , E, (1) where R denotes typed semantic regions, G𝑟 the (possibly empty) local grid of region 𝑟 ∈ R , F𝑟 the fillable fields of region 𝑟 with 
+
+F = Ð𝑟 ∈ R F𝑟 , W𝑓 the widget groups attached to field 𝑓 ∈ F , and 
+
+E directed, typed relations among these elements (e.g., key-to-field links). This nesting makes S a hierarchical page structure rather than the single canonical grid of conventional TSR: regions carry local grids and fields, and fields carry widget groups. The evaluation protocol in Section 4 follows the same hierarchy: local grids are matched only under paired parent regions, and widget groups only under matching parent fields. 
+
+## 2.2 Template Collection and Annotation 
+
+Form-like tables combine local grids, fillable fields, selection con-trols, signature areas, and relations across non-adjacent regions. FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA Data Sources 
+
+Data Collection & Template Annotation 
+
+> Web Source
+> Public Datasets
+> Business Documents
+> Candidate Filtering
+> Candidate Pool
+> Source Check
+> Layout Check
+> Filtered Candidate
+> Doc Type Image Crop Domain
+> Template Annotation
+
+Expert Annotation 
+
+> Annotated Template
+
+Regions 
+
+Relations 
+
+Widgets 
+
+Agentic Generation 
+
+Director Artist Verifier  
+
+> error location Auto Pass Human Adjudication
+> Provenance Record Verified Instance
+> Metadata
+> Parameter
+> Verify Report Image Label
+
+Dataset & Evaluation    
+
+> Final Dataset Fine-grained Evaluation
+> Template Bank Generated Instance
+> Domain Taxonomy
+> Data Splits
+> Edit Distance LIG-F1 Region Detection F1
+> Page Region Struct .TSR-Path WG-F1 GriTS REL-F1
+
+Figure 2: Overview of the FormStruct-Bench dataset construction pipeline. 
+
+Because labeling every filled instance is costly, we instead col-lect reusable templates from web sources and 2 datasets including XFUND [41] and Common Crawl [10]. We retain candidates that combine table-like spatial organization with form-specific elements and whose stable layouts annotators can recover unambiguously; filled values are removed without altering the layout. Each document is rasterized at normalized resolution and ori-entation, then annotated as a structural template. The annotation captures table boundaries, cells and spans, visible text, semantic regions, region-local grids, fillable fields, widgets, and structural relations. Rather than imposing a page-wide grid, annotators mark grids locally and represent checkboxes, radio buttons, character boxes, blank lines, and signature areas as fields or widgets. They record observable relations, including key-to-field links, field-to-widget links, section membership, and line-item grouping; con-straint tags, counts, and difficulty levels are instead derived from the exported metadata. 
+
+## 2.3 Multi-agent Instance Generation 
+
+The three agents separate content planning, rendering, and quality control. The Director samples field values, layout parameters, and visual degradation, and assigns each instance a target constraint profile. It can therefore populate specific diagnostic slices delib-erately; the difficulty tier is derived from the assigned structural and context constraints rather than labeled post hoc. The resulting metadata fully specifies the rendering job. Using only this metadata, the Artist renders the image without access to the original document. Geometry and annotations are computed at render time, yielding exact ground truth for typed regions, region-local grid topology, fields, and widget states. The Verifier uses few-shot in-context learning to instruct an LLM to infer the corresponding structured representation from the rendered image. The inferred result is subsequently validated against the reference answer, with any detected inconsistency returned to the Artist for iterative refinement and re-rendering. 
+
+## 2.4 Verification and Provenance 
+
+Automated verification checks four aspects: whether region types, local grids, and widget states match the metadata; whether OCR recovers the assigned values from fillable regions; whether border visibility, contrast, and skew remain within their assigned ranges; and whether annotations have valid coordinates, field types, and relation targets. Failed samples trigger a structured report and are re-generated until they pass or exhaust the retry budget, after which they are discarded and logged. Every test sample that passes these checks additionally receives human review to ensure that its regions, relations, and widget states are unambiguously supported by visible evidence. Reviewers mark a sample as accepted, corrected, or discarded; corrected samples are re-verified, and unresolved samples are excluded. Passing samples receive a provenance record containing the source template, generation metadata, constraint tags, and, for test samples, the review outcome. Instances retain their template’s struc-tural skeleton while varying filled values and visual parameters. Consequently, the test set can be partitioned by recorded constraint tags without further annotation, enabling constraint-level diagnos-tic evaluation. 
+
+## 3 Data Statistics 
+
+Reporting only sample counts and coarse category distributions tells a researcher little about whether a benchmark will expose the failure modes they care about. FormStruct-Bench organizes its sta-tistics around three questions: Q1. what structural configurations the templates cover; Q2. which constraint combinations appear in the generated instances; and Q3. whether the test split samples those combinations in sufficient numbers to support per-constraint diagnostic evaluation. Our dataset is publicly available at https:// huggingface.co/datasets/D2I-CUHK-Shenzhen/FormStruct-Bench. 
+
+## 3.1 Template-level Statistics 
+
+Q1 concerns domain breadth and structural complexity. Figure 3 shows that the 70 templates span eight named application domains, one residual unclassified template, and 20 fine-grained labels. Gov-ernment and immigration is the largest coarse domain (14 templates, 20.0%), while no fine-grained use case exceeds 9 templates (12.9%). The calibrated difficulty distribution of 11/24/24/11 templates across L1–L4 further balances routine and challenging structures, reducing dependence on any single domain or layout convention. Table 2 shows that templates contain 1–7 semantic sections and 1–9 table regions; the median template has 4 semantic sections, 4 table regions, 23.5 label-field units, 16 selection fields, and 79 struc-tural relation edges. Thus, FormStruct-Bench targets page-level KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+Figure 3: Template distribution across coarse and fine do-mains. 
+
+form layouts whose local grids, fillable regions, selection controls, and cross-region relations jointly define the recognition target, rather than isolated data tables. 
+
+Table 2: Template-level structural statistics. 
+
+Feature Min Median Mean Max Semantic sections 1 4 3.9 7Table regions 1 4 4.6 9Field groups 0 4 5.2 25 Label-field units 2 23.5 25.0 59 Multi-field units 0 4 5.7 23 Selection fields 0 16 19.0 69 Structural relation edges 38 79 88.1 204 Maximum hierarchy depth 3 5 4.7 8Table 3 covers seven languages plus bilingual Chinese–English templates across three script families. Japanese, English, and Chi-nese account for 74.3% of the pool; Arabic contributes right-to-left layouts, while German, Spanish, and Portuguese broaden the Latin-script coverage. This mix helps separate structural-recognition fail-ures from assumptions tied to a single script or writing direction. 
+
+Table 3: Template language, script, and writing direction. 
+
+Language Script Direction Templates %Arabic Arabic RTL 8 11.43 Chinese CJK LTR 11 15.71 Chinese–English CJK + Latin LTR 2 2.86 English Latin LTR 19 27.14 German Latin LTR 2 2.86 Japanese CJK LTR 22 31.43 Portuguese Latin LTR 3 4.29 Spanish Latin LTR 3 4.29 
+
+Total 70 100.00 24 530 2.06 3      
+
+> 32 841.5 2.65 4
+> 43 11 54 3.25 4Max hierarchy depth Mean leaf depth Tree edges Semantic groups Leaf fi elds
+> A. Semantic structure
+> 21 219 8.26 25 0
+> 28 352 10.3 38 0
+> 37 510 14.0 65 2Values ≥40 chars Max value len. Mean value len. Answer chars Active paths
+> B. Answer scale
+> 0.23 0.04 0.02 0.15 0.07
+> 0.34 0.09 0.07 0.21 0.09
+> 0.44 0.15 0.14 0.32 0.10 Edge density Non-white px Duplicate ratio Date ratio Numeric ratio Min 50% Max
+> C. Composition
+> 2,590 228 39.9 3.81 0.86
+> 3,305 234 45.7 4.33 1.48
+> 4,152 238 52.9 4.87 2.89 Colorfulness Gray entropy Gray contrast Gray intensity Laplacian Min 50% Max
+> D. Visual
+
+Figure 4: Distribution of instance-level semantic structure, answer scale, content composition, and visual properties. Table 4: Within-template instance diversity measured by pairwise differences. 
+
+Metric Coverage Median IQR Schema disagreement probability 58.6% 0.746 [0.504, 0.849] Optional-path Hamming distance 58.6% 0.440 [0.325, 0.471] Value-set Jaccard distance 100.0% 0.775 [0.726, 0.831] Shared-field exact-value difference 100.0% 0.673 [0.599, 0.727] Robust visual-feature distance 100.0% 0.094 [0.076, 0.119] Full-answer uniqueness ratio 97.1% 1.000 [1.000, 1.000] 
+
+## 3.2 Instance-level Statistics 
+
+Q2 examines variation among the 7,000 generated instances. Fig-ure 4 summarizes 20 attributes spanning semantic structure, answer scale, content, and appearance: the median instance contains 32 leaf fields, 8 semantic groups, 41.5 tree edges, 28 active answer paths, and 352 answer characters. Numeric values occupy a me-dian 34% of populated fields, while the median non-white-pixel ratio and edge density are 21% and 0.09. The broad distribution tails show that FormStruct-Bench varies structural load, response length, value composition, and rendering conditions rather than producing near-duplicate instances. Table 4 isolates variation among instances from the same tem-plate. For the 58.6% of templates with variable schemas, median schema disagreement and optional-path distance reach 0.746 and 0.440; across all templates, median value-set and shared-field differ-ences are 0.775 and 0.673. Visual variation is also universal (median distance 0.094), and 97.1% of templates have fully unique answers, with a dataset-level uniqueness ratio of 0.989. These row-wise met-rics confirm that repeated generation changes structure, content, and appearance, not only field values. FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA 
+
+Table 5: Difficulty tier distribution across the full corpus and test split.                                      
+
+> Tier Name 𝐷 main Range Corpus (%) Test (%) Mean 𝑆 form Mean 𝐶 context
+> L1 Easy [0,0.6927 )15.71 9.09 0.3747 0.2511 L2 Medium [0.6927 ,0.8220 )34.29 36.36 0.4460 0.3000 L3 Hard [0.8220 ,1.0273 )34.29 36.36 0.5601 0.3590 L4 Expert [1.0273 ,2.0000 ]15.71 18.18 0.7452 0.3720
+
+Table 5 shows that L2 and L3 each account for 34.29% of the corpus and 36.36% of the test split, while L1 and L4 retain the low-and high-difficulty extremes. Mean form-structure and context-complexity scores rise from 0.3747/0.2511 at L1 to 0.7452/0.3720 at L4, supporting the intended tier progression. Because the Director derives these tiers from assigned constraints, each sample carries its difficulty label without additional annotation. 
+
+## 3.3 Test Split Design and Distributional Coverage 
+
+Q3 asks how a template-disjoint partition balances leakage preven-tion with evaluation coverage. As shown in Figure 5(a), we assign entire templates, rather than individual instances, to the training, validation, and test splits. The resulting 49/10/11-template partition corresponds to 4,900/1,000/1,100 instances, or 70.0%/14.3%/15.7% of the corpus, because every template contributes 100 instances. This construction prevents the same layout from appearing in both training and evaluation. All 1,100 test instances pass automated verification and additionally receive human review. 
+
+Figure 5: Template-disjoint split composition and distribu-tional coverage. 
+
+The template-disjoint split favors leakage control over propor-tional domain matching. Figure 5(b) shows that government and immigration and business and operations account for 26.53% and 16.33% of the training templates, respectively, but have no test tem-plates. Conversely, finance, banking, and utilities increases from 12.24% in training to 36.36% in test, while education and student services increases from 8.16% to 27.27%. The maximum train–test gap is therefore 26.53 percentage points. Since the test split con-tains only 11 templates, each template changes a domain share by 9.09 percentage points; aggregate test results should thus be interpreted as performance on the represented domains rather than as corpus-wide domain estimates. Figure 5(c) reveals a complementary concentration in structural scale. The training split spans one to eight regions per template, whereas the test split contains only four to six; six of its eleven tem-plates (54.55%) contain five regions. The resulting Jensen–Shannon divergence of 0.355 indicates a clear separation between the two discrete distributions. Consequently, the test split provides a fully reviewed, template-leakage-free diagnostic subset for mid-range region complexity, but it does not measure generalization to the low- and high-region-count tails. We therefore bound domain- and complexity-level conclusions to the coverage visible in Figure 5 rather than claiming distributional representativeness. 
+
+## 4 Evaluation Protocol 
+
+FormStruct-Bench evaluates predictions at three complementary levels: page-level metrics measure schema and content recovery, path-level metrics test hierarchical field binding, and component metrics assess regions and line-item groups. Three structure-specific diagnostics additionally evaluate region-local grids, widget groups, and typed relations. We report the levels separately to distinguish recognition, binding, localization, and organization errors. 
+
+## 4.1 Page-level Metrics 
+
+Let ˆ 𝐴 and 𝐴 ∗ denote the predicted and ground-truth answer JSON objects for a page. 
+
+Schema Normalized Tree Edit Similarity (Schema-nTED). 
+
+Schema-nTED compares schema trees 𝑇 (𝐴 ) that retain field names, container types, and hierarchy while discarding values: Schema-nTED = 1 −
+
+𝑑 APTED 
+
+
+
+𝑇 ( ˆ𝐴 ),𝑇 (𝐴 ∗)
+
+
+
+|𝑇 ( ˆ𝐴 )| + | 𝑇 (𝐴 ∗)| . (2) It equals 1 only when the predicted and ground-truth schemas match, independently of recognized values. 
+
+Value Normalized Edit Similarity (Value-nED). Let ˆ 𝑉 and 𝑉 ∗
+
+be the multisets of non-empty leaf values in ˆ 𝐴 and 𝐴 ∗. Value-nED uses normalized Levenshtein similarity 𝑠 and maximum-weight one-to-one matching: Value-nED = max 𝑀 ∈ B ( ˆ𝑉 ,𝑉 ∗ )
+
+Í( ˆ𝑣,𝑣 ∗ ) ∈ 𝑀 𝑠 ( ˆ𝑣, 𝑣 ∗)
+
+max (| ˆ𝑉 |, |𝑉 ∗ |) , (3) where B( ˆ𝑉 , 𝑉 ∗) denotes the set of bipartite matchings. Unmatched values score zero, penalizing missing and spurious content inde-pendently of field paths. 
+
+## 4.2 Component-level Metrics 
+
+Table Structure Recognition Path Accuracy (TSR-path). Let 
+
+𝑃 (𝐴 ) be the set of leaf field-path–value pairs obtained by flattening an answer tree. TSR-path counts a ground-truth leaf only when its KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+complete path and value are reproduced exactly: TSR-path =
+
+Í(𝑝,𝑣 ) ∈ 𝑃 (𝐴 ∗ ) 1(𝑝, 𝑣 ) ∈ 𝑃 ( ˆ𝐴 )
+
+|𝑃 (𝐴 ∗)| . (4) It is therefore strict ground-truth leaf recall rather than a precision-aware F1 score. 
+
+Region Detection F1 at IoU 0.5 (R-F1@0.5). Let ˆ 𝑅 and 𝑅 ∗ denote the predicted and ground-truth region sets, and let M𝑅 be the maximum one-to-one matching over pairs with the same semantic type and box IoU of at least 0.5. We compute R-F1@0 .5 = 2|M 𝑅 || ˆ𝑅 | + | 𝑅 ∗ | . (5) Thus, a region requires both correct type and location. 
+
+Line-item-group F1 (LIG-F1). Let ˆ 𝐺 and 𝐺 ∗ denote predicted and ground-truth line-item-group boxes, and let M𝐺 be their maximum one-to-one matching at an IoU threshold of 0.5. LIG-F1 is LIG-F1 = 2|M 𝐺 || ˆ𝐺 | + | 𝐺 ∗ | . (6) It measures whether repeated line-item blocks are localized as coherent groups. 
+
+Local-grid GriTS Topology ( LG -GriTS Top ). Let ˆG and G∗ be the predicted and ground-truth region-local grids. We match grids one-to-one only when their parent regions are paired by M𝑅 , using 
+
+𝑠 Top = GriTS Top [33] as the pair weight. For the maximum-weight matching MLG ,LG-GriTS Top = 2Í( ˆ𝑔,𝑔 ∗ ) ∈ M LG 𝑠 Top ( ˆ𝑔, 𝑔 ∗)| ˆG| + |G ∗ | . (7) This score isolates row/column topology and span recovery within local grids. 
+
+Widget Grouping F1 (WG-F1). Let ˆW and W∗ denote widget groups and M𝑊 their maximum valid one-to-one matching. A valid group match requires the same parent field, widget family, option membership, and observable selection states after member alignment. We compute WG-F1 = 2|M 𝑊 || ˆW| + |W ∗ | . (8) 
+
+Typed Relation F1 (Rel-F1). Let ˆ E and E∗ be the predicted and ground-truth directed, typed relation-edge sets. After aligning their endpoint objects, M𝐸 contains edges whose source, target, direc-tion, and relation type all agree. Rel-F1 is Rel-F1 = 2|M 𝐸 || ˆE| + |E ∗ | . (9) 
+
+## 4.3 Aggregation and Reporting Protocol 
+
+All metrics are macro-averaged over pages. Missing, unparsable, or schema-invalid predictions receive zero on applicable metrics, whereas pages without the corresponding ground-truth component are excluded only from that component-level average. We report valid-output rate separately and use valid-only scores solely as coverage diagnostics. Detailed tree construction, normalization, matching, and edge-case rules are provided in Section A.5. 
+
+## 5 Experiments 
+
+We evaluate 14 API-hosted and locally deployable systems plus two SFT variants to characterize the current state of table-form doc-ument structure recognition. We first report overall performance under the hierarchical evaluation protocol, and then analyze how model behavior varies across difficulty levels, structural constraints, visual degradations, and evaluation criteria. These analyses are de-signed to expose which structural capabilities remain unresolved and where document-level recovery ceases to be a reliable indicator of fine-grained structural correctness. Our code is publicly available at § https://github.com/D2I-CUHKSZ/FormStruct-Bench. 
+
+## 5.1 Baselines 
+
+We compare six API-hosted VLMs with eight locally deployable systems spanning open-weight VLMs, document/OCR parsers, and TSR pipelines, and additionally report SFT variants of Qwen3.5-9B and Qwen3.6-35B-A3B. This grouping contrasts vendor-hosted capability with reproducible local alternatives; model roles and schema mappings are detailed in Section A.1. 
+
+## 5.2 Implementation Protocol 
+
+All systems are evaluated on the same page images and normal-ized to the FormStruct-Bench JSON schema before scoring. VLMs share the same task definition and use deterministic decoding when available, while local pipelines follow their released inference proce-dures; parsing, repair, and conversion rules are fixed across systems (Section A.3). The prompt is provided in Section A.12. 
+
+## 5.3 Overall Performance and Cross-level Gap 
+
+Finding 1 : Under our hierarchical evaluation framework, current systems recover document content substantially bet-ter than the structures that organize it. As summarized in Ta-ble 6, the best document-level scores reach 83.85 Value-nED and 57.45 Schema-nTED, whereas the maxima on the primary structure metrics are only 17.91 TSR-path, 12.49 R-F1@0.5, and 14.21 LIG-F1. The structure-specific diagnostics remain lower still, peaking at 5.56 LG-GriTS Top , 3.94 WG-F1, and 2.81 Rel-F1. This cross-level gap answers our first question: existing systems can read form content, but they still struggle to bind it to the correct hierarchy, region, local grid, widget group, and relation endpoint. 
+
+Finding 2 : SFT improves content recovery, region local-ization, and grouping, but does not uniformly improve all structural capabilities. Qwen3.6-35B-A3B-SFT achieves the best Schema-nTED (57.45), R-F1@0.5 (12.49), LIG-F1 (14.21), and WG-F1 (3.94), while Qwen3.5-9B-SFT leads Value-nED (83.85). However, relative to its base model, Qwen3.6-35B-A3B-SFT drops from 17.91 to 16.84 on TSR-path and from 5.56 to 1.00 on LG-GriTS Top ; its 2.24 Rel-F1 also remains below Seed 2.1 Pro’s 2.81. The uneven gains indicate that supervised adaptation strengthens selected output components rather than resolving the broader coupling problem among document reading, spatial grounding, topology reconstruc-tion, and relation binding. 
+
+## 5.4 Difficulty Analysis 
+
+Finding 3 : Increasing structural difficulty widens the gap between content recovery and spatial grounding. As shown FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA 
+
+Table 6: Main results on the five primary metrics and three structure-specific diagnostics of FormStruct-Bench. All values are percentages. Bold marks the best reported result in each column.                                                                                                                                                                    
+
+> Model Model Size Document-level Metrics Primary Structure Metrics Structure-specific Diagnostics Schema-nTED ↑Value-nED ↑TSR-path ↑R-F1@0.5 ↑LIG-F1 ↑LG-GriTS Top ↑WG-F1 ↑Rel-F1 ↑
+> API-hosted
+> GPT-5.5 [24] Undisc. 54.15 80.98 17.15 1.74 2.07 0.53 0.02 0.09
+> Claude Sonnet 5 [2] Undisc. 52.22 75.42 13.77 1.75 0.52 1.77 0.02 0.13
+> Gemini 3.5 Flash [12] Undisc. 48.59 66.80 14.55 8.19 4.21 4.26 1.99 1.87
+> Qwen3.7-Plus [27] Undisc. 34.01 74.02 9.75 0.00 0.00 0.00 0.00 0.00
+> Kimi2.6 [23] Undisc. 48.20 76.63 12.96 0.47 0.19 0.00 0.05 0.09
+> Seed 2.1 Pro [6] Undisc. 52.81 77.45 15.90 10.77 12.10 5.43 0.86 2.81
+> Locally deployable
+> Qwen3.6-35B-A3B [29] 35B / 3B act. 48.46 66.93 17.91 5.95 7.65 5.56 0.40 0.00
+> Qwen3.6-35B-A3B-SFT [29] 35B / 3B act. 57.45 77.83 16.84 12.49 14.21 1.00 3.94 2.24
+> DeepSeek-VL-2 [38] 27B 5.89 5.29 0.00 0.00 0.01 0.00 0.00 0.00
+> Qwen3.5-9B [28] 9B 45.58 65.73 12.58 2.03 1.84 1.23 0.01 0.00
+> Qwen3.5-9B-SFT [28] 9B 56.98 83.85 17.78 10.81 9.00 0.00 0.00 0.00
+> GLM-4.6V-Flash [43] 9B 30.41 47.88 4.92 5.59 3.66 1.16 0.05 0.00
+> Step3-VL-10B [13] 10B 26.20 59.48 0.04 0.57 1.05 0.00 0.03 0.00
+> InternVL3.5-8B [36] 8B 30.34 57.03 0.01 1.05 0.00 0.00 0.01 0.00
+> MinerU 2.5 Pro [35] 1.2B 4.53 10.97 0.00 0.00 0.00 0.00 0.00 0.00
+> PaddleOCR-VL-1.6 [44] 0.9B 2.97 21.73 0.00 3.68 0.00 0.00 0.00 0.00
+
+Figure 6: Performance across Difficulty L1–L4. 
+
+in Figure 6, across the L1–L4 tiers, document-level value recovery is generally more stable than region-level structural localization. GPT-5.5 and Seed 2.1 Pro maintain comparatively stable Value-nED, whereas Seed 2.1 Pro’s R-F1@0.5 decreases from 13.76 at L2 to 7.23 at L4, a 47.5% relative reduction. Qwen3.6-35B-A3B exhibits degradation at both levels, but its region score drops more sharply: Value-nED decreases from 73.85 at L1 to 58.37 at L4, while R-F1@0.5 falls from 7.09 to 4.07, corresponding to relative reductions of 21.0% and 42.6%, respectively. This asymmetric degradation suggests that current multimodal models can continue recovering plausible field content from global semantic cues as structural and contextual complexity increases, but struggle to preserve precise region iden-tities and bind that content to the correct local organization. The near-flat R-F1@0.5 trajectory of GPT-5.5 should not be interpreted as robustness, since the model already operates close to the metric floor. 
+
+## 5.5 Visual Degradation Robustness 
+
+Finding 4 : Visual degradation leaves the page-level capabil-ity hierarchy largely intact but consistently weakens exact hierarchical binding, while region localization and grouping exhibit model-specific responses. Visual degradation exposes 
+
+Figure 7: Visual-degradation robustness: (a) degraded page-level scores; (b) page-level changes by degradation type; (c)TSR-path changes by severity; and (d) region-level changes by model. 
+
+a clear capability boundary in current multimodal models. Their page-level extraction can remain relatively stable because visible values and document schemas can be recovered from redundant textual and global semantic cues. In contrast, exact hierarchical KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+binding depends more heavily on fragile local evidence, such as boundaries, alignment, spacing, and the visual correspondence be-tween labels and fields. Region localization and line-item grouping are also not affected uniformly, indicating that detecting an approx-imate document region and preserving the internal grouping of its elements are only partially coupled capabilities. These results sug-gest that current models lack a visual-structural representation that remains consistently aligned across semantic extraction, hierarchi-cal binding, localization, and grouping when document appearance changes. Figure 7 supports this boundary. The page-level ranking remains largely unchanged under degradation (Figure 7(a)), and stronger models show only limited degraded–clean changes (Figure 7(b)). In contrast, TSR-path decreases under every degradation type and severity level, with losses of approximately 3.8–6.3 points (Fig-ure 7(c)), showing that exact value-to-path binding is consistently more fragile than page-level extraction. Region-level effects are less uniform (Figure 7(d)): some models preserve region localization while losing line-item grouping, indicating that localization and grouping remain only partially coupled. Overall, visual degradation primarily destabilizes fine-grained structural binding rather than coarse document semantics. 
+
+## 5.6 In-Domain Adaptation & Cross-Dataset Transfer 
+
+Finding 5 : SFT on synthetic table-form documents improves real-world structure recognition across both model scales, covering content recovery, schema reconstruction, and hi-erarchical value binding. To test whether the generated data provides transferable supervision rather than merely fitting the synthetic distribution, we fine-tune two model scales on synthetic table-form documents and evaluate them on both synthetic and real-world data. As shown in Figure 8, SFT improves all three met-rics on real documents for both models, covering content recov-ery, schema reconstruction, and hierarchical value binding. The gains in Schema-nTED and TSR-path further show that the models learn structural organization and field-path alignment, not only surface-text recognition. These results indicate that the synthetic data captures transferable structural regularities and can effectively support real-world table-form structure recognition. 
+
+## 6 Related Work 
+
+Table structure recognition. Existing TSR benchmarks mainly study regular or scientific tables under a global-grid view. Table-Bank and SciTSR cover table detection and scientific-table struc-ture recognition [8, 19], while PubTabNet introduces TEDS to mea-sure tree-edit similarity over HTML-like tables [45]. PubTables-1M scales scientific-document table extraction with canonicalized an-notations [32], and GriTS evaluates topology, content, and loca-tion similarity [33]. These benchmarks omit form-specific elements such as fillable fields, option groups, local subgrids, and non-local relations; consequently, table-level scores can obscure failures in localization, span recovery, widget grouping, reading order, and local-grid reconstruction. 
+
+Document AI and form-like documents. Full-page layout and parsing benchmarks, including PubLayNet, DocBank, DocLayNet, 
+
+Figure 8: Models fine-tuned on synthetic table-form docu-ments achieve consistent gains on real-world data. 
+
+and OmniDocBench [20, 25, 26, 46], are supported by general document-understanding systems such as the LayoutLM family, LayoutXLM, Donut, and MinerU [14, 17, 35, 39, 40, 42]. Form and receipt datasets such as FUNSD, SROIE, and DocILE instead focus on key–value and business-information extraction [15, 16, 31]. SRFUND directly benchmarks multi-granularity hierarchical form reconstruction [21], while FormStruct-Bench emphasizes explicit table-form struc-tures and diagnostic evaluation. VAREX closely overlaps with our template-based synthesis, deterministic ground truth, and quality-assurance workflow [5], but targets schema-based value extrac-tion rather than structure reconstruction. These tasks may re-cover correct values without reconstructing the local grids, wid-get groups, section membership, and relations that make forms machine-consumable. FormStruct-Bench therefore complements them with an explicit hierarchy over regions, local grids, fields, wid-gets, and relations, evaluated through component-level diagnostics rather than a single table or extraction score. 
+
+## 7 Conclusion 
+
+FormStruct-Bench reframes table-form document structure recog-nition as hierarchical recovery over semantic regions, local grids, fields, widgets, and typed relations. Its 70 templates and 7,000 veri-fied instances support five complementary metrics and diagnostic slices over difficulty, structural constraints, and visual degradation. Across 14 systems and two SFT variants, document-level perfor-mance reaches 83.85%, yet the strongest fine-grained structural score remains below 18%, with no system dominating all compo-nents. Within our template-disjoint test coverage, this gap shows that recovering content does not imply recovering the hierarchy required for reliable table-form understanding. FormStruct-Bench thus measures progress at the level of structural failure rather than aggregate output similarity. FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA 
+
+## References 
+
+[1] Milan Aggarwal, Mausoom Sarkar, Hiresh Gupta, and Balaji Krishnamurthy. 2021. Multi-Modal Association based Grouping for Form Structure Extraction. arXiv:2107.04396 [cs.CV] https://arxiv.org/abs/2107.04396 [2] Anthropic. 2026. Claude Sonnet 5. Accessed: 2026-07-07. https://platform.claude. com/docs/en/about-claude/models/whats-new-sonnet-5 [3] Srikar Appalaraju, Bhavan Jasani, Bhargava Urala Kota, Yusheng Xie, and R. Man-matha. 2021. DocFormer: End-to-End Transformer for Document Understanding. In Proceedings of the IEEE/CVF International Conference on Computer Vision . IEEE, Montreal, QC, Canada, 973–983. doi:10.1109/ICCV48922.2021.00103 [4] Deniz Appelbaum, Alexander Kogan, and Miklos A. Vasarhelyi. 2017. Big Data and Analytics in the Modern Audit Engagement: Research Needs. Auditing: A Journal of Practice & Theory 36, 4 (2017), 1–27. doi:10.2308/ajpt-51684 [5] Udi Barzelay, Ophir Azulai, Inbar Shapira, Idan Friedman, Foad Abo Dahood, Madison Lee, and Abraham Daniels. 2026. VAREX: A Benchmark for Multi-Modal Structured Extraction from Documents. arXiv:2603.15118 [cs.CV] doi:10.48550/ arXiv.2603.15118 [6] ByteDance Seed. 2026. Seed2.1 Model Card. Accessed: 2026-07-07. https://lf3-static.bytednsdoc.com/obj/eden-cn/lapzild-tss/ljhwZthlaukjlkulzlp/ seed2.1/Seed2_1_Model_Card.pdf [7] Tathagata Chakraborti, Vatche Isahagian, Rania Khalaf, Yasaman Khazaeni, Vinod Muthusamy, Yara Rizk, and Merve Unuvar. 2020. From Robotic Pro-cess Automation to Intelligent Process Automation. arXiv:2007.13257 [cs.AI] https://arxiv.org/abs/2007.13257 [8] Zewen Chi, Heyan Huang, Heng-Da Xu, Houjin Yu, Wanxuan Yin, and Xian-Ling Mao. 2019. Complicated Table Structure Recognition. arXiv:1908.04729 [cs.IR] https://arxiv.org/abs/1908.04729 [9] Common Crawl Foundation. 2024. Common Crawl Terms of Use. Terms for use of Common Crawl services and crawled content.. https://commoncrawl.org/terms-of-use [10] Common Crawl. 2026. Common Crawl Dataset. https://commoncrawl.org/ [11] doc-analysis. 2022. XFUND: Repository License. CC BY-NC-SA 4.0 license statement.. https://github.com/doc-analysis/XFUND [12] Google AI for Developers. 2026. Gemini API Models. Accessed: 2026-07-07. https://ai.google.dev/gemini-api/docs/models [13] Ailin Huang, Chengyuan Yao, Chunrui Han, Fanqi Wan, Hangyu Guo, Haoran Lv, Hongyu Zhou, Jia Wang, Jian Zhou, Jianjian Sun, Jingcheng Hu, Kangheng Lin, Liang Zhao, Mitt Huang, Song Yuan, Wenwen Qu, Xiangfeng Wang, Yanlin Lai, Yingxiu Zhao, Yinmin Zhang, Yukang Shi, Yuyang Chen, Zejia Weng, Ziyang Meng, Ang Li, Aobo Kong, Bo Dong, Changyi Wan, David Wang, Di Qi, Dingming Li, En Yu, Guopeng Li, Haiquan Yin, Han Zhou, Hanshan Zhang, Haolong Yan, Hebin Zhou, Hongbo Peng, Jiaran Zhang, Jiashu Lv, Jiayi Fu, Jie Cheng, Jie Zhou, Jisheng Yin, Jingjing Xie, Jingwei Wu, Jun Zhang, Junfeng Liu, Kaijun Tan, Kaiwen Yan, Liangyu Chen, Lina Chen, Mingliang Li, Qian Zhao, Quan Sun, Shaoliang Pang, Shengjie Fan, Shijie Shang, Siyuan Zhang, Tianhao You, Wei Ji, Wuxun Xie, Xiaobo Yang, Xiaojie Hou, Xiaoran Jiao, Xiaoxiao Ren, Xiangwen Kong, Xin Huang, Xin Wu, Xing Chen, Xinran Wang, Xuelin Zhang, Yana Wei, Yang Li, Yanming Xu, Yeqing Shen, Yuang Peng, Yue Peng, Yu Zhou, Yusheng Li, Yuxiang Yang, Yuyang Zhang, Zhe Xie, Zhewei Huang, Zhenyi Lu, Zhimin Fan, Zihui Cheng, Daxin Jiang, Qi Han, Xiangyu Zhang, Yibo Zhu, and Zheng Ge. 2026. STEP3-VL-10B Technical Report. arXiv:2601.09668 [cs.CV] doi:10.48550/ arXiv.2601.09668 [14] Yupan Huang, Tengchao Lv, Lei Cui, Yutong Lu, and Furu Wei. 2022. LayoutLMv3: Pre-training for Document AI with Unified Text and Image Masking. In Proceed-ings of the 30th ACM International Conference on Multimedia . ACM, New York, NY, USA, 4083–4091. doi:10.1145/3503161.3548112 [15] Zheng Huang, Kai Chen, Jianhua He, Xiang Bai, Dimosthenis Karatzas, Shjian Lu, and C. V. Jawahar. 2021. ICDAR2019 Competition on Scanned Receipt OCR and Information Extraction. arXiv:2103.10213 [cs.AI] doi:10.1109/ICDAR.2019.00244 [16] Guillaume Jaume, Hazim Kemal Ekenel, and Jean-Philippe Thiran. 2019. FUNSD: A Dataset for Form Understanding in Noisy Scanned Documents. arXiv:1905.13538 [cs.IR] https://arxiv.org/abs/1905.13538 [17] Geewook Kim, Teakgyu Hong, Moonbin Yim, Jeongyeon Nam, Jinyoung Park, Jinyeong Yim, Wonseok Hwang, Sangdoo Yun, Dongyoon Han, and Seunghyun Park. 2022. OCR-free Document Understanding Transformer. arXiv:2111.15664 [cs.LG] https://arxiv.org/abs/2111.15664 [18] Chen-Yu Lee, Chun-Liang Li, Timothy Dozat, Vincent Perot, Guolong Su, Nan Hua, Joshua Ainslie, Renshen Wang, Yasuhisa Fujii, and Tomas Pfister. 2022. Form-Net: Structural Encoding beyond Sequential Modeling in Form Document Infor-mation Extraction. In Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Dublin, Ireland, 3735–3754. doi:10.18653/v1/2022.acl-long.260 [19] Minghao Li, Lei Cui, Shaohan Huang, Furu Wei, Ming Zhou, and Zhoujun Li. 2020. TableBank: A Benchmark Dataset for Table Detection and Recognition. arXiv:1903.01949 [cs.CV] https://arxiv.org/abs/1903.01949 [20] Minghao Li, Yiheng Xu, Lei Cui, Shaohan Huang, Furu Wei, Zhoujun Li, and Ming Zhou. 2020. DocBank: A Benchmark Dataset for Document Layout Analysis. arXiv:2006.01038 [cs.CL] https://arxiv.org/abs/2006.01038 [21] Jiefeng Ma, Yan Wang, Chenyu Liu, Jun Du, Yu Hu, Zhenrong Zhang, Pengfei Hu, Qing Wang, and Jianshu Zhang. 2024. SRFUND: A Multi-Granularity Hierarchical Structure Reconstruction Benchmark in Form Understanding. In Advances in Neural Information Processing Systems , Vol. 37. Curran Associates, Inc., Red Hook, NY, USA, 112411–112432. doi:10.52202/079017-3571 [22] Minesh Mathew, Dimosthenis Karatzas, and C. V. Jawahar. 2021. DocVQA: A Dataset for VQA on Document Images. In Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision . IEEE, Online, 2200–2209. doi:10. 1109/WACV48630.2021.00225 [23] Moonshot AI. 2026. Kimi. Accessed: 2026-07-07. https://www.kimi.com/ [24] OpenAI. 2026. OpenAI API Models. Accessed: 2026-07-07. https://developers. openai.com/api/docs/models [25] Linke Ouyang, Yuan Qu, Hongbin Zhou, Jiawei Zhu, Rui Zhang, Qunshu Lin, Bin Wang, Zhiyuan Zhao, Man Jiang, Xiaomeng Zhao, Jin Shi, Fan Wu, Pei Chu, Minghao Liu, Zhenxiang Li, Chao Xu, Bo Zhang, Botian Shi, Zhongying Tu, and Conghui He. 2025. OmniDocBench: Benchmarking Diverse PDF Document Parsing with Comprehensive Annotations. arXiv:2412.07626 [cs.CV] https: //arxiv.org/abs/2412.07626 [26] Birgit Pfitzmann, Christoph Auer, Michele Dolfi, Ahmed S. Nassar, and Peter Staar. 2022. DocLayNet: A Large Human-Annotated Dataset for Document-Layout Segmentation. In Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining . ACM, New York, NY, USA, 3743–3751. doi:10.1145/3534678.3539043 [27] Qwen Team. 2026. Qwen: Official Models and Chat Service. Accessed: 2026-07-07. https://qwen.ai/ [28] Qwen Team. 2026. Qwen3.5: Towards Native Multimodal Agents. https://qwen. ai/blog?id=qwen3.5 [29] Qwen Team. 2026. Qwen3.6-35B-A3B: Agentic Coding Power, Now Open to All. https://qwen.ai/blog?id=qwen3.6-35b-a3b [30] Josselin Somerville Roberts, Tony Lee, Chi Heem Wong, Michihiro Yasunaga, Yifan Mai, and Percy Liang. 2024. Image2Struct: Benchmarking Structure Ex-traction for Vision-Language Models. NeurIPS 2024. arXiv:2410.22456 [cs.CV] https://arxiv.org/abs/2410.22456 [31] Štěpán Šimsa, Milan Šulc, Michal Uřičář, Yash Patel, Ahmed Hamdi, Matěj Kocián, Matyáš Skalický, Jiří Matas, Antoine Doucet, Mickaël Coustaty, and Dimosthenis Karatzas. 2023. DocILE Benchmark for Document Information Localization and Extraction. arXiv:2302.05658 [cs.CL] https://arxiv.org/abs/2302.05658 [32] Brandon Smock, Rohith Pesala, and Robin Abraham. 2021. PubTables-1M: Towards comprehensive table extraction from unstructured documents. arXiv:2110.00061 [cs.LG] https://arxiv.org/abs/2110.00061 [33] Brandon Smock, Rohith Pesala, and Robin Abraham. 2023. GriTS: Grid table similarity metric for table structure recognition. arXiv:2203.12555 [cs.LG] https: //arxiv.org/abs/2203.12555 [34] Wil M. P. van der Aalst, Martin Bichler, and Armin Heinzl. 2018. Robotic Process Automation. Business & Information Systems Engineering 60, 4 (2018), 269–272. doi:10.1007/s12599-018-0542-4 [35] Bin Wang, Chao Xu, Xiaomeng Zhao, Linke Ouyang, Fan Wu, Zhiyuan Zhao, Rui Xu, Kaiwen Liu, Yuan Qu, Fukai Shang, Bo Zhang, Liqun Wei, Zhihao Sui, Wei Li, Botian Shi, Yu Qiao, Dahua Lin, and Conghui He. 2024. MinerU: An Open-Source Solution for Precise Document Content Extraction. arXiv:2409.18839 [cs.CV] https://arxiv.org/abs/2409.18839 [36] Weiyun Wang, Zhangwei Gao, Lixin Gu, Hengjun Pu, Long Cui, Xingguang Wei, Zhaoyang Liu, Linglin Jing, Shenglong Ye, Jie Shao, Zhaokai Wang, Zhe Chen, Hongjie Zhang, Ganlin Yang, Haomin Wang, Qi Wei, Jinhui Yin, Wenhao Li, Erfei Cui, Guanzhou Chen, Zichen Ding, Changyao Tian, Zhenyu Wu, Jingjing Xie, Zehao Li, Bowen Yang, Yuchen Duan, Xuehui Wang, Zhi Hou, Haoran Hao, Tianyi Zhang, Songze Li, Xiangyu Zhao, Haodong Duan, Nianchen Deng, Bin Fu, Yinan He, Yi Wang, Conghui He, Botian Shi, Junjun He, Yingtong Xiong, Han Lv, Lijun Wu, Wenqi Shao, Kaipeng Zhang, Huipeng Deng, Biqing Qi, Jiaye Ge, Qipeng Guo, Wenwei Zhang, Songyang Zhang, Maosong Cao, Junyao Lin, Kexian Tang, Jianfei Gao, Haian Huang, Yuzhe Gu, Chengqi Lyu, Huanze Tang, Rui Wang, Haijun Lv, Wanli Ouyang, Limin Wang, Min Dou, Xizhou Zhu, Tong Lu, Dahua Lin, Jifeng Dai, Weijie Su, Bowen Zhou, Kai Chen, Yu Qiao, Wenhai Wang, and Gen Luo. 2025. InternVL3.5: Advancing Open-Source Multimodal Models in Versatility, Reasoning, and Efficiency. arXiv:2508.18265 [cs.CV] doi:10. 48550/arXiv.2508.18265 [37] Yandi Wang, Libin Zhan, Ziwei Huang, Tiancheng Luo, Yuxuan Jiang, Wang Dong, Leilei Gan, and Jun Chen. 2026. From Recognition to Reasoning: Benchmarking and Enhancing MLLMs on Real-World Receipt Document Understanding. In 
+
+Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, San Diego, California, United States, 46007–46024. https://aclanthology.org/2026. acl-long.2135/ [38] Haoran Wei, Yaofeng Sun, and Yukun Li. 2026. DeepSeek-OCR 2: Visual Causal Flow. arXiv:2601.20552 [cs.CV] doi:10.48550/arXiv.2601.20552 KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+[39] Yiheng Xu, Minghao Li, Lei Cui, Shaohan Huang, Furu Wei, and Ming Zhou. 2020. LayoutLM: Pre-training of Text and Layout for Document Image Understanding. In Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining . ACM, New York, NY, USA, 1192–1200. doi:10.1145/ 3394486.3403172 [40] Yiheng Xu, Tengchao Lv, Lei Cui, Guoxin Wang, Yijuan Lu, Dinei Florencio, Cha Zhang, and Furu Wei. 2021. LayoutXLM: Multimodal Pre-training for Multilingual Visually-rich Document Understanding. arXiv:2104.08836 [cs.CL] https://arxiv. org/abs/2104.08836 [41] Yiheng Xu, Tengchao Lv, Lei Cui, Guoxin Wang, Yijuan Lu, Dinei Florencio, Cha Zhang, and Furu Wei. 2022. XFUND: A Benchmark Dataset for Multilingual Vi-sually Rich Form Understanding. In Findings of the Association for Computational Linguistics: ACL 2022 . Association for Computational Linguistics, Dublin, Ireland, 3214–3224. doi:10.18653/v1/2022.findings-acl.253 [42] Yang Xu, Yiheng Xu, Tengchao Lv, Lei Cui, Furu Wei, Guoxin Wang, Yijuan Lu, Dinei Florencio, Cha Zhang, Wanxiang Che, Min Zhang, and Lidong Zhou. 2021. LayoutLMv2: Multi-modal Pre-training for Visually-rich Document Un-derstanding. In Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Nat-ural Language Processing . Association for Computational Linguistics, Online, 2579–2591. doi:10.18653/v1/2021.acl-long.201 [43] Z.ai. 2025. GLM-4.6V Model Card. Accessed: 2026-07-07. https://huggingface. co/zai-org/GLM-4.6V [44] Zelun Zhang, Hongen Liu, Suyin Liang, Yubo Zhang, Yiqing Xiang, Jiaxuan Liu, Ting Sun, Manhui Lin, Yue Zhang, Changda Zhou, Tingquan Gao, Cheng Cui, Yi Liu, Dianhai Yu, and Yanjun Ma. 2026. PaddleOCR-VL-1.6: Expanding the Frontier of Document Parsing with Under-Optimized Region Refinement and Progressive Post-Training. arXiv:2606.03264 [cs.CV] https://arxiv.org/abs/2606.03264 [45] Xu Zhong, Elaheh ShafieiBavani, and Antonio Jimeno Yepes. 2020. Image-based table recognition: data, model, and evaluation. arXiv:1911.10683 [cs.CV] https: //arxiv.org/abs/1911.10683 [46] Xu Zhong, Jianbin Tang, and Antonio Jimeno Yepes. 2019. PubLayNet: largest dataset ever for document layout analysis. arXiv:1908.07836 [cs.CL] https: //arxiv.org/abs/1908.07836 FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA 
+
+## A Additional Experimental Details A.1 Baseline Systems 
+
+The API-hosted group comprises GPT-5.5 [24], Claude Sonnet 5 [2], Gemini 3.5 Flash [12], Qwen3.7-Plus [27], Kimi2.6 [23], and Seed 2.1 Pro [6]. These systems directly generate the complete target JSON and represent vendor-hosted multimodal models available only through remote inference services. The locally deployable VLMs include Qwen3.6-35B-A3B [29], DeepSeek-VL-2 [38], Qwen3.5-9B [28], and GLM-4.6V-Flash [43]. We additionally evaluate Step3-VL-10B [13] and InternVL3.5-8B [36]. The locally deployable document/OCR pipelines are MinerU 2.5 Pro [35] and PaddleOCR-VL-1.6. The VLMs are prompted to gen-erate the target schema, whereas the document/OCR pipelines re-tain their released output interfaces. For the latter, only supported predictions are mapped into the closest compatible subset of the FormStruct-Bench schema; components not produced by a pipeline remain absent after conversion. 
+
+## A.2 Experimental Environment 
+
+Hardware. Local inference was conducted on a server with two NVIDIA A100-SXM4 GPUs (80 GB each; 81,920 MiB reported per device) using driver 550.90.07, with Multi-Instance GPU (MIG) dis-abled. The preserved host has two 48-core AMD EPYC 7A23 CPUs (96 physical cores and 192 logical CPUs) and approximately 1 TiB of RAM, and runs Debian GNU/Linux 13 user space on a Linux 5.15 kernel. The surviving inference logs corroborate the GPU model and driver for the formal runs; CPU, memory, and operating-system details were not stored in per-run manifests and are reported from the preserved host snapshot. 
+
+Software. Table 7 summarizes the package versions that can be verified from preserved environments and formal server logs. The NVIDIA driver reports CUDA 12.4 compatibility, whereas the main vLLM stack uses CUDA 12.8 wheels and the Paddle stack uses CUDA 12.6 wheels; we therefore report these layers separately rather than assigning a single CUDA version to all runs. 
+
+Table 7: Verified software environments for locally deploy-able baselines.     
+
+> Stack Verified environment vLLM Python 3.12.8; PyTorch 2.10.0+cu128; Transformers 4.57.6; vLLM 0.18.0. MinerU MinerU-VL-Utils 1.0.5 with its in-process vLLM inference engine. PaddleOCR-VL SGLang 0.5.2; PyTorch 2.8.0; Transformers 4.56.1; PaddlePaddle-GPU 3.2.1; PaddleOCR 3.7.0; PaddleX 3.7.2.
+
+## A.3 Inference and Output Normalization 
+
+Each VLM receives the original page image and the same instruc-tion to return a JSON object containing a semantic answer tree, regions, widgets, local grids, cells, and relations. The shared pre-diction prompt is reproduced verbatim in Section A.12. We use deterministic or near-deterministic decoding whenever the API or inference backend exposes the corresponding control. Locally 
+
+Table 8: Hyperparameters used for FormStruct-Bench LoRA-based SFT.                                          
+
+> Hyperparameter Qwen3.5-9B Qwen3.6-35B-A3B Optimization method LoRA SFT LoRA SFT Epochs / optimizer steps 1 / 307 1 / 307 Peak learning rate 5×10 −55×10 −5
+> Optimizer Fused AdamW Fused AdamW Weight decay 00LR schedule Cosine, 3% warmup Cosine, 3% warmup Per-GPU batch size 21Gradient accumulation 48Effective global batch size 16 16 Maximum sequence length 12,288 14,336 Maximum image pixels 1,048,576 1,048,576 LoRA rank 𝑟 16 16 LoRA scaling 𝛼 32 32 LoRA dropout 0.05 0.05 LoRA bias None None Random seed 42 42
+
+deployable document/OCR and TSR systems are run with their released image-to-table or document-parsing procedures. Predictions are processed by the same task-agnostic JSON parser and schema-conversion pipeline. The parser may repair invalid JSON syntax, but it does not infer or manually complete miss-ing fields; any field absent after parsing remains missing during evaluation. Native pipeline outputs are then converted into their compatible FormStruct-Bench components before the document-and component-level metrics are computed. 
+
+## A.4 Supervised Fine-Tuning Details 
+
+We performed parameter-efficient supervised fine-tuning (SFT) on the FormStruct-Bench training split using LoRA. Each SFT example consisted of a rendered form image, a task instruction, and a struc-tured JSON target. Only assistant-side JSON tokens contributed to the language-modeling loss; image and instruction tokens were masked. Both models were trained for one epoch, corresponding to 307 optimizer updates. Validation was performed at step 300. After training, the LoRA adapters were merged into their respective base models in bfloat16 precision using safe weight merging. 
+
+## A.5 Metric Computation and Edge Cases 
+
+Schema-nTED.. Each answer is converted into a schema tree 
+
+𝑇 (𝐴 ) that retains field names, container types (object, array, or scalar), and hierarchy while discarding field values. Object keys are stripped and sorted so that serialized object order does not affect the score, whereas array order is preserved. In the APTED distance used by Equation (2), insertion and deletion cost 1; renaming costs 0 for identical node labels and 2 otherwise. 
+
+Value-nED.. Before extracting the multisets of non-empty leaf values, we apply Unicode NFKC, lowercasing, whitespace collaps-ing, and removal of spaces or commas between digits. Pairwise KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+similarity is 
+
+𝑠 ( ˆ𝑣, 𝑣 ∗) = 1 − 𝑑 Lev ( ˆ𝑣, 𝑣 ∗)
+
+max (| ˆ𝑣 |, |𝑣 ∗ |) . (10) The maximum-weight bipartite matching in Equation (3) is one-to-one; unmatched predicted or ground-truth values contribute zero. 
+
+TSR-path. We recursively flatten each answer tree into leaf field-path–value pairs. Strings are stripped and repeated whitespace is collapsed, but no fuzzy matching, case folding, or Unicode normal-ization is applied. Extra predicted fields do not change the denom-inator in Equation (4); the metric is therefore strict ground-truth field recall. 
+
+Region and line-item-group matching. For R-F1@0.5, a region pair is a valid matching candidate only when its semantic types agree and box IoU is at least 0.5. We then compute the maximum-cardinality one-to-one matching M𝑅 used in Equation (5). For LIG-F1, region types are not involved: predicted and ground-truth line-item-group boxes are matched one-to-one whenever their IoU is at least 0.5, producing M𝐺 in Equation (6). 
+
+Region-local grid topology. For LG-GriTS Top , each local grid is evaluated only inside its associated semantic region. Widgets are removed before grid construction. Following GriTS [33], a cell with top-left grid position (𝜌, 𝜃 ), rowspan 𝛼 , and colspan 𝛽 is repeated at every grid position (𝑖, 𝑗 ) it occupies and represented there by the topology box 
+
+𝑏 Top  
+
+> 𝑖,𝑗
+
+= [𝜃 − 𝑗, 𝜌 − 𝑖, 𝜃 − 𝑗 + 𝛽, 𝜌 − 𝑖 + 𝛼 ]. (11) The official factored two-dimensional most-similar-substructure alignment compares these boxes with IoU, yielding 𝑠 Top ∈ [ 0, 1].We use these scores as weights in a maximum-weight one-to-one matching between predicted and ground-truth grids whose parent regions are already paired by M𝑅 . The denominator in Equation (7) therefore penalizes omitted and spurious whole grids, while the GriTS term penalizes incorrect rows, columns, and spans within a matched grid. A malformed grid with non-positive spans, conflict-ing cell occupancy, or no valid cells receives zero. 
+
+Widget-group matching. A canonical widget group consists of one parent field and all widgets attached to it by field-to-widget relations; explicit group identifiers, when available, must induce the same partition. Raw prediction identifiers are not compared. Parent fields are aligned by their canonical schema paths within matched parent regions, after which member widgets are matched one-to-one at IoU ≥ 0.5. A member match requires the same wid-get type and, when a ground-truth state is defined, the same se-lected/unselected state. A widget group contributes to M𝑊 only when the parent fields correspond and all members admit a bijec-tion, so a missing, extra, mistyped, or state-inconsistent member makes the group incorrect. Visible label text is excluded to keep WG-F1 focused on grouping rather than OCR. 
+
+Typed-relation matching. Each relation is canonicalized as a di-rected triple (𝑢, ℓ, 𝑣 ), where ℓ is one of the released relation types, including key-to-field, field-to-widget, section-membership, and line-item-membership links. We construct a partial endpoint map 
+
+𝜙 : regions use M𝑅 ; fields use exact canonical schema paths within matched regions; widgets use the member matches from WG-F1; local cells use the alignment induced by MLG ; and line-item groups use M𝐺 . A predicted edge ( ˆ𝑢, ˆℓ, ˆ𝑣 ) is in M𝐸 only if both endpoints are mapped and (𝜙 ( ˆ𝑢 ), ˆℓ, 𝜙 ( ˆ𝑣 )) ∈ E ∗. Edge direction and type must match exactly; edges with an unmatched endpoint remain false positives, and duplicate triples are collapsed before scoring. 
+
+Aggregation and invalid outputs. Metrics are macro-averaged over pages. Missing, unparsable, or schema-invalid predictions re-ceive zero for every applicable metric. If a ground-truth component exists but is omitted from the prediction, its component score is zero; if the ground-truth component itself is absent, that page is excluded only from the corresponding component-level average. In particular, pages without a ground-truth line-item group are marked not applicable rather than counted as perfect negatives. We report valid-output rate separately, and any score conditioned on valid outputs is treated only as a coverage diagnostic. 
+
+## A.6 Qualitative Analysis of Relation Errors 
+
+Figure 9 separates relation-semantic errors from failures to localize or align their endpoint objects. In the English example, the model links Date available to start work to the correct value box and pre-serves the edge direction, but predicts parent-child instead of the ground-truth key-value type. This type substitution makes the predicted edge a false positive and leaves the corresponding ground-truth edge unmatched. At the page level, 11 of 82 predicted relations match 95 ground-truth relations, yielding 12.43% Rel-F1; after restricting the comparison to endpoint-alignable relations, the same 11 matches are scored against 19 predictions and 21 ground-truth relations, yielding 55.00% aligned-endpoint F1. The Japanese example isolates a complementary failure. The model identifies both the Gender field and the selected Female wid-get and predicts the field-widget type, but reverses the directed edge from Gender → Female to Female → Gender . The matched, predicted, and ground-truth relation counts are respectively 0, 78, and 75 on the full page, and 0, 4, and 2 within the endpoint-alignable subset, producing 0.00% under both scores. Together, these exam-ples show that low Rel-F1 is not explained solely by failed endpoint localization: even when the relevant objects are successfully aligned, a model can still confuse the relation ontology or its direction. The cases are illustrative and are not used to estimate error prevalence. 
+
+## A.7 External Structural Representativeness and Diagnostic Utility 
+
+Real-template grounding and leakage-controlled reference. All 7,000 instances in FormStruct-Bench are derived from 70 selected, real, manually structured form templates; synthesis changes field content, schema realization, and visual conditions while remaining anchored to a human-created layout skeleton. We evaluate how well these skeletons align with an external real-form reference using SRFUND [21]. Because pages are not independent layout samples, we cluster SRFUND’s 1,592 pages using rotation-aware image hashes, OCR shingles, normalized entity-box occupancy, aspect ratio, and entity-count agreement, obtaining 1,566 layout clusters. Cross-dataset provenance and visual/OCR matching iden-tify 36 confirmed and one corroborated overlap; excluding all 37 affected clusters leaves 1,529 non-overlapping reference clusters. FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA (a) Relation-type error (b) Direction reversal           
+
+> 12
+> (1) Correct endpoints; wrong relation type
+> GROUND TRUTH key-value PREDICTION parent-child
+> Rel-F1 12.43% · aligned-endpoint F1 55.00%
+> (2) Correct endpoints; direction reversed
+> GROUND TRUTH 性別 →女(Gender → Female)
+> PREDICTION 女→性別 (Female → Gender)
+> Rel-F1 0.00% · aligned-endpoint F1 0.00%
+
+Figure 9: Representative Rel-F1 errors after successful endpoint alignment. Red boxes and bottom insets identify the evaluated relations. Aligned-endpoint F1 is Rel-F1 computed only over edges whose two endpoints can be aligned; its exact type and direction requirements remain unchanged. 
+
+Thus neither repeated pages nor source overlap can inflate the comparison. 
+
+Real–Real calibrated support. Let T denote FormStruct templates and R denote deduplicated SRFUND layout clusters. We compute a group-balanced Gower distance 𝑑 𝐺 that first averages corre-lated features within hierarchy, relation, layout, language, entity-composition, and table groups, and then weights the groups equally. Direct-only comparisons retain aligned language, hierarchy, un-typed relation, and normalized bounding-box features; the mapped analysis additionally includes explicitly marked conditional map-pings for entity composition, table structure, script, and spatial density. In each of 1,000 seeded rounds, two disjoint, size-matched SRFUND sets form the Real–Real baseline, and 𝜏 is the 95th per-centile of Real-B-to-Real-A nearest-neighbor distances. We report TemplateSupport@ 𝜏 = 1
+
+|T | ∑︁ 𝑡 ∈ T 
+
+1
+
+
+
+min   
+
+> 𝑟 ∈ R
+
+𝑑 𝐺 (𝑡, 𝑟 ) ≤ 𝜏 
+
+
+
+, (12) which measures how much of the benchmark template set lies within typical real-layout support rather than whether both corpora have identical sampling frequencies. The shared-language comparison is the most conservative ev-idence because it removes unsupported language categories and prioritizes directly aligned features. Under this setting, 61.7% of templates fall within Real–Real calibrated support, rising to 78.3% when the calibration preserves language composition. For the com-plementary reference-to-template direction, we define ReferenceCoverage@ 𝜏 = 1
+
+|R| ∑︁ 𝑟 ∈ R 
+
+1
+
+
+
+min   
+
+> 𝑡 ∈ T
+
+𝑑 𝐺 (𝑟, 𝑡 ) ≤ 𝜏 
+
+
+
+. (13) Using the global mapped-feature threshold, 876 of 1,529 SRFUND clusters (57.3%) and 806 of 1,137 shared-language clusters (70.9%) have a nearby FormStruct template. FormStruct therefore covers a substantial portion of independently collected real layouts without merely reproducing SRFUND’s composition. The remaining dis-tance above the Real–Real baseline is expected from a benchmark that deliberately emphasizes denser structures: compared with SR-FUND, FormStruct contains more entities and relation links while retaining similar median hierarchy depth, relation density, and nor-malized entity-box area. We consequently characterize FormStruct-Bench as coverage-oriented rather than prevalence-matched .
+
+Advantages over the external reference. The comparison above evaluates only the intersection of the two annotation schemas. Within that shared space, the real-template grounding and leakage-controlled calibration establish that FormStruct is not an uncon-strained synthetic-layout collection. Beyond it, FormStruct-Bench explicitly annotates semantic regions, region-local grids and spans, widget types and states, line-item groups, and typed structural rela-tions, none of which has a directly equivalent SRFUND annotation. This combination provides both external grounding and finer diag-nostic resolution. Consistent with this purpose, Table 6 shows that no evaluated system dominates the five primary metrics and that strong value recovery can coexist with near-zero region or grouping scores; the added structural supervision therefore exposes failure modes hidden by document-level extraction alone. This evidence supports the benchmark’s diagnostic utility, while claims about synthetic-data augmentation or real-world training gains require a KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+Table 9: Real–Real calibrated structural support against non-overlapping SRFUND clusters. T–R is the mean template-to-real nearest-neighbor distance; R–R is its size-matched real-to-real baseline. Support is defined in Equation (12). Higher support and a distance ratio closer to one indicate stronger alignment.                                 
+
+> Scope Features / calibration Matched 𝑛 𝑇 /𝑛 𝑅 T–R R–R median [95% interval] Ratio Support (%) [95% interval] All comparable Direct only 70/70 0.127 0.044 [0.040, 0.050] 2.89 45.7 [31.4, 65.7] Shared languages Direct only 60/60 0.074 0.046 [0.040, 0.052] 1.61 61.7 [45.0, 88.3] Shared languages Direct, language-stratified 60/60 0.063 0.042 [0.038, 0.048] 1.50 78.3 [60.0, 91.7] Shared languages Direct + conditional mappings 60/60 0.084 0.053 [0.047, 0.061] 1.60 70.0 [43.3, 93.3]
+
+separate transfer experiment. The external comparison is also delib-erately scoped to template-level shared structure and does not assert that content, missingness, handwriting, or visual-perturbation fre-quencies of all generated instances match a real-world population. 
+
+## A.8 Evaluation Sensitivity and Error Analysis 
+
+For each metric 𝑞 and predefined constraint tag 𝑐 , we summarize the descriptive performance gap as 
+
+Δ𝑞 (𝑐 ) = E[𝑞 | ¬ 𝑐 ] − E[𝑞 | 𝑐 ]. (14) A positive value indicates lower performance on tagged pages and is interpreted descriptively rather than causally. (a) Selected-model drop (%) 0 35 70 GPT-5.5 58.1 Seed 2.1 Pro 62.0 Qwen3.7 Plus 63.4 Qwen3.6-35B 42.0 Kimi-VL-A3B 50.0 DeepSeek-VL2 51.8 (b) Mean component drop (%) API Local Widget 11.0 16.3 Relation 23.4 19.0 Local grid 15.5 4.2 0 15 30% (c) Across-model SD (%) API Local 8402.2 4.1 0.2/0.2 7.9 5.9 Widget Relation Grid (d) Local-grid spread 0 15 30 API 15.5 Local 4.2 
+
+Figure 10: Evaluation sensitivity of API-hosted and local models. 
+
+Relative to relaxed scoring, full criteria reduce representative API and local scores by 58.1–63.4% and 42.0–51.8%, respectively (Figure 10). Relation penalties are stable across groups, whereas local-grid effects vary by model. Table 10 identifies dense relations and local grids as the largest mean losses (11.5/10.8 points), followed by widgets (6.3). Mixed-layout and line-item effects are inconsistent, localizing errors to field binding and local organization. 
+
+Table 10: TSR-path loss (%) by constraint for four local VLMs.                   
+
+> Constraint Min Mean Max Dense key–field relations 7.2 11.5 15.7 Region-local grids 3.5 10.8 17.6 Widget grouping 4.5 6.3 8.3 Mixed layout −1.23.3 13.0 Line-item groups −5.0−0.91.8
+
+Table 11: Agreement between initial template annotations and third-annotator verification.                    
+
+> Target Agreement statistic Result Region boundaries Mean IoU; object 𝐹 1at IoU ≥0.50.971,0.903 Region types Cohen’s 𝜅 on matched regions 1.000 Local-grid topology Cell/span topology 𝐹 11.000 Widget types and states Matched-object 𝐹 11.000 Structural relations Typed-relation 𝐹 10.993
+
+## A.9 Annotation Agreement and Review Outcomes 
+
+Annotation and verification protocol. The 70 templates were di-vided evenly between two annotators, each of whom annotated 35 templates (50%). A third annotator reviewed all completed an-notations for consistency and correctness. Because the annotation contains both categorical and structured objects, we do not collapse agreement into a single statistic. Categorical decisions are mea-sured with Cohen’s 𝜅 , whereas spatial, topological, and relational objects are compared after matching their identities and bound-aries. Table 11 reports the category-specific statistics obtained dur-ing verification. Spatial objects were aligned using maximum-IoU one-to-one bipartite matching, with a pair considered valid when its bounding-box IoU was at least 0.5. Unmatched objects were treated as missing or additional annotations, while region types were compared only after geometric matching. 
+
+Accepted, corrected, and discarded samples. All 1,100 retained test instances receive human review after automated verification. Reviewers assign one primary outcome: accepted when the image and annotations require no change, corrected when a localized error can be repaired and the sample can pass re-verification, or 
+
+discarded when the visible evidence remains ambiguous or the FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA 
+
+Table 12: Human-review outcomes for test-set construction.           
+
+> Primary outcome Count Rate Accepted 600 54.5% Corrected and re-verified 500 45.5% Discarded 00.0% Total reviewed candidates 1,100 100%
+
+Table 13: Retry distribution and terminal outcomes of auto-mated verification.               
+
+> Terminal path Count Rate Passed without retry 6,801 97.16% Passed after one retry 199 2.84% Passed after two retries 00.00% Passed after three or more retries 00.00% Retry budget exhausted; discarded 00.00% Total generation candidates 7,000 100.00%
+
+error cannot be repaired reliably. Table 12 reports one terminal human-review outcome for each of the 1,100 retained test instances. Each instance is counted once; correction and re-verification do not create additional review entries. A second reviewer independently assessed all 1,100 test instances (100%) for agreement measurement. 
+
+## A.10 Generation Retries and Filtering 
+
+A failed automated check produces a structured failure report and returns the candidate to the Director–Artist pipeline. Generation stops when the candidate passes all checks or reaches the maximum retry budget of three retries, in which case it is discarded. To make this filtering stage auditable, Table 13 reports the first-pass yield and terminal retry distribution over the 7,000 logical generation candidates initiated for dataset construction. Repeated attempts for the same target instance remain part of one candidate, and a retry is counted whenever a failed automated verification triggers a new Director–Artist regeneration followed by another complete verification cycle. Human corrections are tracked separately from automated generation retries. 
+
+## A.11 Source Licensing and Privacy 
+
+Sources and permissions. The reusable templates originate from public web documents and the XFUND and Common Crawl source pools described in Section 2. For each retained template, the release manifest will record the source collection, source URL or upstream identifier, retrieval date, applicable license or terms of use, permit-ted redistribution scope, and the transformation applied by our pipeline. Table 14 separates upstream permissions from the license assigned to newly generated benchmark artifacts; inclusion in Com-mon Crawl is not itself treated as permission to redistribute the underlying page. 
+
+Privacy controls. Original filled values are removed before a source document is converted into a reusable template, and released 
+
+Table 14: Source and release licensing disclosure.        
+
+> Source pool Material retained License or permission Public web documents 22 de-identified blank templates with field labels and manual layout annotations Mixed source terms: copyright/permission-controlled. Source URLs and terms are recorded in provenance. XFUND [41] 42 template images with derivative annotations CC BY-NC-SA 4.0 [11]; derivative materials follow non-commercial/share-alike constraints. Common Crawl [10] 6 de-identified blank templates with annotations and provenance Used under Common Crawl terms [9]; retained materials are de-identified derived templates with source-level license review. Total 70 templates Provenance records include source URLs or dataset versions, retrieval metadata, license status, and release constraints.
+
+instances are rendered from newly sampled field values rather than copying those removed values. Before release, we applied and docu-mented a manual PII-screening procedure for residual sensitive con-tent, including names, contact details, identifiers, account numbers, signatures, faces, hidden metadata, and identifying visual elements such as titles, logos, seals, and annotations. Templates containing sensitive structural metadata, such as field keys or semantic la-bels, were excluded from release, while sensitive filled values and removable identifying visual elements were deleted or redacted. Provenance information is released only through de-identified or access-controlled source identifiers to preserve auditability without re-exposing personal information. We also document the access, retention, and deletion controls applied during annotation. KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+## A.12 Shared VLM Prediction Prompt 
+
+All evaluated VLMs use the following prediction prompt. For readability, the shaded bars segment the prompt; their numbering is typographic and is not part of the model input. The wording and ordering remain unchanged. 
+
+1. Task and output contract 
+
+You are extracting the semantic answer tree and the minimal visible form structure needed for FormStruct-Bench evaluation. Return only strict JSON. Do not include markdown fences, prose, comments, or explanations. Do not include thinking tags such as <think> or </think> . Do not output hidden reasoning. 
+
+2. JSON validity requirements: 
+
+• The response must be parseable by a standard JSON parser. 
+
+• Every object member must be a "key": value pair. Do not put a bare string inside an object. 
+
+• Escape quotation marks and line breaks inside strings. 
+
+• Close every object and array that you open. 
+
+3. Required top-level schema: 
+
+> {"answer": { "visible form title or top-level section": { "visible field label": "visible filled value", "nested visible section": { "visible field label": "visible filled value" }}}, "regions": [ {"id": "r1", "type": "title|section|field|value|text|widget|table|other", "bbox": [x1, y1, x2, y2], "text": "visible label or text"} ], "widgets": [ {"id": "w1", "type": "checkbox|radio|input|signature|other", "bbox": [x1, y1, x2, y2], "label": "visible option or field label", "selected": true} ↩→
+> ], "local_grids": [ {"id": "g1", "region_id": "r_table", "cells": [{"id": "c1", "row": 0, "col": 0, "rowspan": 1, "colspan": 1, "bbox": [x1, y1, x2, y2], "text": "visible cell text"}]} ↩→
+> ], "cells": [ {"id": "c1", "row": 0, "col": 0, "rowspan": 1, "colspan": 1, "bbox": [x1, y1, x2, y2], "text": "visible cell text"} ], "relations": [] }
+
+4. Answer rules: 
+
+• Preserve visible labels as keys as closely as possible, including the original language/script. 
+
+• Preserve nested section/field hierarchy. 
+
+• Use strings for filled values. Use objects for nested sections and arrays for repeated line-item rows. 
+
+• For selected checkboxes/radio buttons, output the selected option label or value in the corresponding answer field. 
+
+• If a visible field is blank, use an empty string. 
+
+• If a section contains a paragraph/comment without a clear field label, represent it as {"value": "the visible text"} rather than as a bare string. 
+
+5. Structure rules: 
+
+• Use pixel coordinates relative to the input image: [left, top, right, bottom] .
+
+• Include visible titles, section headers, field labels, filled value boxes/text areas, and checkbox/radio/input widgets as regions. 
+
+• Each region must have id , type , bbox , and text .
+
+• Include widgets separately in "widgets" with selected=true/false when visually determinable. 
+
+• Use stable ids. 
+
+• Add local_grids/cells only for table-like repeated rows when row/column positions are visually clear. Each cell must have row , col , rowspan , colspan ,
+
+> bbox
+
+, and text .
+
+• Set "relations": [] unless a few relation edges are obvious and short. 
+
+• Do not invent unreadable text or uncertain boxes. Omit items that are not visually supported. Output a single JSON object with all top-level keys shown above. Empty arrays are allowed when no such structure is visible. FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA 
+
+## A.13 Director Prompt for Multi-agent Form Generation 
+
+The Director agent converts structured field metadata into executable form-filling actions for the multi-agent generation pipeline. Given a 
+
+field_key , semantic_key , and data type for each field, it generates semantically plausible content while preserving the original field_key 
+
+for downstream alignment with the template. The resulting JSON action array is passed to the Artist agent for rendering. For readability, the shaded bars segment the prompt; their numbering is typographic and is not part of the model input. The wording and ordering remain unchanged. 
+
+1. Task and input contract 
+
+You are generating form-filling ACTIONS. You will receive a list of semantic fields that need content for text boxes. Each input item includes field_key , data_type , and semantic_key .
+
+2. Field-key preservation rules 
+
+• field_key is the exact output key chosen by the planner. 
+
+• Output actions must use the same field_key string. 
+
+• Do not rename, translate, normalize, or deduplicate field_key .
+
+• If the printed label is missing or unusable, the planner may fall back to semantic_key , but the emitted action must still preserve the provided field_key .
+
+3. Output format and action schema 
+
+• Output only a JSON array of actions, with no extra text or markdown. 
+
+• For each input item, output exactly one action in the same order. 
+
+• Do not invent extra actions or checkbox actions. 
+
+• The action_type must match data_type : number fields use number , date fields use date , and text fields use write_text .
+
+4. Semantic value generation rules 
+
+• Use both field_key and semantic_key when generating content. 
+
+• Preserve field_key as the output key, while using semantic_key to infer the intended field meaning. 
+
+• If field_key is ambiguous, generic, abbreviated, or not human-friendly, rely on semantic_key to choose the content. 
+
+• Generate realistic values related to the intended field meaning. 
+
+5. Localized date and partial-date rules 
+
+Date values should follow the language and form style implied by field_key and semantic_key . Full-date fields use localized formats, while explicit date-component fields such as year, month, or day must contain only the corresponding component. Split-date fields distribute one logical date across sibling fields instead of repeating the full date. 
+
+6. Anti-copying and self-check rules 
+
+• Do not copy field_key as the generated content. 
+
+• Do not copy semantic_key as content unless it is genuinely the intended filled value. 
+
+• Generic option labels must be expanded into more specific plausible values. 
+
+• Before returning the final JSON array, silently check that each action has the correct type, plausible localized content, valid partial-date formatting, and no copied label content. 
+
+7. Output action schema  
+
+> [{"field_key": "EXACT_FIELD_KEY_FROM_INPUT", "action_type": "write_text|number|date", "content": "GENERATED_FIELD_VALUE", "bbox": [x1, x2, y1, y2], "semantic_key": "EXACT_SEMANTIC_KEY_FROM_INPUT" }]KDD ’27, August 01–05, 2027, San Jose, CA Ban et al.
+
+## A.14 Artist Prompt for Multi-agent Form Generation 
+
+The Artist agent converts the Director actions into a realistic filled form image. It first uses a deterministic CV renderer to place the generated actions onto the template according to the layout metadata. The resulting draft image is then passed to an image-editing model for constrained visual naturalization. The prompt below is used in the second stage. 
+
+1. Task and input contract 
+
+You are editing an already-filled form draft image. The input image is a deterministic draft produced from structured form-filling actions. It already contains all required filled values, repeated field occurrences, checkbox selections, radio selections, circled options, signatures, dates, numbers, and free-text entries in their intended locations. You will also receive a reference answer JSON containing the exact content that must be preserved. 
+
+2. Artist role and scope 
+
+• Your task is to make the filled form look realistic and naturally completed. 
+
+• Do not generate new semantic content. 
+
+• Do not decide which fields should be filled. 
+
+• Do not change the meaning, value, order, or location of any filled content. 
+
+• Use the draft image as the positional ground truth. 
+
+• Use the reference answer JSON as the textual ground truth. 
+
+3. Filled-content preservation rules 
+
+• Preserve every filled value exactly as shown in the draft and as specified in the reference answer JSON. 
+
+• Do not add, remove, rewrite, paraphrase, translate, substitute, merge, or reorder any filled value. 
+
+• Preserve repeated field occurrences separately and keep their original top-to-bottom order. 
+
+• Preserve all dates, numbers, emails, addresses, names, signatures, free-text responses, checkbox selections, radio selections, and circled options. 
+
+• If there is any ambiguity, preserve the draft content and placement exactly. 
+
+4. Template preservation rules 
+
+• Treat all fixed printed template content as locked background. 
+
+• Do not redraw, rewrite, translate, paraphrase, stylize, or alter printed labels, instructions, table lines, borders, logos, seals, stamps, URLs, organization names, footer text, or boilerplate. 
+
+• Do not redesign the form layout. 
+
+• Keep page geometry, spacing, table structure, alignment, and scan-like document appearance unchanged. 
+
+• Keep filled content within the same semantic region of the page. 
+
+5. Visual naturalization rules 
+
+• Only naturalize user-entered content. 
+
+• Make the filled entries look like realistic form entries, such as handwritten text, typed text, mild pen-pressure variation, slight ink variation, natural baseline variation, and subtle scan noise. 
+
+• Keep all filled content crisp and readable, especially in dense cells, narrow fields, tables, date boxes, and ID or phone-number fields. 
+
+• Improve realism without changing the actual filled information. 
+
+• Do not sacrifice legibility for style. 
+
+6. Option-mark preservation rules 
+
+• Preserve checkbox, radio, and circled-option states exactly as shown in the draft. 
+
+• Do not add new option marks. 
+
+• Do not remove existing option marks. 
+
+• Do not change selected options into unselected options. 
+
+• Do not change unselected options into selected options. 
+
+• Do not move, thicken, thin, blur, redraw, simplify, or reinterpret option marks. 
+
+7. Critical self-check rules 
+
+• The final image must still exactly match the reference answer JSON. 
+
+• Before producing the final edited image, silently check that every filled value, repeated occurrence, and option state is preserved. 
+
+• When visual realism conflicts with textual or positional fidelity, fidelity wins. FormStruct-Bench : A Hierarchical and Diagnostic Benchmark for Table-Form Document Structure Recognition KDD ’27, August 01–05, 2027, San Jose, CA 
+
+## A.15 Verifier Prompt for Multi-agent Form Generation 
+
+The Verifier agent closes the generation loop by independently re-extracting the filled content from each stylized form image. Given a target generated image and a few same-class examples with standard answer.json outputs, the Verifier produces an answer_verifier.json 
+
+using the same schema as the reference answer. This extracted JSON is compared field-by-field against the original answer.json . If any required field is missing, mismatched, or incorrectly selected, the sample is marked as failed and returned to the Artist stage for regeneration. 
+
+1. Task and input contract 
+
+You are an expert form-layout analysis and key-value extraction assistant. You will receive full form images plus a few same-class examples with their standard answer.json outputs. Each example contains one same-class form image and its standard structured answer. You will then receive one target generated image to extract. 
+
+2. Validation role 
+
+• Your output will be used for automatic field-level validation. 
+
+• The extracted JSON will be compared against the original reference answer.json .
+
+• Missing fields, mismatched values, incorrect option states, or invalid structure may cause the target image to be rejected and regenerated by the Artist stage. 
+
+• Your role is not to repair the image or explain errors. 
+
+• Your role is to faithfully extract what is visible in the target image. 
+
+3. Few-shot schema learning rules 
+
+• Use the example images and standard answer.json files to learn the form class’s JSON hierarchy. 
+
+• Preserve the same field names, nesting levels, array structure, list order, option representation, and value style whenever the target form uses the same fields. 
+
+• The examples define the output schema; the target image defines the actual field values. 
+
+• Do not copy concrete values from the examples into the target output unless the same value is visibly present in the target image. 
+
+4. Target extraction rules 
+
+• Extract a complete structured key-value JSON object from the target image. 
+
+• Traverse the entire image from the header or top row to the bottom. 
+
+• Do not skip any visible region. 
+
+• Treat label-like or title-like text as keys. 
+
+• Match each key to its value using nearby layout, alignment, and semantic relationship. 
+
+• Capture all logical keys through the end of the image. 
+
+5. Value fidelity rules 
+
+• Output every nested key-value relationship. 
+
+• Values may be strings, nested JSON objects, or arrays. 
+
+• Dates must be complete. 
+
+• Preserve date ranges when present. 
+
+• Preserve visible details such as numbers, emails, addresses, dates, punctuation, capitalization, and spacing as much as possible. 
+
+• Re-check high-risk values such as phone numbers, IDs, emails, dates, amounts, percentages, and handwritten free-text fields digit by digit or character by character. 
+
+• If a field is present but blank or unreadable, output an empty string instead of deleting the field. 
+
+6. Option-state extraction rules 
+
+• For checkboxes, radio buttons, dropdowns, and option groups, output the option text actually selected in the target image. 
+
+• Do not infer selected options from row order, field defaults, or the few-shot examples. 
+
+• Do not output unselected options as selected values. 
+
+• Do not change a selected option into a nearby unselected option. 
+
+• Do not merge multiple options unless the target image visibly selects multiple options. 
+
+7. Output format rules 
+
+• Return exactly one JSON object. 
+
+• The response must start with { and end with }.
+
+• The JSON must be valid and fully closed. 
+
+• Do not include explanations, Markdown, comments, confidence scores, code fences, error labels, or extra wrapper keys. 
+
+• Return the final answer_verifier.json for the target image only. KDD ’27, August 01–05, 2027, San Jose, CA Ban et al. 
+
+## A.16 Hierarchical Annotation Example and Visual Encoding 
+
+Figure 11 illustrates how a table-form page is decomposed into nested semantic regions and fine-grained structural components. Colored boxes distinguish sections, table regions, keys, values, cells, and line-item groups, while orange connectors visualize group-level associations among repeated entries. The accompanying legend defines the annotation colors used in the overlay. 
+
+Figure 11: Example annotation diagram. 
+
+Received 20 February 2007; revised 12 March 2009; accepted 5 June 2009
