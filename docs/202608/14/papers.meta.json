@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-14",
+  "date": "2026-08-14",
+  "generated_at": "2026-08-14T20:53:13",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/14/2608.12812v1-a-comprehensive-empirical-evaluation-of-vector-database-systems-for-approximate-nearest-neighbor-search-performance-quality-and-resource-trade-offs",
+      "section": "quick",
+      "title_en": "A Comprehensive Empirical Evaluation of Vector Database Systems for Approximate Nearest Neighbor Search: Performance, Quality, and Resource Trade-offs",
+      "authors": "Ashen Rashmiks, Tiroshan Madushanka",
+      "date": "2026-08-13",
+      "pdf": "https://arxiv.org/pdf/2608.12812v1",
+      "score": "7.0",
+      "evidence": "提供可复现的向量数据库基准评测",
+      "tldr": "向量数据库对RAG等AI应用至关重要，但缺乏全面可复现的基准。这项工作系统评估了FAISS、Qdrant、Milvus等7个系统，覆盖6个数据集、400万向量和15项指标，对比检索质量、延迟、吞吐与资源消耗。结果显示FAISS吞吐最高但缺少数据库功能，Weaviate召回最优，Qdrant延迟最低，LanceDB构建最快但质量偏低。作者据此给出选型建议并开源了基准框架。",
+      "tags": "query:code-paper",
+      "abstract_en": "Vector databases have emerged as critical infrastructure for modern artificial intelligence applications, particularly retrieval-augmented generation (RAG), semantic search, and recommendation systems. Despite their growing importance, there remains a significant gap in comprehensive, reproducible benchmarks that jointly evaluate retrieval quality, query latency, throughput, and resource utilization. We present a systematic empirical evaluation of seven prominent vector database systems: FAISS, Qdrant, Milvus, Weaviate, Chroma, pgvector, and LanceDB. Our methodology spans six diverse datasets, from classical computer-vision descriptors (SIFT, GIST) to transformer-based text embeddings (MS MARCO, GloVe), encompassing over 4 million vectors at dimensionalities from 96 to 960. We measure 15 metrics spanning retrieval quality (Recall@K, Precision@K, MRR, NDCG@K, Hit Rate@K), query performance (latency percentiles, QPS, cold-start latency), and resource consumption (index build time, memory, storage). On SIFT1M, FAISS achieves the highest single-node throughput (866 QPS) but lacks database operational features; Weaviate provides the best out-of-the-box recall (> 99%); Qdrant offers the best latency among full databases (4.55~ms median); and LanceDB trades retrieval quality for substantially faster index construction. We derive system-selection guidelines for practitioners and release our benchmarking framework as open-source software.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/14/2608.13522v1-vero-can-ai-agents-build-formally-verified-software-repositories",
+      "section": "quick",
+      "title_en": "Vero: Can AI Agents Build Formally Verified Software Repositories?",
+      "authors": "Zhe Ye, Hantao Lou, Yuechun Sun, Peiyang Song, Zhengxu Yan, Timothe Kasriel, Qingyang Zhang, Kaiyu Yang, Soonho Kong, Jingxuan He, Dawn Song",
+      "date": "2026-08-13",
+      "pdf": "https://arxiv.org/pdf/2608.13522v1",
+      "score": "7.0",
+      "evidence": "提出含43个多模块实例的仓库级基准，很可能包含代码",
+      "tldr": "现有AI编程缺乏形式化正确性保证，而已有验证代码生成基准多局限于单个函数或已提供实现并仅需证明。为填补空白，我们提出Vero，首个仓库级联合实现与证明合成基准，包含43个来自真实世界的多模块Lean 4仓库实例，并设计审计机制以识别并修正潜在规范错误。实验表明，最强代理仅完整解决27/43实例，且在最具挑战性的仓库上无法关闭任何规范，说明仓库级验证软件合成仍是未解难题，为评估可信AI软件生成提供了重要测试平台。",
+      "tags": "query:code-paper",
+      "abstract_en": "AI agents are increasingly used for programming, but do not provide any guarantee on the correctness of generated code. Verified code generation, in which an agent produces both an implementation and a machine-checked proof of its specification, offers a stronger path toward trustworthy AI-generated software. Existing benchmarks in this direction either focus on individual functions or only evaluate proof generation with provided implementations. It is still an open question whether agents can make coherent implementation and proof choices across real multi-module codebases. To bridge this gap, we introduce Vero, the first benchmark to evaluate joint implementation and proof synthesis at the repository level. Vero contains 43 multi-module instances sourced from real-world repositories spanning Python, Dafny, Verus, and Coq, and covering diverse domains from cryptographic protocols to distributed systems. Each instance consists of a multi-module Lean 4 repository with predetermined API interfaces, manually curated formal specifications, and reference implementations, supporting both proof-only and code-and-proof evaluation modes. To improve benchmark reliability, Vero also includes an audit mechanism where agents are allowed to formally prove unsatisfiability of provided specification or incorrectness of reference code, which surfaces and corrects latent code and specification errors during curation. We evaluate frontier coding-agent configurations with Lean toolchain access. The strongest agent fully solves only 27 of 43 instances and closes no specifications on the hardest repositories. Vero provides a concrete testbed for measuring progress toward repository-scale verified software synthesis, where current agents still fall short. We release the benchmark, curation pipeline, and evaluation harness at https://github.com/sunblaze-ucb/vero.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
