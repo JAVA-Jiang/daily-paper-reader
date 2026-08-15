@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-15",
+  "date": "2026-08-15",
+  "generated_at": "2026-08-15T20:23:00",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/15/2608.10974v1-muse-a-full-text-cross-domain-knowledge-base-of-scientific-problems-solutions-and-rationales",
+      "section": "quick",
+      "title_en": "MUSE: A Full-Text Cross-Domain Knowledge Base of Scientific Problems, Solutions, and Rationales",
+      "authors": "Tsofia Cohen, Tom Hope",
+      "date": "2026-08-11",
+      "pdf": "https://arxiv.org/pdf/2608.10974v1",
+      "score": "6.0",
+      "evidence": "全文本跨领域知识库及抽取流水线",
+      "tldr": "科学论文中完整记录了问题解决方法及选用理由，但现有资源缺乏跨领域系统覆盖，阻碍深入理解。为此，我们提出MUSE，首个全文多领域科学问题-方案-理由（P-S-R）知识库：基于579个专家标注段落，设计模块化抽取流程，扩展为37K个源基础三元组。实验发现，理由监督可提升LLM在复杂多约束问题上的求解能力，但简单任务上表现为负作用。MUSE为科学推理与可解释AI研究提供高质量资源。",
+      "tags": "query:code-paper",
+      "abstract_en": "Scientific papers contain fine-grained records of problem solving: authors mention technical obstacles and methods that were used to address them, often along with reasoning on why those methods were chosen. We introduce MUSE (Mining Underlying Scientific Explanations), a full-text, multi-domain resource of scientific Problem-Solution-Rationale (P-S-R) triplets. We curate 579 expert-annotated full-text paragraphs, with a rich annotation schema covering salient problem, solution, and rationale spans, solves and rationale_of links and conceptual coreference. A modular extraction pipeline scales this annotation to build a high-quality knowledge base of 37K source-grounded P-S-R triplets. We evaluate the extraction components and include a preliminary experiment training a rationale-supervised LLM for scientific problem solving. Interestingly, we find that rationale supervision improves performance on complex, multi-constraint problems but can harm performance on simpler ones.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/15/2608.11889v1-dextersql-deep-schema-exploration-and-rule-based-correction-for-text-to-sql-generation",
+      "section": "quick",
+      "title_en": "DexterSQL: Deep Schema Exploration and Rule-based Correction for Text-to-SQL Generation",
+      "authors": "Anik Pramanik, Murat Kantarcioglu, Vincent Oria, Shantanu Sharma",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.11889v1",
+      "score": "6.0",
+      "evidence": "Text-to-SQL 系统论文，大概率附带开源实现。",
+      "tldr": "针对非微调Text-to-SQL依赖粗粒度schema、未捕获重复失败和复杂条件处理不佳的问题，提出DexterSQL。它通过深度schema探索分析列关系，在训练集上挖掘错误并生成数据库无关规则，并利用依赖树中间表示引导多路径SQL生成。在BIRD-Dev上，开源模型准确率达67.6%，闭源模型达72.2%，超过现有最优。",
+      "tags": "query:code-paper",
+      "abstract_en": "Prompting-based (\\textit{i}.\\textit{e}., non-fine-tuning) Text-to-SQL methods, where underlying large language model parameters are not changed for the task, face three problems: (\\textit{i})~relying on coarse-grained schema information that may not reveal the fine-grained relationships needed to distinguish ambiguous columns, (\\textit{ii})~not capturing recurring SQL-generation failures, and (\\textit{iii})~suffering from omission, hallucination, or misplacement of conditions in complex questions.   This paper develops \\textsc{DexterSQL}, a prompting/non-fine-tuning-based Text-to-SQL system that improves SQL generation with three novel components: (\\textit{i})~\\emph{deep schema explorator} that identifies ambiguous columns, analyzes their individual and joint data distributions to uncover their relationships and the distinct role of each, (\\textit{ii})~\\emph{database-agnostic rule creator} that mines mismatches between generated and gold SQL only on the training database and converts them into database-agnostic corrective rules that capture recurring LLM failure patterns; and (\\textit{iii})~\\emph{multi-path SQL generation} that introduces a dependency-tree-based intermediate representation that uses the question's sentence structure to guide its decomposition into an SQL skeleton for final SQL generation.   \\textsc{DexterSQL} achieves a higher accuracy compared to the state-of-the-art using both open-source/weight and closed-source/weight models. Particularly, \\textsc{DexterSQL}'s shows a high improvement of at least 2.7\\% using an open-weight model (GPT-OSS-120B) on BIRD-Dev, with total accuracy 67.6\\%. \\textsc{DexterSQL} also shows better improvement of at least 0.9\\% using closed-weight models, with total accuracy 71.6\\% and 72.2\\% on BIRD-Dev with GPT-4o and GPT-5.2.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

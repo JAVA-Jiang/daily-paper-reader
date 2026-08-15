@@ -1,0 +1,94 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-15T20:21:24.295659+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.10974v1",
+      "source": "arxiv",
+      "title": "MUSE: A Full-Text Cross-Domain Knowledge Base of Scientific Problems, Solutions, and Rationales",
+      "abstract": "Scientific papers contain fine-grained records of problem solving: authors mention technical obstacles and methods that were used to address them, often along with reasoning on why those methods were chosen. We introduce MUSE (Mining Underlying Scientific Explanations), a full-text, multi-domain resource of scientific Problem-Solution-Rationale (P-S-R) triplets. We curate 579 expert-annotated full-text paragraphs, with a rich annotation schema covering salient problem, solution, and rationale spans, solves and rationale_of links and conceptual coreference. A modular extraction pipeline scales this annotation to build a high-quality knowledge base of 37K source-grounded P-S-R triplets. We evaluate the extraction components and include a preliminary experiment training a rationale-supervised LLM for scientific problem solving. Interestingly, we find that rationale supervision improves performance on complex, multi-constraint problems but can harm performance on simpler ones.",
+      "authors": [
+        "Tsofia Cohen",
+        "Tom Hope"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-11T14:31:37+00:00",
+      "link": "https://arxiv.org/pdf/2608.10974v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "full-text multi-domain knowledge base and extraction pipeline",
+      "llm_evidence_cn": "全文本跨领域知识库及抽取流水线",
+      "llm_evidence": "全文本跨领域知识库及抽取流水线",
+      "canonical_evidence": "全文本跨领域知识库及抽取流水线",
+      "llm_tldr_en": "MUSE is a full-text cross-domain knowledge base of scientific problem-solution-rationale triplets, curated by experts and scaled via a modular extraction pipeline to 37K source-grounded instances.",
+      "llm_tldr_cn": "科学论文中包含细粒度的问题-方法-理由三元组，但缺少系统化资源。论文构建MUSE，先人工标注579段文本，再用模块化抽取流水线扩展到37K个三元组。评估表明各抽取组件有效。该资源可支撑科研论文理解与信息抽取研究。",
+      "llm_tldr": "科学论文中包含细粒度的问题-方法-理由三元组，但缺少系统化资源。论文构建MUSE，先人工标注579段文本，再用模块化抽取流水线扩展到37K个三元组。评估表明各抽取组件有效。该资源可支撑科研论文理解与信息抽取研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.11889v1",
+      "source": "arxiv",
+      "title": "DexterSQL: Deep Schema Exploration and Rule-based Correction for Text-to-SQL Generation",
+      "abstract": "Prompting-based (\\textit{i}.\\textit{e}., non-fine-tuning) Text-to-SQL methods, where underlying large language model parameters are not changed for the task, face three problems: (\\textit{i})~relying on coarse-grained schema information that may not reveal the fine-grained relationships needed to distinguish ambiguous columns, (\\textit{ii})~not capturing recurring SQL-generation failures, and (\\textit{iii})~suffering from omission, hallucination, or misplacement of conditions in complex questions.   This paper develops \\textsc{DexterSQL}, a prompting/non-fine-tuning-based Text-to-SQL system that improves SQL generation with three novel components: (\\textit{i})~\\emph{deep schema explorator} that identifies ambiguous columns, analyzes their individual and joint data distributions to uncover their relationships and the distinct role of each, (\\textit{ii})~\\emph{database-agnostic rule creator} that mines mismatches between generated and gold SQL only on the training database and converts them into database-agnostic corrective rules that capture recurring LLM failure patterns; and (\\textit{iii})~\\emph{multi-path SQL generation} that introduces a dependency-tree-based intermediate representation that uses the question's sentence structure to guide its decomposition into an SQL skeleton for final SQL generation.   \\textsc{DexterSQL} achieves a higher accuracy compared to the state-of-the-art using both open-source/weight and closed-source/weight models. Particularly, \\textsc{DexterSQL}'s shows a high improvement of at least 2.7\\% using an open-weight model (GPT-OSS-120B) on BIRD-Dev, with total accuracy 67.6\\%. \\textsc{DexterSQL} also shows better improvement of at least 0.9\\% using closed-weight models, with total accuracy 71.6\\% and 72.2\\% on BIRD-Dev with GPT-4o and GPT-5.2.",
+      "authors": [
+        "Anik Pramanik",
+        "Murat Kantarcioglu",
+        "Vincent Oria",
+        "Shantanu Sharma"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB",
+        "cs.AI",
+        "cs.CL",
+        "cs.IR"
+      ],
+      "published": "2026-08-12T10:17:08+00:00",
+      "link": "https://arxiv.org/pdf/2608.11889v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "System for Text-to-SQL generation; likely open-source implementation available.",
+      "llm_evidence_cn": "Text-to-SQL 系统论文，大概率附带开源实现。",
+      "llm_evidence": "Text-to-SQL 系统论文，大概率附带开源实现。",
+      "canonical_evidence": "Text-to-SQL 系统论文，大概率附带开源实现。",
+      "llm_tldr_en": "DexterSQL improves prompting-based Text-to-SQL by deep schema exploration, analyzing ambiguous columns, and rule-based correction to capture recurring SQL-generation failures.",
+      "llm_tldr_cn": "现有基于提示的 Text-to-SQL 方法依赖粗糙模式信息，无法准确区分歧义列。DexterSQL 提出深度模式探索器，识别歧义列并分析上下文，同时利用规则纠正捕获重复出现的 SQL 生成错误。在多个基准上，该方法显著提升了复杂问题上的 SQL 生成准确率。该工作为利用 LLM 进行 Text-to-SQL 转换提供了无需微调的高效改进方案。",
+      "llm_tldr": "现有基于提示的 Text-to-SQL 方法依赖粗糙模式信息，无法准确区分歧义列。DexterSQL 提出深度模式探索器，识别歧义列并分析上下文，同时利用规则纠正捕获重复出现的 SQL 生成错误。在多个基准上，该方法显著提升了复杂问题上的 SQL 生成准确率。该工作为利用 LLM 进行 Text-to-SQL 转换提供了无需微调的高效改进方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
