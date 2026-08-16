@@ -6,29 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-15
-- 运行时间：2026-08-15 20:22:56 UTC
+- 最新运行日期：2026-08-16
+- 运行时间：2026-08-16 20:22:31 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：0
+- 本次总论文数：4
+- 精读区：2
 - 速读区：2
 
 ### 今日简报（AI）
-今日速读2篇论文，暂无精读，均获6.0分。  
-值得关注：科学问题知识库MUSE与Text-to-SQL纠错框架DexterSQL两个方向。  
-建议优先精读这两篇，评估其对科研检索或数据库查询的实用价值。
-- 详情：[/202608/15/README](/202608/15/README)
+今日精读2篇高分论文并速读2篇，覆盖网络负载均衡、家庭能源管理与软件工程研究。  
+最值得关注的是PSP针对非对称网络提出的低开销负载均衡方案，以及EnergyBridge对用户参与和电网灵活性的量化分析。  
+建议下一步优先精读PSP原文，并思考其方法在你所处网络场景中的适用性。
+- 详情：[/202608/16/README](/202608/16/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [PSP: Low-Overhead Packet-Level Load Balancing for Stale-State and Bandwidth-Asymmetric Networks](/202608/16/2608.08425v1-psp-low-overhead-packet-level-load-balancing-for-stale-state-and-bandwidth-asymmetric-networks)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：数据中心数据包级负载均衡与调度
+2. [EnergyBridge: Benchmarking Household Energy Management, User Participation, and Grid Flexibility](/202608/16/2608.08691v1-energybridge-benchmarking-household-energy-management-user-participation-and-grid-flexibility)  
+   标签：评分：9.0/10、query:code-paper
+   evidence：电网灵活性与能源管理基准及代码
 
 ### 速读区论文标签
-1. [MUSE: A Full-Text Cross-Domain Knowledge Base of Scientific Problems, Solutions, and Rationales](/202608/15/2608.10974v1-muse-a-full-text-cross-domain-knowledge-base-of-scientific-problems-solutions-and-rationales)  
+1. [Do Stack Overflow Answer Edits Occur Beyond Java? A Replication on Python and JavaScript](/202608/16/2608.08361v1-do-stack-overflow-answer-edits-occur-beyond-java-a-replication-on-python-and-javascript)  
+   标签：评分：7.0/10、query:code-paper
+   evidence：重复研究将已有流程应用于Python和JavaScript，属可复现研究，很可能公开代码与数据。
+2. [GitSkills: A Dataset of Agent Skills on GitHub](/202608/16/2608.10906v1-gitskills-a-dataset-of-agent-skills-on-github)  
    标签：评分：6.0/10、query:code-paper
-   evidence：全文本跨领域知识库及抽取流水线
-2. [DexterSQL: Deep Schema Exploration and Rule-based Correction for Text-to-SQL Generation](/202608/15/2608.11889v1-dextersql-deep-schema-exploration-and-rule-based-correction-for-text-to-sql-generation)  
-   标签：评分：6.0/10、query:code-paper
-   evidence：Text-to-SQL 系统论文，大概率附带开源实现。
+   evidence：在GitHub上提供包含脚本的数据集
 
 
 <div class="dpr-home-promo-card">

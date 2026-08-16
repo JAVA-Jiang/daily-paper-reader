@@ -1,0 +1,541 @@
+Title: PSP: Low-Overhead Packet-Level Load Balancing for Stale-State and Bandwidth-Asymmetric Networks
+
+URL Source: https://arxiv.org/pdf/2608.08425v1
+
+Published Time: Tue, 11 Aug 2026 01:02:08 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# PSP: Low-Overhead Packet-Level Load Balancing for Stale-State and Bandwidth-Asymmetric Networks 
+
+Jiaqi Liu ∗, Chunyang Zhang †, Heng Pan ∗, and Yanbiao Li ∗∗Computer Network Information Center, Chinese Academy of Sciences, China 
+
+†Huawei Technologies Company Ltd., Shenzhen, China 
+
+Abstract —With the rapid growth of large language model training and generative artificial intelligence services, data center networks face severe micro-burst traffic and high concurrency. Traditional hash-based flow-level load balancing cannot sense link states, leading to hash collisions, hotspot congestion, and tail latency in multipath Clos networks. Existing packet-level schemes are constrained by stale state information, high hard-ware complexity, and poor adaptation to heterogeneous links. To address these issues, this paper proposes probabilistic state-proportional (PSP) dispatching, a packet-level load balancing algorithm. Using a Band-based discrete state representation, PSP replaces global sorting with local probability mapping, reducing hardware complexity while suppressing herding and oscillations caused by stale states. Experiments on a cycle-accurate simu-lator show that PSP is robust across port scales, bandwidth-limited paths, and fixed-flow interference. It outperforms join-the-shortest-queue (JSQ) scheduling and Random in loss rate, 99th-percentile buffer occupancy, and scalability, while remaining competitive with Top-k at lower hardware cost. PSP provides an effective balance among performance, stability, and overhead for artificial intelligence data centers. 
+
+Index Terms —Packet-level load balancing, data center net-works, stale state information, bandwidth asymmetry, low hard-ware overhead 
+
+I. I NTRODUCTION 
+
+With the explosive growth of large language models (LLMs) and generative AI, data centers are facing unprecedented networking challenges. Distributed AI training workloads rely heavily on collective communication primitives such as All-Reduce and All-to-All [1], [2], and the resulting traffic is characterized by strong burstiness and high concurrency [3], [4]. In multipath Clos topologies, traditional hash-based flow-level load balancing schemes such as ECMP cannot sense link states. As a result, they are prone to hash collisions when handling elephant flows, which in turn leads to severe hotspots and long-tail latency and ultimately wastes expensive GPU cluster compute resources [5]–[8]. To extract as much throughput as possible from the net-work, industry practice is shifting load balancing from coarse-grained flow-level scheduling to finer-grained flowlet-level and packet-level scheduling [9]–[13]. Although advances in end-host reordering tolerance and switch-side reordering buffers have largely removed the protocol barrier to packet spraying [14], [15], realizing efficient, stable, and deployable packet-level load balancing in real AI data centers still faces three key challenges. First, adaptation to heterogeneous network environments 
+
+remains inadequate. In real deployments, link failures, in-cremental upgrades, the coexistence of different generations of NICs and switching devices, and long-lived background flows occupying part of the network are all common [16]– [18]. These factors lead to persistent asymmetry in available bandwidth across different paths. Under such conditions, a load balancing algorithm must distinguish not only which path is currently less congested, but also which path is intrinsically weaker in available capacity; otherwise, the scheduler may continue injecting traffic into constrained paths, causing buffer buildup, packet loss, retransmissions, and ultimately slower training jobs. Second, the timeliness of remote state information is difficult to guarantee . Existing distributed load-sensing and network-telemetry mechanisms typically rely on probes, feed-back, or telemetry to propagate remote path states across nodes. For example, HULA disseminates path-utilization in-formation through periodic probes [9], while INT supports carrying state metadata such as hop latency, queue occupancy, and buffer occupancy in packets [19]. However, all such remote states must undergo multi-hop propagation, processing, and updating before reaching the source node, which means they inevitably arrive with non-zero delay. For AI training traffic that is highly sensitive to micro-bursts, even such modest delay is sufficient to trigger concentrated following, local congestion, packet loss, and retransmissions, thereby significantly amplifying collective communication completion time. Finally, the scheduling algorithm must have low hard-ware overhead . Packet-level load balancing must operate at line rate in the switch data plane, whereas software-based schemes are constrained by the control-plane feedback loop formed by remote-state export and candidate-port reinstalla-tion, which typically introduces tens to hundreds of microsec-onds of additional delay and makes the candidate set stale before it even takes effect [9], [20]. Therefore, port-quality quantization and path selection must be implemented directly in hardware. At the same time, modern high-radix switches have extremely tight silicon-area, routing, and timing budgets, so reducing the hardware complexity of load-balancing logic is essential to ensuring scalability and deployability [18], [21], [22]. arXiv:2608.08425v1 [cs.NI] 9 Aug 2026 To address these three challenges, we propose PSP (Prob-abilistic State-Proportional), a highly robust packet-level load balancing algorithm. The design philosophy of PSP is to replace global sorting with local perception and to replace hard truncation with probabilistic smoothing. Building on Band-based discrete state representation, PSP introduces a state-proportional probabilistic dispatch mechanism that reduces the complex global sorting problem to a set of parallel local mapping tasks. The main contributions of this work are summarized below:  
+
+> •
+
+A probabilistic PSP dispatch architecture. Building on Band-based discrete state representation, we design a hardware-efficient probabilistic dispatch logic to mitigate traffic oscillations under stale state information.  
+
+> •
+
+A practical parameter configuration model. We pro-vide a heuristic analysis of linear probability-threshold mapping and further derive an engineering-oriented model for setting the maximum threshold T h max , re-ducing complex tuning to direct alignment with end-host hardware capabilities.  
+
+> •
+
+Large-scale cycle-accurate evaluation. On a 51.2T in-house Clos simulation platform, PSP consistently outper-forms JSQ and Random in loss rate, buffer utilization, and scalability, while slightly outperforming Top-k at lower hardware cost overall. II. M OTIVATION AND PROBLEM DEFINITION 
+
+Packet-level scheduling has regained attention in AI train-ing and high-speed storage networks because it can exploit Clos multipath bandwidth more effectively than flow-level or flowlet-level schemes and thus mitigate local hotspots caused by hash collisions [13]–[15]. However, this finer schedul-ing granularity also forces the algorithm to confront state freshness, hardware implementation complexity, and path-capability differences more directly. For the mixed packet-flow data center setting considered in this paper, existing repre-sentative schemes still fail to satisfy all three requirements simultaneously. 
+
+A. The Hardware Bottleneck of Top-k
+
+The core idea of Top-k is to first identify a set of currently best output ports from a large candidate set and then choose one port from this reduced set. This strategy leverages state information while providing some robustness, but its cost is that large-scale comparison and selection must be completed within the very tight latency budget of the switch ASIC pipeline. For high-radix switches, this process typically relies on hardware sorting or Top-k selection structures, whose critical-path depth, on-chip resource consumption, and routing overhead grow rapidly with the number of ports [21], [22]. Therefore, the main limitation of Top-k does not lie in the scheduling idea itself, but in its heavy demand for comparators, multiplexers, registers, and cross-stage wiring [21], [22]. As port counts continue to increase, sorting depth, chip area, and routing congestion together become a major implementation bottleneck, making Top-k difficult to deploy as a sufficiently lightweight general-purpose packet-level scheduling mecha-nism. 
+
+B. The Sensitivity of JSQ to Stale State 
+
+JSQ and related state-aware schemes typically achieve good load balancing when information is fresh, because they always direct traffic toward shorter queues [23]. In large high-speed networks, however, state collection, upload, and dissemination inevitably incur delay, so the scheduler often sees queue states from several microseconds or even tens of microseconds earlier. Under such conditions, what would otherwise be an effective greedy decision turns into a concentrated chase after stale information, thereby inducing classic herding and divergent oscillations [24]. As shown in Fig. 1, in a two-layer spine-leaf Clos network, a source ToR making a local path-selection decision cannot synchronously observe the real-time congestion state of remote spine switches or downstream links, and must instead rely on periodic control-plane reports. Thus, the fundamental limita-tion of JSQ is not its inability to use state, but its excessive sensitivity to state freshness. Once information becomes stale, its high-gain feedback can easily amplify local fluctuations into persistent oscillations [24]. Spine N Spine 1  
+
+> N S pine
+> 2N Leaf
+> Leaf 1
+> Fig. 1. Clos topology used in the simulation platform (two-layer spine-leaf fat-tree architecture).
+
+C. Random Is Blind to Path Capability 
+
+Beyond state delay, practical data center networks often operate under mixed packet-flow traffic, link failures, incre-mental upgrades, and mixed old/new devices [16], [18]. These factors cause some paths to remain persistently constrained by fixed flows or lower-rate links, resulting in pronounced asymmetry in available bandwidth. In such an environment, a scheduler must distinguish not only whether a path is currently congested, but also whether the path itself is fundamentally weaker. Random has the advantage of being simple and insensitive to state freshness, but it also cannot recognize path capability differences. When some paths are already occupied by fixed flows or their effective rates are reduced by heterogeneous links, random dispatching still injects traffic into them in an approximately uniform way. This aggravates local queuing, in-creases reordering pressure, and reduces multipath bandwidth utilization [15], [25]–[27]. D. Design Goals 
+
+The analysis above shows that existing schemes suffer from clear weaknesses along different dimensions: Top-k is constrained by hardware cost, JSQ is sensitive to stale state, and Random cannot exploit path capability differences. To summarize how representative schemes relate to the three key requirements considered in this paper, Table I compares typical algorithms against these requirements. III. PSP D ESIGN 
+
+A. Overall Objective 
+
+The primary goal of this work is to design a load balancing algorithm that remains highly robust even under extreme network-state delays. Specifically, the algorithm must satisfy the following requirements: 1) Delay tolerance and generalization. It should maintain strong load balancing performance across both highly stale control-plane conditions (state update delay >
+
+20 μs) and near-real-time settings (state update delay 
+
+< 1 μs), while approaching the ideal-performance base-line of JSQ. 2) Low hardware resource overhead. Under the strin-gent forwarding-rate demands of switch chips, the al-gorithm’s computation and storage overhead must be tightly controlled to match the hardware constraints of modern commercial data center switches. 3) Adaptation to complex scenarios. Under bandwidth-constrained paths, asymmetric topologies, and 100% offered load, the algorithm must continuously avoid con-strained ports and sustain balanced traffic distribution. 
+
+B. Hardware Architecture and Implementation of PSP 
+
+Unlike Top-k, which depends on global sorting, PSP does not pursue exact comparison across all port states in hardware. Instead, it first discretizes continuous queue depth into a finite set of load states and then completes scheduling through local mapping followed by global weighted selection. In this way, the tightly coupled sorting problem is transformed into a combination of local per-port processing and logarithmic-depth global aggregation, which is better suited to parallel pipelined implementation on high-radix switches. As shown in Fig. 2 and the pseudocode in Fig. 3, the hard-ware architecture of PSP consists of three sequential stages. The first stage is Local Band Mapping: each port compares its own queue depth with the threshold vector and quantizes the continuous state into a discrete Band ID. This process avoids inter-port state exchange while naturally filtering short-timescale micro-burst perturbations through discretization. The second stage is Weight Assignment. After obtaining the Band ID, each port maps the discrete state to its corre-sponding probabilistic weight Wi through a local lookup table. This mapping allows PSP to change scheduling preference by modifying the weight configuration without altering the overall hardware structure, thereby combining implementation simplicity with parameter tunability. The third stage is Global Weighted Selection. After all port weights are aggregated, the system first uses a parallel prefix sum to generate weight boundaries, then performs pseudo-random sampling and parallel comparison to identify the matched interval, and finally outputs the target port through a priority encoder. Since this process is built on regular adders and comparators, its critical path remains at O(log N ),avoiding the high coupling and routing overhead of global sorting networks. Overall, PSP converts load balancing decisions into hard-ware operations that can be decomposed and parallelized through a three-stage pipeline of local quantization, weight mapping, and weighted selection. This significantly reduces implementation complexity while retaining state awareness. The hardware benefits are further quantified in the next sub-section. 
+
+C. Hardware Resource Overhead Analysis 
+
+To evaluate the hardware efficiency of PSP, we compare it against a traditional Top-k selection design represented by a bitonic sorting network on a 128-port high-radix switch. 
+
+1) Local Processing Stage: Parallel quantization vs. sort-ing elements. In a Top-k design, the core consists of a large number of compare-and-swap (CAS) units. For 128 ports, a bitonic sorting network requires N log 2 N (log 2 N +1) 4 CAS units, i.e., 1,792 units. Each unit includes a wide comparator, a multiplexer (MUX), and complex swap logic. PSP instead adopts Local Band Mapping, where each port only needs a static comparator array (quantizer) and a small lookup table (LUT). Since the logic of different ports is completely decoupled and no data exchange is required, the basic gate count is reduced by roughly 90% relative to Top-k.
+
+2) Global Aggregation Stage: Adder tree vs. sorting network. In Top-k, sorting is itself the decision process, so the physical routing of the sorting network exhibits a nonlinear all-to-all structure, producing huge routing-area overhead and logical dead space. PSP instead aggregates weights with a parallel prefix adder tree. For N ports, only N − 1 adders are required; when N = 128 , this is just 127 adders. The adder-tree structure is regular and unidirectional, greatly improving placement and routing density. 
+
+3) Auxiliary Logic and Register Overhead: Register re-dundancy. Because the combinational logic depth of Top-k is large, thousands of pipeline registers must be inserted to cut timing paths and achieve timing closure at GHz frequency, resulting in substantial extra area overhead. 
+
+Random selection logic. Although PSP introduces apseudo-random number generator (PRNG), such as an LFSR, and a weighted selector, the physical scale of this logic is small and requires only tens of flip-flops. 
+
+4) Summary: By converting load balancing decisions into parallel local mapping tasks, PSP fundamentally breaks the “sorting wall” encountered by high-radix switch designs. Its 
+
+O(log n) critical path greatly simplifies hardware implemen-tation and also reduces the additional staleness caused by TABLE I RELATIONSHIP BETWEEN REPRESENTATIVE ALGORITHMS AND THE THREE MAJOR CHALLENGES ADDRESSED IN THIS PAPER .
+
+Algorithm Robust to Stale State Hardware-Friendly Adapts to Bandwidth Asymmetry 
+
+Random ✓ ✓ —JSQ — ✓ ✓
+
+Top-k ✓ — ✓
+
+PSP ✓ ✓ ✓0        
+
+> 1
+> 2
+> n-2
+> n-1
+> n
+> n
+> n-1
+> n-2
+> 2
+> 1
+> 0
+
+Fig. 2. Hardware architecture of PSP: local interval mapping, probabilistic weight lookup, and global weighted selection. TABLE II ESTIMATED HARDWARE RESOURCE COMPARISON BETWEEN PSP AND TOP -k FOR A 128-PORT SWITCH (COARSE -GRAINED ESTIMATE BASED ON STANDARD -GATE EQUIVALENCE ). 
+
+Stage Top-k PSP Relative Estimate 
+
+Port-state processing Dense CAS array, complexity about 
+
+O(N log 2 N )
+
+Parallel quantizers + local LUTs, com-plexity about O(N )
+
+PSP area reduced by about ∼
+
+90% 
+
+Global decision logic Sorting-network interconnect with se-vere global congestion Binary prefix adder tree + PRNG, reg-ular structure PSP area reduced by about ∼
+
+85% 
+
+Pipeline and register overhead Multi-stage pipeline registers required for timing closure Shorter timing paths and lower register overhead PSP overhead reduced by about ∼ 80% 
+
+Overall estimate High area and severe routing conges-tion Low area and linear scalability PSP total area is about ∼
+
+12% of Top-k
+
+hardware latency itself, laying the foundation for ultra-low-latency scheduling at 400 Gbps and beyond. 
+
+D. Robustness to Stale Information 
+
+The probabilistic state-proportional dispatching mechanism of PSP is designed to mitigate load imbalance caused by stale information. In the baseline comparison of this paper, JSQ also adopts Band-based discretization, but its scheduling rule remains strictly greedy: it always selects a port uniformly at random from the set of ports currently in the lowest-load Band. This “random within the best Band” rule still carries a high oscillation risk under stale state information. Compared with JSQ, which concentrates burst traffic onto a small number of currently optimal ports, PSP significantly reduces the instan-taneous injected traffic per port within the stale-information window, thereby alleviating local congestion and subsequent oscillations. A concrete example is given in Appendix D. 
+
+E. Adaptive Regulation Under Bandwidth Asymmetry 
+
+In addition to mitigating herding under stale state in-formation, PSP also exhibits strong self-healing capability in bandwidth-asymmetric environments. Fundamentally, PSP behaves as a negative-feedback control model: it uses queue buildup caused by instantaneous congestion as the feedback signal. When the actual outgoing capacity of a path falls below the expected level, incoming traffic accumulates in the corresponding port buffer. Through Band mapping, this buildup is converted into a lower scheduling weight, which probabilistically suppresses additional traffic sent onto that path and eventually drives the incoming rate toward the residual-bandwidth equilibrium point. A quantitative analysis of this process is provided in Appendix E. I. Configuration Stage (Static / Global)  
+
+> 1:
+
+Parameter: n ▷ Number of Bands, e.g., 8  
+
+> 2:
+
+Parameter: T h max ▷ Maximum threshold, e.g., 960 KB  
+
+> 3:
+
+Thresholds: T = { T h max  
+
+> n
+
+, 2T h max  
+
+> n
+
+, . . . , T h max } ▷
+
+Linear distribution  
+
+> 4:
+
+Weights: W = {n, n − 1, . . . , 1} ▷ Linearly decreasing weights 
+
+II. Stages 1 & 2: Local Band Mapping and Weight Lookup (Parallel Across Ports)  
+
+> 5:
+
+procedure PARALLEL LOCAL MAP -
+
+> PING
+
+(QueueDepths [1 . . . N ]) 
+
+> 6:
+
+for each port ∈ P in parallel do  
+
+> 7:
+
+q ← QueueDepths [port ] 
+
+> 8:
+
+b ← Quantize (q, T ) ▷ Hardware interval comparator array  
+
+> 9:
+
+W [port ] ← LUT (b) ▷ Assign Wi from W
+
+according to b 
+
+> 10:
+
+end for  
+
+> 11:
+
+end procedure III. Stage 3: Global Parallel Selection (Per Packet)  
+
+> 12:
+
+function PSPS CHEDULING (packet )
+
+// Sub-stage 3.1: parallel prefix-sum generation (loga-rithmic time)  
+
+> 13:
+
+S[1 . . . N ] ← ParallelPrefixAdder (W [1 . . . N ])  
+
+> 14:
+
+Wsum ← S [N ]
+
+// Sub-stage 3.2: random sampling and comparison  
+
+> 15:
+
+R ← PRNG (0 , W sum ) ▷ Generate a hardware random number  
+
+> 16:
+
+V [1 . . . N ] ← 0 ▷ Initialize a bit vector  
+
+> 17:
+
+for i = 1 to N in parallel do  
+
+> 18:
+
+if R < S[i] then V [i] ← 1 
+
+> 19:
+
+else V [i] ← 0 
+
+> 20:
+
+end if  
+
+> 21:
+
+end for 
+
+// Sub-stage 3.3: priority encoding  
+
+> 22:
+
+target idx ← PriorityEncoder (V ) ▷ Find the index of the first “1”  
+
+> 23:
+
+return target idx  
+
+> 24:
+
+end function  
+
+> 25:
+
+function QUANTIZE (q, T ) ▷ Hardware interval-classification primitive  
+
+> 26:
+
+return Pn−1 
+
+> i=1
+
+(q > T i) ▷ Implemented with a comparator array  
+
+> 27:
+
+end function  
+
+> Fig. 3. Pseudocode of the PSP scheduling logic.
+
+F. Parameter Configuration 
+
+this subsection presents practical parameter configuration guidelines. For PSP, the core parameters include the number of Bands N , the Band-partition thresholds, and the probability weights assigned to each Band. If exhaustive search or grid search is used, the joint search space formed by these three groups of parameters quickly becomes impractical. Therefore, we first identify a suitable threshold-probability mapping form through heuristic analysis, then fix the maximum threshold 
+
+T h max according to engineering constraints, and finally study the impact of the Band count on performance. The adopted parameter configuration is as follows: 
+
+Thresholds: T h/n, 2T h/n, 3T h/n, . . . , n · T h/n 
+
+Probabilities: n/ Sum , (n − 1) /Sum , . . . , 1/Sum , where 
+
+Sum = n(n + 1) /2
+
+The engineering model for the maximum threshold is 
+
+T h max = Lbuf f er 
+
+Detailed heuristic analysis is given in Appendix C. IV. E VALUATION 
+
+A. Experimental Rules and Workloads 
+
+To comprehensively validate the effectiveness and robust-ness of PSP, we conduct experiments on an in-house packet-level cycle-accurate simulator; the motivation for using this platform is discussed in Appendix B. All experiments follow the same rules: the packet scheduling granularity is 4 KB, the state update period is configurable, and the default setting combines 20 μs stale state information, 1 μs near-real-time information, and 100% offered load. The workload suite covers two core scenario classes. The first is stale-state testing on deployed Clos networks, which is used to characterize the concentrated scheduling and oscillatory behavior of JSQ under delayed state information. The second is available-bandwidth asymmetry testing under stale-state networks, which reveals the limitation of Random in not sensing link-state differences. The chosen workload style and packet-level metrics are also consistent with recent datacenter transport studies spanning deadline- and tail-sensitive traffic, packetized congestion con-trol, and RDMA-oriented deployments [3], [4], [7], [8], [28]– [33]. Because the packet reordering risk studied in this paper mainly manifests as path-level queuing-delay differences, and recent packet-spraying studies likewise identify asymmetry-induced delay gaps and queue buildup as the dominant sources of reordering, we use 99th-percentile buffer occupancy as a proxy for reordering pressure [14], [26], [27], together with average loss rate to characterize stability and availability. 
+
+B. Simulation Platform 1) Simulator Architecture: We use an in-house high-precision packet-level cycle-accurate simulator as the exper-imental platform. The simulator uses packets as the mini-mum scheduling unit and accurately models switch-port en-queue/dequeue behavior, link propagation delay, and control-plane state update delay. Its main features include: (1) packet-level event-driven scheduling with nanosecond precision; (2) configurable state refresh periods ranging from near-real-time (< 1 μs) to highly stale (> 20 μs) conditions; (3) programmable load balancing strategy interfaces that support hot switching among JSQ, Random, Top-k, PSP, and other algorithms; and (4) a network-stack model that includes both link-layer queuing and physical-layer bandwidth constraints. 2) Network Topology and Hardware Parameters: The net-work experiments use the two-layer Clos (fat-tree) topology shown in Fig. 1. The detailed configuration is summarized in Table III. This topology choice is intended to match a common deployment unit rather than to introduce an artificial simpli-fication. Prior datacenter load-balancing work has explicitly argued that two-tier leaf-spine fabrics cover the needs of most enterprise datacenter deployments and therefore form the pri-mary engineering target for fine-grained in-fabric scheduling [6]. Industry deployment guides likewise treat Layer-2 leaf-spine as a standard production design and note that, when the scale of a Layer-3 underlay is unnecessary, an L2 leaf-spine subnet is often sufficient for real deployments [34]. Therefore, evaluating PSP on a two-layer Clos fabric directly targets the practical setting in which packet-level load balancing is most often exercised within a pod or subnet, even if larger clusters are further interconnected through higher-layer routing domains. Each spine switch is equipped with 2N downlink ports, and each leaf connects to all spine switches through uplinks to preserve full redundancy. As a result, the total throughput of each spine is N × 400 Gbps. All ports share a virtual output queue buffer with dynamic watermark control, which is intended to emulate the on-chip buffering capability of real commercial switch ASICs. 
+
+3) Traffic Models and Load Configuration: To cover diverse traffic characteristics in modern data centers, we adopt three representative traffic generation models. Unless otherwise specified, the default experimental setup uses the AI-training traffic model, 100% average network load, and a 20 μs state update delay (the stale-state setting). Each simulation runs for 10 ms and is repeated five times; the reported results are averaged to eliminate random fluctuations. 
+
+C. Baseline Algorithms 
+
+To ensure a fair and comprehensive comparison, we choose the following representative load balancing algorithms as baselines: These baselines cover the dominant design patterns dis-cussed in recent data center load-balancing and transport literature, namely greedy queue-aware selection, oblivious                
+
+> TABLE III CORE CONFIGURATION PARAMETERS OF THE SIMULATION PLATFORM .
+> Category Parameter Value
+> Topology scale Number of spine switches N
+> Number of leaf switches 2N
+> Link configuration Spine–leaf link rate 400 Gbps Leaf–server link rate 400 Gbps Downward ports per spine 2N
+> Total throughput per spine 400 NGbps Switch parameters Per-port queue buffer 1024 KB Scheduling granularity Packet-level State update period 0.5 μs–50 μs
+
+spraying, and candidate-pruned state-aware dispatching [3], [4], [7]–[13], [28]–[33]. These baselines are chosen for the following reasons. (1) 
+
+JSQ represents a purely greedy packet-level strategy based on Band discretization. Because it always selects from the best Band, it is prone to “many-to-few” congestion when the number of available ports is small, making it suitable for illustrating the fragility of pure greediness. (2) Random 
+
+represents the upper bound of a fully stateless scheme and is used to measure the performance gain brought by state awareness. (3) Top-k represents a strong and widely adopted advanced configuration in the literature. 
+
+D. Experiments in Complex Scenarios 
+
+To validate the robustness of PSP to stale information under realistic network conditions, we conduct large-scale experiments on the Clos network shown in Fig. 1. This environment naturally carries about 20 μs of state update delay, so scheduling decisions are always made based on stale queue information. We test three scales, 128, 256, and 512 GPUs, and compare Top-k (k = N/ 2), PSP, JSQ, and Random in terms of 99th-percentile buffer occupancy, average buffer occupancy, and packet loss. 
+
+1) Stale-State Test: In this scenario, bandwidth remains symmetric: all links operate at 400 Gbps, and there are no special congestion sources such as link failures or elephant flows. This test is intended to validate the stability and performance advantages of PSP under stale state information. The results are shown in Fig. 4. 
+
+2) Available-Bandwidth Asymmetry Tests: To further evalu-ate adaptability to available-bandwidth asymmetry, we design two tests: one in which a fixed flow limits local path band-width, and another in which physical bandwidth asymmetry is created because part of the network is constrained by lower-speed links. 
+
+a) Fixed-flow scenario: In this test, the network contains a fixed 200 Gbps flow along the path tor15–spine8–tor10, while all remaining traffic follows the normal port-competition pattern. This fixed flow persistently occupies local path re-sources and therefore creates stable asymmetry in available bandwidth. The results are shown in Fig. 5. 
+
+b) Heterogeneous-link scenario: This scenario models physical bandwidth asymmetry under incremental deployment or mixed generations of devices, where some paths are con-strained by lower-speed equipment: specifically, half of the links operate at only half the bandwidth of standard 400 Gbps links. The results are shown in Fig. 6. Taken together, these three scenarios show the following. In network environments with stale state information, greedy JSQ performs worst, and its degradation becomes more pronounced as scale increases. Although Random achieves load balancing close to PSP in the pure stale-state scenario, its lack of state awareness causes the most severe imbalance under available-bandwidth asymmetry. Both JSQ and Random suffer notice-able packet loss. By contrast, Top-k (k = N/ 2) maintains strong performance across all three scenarios, indicating that TABLE IV DESCRIPTION OF BASELINE ALGORITHMS .
+
+Algorithm Mechanism Key Parameter 
+
+JSQ Always selects a forwarding port from the currently best Band (a purely greedy packet-level strategy built on Band discretization) Global Band visibility Random Fully stateless uniform random packet dispatching, unable to sense any link state None Top-k Selects the k output ports with the shortest queues and forwards uniformly at random among them 
+
+k
+
+PSP The probabilistic state-proportional algorithm proposed in this paper: discrete Band mapping + linear proportional probability weights 
+
+Nband = 8, W =
+
+{7, 6, 5, 4, 3, 2, 1, 0}
+
+128 256 512 
+
+0510 15 2.4 1.5 1.3
+
+Number of GPUs 99th-Percentile Buffer (MB) JSQ Random Top-k PSP (a) 99th-percentile buffer 128 256 512 
+
+00.511.520.70.3 0.2
+
+Number of GPUs Average Buffer (MB) (b) Average buffer Fig. 4. Results of the stale-state test: buffer and loss behavior of different algorithms at different GPU counts in a Clos network that naturally carries 20 μsstale-state delay. 128 256 512 
+
+0510 15 8.7 9.1 11 .3
+
+Number of GPUs 99th-Percentile Buffer (MB) (a) 99th-percentile buffer 128 256 512 
+
+01230.4 0.4 0.5
+
+Number of GPUs Average Buffer (MB)  JSQ Random Top-k PSP 
+
+(b) Average buffer Fig. 5. Results under available-bandwidth asymmetry caused by a fixed flow: the network contains a 200 Gbps fixed flow along tor15–spine8–tor10. 128 256 512 
+
+0510 0.8 1 0.6
+
+Number of GPUs 99th-Percentile Buffer (MB) (a) 99th-percentile buffer 128 256 512 
+
+00.511.520.2 0.3 0.2
+
+Number of GPUs Average Buffer (MB)  JSQ Random Top-k PSP 
+
+(b) Average buffer Fig. 6. Results under bandwidth asymmetry caused by heterogeneous links: part of the paths are constrained by lower-speed devices in an incremental deployment setting. 
+
+moderately trimming the candidate set helps suppress incorrect following under stale state at larger scales. PSP significantly mitigates stale-state-induced oscillations through probabilistic smoothing. Its buffer occupancy and loss rate remain below those of JSQ and Random and outperform Top-k in most scenarios. 
+
+E. Parameter Sensitivity Analysis 1) Impact of the Number of Bands N : The number of Bands N is a core hyperparameter of PSP because it de-termines the granularity of state discretization. Keeping the maximum threshold fixed at T h max = 960 KB, we test the performance impact of four configurations, N ∈ { 4, 8, 16 , 32 }.All configurations use threshold vectors that form arithmetic sequences spanning 64 to 960 KB. This means that the covered queue-depth range remains identical for all N values, and only the discretization step size changes. This design guarantees a fair comparison across different N : any performance differ-ence comes solely from the discretization granularity rather than from changes in threshold coverage.                   
+
+> 4816 32
+> 00.510.28 0.18 0.19 0.19
+> Number of Bands N
+> Average Queue Depth (MB)  Average Queue Depth Fig. 7. Impact of the number of Bands Non average queue depth. As N
+> increases from 4 to 8, the average queue depth drops significantly; when
+> N≥16 , the gain saturates, and N= 32 is almost identical to N= 16 ,showing diminishing marginal returns.
+
+As shown in Fig. 7, this paper adopts N = 8 as the default configuration. This setting offers a better balance between performance and implementation complexity and is also consistent with the threshold discretization used in the later experiments. 
+
+2) Selection of Maximum Threshold and Weights: For the maximum threshold T h max , this paper sets the upper limit to 960 KB; the rationale is explained in Appendix C. The results in Fig. 8 in that appendix show that as T h max increases from 240 KB to 480 KB and then to 960 KB, the system’s loss rate, 99th-percentile buffer occupancy, and average buffer occupancy all improve consistently. This indicates that on the current platform, a larger T h max enables the probabilistic scheduling mechanism to better exploit its smoothing advan-tage and reduces the performance loss caused by quantization saturation. Combining the appendix analysis and experimental results, we therefore adopt T h max = 960 KB as the default engineering configuration. V. R ELATED WORK 
+
+Existing data center load balancing work can be broadly divided into three categories. The first category includes hash-based flow-level or flowlet-level mechanisms, such as ECMP,                  
+
+> TABLE V PACKET -LOSS COMPARISON OF ALL ALGORITHMS ACROSS THE THREE TEST SETTINGS (✗INDICATES PACKET LOSS ).
+> Packet Loss 128 GPUs 256 GPUs 512 GPUs
+> Random ✓✗✗
+> JSQ ✗✗✗
+> Top-k✓✓✓
+> PSP ✓✓✓
+
+CONGA, HULA, LetFlow, FlowBender, and PLB [5], [6], [9]–[11], [13]. These methods are easy to deploy, incur low control overhead, and naturally preserve flow-level ordering or amortize path changes over flowlets, but they lack sensitivity to instantaneous queue states and path-capability differences at pure packet granularity. As a result, they still tend to suffer from hotspot congestion and long-tail latency when multipath Clos networks face AI-training micro-burst traffic. The second category consists of fine-grained scheduling methods based on queue or congestion state, including micro-load balancing schemes such as DRILL [35], packet-spraying approaches such as DRB and Presto [14], [15], and more general packet-level or transport-level designs such as pFabric, PIAS, pHost, NDP, Homa, Swift, DCQCN, IRN, ExpressPass, and DART [3], [4], [7], [8], [28]–[33]. Such methods typically exploit multipath resources more effectively when state information is fresh, but in large-scale networks they become constrained by both stale state information and hardware complexity. The third category focuses further on robustness and en-gineering deployability under non-ideal network conditions, such as Hermes for asymmetric links, failures, and black-hole scenarios [16], and SGLB for AI clusters with global conges-tion awareness [18]. Overall, the key challenge of modern data center load balancing is no longer merely whether congestion can be sensed, but how to realize stable, efficient, and scalable scheduling under stale state information, path heterogeneity, and limited on-chip resources. Compared with these prior efforts, PSP adopts a “local quantization + probability mapping + weighted selection” design, replacing global best-path search with local probabilistic dispatching. It retains state awareness while reducing implementation complexity and improving robustness to stale state information and heterogeneous-link scenarios. VI. C ONCLUSION 
+
+This paper presents PSP, a packet-level load balancer for stale-state and bandwidth-asymmetric AI data center net-works. PSP replaces global sorting with Band discretiza-tion, probabilistic weight mapping, and parallel weighted selection, reducing implementation complexity while retaining state awareness. Cycle-accurate simulations show that PSP mitigates scheduling concentration and oscillation under stale information, avoids bandwidth-constrained paths, and offers a better overall performance–hardware-cost trade-off than Top-
+
+k. These results make PSP a practical design for high-performance AI networks. ACKNOWLEDGMENT 
+
+The authors thank the anonymous reviewers for their con-structive comments and suggestions. REFERENCES [1] H. Zhang et al. , “Aeon: A scheduling framework for distributed deep learning,” in Proceedings of the 2021 ACM Symposium on Cloud Computing (SoCC) , 2021. [2] A. Sergeev and M. Del Balso, “Horovod: Fast and easy distributed deep learning in TensorFlow,” arXiv preprint arXiv:1802.05799 , 2018. [Online]. Available: https://arxiv.org/abs/1802.05799 [3] M. Handley, C. Raiciu, A. Agache, A. Voinescu, A. W. Moore, G. An-tichi, and M. W´ ojcik, “Re-architecting datacenter networks and stacks for low latency and high performance,” in Proceedings of the ACM SIGCOMM 2017 Conference , 2017, pp. 29–42. [4] B. Montazeri, Y. Li, M. Alizadeh, and J. K. Ousterhout, “Homa: A receiver-driven low-latency transport protocol using network priorities,” in Proceedings of the ACM SIGCOMM 2018 Conference , 2018, pp. 221–235. [5] C. Hopps, “Analysis of an equal-cost multi-path algorithm,” RFC 2992 ,2000. [6] M. Alizadeh, T. Edsall, S. Dharmapurikar, R. Vaidyanathan, K. Chu, A. Fingerhut, V. T. Lam, F. Matus, R. Pan, N. Yadav, and G. Varghese, “Conga: Distributed congestion-aware load balancing for datacenters,” in Proceedings of the ACM SIGCOMM 2014 Conference , 2014, pp. 503–514. [7] M. Alizadeh, S. Jain, A. Greenberg, D. A. Maltz, J. Padhye, P. Patel, B. Prabhakar, S. Sengupta, and M. Sridharan, “pfabric: Minimal near-optimal datacenter transport,” in Proceedings of the ACM SIGCOMM 2013 Conference , 2013, pp. 435–446. [8] W. Bai, L. Chen, K. Chen, D. Han, C. Tian, and H. Wang, “Information-agnostic flow scheduling for commodity data centers,” in 12th USENIX Symposium on Networked Systems Design and Implementation (NSDI) ,2015, pp. 455–468. [9] N. P. Katta, M. Hira, C. Kim, A. Sivaraman, and J. Rexford, “Hula: Scal-able load balancing using programmable data planes,” in Proceedings of the Symposium on SDN Research (SOSR) , 2016, pp. 10:1–10:12. [10] E. Vanini, R. Pan, M. Alizadeh, P. Taheri, and T. Edsall, “Let it flow: Resilient asymmetric load balancing with flowlet switching,” in 14th USENIX Symposium on Networked Systems Design and Implementation (NSDI) , 2017, pp. 407–420. [11] A. Kabbani, B. Vamanan, J. Hasan, and F. Duchene, “Flowbender: Flow-level adaptive routing for improved latency and throughput in datacenter networks,” in Proceedings of the 10th ACM International on Conference on Emerging Networking Experiments and Technologies (CoNEXT) , 2014, pp. 149–160. [12] C. H. Benet and A. J. Kassler, “Flowdyn: Towards adynamic flowlet gap detection using programmable data planes,” 
+
+arXiv preprint arXiv:1910.03324 , 2019. [Online]. Available: https://arxiv.org/abs/1910.03324 [13] M. A. Qureshi, Y. Cheng, Q. Yin, Q. Fu, G. Kumar, M. Moshref, J. Yan, V. Jacobson, D. J. Wetherall, and A. Kabbani, “Plb: Congestion signals are simple and effective for network load balancing,” in Proceedings of the ACM SIGCOMM 2022 Conference , 2022, pp. 378–393. [14] L. Amaru, A. M. Caulfield, T. Chung, M. Hayden, O. Hodson, M. Isard, J. Mace, M. Moskewicz, D. Narayanan, S. Peter, S. Seshan, and M. Zaharia, “One packet is all you need: Scalable and flexible packet processing with Presto,” in Proceedings of the ACM SIGCOMM 2015 Conference , 2015, pp. 241–252. [15] J. Cao, R. Xia, P. Yang, C. Guo, G. Lu, L. Yuan, Y. Zheng, H. Wu, Y. Xiong, and D. A. Maltz, “Per-packet load-balanced, low-latency routing for clos-based data center networks,” in Proceedings of the 9th ACM International on Conference on Emerging Networking Experiments and Technologies (CoNEXT) , 2013, pp. 49–60. [16] H. Zhang, J. Zhang, W. Bai, K. Chen, and M. Chowdhury, “Resilient dat-acenter load balancing in the wild,” in Proceedings of the Conference of the ACM Special Interest Group on Data Communication (SIGCOMM) ,2017, pp. 253–266. [17] J. Li, M. Zhang, J. Yang et al. , “Efficient load balancing over asymmetric datacenter topologies,” Computer Communications , vol. 125, pp. 21–32, 2018. [18] C. Qi, W. Wu, Y. Wang, K. He, Y.-H. Kao, Z. He, C.-Y. Yen, Z. Jiang, F. Luo, S. Anubolu, Y. Gao, B. Lin, W. Ni, Y. Yang, D. Wei, B. Zhou, J. Wang, and S. Ding, “Sglb: Scalable and robust global load balancing in commodity ai clusters,” in Proceedings of the ACM SIGCOMM 2025 Conference , 2025, pp. 626–644. [19] P4.org Applications Working Group, “In-band network telemetry (INT) dataplane specification version 2.1,” 2020, p4.org technical specification. [20] S. Stubbe et al. , “Exploring data plane updates on P4 switches with P4Runtime,” in 2023 IFIP Networking Conference (IFIP Networking) ,2023, pp. 1–9. [21] W. Qiao, L. Guo, Z. Fang, M.-C. F. Chang, and J. Cong, “TopSort: A high-performance two-phase sorting accelerator optimized on HBM-based FPGAs,” IEEE Transactions on Emerging Topics in Computing ,vol. 10, no. 3, pp. 1217–1231, 2022. [22] B. He, M. Xue, S. Liu, F. Yu, and W. Chen, “Resource efficient top-k
+
+sorter on FPGA,” IEICE Transactions on Fundamentals of Electronics, Communications and Computer Sciences , vol. E105.A, no. 8, pp. 1091– 1094, 2022. [23] P. Eschenfeldt and D. Gamarnik, “Join the shortest queue with many servers. the heavy-traffic asymptotics,” Mathematics of Operations Re-search , vol. 43, no. 3, pp. 867–886, 2018. [24] R. Atar and D. Lipshutz, “Heavy traffic limits for join-the-shortest-estimated-queue policy using delayed information,” Mathematics of Operations Research , vol. 46, no. 1, pp. 268–300, 2021. [25] T. Bonato, A. Kabbani, A. Ghalayini, M. Papamichael, M. Dohadwala, L. Gianinazzi, M. Khalilov, E. Achermann, D. D. Sensi, and T. Hoefler, “Reps: Recycled entropy packet spraying for adaptive load balancing and failure mitigation,” 2024. [Online]. Available: https://arxiv.org/abs/2407.21625 [26] J. Huang, W. Lyu, W. Li, J. Wang, and T. He, “Mitigating packet reorder-ing for random packet spraying in data center networks,” IEEE/ACM Transactions on Networking , vol. 29, no. 3, pp. 1183–1196, 2021. [27] J. Huang, S. Wang, S. Li, S. Zou, J. Hu, and J. Wang, “HTPC: Heterogeneous traffic-aware partition coding for random packet spraying in data center networks,” Journal of Cloud Computing , vol. 10, no. 1, p. 31, 2021. [28] P. X. Gao, A. Narayan, G. Kumar, R. Agarwal, S. Ratnasamy, and S. Shenker, “phost: Distributed near-optimal datacenter transport over commodity network fabric,” in Proceedings of the 11th ACM Inter-national on Conference on Emerging Networking Experiments and Technologies (CoNEXT) , 2015, pp. 1:1–1:12. [29] G. Kumar, N. Dukkipati, K. Jang, H. M. G. Wassel, X. Wu, B. Mon-tazeri, Y. Wang, K. Springborn, C. Alfeld, M. Ryan, D. Wetherall, and A. Vahdat, “Swift: Delay is simple and effective for congestion control in the datacenter,” in Proceedings of the ACM SIGCOMM 2020 Conference , 2020, pp. 514–528. [30] Y. Zhu, H. Eran, D. Firestone, C. Guo, M. Lipshteyn, Y. Liron, J. Padhye, S. Raindel, M. H. Yahia, and M. Zhang, “Congestion control for large-scale rdma deployments,” in Proceedings of the ACM SIGCOMM 2015 Conference , 2015, pp. 523–536. [31] R. Mittal, A. Shpiner, A. Panda, E. Zahavi, A. Krishnamurthy, S. Ratnasamy, and S. Shenker, “Revisiting network support for rdma,” arXiv preprint arXiv:1806.08159 , 2018. [Online]. Available: https://arxiv.org/abs/1806.08159 [32] I. Cho, D. Han, and K. Jang, “Expresspass: End-to-end credit-based congestion control for datacenters,” arXiv preprint arXiv:1610.04688 ,2016. [Online]. Available: https://arxiv.org/abs/1610.04688 [33] J. Xue, M. U. Chaudhry, B. Vamanan, T. N. Vijaykumar, and M. Thottethodi, “Dart: Divide and specialize for fast response to congestion in rdma-based datacenter networks,” 
+
+arXiv preprint arXiv:1805.11158 , 2018. [Online]. Available: https://arxiv.org/abs/1805.11158 [34] Arista Networks, “Layer 2 leaf & spine design and deployment guide,” Arista design guide, 2017, production deployment guide for Layer-2 leaf-spine fabrics. [35] S. Ghorbani, Z. Yang, P. B. Godfrey, Y. Ganjali, and A. Firoozshahian, “Drill: Micro load balancing for low-latency data center networks,” in 
+
+Proceedings of the Conference of the ACM Special Interest Group on Data Communication (SIGCOMM) , 2017, pp. 225–238. [36] J. Dean and L. A. Barroso, “The tail at scale,” Communications of the ACM , vol. 56, no. 2, pp. 74–80, 2013. APPENDIX ARATIONALE FOR THE EXPERIMENTAL CONFIGURATION 
+
+The rationale behind the chosen experimental settings is as follows:  
+
+> •
+
+100% offered load. This paper targets micro-burst com-munication in AI training, where traffic can momentarily approach link capacity during synchronization phases. Using 100% offered load therefore captures realistic burst pressure more accurately and more clearly differentiates the congestion-control and load-balancing capabilities of different algorithms.  
+
+> •
+
+10 ms simulation duration. Micro-bursts typically occur on a millisecond timescale. A 10 ms simulation window therefore covers an entire burst process while providing enough samples for queue-depth, loss-rate, and tail-metric statistics. APPENDIX BADVANTAGES AND POSITIONING OF THE IN-H OUSE 
+
+SIMULATION PLATFORM 
+
+It is important to note that our in-house platform is not intended to replace RTL-level circuit verification, nor does it directly answer timing-closure questions under specific processes, layouts, and target frequencies. Instead, this paper focuses on a layer between general-purpose network discrete-event simulation and circuit-level implementation, namely 
+
+switch-chip scheduling-pipeline modeling under hardware budget constraints . For the packet-level load balancing prob-lem studied here, modeling only link propagation, port queues, and control-plane state update delay is insufficient, because algorithmic performance depends not only on congestion feed-back in the network, but also on whether the scheduler can complete state collection, local quantization, result aggrega-tion, and global selection within a limited processing budget. Unlike general-purpose network simulation approaches that abstract scheduling logic as an “instantaneously available global decision function,” our platform explicitly models the multi-stage internal processing of the scheduler, including the degree of parallelism in port-state quantization modules, the set of ports handled by each module, the clock interval of quantization operations, the storage and visibility delay of local quantization results, the scanning and transmission process from local modules to the global decision module, the inter-module communication latency in clock cycles, and the number of results the global decision module can process per unit time. These factors jointly determine how fresh the state observed by the scheduler is and whether the algorithm remains stable and scalable at large port counts. Therefore, the reason for using our own platform is not to deny the value of general-purpose simulators such as ns-3, but because they answer a different level of question. ns-3 is better suited for evaluating links, queues, protocol interactions, and end-to-end network performance. In contrast, we also need to answer the following question: under a given mod-ule partition, scanning bandwidth, pipeline delay, and local aggregation constraint, can a load balancing algorithm still maintain its expected performance? If this internal processing budget is ignored and all port states are assumed to be globally visible and immediately usable at zero cost and zero delay, then algorithms that rely on large-scale global scanning or centralized selection are easily overestimated, while the value of designs based on local processing, parallel mapping, and gradual aggregation is underestimated. Based on this consideration, our platform treats internal scheduler processing delay as one component of stale state information and brings the chip-internal time cost, which is usually ignored by traditional network-layer simulation, into a unified evaluation framework. Although the resulting evaluation does not replace circuit synthesis or timing analysis, it more faithfully reflects the trade-off among implementa-tion cost, information freshness, and network performance for different load balancing algorithms under finite hardware budgets. This is precisely why we choose an in-house platform rather than using a general-purpose network simulator as the sole experimental tool. APPENDIX CPARAMETER CONFIGURATION ANALYSIS 
+
+Figure 8 summarizes the measured effect of the maximum-threshold setting. 
+
+A. Linear Threshold-Probability Mapping 
+
+The latency trap of exponential weights. 
+
+In probability design, we first compare linear probabilities with exponential probabilities, for example by setting the prob-ability of the n-th Band to 2n/ P 2i. Intuitively, exponential probabilities provide a wider control range, but analysis shows that they introduce a clear latency trap in practical hardware. 
+
+Illustrative derivation. Assume that all ports in the system are fully loaded (100% throughput) and stay in Band 0, and each port has an outgoing bandwidth of 400 Gbps. If one port drops to 50% carrying capacity (200 Gbps) due to a link failure or an elephant flow, then under exponential weights that congested port will quickly fall to Band 1, and its selection probability becomes 50% of that of Band 0. However, hardware systems inevitably incur state update delay, which we assume here to be 20 μs. When the link failure is repaired or the elephant flow disappears, the port capacity instantly returns to 400 Gbps, but because of the 
+
+20 μs feedback delay, the incoming traffic assigned to that port remains at 200 Gbps. To preserve throughput during this 
+
+20 μs interval and avoid link idling, the queue must contain enough buffered data to cover the rate gap. Link idling not only wastes physical bandwidth, but in distributed AI training, even microsecond-scale local delay can be amplified by col-lective synchronization semantics into cluster-wide compute underutilization [1], [4], [29], [35], [36]. The required amount of buffered data to drain is 
+
+Qdrop = (400 − 200) Gbps × 20 μs = 0 .5 MB (1) 128 256 512       
+
+> 0510 15
+> Number of GPUs 99th-Percentile Buffer (MB)  240 KB 480 KB 960 KB (a) 99th-percentile buffer 128 256 512
+> 00.511.52
+> Number of GPUs Average Buffer (MB) (b) Average buffer Fig. 8. Experimental comparison under different maximum-threshold settings T h max . Larger thresholds yield better performance.
+
+This means that under exponential weights, to avoid throughput degradation, the trigger threshold of Band 1 must be greater than 0.5 MB. This leads to two severe consequences: 1) Significantly increased static queuing delay. Once a port becomes congested and crosses the first thresh-old, it incurs at least a fixed queuing delay of 
+
+0.5 MB /400 Gbps = 10 μs. 2) Substantially higher end-host reordering pressure. 
+
+Under mild imbalance, for example when one port is in Band 0 and another in Band 1, two packets sent to the same destination at the same time may experience a delay gap of 10 μs, dramatically increasing NIC-side reordering pressure [30], [31], [33]. 
+
+Linear probability design. To avoid the high latency and strong reordering pressure introduced by exponential distri-butions, we propose a linear probability design . Heuristic analysis suggests that when probabilities decrease linearly and thresholds increase linearly with the same proportion, the system is more likely to achieve a smooth dynamic equilibrium. Suppose the total incoming traffic during a time window is 
+
+a, and the system is partitioned into n Bands. Under linear probability design, the traffic assigned to each Band decreases linearly: the n-th Band receives 0, the (n−1) -th Band receives 
+
+x, and the first Band receives (n − 1) x. The sum across all Bands equals the total traffic: 
+
+0 + x + 2 x + · · · + ( n − 1) x = n(n − 1) 2 x = a
+
+Hence the basic traffic unit is x = 2 a/ [n(n − 1)] . Therefore, the traffic share sent to the y-th Band can be expressed as 
+
+(n − y)x = ( n − y) · 2a/ [n(n − 1)] .Port buffering is essentially the integral of the mismatch be-tween incoming and outgoing traffic. Our optimization target is the equal-time recovery principle : regardless of whether the source of congestion disappears, the system should maintain a stable dynamic equilibrium; once congestion is relieved, ports in different Bands should drain their extra buffers within a similar time and return to low-load states in a synchronized manner. Let the threshold of the y-th Band be T h y (in Bytes), and let the net incoming traffic assigned to that Band within one time window be (n − y)x (in Bytes/window). To satisfy equal-time recovery, i.e., to keep the sum of “current queue accumulation + future draining capability” constant across different Bands, the following must hold: 
+
+T h 1 +n·x = T h 2 +( n−1) ·x = · · · = T h n +1 ·x = Constant Each term physically represents current queue depth (Bytes) + number of windows needed to drain at the maximum recovery rate × traffic share per window (Bytes/window) .Since x is also measured in Bytes, both sides are dimensionally consistent. After simplification, we see that the thresholds T h 
+
+must form an arithmetic sequence with common difference x.In other words, thresholds should increase linearly with Band level. The resulting configuration template is:  
+
+> •
+
+Threshold distribution: T h/n, 2T h/n, 3T h/n, . . . , n ·
+
+T h/n  
+
+> •
+
+Probability distribution: n/ Sum , (n −
+
+1) /Sum , . . . , 1/Sum , where Sum = n(n + 1) /2
+
+B. Engineering Model for the Maximum Threshold T h max 
+
+The maximum threshold directly determines the upper bound of network queuing delay. Different network topologies and end-host applications differ in their sensitivity to delay, while feasible thresholds are strongly constrained by the maximum reordering capability of the receiving NIC. If grid search is applied to every heterogeneous network, the tuning cost in both time and computation becomes enormous. Based on the analysis above, we propose an engineering-oriented threshold configuration model. In heterogeneous net-works, the tolerance limit of the system is mainly determined by the capacity of the receiver-side NIC reorder buffer. A reasonable range for the maximum threshold can be estimated by 
+
+Lbuf f er = Cport × ∆Tmax 
+
+where Lbuf f er is the maximum reorder-buffer length at the NIC, Cport is the port throughput, and ∆Tmax is the maximum tolerable path-delay difference. Since the delay difference in our system is mainly de-termined by the queuing delay caused by maximum queue occupancy, we have ∆Tmax = T h max /C port . Substituting this into the above equation yields 
+
+T h max = Lbuf f er 
+
+This shows that under the linear PSP framework proposed in this paper, the maximum threshold need not be determined by trial and error. Instead, it should be directly aligned with the hardware reordering capability of the end-host NIC, thereby minimizing tuning cost while avoiding retransmissions caused by excessive reordering. Although we do not directly measure the cycle-by-cycle occupancy of the NIC-side reorder buffer, in packet-level scheduling the dominant source of reordering pressure is the queuing-delay difference across paths, which is itself mainly determined by switch queue occupancy. For systems with fixed port rate and scheduling granularity, queue depth, queuing delay, and reordering depth are monotonically related. Therefore, this paper uses queue-buffer occupancy as an indirect metric for reordering pressure [14], [15], [31], [33]. This metric is not equivalent to actual NIC reorder-buffer occupancy, but it can stably reflect the relative impact of different scheduling algorithms on reordering risk. It should also be noted that the derivation above implicitly assumes that single-hop queuing delay is the only source of end-to-end queuing delay. In a real two-layer Clos architecture, however, end-to-end queuing delay is the sum of queuing delay at the source leaf and at the spine. Therefore, if T h max is directly set to the full capacity of the NIC reorder buffer, the accumulated reordering depth under simultaneous high occupancy at both switch layers may exceed the receiver’s limit and trigger retransmissions. Considering that AI training traffic, such as RoCEv2 over DDP, is highly sensitive to reordering, engineering practice must reserve a safety margin [30]–[33]. That is, T h max should be set to a reasonable subset of the NIC reorder-buffer capacity so that the total reordering depth after multi-hop queuing accumulation remains within the tolerance of the NIC. Based on these considerations, our experiments use T h max = 960 KB as a conservative yet practical default value that balances two-layer queuing accumulation and AI-traffic reordering tolerance. APPENDIX DILLUSTRATIVE EXAMPLE OF JSQ AND PSP U NDER STALE 
+
+INFORMATION 
+
+Consider a switch with 512 ports, each at 400 Gbps, and a state update period of 20 μs. Assume that ports 3 and 5 are in Band 1 with weight 3, while the remaining ports are in Band 2 with weight 2. Under JSQ, because the scheduler selects only within the currently best Band, the burst traffic arriving during the 20 μs window is highly concentrated on ports 3 and 5, causing instantaneous local congestion. By contrast, PSP dispatches according to the global weight distribution, which smooths traffic across all candidate ports. In this way, PSP preserves preference for lower-load ports while avoiding the divergent oscillation caused by all traffic chasing a few “optimal” ports simultaneously. Within this stale-information window, the total arriving traffic is 
+
+512 × 400 Gbps × 20 μs × 18 = 0 .5 GB .
+
+Therefore, under PSP, the expected traffic received by ports 3 and 5 is 
+
+0.5G × 33 × 2 + 2 × 510 ≈ 0.00146G ≈ 1.46MB .
+
+APPENDIX EADAPTIVE REGULATION MECHANISM UNDER 
+
+BANDWIDTH ASYMMETRY 
+
+Assume a system with 512 ports at 400 Gbps and a state update period of 20 μs. Under 100% offered load, suppose that the throughput capacity of one path suddenly drops from 
+
+400 Gbps to 200 Gbps because of a link failure. 
+
+a) Buffer buildup stage.: During the 20 μs state update window, the scheduler still maintains the original dispatch rate, so the rate mismatch causes buffer accumulation at the port, with an increment of 
+
+∆Q = (400 − 200) Gbps × 20 μs × 18 = 0 .5 MB .
+
+b) Weight suppression stage.: This 0.5 MB of backlog pushes the port state from Band 0 to a higher-load Band, for example reducing its weight from Wnormal = 7 to 
+
+Wf ault = 3 . The incoming traffic share assigned to that port then drops significantly. If the other normal ports keep weight 7, the relationship between the incoming traffic x sent to the failed port and the traffic sent to a normal port satisfies 
+
+xCnormal 
+
+≈ Wf ault 
+
+Wnormal 
+
+= 37 ,
+
+from which we obtain 
+
+x ≈ 37 × 400 Gbps ≈ 171 .4 Gbps .
+
+c) Dynamic recovery and equilibrium.: At this point, the incoming traffic ( 171 .4 Gbps) is below the residual physical bandwidth ( 200 Gbps), so the port queue starts to drain. In the next sampling period, as the queue decreases, its weight may rise to W = 4 . The incoming traffic then increases to  
+
+> 47
+
+× 400 Gbps ≈ 228 .6 Gbps. Since this again exceeds the physical limit, the queue starts to build up once more. Through this cycle, PSP uses queue depth as a “pressure gauge” and drives traffic into a periodically convergent oscil-lation near the constrained port, so that the average incoming rate statistically approaches the residual bandwidth limit. The cost of this adaptation is a certain amount of buffer space, namely the minimum backlog required to store the negative-feedback signal, together with extra queuing delay. However, by setting the maximum threshold T h max appropriately, this cost can be kept within the reorder tolerance of the end-host NIC.

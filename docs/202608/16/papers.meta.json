@@ -1,0 +1,69 @@
+{
+  "label": "2026-08-16",
+  "date": "2026-08-16",
+  "generated_at": "2026-08-16T20:22:37",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202608/16/2608.08425v1-psp-low-overhead-packet-level-load-balancing-for-stale-state-and-bandwidth-asymmetric-networks",
+      "section": "deep",
+      "title_en": "PSP: Low-Overhead Packet-Level Load Balancing for Stale-State and Bandwidth-Asymmetric Networks",
+      "authors": "Jiaqi Liu, Chunyang Zhang, Heng Pan, Yanbiao Li",
+      "date": "2026-08-09",
+      "pdf": "https://arxiv.org/pdf/2608.08425v1",
+      "score": "9.0",
+      "evidence": "数据中心数据包级负载均衡与调度",
+      "tldr": "数据中心网络面临微突发流量和高并发，传统哈希流级负载均衡无法感知链路状态，导致哈希冲突与热点拥塞。本文提出概率状态比例（PSP）包级调度，采用基于Band的离散状态表示，以局部概率映射替代全局排序，降低硬件复杂度并抑制陈旧状态引发的扰动。在周期精确模拟器上，PSP在丢包率、99%缓冲区占用和可扩展性上优于JSQ和Random，硬件成本低于Top-k，为AI数据中心负载均衡提供了性能、稳定性和开销的有效平衡。",
+      "tags": "query:code-paper",
+      "abstract_en": "With the rapid growth of large language model training and generative artificial intelligence services, data center networks face severe micro-burst traffic and high concurrency. Traditional hash-based flow-level load balancing cannot sense link states, leading to hash collisions, hotspot congestion, and tail latency in multipath Clos networks. Existing packet-level schemes are constrained by stale state information, high hardware complexity, and poor adaptation to heterogeneous links.   To address these issues, this paper proposes probabilistic state-proportional (PSP) dispatching, a packet-level load balancing algorithm. Using a Band-based discrete state representation, PSP replaces global sorting with local probability mapping, reducing hardware complexity while suppressing herding and oscillations caused by stale states.   Experiments on a cycle-accurate simulator show that PSP is robust across port scales, bandwidth-limited paths, and fixed-flow interference. It outperforms join-the-shortest-queue (JSQ) scheduling and Random in loss rate, 99th-percentile buffer occupancy, and scalability, while remaining competitive with Top-k at lower hardware cost. PSP provides an effective balance among performance, stability, and overhead for artificial intelligence data centers.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/16/2608.08691v1-energybridge-benchmarking-household-energy-management-user-participation-and-grid-flexibility",
+      "section": "deep",
+      "title_en": "EnergyBridge: Benchmarking Household Energy Management, User Participation, and Grid Flexibility",
+      "authors": "Xudong Wu, Zeqing Wu, Jiarui Zhang, Xuhao Fan, Ziang Ding, Yuming Zhuang, Mingqi Yuan, Yilun Du, Hongjie Jia, Yunfei Mu, Jiayu Chen",
+      "date": "2026-08-09",
+      "pdf": "https://arxiv.org/pdf/2608.08691v1",
+      "score": "9.0",
+      "evidence": "电网灵活性与能源管理基准及代码",
+      "tldr": "住宅虚拟电厂提供电网灵活性依赖居民的授权与执行，现有基准忽略事件级授权。提出EnergyBridge基准与智能体框架，整合容量上报、家庭授权与物理执行，结合天津、柏林EnergyPlus环境与LLM用户参与模拟器。在584个人设与事件匹配的判断中，模拟器保留方法排序且平均绝对误差5.3点。相比常规控制器，EnergyBridge在模拟授权、事件窗口能耗及容量承诺可靠性上均最优。",
+      "tags": "query:code-paper",
+      "abstract_en": "Residential virtual power plants (VPPs) can provide grid flexibility by shifting household demand, but physical flexibility becomes dependable capacity only when residents authorize a plan and the promised response is delivered. Existing benchmarks evaluate control but omit event-specific authorization. We present EnergyBridge, a benchmark and agent framework connecting capacity reporting, household authorization, and physical execution. It combines region-specific EnergyPlus environments for Tianjin and Berlin with an LLM-based User Participation Simulator. Against 584 persona- and event-matched human role-play judgments, the LLM-based User Participation Simulator preserves method ordering with a 5.3-point mean absolute acceptance error. Across conventional controllers and agent baselines, EnergyBridge achieves the highest simulated authorization, lowest event-window energy, and the most reliable capacity commitment in both regions. We release human data and codes for reproducible human-centered grid-flexibility research: https://github.com/Agentic-Intelligence-Lab/EnergyBridge.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/16/2608.08361v1-do-stack-overflow-answer-edits-occur-beyond-java-a-replication-on-python-and-javascript",
+      "section": "quick",
+      "title_en": "Do Stack Overflow Answer Edits Occur Beyond Java? A Replication on Python and JavaScript",
+      "authors": "Chaiyong Ragkhitwetsagul, In-on Wiratsin, Matheus Paixao, Denis De Sousa, Pongpop Lapvikai, Peter Haddawy",
+      "date": "2026-08-08",
+      "pdf": "https://arxiv.org/pdf/2608.08361v1",
+      "score": "7.0",
+      "evidence": "重复研究将已有流程应用于Python和JavaScript，属可复现研究，很可能公开代码与数据。",
+      "tldr": "针对Stack Overflow答案编辑是否仅发生在Java社区的问题，在Python和JavaScript上复制原研究。采用SOTorrent提取流程、Siamese+克隆搜索及相同流行度标准，分析84万Python和114万JavaScript答案，发现编辑率分别达41.25%和39.10%，约为Java的2.5倍，但每次编辑的修订数相近。在100个GitHub项目中，编辑匹配数随项目流行度单调递增，Python显著而JavaScript不显著。核心发现可泛化到Java之外，且候选改进供给更大。",
+      "tags": "query:code-paper",
+      "abstract_en": "Stack Overflow answers are continually revised by the community, and the edits made to their code snippets are a potential source of improvements for code that has been reused in open-source projects. A recent empirical study established this for Java, reporting that 16.11% of accepted Java answers are edited and that the resulting recommendations concentrate in highly popular GitHub projects. Whether that behaviour is a property of Stack Overflow or a property of the Java community has remained an open question. We replicate the study on Python and JavaScript, the two most widely used languages alongside Java, applying the same SOTorrent-based extraction pipeline, the same clone search tool, Siamese+, and the same project popularity criteria. Analysing 840,132 accepted Python answers and 1,144,185 accepted JavaScript answers, we find that 41.25% and 39.10% respectively have been edited at least once, roughly two and a half times the Java rate, while the number of revisions per edited answer is almost invariant across the three languages at 2.78, 2.68 and 2.82. Searching 100 GitHub projects per language, we find that the number of matched answer edits increases monotonically from low- to medium- to high-popularity projects in both languages, from 80 to 156 to 977 for Python and from 32 to 71 to 353 for JavaScript. The difference is statistically significant for Python but not for JavaScript. The central findings of the original study therefore generalise beyond Java, with the supply of candidate improvements considerably larger in both replication languages than in the original.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/16/2608.10906v1-gitskills-a-dataset-of-agent-skills-on-github",
+      "section": "quick",
+      "title_en": "GitSkills: A Dataset of Agent Skills on GitHub",
+      "authors": "Giuseppe Destefanis, Daniel Graziotin, Matteo Vaccargiu, Marco Ortu",
+      "date": "2026-08-11",
+      "pdf": "https://arxiv.org/pdf/2608.10906v1",
+      "score": "6.0",
+      "evidence": "在GitHub上提供包含脚本的数据集",
+      "tldr": "Agent技能是Anthropic于2025年10月提出的一种开放规范，以包含SKILL.md文件的文件夹形式存在，由语言模型在运行时根据任务描述选择使用，目前缺乏记录其生态的大规模数据集。GitSkills数据集从2026年7月收集的282,200个公共GitHub仓库中提取了3,797,117个SKILL.md文件，通过内容哈希归并为1,877,981个唯一技能，并为每个唯一内容保留了代表性文件的全文本、解析后的前置信息、同目录文件、仓库元数据以及部分提交历史。整个数据集打包为自包含的SQLite文件，便于研究者分析技能的采用、复用、结构、作者、维护和安全性等方面，填补了该新兴领域的实证数据空白。",
+      "tags": "query:code-paper",
+      "abstract_en": "An agent skill is a folder containing a SKILL.md file with instructions for a language-model agent, optionally accompanied by scripts and reference files. The agent loads the skill when it judges that a task matches the skill description. Anthropic introduced the format in October 2025 as an open specification. Nine months later, we find that skill files in the millions sit in public GitHub repositories. Skills are unlike the artifacts the SE research community usually mines: they are written mainly in natural language, a model selects them probabilistically at run time, and no compiler or type checker verifies the selection. They also have no central registry or package manager, so they spread by copying folders between repositories. How developers write, reuse, and maintain skills is therefore an empirical question, and no existing dataset records this population. We present GitSkills, a dataset of 3,797,117 SKILL.md files collected from 282,200 public repositories in July 2026. The dataset retains every file occurrence with its repository, path, and content hash. It groups identical files into 1,877,981 distinct contents and enriches one representative per group with the full text, parsed front matter, folder contents, repository metadata, and, for a subset, the commit history of the file. A single self- contained SQLite file supports research on the adoption, reuse, structure, authorship, maintenance, and security of agent skills.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

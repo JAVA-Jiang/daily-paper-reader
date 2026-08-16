@@ -1,0 +1,898 @@
+Title: EnergyBridge: Benchmarking Household Energy Management, User Participation, and Grid Flexibility
+
+URL Source: https://arxiv.org/pdf/2608.08691v1
+
+Published Time: Tue, 11 Aug 2026 01:40:58 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# EnergyBridge: Benchmarking Household Energy Management, User Participation, and Grid Flexibility 
+
+# Xudong Wu ∗1, Zeqing Wu ∗2, Jiarui Zhang 2, Xuhao Fan 1, Ziang Ding 1,Yuming Zhuang 3, Mingqi Yuan 1, Yilun Du 2, Hongjie Jia †2, Yunfei Mu †2, Jiayu Chen †1
+
+> 1
+
+The University of Hong Kong 
+
+> 2
+
+Tianjin University 
+
+> 3
+
+Beihang University 
+
+Abstract 
+
+Residential virtual power plants (VPPs) can provide grid flex-ibility by shifting household demand, but physical flexibility becomes dependable capacity only when residents authorize a plan and the promised response is delivered. Existing bench-marks evaluate control but omit event-specific authorization. We present EnergyBridge, a benchmark and agent framework connecting capacity reporting, household authorization, and physical execution. It combines region-specific EnergyPlus environments for Tianjin, and Berlin with an LLM-based User Participation Simulator. Against 584 persona- and event-matched human role-play judgments, the LLM-based User Participation Simulator preserves method ordering with a 5.3-point mean absolute acceptance error. Across conventional controllers and agent baselines, EnergyBridge achieves the highest simulated authorization, lowest event-window energy, and the most reliable capacity commitment in both regions. We release human data and codes for reproducible human-centered grid-flexibility research: https://github.com/Agentic-Intelligence-Lab/EnergyBridge. 
+
+# 1 Introduction 
+
+Variable renewable generation, growing electrified loads, and local demand peaks are increasing the need for short-duration grid flexibility. Demand response enables households to pro-vide such flexibility by temporarily reducing, shifting, or rescheduling flexible loads, including heating, ventilation, and air conditioning (HVAC), electric vehicles (EVs), water heaters, and task-oriented appliances (Martinez, Vellei, and Le Dréau 2022; Sajjad, Chicco, and Napoli 2016). By aggre-gating distributed household responses, virtual power plants (VPPs) create grid-scale flexibility portfolios that can pro-vide demand-side capacity when needed (Wang et al. 2020; National Grid Electricity System Operator 2021). However, converting household flexibility into reliable grid resources requires more than physical capability: households must au-thorize the requested actions, and the committed capacity must be delivered in practice. Household participation is inherently uncertain because decisions depend on comfort preferences, domestic routines, 
+
+> ∗
+
+These authors contributed equally. 
+
+> †
+
+Corresponding author. 
+
+expected incentives, and tolerance for external automation. Field studies show substantial variation in residential re-sponse across different events and automation settings (Na-tional Grid Electricity System Operator 2021). Therefore, households should be modeled as active decision makers rather than passive flexibility assets. A VPP must deter-mine not only whether a physical action is possible, but also whether a household will accept and sustain that action. Beyond authorization, a VPP must estimate how much flexibility each household can reliably provide before an event. Existing capacity estimation approaches typically rely on device states, historical demand, weather conditions, event timing, and aggregation across households (Sajjad, Chicco, and Napoli 2016; Wang et al. 2020). While aggregation can reduce random errors, it cannot eliminate systematic uncer-tainties caused by shared weather conditions, behavioral pat-terns, or comfort constraints. For example, an air conditioner may have theoretical load reduction potential, but that ca-pacity is not reliable if occupants reject the corresponding comfort change. Thus, accurate flexibility reporting requires household and event context rather than aggregation alone. A key question is therefore how to model household par-ticipation preferences: given a flexibility request and its ex-pected consequences, will a household accept, revise, or re-ject the proposed action, and how can this participation deci-sion inform reliable flexibility delivery? Persona-conditioned large language model (LLM) simulators provide a scalable approach for representing such user decisions. Prior studies show that role-conditioned LLMs can reproduce aggregate human response patterns in controlled experiments (Aher, Arriaga, and Kalai 2023; Argyle et al. 2023), while matched human evaluations can further calibrate task-specific relia-bility (Liu, Li, and Yin 2026; Dou et al. 2025). However, existing VPP benchmarks mainly focus on physical flexibil-ity, whereas agent-based HEMS studies emphasize interac-tion and preference reasoning. They lack a unified evaluation framework that connects household authorization, personal-ized capacity reporting, execution decisions, and measured grid delivery (El Makroum, Zwickl-Bernhard, and Kranzl 2026; Jung 2026; Dolinin and Kiourt 2026). To bridge this gap, we introduce EnergyBridge, a bench-mark and agent framework that connects household decisions arXiv:2608.08691v1 [cs.AI] 9 Aug 2026 Figure 1: Overview of the EnergyBridge benchmark and agent. Before the event, the VPP sends a flexibility request to the household. The EnergyBridge agent first combines household preferences, device states, and outcomes from previous events to generate an pre-event capacity report, and then invokes control tools to produce a candidate plan and a household-facing explanation. Household members may accept, revise, or reject the plan. An accepted plan is executed; revision feedback is stored in memory and used to regenerate the proposal; and rejection triggers the ordinary fallback policy. During execution, EnergyPlus simulates HVAC, EV charging, water heating, and household appliances. The benchmark then compares the pre-event reported capacity with the realized delivered capacity and feeds the verification results back into the agent’s memory. This workflow enables EnergyBridge to evaluate the complete chain from VPP requests and household authorization to physical execution and capacity delivery within a unified framework. with VPP-level flexibility delivery. EnergyBridge operates at the household–VPP interface, where a household-level agent translates VPP flexibility requests into household-level deci-sions and actions. EnergyBridge evaluates the complete process. Given a VPP flexibility request, the agent estimates and reports pre-event capacity, generates a feasible device-level plan under operational constraints, and requests resident authorization. The approved plan is executed in an EnergyPlus simulation environment, while revision triggers plan regeneration and rejection activates the fallback policy. The realized delivery is then compared with the pre-event capacity report. This de-sign separates physical capability, user-authorized flexibility, and actual delivered flexibility under a common evaluation protocol. The agent uses questionnaires, calendars, device states, historical feedback, and event memory to learn household preferences and personalize both control decisions and ca-pacity reports. Instead of treating households as fixed re-sources, it continuously updates its understanding of what each household can accept and how much flexibility the VPP can reliably offer. We evaluate EnergyBridge using regional building simu-lations, human-grounded authorization evaluation, and post-event evaluation of capacity-reporting accuracy. The bench-mark compares EnergyBridge with conventional controllers and existing agent-based methods under the same house-hold context, execution protocol, and metrics. Results show that EnergyBridge improves household participation while achieving reliable VPP-side flexibility reporting, demonstrat-ing the importance of connecting human authorization with physical energy delivery. Our contributions are: 
+
+• An end-to-end benchmark for human-authorized physical agents. EnergyBridge formulates residential flexibility as a closed-loop agent task: an agent must rea-son over household preferences, plan under device and operational constraints, request household authorization, execute only the authorized plan in a physical simulator, and ensure that its pre-event capacity report matches the realized delivery. This enables joint evaluation of user interaction, constrained decision making, physical execu-tion, and outcome reliability, rather than evaluating lan-guage responses or control performance in isolation. 
+
+• Human-grounded evaluation and open resources. En-ergyBridge incorporates human-calibrated user simula-tion and releases benchmark environments, human evalu-ation data, physical models, and baseline implementations to support reproducible research. 
+
+• A cross-layer flexibility agent. The EnergyBridge agent combines household grounding, constraint-aware plan generation, consent-gated execution, and personalized capacity reporting, enabling reliable conversion from household flexibility potential to delivered grid resources. 
+
+# 2 Related Work 
+
+2.1 Benchmarks for Energy Management 
+
+Existing building and community energy benchmarks pri-marily focus on standardizing physical control, economic evaluation, and grid-interactive operation. BOPTEST pro-vides reproducible building-control tests, and CityLearn evaluates flexibility, resilience-oriented control, and carbon-aware community energy management (Blum et al. 2021; Nweye et al. 2025). These environments mainly characterize the physical outcomes after control execution without mod-eling household decisions. This omission is consequential in flexibility settings, because a technically feasible control action may still be revised or rejected by occupants, directly affecting whether the promised flexibility is delivered. Modeling user decision therefore requires a complemen-tary evaluation mechanism. Persona-conditioned language models have shown the ability to reproduce heterogeneous user preferences and choices in controlled settings (Aher, Arriaga, and Kalai 2023; Argyle et al. 2023). Large-scale simulation studies further show that LLM-based representa-tive samples can approximate aggregate human responses in social science experiments (Hewitt et al. 2026). Task-specific reliability can then be calibrated and evaluated through persona- and context-matched human judgments (Liu, Li, and Yin 2026; Dou et al. 2025). EnergyBridge builds on these findings by introducing a benchmark-owned User Participation Simulator and calibrat-ing its simulated decisions with matched human response data. 
+
+2.2 Conventional and Language-Model HEMS Control 
+
+MPC, MILP, and reinforcement-learning based HEMS op-timize energy cost, comfort, and appliance operation under predefined objectives and constraints (Han et al. 2023; Amer, Shaban, and Massoud 2023; Mu et al. 2023; El Makroum et al. 2026). These methods provide strong physical mod-eling and reliable device-level control. However, household preferences are typically represented through manually de-signed parameters rather than learned from historical in-teractions and contextual household information. Therefore, conventional HEMS lacks the ability to continuously adapt to heterogeneous user preferences and provide personalized flexibility decisions. Recent language-model and multi-agent HEMS extend energy management with natural-language interaction and personalized reasoning. Agentic AI HEMS translates house-hold preferences, day-ahead prices, and calendar constraints into appliance schedules (El Makroum, Zwickl-Bernhard, and Kranzl 2026). HEMA and SmartHouseOperator fur-ther explore multi-agent assistance, user confirmation, mem-ory, and device interaction (Jung 2026; Dolinin and Kiourt 2026). These systems demonstrate the potential of LLM-based agents for personalized and interactive energy man-agement. However, their quantitative evaluations mainly fo-cus on the quality of agent-generated strategies, with lim-ited validation through closed-loop execution in high-fidelity, physics-based building simulation environments. EnergyBridge Agent combines preference-aware decision making with physics-grounded execution, enabling person-alized and reliable flexibility control. 
+
+# 3 EnergyBridge Benchmark 
+
+Hereafter, EnergyBridge benchmark refers to the common evaluation framework, while EnergyBridge agent refers to our proposed method. As shown in Figure 1, the benchmark covers the full process from a VPP request and household consent to physical execution and delivery verification. This section defines the request-to-delivery task, introduces the physical household environment and user participation sim-ulator, and specifies the benchmark outputs and metrics. 
+
+3.1 Task Definition 
+
+Residential VPP flexibility requires more than physical con-trollability. A household device may provide technically fea-sible flexibility, but the corresponding action may not be authorized by residents or successfully delivered after ex-ecution. EnergyBridge therefore evaluates agents through a complete request-to-delivery process connecting capacity reporting, household authorization, physical execution, and delivery verification. Given a VPP flexibility request, an evaluated method must: (1) estimate the capacity that can be reliably offered before execution, (2) generate a household-feasible flexibility plan, (3) obtain household authorization through the consent gate, (4) execute the confirmed plan or ordinary fallback branch, and (5) verify the realized flexibility from physical trajecto-ries. This protocol distinguishes three levels of flexibility ca-pacity.Let F phys  
+
+> i,e
+
+denote the physically feasible flexibility of household i during event e under comfort, safety, and service constraints. The aggregate physical flexibility is 
+
+Cphys  
+
+> e
+
+= X
+
+> i∈Ie
+
+F phys  
+
+> i,e
+
+. (1) After considering household decisions, only a fraction of this flexibility is authorized: 
+
+Cauth  
+
+> e
+
+= X
+
+> i∈Ie
+
+αi,e F phys  
+
+> i,e
+
+, (2) where αi,e ∈ [0 , 1] represents the event-specific authoriza-tion fraction. After execution, the baseline-adjusted metered trajectory determines the delivered flexibility: 
+
+Cdel  
+
+> e
+
+= X
+
+> i∈Ie
+
+ηi,e αi,e F phys  
+
+> i,e
+
+, (3) where ηi,e captures the realization gap between authorized and delivered flexibility. Therefore, EnergyBridge evaluates whether an agent can transform physical flexibility potential into household-authorized and verifiable grid resources, rather than only generating feasible control schedules. 
+
+3.2 Physical Household Simulator 
+
+Building dynamics. EnergyBridge uses EnergyPlus 25.1, a whole-building energy simulation engine (Crawley et al. 2001). Tianjin and Berlin instantiate separate residen-tial building models whose envelope parameters follow GB 50176-2016 and DIN 4108-4:2020-11, respectively (Ministry of Housing and Urban-Rural Development of the People’s Republic of China 2016; DIN Deutsches Institut für Normung e.V. 2020). Each model is simulated at six zone timesteps per hour (10 minutes) and exposes zone tempera-ture, outdoor conditions, HVAC actuation, facility electricity, and event-window meter data. 
+
+Appliances. The household layer models HVAC, EV charging, an electric water heater, washer, dryer, and dish-washer, together with non-controllable base load. Its inter-face permits household-specific thermal-zone use, appliance availability, and device settings. EV service is constrained by arrival, departure, charging power, and target state of charge. The water heater uses a shiftable-load service proxy with an availability window and nominal setpoint. Task appliances have duration, precedence where applicable, and comple-tion deadlines. At every EnergyPlus timestep, the appliance simulator writes electrical loads back to the physical run. 
+
+Regional context. Tianjin uses a normalized time-of-use tariff and the CSWD typical-year EPW for WMO station 545270 (China Meteorological Bureau, Climate Information Center, Climate Data Office and Tsinghua University, De-partment of Building Science and Technology 2005). 1 Berlin uses hourly 2025 station observations from the Deutscher Wetterdienst Climate Data Center (Deutscher Wetterdienst Climate Data Center (CDC) 2026) and hourly 2025 price traces. The main physical runs use occupancy schedules to determine device availability and service constraints. 
+
+3.3 User Participation Simulator 
+
+Household representation. Each base persona is repre-sented along six behavior dimensions: 
+
+p = ( pschedule , p comfort , p task , p price , p control , p grid ). (4) These dimensions control routines, comfort tolerance, task flexibility, price sensitivity, automation trust, confirmation     
+
+> 1Tianjin CSWD listing: https://climate.onebuilding. org/WMO_Region_2_Asia/CHN_China/index.html; file
+> CHN_TJ_Tianjin.545270_CSWD.zip .
+
+requirements, and willingness to support the grid. The main benchmark composes them into five multi-member house-holds (Appendix Table 4). Shared devices are scheduled once, while members retain distinct calendars and evalua-tion criteria. Prior studies show that persona-conditioned LLMs can reproduce aggregate human response patterns in controlled settings (Aher, Arriaga, and Kalai 2023; Argyle et al. 2023). Profile-conditioned role-play models can also align their rat-ings with human judgments (Dou et al. 2025). Following empirical persona-alignment approaches (Liu, Li, and Yin 2026), we designed the six-dimensional role cards and eval-uator prompt, refined them with formative participant feed-back, and froze both before validation. The prompt exposes temperature, routines, service deadlines, explanation speci-ficity, and override-relevant conflicts established in residen-tial demand-response studies (Sarran et al. 2021; Kaspar et al. 2024; Nambiar et al. 2025). Section 5.5 directly evaluates aggregate authorization alignment against 584 human responses under matched roles, events, question wording, and method-name-masked conse-quence payloads. It recovers the same method ordering with a 5.3-percentage-point acceptance MAE (Table 2). 
+
+Pre-execution participation. Before execution, house-hold members are not told which method generated the candidate plan. They are shown only the proposed device schedule and a summary of its expected consequences. For each member, the Role-Play Household Simulator produces an acceptance probability, a response label (accept, condi-tional, or reject), and structured feedback. Conditional re-sponses specify constraints for revising the proposal. After revision, the members’ acceptance probabilities are averaged to obtain the household-level acceptance probability. A fixed household-event random draw then converts this probability into a reproducible accept-or-reject decision. 
+
+Post-event scoring. After execution, the identity of the method remains hidden from household members. They are shown only the realized outcomes, including indoor tem-perature, device schedules, task completion, VPP conflicts, and the user-facing explanation. Each member then assigns a score, and the household score is computed as the arithmetic mean across all member scores. 
+
+3.4 Benchmark Outputs and Metrics 
+
+The benchmark reports three groups of method-independent outcomes. 
+
+• User outcomes: simulated gate-acceptance rate A =
+
+Naccepted /N events , mean post-event household score on a 1-5 scale. 
+
+• Household physical and service outcomes: thermal out-comes, task completion, daily energy cost, and VPP-window energy. 
+
+• Capacity and safety outcomes: event-authorized capac-ity and delivered capacity. 4 EnergyBridge Agent 
+
+This section describes the three main components of the EnergyBridge agent: household memory, personalized plan synthesis, and retrieval-based capacity reporting. 
+
+4.1 Household Knowledge and Memory 
+
+EnergyBridge uses a two-level hierarchical memory to limit the amount of information included in the planning con-text. The first level stores a structured household profile ini-tialized from a four-question onboarding questionnaire. The questionnaire responses are normalized into preferences and planning rules covering comfort, task flexibility, trust in au-tomation, calendar constraints, and price or grid priorities. The second level stores episodic information from previous events, including proposed plans, authorization decisions, executed actions, delivery outcomes, evaluation scores, and user feedback. Before each event, the planner receives the household pro-file, the current planning rules, a compact summary of prior interactions, and the three most recent event records. After execution, new feedback and outcomes are used to update the preference rules and the compact summary for subsequent decisions. 
+
+4.2 Plan Synthesis 
+
+EnergyBridge treats conventional control methods as callable skills, including Model Predictive Control (MPC) and rule-guided Mixed-Integer Linear Programming (MILP). Each skill returns a normalized candidate record containing de-vice actions. The agent selects and personalizes candidate plans using household memory and historical feedback. The physical validator rejects unsafe action records. The resulting plan is presented in household-relevant terms. Using household memory and historical feedback, the agent generates personalized explanations and revision suggestions to address individual concerns and improve user acceptance. 
+
+4.3 Retrieval-Augmented Capacity Reporting 
+
+EnergyBridge retrieves the k most similar historical events using region, household type, event time and duration, pre-event load, weather, available devices, and schedule context. Historical delivery is baseline-adjusted to the target event. Only records preceding the target period are eligible. Their adjusted deliveries form an empirical distribution from which the pre-event report is selected before the consent decision. We refer to this estimator as retrieval-based capacity report-ing. Reporting conditional reporting accuracy and reliable capacity coverage defined in Section 5.6. 
+
+# 5 Experimental Evaluation 
+
+We evaluate EnergyBridge at three levels. First, we examine whether the agent can achieve desirable household outcomes. Second, we compare simulated user authorization with 584 matched human responses to validate the reliability of the participation simulator. Third, we evaluate the accuracy of pre-event flexibility reports. 
+
+5.1 Baselines 
+
+HEMA agent. HEMA is an open multi-agent home-energy assistant with analysis, knowledge, and control tools (Jung 2026). We retain its design, including native routing, tool graph, memory, natural-language feedback, and event expla-nations, making it the closest native agent comparison. 
+
+Physical-control references. The three controller base-lines cover established method families: building-energy MPC (Mu et al. 2023; Slaifstein et al. 2026; Behzadi et al. 2026), household MILP scheduling (de Lima, Faria, and Vale 2026; El Makroum et al. 2026), and DRL-based building control (Wu et al. 2022, 2026). MPC Dynamic optimizes en-ergy, comfort, appliance constraints, and event-window load over a one-hour horizon. Rule+MILP protects fixed services with interpretable rules and schedules flexible services by mixed-integer optimization. We implement PPO (Schulman et al. 2017) for DRL-based building control. Detailed for-mulations of the three controller baselines are provided in Appendix C. 
+
+5.2 Main Evaluation 
+
+The main matrix crosses five households, two regions, seven days, and five methods. One 18:00-19:00 event per household-day yields 70 matched contexts per method and 350 episodes. Tianjin and Berlin use distinct regional build-ing models. Within each matched household-region-day con-text, all methods share the same household configuration and external conditions, with differences arising only from the evaluated method. Their interaction budgets and tool usage are recorded un-der their original configurations, with token consumption comparisons reported in Table 13. EnergyBridge achieves the highest simulated user score and acceptance rate, the lowest VPP-window energy, and 100% modeled task completion (Figure 2). Relative to HEMA, the simulated acceptance gap is 40.0 percentage points in Tianjin and 42.9 points in Berlin, while event-window energy is 35.2% and 23.4% lower, respectively. 
+
+5.3 Personalization Capability 
+
+We evaluate whether agents can adapt executable control decisions to different household preferences and routines. Table 1 shows that EnergyBridge provides the strongest per-sonalization capability among the evaluated methods. Addi-tional calendar cases in Appendix Table 8 show that Ener-gyBridge further adapts schedules according to occupancy, return-home time, care requirements, and service deadlines. These results demonstrate that household context changes the executable control policy rather than only the generated explanation in EnergyBridge. 
+
+5.4 Contribution of Household Grounding Components 
+
+To identify which components enable EnergyBridge’s high authorization rate, we ablate the household grounding in-formation used for personalized proposals and consent deci-sions. The fixed-plan replay keeps the event, physical plan, Figure 2: Region-specific results ( n = 35 events per region-method). Score and gate acceptance are simulated. Tianjin cost uses normalized TOU units, Berlin cost is EUR per household-day, and VPP energy is kWh per event hour. Price-sensitive Comfort-sensitive Method Score ↑ Cost ↓ ◦C kWh ↓ Method Score ↑ Cost ↓ ◦C kWh ↓
+
+EnergyBridge 4.21 23.431 27.5 1.224 EnergyBridge 4.51 32.252 25.5 1.634 HEMA 4.00 32.551 23.9 1.344 HEMA 2.37 32.965 23.9 3.840 MPC Dynamic 4.21 26.454 27.0 1.437 MPC Dynamic 2.57 26.454 27.0 1.437 Rule+MILP 4.40 15.590 28.0 1.113 Rule+MILP 2.10 17.701 28.0 1.774 PPO 3.22 20.314 27.1 1.263 PPO 2.57 20.810 27.0 1.283 Table 1: Controlled persona evaluation with acceptance and fallback disabled. Cost is normalized Tianjin TOU; VPP kWh is integrated over the one-hour event. Higher score is better; preferred setpoint is persona-dependent. household, and random draw unchanged while removing one component at a time. With the complete EnergyBridge con-text, simulated acceptance reaches 77.1%. Removing feed-back memory reduces acceptance to 65.7%, removing calen-dar context reduces it to 54.3%, removing the questionnaire-based household profile reduces it to 45.7%, and replacing personalized explanations with a generic explanation reduces it to 37.1% . These results show that household grounding and memory-based personalization directly affect authoriza-tion decisions, while physical feasibility remains unchanged. 
+
+5.5 Human Grounding of Role-Play Authorization 
+
+This experiment tests whether human and LLM role players authorize the same methods under matched persona and event information. Human respondents adopt an assigned house-hold persona and evaluate the same frozen role card, Tianjin event, question wording, and method-name-masked conse-quence trajectory shown to the LLM evaluator. The com-parison therefore isolates role-play authorization rather than respondents’ own household preferences or method identity. Formative feedback refined the six role cards and evaluator prompt before both were frozen for validation. The cohort contains 584 complete consented responses across the six personas ( n = 97 , 116 , 73 , 88 , 91 , 119 ). Each Method LLM ↑ Human ↑ [95% CI] Gap ↓ JSD ↓
+
+MPC 28.6% 25.7% [22.3, 29.4] 2.9 0.0005 HEMA 37.1% 45.2% [41.2, 49.3] 8.1 0.0034 EnergyBridge 77.1% 72.1% [68.3, 75.6] 5.1 0.0017 Table 2: Prompt- and event-matched aggregate human–LLM authorization alignment. Human rates use 584 responses; LLM rates use 35 frozen Tianjin evaluator records per method. Brackets are Wilson 95% intervals. Gap is the abso-lute difference between unrounded rates in percentage points. respondent evaluates MPC, HEMA, and EnergyBridge, yielding 1,752 paired respondent-method judgments. The primary endpoint is method-level acceptance because it de-termines entry into consent-gated execution. Following ag-gregate human-LLM choice alignment (Liu, Li, and Yin 2026), we evaluate aggregate rather than individual predic-tion. We report Wilson intervals for human rates, paired respondent bootstrap intervals for method contrasts, and Bernoulli JSD and acceptance MAE for human-LLM align-ment. The cohort contains 293 female and 291 male respondents, with ages spanning 20–55 years. Across persona forms, fe-male shares range from 46.4% to 54.8%, and mean ages range from 29.5 to 34.3 years. Coarse source geolocation covers 21 province-level regions and 80 city labels (Appendix Table 7). Human and LLM aggregate judgments produce the same acceptance ordering: EnergyBridge, HEMA, then MPC (Ta-ble 2). The EnergyBridge advantage over HEMA holds across all six personas, ranging from 15.5 to 37.4 points (Appendix Table 5). Excluding responses with a persona mismatch or completion time below 60 seconds preserves the ordering (Appendix Table 6). These matched human judg-ments ground the aggregate authorization ordering used by the role-play benchmark. Further details are provided in Ap-pendix A. 
+
+5.6 Capacity Reporting 
+
+Can a capacity value declared before an event be verified after household authorization selects the physical execution branch? We evaluate this question in a separate June-to-July capacity audit with 70 held-out events per method. June de-livery records form each method’s retrieval memory, while July events form the query cohort. Every method uses top-5 same-method retrieval. Simulated consent selects either the proposed controller trajectory or the household’s ordinary fallback before physical execution. We report three complementary quantities. Conditional reporting accuracy Bm is the fraction of accepted events whose reported capacity is verified within the target band. The 20% tolerance criterion follows the capacity assessment requirement (Jiangsu Provincial Development and Reform Commission 2024). Acceptance rate Am is the fraction of capacity requests authorized by the simulated household. We define reliable capacity coverage Fm as the fraction of all capacity requests that are both authorized and accurately Method Acc. Bm ↑ Accept. Am ↑ Fm ↑
+
+EnergyBridge 90.0% 71.4% 64.3% 
+
+HEMA 69.2% 37.1% 25.7% MPC Dynamic 63.2% 27.1% 17.1% Rule+MILP 93.8% 22.9% 21.4% PPO 70.6% 24.3% 17.1% Table 3: Cross-method capacity reporting under method-neutral simulated consent ( Nm = 70 per method). Overall accurate coverage is calculated as conditional accuracy mul-tiplied by acceptance rate. reported: 
+
+Bm = P
+
+
+
+0.8 ≤ Cactual 
+
+bC ≤ 1.2 accepted 
+
+
+
+, (5) 
+
+Am = P (accepted) , (6) 
+
+Fm = P
+
+
+
+accepted ∩
+
+
+
+0.8 ≤ Cactual 
+
+bC ≤ 1.2
+
+ 
+
+. (7) An accurate capacity report does not constitute dispatch-able grid capacity if the household rejects the associated action. Conversely, a highly accepted request is not reliable if its reported capacity cannot be physically delivered within the target band. 
+
+# 6 Conclusion 
+
+Existing residential energy research often evaluates three stages of flexibility provision separately: pre-event capac-ity reporting, household authorization, and physical delivery. However, these stages are sequentially dependent. Reported capacity is useful to a VPP only if the corresponding house-hold authorizes the proposed action and the approved plan subsequently delivers the promised response. Evaluating any stage in isolation therefore cannot determine whether house-hold flexibility constitutes a reliable grid resource. EnergyBridge connects these stages within a complete request-to-delivery process. Household authorization deci-sions are simulated by a human-calibrated User Simulator based on the household context and the proposed plan. Ap-proved plans are executed in regional EnergyPlus environ-ments, and the pre-event capacity report is compared with realized delivery after the event. The resulting authorization decisions, delivery outcomes, and user feedback are then recorded and used to update subsequent planning and capac-ity reporting. Across two regional EnergyPlus environments, the Ener-gyBridge agent achieves the highest simulated authorization rate and the lowest event-window energy among the evalu-ated conventional controllers and agent baselines. The study with 584 human role-play responses supports the simulated method ordering, and the post-event audit evaluates the ac-curacy of capacity reports for accepted events. These results demonstrate the value of evaluating household authorization, physical execution, and capacity-reporting accuracy as a sin-gle closed-loop process. We release the benchmark environ-ments, human evaluation data, physical models, and baseline implementations to support reproducible research. 
+
+# References 
+
+Aher, G.; Arriaga, R. I.; and Kalai, A. T. 2023. Using large language models to simulate multiple humans and repli-cate human subject studies. In Proceedings of the 40th International Conference on Machine Learning , ICML’23. JMLR.org. Amer, A. A.; Shaban, K.; and Massoud, A. M. 2023. DRL-HEMS: Deep Reinforcement Learning Agent for Demand Response in Home Energy Management Systems Consider-ing Customers and Operators Perspectives. IEEE Transac-tions on Smart Grid , 14(1): 239–250. Argyle, L. P.; Busby, E. C.; Fulda, N.; Gubler, J. R.; Ryt-ting, C.; and Wingate, D. 2023. Out of One, Many: Using Language Models to Simulate Human Samples. Political Analysis , 31(3): 337–351. Behzadi, A.; Goudarzi, N.; Ploskic, A.; Thorin, E.; and Sadrizadeh, S. 2026. Advancing an already high-performance smart building with model predictive control: Multi-layer optimization under forecast uncertainty in a real building case. Applied Energy , 402: 126999. Blum, D.; Arroyo, J.; Huang, S.; Drgoňa, J.; Jorissen, F.; Wal-num, H. T.; Chen, Y.; Benne, K.; Vrabie, D.; Wetter, M.; and Helsen, L. 2021. Building optimization testing framework (BOPTEST) for simulation-based benchmarking of control strategies in buildings. Journal of Building Performance Simulation , 14(5): 586–610. China Meteorological Bureau, Climate Information Center, Climate Data Office; and Tsinghua University, Department of Building Science and Technology. 2005. China Standard Weather Data for Analyzing Building Thermal Conditions .Beijing, China: China Architecture & Building Press. ISBN 7-112-07273-3. Crawley, D. B.; Lawrie, L. K.; Winkelmann, F. C.; Buhl, W.; Huang, Y.; Pedersen, C. O.; Strand, R. K.; Liesen, R. J.; Fisher, D. E.; Witte, M. J.; and Glazer, J. 2001. EnergyPlus: creating a new-generation building energy simulation pro-gram. Energy and Buildings , 33(4): 319–331. Special Issue: BUILDING SIMULATION’99. de Lima, T. D.; Faria, P.; and Vale, Z. 2026. Optimal schedul-ing of home energy systems considering battery aging and CO2 emissions. Applied Energy , 409: 127433. Deutscher Wetterdienst Climate Data Center (CDC). 2026. Hourly Station Observations of Climate Variables for Ger-many. CDC Open Data. Accessed July 24, 2026. DIN Deutsches Institut für Normung e.V. 2020. Thermal Insulation and Energy Economy in Buildings—Part 4: Hy-grothermal Design Values. DIN Standard DIN 4108-4:2020-11, DIN Media, Berlin, Germany. Dolinin, E.; and Kiourt, C. 2026. Multi-Agent-Based Smart-Home Energy Management with Adaptive Reasoning. Ap-plied Sciences , 16(4). Dou, Y.; Galley, M.; Peng, B.; Kedzie, C.; Cai, W.; Ritter, A.; Quirk, C.; Xu, W.; and Gao, J. 2025. SimulatorArena: Are User Simulators Reliable Proxies for Multi-Turn Evaluation of AI Assistants? In Christodoulopoulos, C.; Chakraborty, T.; Rose, C.; and Peng, V., eds., Proceedings of the 2025 Con-ference on Empirical Methods in Natural Language Process-ing , 35212–35290. Suzhou, China: Association for Compu-tational Linguistics. ISBN 979-8-89176-332-6. El Makroum, R.; Zwickl-Bernhard, S.; and Kranzl, L. 2026. Agentic AI home energy management system: A large lan-guage model framework for residential load scheduling. Re-sults in Engineering , 29: 109857. El Makroum, R.; Zwickl-Bernhard, S.; Kranzl, L.; and Auer, H. 2026. Load scheduling optimization for user-centric res-idential demand response leveraging time use surveys. Ap-plied Energy , 403: 127080. Han, B.; Zahraoui, Y.; Mubin, M.; Mekhilef, S.; Seyedmah-moudian, M.; and Stojcevski, A. 2023. Home Energy Man-agement Systems: A Review of the Concept, Architecture, and Scheduling Strategies. IEEE Access , 11: 19999–20025. Hewitt, L.; Ashokkumar, A.; Ghezae, I.; and Willer, R. 2026. Large language models can predict the results of social sci-ence experiments. Nature .Jiangsu Provincial Development and Reform Commission. 2024. Jiangsu Province Electricity Demand Response Im-plementation Rules. Technical Report Su Fa Gai Gui Fa [2024] No. 2, Jiangsu Provincial Development and Reform Commission, Nanjing, China. Jung, W. 2026. Multi-agent home energy management as-sistant (HEMA). SoftwareX , 34: 102633. Kaspar, K.; Nweye, K.; Buscemi, G.; Capozzoli, A.; Nagy, Z.; Pinto, G.; Eicker, U.; and Ouf, M. M. 2024. Effects of occupant thermostat preferences and override behavior on residential demand response in CityLearn. Energy and Buildings , 324: 114830. Liu, T.; Li, M.; and Yin, Y. 2026. Aligning LLM with Humans for Travel Choices: A Persona-Based Embedding Learning Approach. Transportation Science .Martinez, S.; Vellei, M.; and Le Dréau, J. 2022. Demand-side flexibility in a residential district: What are the main sources of uncertainty? Energy and Buildings , 255: 111595. Ministry of Housing and Urban-Rural Development of the People’s Republic of China. 2016. Thermal Design Code for Civil Building. National Standard GB 50176–2016, China Architecture & Building Press, Beijing, China. Mu, Y.; Xu, Y.; Zhang, J.; Wu, Z.; Jia, H.; Jin, X.; and Qi, Y. 2023. A data-driven rolling optimization control approach for building energy systems that integrate virtual energy storage systems. Applied Energy , 346: 121362. Nambiar, C.; Schiavon, S.; Brager, G.; and Rosenberg, S. 2025. Assessing thermal comfort and participation in resi-dential demand flexibility programs. Energy and Buildings ,328: 115153. National Grid Electricity System Operator. 2021. CrowdFlex – Phase 1 Report. Technical report, National Grid ESO, London, UK. Nweye, K.; Kaspar, K.; Buscemi, G.; Fonseca, T.; Pinto, G.; Ghose, D.; Duddukuru, S.; Pratapa, P.; Li, H.; Moham-madi, J.; Ferreira, L. L.; Hong, T.; Ouf, M.; Capozzoli, A.; and Nagy, Z. 2025. CityLearn v2: energy-flexible, resilient, occupant-centric, and carbon-aware management of grid-interactive communities. Journal of Building Performance Simulation , 18(1): 17–38. Sajjad, I. A.; Chicco, G.; and Napoli, R. 2016. Definitions of Demand Flexibility for Aggregate Residential Loads. IEEE Transactions on Smart Grid , 7(6): 2633–2643. Sarran, L.; Gunay, H. B.; O’Brien, W.; Hviid, C. A.; and Rode, C. 2021. A data-driven study of thermostat overrides during demand response events. Energy Policy , 153: 112290. Schulman, J.; Wolski, F.; Dhariwal, P.; Radford, A.; and Klimov, O. 2017. Proximal Policy Optimization Algorithms. arXiv:1707.06347. Slaifstein, D.; Chandra Mouli, G. R.; Ramirez-Elizondo, L.; and Bauer, P. 2026. Sequential operation of residential energy hubs using physics-based economic nonlinear MPC. Applied Energy , 408: 127402. Wang, F.; Xiang, B.; Li, K.; Ge, X.; Lu, H.; Lai, J.; and Dehghanian, P. 2020. Smart Households’ Aggregated Ca-pacity Forecasting for Load Aggregators Under Incentive-Based Demand Response Programs. IEEE Transactions on Industry Applications , 56(2): 1086–1097. Wu, Z.; Mu, Y.; Deng, S.; Wang, J.; Bai, Y.; Xue, J.; Li, Y.; Jiang, Y.; Zhang, X.; and Xu, W. 2022. Towards comfortable and cost-effective indoor temperature management in smart homes: A deep reinforcement learning method combined with future information. Energy and Buildings , 275: 112491. Wu, Z.; Mu, Y.; Jin, X.; Xu, Y.; Jia, H.; and Zhao, J. 2026. AE-TD3 with adaptive expert guidance: towards responsive deep reinforcement learning for building HVAC control systems. 
+
+Energy and Buildings , 351: 116744. A Household Persona and Consent Details 
+
+Six base roles span cooperative price-aware commuting, comfort-gated home work, irregular cautious routines, ideal participation, caregiving/low flexibility, and EV optimiza-tion. Atom personas add comfort sensitivity, automatic-control trust, price indifference, and task rigidity. The five main households compose three to five members from these roles. The human role-play comparison remains consistent within each assigned persona. EnergyBridge exceeds HEMA in all six paired comparisons, with persona-specific differ-ences of 15.5–37.4 percentage points (Table 5). The following calendar cases use a separate controlled set of routine anchors and therefore complement, rather than duplicate, the two-persona setpoint test in Table 1. 
+
+# B Exact Metric Definitions 
+
+For event set E, simulated gate acceptance is 
+
+A = |E|−1 X
+
+> e∈E
+
+I[ge = accept] . (8) For household members Me, post-event user score is 
+
+Ue = |Me|−1 X
+
+> j∈Me
+
+ue,j , ue,j ∈ [1 , 5] . (9) VPP-window energy is metered from EnergyPlus and appli-ance loads: 
+
+EVPP  
+
+> e
+
+= X
+
+> t∈[ts,t e)
+
+Pt∆t. (10) Realized shed uses the event baseline estimator only when valid: 
+
+Cactual  
+
+> e
+
+= max(0 , E baseline  
+
+> e
+
+− EVPP  
+
+> e
+
+). (11) For accepted events, this meter deviation is the delivered capacity Cdel  
+
+> e
+
+. For rejected events, event-authorized and de-livered capacity are zero, while Cactual  
+
+> e
+
+remains an audit quantity for the ordinary-fallback trajectory. Counterfactual no-DR values remain diagnostic and are not silently substi-tuted for actual shed. Capacity pass Be is defined in Sec-tion 3.4. Task completion is the fraction of required services whose physical completion and deadline conditions are sat-isfied. Execution-without-consent counts any VPP-specific actuation on a rejected branch; fallback restoration checks that the ordinary fallback is reinstated. 
+
+# C Details of Physical-Control Baselines 
+
+C.1 Common Physical-Control Interface 
+
+MPC Dynamic, Rule+MILP, and PPO use the same physi-cal execution interface. At each 10-minute decision step, the controller receives the current simulation time, indoor and outdoor temperatures, current HVAC setpoint, occupancy proxy, electricity price, active VPP event and target, appli-ance configuration, appliance execution states, and available load or capacity estimates. Each controller returns a normal-ized action record containing an HVAC cooling setpoint and schedules for the controllable household services: washer, dishwasher, dryer, electric water heater (EWH), and electric vehicle (EV). Commands for absent devices are discarded by the execution adapter. 
+
+C.2 MPC Dynamic 
+
+State and prediction horizon. MPC Dynamic operates at a 10-minute resolution, ∆t = 1 /6 hour. Its default prediction horizon is six control steps, corresponding to one hour: 
+
+H = 6 , H∆t = 1 hour . (12) At decision step k, the internal state is 
+
+sk =  T ak , T mk , T ek , P HVAC ,raw  
+
+> k−1
+
+, z EV  
+
+> k
+
+, p EV ,home  
+
+> k
+
+, T EWH  
+
+> k
+
+,pwait  
+
+> j,k
+
+, p run  
+
+> j,k
+
+, p finish  
+
+> j,k
+
+, r j,k , p occ  
+
+> k
+
+, ξ k
+
+,
+
+(13) where T a, T m, and T e are the air, internal-mass, and en-velope temperatures; zEV is EV state of charge; T EWH is tank temperature; and the task variables describe the ex-pected waiting, running, finished, and remaining states of washer, dishwasher, and dryer. The exogenous vector ξk con-tains outdoor temperature, direct and diffuse solar radiation, electricity price, base load, time, day type, and VPP context. At the beginning of each rollout, the unobserved mass and envelope temperatures are initialized to the measured indoor air temperature. Regional thermal and HVAC coefficients are selected separately for Tianjin and Berlin. The prediction model combines a regional 5R3C ther-mal model, device-state models, and an expected household-behavior Markov model. The thermal transition is 
+
+Ca
+
+T ak+1 − T ak
+
+∆t = goa (T ok − T ak ) + gam (T mk − T ak )+ gae (T ek − T ak ) + QHVAC ,eff 
+
+> k
+
++ raQsol  
+
+> k
+
+, (14) 
+
+Cm
+
+T mk+1 − T mk
+
+∆t = gam (T ak − T mk ) + gme (T ek − T mk )+ rmQsol  
+
+> k
+
+, (15) 
+
+Ce
+
+T ek+1 − T ek
+
+∆t = gae (T ak − T ek ) + gme (T mk − T ek )+ geo (T ok − T ek ) + reQsol  
+
+> k
+
+. (16) The cooling and heating fractions are computed as 
+
+uck = clip 
+
+ T ak − T c, sp 
+
+> k
+
+2 , 0, 1
+
+
+
+, (17) 
+
+uhk = clip T h, sp  
+
+> k
+
+− T ak
+
+2 , 0, 1
+
+!
+
+. (18) Simultaneous heating and cooling are prohibited by retaining only the larger fraction. HVAC electrical power is 
+
+P HVAC  
+
+> k
+
+= ¯Qcuck
+
+COP c
+
++ ¯Qhuhk
+
+COP h
+
++ 0 .25 max  uck, u hk
+
+ .
+
+(19) and the effective thermal input additionally contains the fitted cooling, heating, fan, and one-step HVAC-lag coefficients. Household Members represented Principal conflicts tested Dual commuter EV commuter, automation-trusting commuter, student, older adult Evening return, study comfort, chores, hot water, and next-day EV readiness. Multigeneration caregiver Caregiver, older adult, commuter, home worker, child/student proxy Vulnerable-member comfort and hot water take pri-ority over aggressive grid response. Hybrid work from home Home worker, price-aware com-muter, irregular resident Daytime occupancy, work comfort, evening EV ser-vice, and uncertain schedules. Flexible EV commuter EV owner, flexible partner, convenience-oriented member High physical flexibility subject to a hard mobility deadline. Shared roommates EV owner, shift worker, price-indifferent member, rigid-task mem-ber Shared-resource conflicts and partial-veto behavior under irregular occupancy. Table 4: Main household scenarios. All scenarios include HVAC, washer, dryer, dishwasher, water heater, EV, and base load; the distinction is the member and routine structure. Persona n MPC HEMA EB EB–HEMA [95% CI] Holm p
+
+Price-sensitive 97 29.9 55.7 71.1 15.5 [4.1, 26.8] .0135 Comfort-sensitive 116 24.1 44.0 68.1 24.1 [12.1, 36.2] < . 001 
+
+Irregular routine 73 19.2 43.8 63.0 19.2 [2.7, 35.6] .0385 Cooperative regular 88 26.1 38.6 72.7 34.1 [18.2, 48.9] < . 001 
+
+Caregiver 91 28.6 42.9 80.2 37.4 [24.2, 50.5] < . 001 
+
+EV commuter 119 25.2 45.4 75.6 30.3 [17.6, 42.0] < . 001 
+
+Table 5: Human authorization by assigned persona. Rates are percentages. Differences and paired bootstrap intervals compare EnergyBridge (EB) with HEMA. Reported p values are exact McNemar tests with Holm adjustment across the three within-persona method contrasts. Subset n MPC HEMA EnergyBridge Full cohort 584 25.7% 45.2% 72.1% Persona match 577 25.3% 44.5% 71.9% Completion ≥ 60 s 576 24.8% 44.4% 71.7% Combined filter 570 24.4% 43.9% 71.6% Table 6: Authorization-rate sensitivity to response-quality filters. All three method decisions and scored outcomes are complete in every subset. The EV transition is 
+
+P EV  
+
+> k
+
+= min 
+
+
+
+¯P EV uEV  
+
+> k
+
+prequest  
+
+> k
+
+phome  
+
+> k
+
+, (ztarget − zEV  
+
+> k
+
+)+CEV 
+
+ηEV ∆t
+
+
+
+,
+
+(20) 
+
+zEV  
+
+> k+1
+
+= clip 
+
+
+
+zEV  
+
+> k
+
++ ηEV P EV  
+
+> k
+
+∆tCEV , 0, z max 
+
+
+
+. (21) The EWH model accounts for scheduled hot-water draws, standing thermal loss, rated heating power, thermal effi-ciency, and minimum and maximum tank temperatures. For each shiftable task j, the expected transition updates the wait-ing, running, and finished probabilities. A task can start only after its earliest start time and when its remaining duration fits before its latest finish time. Occupancy, EV-at-home probability, device requests, and preferred HVAC setpoints are propagated using expected val-ues from the stored factorized behavior-transition and action-policy matrices. Within a one-hour rollout, the current out-door temperature, price, and base-load forecast are retained unless an explicit forecast is available; solar input follows the implementation’s day/night forecast profile. 
+
+Action space and search. The action contains 
+
+ak =
+
+
+
+T c, sp  
+
+> k
+
+, {sj,k , b skip  
+
+> j,k
+
+}j ,sEWH  
+
+> k
+
+, e EWH  
+
+> k
+
+, T EWH ,sp  
+
+> k
+
+,sEV  
+
+> k
+
+, e EV 
+
+> k
+
+
+
+.
+
+(22) The implementation uses sequential discrete enumeration rather than a continuous nonlinear solver. It first selects the HVAC setpoint, then washer, dishwasher, and dryer sched-ules, followed by the EV and EWH schedules. Each compo-nent is retained before the next component is optimized. 
+
+Finite-horizon objective. For each candidate, the regional dynamic model generates six predicted states. The accumu-lated objective is 
+
+a⋆k = arg min  
+
+> ak∈A k
+> H
+
+X
+
+> h=1
+
+Jk+h(sk+h, a k), (23) where 
+
+Jk = αC Chome  
+
+> k
+
++αU Duser  
+
+> k
+
++αGDgrid  
+
+> k
+
++λslack Dslack  
+
+> k
+
+. (24) Assigned persona n Female (%) Age, mean ± SD Median [IQR] Regions/cities All 584 50.2 32 .2 ± 10 .9 26 [23, 41] 21/80 Price-sensitive 97 46.4 32 .4 ± 11 .7 26 [23, 44] 16/47 Comfort-sensitive 116 50.0 30 .9 ± 9.7 26 [23, 38] 14/45 Irregular routine 73 54.8 34 .3 ± 11 .8 34 [23, 44] 13/35 Cooperative regular 88 50.0 33 .9 ± 12 .0 28 [24, 47.3] 15/45 Caregiver 91 51.6 33 .6 ± 11 .0 30 [24, 43] 17/47 EV commuter 119 49.6 29 .5 ± 9.0 25 [23, 35] 15/54 Table 7: Distribution of the 584 retained human role players. Gender and age are self-reported. Region and city counts use coarse source geolocation parsed before raw IP removal. IQR denotes the interquartile range. Persona Routine anchors EnergyBridge realized schedule EB HEMA MPC R+M PPO Commuter, price-aware Return 18.5; hot water due 21 W 19-21; DW 21-22.5; WH 14-18 4.18 3.82 4.21 4.40 3.22 Stay-home, comfort Home during event; hot water due 21 W 10-12; WH 18-20 3.82 2.37 2.44 2.66 2.64 Irregular, cau-tious Return 19 ± 3; hot wa-ter due 21 W 19-21; WH 18-20 3.16 3.30 2.18 3.67 3.51 Caregiver Occupied; vulnerable member; hot water due 20 W 10-12; WH 17-19 3.80 3.82 2.42 3.71 2.51 Table 8: Calendar adaptation in the one-day no-gate controlled setting. Times are hours of day; W, DW, and WH denote washer, dishwasher, and water-heater operation. The five rightmost columns are realized user scores. The weights are 
+
+(αC , α U , α G) = 
+
+(0 .30 , 0.45 , 0.25) , ordinary step ,
+
+(0 .25 , 0.40 , 0.35) , active VPP step ,
+
+(25) 
+
+λslack = 100 . (26) The normalized home-energy cost is 
+
+Chome  
+
+> k
+
+= pk∆t  P HVAC  
+
+> k
+
++ P task  
+
+> k
+
++ P EWH  
+
+> k
+
++ P EV 
+
+> k
+
+
+
+max {1, 10 pk∆t} .
+
+(27) The 10-kWh-equivalent denominator prevents the monetary term from dominating solely because of the tariff scale. User discomfort is the mean of the active temperature, setpoint-preference, task-timing, and EV-service compo-nents: 
+
+Duser  
+
+> k
+
+= 1
+
+|K k|
+
+X
+
+> ℓ∈K k
+
+dℓ,k . (28) The occupied temperature and setpoint terms are 
+
+dT,k = ok∆t  [T min − T ak ]2+ + [ T ak − T max ]2+
+
+
+
+max {1, (T max − T min )2} , (29) 
+
+dsp ,k = ok∆t
+
+ |T c, sp  
+
+> k
+
+− T pref |
+
+∆T acc − 1
+
+2+
+
+, (30) where ok is the occupancy probability and ∆T acc = 1 ◦Cunless overridden by the household configuration. For a shiftable task j,
+
+dj,k = wj
+
+[spref  
+
+> j
+
+− sj ]+ + [ fj − f pref  
+
+> j
+
+]+
+
+Wj
+
+!q
+
+, q = 2 ,
+
+(31) where Wj is its allowed service-window length. Explicitly skipping a required task incurs unit timing discomfort in addition to service slack. The EV discomfort is the squared normalized departure-SOC shortfall. The grid term penalizes predicted power above the avail-able event or grid target: 
+
+Dgrid  
+
+> k
+
+= [P total  
+
+> k
+
+− P target  
+
+> k
+
+]2+∆t
+
+max {ϵ, (P target  
+
+> k
+
+)2} . (32) The implementation retains a separate realized-DR contri-bution field, but sets it to zero at planning time because the realized reduction and post-event rebound are not yet ob-servable. Thus, no post-event information enters the ex-ante MPC decision. 
+
+Constraints and slack. Action enumeration enforces de-vice presence, setpoint limits, task service windows, task du-ration, scheduling after the current time, EWH timing, and EV charging windows. Remaining violations are represented by squared slack terms: 
+
+Dslack  
+
+> k
+
+= DHVAC −bound  
+
+> k
+
++ Dtemperature −safety 
+
+> k
+
++ Dtask −skip /deadline  
+
+> k
+
++ DEWH −service 
+
+> k
+
++ DEV −SOC  
+
+> k
+
++ Dgrid −limit  
+
+> k
+
+.
+
+(33) Table 9: MPC Dynamic action candidates. Only present and currently unlocked devices are enumerated.                            
+
+> Component Candidate construction HVAC Candidates include 25 .5,26 .0,26 .5,27 .0, and 27 .5◦C, the household’s preferred minimum and maxi-mum, and the current setpoint plus or minus 0.5◦C. Values are clipped to [22 ,28] ◦C. During an active VPP event, candidates below max {Tpref ,max + 0 .5, T c, sp
+> k}are removed when at least one raised-setpoint candidate remains. Washer, dishwasher, and dryer For task j, candidates include its preferred time, earliest feasible time, latest start time, the time immediately before a VPP event, and the event end. Each candidate must be in the configured service window, must not start in the past, and must finish before its deadline. A task already running, completed, or skipped is locked and is not rescheduled. EV Candidate charge starts are {0,2,4,6,20 ,22 }hours, with the configured departure time as the charge end. The forward SOC model penalizes schedules that do not reach the required departure SOC. EWH Candidates include the configured preheat window and several earlier preheat windows; the selected target is 65 ◦C. Candidate windows are checked against the required bath time and service-readiness constraints.
+
+A slack component is activated only when the correspond-ing physical field is available. The MPC objective excludes simulated acceptance, role-play scores, language-model cost, latency, token consumption, and final benchmark metrics. 
+
+C.3 Rule+MILP 
+
+Rule+MILP separates HVAC selection from appliance scheduling. HVAC is selected by regional dynamic-model enumeration, while non-HVAC services are scheduled by a binary mixed-integer program on a 30-minute grid. This de-sign makes the service constraints explicit and avoids intro-ducing language-derived preferences into the physical con-troller. 
+
+HVAC rule and objective. The HVAC module uses the same regional 5R3C model and six-step, one-hour predic-tion horizon as MPC Dynamic. In the standalone baseline, ordinary cooling-setpoint candidates are 
+
+T = {22 .0, 22 .5, . . . , 28 .0} ◦C. (34) When the prediction horizon overlaps a VPP event, a 40 ◦Ccooling-setpoint sentinel is additionally available to represent HVAC-off control. For candidate setpoint T , the standalone HVAC objective is 
+
+JHVAC (T ) = pkEHVAC (T ) + 10 4EHVAC ,VPP (T ), (35) where the two energy quantities are obtained from the six-step dynamic rollout. Consequently, the controller strongly prioritizes suppressing HVAC operation inside the event win-dow. Temperature and PMV remain evaluation outcomes rather than terms in the standalone Rule+MILP objective. If the regional model cannot be loaded, the implementation falls back to a PMV rule and selects the warmest candidate satisfying |PMV | ≤ 0.5, when such a candidate exists. 
+
+MILP variables and objective. Let I be the set of present, unlocked appliances and Ci the feasible candidates generated for appliance i. For every candidate c ∈ C i, define 
+
+xic ∈ { 0, 1}, (36) where xic = 1 means that candidate c is selected. Its energy cost is computed on the 30-minute tariff grid: 
+
+Cic = X 
+
+> τ∈H ic
+
+pτ Pic ∆τ. (37) The candidate objective is 
+
+eCic = Cic + 10 4 IHic ∩ H VPP ̸ = ∅ . (38) The scheduling problem is 
+
+min 
+
+> {xic }
+
+X
+
+> i∈I
+
+X
+
+> c∈C i
+
+eCic xic , (39) 
+
+s.t. X
+
+> c∈C i
+
+xic = 1 , ∀i ∈ I , (40) 
+
+xic ∈ { 0, 1}. (41) The current problem contains one independent choose-one constraint per appliance and therefore decomposes by appli-ance. It is nevertheless solved through the same binary MILP interface using CBC. If the MILP package is unavailable, ex-act enumeration returns the same minimum. Equal-objective candidates are sampled uniformly so that the baseline does not silently add an unmodeled preferred start time; this affects only exact ties. 
+
+Candidate generation and constraints. For washer, dish-washer, and dryer, candidate starts are placed at 30-minute intervals satisfying 
+
+si ≥ max {tk, e i}, (42) 
+
+si + di ≤ li, (43) 
+
+si + di < t run −end , (44) where ei, li, and di are the earliest time, latest finish, and duration. Overnight windows are converted to absolute sim-ulation time before these tests. To ensure that completion is recorded before the simulator stops, one additional 30-minute grid interval is retained before a finite run boundary. Non-shiftable services use their configured fixed start. For the EWH, preheat candidates extend from the current time to the required bath deadline. The preheat duration is taken from the configured service window, the target temper-ature is 63 ◦C, and the energy-cost proxy scales rated power by 63 − 40 65 − 40 . (45) For the EV, the required charging energy is 
+
+EEV ,need = max Edaily −drive , [ztarget − zEV  
+
+> k
+
+]+CEV ,
+
+(46) and the charging duration is rounded upward to the nearest 30 minutes: 
+
+dEV = 0 .5
+
+ EEV ,need 
+
+0.5 ηEV ¯P EV 
+
+
+
+. (47) EV candidates must fit before the daily and simulation cut-offs. Whenever at least one candidate for an appliance avoids every VPP window, all VPP-overlapping candidates for that appliance are removed before optimization. The 10 4 penalty is retained for diagnostics and for the case in which no VPP-safe service schedule exists. An appliance is locked for the remainder of the day once it is running, completed, skipped, ready at the required bath time, or has reached its EV target. The complete Rule+MILP objective reported in the con-troller trace is 
+
+JRule+MILP = JHVAC + X
+
+> i,c
+
+eCic xic . (48) No simulated acceptance or post-event capacity result is used during this optimization. 
+
+C.4 PPO Controller 
+
+Markov decision process. The PPO baseline is formulated as a finite-horizon Markov decision process ⟨S , A, P, r, γ ⟩
+
+with a 10-minute decision interval and discount factor γ =0.995 . The policy maximizes 
+
+max  
+
+> θ
+
+Eπθ
+
+"K−1X
+
+> k=0
+
+γkrk + γK Rterminal 
+
+#
+
+. (49) Regional PPO checkpoints are trained in the fast dynamic en-vironment using a single-step transition of the same regional 5R3C model. Final benchmark evaluation uses deterministic policy inference in the common EnergyPlus environment. 
+
+Observation space. The observation is a 41-dimensional real vector. Its exact composition is given in Table 10. 
+
+Action space. The neural policy outputs 
+
+uk ∈ [−1, 1] 8. (50) Each coordinate is linearly decoded into the physical action shown in Table 11. The HVAC setpoint is applied at every decision. Appli-ance schedules are accepted at most once per device per day. Outputs for absent devices are ignored. For washer, dish-washer, and dryer, a non-DR-adjustable household configu-ration overrides the policy output with the household’s pre-ferred routine time. Their scheduling commands are withheld when the decision itself occurs inside an active VPP window. EWH preheat lasts three hours, with its end capped at 18:00. EV mode is fixed to smart ; its start is additionally clipped to the household arrival time and its end to the allowed pre-departure range. 
+
+Step reward. Let ek = P total  
+
+> k
+
+∆t be step energy, pk the current price, sprice ∈ [0 , 1] the price-sensitivity proxy, and 
+
+sVPP ∈ [0 , 1] the VPP-cooperation proxy. The occupied comfort violation is 
+
+dTk = [ T min − T ak ]+ + [ T ak − T max ]+, (51) where the comfort band is read from the household configu-ration. The price multiplier is 
+
+mpk = 1 + 0 .2sprice max 
+
+
+
+0, pk
+
+0.15 
+
+
+
+. (52) The step reward used by the released checkpoints is 
+
+rk = clip 
+
+
+
+−0.3ekmpk + 8 okdTk + 2 sVPP vkek
+
+,
+
+− 50 , 50 
+
+
+
+,
+
+(53) where ok = I[8:00 ≤ hk < 22:00] and vk is the active-VPP indicator. Thus PPO is penalized for energy consump-tion, price-weighted energy, occupied comfort violations, and event-window consumption. 
+
+Terminal reward. The episode-end reward represents ser-vice fulfillment and VPP avoidance: 
+
+Rterminal = 200 fwasher + 200 fdishwasher + 200 fdryer 
+
++ 100 fEWH + 300 fEV + 100 favoid 
+
++ max {0, 80 − 3EVPP }.
+
+(54) Here, the three shiftable-load fractions measure schedules issued early enough to finish before their configured latest times; fEWH is the fraction of required bath events for which hot water is ready; fEV is the fraction reaching target SOC; and favoid is the fraction of present shiftable and EWH ser-vices that are scheduled feasibly without operating during a VPP event. EVPP is total episode energy consumed inside all VPP windows. 
+
+PPO optimization and checkpoint settings. The policy and value functions use two-layer multilayer perceptrons with 256 hidden units per layer. PPO uses a rollout length of 432 steps per environment, batch size 2,048, learning rate 3 ×
+
+10 −4, γ = 0 .995 , GAE parameter 0.95, clipping parameter 0.2, ten optimization epochs per update, entropy coefficient 0, value-loss coefficient 0.5, and maximum gradient norm 0.5. Thirty-two dynamic-model environments are run in parallel. Both regional checkpoints were requested for ten million training steps and contain 10,008,576 steps because the final vectorized rollout crosses the requested boundary. The PPO surrogate is 
+
+Lclip (θ) = Ek
+
+h
+
+min 
+
+
+
+ρk(θ) bAk,
+
+clip  ρk(θ), 1 − ϵ, 1 + ϵ bAk
+
+i 
+
+.
+
+(55) with ϵ = 0 .2 and ρk(θ) = πθ (ak | sk)/π θold (ak | sk). The saved training configuration uses advantage normalization and ten epochs per rollout. Table 10: PPO observation vector. Scaling is applied before the vector is passed to the policy network. 
+
+Group Dim. Features and scaling Time 4 sin(2 πh/ 24) , cos(2 πh/ 24) , day index divided by 7, and time to the next 18:00 VPP event divided by 24. Thermal and occu-pancy 4 Indoor temperature divided by 40, outdoor temperature divided by 45, current setpoint divided by 30, and the binary occupancy indicator I[8:00 ≤ h < 22:00] .VPP context 4 Active-event indicator, scaled event target, committable capacity divided by 2, and recom-mended bid divided by 2. Capacity values are set to zero outside an active event. Price 5 Current price and the next-six-hour mean, maximum, and minimum prices, each divided by 0.3, together with a peak-price indicator. The look-ahead statistics use 30-minute samples over the next six hours. Preference proxy 4 Comfort weight, price sensitivity, task flexibility, and VPP cooperation, derived from the structured persona tags and scoring weights. Washer 5 Presence, execution state divided by 3, scheduled hour divided by 24, earliest hour divided by 24, and latest hour divided by 24. Execution state encodes absent/skipped, waiting, running, and completed states. Dishwasher 5 The same five fields as the washer. EWH 5 Presence, preheat-request indicator, preheat start and end divided by 24, and required bath time divided by 24. EV 3 Presence, current SOC, and at-home indicator. Refrigerator 2 Presence and power divided by 2. The refrigerator is observed but is not directly controlled. Total 41 The dryer has an action coordinate but no separate observation block; its valid interval and execution constraints are enforced by the action decoder and daily scheduling adapter. 
+
+Table 11: PPO action vector and physical decoding ranges. 
+
+Dim. Physical action Decoder Range 0 HVAC cooling setpoint 25 + 3 u0 [22 , 28] ◦C1 Washer start hour 13 .5 + 5 .5u1 [8 , 19] h2 Dishwasher start hour 20 .25 + 1 .25 u2 [19 , 21 .5] h3 EWH preheat start 12 + 5 u3 [7 , 17] h4 EWH target temperature 60 + 15 u4 [45 , 75] ◦C5 EV charge start 19 .25 + 0 .75 u5 [18 .5, 20] h6 EV charge end 5.75 + 1 .75 u6 [4 , 7.5] h7 Dryer start hour 13 .75 + 5 .75 u7 [8 , 19 .5] h
+
+# D Ordinary-Routine Physical Reference 
+
+We additionally execute the same five households and two regions for seven days under an ordinary no-DR routine. This physical reference quantifies the event-window load retained without a VPP-specific household plan and is reported sepa-rately from the agent/controller rankings. Region No-DR kWh/h EB kWh/h Reduction No-DR cost EB cost Tianjin 5.489 1.597 70.9% 63.242 54.681 Berlin 5.503 1.605 70.8% 4.432 3.842 Table 12: EnergyBridge against the separately executed ordinary-routine reference. Cost uses each region’s native unit. EnergyBridge removes about 71% of ordinary-routine event-window energy in both regions. Daily cost also falls by 13.5% in Tianjin and 13.3% in Berlin. This separate ref-erence makes the physical meaning of the 1.60 kWh/h main result directly observable without mixing a non-participating routine into the consent ranking. 
+
+# E Agent Interaction Resource Accounting 
+
+The frozen logs record every language-model call and token. We report measured resource counts rather than converting them through a model-price assumption, which keeps the comparison independent of changing API prices. Region Method Calls Prompt tok. Completion tok. Total tok. Tianjin EnergyBridge 7.0 108,451 5,252 113,703 HEMA 4.0 98,307 2,627 100,934 Berlin EnergyBridge 7.0 108,961 4,897 113,858 HEMA 4.0 96,152 2,666 98,818 Table 13: Measured LLM resources per household-day. Both agent methods use the same 35 household-days per region. The additional interaction budget corresponds to onboard-ing, skill selection, event-level proposal generation, and feedback-memory updates. Alongside 12.7-15.2% more to-kens than HEMA, EnergyBridge shows observed regional differences of 0.786-0.854 in score, 40.0-42.9 percentage points in simulated gate acceptance, 23.4-35.2% in VPP-window energy, and 5.1-9.7% in electricity cost. Together, these values make the observed performance-interaction trade-off explicit. 
+
+# F Capacity Retrieval Validation and Sensitivity 
+
+We evaluate the June-to-July temporal capacity validation for k ∈ { 1, 3, 5, 7, 10 , 15 }. Every row evaluates the same 208 accepted events; only the number of historical neighbors changes.                                    
+
+> knRetrieval pass MAE (kWh) Mean ratio IS pass 1208 85.10% 0.561 0.980 85.10% 3208 86.06% 0.574 0.971 86.06% 5208 86.54% 0.578 0.946 86.54%
+> 7208 84.13% 0.590 0.939 84.13% 10 208 81.25% 0.600 0.924 81.25% 15 208 77.40% 0.621 0.916 78.37%
+
+Table 14: Capacity sensitivity to retrieval size on the July validation cohort. Pass denotes 0.8 ≤ Cactual / bC ≤ 1.2;MAE is in kWh. Within this validation sensitivity set, top-5 gives the best target-band coverage, while top-1 minimizes MAE by using the closest historical analogue. EnergyBridge reports top-5 because the benchmark prioritizes band coverage rather than only average absolute error. Compact neighborhoods remain stable under importance weighting, which adds 0.97 points for the wider k = 15 neighborhood.

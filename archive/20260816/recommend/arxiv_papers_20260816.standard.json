@@ -1,0 +1,179 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-16T20:19:12.251639+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2608.08425v1",
+      "source": "arxiv",
+      "title": "PSP: Low-Overhead Packet-Level Load Balancing for Stale-State and Bandwidth-Asymmetric Networks",
+      "abstract": "With the rapid growth of large language model training and generative artificial intelligence services, data center networks face severe micro-burst traffic and high concurrency. Traditional hash-based flow-level load balancing cannot sense link states, leading to hash collisions, hotspot congestion, and tail latency in multipath Clos networks. Existing packet-level schemes are constrained by stale state information, high hardware complexity, and poor adaptation to heterogeneous links.   To address these issues, this paper proposes probabilistic state-proportional (PSP) dispatching, a packet-level load balancing algorithm. Using a Band-based discrete state representation, PSP replaces global sorting with local probability mapping, reducing hardware complexity while suppressing herding and oscillations caused by stale states.   Experiments on a cycle-accurate simulator show that PSP is robust across port scales, bandwidth-limited paths, and fixed-flow interference. It outperforms join-the-shortest-queue (JSQ) scheduling and Random in loss rate, 99th-percentile buffer occupancy, and scalability, while remaining competitive with Top-k at lower hardware cost. PSP provides an effective balance among performance, stability, and overhead for artificial intelligence data centers.",
+      "authors": [
+        "Jiaqi Liu",
+        "Chunyang Zhang",
+        "Heng Pan",
+        "Yanbiao Li"
+      ],
+      "primary_category": "cs.NI",
+      "categories": [
+        "cs.NI",
+        "cs.DC"
+      ],
+      "published": "2026-08-09T02:47:03+00:00",
+      "link": "https://arxiv.org/pdf/2608.08425v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Data center packet-level load balancing and scheduling",
+      "llm_evidence_cn": "数据中心数据包级负载均衡与调度",
+      "llm_evidence": "数据中心数据包级负载均衡与调度",
+      "canonical_evidence": "数据中心数据包级负载均衡与调度",
+      "llm_tldr_en": "PSP proposes a probabilistic state-proportional dispatch algorithm for packet-level load balancing in data centers, addressing stale state and bandwidth asymmetry with low overhead.",
+      "llm_tldr_cn": "数据中心网络在 LLM 训练等场景下面临严重微突发流量，传统哈希负载均衡无法感知链路状态。本文提出概率状态比例（PSP）分派算法，使用基于带的离散状态表示，以局部概率映射替代全局排序，从而降低硬件复杂度并适应异构链路。实验结果表明，PSP 在陈旧状态和带宽不对称情况下显著减少热点拥塞和尾延迟。这为数据中心任务调度提供了低成本高性能的负载均衡解决方案。",
+      "llm_tldr": "数据中心网络在 LLM 训练等场景下面临严重微突发流量，传统哈希负载均衡无法感知链路状态。本文提出概率状态比例（PSP）分派算法，使用基于带的离散状态表示，以局部概率映射替代全局排序，从而降低硬件复杂度并适应异构链路。实验结果表明，PSP 在陈旧状态和带宽不对称情况下显著减少热点拥塞和尾延迟。这为数据中心任务调度提供了低成本高性能的负载均衡解决方案。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.08691v1",
+      "source": "arxiv",
+      "title": "EnergyBridge: Benchmarking Household Energy Management, User Participation, and Grid Flexibility",
+      "abstract": "Residential virtual power plants (VPPs) can provide grid flexibility by shifting household demand, but physical flexibility becomes dependable capacity only when residents authorize a plan and the promised response is delivered. Existing benchmarks evaluate control but omit event-specific authorization. We present EnergyBridge, a benchmark and agent framework connecting capacity reporting, household authorization, and physical execution. It combines region-specific EnergyPlus environments for Tianjin and Berlin with an LLM-based User Participation Simulator. Against 584 persona- and event-matched human role-play judgments, the LLM-based User Participation Simulator preserves method ordering with a 5.3-point mean absolute acceptance error. Across conventional controllers and agent baselines, EnergyBridge achieves the highest simulated authorization, lowest event-window energy, and the most reliable capacity commitment in both regions. We release human data and codes for reproducible human-centered grid-flexibility research: https://github.com/Agentic-Intelligence-Lab/EnergyBridge.",
+      "authors": [
+        "Xudong Wu",
+        "Zeqing Wu",
+        "Jiarui Zhang",
+        "Xuhao Fan",
+        "Ziang Ding",
+        "Yuming Zhuang",
+        "Mingqi Yuan",
+        "Yilun Du",
+        "Hongjie Jia",
+        "Yunfei Mu",
+        "Jiayu Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-09T13:12:33+00:00",
+      "link": "https://arxiv.org/pdf/2608.08691v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Grid flexibility and energy management benchmark with code",
+      "llm_evidence_cn": "电网灵活性与能源管理基准及代码",
+      "llm_evidence": "电网灵活性与能源管理基准及代码",
+      "canonical_evidence": "电网灵活性与能源管理基准及代码",
+      "llm_tldr_en": "EnergyBridge presents a benchmark and agent framework that connects household energy management, user participation, and grid flexibility, enabling event-specific authorization evaluation.",
+      "llm_tldr_cn": "居民虚拟电厂能够通过调整家庭负荷为电网提供灵活性，但需要居民授权并实际执行。现有基准往往忽略事件级授权环节。为此，本文提出 EnergyBridge，将容量报告、家庭授权与物理执行连接起来，并结合 EnergyPlus 环境与 LLM 用户参与模拟器。在 584 个情境匹配的判断中，该模拟器保持了方法排序，平均绝对接受度差异为 5.3 分。这为电网调度和家庭能源管理研究提供了更贴近实际的基准。",
+      "llm_tldr": "居民虚拟电厂能够通过调整家庭负荷为电网提供灵活性，但需要居民授权并实际执行。现有基准往往忽略事件级授权环节。为此，本文提出 EnergyBridge，将容量报告、家庭授权与物理执行连接起来，并结合 EnergyPlus 环境与 LLM 用户参与模拟器。在 584 个情境匹配的判断中，该模拟器保持了方法排序，平均绝对接受度差异为 5.3 分。这为电网调度和家庭能源管理研究提供了更贴近实际的基准。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.08361v1",
+      "source": "arxiv",
+      "title": "Do Stack Overflow Answer Edits Occur Beyond Java? A Replication on Python and JavaScript",
+      "abstract": "Stack Overflow answers are continually revised by the community, and the edits made to their code snippets are a potential source of improvements for code that has been reused in open-source projects. A recent empirical study established this for Java, reporting that 16.11% of accepted Java answers are edited and that the resulting recommendations concentrate in highly popular GitHub projects. Whether that behaviour is a property of Stack Overflow or a property of the Java community has remained an open question. We replicate the study on Python and JavaScript, the two most widely used languages alongside Java, applying the same SOTorrent-based extraction pipeline, the same clone search tool, Siamese+, and the same project popularity criteria. Analysing 840,132 accepted Python answers and 1,144,185 accepted JavaScript answers, we find that 41.25% and 39.10% respectively have been edited at least once, roughly two and a half times the Java rate, while the number of revisions per edited answer is almost invariant across the three languages at 2.78, 2.68 and 2.82. Searching 100 GitHub projects per language, we find that the number of matched answer edits increases monotonically from low- to medium- to high-popularity projects in both languages, from 80 to 156 to 977 for Python and from 32 to 71 to 353 for JavaScript. The difference is statistically significant for Python but not for JavaScript. The central findings of the original study therefore generalise beyond Java, with the supply of candidate improvements considerably larger in both replication languages than in the original.",
+      "authors": [
+        "Chaiyong Ragkhitwetsagul",
+        "In-on Wiratsin",
+        "Matheus Paixao",
+        "Denis De Sousa",
+        "Pongpop Lapvikai",
+        "Peter Haddawy"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-08T23:13:50+00:00",
+      "link": "https://arxiv.org/pdf/2608.08361v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Replication study applying existing pipeline to Python and JavaScript; reproducible research with likely released code and data.",
+      "llm_evidence_cn": "重复研究将已有流程应用于Python和JavaScript，属可复现研究，很可能公开代码与数据。",
+      "llm_evidence": "重复研究将已有流程应用于Python和JavaScript，属可复现研究，很可能公开代码与数据。",
+      "canonical_evidence": "重复研究将已有流程应用于Python和JavaScript，属可复现研究，很可能公开代码与数据。",
+      "llm_tldr_en": "This replication extends a Stack Overflow code-snippet edit study from Java to Python and JavaScript, applying the same SOTorrent-based pipeline and Siamese+ clone search. It tests whether the earlier findings generalize across languages.",
+      "llm_tldr_cn": "本文在Python和JavaScript上重复了针对Stack Overflow答案编辑的既有实证研究，使用相同的SOTorrent提取流程和Siamese+克隆搜索工具。研究旨在判断早前在Java上发现的行为是Stack Overflow的普遍属性还是Java社区的特有属性。作为可复现研究，该论文通常伴随代码与数据发布，与用户寻找含代码论文的需求高度契合。",
+      "llm_tldr": "本文在Python和JavaScript上重复了针对Stack Overflow答案编辑的既有实证研究，使用相同的SOTorrent提取流程和Siamese+克隆搜索工具。研究旨在判断早前在Java上发现的行为是Stack Overflow的普遍属性还是Java社区的特有属性。作为可复现研究，该论文通常伴随代码与数据发布，与用户寻找含代码论文的需求高度契合。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.10906v1",
+      "source": "arxiv",
+      "title": "GitSkills: A Dataset of Agent Skills on GitHub",
+      "abstract": "An agent skill is a folder containing a SKILL.md file with instructions for a language-model agent, optionally accompanied by scripts and reference files. The agent loads the skill when it judges that a task matches the skill description. Anthropic introduced the format in October 2025 as an open specification. Nine months later, we find that skill files in the millions sit in public GitHub repositories. Skills are unlike the artifacts the SE research community usually mines: they are written mainly in natural language, a model selects them probabilistically at run time, and no compiler or type checker verifies the selection. They also have no central registry or package manager, so they spread by copying folders between repositories. How developers write, reuse, and maintain skills is therefore an empirical question, and no existing dataset records this population. We present GitSkills, a dataset of 3,797,117 SKILL.md files collected from 282,200 public repositories in July 2026. The dataset retains every file occurrence with its repository, path, and content hash. It groups identical files into 1,877,981 distinct contents and enriches one representative per group with the full text, parsed front matter, folder contents, repository metadata, and, for a subset, the commit history of the file. A single self- contained SQLite file supports research on the adoption, reuse, structure, authorship, maintenance, and security of agent skills.",
+      "authors": [
+        "Giuseppe Destefanis",
+        "Daniel Graziotin",
+        "Matteo Vaccargiu",
+        "Marco Ortu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-08-11T13:28:27+00:00",
+      "link": "https://arxiv.org/pdf/2608.10906v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Provides a dataset on GitHub with scripts",
+      "llm_evidence_cn": "在GitHub上提供包含脚本的数据集",
+      "llm_evidence": "在GitHub上提供包含脚本的数据集",
+      "canonical_evidence": "在GitHub上提供包含脚本的数据集",
+      "llm_tldr_en": "GitSkills presents a large-scale dataset of agent skill files mined from GitHub, enabling studies of how such skills are written, reused, and maintained.",
+      "llm_tldr_cn": "代理技能是一种包含 SKILL.md 文件和可选脚本的文件夹，但在 GitHub 上已出现数百万且缺乏统一管理。本文构建了 GitSkills 数据集，系统收集并分析这些技能的编写、复用和维护模式。研究发现技能主要以自然语言描述，由模型运行时概率选择，且没有集中注册机制。该数据集为理解软件工程中新型代码工件提供了宝贵资源。",
+      "llm_tldr": "代理技能是一种包含 SKILL.md 文件和可选脚本的文件夹，但在 GitHub 上已出现数百万且缺乏统一管理。本文构建了 GitSkills 数据集，系统收集并分析这些技能的编写、复用和维护模式。研究发现技能主要以自然语言描述，由模型运行时概率选择，且没有集中注册机制。该数据集为理解软件工程中新型代码工件提供了宝贵资源。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
