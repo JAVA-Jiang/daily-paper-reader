@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-17",
+  "date": "2026-08-17",
+  "generated_at": "2026-08-17T20:37:13",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/17/2608.13889v1-consensus-gated-multi-agent-neural-architecture-search-for-seismic-fault-segmentation",
+      "section": "deep",
+      "title_en": "Consensus-gated Multi-Agent Neural Architecture Search for Seismic Fault Segmentation",
+      "authors": "Shehram Baig, Ahmad Mustafa",
+      "date": "2026-08-14",
+      "pdf": "https://arxiv.org/pdf/2608.13889v1",
+      "score": "8.0",
+      "evidence": "多智能体NAS系统自动编写PyTorch实现，含源代码可能性高",
+      "tldr": "地震断层分割常借用视觉领域的网络，但标注数据稀缺，手动设计耗时，经典NAS受限于搜索空间和算力。本文提出一种基于多智能体共识的NAS方法，由三个大语言模型辩论达成一致后生成并审查PyTorch代码，在自动训练验证循环中迭代。仅用单GPU和8个候选即发现425K参数的模型，F1达0.578，超越31M参数的U-Net，成本约1个GPU天。",
+      "tags": "query:code-paper",
+      "abstract_en": "Neural networks for seismic fault segmentation are often borrowed from computer vision and medical imaging domains where they train under relatively much larger labeled data resources. Optimizing their architecture under tight labeled data budgets as are common in geophysical applications is not a trivial problem. Manually designing data-optimal architectures is time-consuming while classical neural architecture search (NAS) is restricted to hand-crafted search spaces and large compute budgets. We present an agentic NAS system in which a panel of three large language models (Claude, GPT-5.1, and Gemini~2.5~Pro) debates each candidate architecture to unanimous consensus, authors the complete PyTorch implementation, cross-reviews it, and submits it to an automated validate-train-score loop with a hard 450K parameter budget, keep-or-revert lineage, and a memory of failed mechanisms. Operating on source code rather than a predefined operation menu, the search ran on a single consumer GPU and trained only eight candidates. It discovered \\ours{}: a 425K-parameter encoder-decoder with a strip-pooling bottleneck, squeeze-and-excitation gating, an asymmetric one-conv decoder, and a feature-pyramid fusion neck. Trained under a protocol identical to all baselines on sections derived from the Thebe fault dataset, it attains the highest F1 (0.578) and IoU of all models tested while being the smallest, outperforming a published-capacity U-Net (31M parameters, F1 0.484), DeepLabV3-ResNet50 (39.6M, 0.516), an Attention U-Net(1.83M, 0.502). The search cost 101 LLM calls ($\\sim$1.15M input / 0.39M output tokens) and roughly one GPU-day, making consensus-gated LLM panels a practical, low-cost route to domain-specific architecture discovery.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

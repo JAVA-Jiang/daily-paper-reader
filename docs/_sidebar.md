@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-17 <!--dpr-date:20260817-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/17/2608.13889v1-consensus-gated-multi-agent-neural-architecture-search-for-seismic-fault-segmentation" data-sidebar-item="{&quot;title&quot;: &quot;Consensus-gated Multi-Agent Neural Architecture Search for Seismic Fault Segmentation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.13889v1-consensus-gated-multi-agent-neural-architecture-search-for-seismic-fault-segmentation&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;多智能体NAS系统自动编写PyTorch实现，含源代码可能性高&quot;}">Consensus-gated Multi-Agent Neural Architecture Search for Seismic Fault Segmentation</a>
   * 2026-08-16 <!--dpr-date:20260816-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/16/2608.08425v1-psp-low-overhead-packet-level-load-balancing-for-stale-state-and-bandwidth-asymmetric-networks" data-sidebar-item="{&quot;title&quot;: &quot;PSP: Low-Overhead Packet-Level Load Balancing for Stale-State and Bandwidth-Asymmetric Networks&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.08425v1-psp-low-overhead-packet-level-load-balancing-for-stale-state-and-bandwidth-asymmetric-networks&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;数据中心数据包级负载均衡与调度&quot;}">PSP: Low-Overhead Packet-Level Load Balancing for Stale-State and Bandwidth-Asymmetric Networks</a>
