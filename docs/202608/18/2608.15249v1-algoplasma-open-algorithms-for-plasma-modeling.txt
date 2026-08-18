@@ -1,0 +1,292 @@
+Title: AlgoPlasma: Open Algorithms for Plasma Modeling
+
+URL Source: https://arxiv.org/pdf/2608.15249v1
+
+Published Time: Tue, 18 Aug 2026 00:49:58 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# AlgoPlasma: Open Algorithms for Plasma Modeling 
+
+Yinjian Zhao a, ∗, Zhongping Zhao a, Zhe Liu a, Baisheng Wang a, Zilong Peng a, Xin Luo a, Lihuan Xie a, Xi Chen a, Zhijun Zhou a, Kunpeng Zhong a,Yingjie Chen a, Changzheng Hu a
+
+> aSchool of Energy Science and Engineering, Harbin Institute of Technology, Harbin 150001, People’s Republic of China
+
+Abstract 
+
+AlgoPlasma is an open-source library in which core numerical algorithms for plasma modeling are implemented as modular, well-documented, and inde-pendently testable components. Rather than offering a complete simulation code, it allows researchers to select, adapt, and assemble the required com-ponents into application-specific workflows. The current release is centered on particle-based simulation, while AlgoPlasma is designed to encompass a broader range of approaches to plasma modeling. It provides components for particle initialization and advancement, particle–grid coupling, field solu-tion, collision modeling, parallel data exchange, input/output, and selected fluid updates. Documentation links mathematical formulations to source im-plementations, interfaces, and usage, while verification and validation cases evaluate numerical accuracy and physical behavior. AlgoPlasma thus estab-lishes a shared algorithmic foundation for plasma modeling, transforming repeatedly reimplemented numerical methods into open, reusable, tested, and explainable components for research, verification, education, and collab-orative development. 
+
+Keywords: AlgoPlasma, Plasma modeling, Numerical algorithms, Parallel computing arXiv:2608.15249v1 [physics.plasm-ph] 15 Aug 2026 Nr. Code metadata description Metadata 
+
+C1 Current code version v1.0 
+
+C2 Permanent GitHub link to code/repository used for this code version 
+
+https://github.com/ AlgoPlasma/AlgoPlasma/ releases/tag/v1.0.0 
+
+C3 Legal Code License Apache License 2.0 (Apache-2.0) C4 Code versioning system used Git C5 Software code languages, tools, and services used Fortran, C/C++, Python 3, Bash; Doxygen, Graphviz; Read the Docs C6 Compilation requirements, operat-ing environments & dependencies Linux; GNU Fortran, GCC, CMake, GNU Make; MPI, OpenMP, HYPRE, HDF5; NumPy, SciPy, Matplotlib, ImageIO, Sphinx, Breathe C7 If available Link to developer docu-mentation/manual 
+
+https://algoplasma. readthedocs.io/en/latest/ index.html 
+
+C8 Support email for questions contact@algoplasma.com 
+
+> Table 1: Code metadata (mandatory)
+
+Required Metadata Current code version 1. Motivation and significance 
+
+Numerical simulation is an essential tool for investigating plasma behav-ior across a wide range of scientific and engineering applications, such as laboratory and space plasmas, fusion energy, plasma-based acceleration, and electric propulsion, among others. Plasma dynamics involve nonlinear, collec-tive, and multiscale processes and are therefore simulated using fluid, kinetic, hybrid, or reduced models according to the physical regime and research ob-jective. Among particle-based kinetic approaches, the particle-in-cell (PIC) method self-consistently evolves particle distributions and electromagnetic fields and has become central to computational plasma research [1, 2, 3]. Despite differences in their physical descriptions, these models rely on re-curring numerical operations, including field solution, collision treatment,     
+
+> ∗Corresponding author.
+> Email address: zhaoyinjian@hit.edu.cn (Yinjian Zhao)
+> URL: https://homepage.hit.edu.cn/zhaoyinjian (Yinjian Zhao)
+
+2continuum updates, parallel data exchange, and diagnostic input/output; particle-based and hybrid methods additionally require particle advancement and particle–grid transfer. Although the underlying methods are well estab-lished, their implementation requires careful treatment of time integration, coordinate systems, boundary conditions, stability, conservation, and com-putational efficiency. Reimplementing these operations for each application duplicates development effort and may leave important numerical assump-tions implicit. Conversely, implementations embedded in complete simula-tion codes are often coupled to application-specific data structures and ex-ecution procedures, making individual algorithms difficult to inspect, test, modify, or reuse independently. For example, WarpX and Smilei are large-scale, high-performance PIC codes that support complete simulation workflows across a broad range of applica-tions [4, 5]. Their broad capabilities and performance-oriented architectures naturally entail substantial software complexity, which can make individual algorithms difficult to isolate, study, and reuse. EPOCH and PICLas also adopt modular designs, but are intended primarily as integrated simulation frameworks rather than as collections of stand-alone algorithm implementa-tions [6, 7]. AlgoPlasma was developed to fill this gap by providing plasma-modeling algorithms as inspectable, testable, adaptable, and reusable source-level components that can be used without adopting a complete simulation application. AlgoPlasma organizes core numerical algorithms into explicit, separable, and reusable components. The current release includes particle pushers, particle– grid coupling, Poisson and Maxwell solvers, collision models, particle initial-ization, parallel data exchange, input/output, and selected fluid updates for Cartesian and cylindrical and other geometries. Rather than prescribing a fixed workflow, AlgoPlasma allows researchers to retain control over the phys-ical model and overall simulation procedure. Users can select the required components, examine their interfaces and corresponding validation cases, and adapt or integrate them into application-specific programs. The current implementation is written primarily in Fortran, complemented by support-ing C and Python code, with MPI and OpenMP providing distributed- and shared-memory parallelism. Future releases will broaden language support and introduce GPU acceleration. Although AI tools have made code generation and cross-language transla-tion increasingly accessible [8, 9], a central challenge remains: translating a numerical method from the literature into a modular implementation whose accuracy and numerical behavior have been rigorously verified. AlgoPlasma addresses this challenge by providing each algorithm with a tested reference implementation, stand-alone documentation, and corresponding verification 3and validation cases. These resources provide a rigorous foundation for AI-assisted programming, accelerating the development of complex simulation software while preserving accuracy and reliability. The detailed documenta-tion links each algorithm’s mathematical formulation to its implementation, interface, and usage, enabling new users to progress from understanding the method to running its accompanying examples and validation cases, and ulti-mately to integrating it into a coupled model, without first having to master the architecture of a complete plasma application. AlgoPlasma evolved from the earlier Plasma Modeling Subprogram Library (PMSL), which provided the algorithmic basis for PMSL-PIC-HET-3D, an in-house three-dimensional PIC code introduced and assessed against WarpX in Hall-thruster simulations [10]. The underlying algorithmic system and the application codes derived from it subsequently supported studies of magnetic-field configurations and their effects on electron drift instability [11, 12, 13], as well as analyses of electron transport through three-dimensional PIC fields, test-particle dynamics, and near-wall transport pathways [14, 15, 16]. Re-lated developments addressed particle–fluid coupling and neutral transport [17, 18], together with conservative charge and current deposition on nonuni-form cylindrical meshes [19]. The complete application codes developed for these studies are not included in the public release. Instead, AlgoPlasma distills reusable algorithm implementations, validation procedures, and doc-umentation from this body of research into a shared foundation for develop-ing, examining, and verifying plasma simulation methods across application domains. 
+
+2. Software description 
+
+2.1. Library architecture 
+
+AlgoPlasma is organized around three complementary elements: source-level algorithm implementations, focused verification and validation (V&V) cases, and documentation linking the underlying numerical formulations to source interfaces and reference results (Fig. 1). Together, these elements make each numerical method not merely a source routine, but a documented and as-sessable computational unit. The numerical core consists of modules grouped by computational task. These modules operate on caller-managed data and can be selected and inte-grated without adopting a central driver or prescribed simulation workflow, leaving users free to define application-specific data structures, boundary conditions, physical coupling, and execution order. Supporting utilities pro-vide selected solver interfaces, data preparation, analysis, and visualization, with external dependencies introduced only where required. 4Figure 1: Overall architecture of AlgoPlasma as a reusable algorithm library. 
+
+Most core components are accompanied by focused V&V cases that call the same source routines used in applications. These cases assess numerical ac-curacy, convergence, stability, conservation, or expected physical behavior against analytical solutions, reference results, or established benchmarks. The documentation describes the governing formulations, interfaces, usage, case configurations, and interpretation of results. Narrative pages are gener-ated with Sphinx, API information is extracted with Doxygen, and Breathe integrates the API content into Sphinx. 
+
+2.2. Core functionality 
+
+The current functionality of AlgoPlasma is organized into ten letter-coded categories, A–J. Each category corresponds to a distinct computational func-tion, while alternative algorithmic implementations within a category are distinguished by numerical identifiers, such as A01 and A02 . For clarity, these categories are grouped according to the data on which they operate and their roles in plasma simulation, as shown in Fig. 2. The connections in the figure represent typical data exchanges rather than a prescribed execution sequence. • Particle-space operations. These components operate directly on particle phase-space data. I_Initializer provides particle creation and loading procedures, while A_Pusher advances particle positions and velocities using algorithms including the Boris and Higuera–Cary pushers [20, 21]. G_collision implements null-collision Monte Carlo methods [22]. 5Figure 2: Functional organization of AlgoPlasma and the principal data exchanges among its algorithm modules. 
+
+• Particle–grid coupling. These components provide bidirectional transfer between particle and grid representations. B_Scatter deposits particle quantities, such as charge and current densities, onto the com-putational grid, whereas C_Gather interpolates grid-based fields to par-ticle positions. They therefore connect particle-space operations with mesh-based field calculations [1, 2]. • Field and continuum operations. These components operate pri-marily on grid-based quantities. D_Poisson provides Poisson solvers and electric-field evaluation for electrostatic calculations, including in-terfaces to HYPRE [23]. E_Maxwell implements finite-difference time-domain updates and convolutional perfectly matched layers [24, 25]. 
+
+J_Fluid provides selected updates for continuum equations. • Cross-cutting services. These components support multiple nu-merical modules rather than representing a specific physical process. 
+
+H_MPI_Exchange handles the exchange of field, particle, and density data between subdomains in distributed-memory calculations, while 
+
+F_IO provides input and output routines for particle and field data. The components can be assembled at different levels of complexity. A single-particle study may require only initialization and particle pushing, whereas an electrostatic PIC application may combine particle pushing, deposition, 6interpolation, and Poisson solution. Electromagnetic or distributed-memory applications can additionally incorporate Maxwell updates, MPI data ex-change, and input/output as needed. 
+
+3. Illustrative examples 
+
+3.1. Example setup and implementation 
+
+To illustrate how AlgoPlasma components can be assembled into an application-specific program, we consider the electrostatic two-stream instability in a two-dimensional spatial domain with three velocity components (2D3V) [1, 2, 26]. The system consists of two equally populated electron beams drifting along the x direction with mean drift velocities ±3vte , where vte = pkBTe/m e,and a uniform, immobile neutralizing background. The periodic domain, 
+
+64 λDe × 64 λDe , is discretized on a 64 × 64 Cartesian grid. Each beam con-tains 64 macroparticles per cell, giving 524,288 electron macroparticles in total. The time step is ∆t = 0 .05 ω−1 
+
+> pe
+
+, and the simulation is advanced to 
+
+ωpe t = 40 .A prescribed oblique mode is seeded by displacing both beams according to 
+
+ξ = δ0
+
+k
+
+|k|2 sin( k · x), δ0 = 0 .005 , (1) where k = 2 π(mx/L x, m y/L y) and (mx, m y) = (2 , 1) . For a spatially uni-form initial distribution, this displacement produces, to first order, δn/n 0 =
+
+−δ0 cos( k · x). It therefore introduces a controlled 0.5% density perturba-tion in the selected mode [1], allowing its growth to be distinguished from particle noise and compared directly with linear kinetic theory. Choosing an oblique mode also exercises deposition, interpolation, and field solution in both spatial directions rather than reducing the example to an effectively one-dimensional problem. Fig. 3 shows the assembly of the numerical components. Module I01 initial-izes the particle distribution, and B01 deposits the charge density. Module 
+
+D02 solves the Poisson equation, while D05 and D06 reconstruct the grid po-tential and electric field. Module C01 interpolates the field to the particles, 
+
+A01 advances their velocities, and F02 /F04 write particle and field data. The application-specific code retains control of the data structures, execution or-der, particle-position update, periodic boundaries, and diagnostic frequency. The example-specific source is divided into three files: case_parameters.f90 
+
+defines the physical and numerical parameters, two_stream_case.f90 con-nects the application data to the AlgoPlasma interfaces, and main.f90 de-fines the execution sequence. Together, these files contain 217 physical lines, 7Figure 3: Assembly of AlgoPlasma components in the two-dimensional electrostatic PIC example. 
+
+or 187 source lines when blank and comment-only lines are excluded. The complete 26-line application-level driver is reproduced with unnumbered ex-planatory annotations in Listing 1.  
+
+> 1
+
+program two_stream_2d  
+
+> 2
+
+use mpi  
+
+> 3
+
+use two_stream_parameters  
+
+> 4
+
+use two_stream_case  
+
+> 5
+
+implicit none  
+
+> 6
+
+integer :: step, ierr  
+
+> 78
+
+call mpi_init(ierr)  
+
+> 9
+
+call initialize_case ! I01 sub_I01_par_distribute_equilibrium  
+
+> 10
+
+call update_electric_field ! B01 sub_B01_scatter_3Dxyz ! D02 sub_D02_hypre_3Dxyz_bc_A ! sub_D02_hypre_3Dxyz_bc_fortran ! D05 sub_D05_phi1d_to_phi3d ! D06 sub_D06_phi_to_E  
+
+> 11
+
+call push_velocities(initial_half_push) ! C01 sub_C01_gather_3Dxyz ! A01 sub_A01_Boris_3Dxyz  
+
+> 12
+
+call write_fields(0) ! F04 sub_F04_field_output_3d_bin  
+
+> 13
+
+call write_particles(0) ! F02 sub_F02_par_output  
+
+> 14 15
+
+do step=1,nt  
+
+> 16
+
+call push_velocities(full_push)  
+
+> 17
+
+call move_particles(dt) ! Application-specific position update and periodic boundaries  
+
+> 18
+
+call update_electric_field  
+
+> 19 20
+
+if (step==1 .or. mod(step,field_stride)==0) call write_fields(step)  
+
+> 21
+
+if (step==1 .or. mod(step,particle_stride)==0) call write_particles(step) 
+
+822 end do     
+
+> 23 24 call finalize_case ! D02 sub_D02_hypre_3Dxyz_bc_fortran (finalization)
+> 25 call mpi_finalize(ierr)
+> 26 end program two_stream_2d
+
+Listing 1: Application-level driver of the two-stream example. Unnumbered comments identify the underlying AlgoPlasma routines. 
+
+The driver exposes the essential PIC cycle without embedding the implemen-tation of each numerical operation. The stage-level procedures in two_stream_case.f90 
+
+invoke the corresponding AlgoPlasma components shown in Fig. 3. This separation keeps the simulation sequence explicit while allowing individual algorithms to be replaced or examined independently. 
+
+3.2. Results and validation 
+
+The numerical behavior of the assembled application is assessed through the phase-space evolution, the growth of the seeded electric-field mode, and the conservation of total energy. 
+
+Figure 4: Evolution of the reduced electron distribution in wave-aligned phase space at 
+
+ωpe t = 0 , 17 .5, and 25 .0.
+
+Because the seeded mode is oblique, a conventional (x, v x) projection would superimpose particles at different values of the y-dependent wave phase. Fig. 4 instead uses coordinates aligned with the wave vector, 
+
+θ = ( k · x) mod 2 π, v∥ = k · v
+
+|k| . (2) This representation groups particles lying on the same wave phase and retains the velocity component involved in the longitudinal wave–particle interaction [27]. The initial beams are centered at v∥/v te ≃ ± 2.683 . A coherent, phase-correlated velocity modulation is evident at ωpe t = 17 .5, followed by strong 9Figure 5: Electric-field structure, instability growth, and energy balance in the two-stream example. (a) Parallel electric field at ωpe t = 22 .5. (b) Evolution of the seeded (mx, m y ) = (2 , 1) Fourier amplitude, together with the fitted and theoretical growth rates. (c) Changes in field and particle kinetic energies and the relative total-energy error. 
+
+10 broadening and interpenetration at ωpe t = 25 as the instability enters non-linear saturation [28, 26]. For an electrostatic Fourier mode, the dynamically relevant electric field is longitudinal. Fig. 5(a) therefore shows 
+
+E∥ = kxEx + kyEy
+
+|k| , (3) which isolates the field component parallel to the seeded wave vector. Its oblique structure confirms that the prescribed (2 , 1) mode is resolved simul-taneously in both spatial directions. Fig. 5(b) follows the corresponding Fourier amplitude, 2| bE∥(2 , 1) |. A least-squares fit to its logarithm over 10 ≤ ωpe t ≤ 19 gives 
+
+γPIC = 0 .2603 ωpe , R2 = 0 .9836 . (4) For comparison, the warm, symmetric two-stream dispersion relation [29, 28] is 
+
+ε(ω, k) = 1 + 12( kλ De )2
+
+X
+
+> σ=±1
+
+[1 + ζσZ(ζσ)] = 0 , (5) where 
+
+ζσ = ω − σk xud
+
+√2 kv te 
+
+, k = |k|, (6) 
+
+ud = 3 vte is the drift speed of each beam, λDe = vte /ω pe , and Z is the plasma dispersion function. Its unstable root gives γth = 0 .2616 ωpe , within 0.5% 
+
+of the PIC result. Only the vertical normalization of the theoretical line is matched over the fitting interval. The mode reaches its maximum near 
+
+ωpe t = 24 before nonlinear saturation and decay. Fig. 5(c) shows the transfer of energy between the particles and the electro-static field. With both changes normalized by the initial total energy W0,the maximum relative total-energy error is 0.0183% . The agreement with ki-netic theory, the nonlinear phase-space evolution, and the small energy error together show that independently reusable AlgoPlasma components can be assembled into a compact and physically consistent PIC application. 
+
+4. Impact 
+
+The clearest scientific impact of the algorithmic base from which AlgoPlasma emerged is its use in Hall-thruster modeling. This base enabled the devel-opment of PMSL-PIC-HET-3D, introduced and benchmarked in a study of plume-domain effects on azimuthal instability [10]. Subsequent extensions incorporated realistic magnetic-field configurations [11, 12], coupled Monte 11 Carlo collision and fluid-neutral models [17], and self-consistent wall and open-plume treatments [16]. Built on this common numerical foundation, the research progressed from resolving electron drift instability to quantify-ing how magnetic topology and boundaries govern electron transport, con-structing effective mobility profiles [14], and identifying the field structures responsible for transport through test-particle and modal analyses [15, 13]. Application-driven research has also produced stand-alone algorithmic ad-vances. Conservative charge and current deposition on nonuniform three-dimensional cylindrical meshes was developed together with continuity and residual self-field diagnostics [19]. Particle-based and deterministic free-molecular methods were likewise developed to provide face-flux-consistent closures for reduced neutral-continuity models [18]. These developments al-low numerical artifacts to be distinguished more clearly from physical be-havior and alternative methods to be compared using common conservation and diagnostic criteria. They also exemplify the development process under-lying AlgoPlasma: numerical requirements arising in application programs are recast as separable algorithms with dedicated verification and validation, providing tested foundations for further research and library expansion. Within the authors’ group, this shared algorithmic base has shifted software development from repeatedly constructing complete solvers to reusing estab-lished components and adapting only the physics, coupling, and boundary treatments specific to each problem. This practice reduces duplicate imple-mentation and makes numerical assumptions easier to examine and compare across application programs. New physical models and algorithms will be incorporated into AlgoPlasma after independent testing and validation. At present, documented use is concentrated within the authors’ group and the derived programs cited above. Because AlgoPlasma v1.0 has only recently been released, meaningful statistics on external downloads, users, and com-munity adoption are not yet available. The software has not been commer-cially deployed and has not led to the creation of a spin-off company. 
+
+5. Conclusions 
+
+AlgoPlasma is an open-source, modular library of reusable numerical algo-rithms for plasma modeling. By presenting numerical methods as source-level components rather than prescribing a complete simulation workflow, it allows users to select, examine, adapt, and integrate only the components re-quired by their applications. The current release brings together particle and field operations, particle–grid coupling, continuum updates, parallel data ex-change, input/output, documentation, and verification and validation cases, enabling selective reuse and independent assessment. The illustrative two-12 stream example demonstrates how these components can be assembled into a compact PIC workflow that reproduces the expected linear growth, non-linear phase-space evolution, and energy exchange while maintaining global energy conservation. Application programs and algorithmic developments derived from the earlier PMSL base further demonstrate the versatility of this algorithm-centered approach across different physical models and com-putational settings. Future releases will incorporate additional algorithms, physical models, and computational capabilities as they mature through test-ing and validation. AlgoPlasma thus provides a transparent and extensible basis for plasma-modeling research, verification, and education. 
+
+CRediT authorship contribution statement 
+
+Yinjian Zhao: Conceptualization, Methodology, Software, Resources, Su-pervision, Project administration, Funding acquisition, Writing – review & editing. Zhongping Zhao: Methodology, Software, Validation, Formal analysis, Writ-ing – original draft, Writing – review & editing. Zhe Liu: Methodology, Software, Validation, Formal analysis, Visualization, Writing – review & editing. Baisheng Wang: Software, Validation, Writing – review & editing. Zilong Peng: Software, Validation, Writing – review & editing. Xin Luo: Software, Validation, Writing – review & editing. Lihuan Xie: Software, Validation, Writing – review & editing. Xi Chen: Methodology, Validation, Investigation, Writing – review & editing. Zhijun Zhou: Software, Validation, Writing – review & editing. Kunpeng Zhong: Validation, Formal analysis, Investigation, Writing – review & editing. Yingjie Chen: Methodology, Software, Validation, Writing – review & edit-ing. Changzheng Hu: Methodology, Validation, Writing – review & editing. 
+
+Declaration of competing interest 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. 
+
+Acknowledgements 
+
+The authors acknowledge support from the National Natural Science Foun-dation of China under Grant No. 52472403. This work was also partially 13 supported by the Harbin Institute of Technology Kunpeng & Ascend Center of Cultivation. 
+
+References 
+
+[1] C. K. Birdsall, A. B. Langdon, Plasma Physics via Computer Simula-tion, Adam Hilger, Bristol, 1991. [2] R. W. Hockney, J. W. Eastwood, Computer Simulation Using Particles, Adam Hilger, Bristol, 1988. [3] J. P. Verboncoeur, Particle simulation of plasmas: Review and advances, Plasma Physics and Controlled Fusion 47 (5A) (2005) A231–A260. doi: 10.1088/0741-3335/47/5A/017 .URL https://doi.org/10.1088/0741-3335/47/5A/017 
+
+[4] J. Derouillat, A. Beck, F. Pérez, T. Vinci, M. Chiaramello, A. Grassi, M. Flé, G. Bouchard, I. Plotnikov, N. Aunai, J. Dargent, C. Riconda, M. Grech, Smilei: A collaborative, open-source, multi-purpose particle-in-cell code for plasma simulation, Computer Physics Communications 222 (2018) 351–373. doi:10.1016/j.cpc.2017.09.024 .URL https://doi.org/10.1016/j.cpc.2017.09.024 
+
+[5] J.-L. Vay, A. Almgren, J. Bell, L. Ge, D. P. Grote, M. Hogan, O. Kononenko, R. Lehe, A. Myers, C. Ng, J. Park, R. Ryne, O. Shapo-val, M. Thévenet, W. Zhang, Warp-X: A new exascale computing plat-form for beam–plasma simulations, Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment 909 (2018) 476–479. doi:10.1016/j.nima. 2018.01.035 .URL https://doi.org/10.1016/j.nima.2018.01.035 
+
+[6] T. D. Arber, K. Bennett, C. S. Brady, A. Lawrence-Douglas, M. G. Ramsay, N. J. Sircombe, P. Gillies, R. G. Evans, H. Schmitz, A. R. Bell, C. P. Ridgers, Contemporary particle-in-cell approach to laser-plasma modelling, Plasma Physics and Controlled Fusion 57 (11) (2015) 113001. 
+
+doi:10.1088/0741-3335/57/11/113001 .URL https://doi.org/10.1088/0741-3335/57/11/113001 
+
+[7] S. Fasoulas, C.-D. Munz, M. Pfeiffer, J. Beyer, T. Binder, S. Cop-plestone, A. Mirza, P. Nizenkov, P. Ortwein, W. Reschke, Combin-ing particle-in-cell and direct simulation Monte Carlo for the simula-tion of reactive plasma flows, Physics of Fluids 31 (7) (2019) 072006. 14 doi:10.1063/1.5097638 .URL https://doi.org/10.1063/1.5097638 
+
+[8] M. Chen, J. Tworek, H. Jun, et al., Evaluating large language models trained on code, arXiv:2107.03374 (2021). arXiv:2107.03374 , doi: 10.48550/arXiv.2107.03374 .URL https://arxiv.org/abs/2107.03374 
+
+[9] B. Rozière, M.-A. Lachaux, L. Chanussot, G. Lample, Unsupervised translation of programming languages, in: Advances in Neural Infor-mation Processing Systems, Vol. 33, Curran Associates, Inc., 2020, pp. 20601–20611. URL https://proceedings.neurips.cc/paper/2020/hash/ ed23fbf18c2cd35f8c7f8de44f85c08d-Abstract.html 
+
+[10] X. Chen, L. Xie, K. Zhong, X. Luo, Z. Zhou, B. Wang, Z. Liu, Y. Zhao, Influence of plume region arrangement on Hall thruster azimuthal insta-bility: 3D PIC simulations via a newly developed code PMSL-PIC-HET-3D, Physics of Plasmas 32 (5) (2025) 052103. doi:10.1063/5.0253669 .URL https://doi.org/10.1063/5.0253669 
+
+[11] Y. Zhao, K. Zhong, Effect of magnetic field configuration on Hall thruster azimuthal instability in 3D PIC simulations, in: Proceedings of the 39th International Electric Propulsion Conference, Electric Rocket Propulsion Society, London, United Kingdom, 2025, paper IEPC-2025-063, presented 14–19 September 2025. [12] K. Zhong, D. Zeng, Y. Zhao, D. Yu, Effects of RZ magnetic field compo-nents on electron drift instability in Hall thrusters via 3D PIC simula-tions, Physics Letters A 590 (2026) 131809. doi:10.1016/j.physleta. 2026.131809 .URL https://doi.org/10.1016/j.physleta.2026.131809 
+
+[13] Z. Zhao, Y. Zhao, A review of 3D particle-in-cell simulations for elec-tron drift instability in Hall thrusters, Plasma Science and Technol-ogyAccepted manuscript; available online 12 May 2026 (2026). doi: 10.1088/2058-6272/ae69a9 .URL https://doi.org/10.1088/2058-6272/ae69a9 
+
+[14] Y. Zhao, K. Zhong, 3D PIC simulations on Hall thruster electron drift instability: Influence of magnetic field on electron transport, arXiv:2512.06222 (2025). arXiv:2512.06222 , doi:10.48550/arXiv. 
+
+15 2512.06222 .URL https://arxiv.org/abs/2512.06222 
+
+[15] Z. Zhao, K. Zhong, Y. Zhao, Test particle study of EDI driven elec-tron transport in a Hall thruster using PIC derived electric fields, arXiv:2606.21143 (2026). arXiv:2606.21143 , doi:10.48550/arXiv. 2606.21143 .URL https://arxiv.org/abs/2606.21143 
+
+[16] Z. Liu, Z. Zhao, Y. Zhao, Near-wall pathways of anomalous elec-tron transport in Hall thrusters revealed by 3D PIC simulations, arXiv:2603.14849 (2026). arXiv:2603.14849 , doi:10.48550/arXiv. 2603.14849 .URL https://arxiv.org/abs/2603.14849 
+
+[17] X. Chen, Y. Zhao, Coupling MCC with fluid neutral solver for 3D PIC simulation of Hall thruster electron azimuthal drift instability, in: Pro-ceedings of the 39th International Electric Propulsion Conference, Elec-tric Rocket Propulsion Society, London, United Kingdom, 2025, paper IEPC-2025-169, presented 14–19 September 2025. [18] Y. Chen, X. Chen, Y. Zhao, Free-molecular face-flux preprocessing for reduced neutral-continuity modeling in Hall thrusters: Particle-based reference and deterministic SN –DFEM realization, arXiv:2606.14242 (2026). arXiv:2606.14242 , doi:10.48550/arXiv.2606.14242 .URL https://arxiv.org/abs/2606.14242 
+
+[19] Z. Liu, Z. Zhou, Y. Zhao, Conservative charge and current depo-sition on nonuniform 3D cylindrical PIC meshes with residual self-field diagnostics, arXiv:2606.09168 (2026). arXiv:2606.09168 , doi: 10.48550/arXiv.2606.09168 .URL https://arxiv.org/abs/2606.09168 
+
+[20] J. P. Boris, Relativistic plasma simulation—optimization of a hybrid code, in: Proceedings of the Fourth Conference on Numerical Simulation of Plasmas, Naval Research Laboratory, Washington, DC, 1970, pp. 3– 67. [21] A. V. Higuera, J. R. Cary, Structure-preserving second-order integra-tion of relativistic charged particle trajectories in electromagnetic fields, Physics of Plasmas 24 (5) (2017) 052104. doi:10.1063/1.4979989 .URL https://doi.org/10.1063/1.4979989 
+
+16 [22] V. Vahedi, M. Surendra, A Monte Carlo collision model for the particle-in-cell method: Applications to argon and oxygen discharges, Com-puter Physics Communications 87 (1–2) (1995) 179–198. doi:10.1016/ 0010-4655(94)00171-W .URL https://doi.org/10.1016/0010-4655(94)00171-W 
+
+[23] R. D. Falgout, U. M. Yang, hypre: A library of high performance precon-ditioners, in: Computational Science—ICCS 2002, Vol. 2331 of Lecture Notes in Computer Science, Springer, Berlin, Heidelberg, 2002, pp. 632– 641. doi:10.1007/3-540-47789-6_66 .URL https://doi.org/10.1007/3-540-47789-6_66 
+
+[24] K. S. Yee, Numerical solution of initial boundary value problems in-volving Maxwell’s equations in isotropic media, IEEE Transactions on Antennas and Propagation 14 (3) (1966) 302–307. doi:10.1109/TAP. 1966.1138693 .URL https://doi.org/10.1109/TAP.1966.1138693 
+
+[25] J. A. Roden, S. D. Gedney, Convolution PML (CPML): An efficient FDTD implementation of the CFS-PML for arbitrary media, Microwave and Optical Technology Letters 27 (5) (2000) 334–339. doi:10.1002/ 1098-2760(20001205)27:5<334::AID-MOP14>3.0.CO;2-A .[26] R. L. Morse, C. W. Nielson, One-, two-, and three-dimensional numerical simulation of two-beam plasmas, Physical Review Letters 23 (19) (1969) 1087–1090. doi:10.1103/PhysRevLett.23.1087 .URL https://doi.org/10.1103/PhysRevLett.23.1087 
+
+[27] T. M. O’Neil, Collisionless damping of nonlinear plasma oscillations, The Physics of Fluids 8 (12) (1965) 2255–2262. doi:10.1063/1.1761193 .URL https://doi.org/10.1063/1.1761193 
+
+[28] R. L. Morse, C. W. Nielson, Numerical simulation of warm two-beam plasma, The Physics of Fluids 12 (11) (1969) 2418–2425. doi:10.1063/ 1.1692361 .URL https://doi.org/10.1063/1.1692361 
+
+[29] B. D. Fried, S. D. Conte, The Plasma Dispersion Function, Academic Press, New York, 1961. 17

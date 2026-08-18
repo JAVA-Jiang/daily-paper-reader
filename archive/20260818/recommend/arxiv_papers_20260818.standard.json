@@ -1,0 +1,522 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-18T19:55:34.512245+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 10,
+    "quick_skim_target": 11,
+    "quick_selected": 10
+  },
+  "deep_dive": [
+    {
+      "id": "2608.14864v1",
+      "source": "arxiv",
+      "title": "An open-source data processing pipeline for Keck / NIRC2-Polarimetry",
+      "abstract": "The Keck/NIRC2 infrared imager was recently upgraded with a new suite of polarimetric observing modes. This polarimetry upgrade (referred to as NIRC2-Pol) will open up a wide range of new astronomical studies, including investigations of exoplanets, the Galactic center, active galactic nuclei and the solar system. Astronomical polarimeters require sophisticated data reduction, especially for quantitative polarimetry requiring the use of a Mueller Matrix model for instrumental polarization calibration. This work presents the design of a flexible, user-friendly, open-source data processing pipeline intended for use with NIRC2-Pol, summarizing its key steps and details of its ongoing implementation.",
+      "authors": [
+        "Briley L. Lewis",
+        "Maxwell A. Millar-Blanchaer",
+        "Rebecca Zhang",
+        "Jayke Nguyen",
+        "Max Brodheim",
+        "Ashish Uhlmann"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM"
+      ],
+      "published": "2026-08-14T20:01:26+00:00",
+      "link": "https://arxiv.org/pdf/2608.14864v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Open-source data processing pipeline with source code availability",
+      "llm_evidence_cn": "开源数据处理流水线，提供源码",
+      "llm_evidence": "开源数据处理流水线，提供源码",
+      "canonical_evidence": "开源数据处理流水线，提供源码",
+      "llm_tldr_en": "This paper presents an open-source data processing pipeline for the new polarimetric modes of the Keck/NIRC2 imager, including Mueller matrix calibration, to support quantitative polarimetry across various astronomical studies.",
+      "llm_tldr_cn": "针对天文偏振测量数据处理复杂、校准要求高的挑战，本文提出并实现了面向Keck/NIRC2偏振探测模式的开源数据处理流水线。该流水线采用Mueller矩阵模型进行仪器偏振校准，支持灵活的用户配置，旨在使定量偏振测量数据处理更便捷。该工作以开源形式发布，提供了完整的数据处理流程，具有良好的可复现性和易用性，为系外行星、银河中心等天文研究提供了重要工具。",
+      "llm_tldr": "针对天文偏振测量数据处理复杂、校准要求高的挑战，本文提出并实现了面向Keck/NIRC2偏振探测模式的开源数据处理流水线。该流水线采用Mueller矩阵模型进行仪器偏振校准，支持灵活的用户配置，旨在使定量偏振测量数据处理更便捷。该工作以开源形式发布，提供了完整的数据处理流程，具有良好的可复现性和易用性，为系外行星、银河中心等天文研究提供了重要工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.15249v1",
+      "source": "arxiv",
+      "title": "AlgoPlasma: Open Algorithms for Plasma Modeling",
+      "abstract": "AlgoPlasma is an open-source library in which core numerical algorithms for plasma modeling are implemented as modular, well-documented, and independently testable components. Rather than offering a complete simulation code, it allows researchers to select, adapt, and assemble the required components into application-specific workflows. The current release is centered on particle-based simulation, while AlgoPlasma is designed to encompass a broader range of approaches to plasma modeling. It provides components for particle initialization and advancement, particle--grid coupling, field solution, collision modeling, parallel data exchange, input/output, and selected fluid updates. Documentation links mathematical formulations to source implementations, interfaces, and usage, while verification and validation cases evaluate numerical accuracy and physical behavior. AlgoPlasma thus establishes a shared algorithmic foundation for plasma modeling, transforming repeatedly reimplemented numerical methods into open, reusable, tested, and explainable components for research, verification, education, and collaborative development.",
+      "authors": [
+        "Yinjian Zhao",
+        "Zhongping Zhao",
+        "Zhe Liu",
+        "Baisheng Wang",
+        "Zilong Peng",
+        "Xin Luo",
+        "Lihuan Xie",
+        "Xi Chen",
+        "Zhijun Zhou",
+        "Kunpeng Zhong",
+        "Yingjie Chen",
+        "Changzheng Hu"
+      ],
+      "primary_category": "physics.plasm-ph",
+      "categories": [
+        "physics.plasm-ph"
+      ],
+      "published": "2026-08-15T14:14:33+00:00",
+      "link": "https://arxiv.org/pdf/2608.15249v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source library with modular algorithms",
+      "llm_evidence_cn": "开源算法库，提供模块化算法",
+      "llm_evidence": "开源算法库，提供模块化算法",
+      "canonical_evidence": "开源算法库，提供模块化算法",
+      "llm_tldr_en": "AlgoPlasma is an open-source library providing modular, well-documented numerical algorithms for plasma modeling, allowing researchers to assemble custom simulation workflows; it covers particle initialization, field solution, collisions, and parallel I/O.",
+      "llm_tldr_cn": "针对等离子体建模中缺少可复用、可验证的数值算法实现的问题，提出 AlgoPlasma 开源库，将粒子初始化、推进、粒子-网格耦合、场求解、碰撞建模等核心算法实现为模块化组件。库的设计强调文档与实现的对应，允许研究者灵活挑选组装出面向具体应用的仿真流程。当前版本已覆盖粒子法相关功能，可作为等离子体仿真研究的可复现基础。",
+      "llm_tldr": "针对等离子体建模中缺少可复用、可验证的数值算法实现的问题，提出 AlgoPlasma 开源库，将粒子初始化、推进、粒子-网格耦合、场求解、碰撞建模等核心算法实现为模块化组件。库的设计强调文档与实现的对应，允许研究者灵活挑选组装出面向具体应用的仿真流程。当前版本已覆盖粒子法相关功能，可作为等离子体仿真研究的可复现基础。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.15253v1",
+      "source": "arxiv",
+      "title": "Claude-SpinDynamics: a cross-platform, dual-precision CPU/GPU micromagnetic simulator with native mumax3 script compatibility",
+      "abstract": "Quantitative spintronics increasingly depends on a handful of GPU micromagnetic codes, all of which require NVIDIA hardware and single precision throughout, leaving researchers without such hardware unable to run even the standard validation problems. We report Claude-SpinDynamics (Claude-SD), a new open source micromagnetic simulator with a cross platform C++20 core (Windows and Linux) and a Python interface that closes this gap: a complete CPU build, validated by the same test suite as the GPU path, runs every unit test and uMAG standard problem with no accelerator at all, alongside GPU builds offering both single and double precision, a choice of two demagnetization FFT backends, and natively implemented spin-orbit, spin-transfer, and Zhang-Li torques, Dzyaloshinskii-Moriya interaction, and percell materials.Claude-SD natively interprets mumax3's .mx3 scripting language, so existing community scripts run unmodified; under matched conditions the two codes agree cell-by cell to single-precision round-off, and, together with mumax+ and OOMMF, to within 2% on the uMAG dynamic-switching standard problem, with MuMax-CO agreeing to mumax3 to float32 round-off on the same problem. Benchmarked head-to-head against these three codes, Claude-SD's single-precision build is the fastest solver on small and two-dimensional problems and remains competitive at the largest grid sizes, while its double-precision and dual-FFT-backend paths are unmatched among GPU micromagnetic codes. A GPU replicabatching extension further advances an entire ensemble of finite-temperature trajectories in a single kernel launch per step, giving one to two orders of magnitude of throughput over a per-trial loop while reproducing single-trajectory results to numerical round-off. The complete source is openly licensed and distributed with runnable example notebooks and documentation for independent reproduction.",
+      "authors": [
+        "Chun-Yeol You",
+        "Jaeyong Cho"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-08-15T14:16:37+00:00",
+      "link": "https://arxiv.org/pdf/2608.15253v1",
+      "tags": [
+        "keyword:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "explicitly open source micromagnetic simulator",
+      "llm_evidence_cn": "明确开源微磁模拟器",
+      "llm_evidence": "明确开源微磁模拟器",
+      "canonical_evidence": "明确开源微磁模拟器",
+      "llm_tldr_en": "Claude-SpinDynamics is a new open source micromagnetic simulator with a cross-platform C++20 core and Python interface, supporting CPU/GPU and dual precision, and natively running mumax3 scripts.",
+      "llm_tldr_cn": "定量自旋电子学依赖少数GPU微磁代码，且仅支持NVIDIA硬件和单精度，无对应硬件的研究者无法运行。为此提出Claude-SpinDynamics，一个跨平台开源微磁模拟器，包含C++20核心与Python接口，提供完整CPU实现以及单/双精度GPU构建。经标准测试验证，CPU构建无需加速器即可运行全部单元测试和uMAG标准问题，并且兼容mumax3脚本。该论文明确开源，是携带源代码的可复现研究。",
+      "llm_tldr": "定量自旋电子学依赖少数GPU微磁代码，且仅支持NVIDIA硬件和单精度，无对应硬件的研究者无法运行。为此提出Claude-SpinDynamics，一个跨平台开源微磁模拟器，包含C++20核心与Python接口，提供完整CPU实现以及单/双精度GPU构建。经标准测试验证，CPU构建无需加速器即可运行全部单元测试和uMAG标准问题，并且兼容mumax3脚本。该论文明确开源，是携带源代码的可复现研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.11744v1",
+      "source": "arxiv",
+      "title": "Harnessing LLMs for Document-Guided Fuzzing of Python Libraries",
+      "abstract": "Python libraries underpin deep learning, scientific computing, data analysis, and computer vision, making their reliability critical to downstream applications. Testing their APIs requires inputs that satisfy both per-parameter constraints and dependencies among parameters. Existing approaches either leave such constraints implicit in generated programs or rely on library-specific parsing rules. This paper introduces VistaFuzz, a document-guided fuzzing technique that uses a locally served open-sourced LLM to extract parameter specifications from API documents and generate inputs that satisfy both parameter constraints and inter-parameter dependencies. We evaluate VistaFuzz on 7,718 APIs across twelve Python libraries. Inter-parameter relationships occur in 40.1\\% of tested APIs, and disabling their resolution reduces the valid generation rate on those APIs from above 95\\% to 31.6\\%--52.8\\%. VistaFuzz reports 74 issues, of which 43 have been confirmed by developers and 29 have been fixed.",
+      "authors": [
+        "Bin Duan",
+        "Tarek Mahmud",
+        "Meiru Che",
+        "Yan Yan",
+        "Naipeng Dong",
+        "Dan Dongseong Kim",
+        "Guowei Yang"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-12T07:34:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.11744v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "A fuzzing tool for Python libraries, likely open-sourced, improving API reliability",
+      "llm_evidence_cn": "面向Python库的文档引导模糊测试工具，可能开源，提升API可靠性",
+      "llm_evidence": "面向Python库的文档引导模糊测试工具，可能开源，提升API可靠性",
+      "canonical_evidence": "面向Python库的文档引导模糊测试工具，可能开源，提升API可靠性",
+      "llm_tldr_en": "VistaFuzz uses a local LLM to extract parameter specifications from API documents and generate constraint-satisfying inputs for Python libraries, testing 7,718 APIs.",
+      "llm_tldr_cn": "Python库的可靠性依赖于对API输入约束的测试，但现有方法难以处理参数间依赖。论文提出VistaFuzz，利用本地开源LLM从API文档提取参数规范，自动生成满足约束和依赖的测试输入，并在12个库的7718个API上评估。工具能捕获大量参数间依赖关系，有望作为开源代码工具支持更鲁棒的库测试。",
+      "llm_tldr": "Python库的可靠性依赖于对API输入约束的测试，但现有方法难以处理参数间依赖。论文提出VistaFuzz，利用本地开源LLM从API文档提取参数规范，自动生成满足约束和依赖的测试输入，并在12个库的7718个API上评估。工具能捕获大量参数间依赖关系，有望作为开源代码工具支持更鲁棒的库测试。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.09254v1",
+      "source": "arxiv",
+      "title": "Business Truth, not SQL Accuracy: A Rule-Gated 7B Analytics Agent Outperforms a Direct-Prompted 32B Baseline",
+      "abstract": "LLM analytics agents are evaluated on SQL syntax accuracy, but production failures look different: questions with two valid business definitions, questions the warehouse cannot answer, deprecated columns after a schema change, and queries that execute successfully while returning the wrong business number. No execution-match metric can score them. This paper introduces WarehouseReliabilityBench, 400 frozen tasks over two synthetic warehouses in which roughly half the correct responses are a clarification, an abstention or a refusal, with pinned denominators and a pre-registered paired bootstrap fixing each claim verb before the numbers existed. QueryProof, a 7B agent, uses rules derived from a semantic layer and physical catalog to determine its behaviour, and gates every answer on deterministic post-execution checks. On an 80-task synthetic test split evaluated once, QueryProof outperforms a direct-prompted 32B baseline by +0.237 [+0.112, +0.375] Business Truth Rate at 71.0% lower cost per correct answer; against a cost-matched few-shot baseline the accuracy gain holds but the cost difference does not resolve. This compares systems rather than model sizes: the 32B baseline receives none of the scaffolding. False success falls from 0.754 to 0.351 of returned answers, and no wrong number was returned on an answerable task (0 of 24), though 13 answers went to questions requiring clarification or abstention. Removing the routing layer changes little (0.562 against 0.537), so the result does not depend on escalation. Routing tuned on validation over-abstains on test, and the fitted confidence model loses to the heuristic it replaced. Resampling template families rather than tasks widens both accuracy intervals to include zero, so the effect's direction is better supported than its magnitude. The gain tracks the deterministic layer, though no component ablation was run.",
+      "authors": [
+        "Morris Lee"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-10T08:14:24+00:00",
+      "link": "https://arxiv.org/pdf/2608.09254v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Introduces WarehouseReliabilityBench and QueryProof agent, likely with code.",
+      "llm_evidence_cn": "提出了WarehouseReliabilityBench基准和QueryProof智能体，可能附带代码。",
+      "llm_evidence": "提出了WarehouseReliabilityBench基准和QueryProof智能体，可能附带代码。",
+      "canonical_evidence": "提出了WarehouseReliabilityBench基准和QueryProof智能体，可能附带代码。",
+      "llm_tldr_en": "Introduces WarehouseReliabilityBench, 400 tasks where correct responses may be clarification, abstention, or refusal, and QueryProof, a rule-gated 7B agent that outperforms a 32B baseline. Likely provides code.",
+      "llm_tldr_cn": "针对LLM分析智能体以SQL语法准确率评估却常产出错误业务数字的缺陷，本文提出WarehouseReliabilityBench基准，包含400个需要澄清、弃权或拒绝的任务。同时设计QueryProof，一个由语义层规则门控的7B智能体，在固定分母和预注册配对检验下优于直接提示的32B基线。基准和智能体均可能开源，属于含代码的研究。",
+      "llm_tldr": "针对LLM分析智能体以SQL语法准确率评估却常产出错误业务数字的缺陷，本文提出WarehouseReliabilityBench基准，包含400个需要澄清、弃权或拒绝的任务。同时设计QueryProof，一个由语义层规则门控的7B智能体，在固定分母和预注册配对检验下优于直接提示的32B基线。基准和智能体均可能开源，属于含代码的研究。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.15584v1",
+      "source": "arxiv",
+      "title": "GraniKV: Asymmetric Granularity KV-Cache Paging for Multi-Agent Systems with Long Shared Prefix",
+      "abstract": "Production paged-serving engines apply uniform paging granularity to the KV cache, even though the two regions of a multi-agent workload have opposite storage requirements: a long shared prefix demands contiguity, while the per-request suffix demands fine-grained allocation.   We present \\textbf{GraniKV}, a KV-cache layer that allocates the shared prefix in a contiguous HOT pool and the suffix in a token-level COLD pool, combined with a per-step dispatcher which selects the appropriate backend among dual backends for each regime (compute-, memory-, or communication-bound). To the best of our knowledge, GraniKV is the first system to apply asymmetric paging granularity to the KV cache of a production paged-serving engine.   At $L_p{=}16$\\,K shared tokens GraniKV reaches $\\mathbf{2.16\\times}$, $\\mathbf{1.98\\times}$, and $\\mathbf{1.57\\times}$ output-token throughput over the production baseline on Llama-3.1-8B/TP=1, Qwen-2.5-14B/TP=2, and Qwen-2.5-32B/TP=4. The gain decomposes: cascade attention integration contributes the majority at saturation; the asymmetric storage layer adds $1.05$--$1.15\\times$ end-to-end while being what makes the batched-GEMM prefix backend possible at all. Under heterogeneous multi-agent serving with \\emph{distinct} prompts of different lengths, the attribution inverts: GraniKV sustains $\\mathbf{1.95\\times}$ while batch-global cascade collapses to parity --- the storage layer alone carries the win in the regime that motivates the paper.",
+      "authors": [
+        "Jinhyun Jeon",
+        "Sungjoo Yoo"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-16T07:19:49+00:00",
+      "link": "https://arxiv.org/pdf/2608.15584v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "A systems tool for KV-cache paging, likely open-sourced, addressing efficiency in serving engines",
+      "llm_evidence_cn": "面向服务引擎KV缓存分页的系统工具，可能开源，提升推理效率",
+      "llm_evidence": "面向服务引擎KV缓存分页的系统工具，可能开源，提升推理效率",
+      "canonical_evidence": "面向服务引擎KV缓存分页的系统工具，可能开源，提升推理效率",
+      "llm_tldr_en": "GraniKV introduces asymmetric granularity paging for KV caches in multi-agent serving, using HOT and COLD pools with per-step backend selection.",
+      "llm_tldr_cn": "多智能体工作负载中KV缓存的长共享前缀和短后缀存储需求相反。论文提出GraniKV，将共享前缀存于连续HOT池，后缀存于token级COLD池，并通过每步调度器选择最佳后端。这是首个在成熟服务引擎中应用非对称分页粒度的系统，能显著提升缓存效率。",
+      "llm_tldr": "多智能体工作负载中KV缓存的长共享前缀和短后缀存储需求相反。论文提出GraniKV，将共享前缀存于连续HOT池，后缀存于token级COLD池，并通过每步调度器选择最佳后端。这是首个在成熟服务引擎中应用非对称分页粒度的系统，能显著提升缓存效率。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.11924v1",
+      "source": "arxiv",
+      "title": "Spark-to-Paper: End-to-End Research Paper Generation as a Composable Skill",
+      "abstract": "Turning a research idea into a complete paper requires more than text generation: the system must retrieve literature, design and execute experiments, revise claims according to evidence, produce publication-ready figures, and maintain consistency across a long generation process. We present Spark-to-Paper, an end-to-end research paper generation system implemented as thirteen composable skills inside an existing coding assistant, without requiring a separate agent platform or orchestration service. Spark-to-Paper separates model-based judgment from deterministic operations that can be directly executed and checked. It further separates experiment planning from reporting, so that required evidence is specified before results are observed and manuscript claims are revised according to measured outcomes. To improve reliability over long research trajectories, the system combines deterministic integrity checks with self-critique and bounds a failure mode we call the Self-Refutation Loop, in which repeated experiments continue to reject the original research objective. Spark-to-Paper also produces editable vector figures through programmatic plotting for experimental results and code-based reconstruction for generated method diagrams. Across eight controlled research topics, Spark-to-Paper achieves 99.5% citation validity and 96.4% figure editability. A controlled ablation increases fabrication detection from 14% for a single-pass draft to 92% with the full integrity and review stack, while adversarial review achieves 74% precision. The full system uses 11.9M tokens, costs $8.1 per manuscript, and requires 3.2 hours on average. These results show that end-to-end research paper generation can be implemented as a lightweight, composable workflow inside existing coding assistants while keeping experimental evidence central to how claims are accepted, revised, or abandoned.",
+      "authors": [
+        "Zhuoyang Qian",
+        "Biao Wu",
+        "Yiran Wang",
+        "Chris D Yan",
+        "Desan Dai",
+        "Liangwei Zheng",
+        "Jin Jiang",
+        "Junsheng Zhang",
+        "Wenhao Wang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-12T11:11:07+00:00",
+      "link": "https://arxiv.org/pdf/2608.11924v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "An end-to-end research paper generation system implemented as composable skills in a coding assistant, likely with provided code",
+      "llm_evidence_cn": "基于编码助手的组合式论文生成系统，可能附带代码，但非核心科学代码",
+      "llm_evidence": "基于编码助手的组合式论文生成系统，可能附带代码，但非核心科学代码",
+      "canonical_evidence": "基于编码助手的组合式论文生成系统，可能附带代码，但非核心科学代码",
+      "llm_tldr_en": "Spark-to-Paper generates complete research papers using thirteen composable skills in a coding assistant, separating planning, evidence, and deterministic operations.",
+      "llm_tldr_cn": "生成一篇完整论文需要检索、实验、写作和图表制作等复杂流程。论文提出Spark-to-Paper，在现有编码助手中以十三个可组合技能实现端到端生成，无需独立平台。它将模型判断与确定性操作分离，并先规划实验再报告结果，以保障证据优先。该系统适合作为自动化科研辅助工具。",
+      "llm_tldr": "生成一篇完整论文需要检索、实验、写作和图表制作等复杂流程。论文提出Spark-to-Paper，在现有编码助手中以十三个可组合技能实现端到端生成，无需独立平台。它将模型判断与确定性操作分离，并先规划实验再报告结果，以保障证据优先。该系统适合作为自动化科研辅助工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.15886v1",
+      "source": "arxiv",
+      "title": "SMTpip: Interpreter-Aware SMT-Based Dependency Conflict Resolution for Restoring Python Source-Code Executability",
+      "abstract": "Software developers rely on packages to reuse existing functionality instead of implementing everything from scratch. Python developers commonly provide package and interpreter dependencies using configuration files, such as requirements.txt or setup.py. Package managers in Python, such as pip, can install packages according to dependency and interpreter version constraints specified in configuration files. However, Python dependency resolution remains challenging: (1) different packages may require incompatible versions of the same dependency; (2) dependencies may require a Python interpreter version that is incompatible with the interpreter used for the project, making a valid environment impossible; and (3) pip, the most popular Python package manager, resolves conflicts via backtracking, repeatedly trying candidate versions without knowing whether a valid execution environment exists or not. To address these challenges, we present SMTpip, an interpreter-aware environment inference technique for improving the executability of Python source-code artifacts. SMTpip constructs a dependency knowledge graph using metadata stored in the Python Package Index (PyPI) that hosts millions of package releases, encodes both package version constraints and interpreter compatibility constraints specified in configuration files into Satisfiability Modulo Theories (SMT) formulas. Solving these formulas identifies a set of package versions and an interpreter version that jointly satisfy all declared constraints. Empirical evaluation on multiple datasets from open-source Python projects shows that SMTpip achieves substantial speedups -- $6.9\\times$ over pip, $9.6\\times$ over Conda, $3.2\\times$ over smartPip, and $4\\times$ over PyEGo -- while consistently producing constraint-consistent environments.",
+      "authors": [
+        "Sadman Jashim Sakib",
+        "Muhammad Asaduzzaman",
+        "Curtis Bright"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.LO"
+      ],
+      "published": "2026-08-16T18:22:59+00:00",
+      "link": "https://arxiv.org/pdf/2608.15886v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Presents SMTpip, a concrete tool for restoring Python source-code executability, directly a code artifact.",
+      "llm_evidence_cn": "提出了SMTpip工具，用于恢复Python源代码可执行性，直接是代码工件。",
+      "llm_evidence": "提出了SMTpip工具，用于恢复Python源代码可执行性，直接是代码工件。",
+      "canonical_evidence": "提出了SMTpip工具，用于恢复Python源代码可执行性，直接是代码工件。",
+      "llm_tldr_en": "Presents SMTpip, an interpreter-aware SMT-based dependency conflict resolver that restores Python source-code executability by handling package and interpreter constraints. Directly provides a software artifact.",
+      "llm_tldr_cn": "Python依赖解析常因包版本和解释器版本约束冲突导致环境不可构建。本文提出SMTpip，一种解释器感知的基于SMT的依赖冲突消解工具，能够恢复Python源代码的可执行性。工具将依赖和解释器约束编码为SMT问题，求解有效环境或给出证明。它直接面向源代码可执行性，是一个具体的软件工具，必然提供代码。",
+      "llm_tldr": "Python依赖解析常因包版本和解释器版本约束冲突导致环境不可构建。本文提出SMTpip，一种解释器感知的基于SMT的依赖冲突消解工具，能够恢复Python源代码的可执行性。工具将依赖和解释器约束编码为SMT问题，求解有效环境或给出证明。它直接面向源代码可执行性，是一个具体的软件工具，必然提供代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.13384v1",
+      "source": "arxiv",
+      "title": "Structure then Query: Enabling Precise Analytical Queries over Unstructured Documents",
+      "abstract": "Unstructured documents constitute the majority of enterprise and web data. With the rapid development of large language models(LLMs), researchers have started to build data systems that analyze unstructured textual documents like operating on databases. However, because mainstream retrieval methods still relies on fuzzy matching based on vector similarity, accurately obtaining information and performing structured analysis and reasoning remains a major challenge. To address these limitations, AnnoIndex introduces two core fundamental components. The first is Annotation Index. The system uses a module called SchemaLoop to automatically create hierarchical annotation schemas from the raw corpus, and then uses lightweight language model to extract specific values. It turns scattered unstructured text into a materialized, structured index that enables low-cost filtering and querying. The annotation index avoids the black-box matching of vector similarity and amortizes attribute extraction costs from online queries to a one-time build. The second innovation is a Structured Query Engine. It compiles user questions into execution plans based on SQL extension. It first uses the Annotation Index for precise documents filtering, then gradually applies extraction operations in ascending order of cost, resorting to LLMs only for the remaining minimal fraction of the corpus that require deep semantic understanding. The extracted attributions are merged into the annotation index, reducing the cost of future queries. Experiments on three real-world datasets demonstrate that AnnoIndex consistently outperforms state-of-the-art baselines, achieving the highest average F1 score (0.87) while maintaining robust performance on complex multi-hop join and progressive reasoning queries.",
+      "authors": [
+        "Teng Lin",
+        "Yuyu Luo",
+        "Nan Tang"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.DB"
+      ],
+      "published": "2026-08-13T15:46:20+00:00",
+      "link": "https://arxiv.org/pdf/2608.13384v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Presents AnnoIndex, an indexing system for precise analytical queries over documents, likely open-sourced.",
+      "llm_evidence_cn": "提出了AnnoIndex索引系统，用于对文档进行精确分析查询，可能开源。",
+      "llm_evidence": "提出了AnnoIndex索引系统，用于对文档进行精确分析查询，可能开源。",
+      "canonical_evidence": "提出了AnnoIndex索引系统，用于对文档进行精确分析查询，可能开源。",
+      "llm_tldr_en": "Introduces AnnoIndex, a system combining Annotation Index and SchemaLoop to enable precise analytical queries over unstructured documents, moving beyond fuzzy vector matching. Likely provides code.",
+      "llm_tldr_cn": "针对非结构化文档分析依赖向量模糊匹配、难以进行精确结构化查询的问题，本文提出AnnoIndex系统。系统通过SchemaLoop自动生成层级注释模式，并利用轻量语言模型构建注释索引，从而将文档组织为可查询的结构。该方法支持在文档集合上进行精确的分析与推理，为LLM数据系统提供了新思路。系统实现很可能开源，是含代码的研究论文。",
+      "llm_tldr": "针对非结构化文档分析依赖向量模糊匹配、难以进行精确结构化查询的问题，本文提出AnnoIndex系统。系统通过SchemaLoop自动生成层级注释模式，并利用轻量语言模型构建注释索引，从而将文档组织为可查询的结构。该方法支持在文档集合上进行精确的分析与推理，为LLM数据系统提供了新思路。系统实现很可能开源，是含代码的研究论文。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.13512v1",
+      "source": "arxiv",
+      "title": "Performance Reporting of Mathematical Library Installations with LAAB - An Overview",
+      "abstract": "We present the Linear Algebra Aware Benchmarks (LAAB) framework for systematically assessing and reporting the performance of mathematical library installations on HPC systems. Mathematical libraries provide interfaces for operations that form the computational building blocks of scientific applications. Reporting their performance is important for assessing application efficiency, estimating compute-time requirements, and preparing resource-allocation requests. In this paper, we define four objectives for performance reporting: 1) traceability, linking each report to the exact library installation and execution settings; 2) compatibility, relating library-operation performance to higher-level scientific applications that use them; 3) reliability, supporting interpretation in the presence of measurement variability; and 4) accessibility, ensuring that reports, benchmark definitions, and relevant metadata are available for inspection and reproduction. We then present the design of LAAB and show how it addresses the challenges associated with these objectives.",
+      "authors": [
+        "Aravind Sankaran",
+        "Paolo Bientinesi"
+      ],
+      "primary_category": "cs.PF",
+      "categories": [
+        "cs.PF",
+        "cs.MS"
+      ],
+      "published": "2026-08-13T17:35:01+00:00",
+      "link": "https://arxiv.org/pdf/2608.13512v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Introduces the LAAB software framework for benchmarking, likely accompanied by source code.",
+      "llm_evidence_cn": "提出了LAAB基准测试软件框架，可能附带源代码。",
+      "llm_evidence": "提出了LAAB基准测试软件框架，可能附带源代码。",
+      "canonical_evidence": "提出了LAAB基准测试软件框架，可能附带源代码。",
+      "llm_tldr_en": "Presents the Linear Algebra Aware Benchmarks framework for systematically assessing and reporting performance of mathematical library installations on HPC systems, with four objectives: traceability, compatibility, reliability, and resource estimation. Likely provides open-source code.",
+      "llm_tldr_cn": "针对高性能计算环境中数学库安装性能报告缺乏系统性的问题，本文提出LAAB基准测试框架。框架从可追溯性、与应用兼容性、可靠性等四个目标出发，规范性能报告的流程。通过精确记录库安装与执行配置，LAAB支持资源需求估算与分配申请，为科学计算应用效率评估提供基础工具。该框架很可能提供开源源代码，符合代码论文需求。",
+      "llm_tldr": "针对高性能计算环境中数学库安装性能报告缺乏系统性的问题，本文提出LAAB基准测试框架。框架从可追溯性、与应用兼容性、可靠性等四个目标出发，规范性能报告的流程。通过精确记录库安装与执行配置，LAAB支持资源需求估算与分配申请，为科学计算应用效率评估提供基础工具。该框架很可能提供开源源代码，符合代码论文需求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.14841v1",
+      "source": "arxiv",
+      "title": "What the Reranker Sees: Multi-Aspect Page Annotation for Long-Document Multimodal Question Answering",
+      "abstract": "Long-document visual question answering (VQA) over documents of tens to hundreds of pages mixing text, tables, charts, and figures typically follows retrieve-then-read pipelines. In our setting, the bottleneck shifts from retrieval recall to reranker-side evidence selection: on MMLongBench-Doc, BGE-M3 reaches Recall@20 = 0.86 but only F1@5 = 0.254, and even the visual retriever ColPali reaches only F1@5 = 0.332; a text-only rerank LLM seeing only raw snippets misses table, chart, and layout evidence even when the upstream retriever encoded images. We propose Trident, with two complementary components: Trident-R, a retriever-agnostic LLM reranker that converts each candidate into an LLM-readable semantic record, including a visual caption, section path, entity tags, multi-axis concept hits, and a text snippet, then performs a single adaptive-K rerank call; and Trident-S, a generation-side module that prompts the VLM under topical, entity, and structural lenses before synthesis. On two long-document datasets, the annotation+rerank protocol substantially improves retrieval F1 across five heterogeneous pools, with every reranked pool exceeding the strongest adaptive-K baseline PageIndex. An LLM rerank without the annotation barely changes first-hit ranking, indicating the lift comes from the structured annotation. Trident-S targets open-ended synthesis questions by design, adding up to 6.6 points in generation accuracy on these questions. The best Trident configuration is the strongest downstream QA pipeline in our evaluation, with rankings consistent across two LLM judges (kappa = 0.913).",
+      "authors": [
+        "Guanchen Wu",
+        "Jiayuan Ding",
+        "Subhabrata Mukherjee",
+        "Carl Yang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-14T19:29:42+00:00",
+      "link": "https://arxiv.org/pdf/2608.14841v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Proposes Trident reranker for long-document multimodal QA, likely with code.",
+      "llm_evidence_cn": "提出了用于长文档多模态问答的Trident重排器，可能附带代码。",
+      "llm_evidence": "提出了用于长文档多模态问答的Trident重排器，可能附带代码。",
+      "canonical_evidence": "提出了用于长文档多模态问答的Trident重排器，可能附带代码。",
+      "llm_tldr_en": "Proposes Trident, a retriever-agnostic LLM reranker using multi-aspect page annotation for long-document multimodal QA, targeting the reranker-side evidence selection bottleneck. Likely provides code.",
+      "llm_tldr_cn": "长文档多模态问答中检索召回已不是瓶颈，重排器侧的证据选择成为主要问题，文本重排器常遗漏表格、图表和布局信息。本文提出Trident，包含检索无关的LLM重排器Trident-R，将候选项转换为LLM可读语义记录，并补充多方面的页面注释。在MMLongBench-Doc上的实验显示其显著提升F1@5，针对表格、图表证据的选择效果更好。该系统可能提供代码，是含代码的方法论文。",
+      "llm_tldr": "长文档多模态问答中检索召回已不是瓶颈，重排器侧的证据选择成为主要问题，文本重排器常遗漏表格、图表和布局信息。本文提出Trident，包含检索无关的LLM重排器Trident-R，将候选项转换为LLM可读语义记录，并补充多方面的页面注释。在MMLongBench-Doc上的实验显示其显著提升F1@5，针对表格、图表证据的选择效果更好。该系统可能提供代码，是含代码的方法论文。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.15624v1",
+      "source": "arxiv",
+      "title": "Can Retrievers Find the Same Paper from Different Aspects? A Multi-Aspect Full-Paper Scientific Retrieval Benchmark",
+      "abstract": "Scientific papers contain multiple searchable facets such as background, methods. However, many paper retrieval benchmarks merely evaluate individual query-paper relevance, while overlooking other facets of the same paper. To bridge this gap, we introduce MAPLE, an expert-validated benchmark for multi-aspect, full-paper retrieval that evaluates whether retrievers can consistently recover the same paper from queries targeting its motivation, method, and experimental findings. MAPLE contains 2,095 queries about recent ML and NLP papers, grounded in both textual and multimodal content. We further propose MAPLE-Synth, a retrieval-based in-context learning pipeline that leverages OpenReview discussions and human-written query exemplars to generate realistic queries reflecting researchers' interests in different aspects of a paper. Our expert validation shows that these queries are comparable in realism to human-written queries and highly relevant to the target papers. Experiments across lexical, scientific-domain, general-purpose text, and multimodal retrievers reveal a substantial gap between retrieving a paper from any one aspect and retrieving it from all aspects: the strongest model achieves 98.1% AnyAspect@20 but only 15.7% AllAspect@20. Experiment/result queries and table-referenced queries are particularly difficult across retrievers. Although multi-chunk aggregation improves multi-aspect paper retrieval, considerable failures persist. MAPLE provides a testbed for evaluating and developing retrievers that represent scientific papers more comprehensively.",
+      "authors": [
+        "Yiyang Wei",
+        "Fang Guo",
+        "Qiji Zhou",
+        "Zhizhang Fu",
+        "Mengru Ding",
+        "Kai Yang",
+        "Yue Zhang"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-08-16T08:41:23+00:00",
+      "link": "https://arxiv.org/pdf/2608.15624v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "introduces MAPLE benchmark and MAPLE-Synth; benchmark likely with code",
+      "llm_evidence_cn": "提出MAPLE基准与MAPLE-Synth管线，基准通常附带代码",
+      "llm_evidence": "提出MAPLE基准与MAPLE-Synth管线，基准通常附带代码",
+      "canonical_evidence": "提出MAPLE基准与MAPLE-Synth管线，基准通常附带代码",
+      "llm_tldr_en": "MAPLE is an expert-validated benchmark with 2,095 queries for multi-aspect full-paper retrieval, plus a retrieval-based in-context learning pipeline. It provides a reusable testbed for scientific paper retrieval, likely with code, and directly supports code-paper searches.",
+      "llm_tldr_cn": "现有论文检索基准往往只评估单一查询与论文的相关性，忽略同一篇论文的动机、方法和实验结果等多方面内容。为此论文构建了专家验证的多方面全论文检索基准MAPLE，包含2095个查询，并提出基于检索的上下文学习管线MAPLE-Synth。该基准可复现、可扩展，为科学论文检索系统提供评测工具。由于基准类工作通常附带代码，与用户寻找含代码论文的需求相符。",
+      "llm_tldr": "现有论文检索基准往往只评估单一查询与论文的相关性，忽略同一篇论文的动机、方法和实验结果等多方面内容。为此论文构建了专家验证的多方面全论文检索基准MAPLE，包含2095个查询，并提出基于检索的上下文学习管线MAPLE-Synth。该基准可复现、可扩展，为科学论文检索系统提供评测工具。由于基准类工作通常附带代码，与用户寻找含代码论文的需求相符。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.16394v1",
+      "source": "arxiv",
+      "title": "Think Inside the Chunk: RegulaRAG for Regulation-Compliant Scenario Generation using LLMs: A Case Study of UN Regulation No. 152",
+      "abstract": "Generating regulation-compliant test scenarios is essential for validating safety-critical automotive systems, yet Large Language Models (LLMs) struggle to ground outputs in long, hierarchical standards. We present RegulaRAG, a Retrieval-Augmented Generation (RAG) pipeline that couples SmartChunking, reference-aware enrichment of paragraphs and tables via graph traversal, with Smart Retrieve & Rerank over these enriched units. To test our system, we evaluate on a manually curated dataset covering all scenarios in UN Regulation No. 152 (AEBS). Our study comprises: (i) a three-step progressive search that identifies near-optimal retrieval parameters without exhaustive grid search; (ii) head-to-head comparisons against five baseline RAG systems; and (iii) a robustness stress test that scales the source corpus with distractor content. Outputs are evaluated using a customized penalized scoring metric. Across all experiments, RegulaRAG achieves the highest average Meta-Score (82.99), outperforming the next-best system by 43% (NoRAG: 57.94), while operating at 14k-25k tokens per query versus up to 500k for graphcentric baselines. It maintains strong performance, remaining stable even as the number of regulatory sources grows, whereas competing RAG systems degrade sharply in both quality and robustness.",
+      "authors": [
+        "Vahid Zolfaghari",
+        "Nenad Petrovic",
+        "AndrÉ Schamschurko",
+        "Alois Knoll"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.IR"
+      ],
+      "published": "2026-08-17T10:46:33+00:00",
+      "link": "https://arxiv.org/pdf/2608.16394v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Presents RegulaRAG pipeline for regulation-compliant scenario generation, likely with code.",
+      "llm_evidence_cn": "提出了RegulaRAG流水线用于生成合规场景，可能附带代码。",
+      "llm_evidence": "提出了RegulaRAG流水线用于生成合规场景，可能附带代码。",
+      "canonical_evidence": "提出了RegulaRAG流水线用于生成合规场景，可能附带代码。",
+      "llm_tldr_en": "Presents RegulaRAG, a RAG pipeline with SmartChunking and reference-aware enrichment for generating regulation-compliant automotive test scenarios, evaluated on UN Regulation No. 152. Likely provides code.",
+      "llm_tldr_cn": "针对大语言模型难以在长而层级化的标准文本中生成合规测试场景的问题，本文提出RegulaRAG检索增强生成流水线。它通过SmartChunking和基于图遍历的参考感知增强，以及Smart Retrieve & Rerank，在UN R152数据集上评估。三阶段渐进搜索找到了近似最优检索参数，并与基线进行了对比。该流水线可用于安全关键汽车系统验证，可能提供代码。",
+      "llm_tldr": "针对大语言模型难以在长而层级化的标准文本中生成合规测试场景的问题，本文提出RegulaRAG检索增强生成流水线。它通过SmartChunking和基于图遍历的参考感知增强，以及Smart Retrieve & Rerank，在UN R152数据集上评估。三阶段渐进搜索找到了近似最优检索参数，并与基线进行了对比。该流水线可用于安全关键汽车系统验证，可能提供代码。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
