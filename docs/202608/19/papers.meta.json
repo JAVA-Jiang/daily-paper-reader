@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-19",
+  "date": "2026-08-19",
+  "generated_at": "2026-08-19T20:36:38",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/19/2608.15073v1-bocode-engineering-centered-benchmarking-for-bayesian-optimization",
+      "section": "deep",
+      "title_en": "BOCoDe: Engineering-Centered Benchmarking for Bayesian Optimization",
+      "authors": "Rosen Ting-Ying Yu, Christophe Hatterer, Advaith Narayanan, Cyril Picard, Faez Ahmed",
+      "date": "2026-08-15",
+      "pdf": "https://arxiv.org/pdf/2608.15073v1",
+      "score": "9.0",
+      "evidence": "开源PyTorch基准",
+      "tldr": "贝叶斯优化评估多依赖合成函数与超参调优，缺乏物理工程设计的真实挑战。为此推出BOCoDe基准，含307个问题、159个工程任务，提供统一API与元数据。实验表明工程任务在约束、多目标及混合变量上独有覆盖，算法排名跨域迁移性差，为研发更贴近工程需求的优化方法奠定基础。",
+      "tags": "query:code-paper",
+      "abstract_en": "Bayesian optimization (BO) is a sample-efficient, surrogate-based approach to black-box optimization (BBO), but its evaluation remains dominated by synthetic functions and hyperparameter optimization (HPO) tasks that are typically low-dimensional and single-objective. Engineering design poses a substantially different regime: problems are physics-based, often high-dimensional, constrained by requirements such as cost and manufacturability, and may involve multiple objectives or mixed variables. To close this benchmarking gap, we introduce BOCoDe, an open-source, PyTorch-native benchmark comprising 307 BBO problems, including 159 engineering design tasks and widely used synthetic and HPO benchmarks. Each problem includes cited provenance and machine-readable metadata that supports programmatic discovery, including by LLM-based agents, and all tasks are exposed through a unified API compatible with open-source BO libraries. We evaluate 31 BO and evolutionary algorithms across five problem classes spanning single- and multi-objective optimization, constrained and unconstrained settings, and mixed-variable search spaces. Analyses of problem structure show that engineering tasks uniquely span constrained and multi-objective settings that synthetic and HPO suites rarely cover, while embeddings from a tabular foundation model separate them most clearly from HPO tasks. Algorithm rankings also vary substantially across domains; in several problem classes, rankings obtained on standard benchmarks do not transfer to engineering tasks. BOCoDe establishes a reproducible and extensible foundation for developing and evaluating BO methods that better reflect the demands of engineering design. Code & data can be found at https://github.com/rosenyu304/BOCoDe",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

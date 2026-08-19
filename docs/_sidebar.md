@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-19 <!--dpr-date:20260819-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/19/2608.15073v1-bocode-engineering-centered-benchmarking-for-bayesian-optimization" data-sidebar-item="{&quot;title&quot;: &quot;BOCoDe: Engineering-Centered Benchmarking for Bayesian Optimization&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.15073v1-bocode-engineering-centered-benchmarking-for-bayesian-optimization&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;开源PyTorch基准&quot;}">BOCoDe: Engineering-Centered Benchmarking for Bayesian Optimization</a>
   * 2026-08-18 <!--dpr-date:20260818-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/18/2608.14864v1-an-open-source-data-processing-pipeline-for-keck--nirc2-polarimetry" data-sidebar-item="{&quot;title&quot;: &quot;An open-source data processing pipeline for Keck / NIRC2-Polarimetry&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.14864v1-an-open-source-data-processing-pipeline-for-keck--nirc2-polarimetry&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;code-paper&quot;}], &quot;evidence&quot;: &quot;开源数据处理流水线，提供源码&quot;}">An open-source data processing pipeline for Keck / NIRC2-Polarimetry</a>

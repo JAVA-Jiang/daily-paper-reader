@@ -1,0 +1,55 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-19T20:33:39.858302+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2608.15073v1",
+      "source": "arxiv",
+      "title": "BOCoDe: Engineering-Centered Benchmarking for Bayesian Optimization",
+      "abstract": "Bayesian optimization (BO) is a sample-efficient, surrogate-based approach to black-box optimization (BBO), but its evaluation remains dominated by synthetic functions and hyperparameter optimization (HPO) tasks that are typically low-dimensional and single-objective. Engineering design poses a substantially different regime: problems are physics-based, often high-dimensional, constrained by requirements such as cost and manufacturability, and may involve multiple objectives or mixed variables. To close this benchmarking gap, we introduce BOCoDe, an open-source, PyTorch-native benchmark comprising 307 BBO problems, including 159 engineering design tasks and widely used synthetic and HPO benchmarks. Each problem includes cited provenance and machine-readable metadata that supports programmatic discovery, including by LLM-based agents, and all tasks are exposed through a unified API compatible with open-source BO libraries. We evaluate 31 BO and evolutionary algorithms across five problem classes spanning single- and multi-objective optimization, constrained and unconstrained settings, and mixed-variable search spaces. Analyses of problem structure show that engineering tasks uniquely span constrained and multi-objective settings that synthetic and HPO suites rarely cover, while embeddings from a tabular foundation model separate them most clearly from HPO tasks. Algorithm rankings also vary substantially across domains; in several problem classes, rankings obtained on standard benchmarks do not transfer to engineering tasks. BOCoDe establishes a reproducible and extensible foundation for developing and evaluating BO methods that better reflect the demands of engineering design. Code & data can be found at https://github.com/rosenyu304/BOCoDe",
+      "authors": [
+        "Rosen Ting-Ying Yu",
+        "Christophe Hatterer",
+        "Advaith Narayanan",
+        "Cyril Picard",
+        "Faez Ahmed"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-08-15T06:47:28+00:00",
+      "link": "https://arxiv.org/pdf/2608.15073v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-source PyTorch-native benchmark",
+      "llm_evidence_cn": "开源PyTorch基准",
+      "llm_evidence": "开源PyTorch基准",
+      "canonical_evidence": "开源PyTorch基准",
+      "llm_tldr_en": "BOCoDe is an open-source PyTorch benchmark with 307 black-box optimization problems including 159 engineering design tasks, providing cited provenance and machine-readable metadata for reproducible research.",
+      "llm_tldr_cn": "BOCoDe是一个工程导向的贝叶斯优化基准，包含307个黑箱优化问题，其中159个来自工程实际设计。该基准采用PyTorch实现并开源，每个问题都附有引用来源和机器可读元数据，支持可重复研究。它为工程优化方法提供了标准评测平台，并满足用户对开放源代码的要求。",
+      "llm_tldr": "BOCoDe是一个工程导向的贝叶斯优化基准，包含307个黑箱优化问题，其中159个来自工程实际设计。该基准采用PyTorch实现并开源，每个问题都附有引用来源和机器可读元数据，支持可重复研究。它为工程优化方法提供了标准评测平台，并满足用户对开放源代码的要求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}
