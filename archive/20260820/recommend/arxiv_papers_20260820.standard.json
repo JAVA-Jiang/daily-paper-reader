@@ -1,0 +1,424 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-20T20:16:08.237909+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 8,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2608.18503v1",
+      "source": "arxiv",
+      "title": "LLM-Powered Predictive Decision-Making for Sustainable Data Center Operations",
+      "abstract": "The growing demand for AI-driven workloads, particularly from Large Language Models (LLMs), has raised concerns about the significant energy and resource consumption in data centers. This work introduces a novel LLM-based predictive scheduling system designed to enhance operational efficiency while reducing the environmental impact of data centers. Our system utilizes an LLM to predict key metrics such as execution time and energy consumption from source code, and it has the potential to extend to other sustainability-focused metrics like water usage for cooling and carbon emissions, provided the data center can track such data. The predictive model is followed by a real-time scheduling algorithm that allocates GPU resources, aiming to improve sustainability by optimizing both energy consumption and queuing delays. With fast inference times, the ability to generalize across diverse task types, and minimal data requirements for training, our approach offers a practical solution for data center scheduling. This framework demonstrates strong potential for advancing sustainability objectives in AI-driven infrastructure. Through our collaboration with a data center, we achieved a 32% reduction in energy consumption and a 30% decrease in waiting time.",
+      "authors": [
+        "Hanzhao Wang",
+        "Jingxuan Wu",
+        "Yumeng Li",
+        "Yu Pan",
+        "Guanting Chen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-19T03:50:32+00:00",
+      "link": "https://arxiv.org/pdf/2608.18503v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Predictive scheduling for data center GPU resource allocation matches task scheduling in data centers",
+      "llm_evidence_cn": "面向数据中心GPU资源分配的预测调度，直接匹配数据中心任务调度需求",
+      "llm_evidence": "面向数据中心GPU资源分配的预测调度，直接匹配数据中心任务调度需求",
+      "canonical_evidence": "面向数据中心GPU资源分配的预测调度，直接匹配数据中心任务调度需求",
+      "llm_tldr_en": "An LLM-based predictive scheduling system forecasts execution time and energy consumption directly from source code and then allocates GPU resources in real time, improving efficiency and reducing environmental impact; it is designed for sustainable data center operations and can be extended to water usage and carbon emissions.",
+      "llm_tldr_cn": "针对AI负载导致数据中心能耗与资源消耗剧增的问题，本文提出一种基于大语言模型的预测调度系统。该系统从源代码预测作业执行时间与能耗，并由实时调度算法分配GPU资源，以提升运营效率、降低环境影响。在数据中心场景下验证了其可行性，并具备扩展到冷却水耗与碳排放等可持续性指标的潜力。",
+      "llm_tldr": "针对AI负载导致数据中心能耗与资源消耗剧增的问题，本文提出一种基于大语言模型的预测调度系统。该系统从源代码预测作业执行时间与能耗，并由实时调度算法分配GPU资源，以提升运营效率、降低环境影响。在数据中心场景下验证了其可行性，并具备扩展到冷却水耗与碳排放等可持续性指标的潜力。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.18595v1",
+      "source": "arxiv",
+      "title": "OdinEval: A Reproducible Benchmark for LLM-Based Program Repair in the Odin Programming Language",
+      "abstract": "Repository-level repair benchmarks still center on a few mainstream languages, leaving systems languages such as Odin largely untested. We present OdinEval, a reproducible benchmark built from documented defects in public Odin repositories. Each instance binds an issue to base and fix commits, a gold patch, an issue-specific regression test, a historical toolchain, and execution records. Admission requires the test to fail on the base revision and pass after the gold fix. When no usable developer test exists, a black-box test is reviewed independently by three instances of the same model, executed in both historical states, and revised from recorded feedback under a versioned Test Writing Skill. We evaluate six language models on 168 filtered instances under one shared protocol. Kimi-K3 records the highest Resolved score at 66.7%, while Qwen3.8-Max has the highest Repro score at 96.4%. The release includes frozen data, source archives, containers, validators, model patches, and audit manifests.",
+      "authors": [
+        "Bang Xie",
+        "Hao Liu",
+        "Zhiyuan Peng",
+        "Xin Yin",
+        "Senjian Zhang",
+        "Yuan Luo",
+        "Chenhao Ying",
+        "Haiming Jin",
+        "Wei Chen",
+        "Shaocong Long",
+        "Zhenyu Shi"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-19T06:38:32+00:00",
+      "link": "https://arxiv.org/pdf/2608.18595v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "OdinEval is an explicitly reproducible benchmark for LLM-based program repair, with associated code and data.",
+      "llm_evidence_cn": "OdinEval是一个可复现的LLM程序修复基准，附带相关代码和数据。",
+      "llm_evidence": "OdinEval是一个可复现的LLM程序修复基准，附带相关代码和数据。",
+      "canonical_evidence": "OdinEval是一个可复现的LLM程序修复基准，附带相关代码和数据。",
+      "llm_tldr_en": "OdinEval is a reproducible benchmark for program repair in the Odin language, binding issues to base/fix commits, tests, toolchains, and execution records.",
+      "llm_tldr_cn": "Odin等系统级语言缺少可复现的修复基准，作者提出OdinEval，从公开Odin仓库的已知缺陷构建，每个实例绑定issue、修复提交、金补丁、回归测试、工具链和执行记录。在六个大模型上评估了修复能力，为系统级语言的自动程序修复研究提供了可复现的评测平台。",
+      "llm_tldr": "Odin等系统级语言缺少可复现的修复基准，作者提出OdinEval，从公开Odin仓库的已知缺陷构建，每个实例绑定issue、修复提交、金补丁、回归测试、工具链和执行记录。在六个大模型上评估了修复能力，为系统级语言的自动程序修复研究提供了可复现的评测平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.19026v1",
+      "source": "arxiv",
+      "title": "Institutional Books - Enriched Text: A customizable multilingual open-source pipeline for denoising, deduplicating, and annotating OCR text at scale",
+      "abstract": "Released in 2025, Institutional Books: Harvard Library (IB-HL) is a collection of 983,004 volumes (242B o200k_base tokens), originally digitized through Harvard Library's participation in the Google Books Library project. As researchers and developers have begun to use IB-HL, a tension has emerged between standard large-scale preprocessing practices and the goals of careful information stewardship. Many existing pipelines optimize for web text: as a result, they tend to aggressively filter, deduplicate, restrict by language, and sometimes discard meaningful metadata. Meanwhile, researchers seeking to use IB-HL duplicate effort while performing similar processing and analysis.   We describe an approach that we call Enriched Text. Instead of producing a single 'complete' stream of tokens, we normalize the text while preserving metadata through annotations. We separate endmatter, detect per-paragraph language, identify clusters of duplicate paragraphs, and compute per-paragraph bits-per-byte scores. We provide this information through HTML-like annotations layered on top of the text. By parsing these annotations, users can tailor the output to their own needs instead of accepting a global editorial decision on content. The pipeline applies to all $\\approx$250 languages in the collection.   This report describes this project's goals, implementation, and design rationale. The release includes IB-HL-ET (an enriched-text version of IB-HL containing 217B o200k_base tokens across 983,003 volumes, organized into 1.39B annotated subtopic paragraphs) and the pipeline that produced it. These serve to make the collection easier for machines to parse and for humans to study.",
+      "authors": [
+        "David Lowry-Duda",
+        "Matteo Cargnelutti",
+        "Catherine Brobston",
+        "Salwa Ismail",
+        "Greg Leppert",
+        "Amanda Watson",
+        "Jonathan Zittrain"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.DL"
+      ],
+      "published": "2026-08-19T15:20:54+00:00",
+      "link": "https://arxiv.org/pdf/2608.19026v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "explicitly open-source pipeline",
+      "llm_evidence_cn": "明确开源流水线",
+      "llm_evidence": "明确开源流水线",
+      "canonical_evidence": "明确开源流水线",
+      "llm_tldr_en": "Offers a customizable multilingual open-source pipeline for denoising, deduplication, and annotation of OCR text at scale, designed for IB-HL and directly satisfying the need for papers with code.",
+      "llm_tldr_cn": "针对机构藏书OCR处理中现有流程过度过滤和重复劳动的问题，本文提出了一个可定制的多语言开源流水线，集成降噪、去重与标注功能，并面向哈佛图书馆馆藏设计。该工具应用于大规模语料处理，展示了其高效性和可复用性。作为开放获取代码，它直接满足了可复现研究对源代码的需求。",
+      "llm_tldr": "针对机构藏书OCR处理中现有流程过度过滤和重复劳动的问题，本文提出了一个可定制的多语言开源流水线，集成降噪、去重与标注功能，并面向哈佛图书馆馆藏设计。该工具应用于大规模语料处理，展示了其高效性和可复用性。作为开放获取代码，它直接满足了可复现研究对源代码的需求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.12853v1",
+      "source": "arxiv",
+      "title": "Beyond Source: An Empirical Study of Python Bytecode Security Risks",
+      "abstract": "Python package security is largely source-centric, yet Python runtimes can execute bytecode directly through .pyc files, compiled-only modules, and marshalled code objects, creating an inspection-execution gap. We present an empirical study of Python bytecode as a security artifact. We measure bytecode exposure in PyPI distributions, evaluate practical analyzability using version-aware tooling, assess CPython runtime robustness under adversarial bytecode, and test source-level reproduction of bytecode findings. Across 1,034,843 collected PyPI artifacts, we identify 7,388 bytecode-containing artifacts, including 228,578 .pyc files and 28,193 artifact-local source-less .pyc files. For modern CPython 3.8-3.14 bytecode, at least one selected decompiler emits source for 204,901 of 204,904 in-scope files, a result measuring emission rather than verified functional equivalence. Tools are non-robust: observed PyPI bytecode triggers managed-code exceptions and timeouts, while adversarial mutated bytecode also drives decompilers into native process failures; together these outcomes yield 17 distinct robustness signatures. Fuzzing produces 1,009 stack-deduplicated runtime findings dominated by pointer-dereference symptoms; 261 groups exhibit potential memory-corruption characteristics, and at least 91.7% of groups reach execution beyond the documented-unsafe ingestion boundary. None reproduce from ordinary Python source. Bytecode is thus a visible ecosystem artifact, a practical analysis target, and a security-relevant interpreter input whose behavior need not match source-level behavior.",
+      "authors": [
+        "Baihong Chen",
+        "Tian Xie",
+        "Wen Li"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-08-13T05:54:24+00:00",
+      "link": "https://arxiv.org/pdf/2608.12853v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Empirical study of Python bytecode security that uses tooling for analysis; likely provides source code for the analysis tools.",
+      "llm_evidence_cn": "对Python字节码安全性的实证研究，使用分析工具，可能提供这些工具的源码。",
+      "llm_evidence": "对Python字节码安全性的实证研究，使用分析工具，可能提供这些工具的源码。",
+      "canonical_evidence": "对Python字节码安全性的实证研究，使用分析工具，可能提供这些工具的源码。",
+      "llm_tldr_en": "This paper empirically studies Python bytecode security, measuring exposure in PyPI, evaluating analyzability, and testing source-level reproduction across a large corpus.",
+      "llm_tldr_cn": "Python包安全大多关注源代码，但运行时可直接执行字节码形成盲区。作者对超过100万PyPI工件进行字节码安全实证研究，评估了版本感知工具的可分析性、CPython运行时的鲁棒性，并测试源码级复现，发现了大量字节码工件。该工作揭示了供应链安全中一个被忽视的字节码风险面。",
+      "llm_tldr": "Python包安全大多关注源代码，但运行时可直接执行字节码形成盲区。作者对超过100万PyPI工件进行字节码安全实证研究，评估了版本感知工具的可分析性、CPython运行时的鲁棒性，并测试源码级复现，发现了大量字节码工件。该工作揭示了供应链安全中一个被忽视的字节码风险面。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.17550v1",
+      "source": "arxiv",
+      "title": "Code as Representation: A Compilable Parsing Paradigm for Academic Documents",
+      "abstract": "Academic papers are a primary carrier of scientific knowledge, yet most of this knowledge remains locked in PDFs that are optimized for human reading rather than machine use. For Multimodal Large Language Models (MLLMs), the core challenge is not only perception, but representation: scientific pages interleave text with Structured Academic Elements (SAEs) such as tables, formulas, charts, and pseudocode, whose structure, data, and logic are poorly preserved by common surrogates like Markdown. We therefore propose Compilable Academic Document Parsing (CADP), a paradigm that reconstructs a full page as contextual \\LaTeX{} plus executable Python, so that structure-preserving elements and executable chart representations can be reconstructed, recompiled, and directly verified against the source page. To support this setting, we introduce CADP-Bench, an expert-verified benchmark of full academic pages containing tightly coupled text and multiple SAE types, evaluated through a re-injection compilation protocol. We further study current capabilities using SOTA MLLMs and an exploratory multi-agent baseline that incorporates common agentic techniques. Results show that even frontier models still struggle to produce high-fidelity executable reconstructions, highlighting substantial room for improvement in structure-aware scientific document parsing. CADP-Bench is released for future research.",
+      "authors": [
+        "Rihui Jin",
+        "Jun Wang",
+        "chengyuan zhu",
+        "Liang Mingyu",
+        "Yue Gao",
+        "Li Yunxuan",
+        "Kuicai Dong",
+        "Guilin Qi",
+        "Lin Ren",
+        "Yongrui Chen",
+        "Xinbang Dai",
+        "Jiaqi Li",
+        "Tongtong Wu",
+        "Gholamreza Haffari"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CL"
+      ],
+      "published": "2026-08-18T09:10:43+00:00",
+      "link": "https://arxiv.org/pdf/2608.17550v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Presents CADP, a paradigm reconstructing academic pages into LaTeX plus executable Python, directly involving source code as the representation.",
+      "llm_evidence_cn": "提出CADP，将学术页面重构为LaTeX加可执行Python，直接涉及源码作为表示。",
+      "llm_evidence": "提出CADP，将学术页面重构为LaTeX加可执行Python，直接涉及源码作为表示。",
+      "canonical_evidence": "提出CADP，将学术页面重构为LaTeX加可执行Python，直接涉及源码作为表示。",
+      "llm_tldr_en": "The paper proposes CADP, a compilable academic document parsing paradigm that reconstructs pages as LaTeX plus executable Python, enabling structure-preserving and executable chart representations.",
+      "llm_tldr_cn": "学术论文以PDF形式存在，机器难以读取其中的表格、公式、图表和伪代码。作者提出可编译学术文档解析范式CADP，将整页重构为上下文LaTeX加上可执行Python，从而保留结构并实现图表和逻辑的可执行表示，使内容可以被重建、重新编译和验证。这项研究为多模态大模型理解科学文档提供了新的表示范式。",
+      "llm_tldr": "学术论文以PDF形式存在，机器难以读取其中的表格、公式、图表和伪代码。作者提出可编译学术文档解析范式CADP，将整页重构为上下文LaTeX加上可执行Python，从而保留结构并实现图表和逻辑的可执行表示，使内容可以被重建、重新编译和验证。这项研究为多模态大模型理解科学文档提供了新的表示范式。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.17889v1",
+      "source": "arxiv",
+      "title": "VisDocAgentBench: Benchmarking Agents for Visually Rich Document Retrieval",
+      "abstract": "Visually rich documents encode relevance through language, layout, structured visual elements, and corpus context, yet retrieval is typically evaluated by one-shot query--page matching. Agentic-search benchmarks usually score downstream question answering or report generation, leaving document ranking under iterative evidence acquisition underexplored. We introduce VisDocAgentBench, a closed-corpus benchmark comparing static and agentic retrieval under a shared ranked-output contract. It contains 2,375 pages from 100 documents and 120 unique-target queries balanced across direct, one-bridge, and two-bridge evidence structures. Relation-preserving construction yields semantic, relational, and visual queries, followed by full-document review and hard-negative validation. A strong late-interaction visual retriever reaches 97.50% Recall@1 on direct items but 2.50% on two-bridge items, exposing the limits of query--target matching when relevance depends on corpus context. Agents recover much of this loss, but planner choice and retrieval representation remain decisive. Every planner performs better with visual retrieval, whose best R@1 reaches 67.50% versus 37.50% for OCR-text. Ablations identify iterative search and page inspection as consequential capabilities, and providing the complete support context improves ranking on both routes. Trace analysis localizes the remaining losses to target discovery, candidate examination, and evidence-role integration. These findings motivate retrieval agents that combine modality-preserving discovery with evidence-directed verification.",
+      "authors": [
+        "Lexiang Hu",
+        "Yanzhao Zhang",
+        "Mingxin Li",
+        "Dingkun Long",
+        "Yikang Li",
+        "Fuwei Zhang",
+        "Yisen Wang",
+        "Zhouchen Lin"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-08-18T15:23:06+00:00",
+      "link": "https://arxiv.org/pdf/2608.17889v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "VisDocAgentBench is a benchmark for visually rich document retrieval; benchmarks typically include source code for the evaluation framework.",
+      "llm_evidence_cn": "VisDocAgentBench是一个视觉丰富文档检索基准，基准通常包含评测框架的源码。",
+      "llm_evidence": "VisDocAgentBench是一个视觉丰富文档检索基准，基准通常包含评测框架的源码。",
+      "canonical_evidence": "VisDocAgentBench是一个视觉丰富文档检索基准，基准通常包含评测框架的源码。",
+      "llm_tldr_en": "VisDocAgentBench is a closed-corpus benchmark comparing static and agentic retrieval for visually rich documents under a shared ranked-output contract.",
+      "llm_tldr_cn": "视觉丰富文档的相关性编码在语言、布局和结构元素中，现有检索评测多为单次查询匹配。作者提出VisDocAgentBench，一个包含2375页、100篇文档和120个独特目标查询的封闭语料基准，对比静态与智能体检索的排名输出。通过关系保持构建生成语义、关系和视觉查询，为迭代证据获取下的文档排序研究提供了标准评测平台。",
+      "llm_tldr": "视觉丰富文档的相关性编码在语言、布局和结构元素中，现有检索评测多为单次查询匹配。作者提出VisDocAgentBench，一个包含2375页、100篇文档和120个独特目标查询的封闭语料基准，对比静态与智能体检索的排名输出。通过关系保持构建生成语义、关系和视觉查询，为迭代证据获取下的文档排序研究提供了标准评测平台。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.18329v1",
+      "source": "arxiv",
+      "title": "Engine-Transfer-Bench: An Evidence-Based Benchmark for Document Compilation Engine Selection",
+      "abstract": "There is no shared framework for selecting among document compilation engines (pdfLaTeX, XeLaTeX, LuaLaTeX, Tectonic, Typst, and pandoc PDF backends). We present Engine-Transfer-Bench (ETB): 1,784 open documents, four tasks covering reliability, latency, text consistency, and failures, a pinned harness, and host-tagged multi-OS results. On GitHub Actions (N=4,211 compiles per host across macOS, Ubuntu, and Windows), Tectonic success is stable within 0.9 percentage points (96.3-97.2%), whereas classic TeX Live-style engines vary by 12-20 percentage points according to distribution policy (Ubuntu apt, MiKTeX auto-install, or macOS BasicTeX). On 702 portable LaTeX documents, the tested engines succeed at 100%, making latency the primary selection factor; failures concentrate in 107 engine-specific templates. Within ETB, failures are architectural, involving fonts, layout, and assets, rather than missing packages on a provisioned host. A 50-pair validation of the S_pdf text-consistency metric achieves 94% precision for real content divergence. We release ETB, ETB-Porta, a recommender and portability gate, and a public cross-OS harness as shared infrastructure.",
+      "authors": [
+        "Prajwal S. Venkateshmurthy"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.PL"
+      ],
+      "published": "2026-08-18T21:29:13+00:00",
+      "link": "https://arxiv.org/pdf/2608.18329v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Pinned harness, open documents and reproducible multi-OS benchmark with source",
+      "llm_evidence_cn": "提供固定测试框架、开放文档和可复现的多操作系统基准实验",
+      "llm_evidence": "提供固定测试框架、开放文档和可复现的多操作系统基准实验",
+      "canonical_evidence": "提供固定测试框架、开放文档和可复现的多操作系统基准实验",
+      "llm_tldr_en": "Introduces Engine-Transfer-Bench, a reproducible benchmark with 1,784 open documents and a pinned harness for evaluating LaTeX/Typst engines across OSes, offering source code and data for engine selection.",
+      "llm_tldr_cn": "针对文档编译引擎选择缺乏统一评测框架的问题，Engine-Transfer-Bench构建了包含1784篇开放文档的基准，涵盖可靠性、延迟、文本一致性等多个任务，并提供固定版本测试框架与多操作系统实验结果。基于GitHub Actions跨macOS、Ubuntu和Windows的4211次编译显示各引擎稳定性差异明显。该基准附带开放文档与可复现脚本，为编译器选型提供了证据支持。",
+      "llm_tldr": "针对文档编译引擎选择缺乏统一评测框架的问题，Engine-Transfer-Bench构建了包含1784篇开放文档的基准，涵盖可靠性、延迟、文本一致性等多个任务，并提供固定版本测试框架与多操作系统实验结果。基于GitHub Actions跨macOS、Ubuntu和Windows的4211次编译显示各引擎稳定性差异明显。该基准附带开放文档与可复现脚本，为编译器选型提供了证据支持。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2608.18039v1",
+      "source": "arxiv",
+      "title": "The Polyglot's Dilemma: Conformance Testing a Dozen Specs in as Many Languages",
+      "abstract": "MongoDB maintains client libraries in a dozen programming languages, used by tens of thousands of organizations and millions of developers. Most are implemented natively rather than as wrappers around a shared core. Ensuring consistent behavior across these libraries, comprising millions of lines of code, is hard but essential. Over eleven years, we developed a specification-based testing approach: tests are written once in YAML and executed by language-specific interpreters for each library. We describe the evolution from many ad-hoc formats to a Unified Test Format, which allowed us to delete over 22,000 lines of test code. The rate of nonconformance bugs fell up to 86% in drivers that adopted YAML tests (though results varied). We report lessons learned about declarative test design, test architecture, schema evolution, and the limits of unification.",
+      "authors": [
+        "A. Jesse Jiryu Davis",
+        "Jeremy Mikola",
+        "Jeff Yemin"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-18T17:32:47+00:00",
+      "link": "https://arxiv.org/pdf/2608.18039v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Presents a specification-based testing approach with YAML test code for MongoDB client libraries, likely providing source code for testing infrastructure.",
+      "llm_evidence_cn": "提出基于规范的测试方法，使用YAML测试代码，可能提供相关源码。",
+      "llm_evidence": "提出基于规范的测试方法，使用YAML测试代码，可能提供相关源码。",
+      "canonical_evidence": "提出基于规范的测试方法，使用YAML测试代码，可能提供相关源码。",
+      "llm_tldr_en": "MongoDB client libraries in many languages need consistent behavior; a unified YAML test format was developed and executed by per-language interpreters, cutting nonconformance bugs by up to 86%.",
+      "llm_tldr_cn": "多种语言的MongoDB客户端库行为一致性难以保证，作者开发了基于规范的测试方法，测试统一用YAML编写并由各语言解释器执行，删除了超过22000行测试代码。采用该格式的驱动程序一致性缺陷率最高下降86%。这展示了如何通过统一测试格式大幅降低多语言软件的测试成本。",
+      "llm_tldr": "多种语言的MongoDB客户端库行为一致性难以保证，作者开发了基于规范的测试方法，测试统一用YAML编写并由各语言解释器执行，删除了超过22000行测试代码。采用该格式的驱动程序一致性缺陷率最高下降86%。这展示了如何通过统一测试格式大幅降低多语言软件的测试成本。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.18565v1",
+      "source": "arxiv",
+      "title": "SemaPLC: A Project-Grounded, Verification-Gated Agent Harness for PLC Code Generation",
+      "abstract": "Programmable logic controllers (PLCs) run industrial plants, and large language models can already generate independent program organization units (POUs) for them. Whether such logic integrates into an existing PLC project and then runs correctly has been checked only in limited tests. We present \\textsc{SemaPLC}, a project-grounded and verification-gated agent harness assembled from conventional tools but governed by a strict completion rule. Rather than stopping when the model judges its own output adequate, \\textsc{SemaPLC} declares a task complete only when logged external checks confirm it. Those checks cover the specification, the compilation, and the behavior on a live runtime. On 117 independent-POU tasks matching existing benchmarks, it attains the highest strict verified pass rate on all seven models (72.6\\% mean). On a project-context track of 65 tasks whose generated logic must compile and run inside a real project, it attains the highest mean on integrated compilation, static behavior, and dynamic behavior. Of the three layers, dynamic behavior is the most revealing. We measure it by deploying the generated and the reference logic to a live PLC runtime and comparing their executed traces. All methods fall within 10 static points of one another, whereas dynamic scores separate them sharply, from 22.4 to 31.4 for the baselines against 52.2 for \\textsc{SemaPLC}. Overall, our verification-gated harness raises the mean at every layer and most sharply at runtime. Execution, not static scoring, is the faithful test of whether generated control logic actually works. \\textsc{SemaPLC} is open-sourced at https://github.com/midea-ai/SemaPLC.",
+      "authors": [
+        "Yanlun Tu",
+        "Huacan Wang",
+        "Ziyue Zhou",
+        "Jie Zhou",
+        "Ningyan Zhu",
+        "Ge Chen",
+        "Wangyi Chen",
+        "Tengfei Zhou",
+        "Yifan Zhou",
+        "Dasheng Yang",
+        "Xiaofeng Mou",
+        "Hui Zhang",
+        "Yi Xu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-19T05:44:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.18565v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Presents SemaPLC, an agent harness for PLC code generation with verification gates; likely includes source code for the harness.",
+      "llm_evidence_cn": "提出SemaPLC，一个用于PLC代码生成的验证门控代理框架，可能包含相关源码。",
+      "llm_evidence": "提出SemaPLC，一个用于PLC代码生成的验证门控代理框架，可能包含相关源码。",
+      "canonical_evidence": "提出SemaPLC，一个用于PLC代码生成的验证门控代理框架，可能包含相关源码。",
+      "llm_tldr_en": "SemaPLC is a verification-gated agent harness for PLC code generation, declaring completion only after external checks of specification, compilation, and runtime behavior pass.",
+      "llm_tldr_cn": "大模型生成的PLC程序组织单元能否集成到现有项目并正确运行缺乏验证，作者提出SemaPLC，一个由外部验证门控的代理框架，只有通过规格、编译和运行时行为检查后才判定任务完成，在117个独立POU任务上验证了有效性。该方法为工业控制中的可靠代码生成提供了可落地的验证机制。",
+      "llm_tldr": "大模型生成的PLC程序组织单元能否集成到现有项目并正确运行缺乏验证，作者提出SemaPLC，一个由外部验证门控的代理框架，只有通过规格、编译和运行时行为检查后才判定任务完成，在117个独立POU任务上验证了有效性。该方法为工业控制中的可靠代码生成提供了可落地的验证机制。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.18733v1",
+      "source": "arxiv",
+      "title": "Flama: a Python framework for development and deployment of production-ready APIs, machine learning, and LLM services",
+      "abstract": "We present Flama, an open-source Python framework for developing and deploying production-ready web APIs, machine learning services, and large-language-model (LLM) applications. Built on the Asynchronous Server Gateway Interface (ASGI), Flama offers a type-driven, async-first programming model that unifies REST API development, predictive model serving, and generative AI inference in one architecture.   It is organised around seven subsystems: a component-based dependency injection system resolving handler parameters from type annotations at startup; a pluggable schema layer supporting Pydantic, Marshmallow and Typesystem behind a single adapter; an automatic CRUD generator turning a SQLAlchemy table and a schema class into REST endpoints backed by the Repository and Unit of Work patterns; a portable binary format (.flm) packaging models from scikit-learn, TensorFlow, PyTorch and Hugging Face Transformers with their metadata for zero-code deployment; a multi-backend LLM server running vLLM (Linux/CUDA) or MLX (Apple Silicon) and exposing four wire protocols (OpenAI, Anthropic, Ollama, and a native streaming dialect) through a shared codec; a Rust-accelerated core compiled via Maturin for routing, JSON encoding, compression and parsing; and a Model Context Protocol module turning any application into an MCP server over JSON-RPC 2.0.   Built-in capabilities include JWT authentication, two pagination strategies, background tasks in threads or processes, WebSocket endpoints, Server-Sent Event and NDJSON streaming, OpenAPI 3.2.0 generation from handler signatures, and a command-line interface for running applications and for serving, packaging and inspecting models.   We describe the architecture, present the programming model through worked examples, and compare Flama with existing frameworks, model serving platforms and LLM inference engines.",
+      "authors": [
+        "José A. Perdiguero López",
+        "Miguel A. Durán-Olivencia"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-08-19T09:37:00+00:00",
+      "link": "https://arxiv.org/pdf/2608.18733v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Open-source Python framework; explicitly provides source code",
+      "llm_evidence_cn": "开源Python框架，明确提供源代码",
+      "llm_evidence": "开源Python框架，明确提供源代码",
+      "canonical_evidence": "开源Python框架，明确提供源代码",
+      "llm_tldr_en": "Presents Flama, an open-source Python framework for building production-ready APIs, ML services, and LLM applications using a type-driven async model and automatic CRUD generation, ensuring code availability.",
+      "llm_tldr_cn": "针对用户寻找含代码论文的需求，本文介绍开源Python框架Flama。Flama基于ASGI，采用类型驱动与异步优先的编程模型，统一支持REST API、机器学习服务与大语言模型应用。它提供依赖注入、模式层适配和自动CRUD生成等七个子系统。由于项目以开源形式发布，论文可直接满足对源代码可获得性的要求。",
+      "llm_tldr": "针对用户寻找含代码论文的需求，本文介绍开源Python框架Flama。Flama基于ASGI，采用类型驱动与异步优先的编程模型，统一支持REST API、机器学习服务与大语言模型应用。它提供依赖注入、模式层适配和自动CRUD生成等七个子系统。由于项目以开源形式发布，论文可直接满足对源代码可获得性的要求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}

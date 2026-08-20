@@ -1,0 +1,325 @@
+Title: OdinEval: A Reproducible Benchmark for LLM-Based Program Repair in the Odin Programming Language
+
+URL Source: https://arxiv.org/pdf/2608.18595v1
+
+Published Time: Thu, 20 Aug 2026 00:32:34 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# OdinEval: A Reproducible Benchmark for LLM-Based Program Repair in the Odin Programming Language 
+
+## Bang Xie 1, Hao Liu 1, Zhiyuan Peng 1, Xin Yin 2,Senjian Zhang 1, Yuan Luo 1, Chenhao Ying 1∗, Haiming Jin 1,Wei Chen 1, Shaocong Long 1, Zhenyu Shi 1
+
+> 1
+
+Shanghai Jiao Tong University, Shanghai, China 
+
+> 2
+
+Zhejiang University, Hangzhou, China yingchenhao@sjtu.edu.cn 
+
+Abstract 
+
+Repository-level repair benchmarks still center on a few main-stream languages, leaving systems languages such as Odin largely untested. We present OdinEval, a reproducible bench-mark built from documented defects in public Odin reposi-tories. Each instance binds an issue to base and fix commits, a gold patch, an issue-specific regression test, a historical toolchain, and execution records. Admission requires the test to fail on the base revision and pass after the gold fix. When no usable developer test exists, a black-box test is reviewed independently by three instances of the same model, executed in both historical states, and revised from recorded feedback under a versioned Test Writing Skill. We evaluate six lan-guage models on 168 filtered instances under one shared pro-tocol. Kimi-K3 records the highest Resolved score at 66.7%, while Qwen3.8-Max has the highest Repro score at 96.4%. The release includes frozen data, source archives, containers, validators, model patches, and audit manifests. 
+
+## Introduction 
+
+Repository-level program repair turns an issue report and a historical codebase into a patch that builds and restores the reported behavior. Although LLMs are widely studied in software engineering (Zhang et al. 2026), executable repair benchmarks mainly cover Java and Python, including De-fects4J, BugsInPy, and SWE-bench (Just, Jalali, and Ernst 2014; Widyasari et al. 2020; Jimenez et al. 2024). Multilin-gual and ecosystem-specific benchmarks broaden this cover-age (Zan et al. 2025; Peng et al. 2025; Wang et al. 2026; Xie et al. 2026), but none tests repair in Odin. It is therefore un-clear whether current methods transfer to Odin’s toolchains, project layouts, and test conventions. Odin repositories provide an underrepresented systems-language repair setting. A benchmark for this setting needs more than a commit diff: it must identify the defective revi-sion, reconstruct its toolchain, attach a behavioral test, and show that the test distinguishes the buggy and fixed states. Without this evidence, a patch may appear successful be-cause the test did not run, the environment changed, or the assertion copied an implementation detail. We introduce OdinEval , a benchmark and protocol for issue-linked Odin repairs. Its construction adapts ArkEval’s 
+
+> ∗
+
+Corresponding author. 
+
+auditable workflow (Xie et al. 2026) to Odin-specific min-ing, toolchains, and test execution. Each repair instance is a versioned evidence bundle. We prefer developer regression tests; otherwise, an iterative workflow generates a black-box test, collects three isolated same-model reviews, runs the test in both historical states, and records each revision of the test and its governing Skill. This paper makes the following contributions: 
+
+• An executable Odin repair benchmark. Each accepted instance will connect an issue, base and fix commits, gold patch, issue-specific test, historical toolchain descriptor, and immutable execution evidence. 
+
+• A test-oracle construction protocol. The protocol ad-mits an instance only when the added test fails on the base revision and passes after the gold fix under the same declared environment; it separates runtime evidence from infrastructure failures. 
+
+• A controlled LLM repair study. We compare six models on the same 168 filtered instances while holding the repair prompt, source scope, validator, and reporting taxonomy fixed. 
+
+• Reproducible research artifacts. OdinEval will release frozen data records, source archives, containerized envi-ronments, validators, model patches, and audit manifests. The current model comparison covers the 168 instances that passed benchmark construction and filtering. 
+
+## Background and Scope 
+
+Repository-Level Repair Benchmarks 
+
+Defects4J (Just, Jalali, and Ernst 2014), BugsInPy (Widyasari et al. 2020), and SWE-bench (Jimenez et al. 2024) connect defects to executable repositories and tests. Textual similarity alone misses patch application, buildability, test discovery, and behavioral outcomes. Repository-level code benchmarks likewise show that project definitions, APIs, and dependencies are part of the task (Yu et al. 2024; Li et al. 2024). Existing collections expose different kinds of evidence. Some package curated defects with test suites; others bind natural-language issues to repository snapshots. Neither guarantees that a new issue-specific test separates the buggy revision from the fix, especially when projects rely on arXiv:2608.18595v1 [cs.SE] 19 Aug 2026 old compilers, local scripts, or unusual test entry points. OdinEval therefore releases the executable evidence with each instance. Figure 1 summarizes the construction path: each stage adds evidence needed to make the final benchmark artifact independently auditable. 
+
+Odin as an Evaluation Setting 
+
+Odin is a systems programming language with a data-oriented design and an explicit toolchain (Odin Contributors 2026). Its public projects are a useful transfer setting because a repair system must operate over repository conventions that need not resemble the dominant Python- or Java-centric benchmark ecosystems. In particular, repository-level eval-uation must preserve how a historical checkout obtains the compiler, resolves project-local dependencies, invokes tests, and distinguishes a test failure from an environment failure. A patch that is syntactically plausible but cannot be evaluated under the relevant compiler and command contract is not a completed repair. Odin has no universal build layout or test framework. Each instance instead declares the smallest executable contract needed to reproduce its behavior. This supports heteroge-neous repositories without hiding project-specific assump-tions in a benchmark-wide script. 
+
+Scope 
+
+OdinEval is an issue-resolution benchmark. It targets local-ized, behaviorally identifiable changes in public repositories; it does not claim to represent all Odin development work, large redesigns, or performance-only changes. The bench-mark may include bug fixes and narrowly scoped corrections that are documented through an issue or equivalent project record. Each record must have a traceable base revision, a fix revision, and a reproducible execution path. The evaluation does not expose the gold patch, the fixed revision, or the gold test source to the repair model. The unit of analysis is an accepted instance, not an is-sue label or a commit alone. An issue may map to multiple commits, and one commit may resolve multiple documented symptoms. OdinEval records these relations explicitly and includes a candidate only when curators can state one re-pair target and one validator contract. The benchmark ex-cludes large-scale migrations, formatting-only changes, ver-sion bumps, and changes whose expected behavior cannot be observed under a reproducible command. These exclusions improve interpretability but also limit the scope of the con-clusions; the final dataset report will disclose all exclusion categories and their counts. 
+
+## Benchmark Construction 
+
+Instance Contract and Admission Rule 
+
+An OdinEval instance is a tuple 
+
+I = ( q, r b, r f , p g , t, e, m ),
+
+where q is the documented issue, rb and rf are the base and fix commits, pg is the gold patch, t is an issue-specific regression test, e is a historical toolchain and execution specification, and m is an audit manifest. The manifest records commands, container digest, return codes, test output, reviewer decisions, and checksums for released files. An instance is admitted only when the same validator establishes: 
+
+Run( rb+t, e ) = FAIL and Run( rb+pg +t, e ) = PASS .
+
+The base failure must be attributable to the documented be-havior, rather than to patch application, dependency resolu-tion, compilation, test discovery, timeout configuration, or an unrelated failing test. Those conditions are preserved as diagnostic records but never counted as fail-to-pass evidence. Passing a test suite does not by itself establish seman-tic correctness of a patch (Qi et al. 2015), and test-oracle adequacy remains a separate challenge (Barr et al. 2015). OdinEval therefore retains explicit two-state evidence and oracle provenance rather than treating a passing outcome as a correctness proof. 
+
+Repository Mining and Curation 
+
+We will mine public Odin repositories with issue or pull-request histories. Repository inclusion requires public acces-sibility, substantive Odin implementation, revision pairs that can be retrieved, and an executable or reconstructable his-torical toolchain. The collection process has two deliberately separate stages: automated profiling produces a complete candidate record, and semantic curation decides whether that record represents an admissible issue-resolution task. The final paper will report the collection cutoff date, source repositories, candidate attrition, and the exact curation rubric rather than infer these quantities from the released benchmark alone. 
+
+Candidate Profiling For every candidate, a profiler records the repository URL, issue and pull-request identi-fiers, available text, base and fix revisions, commit-parent relation, changed paths, added and removed lines, and any test or build commands found in repository metadata. The profiler also records failed retrievals rather than omitting them silently. This produces a candidate manifest before hu-man judgment and makes it possible to distinguish selection decisions from later environment or test failures. Patch size and the ratio of Odin source files are descriptive signals, not stand-alone admission rules. They help curators prioritize localized changes, but a small patch can still be a refactoring and a larger patch can still expose a single re-producible behavior. The final release will publish the exact counting definitions, including whether generated files, ven-dored files, and test-only paths contribute to each statistic. 
+
+Semantic Curation Curators apply a written rubric to the profiled records. A candidate must have (1) a documented symptom or target behavior, (2) a traceable relation between that behavior and the historical change, (3) an executable base checkout or a credible reconstruction path, and (4) a feasible issue-specific oracle. They reject records whose semantic target is ambiguous, whose change is primarily a migration or broad redesign, or whose required dependencies cannot legally and reproducibly be obtained. Public Repositories  Issue & Revision Mining  Environment Reconstruction  Fail -to -Pass Validation  Frozen Benchmark Artifact     
+
+> Issue
+> PR/Commits
+> Code
+> Issue
+> Base
+> Revision
+> Fix
+> Revision
+> Gold
+> Patch
+> Toolchain
+> Container
+> Deps
+> Command
+> Base + Test
+> Fail
+> Base + Fix + Same Test
+> Pass
+> Meta Archive
+> Patch Test
+> Env Logs
+> Hash Audit
+> 1
+> Public Evidence
+> 2
+> Linked Revisions
+> 3
+> Reproducible Env
+> 4
+> Runtime Evidence
+> 5
+> Auditable Artifact
+
+Evidence chain from public issue to reproducible fail -to -pass artifact 
+
+> Repositories
+
+Figure 1: OdinEval benchmark construction. The curation record contains the decision, rationale, cu-rator identifier or anonymous role, and any disagreement. If multiple curators are used, the final paper will report the independent-decision protocol, agreement statistic, recon-ciliation procedure, and final admission rule. No aggregate agreement value will be reported until it is computed from the frozen curation records. 
+
+Historical Environment Reconstruction 
+
+The evaluation environment is part of the benchmark defini-tion. For each candidate that survives curation, OdinEval resolves the compiler release, operating-system base, de-pendency acquisition method, environment variables, work-ing directory, test entry, filter, timeout, and expected exit code. These fields are materialized in a container recipe and a machine-readable command specification. The validator checks the revision before and after adding the gold patch using the same image digest and command sequence. Environment reconstruction proceeds conservatively. A modern compiler is not silently substituted for a historical one, and a repository-wide command is not replaced with a narrower command merely to obtain a pass. When an exact historical toolchain cannot be reconstructed, the instance re-mains outside the accepted corpus. The release will retain the failed reconstruction manifest so that the selection boundary is inspectable. 
+
+Regression-Test Construction 
+
+When a developer test directly exercises the reported behav-ior, OdinEval adapts and validates that test against the two historical states. Automated test generation has long pursued executable tests through feedback-directed random testing and search-based generation (Pacheco and Ernst 2007; Fraser and Arcuri 2011); recent work also uses pretrained language models to augment this process (Lemieux et al. 2023). When no usable developer test exists, the benchmark uses a ver-sioned Test Writing Skill. The writer receives the issue, base repository, permitted test locations, and permitted execution commands. It must formulate an observable black-box oracle and must not assert source strings, private implementation details, exact imports, or the structure of the gold patch. 
+
+Developer Tests and Test Adaptation Developer tests are preferred because they are closest to the repository’s original maintenance intent. However, a test added in the fixed revi-sion may depend on surrounding changes and therefore may not execute when transplanted to the base revision. OdinEval records whether a test is developer-provided, adapted from a developer test, or generated. An adapted test is accepted only after the same two-state validation used for generated tests. The benchmark never treats the mere existence of a test file in the fix revision as evidence of a valid oracle. 
+
+Skill-Guided Black-Box Test Generation The Test Writ-ing Skill defines the writer’s allowed context, output format, and behavioral constraints. Before editing, the writer must state the issue trigger, observable behavior, and test com-mand. White-box checks over source text, AST shape, visi-bility, exact identifiers, or signals from the official patch are forbidden. Each Skill version is immutable, and its change log links recurring rejections to the rules added in response. Three isolated instances of the same reviewer model in-spect each candidate test independently. Their rubric asks whether the test triggers the issue, observes the intended be-havior, explains the base failure and fixed pass, and avoids im-plementation leakage. Unanimous approval is required before execution. Isolated same-model review is a consistency gate, not evidence of inter-model consensus; the artifact records the model identifier, prompt revision, and all reviewer ratio-nales. 
+
+Two-State Validation and Rewrite Loop An approved candidate then undergoes two-state runtime validation under the same declared environment. The validator executes the test first on the base state and then on the base state plus gold repair. It records command lines, output, exit status, elapsed time, and checksums of the checked-out source and applied test. Rejected tests are rewritten from structured feedback and re-enter all review and execution gates. A rejection caused by test discovery, build configuration, or toolchain setup is labeled separately from a behavioral mismatch. The protocol does not claim that test generation or execu-tion alone yields a complete oracle. It records the intended behavioral claim and two-state evidence because oracle ade-quacy remains a distinct testing problem (Barr et al. 2015). The workflow may include a final human semantic audit. If this gate is used in the final corpus, the paper will state the auditors’ role, whether they are blind to gold-patch details, the agreement rule, and the stored record. The human audit will not be described as completed until these fields and its evidence are available. Figure 2 depicts this gated construction loop, including the retained feedback that links every rejection to a rewritten candidate test or a subsequent Skill version. 
+
+Dataset Release 
+
+The release will freeze both the dataset and the means to audit it. For each instance, OdinEval will provide a metadata record, source archive or retrieval recipe, containerized en-vironment, validator, golden patch, test patch, and execution logs. Release checksums and a dataset-level manifest will bind the published results to a specific artifact version. The filtered corpus contains 168 instances. The release checker verifies that every instance has all re-quired files, that manifest hashes match their contents, that the two-state logs identify the same command contract, and that no generated-test record omits its review history. Dataset statistics, paper tables, and analysis scripts must read only this frozen manifest. The rule keeps an evolving working direc-tory separate from the benchmark version used for reported results. 
+
+## Repair Evaluation Protocol 
+
+Task Formulation 
+
+Given a base repository rb, issue description q, and a local-ized source scope L, a model produces one unified patch 
+
+p. The evaluator applies p to rb and then runs the instance validator. A strict successful repair requires patch applica-bility, successful build or test preparation when applicable, passage of the issue-specific regression test, and passage of the declared non-target regression checks. We report every gate separately because a buildable patch is not necessarily a behavioral repair. The repair model sees only information available at the base revision: the issue record, files in L, repository metadata permitted by the protocol, and the shared patch instruction. It does not see the fixed revision, the gold diff, the gold test patch, base-fail/fixed-pass logs, or reviewer evidence. The evaluator may use these withheld artifacts only after patch generation to score the attempt. This separation makes it possible to attribute a success to the model’s generated patch rather than to leakage from the benchmark construction process. Every generated patch is required to be a unified diff that changes only permitted repository paths. The evaluator resets a clean base checkout for each attempt, applies the patch once, and performs no manual repair. Build and test output are not returned to the model in the reported one-attempt setting. Any iterative repair experiment would be a separate condition with a separately declared feedback budget and must not be mixed with the results reported here. Figure 3 summarizes the source-scope conditions and or-dered evaluator. Lexical and oracle localization change only the supplied files; every downstream generation and valida-tion step remains fixed. 
+
+Localization Conditions 
+
+Lexical localization supplies the repair model with the top-k
+
+files returned by a deterministic lexical retriever over the base revision using the issue text. The retriever indexes only files permitted by the instance policy. Before the full experiment, the release will freeze the tokenization, corpus filters, ranking function, k, tie-breaking rule, path normalization, and index checksum. The retriever must retain a per-instance ranked list so that Recall@ k can be recomputed without rerunning a mutable index. Lexical localization is intentionally simple. It establishes a transparent end-to-end reference point and avoids using semantic embeddings, external documentation, or model-generated file selection as unreported sources of context. Issue-report-driven file ranking is a well-established bug-localization formulation (Zhou, Zhang, and Lo 2012; Ye, Bunescu, and Liu 2014); our condition is deliberately nar-rower, ranking repository files from the issue text alone. Its purpose is not to claim that lexical retrieval is state of the art, but to quantify how much of the final repair gap is explained by source-file localization. 
+
+Oracle localization supplies the model with the base-version paths corresponding to files changed by the devel-oper fix. It is an upper-bound condition for localization, not a realistic deployment setting. The model receives source contents from those paths but never receives the gold diff, fix commit, test patch, or reviewer evidence. The oracle path list is computed once from the frozen gold patch, normalized against the base checkout, and stored in the instance mani-fest. Comparing these two conditions separates the cost of localization from the model’s ability to synthesize a repair once a relevant scope is available. The oracle condition can still be difficult: a changed file may contain unrelated edits, a repair may require code outside the changed-file set, and the model receives no indication of the exact edited lines. Accordingly, oracle success is an upper bound for this particular file-scope protocol, not an estimate of an ideal repair system. 
+
+Prompt Contract and Evaluator Isolation 
+
+The shared repair prompt requests a patch only. It identifies the task, specifies the allowed source scope, requires a uni-fied diff, and prohibits modifications to tests, environment recipes, or generated artifacts unless the benchmark task ex-plicitly permits them. The six-model comparison uses the same prompt template and frozen source bundle for every Issue Context  1 Skill -Guided  
+
+> Test Writing
+
+2 Independent Review  3 Unanimous  
+
+> Approval
+
+4 Two -State  
+
+> Runtime Validation
+
+5 Accepted     
+
+> Benchmark Test
+> Issue
+> Base Repo
+> Exec
+> Contract
+> Gold Fix
+> (validation
+> only)
+> Test Writing
+> Skill
+> Test Writer
+> Candidate
+> Test Patch
+> Observable
+> only
+> Avoid
+> source
+> text
+> Avoid
+> private
+> details
+> Avoid
+> gold -patch
+> leakage
+> Candidate Test
+> Reviewer A Reviewer B Reviewer C
+> Issue hit
+> Meaningful fail
+> Base fail / Fix pass
+> No leakage
+> 3 / 3 approve
+> Proceed only if
+> unanimous
+> Base + Test
+> FAIL
+> same environment
+> same command contract
+> Base + Gold Fix + Same Test
+> PASS
+> Recorded benchmark test
+> Test Patch
+> Review
+> Decisions
+> Runtime Logs
+> Command
+> Output
+> Skill
+> Version
+> Audit
+> Record
+> Reviewer Reject Runtime Reject
+> Rewrite Test Structured
+> Feedback
+> Next Skill Version
+
+Independent review + fail -to -pass evidence + versioned audit trail Figure 2: Generated-test workflow. model. The prompt and every included file are stored in the run manifest, so a later analysis can verify the model’s actual information boundary. Generation and evaluation are isolated processes. The generation service writes a candidate response and cannot execute repository commands. The evaluator consumes the normalized diff, performs patch application, invokes the con-tainerized validator, and emits a structured outcome. Keeping the processes separate prevents hidden tool feedback from turning a nominal single-attempt repair into an interactive agent run. The same validators can then score gold patches, generated patches, and future baselines. 
+
+Models and Controls 
+
+We evaluate GPT-5.6-sol, GPT-5.6-terra-max, GLM-5.2, MiniMax-M3, Qwen3.8-Max, and Kimi-K3. Every model uses the same 168 instances, issue representation, repository snapshot, prompt template, source scope, patch format, retry policy, timeout, and validator. The final artifact will record model identifiers, API date, decoding parameters, context budget, concurrency, retry behavior, and per-instance cost and latency. Any model-specific protocol difference will be reported as a deviation. The reported design uses one scored patch for each model-instance pair, producing a paired 6 × 168 matrix. Retries caused by an API transport failure are retained as infras-tructure metadata and may repeat only the identical request before any model content is received. Retries after a model response, malformed patch, or evaluator outcome are forbid-den in the one-attempt experiment. 
+
+Metrics and Failure Taxonomy 
+
+The main comparison reports Apply, Repro, and Resolved on the 168 filtered instances. Apply measures whether the Table 1: Controls frozen before full repair evaluation. Control Frozen record Model identity Provider model string, API date, and request endpoint class. Decoding Temperature, top-p, maximum tokens, seed support, and stop rules. Context Prompt-template hash, source paths, byte or token budget, and truncation policy. Execution Container digest, validator re-vision, timeout, host architec-ture, and concurrency. Attempt policy One scored response; transport-only retry rule and complete retry log. Analysis Dataset manifest hash, retrieval-index hash, failure-classifier revision, and analysis-script commit. generated patch can be applied to the base revision. Repro records the issue-specific reproduction outcome, and Re-solved records complete repair under the evaluator. Table 2 reports only these three supplied metrics. For the frozen eligible set E and a metric indicator si,the reported rate is P 
+
+> i∈E
+
+si/|E|. The same 168 instances form E for every model and every reported metric. The set is fixed after the pre-run eligibility filter, and no model-specific post-run exclusion is allowed. The evaluator retains detailed logs for later diagnosis, but Shared issue +    
+
+> base repository
+> Lexical localization Oracle localization
+> Shared patch -only repair model
+> Issue
+> Base repo
+> Issue Base repo Frozen lexical
+> retriever
+> Top -k
+> file scope
+
++   
+
+> Issue + repo → retriever → top -k files
+> Base -version
+> changed files
+> File scope
+> (top -k = all)
+> Developer -changed
+> base files only
+> No gold diff No fixed revision No test patch No runtime logs
+> Issue
+
++
+
+> Supplied
+> file scope
+> (differs only by
+> condition)
+
++ Repair model                   
+
+> (LLM)
+> All prompts, model
+> settings, retries,
+> commands, and
+> environments are
+> shared
+> Shared ordered evaluation pipeline
+> 1Valid unified diff 2Apply to clean base 3Build / prepare 4Run target test 5Run non -target checks 6Resolved
+> All required
+> gates pass
+> Malformed patch Patch apply fail Build / prep fail Test execution fail Target -behavior fail Non -target regression fail
+> Run log Run manifest Failure
+> taxonomy
+> Run manifest +
+> failure taxonomy
+> Lexical and oracle localization differ only in source scope; every downstream repair and validation gate is identical.
+> 4
+
+Figure 3: Controlled repair evaluation. Table 2: Repair results on 168 filtered instances. 
+
+Model Apply Repro Resolved GPT-5.6-sol 100.0% 90.5% 50.6% GPT-5.6-terra-max 99.4% 90.5% 48.8% GLM-5.2 100.0% 94.6% 57.7% MiniMax-M3 93.5% 88.7% 45.8% Qwen3.8-Max 100.0% 96.4% 48.8% Kimi-K3 100.0% 93.5% 66.7% 
+
+unreported fields are not added to the main comparison. Each unsuccessful attempt receives the first failed gate shown in Figure 3 as its primary label, while raw logs re-tain secondary diagnoses. Preexisting infrastructure failures are excluded only by the frozen pre-run eligibility rule and remain in the release manifest. The six-model comparison in Table 2 fixes the supplied source scope and uses the same downstream generation, val-idation, and failure-classification steps for every model. 
+
+## Experimental Results 
+
+Overall Model Comparison 
+
+Kimi-K3 obtains the highest Resolved score at 66.7%, fol-lowed by GLM-5.2 at 57.7% and GPT-5.6-sol at 50.6%. GPT-5.6-terra-max and Qwen3.8-Max both reach 48.8%, while MiniMax-M3 reaches 45.8%. The ordering differs for Re-pro: Qwen3.8-Max leads at 96.4%, followed by GLM-5.2 at 94.6%. Complete resolution therefore changes the ranking obtained from Repro alone. Kimi-K3 exceeds GLM-5.2 in Resolved by 8.9 percentage points. Qwen3.8-Max records the highest Repro score, yet its Resolved score is 17.9 points below Kimi-K3. MiniMax-M3 has the lowest Apply, Repro, and Resolved scores, while the other five models reach at least 99.4% Apply. 
+
+Metric-Level Analysis 
+
+The three metrics in Table 2 reveal different behavior. Apply spans 6.5 percentage points, Repro spans 7.7, and Resolved spans 20.8. Apply is nearly saturated for five models, but Resolved ranges from 45.8% to 66.7%. The run manifest retains the logs needed to diagnose the differences. 
+
+## Discussion 
+
+OdinEval asks a narrow question: can a model restore one documented behavior with a patch that can be evaluated in the original environment? Kimi-K3 has the strongest Resolved result at 66.7%, while Qwen3.8-Max leads Repro at 96.4%. Their different rankings show that Repro is not the same as satisfying the full repair contract. Metric choice therefore changes the apparent winner. Re-porting only Apply would make four models indistinguish-able, and reporting only Repro would favor Qwen3.8-Max. Resolved instead favors Kimi-K3 by a clear margin. OdinEval reports all three supplied metrics so that patch application, issue reproduction, and complete repair are not collapsed into one claim. Generated tests cover issues without runnable developer tests, but same-model review is only a consistency check. Runtime validation remains mandatory, and one passing test does not prove full correctness. Frozen snapshots permit later comparisons if their information boundaries and budgets are disclosed. The release also distinguishes a repeated evaluation from a new benchmark version. A new repair model can reuse the frozen issues, environments, tests, and validator. A lo-calization study may change the supplied file scope while keeping all later gates fixed. Replacing a test, compiler, com-mand, or acceptance rule changes the task itself and must produce a new version. This boundary prevents a reported gain from silently combining a better repair method with an easier oracle or environment. 
+
+## Threats to Validity 
+
+Construct validity. Fail-to-pass tests may overfit symptoms or assumptions from the gold fix. Black-box review and two-state evidence reduce but do not remove this risk, so re-sults separate developer, adapted, and generated tests. The reported comparison fixes one source scope and does not measure sensitivity to alternative localization methods. 
+
+Internal validity. Historical toolchains, validator changes, and model-service updates can alter outcomes. Manifests bind each result to its environment, validator, model, request, commands, and responses. 
+
+External and conclusion validity. The 168 filtered pub-lic issues may not represent all Odin development, and six models do not establish a universal ranking. We therefore bound the claims to the disclosed corpus, fixed denominator, and frozen evaluation protocol. 
+
+## Related Work 
+
+Program repair has moved from search and symbolic reason-ing (Le Goues et al. 2012; Mechtaev, Yi, and Roychoudhury 2016) to learned edits (Tufano et al. 2019; Lutellier et al. 2020; Jiang, Lutellier, and Tan 2021; Zhu et al. 2021) and LLM-based repair (Fan et al. 2023; Jin et al. 2023; Xia and Zhang 2024; Yin et al. 2024). OdinEval evaluates these ap-proaches; it does not introduce another repair algorithm. Repair benchmarks range from curated defects to issue-linked repositories (Just, Jalali, and Ernst 2014; Widyasari et al. 2020; Jimenez et al. 2024); QuixBugs pairs Java and Python defects (Lin et al. 2017). Unlike interactive systems such as SWE-agent (Yang et al. 2024), OdinEval uses a patch-only protocol that keeps localization, generation, and valida-tion separate. SolEval and ArkRepoBench study repository-level gener-ation and completion in Solidity and ArkTS (Peng et al. 2025; Wang et al. 2026); HapRepair and ArkEval target OpenHar-mony and ArkTS repair (Lin et al. 2025; Xie et al. 2026). OdinEval adds historical Odin toolchains, issue-specific ora-cles, and auditable fail-to-pass evidence. The tests support a repair claim but do not prove semantic correctness (Qi et al. 2015; Barr et al. 2015). 
+
+## Conclusion 
+
+OdinEval turns issue-linked Odin repairs into auditable benchmark instances. On 168 tasks, Kimi-K3 leads Resolved at 66.7%, while Qwen3.8-Max leads Repro at 96.4%. The ranking shift shows that Repro alone overstates complete repair. Frozen evidence makes this distinction reproducible. 
+
+## References 
+
+Barr, E. T.; Harman, M.; McMinn, P.; Shahbaz, M.; and Yoo, S. 2015. The Oracle Problem in Software Testing: A Survey. IEEE Transactions on Software Engineering , 41(5): 507–525. Fan, Z.; Gao, X.; Mirchev, M.; Roychoudhury, A.; and Tan, S. H. 2023. Automated Repair of Programs from Large Language Mod-els. In 2023 IEEE/ACM 45th International Conference on Software Engineering , 1469–1481. Fraser, G.; and Arcuri, A. 2011. EvoSuite: Automatic Test Suite Generation for Object-Oriented Software. In Proceedings of the 19th ACM SIGSOFT Symposium and the 13th European Conference on Foundations of Software Engineering , 416–419. Jiang, N.; Lutellier, T.; and Tan, L. 2021. CURE: Code-Aware Neu-ral Machine Translation for Automatic Program Repair. In Proceed-ings of the 43rd International Conference on Software Engineering ,1161–1173. Jimenez, C. E.; Yang, J.; Wettig, A.; Yao, S.; Pei, K.; Press, O.; and Narasimhan, K. 2024. SWE-bench: Can Language Models Resolve Real-World GitHub Issues? In The Twelfth International Conference on Learning Representations .Jin, M.; Shahriar, S.; Tufano, M.; Shi, X.; Lu, S.; Sundaresan, N.; and Svyatkovskiy, A. 2023. InferFix: End-to-End Program Repair with LLMs. In Proceedings of the 31st ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering , 1646–1656. Just, R.; Jalali, D.; and Ernst, M. D. 2014. Defects4J: A Database of Existing Faults to Enable Controlled Testing Studies for Java Programs. In Proceedings of the 2014 International Symposium on Software Testing and Analysis , 437–440. Le Goues, C.; Nguyen, T.; Forrest, S.; and Weimer, W. 2012. Gen-Prog: A Generic Method for Automatic Software Repair. IEEE Transactions on Software Engineering , 38(1): 54–72. Lemieux, C.; Inala, J. P.; Lahiri, S. K.; and Sen, S. 2023. CO-DAMOSA: Escaping Coverage Plateaus in Test Generation with Pre-trained Large Language Models. In Proceedings of the 45th International Conference on Software Engineering , 919–931. Li, J.; Li, G.; Zhao, Y.; Li, Y.; Liu, H.; Zhu, H.; Wang, L.; Liu, K.; Fang, Z.; Wang, L.; Ding, J.; Zhang, X.; Zhu, Y.; Dong, Y.; Jin, Z.; Li, B.; Huang, F.; Li, Y.; Gu, B.; and Yang, M. 2024. DevEval: A Manually-Annotated Code Generation Benchmark Aligned with Real-World Code Repositories. In Findings of the Association for Computational Linguistics: ACL 2024 , 3603–3614. Lin, D.; Koppel, J.; Chen, A.; and Solar-Lezama, A. 2017. QuixBugs: A Multi-Lingual Program Repair Benchmark Set Based on the Quixey Challenge. In Proceedings Companion of the 2017 ACM SIGPLAN International Conference on Systems, Program-ming, Languages, and Applications: Software for Humanity , 55–56. Lin, Z.; Zhou, M.; Ma, W.; Chen, C.; Yang, Y.; Wang, J.; Hu, C.; and Li, L. 2025. HapRepair: Learn to Repair OpenHarmony Apps. In Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering, Industry Track , 319–330. Lutellier, T.; Pham, H. V.; Pang, L.; Li, Y.; Wei, M.; and Tan, L. 2020. CoCoNuT: Combining Context-Aware Neural Translation Models using Ensemble for Program Repair. In Proceedings of the 29th ACM SIGSOFT International Symposium on Software Testing and Analysis , 101–114. Mechtaev, S.; Yi, J.; and Roychoudhury, A. 2016. Angelix: Scal-able Multiline Program Patch Synthesis via Symbolic Analysis. In Proceedings of the 38th International Conference on Software Engineering , 691–701. Odin Contributors. 2026. The Odin Programming Language. https: //odin-lang.org/. Accessed: 2026-07-27. Pacheco, C.; and Ernst, M. D. 2007. Randoop: Feedback-Directed Random Testing for Java. In Companion to the 22nd ACM SIG-PLAN Conference on Object-Oriented Programming Systems and Applications Companion , 815–816. Peng, Z.; Yin, X.; Qian, R.; Lin, P.; Liu, Y.; Zhang, H.; Ying, C.; and Luo, Y. 2025. SolEval: Benchmarking Large Language Models for Repository-Level Solidity Smart Contract Generation. In Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing , 4388–4411. Qi, Z.; Long, F.; Achour, S.; and Rinard, M. 2015. An Analysis of Patch Plausibility and Correctness for Generate-and-Validate Patch Generation Systems. In Proceedings of the 2015 International Symposium on Software Testing and Analysis , 24–36. Tufano, M.; Watson, C.; Bavota, G.; Di Penta, M.; White, M.; and Poshyvanyk, D. 2019. An Empirical Study on Learning Bug-Fixing Patches in the Wild via Neural Machine Translation. ACM Transactions on Software Engineering and Methodology , 28(4): 1–29. Wang, Y.; Zhang, B.; Wang, Y.; Guo, D.; Zhuo, T. Y.; Chen, J.; Liu, M.; Zhang, X.; and Zheng, Z. 2026. ArkRepoBench: A Repository-Level Code Completion Benchmark for HarmonyOS Development. In Findings of the Association for Computational Linguistics: ACL 2026 , 19409–19429. Widyasari, R.; Sim, S. Q.; Lok, C.; Qi, H.; Phan, J.; Tay, Q.; Tan, C.; Wee, F.; Tan, J. E.; Yieh, Y.; Goh, B.; Thung, F.; Kang, H. J.; Hoang, T.; Lo, D.; and Ouh, E. L. 2020. BugsInPy: A Database of Existing Bugs in Python Programs to Enable Controlled Testing and Debugging Studies. In Proceedings of the 28th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering , 1556–1560. Xia, C. S.; and Zhang, L. 2024. Automated Program Repair via Conversation: Fixing 162 out of 337 Bugs for $0.42 Each using ChatGPT. In Proceedings of the 33rd ACM SIGSOFT International Symposium on Software Testing and Analysis , 819–831. Xie, B.; Zhang, S.; Peng, Z.; Chen, W.; Ying, C.; and Luo, Y. 2026. ArkEval: Benchmarking and Evaluating Automated CodeRepair for ArkTS. arXiv:2602.08866. Yang, J.; Jimenez, C. E.; Wettig, A.; Lieret, K.; Yao, S.; Narasimhan, K.; and Press, O. 2024. SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering. In Advances in Neural Information Processing Systems , volume 37. Ye, X.; Bunescu, R.; and Liu, C. 2014. Learning to Rank Relevant Files for Bug Reports Using Domain Knowledge. In Proceedings of the 22nd ACM SIGSOFT International Symposium on Foundations of Software Engineering , 689–699. Yin, X.; Ni, C.; Wang, S.; Li, Z.; Zeng, L.; and Yang, X. 2024. ThinkRepair: Self-Directed Automated Program Repair. In Pro-ceedings of the 33rd ACM SIGSOFT International Symposium on Software Testing and Analysis , 1274–1286. Yu, H.; Shen, B.; Ran, D.; Zhang, J.; Zhang, Q.; Ma, Y.; Liang, G.; Li, Y.; Wang, Q.; and Xie, T. 2024. CoderEval: A Benchmark of Pragmatic Code Generation with Generative Pre-trained Models. In Proceedings of the IEEE/ACM 46th International Conference on Software Engineering , 1–12. Zan, D.; Huang, Z.; Liu, W.; Chen, H.; Zhang, L.; Xin, S.; Chen, L.; Liu, Q.; Zhong, X.; Li, A.; Liu, S.; Xiao, Y.; Chen, L.; Zhang, Y.; Su, J.; Liu, T.; Long, R.; Shen, K.; and Xiang, L. 2025. Multi-SWE-bench: A Multilingual Benchmark for Issue Resolving. arXiv:2504.02605. Zhang, Q.; Fang, C.; Xie, Y.; Zhang, Y.; Yu, S.; Sun, W.; Yang, Y.; and Chen, Z. 2026. A Survey on Large Language Models for Software Engineering. Science China Information Sciences , 69: 141102. Zhou, J.; Zhang, H.; and Lo, D. 2012. Where Should the Bugs Be Fixed? More Accurate Information Retrieval-Based Bug Localiza-tion Based on Bug Reports. In Proceedings of the 34th International Conference on Software Engineering , 14–24. Zhu, Q.; Sun, Z.; Xiao, Y.-a.; Zhang, W.; Yuan, K.; Xiong, Y.; and Zhang, L. 2021. A Syntax-Guided Edit Decoder for Neural Program Repair. In Proceedings of the 29th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering , 341–353.

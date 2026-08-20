@@ -1,0 +1,428 @@
+Title: Engine-Transfer-Bench: An Evidence-Based Benchmark for Document Compilation Engine Selection
+
+URL Source: https://arxiv.org/pdf/2608.18329v1
+
+Published Time: Thu, 20 Aug 2026 00:12:53 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Engine-Transfer-Bench: An Evidence-Based Benchmark for Document Compilation Engine Selection 
+
+## Prajwal S. Venkateshmurthy 
+
+Independent Researcher San Jose, CA, USA prajwal@prajwal.me 
+
+## Abstract 
+
+There is no shared framework for selecting among document com-pilation engines (pdfLaTeX, XeLaTeX, LuaLaTeX, Tectonic, Typst, pandoc PDF backends). We present Engine-Transfer-Bench (ETB): 1,784 open documents, four tasks (reliability, latency, text consis-tency, failure modes), a pinned harness, and host-tagged multi-OS results, to our knowledge the first cross-platform empirical study of document compilation engines under identical seeds and protocol. On GitHub Actions ( 𝑁 =4,211 compiles per host on macOS, Ubuntu, and Windows), Tectonic’s success rate is stable within 0.9 pp (96.3– 97.2%), while classic TeX Live-style engines swing 12–20 pp with distribution policy (Ubuntu apt vs. MiKTeX auto-install vs. macOS BasicTeX). On 702 portable LaTeX documents every engine tested succeeds, so latency decides. Failures concentrate in 107 engine-specific templates and are architectural (fonts, layout, assets) rather than missing packages on a provisioned host. We release ETB, the ETB-Porta recommender, and a public cross-OS harness as shared infrastructure. 
+
+## CCS Concepts 
+
+• Software and its engineering → Software libraries and repos-itories ; Software testing and debugging ; • Information systems 
+
+→ Digital libraries and archives. 
+
+## Keywords 
+
+document compilation, TeX engines, Tectonic, Typst, benchmark-ing, multi-OS reproducibility, empirical software engineering, CI infrastructure 
+
+## 1 Introduction 
+
+Document compilation engines are critical developer infrastruc-ture for science and industry: they turn markup into the PDFs that implement publication, theses, CVs, and reports. The ecosystem is fragmented, classical TeX engines (pdfLaTeX, XeLaTeX, LuaLaTeX), modern wrappers (Tectonic), new languages (Typst), and Mark-down pipelines (pandoc backends). Choosing an engine affects CI time, local editor feedback, font support, and whether a template compiles at all. 
+
+Build infrastructure, not only “LaTeX engines”. Compilation is embedded in the same class of systems as language toolchains and package managers: continuous-integration jobs that gate pull requests, Docker/container images that pin TeX Live or MiKTeX for reproducible builds, arXiv and journal submission pipelines that recompile sources under operator-controlled engines, and campus or lab templates that must survive years of OS upgrades. A slow or non-portable engine is a build-system cost (queue time, flaky CI, broken Docker layers), not a typesetting preference. 
+
+Why engine reliability matters for reproducible science and CI. 
+
+Reproducible science assumes that the same markup yields a usable PDF under the toolchain a collaborator, container, or publisher actually runs. When engines or TeX distributions diverge, CI can pass on one host and fail on another, arXiv recompiles can surface silent layout or font changes, and Docker layers that pin the “wrong” package set become permanent flakiness. That is an infrastructure reliability problem: we need shared measurement substrate (corpus, tasks, multi-OS protocol) and reusable tools such as ETB-Porta , a recommender and portability gate others can embed in CI, rather than one-off single-machine rankings. Yet the community has no evidence-based decision frame-work and no shared evaluation infrastructure for this choice. Advice lives in blog posts and single-template anecdotes. Tan and Rigger showed that TeX engines can emit inconsistent documents from identical correct sources [7], a reliability phenomenon, but did not provide a shared multi-platform measurement stack. Repair and generation benchmarks typically pin a single engine [9, 11], so their results cannot transfer across toolchains [1, 4–6]. 
+
+What is missing. Infrastructure papers that change a field (De-fects4J, SWE-bench, HumanEval) define tasks , oracles , protocols , and a corpus others can reuse. Document compilation lacks such shared substrate. Without it, every study invents its own seeds, timeouts, and success definitions, results cannot accumulate. 
+
+This paper. We introduce Engine-Transfer-Bench (ETB) as empirical infrastructure, the benchmark is the reusable substrate. The findings characterize ecosystem reliability: (1) A redistributable corpus of 1,784 working documents with license metadata (not synthetic mutants). (2) Four standardized tasks with fixed metrics (Table 2). (3) A pinned multi-engine protocol and open harness (4,211 native compiles + 297 Markdown runs in our reference campaign, plus full multi-OS GHA replicas, Table 11). (4) A decision methodology : condition claims on portable vs. engine-specific subpopulations so selection bias cannot be mis-taken for absolute reliability. Reference measurements indicate how these engines behave un-der a fixed protocol and yield principles within ETB , not merely a leaderboard of today’s binaries. 
+
+Hypotheses. 
+
+H1 (concentrated reliability risk) TeX Live compile failures on open templates concentrate in a small engine-specific minority rather than distributing uniformly. arXiv:2608.18329v1 [cs.SE] 18 Aug 2026 Prajwal S. Venkateshmurthy 
+
+H2 (architecture over lineage for latency) On multi-engine-portable documents, latency differences are large and systematic (not noise), with auto-fetch/XeTeX-based Tectonic faster than clas-sical TeX Live engines under a paired design. 
+
+H3 (residual semantic divergence) Even when all engines suc-ceed, PDF-text inconsistency exceeds a practical 𝑆 pdf threshold for a non-trivial fraction of documents (extending [7]). 
+
+H4 (architectural failure modes within ETB) Dominant fail-ures on this corpus reflect font-stack mismatch, multi-file layout, and asset packaging, not absence of packages on a fully provisioned host. 
+
+Contributions. (1) ETB as a reusable benchmark artifact (cor-pus, tasks, metrics, protocol). (2) A conditioned evaluation method-ology (portable vs. engine-specific). (3) Hypothesis-driven find-ings with paired latency effect sizes and thresholded consistency analysis. (4) ETB-Porta , a recommender +portability-gate system evaluated on ETB (99.9% primary success at mean CI cost ≈2.05, 78.9% of pdf fails caught in CI, and a hybrid +pdf gate with 0% dangerous-green at cost 2.33). (5) A full multi-OS GHA campaign (macOS/Ubuntu/Windows, 𝑁 =4211 compiles per host) showing Tectonic portability (gap ≤0.9 pp) vs. classic-engine distribution effects, plus design principles (scoped to ETB) and an adoption checklist. 
+
+## 2 Related Work 
+
+Cross-engine TeX studies. Tan and Rigger systematically docu-ment cross-engine and cross-version inconsistencies [7]. ETB reuses 
+
+that insight as Task T3 and adds standardized latency/reliability tasks, open template scale, Typst and Markdown tracks, and a deci-sion decomposition for practitioners and tool builders. 
+
+Executable benchmarks as infrastructure. Defects4J [5], Many-Bugs [6], SWE-bench [4], and HumanEval [1] succeed because later papers adopt their tasks and oracles. ETB aims at the same role for document compilation toolchains. 
+
+Document tooling. EqFix [11], TexOCR [9], OverleafCopilot and PaperDebugger [2, 10] advance repair, reconstruction, or writing assistance, usually under a single pinned engine. ETB is complemen-tary substrate: a multi-engine yardstick those systems can report against. 
+
+Companion: TeXFix-Bench. In companion work, we introduce TeXFix-Bench [8], a benchmark for LLM-based repair of broken document sources. Engine-Transfer-Bench complements that work: whereas TeXFix-Bench evaluates repair agents, this work evaluates the compilation engines that serve as the repair oracle. Together, they provide end-to-end infrastructure for document source relia-bility research. 
+
+Mutation testing methodology. Controlled fault injection [3] mo-tivates clean oracles. ETB instead studies working documents (no mutations) so engine selection is not confounded with repair diffi-culty. 
+
+Positioning against prior benchmarks. Table 1 contrasts ETB with related evaluation artifacts. Unlike single-engine repair oracles, 
+
+Table 1: How ETB relates to well-known evaluation artifacts.                
+
+> Artifact Unit What later work reuses
+> Defects4J Java bugs +tests Fault corpus, test oracles SWE-bench GitHub issues Task instances, harness HumanEval Coding problems Pass@k protocol Tan&Rigger Correct TeX sources Inconsistency phenomenon
+> ETB (this) Working docs +en-gines Tasks T1–T4, protocol, portable split Corpus 1,784 docs licenses Tasks T1–T4 Protocol pinned engines 60 s, isolated Analysis conditioned sets effect sizes
+
+Figure 1: ETB evaluation pipeline. The benchmark artifact is the corpus + tasks + protocol. Measurements are a reference campaign on that artifact. 
+
+ETB’s unit of analysis is the toolchain , and its primary outcome is a conditioned decision, not a model leaderboard. 
+
+## 3 Engine-Transfer-Bench 
+
+ETB is defined by four components: corpus, tasks, metrics, and protocol. Figure 1 summarizes the evaluation flow. 
+
+## 3.1 Corpus 
+
+• Size: 1,784 unique working documents (809 LaTeX, 975 Typst) after license, safety, and primary-compile filters. 
+
+• Sources: GitHub Typst (604), Typst Universe (368), GitHub La-TeX (332), Overleaf CC gallery (275), Oleafly template-packs (107), CTAN examples (98). 
+
+• Licenses: MIT, CC-BY-4.0, CC0-1.0, Apache-2.0, LPPL-1.3c, MIT-0, each item ships attribution metadata for redistribution. 
+
+• LaTeX labels: portable/cross-engine (702) vs. engine-specific (107), assigned at construction by multi-engine compile probes. 
+
+Why this population (bias justification). We deliberately exclude non-redistributable arXiv dumps and proprietary publisher classes. ETB targets reproducible science on open templates , not a prob-ability sample of all PDFs ever written. Representativeness claims are scoped to supply-limited open-source document software, the same honesty Defects4J applies when it scopes to projects with test suites. Construction uses a Tectonic-oriented primary gate for LaTeX. ETB’s methodology therefore requires conditioned analysis (portable vs. engine-specific) rather than raw full-set winner-takes-all rankings. 
+
+## 3.2 Tasks 3.3 Metrics 
+
+Success. Binary: process exit code 0 and a non-empty PDF arti-fact. 
+
+Latency. High-resolution wall clock. CPU via time -p when available. Primary TeX latency claims use the portable set (all four engines succeed) to avoid failure truncation bias. 
+
+PDF text similarity 𝑆 pdf . Let 𝑃 (·) be the lowercase whitespace-token sequence from Poppler pdftotext . Define token-level LCS Engine-Transfer-Bench: An Evidence-Based Benchmark for Document Compilation Engine Selection 
+
+Table 2: ETB tasks, oracles, and primary metrics.               
+
+> ID Task Oracle / metric
+> T1 Reliability Exit 0 ∧non-empty PDF within 60 s, success rate on defined sets T2 Latency Wall time (ms) on successful runs, paired ratios on portable set T3 Text consistency 𝑆 pdf (Eq. 1) on portable multi-engine PDFs, flag rate at 𝜏
+> T4 Failure modes Categorized root causes from logs (font, layout, as-sets, . . . )
+> Optional track T5: Markdown
+
+→PDF backends (pandoc ×3) on a simplicity-ranked conversion cohort ( 𝑛 =99 in reference campaign). 
+
+length and Dice coefficient 
+
+𝑆 pdf (𝑎, 𝑏 ) = 2 LCS  𝑃 (𝑎 ), 𝑃 (𝑏 )
+
+|𝑃 (𝑎 )| + | 𝑃 (𝑏 )| . (1) 
+
+Why Dice +LCS (not edit distance / pixels)? (1) Order-sensitive token LCS captures reflow and content drops better than bag-of-words overlap. (2) Dice normalizes for length asymmetry. (3) Charac-ter edit distance is dominated by hyphenation and is 𝑂 (𝑛 2) on long theses. (4) Visual/raster diffs are complementary future work [7]. ETB prioritizes a cheap, deterministic, CI-friendly oracle. Sequences 
+
+>15k tokens are truncated for tractability (flagged when used). 
+
+Failure taxonomy. Priority rules on first-error strings: font-stack/engine-lock → font . Aux-write/undefined control/emergency stop → structure . Typst missing media paths → asset , and otherwise 
+
+other . This corrects naive “missing package” tags when fontspec 
+
+aborts under pdfLaTeX. 
+
+## 3.4 Protocol (reference campaign) 
+
+Fresh temp directory per run (source tree read-only), 60 s budget. Se-quential execution. Shell-escape disabled for TeX Live. Two passes for pdf/Xe/Lua. Tectonic and Typst use a single invocation with engine-internal re-runs. Pinned stack: Tectonic 0.17.0. TeX Live 2025. Typst 0.15.1. Pandoc 3.10.1. Poppler 25.11.0. MacOS arm64 (Node harness). Zero timeouts in the reference campaign (4,508 attempts, 76 min wall). 
+
+## 3.5 Conditioning sets (methodological requirement) 
+
+• Full LaTeX set (𝑁 =809): all seeds × four engines. 
+
+• Portable set (𝑁 =702): fair for T2/T3 (all four engines succeed on every document). 
+
+• Engine-specific set (𝑁 =107): reliability stress set for T1/T4. ETB forbids interpreting Tectonic’s full-set 100% as “compiles arbi-trary unfiltered LaTeX.” 
+
+## 4 Reference Campaign Results 
+
+We report a complete reference campaign to (i) validate ETB’s tasks and (ii) test H1–H4. Note on construction bias: the corpus passed a Tectonic-oriented primary gate at construction (§3). Tectonic’s 100% full-set rate in Table 3 is therefore partially circular. The non-circular results are the cross-OS campaign (Table 11: Tectonic drops to 96–97% on GHA hosts) and the conditioned engine-specific com-parison (Table 4: Tectonic 100% vs. TeX Live 29–45% on documents 
+
+Table 3: Full-set native outcomes (mixture of portable +
+
+engine-specific).                               
+
+> Engine NSucc. Rate Med ms Mean ms
+> Tectonic 809 809 100% 419 795 pdfLaTeX 809 733 90.6% 836 1,109 XeLaTeX 809 749 92.6% 1,135 1,472 LuaLaTeX 809 750 92.7% 1,249 1,630 Typst 975 928 95.2% 67 147
+
+Table 4: Conditioned reliability and latency (TeX). Portable 
+
+= H2/T2, engine-specific = H1/T1.                         
+
+> Tec pdf Xe Lua
+> Portable 𝑁 =702 (all succeed) Success 100% 100% 100% 100% Median ms 383 827 1,108 1,219 Mean ms 654 1,105 1,457 1,577
+> Engine-specific 𝑁 =107
+> Success 100% 29% 44% 45%
+
+Table 5: Full-set LaTeX success (%) by category/source (Tec =100 throughout).                                             
+
+> Slice Npdf Xe Lua
+> package-example 70 100 100 99 report 53 98 98 98 venue 61 97 95 97 cv 134 95 85 96 beamer 61 90 98 92
+> thesis 54 70 74 72
+> ctan 98 100 100 99 template-packs 104 99 99 100 overleaf 275 89 91 91 github-latex 332 87 89 90
+
+where other engines defined the gate). Scientific claims below con-sistently state the conditioning set. 
+
+## 4.1 H1: Reliability risk is concentrated 
+
+Supported within ETB. On the portable set, success is 100% for all engines. On the engine-specific set: Tectonic 100%, pdfLaTeX 29% (31/107), XeLaTeX 44%, LuaLaTeX 45% (Table 4). Across our dataset, every document that fails any TeX Live engine under re-measurement lies in this 107 ( failAnyLive =107). Full-set rates of 90–93% are therefore a mixture model : perfect success on 86.8% of documents plus severe loss on 13.2%. 
+
+Effect size on reliability. Cohen’s ℎ between Tectonic (1.0) and pdfLaTeX (0.29) on the engine-specific set is ℎ≈2.0 (very large). Between pdf and Xe on that set, ℎ≈0.31 (small–medium): TeX Live engines are more similar to each other than to Tectonic on this stress slice. 
+
+Stratification. Table 5 shows full-set success by category/source. Theses are hardest for TeX Live (pdf 70%, Xe 74%, Lua 72%, 𝑛 =54). GitHub/Overleaf drive most misses. CTAN and template-packs stay near ceiling, consistent with modern fontspec preambles in com-munity templates vs. classical package demos. This stratification is part of ETB’s reporting checklist: users should not publish a single scalar success rate without category or regime splits. Prajwal S. Venkateshmurthy 
+
+Table 6: Paired latency vs. Tectonic on portable set ( 𝑛 =702 ). Cliff’s 𝛿 >0 means the other engine tends slower. Sign test: 𝐻 0
+
+equal median times.                           
+
+> vs Tec Med ratio 95% boot CI Cliff 𝛿 Sign 𝑝
+> pdfLaTeX 2.23 [2.19 ,2.28 ]0.62 (large) ≪0.001
+> XeLaTeX 2.91 [2.82 ,2.98 ]0.76 (large) ≪0.001
+> LuaLaTeX 3.24 [3.13 ,3.36 ]0.79 (large) ≪0.001
+> pdf →Xe med ratio 1.34 (𝛿 =0.49 ). Xe →Lua 1.10 (𝛿 =0.17 , small). pdf slower than Tec on 92% of docs. Xe/Lua on >98%.
+> Tectonic pdfLaTeX XeLaTeX LuaLaTeX
+> 0500 1,000 1,500
+> 795 1,109 1,472 1,630 147
+> Mean wall time (ms)
+
+Figure 2: Full-set mean latency overview. Authoritative TeX pairwise tests: Table 6 (portable). Typst is a separate stack (H2 non-claim). 
+
+## 4.2 H2: Latency differences are large and systematic 
+
+Supported on the portable set with paired designs ( 𝑛 =702 docu-ments, all four times observed). 
+
+Scientific reading: under fair same-document conditions, en-gine architecture (startup, font pipeline, implementation) induces 
+
+multiplicative latency gaps, not jitter. Tectonic’s auto-fetch XeTeX-based design is faster on the portable majority where reliability is tied, in addition to being more reliable on exotic templates. 
+
+Typst (stack-level, not same-source). Typst median 67 ms on suc-cessful .typ compiles (95.2% success). We do not claim “Typst is 11 × Lua on the same file”. We claim the Typst stack offers sub-100 ms interactive potential that TeX stacks do not match on this corpus. 
+
+## 4.3 H3: Text inconsistency remains after multi-engine success 
+
+Supported within ETB. On the portable 702, mean pairwise 𝑆 pdf 
+
+is high (Xe–Lua 0.982, Tectonic–pdf 0.951) but min 𝑆 pdf <0.95 flags 
+
+25.5% of documents. Threshold sensitivity (Table 7) shows the phe-nomenon is not an artifact of a single 𝜏 : 8.5% at 0.80, 15% at 0.90, 53% at 0.99. Closest engines share lineage (Xe ↔Lua and Tectonic ↔Xe). 
+
+Flag validation. To confirm that 𝑆 pdf flags reflect real content divergence rather than pdftotext artifacts, we validated a ran-dom sample of 50 flagged pairs (lowest-𝑆 pdf engine pair per doc-ument) with an automated line-level diff classifier, followed by author review of every sampled diff with Unicode-normalization and whitespace-fold checks. Result: 47/50 (94%) show genuine con-tent differences (dropped words, missing lines or whole sections, divergent text), and 3/50 (6%) are extraction artifacts, two Uni-code NFC/NFD normalization mismatches on accented characters 
+
+Table 7: H3: inconsistency rate vs. threshold ( 𝑁 =702 portable).                            
+
+> 𝜏 in min 𝑆 pdf <𝜏 Count Rate 0.80 60 8.5% 0.90 105 15.0% 0.95 (default) 179 25.5% 0.99 372 53.0% 1.00 0.95 0.98 0.96 0.95 1.00 0.97 0.97 0.98 0.97 1.00 0.98 0.96 0.97 0.98 1.00 Tec Tec pdf pdf Xe Xe Lua Lua
+
+Figure 3: Mean pairwise 𝑆 pdf on portable set (H3). Darker green = closer.            
+
+> pdfLaTeX XeLaTeX LuaLaTeX Typst
+> 020 40 37 28 22 021 20 23 000047 18 12 14 0
+> Failures
+> font-stack structure/layout missing asset other
+
+Figure 4: H4: architectural failure modes within ETB (Tec-tonic omitted: zero failures). 
+
+and one fi -ligature folding difference. The 𝑆 pdf <0.95 flag is thus a high-precision (94%) indicator of real cross-engine text divergence. The residual artifact classes suggest adding NFC normalization and ligature folding to 𝑆 pdf ’s tokenizer in a future revision. Per-pair adjudications ship in the artifact ( spdf-validation.json ). 
+
+## 4.4 H4: Failures are architectural (within ETB) 
+
+Supported within ETB. Reclassified native failures (Figure 4): TeX Live is dominated by font-stack mismatch (pdf 37, Xe 28, Lua 22) and multi-file/structure issues (pdf 21, Xe 20, Lua 23). True missing CTAN packages are ≤1 per engine on this provisioned host. Typst’s 47 failures are 100% missing assets on this corpus. 
+
+Root-cause lessons and representative patterns. 
+
+• Font-stack mismatch (leading TeX Live class): messages of the form “fontspec requires XeTeX or LuaTeX” or CTeX “fontset unavailable.” These are engine interface failures: the package exists, but the PDF engine’s font model is wrong. Installing more CTAN packages does not help. Engine-Transfer-Bench: An Evidence-Based Benchmark for Document Compilation Engine Selection 
+
+• Multi-file build layout: “I can’t write on file chapters/...aux .” Failures cluster in theses/multi-root templates where relative paths and working directories differ across drivers. 
+
+• Package–engine interaction: tcolorbox and similar packages abort with engine-specific constraints even when files resolve. 
+
+• Asset packaging (Typst, 47/47): file not found (searched at . . . /logo.svg) . The language runtime is stable. The dis-tribution unit is incomplete. ETB’s T4 task is intentionally actionable: each category maps to a different repair class (change engine, fix layout, pin fonts, ship media), a property future automated repair systems can exploit. 
+
+## 4.5 Optional track: Markdown backends 
+
+On 99 simplicity-ranked LaTeX →Markdown conversions: pandoc →HTML 100% success (median 1.80 s), →Tectonic 96% (1.06 s), →Typst 85.9% (232 ms). This track is exploratory : conver-sion loss confounds backend quality. ETB includes it so future work can replace the cohort with native Markdown without changing the task API. 
+
+## 5 Principles 
+
+Beyond rankings, ETB yields reusable principles about this corpus and protocol (not universal laws of all document systems): (1) Package/auto-fetch architecture dominates reliability tails within ETB. On engine-specific templates, Tectonic retains 100% while TeX Live drops to 29–45% despite a full TeX Live install. The gap is not “missing .sty on disk” but workflow/architecture (fetch, isolation, template assumptions). (2) Font systems dominate compatibility within ETB. Font-stack mismatches are the leading TeX Live failure class on this set. Engine lineage (pdf vs. Xe/Lua) predicts failure better than raw package counts. (3) Runtime/implementation dominates latency on the portable majority (within ETB). When reliability is tied, multiplicative slowdowns (median ratios 2 .2–3 .2× vs. Tectonic) are the decision variable, with large paired effect sizes. (4) Success does not imply semantic identity. H3 shows text-level divergence after multi-engine success on the portable set. Multi-engine CI needs a consistency oracle, not only exit codes [7]. (5) Distribution packaging is part of the compiler stack. 
+
+Within ETB’s Typst track, failures are asset packaging, not parser crashes, tooling must treat media as build inputs. (6) Conditioning is mandatory for honest evaluation. Full-set averages hide a two-regime world. Benchmark users must report portable vs. engine-specific (or equivalent) splits. 
+
+## 6 ETB-Porta: Companion System 
+
+A benchmark becomes field infrastructure when systems are eval-uated on it and built from its labels . We implement ETB-Porta , a companion system with two components evaluated on the ETB ref-erence campaign: (1) a static engine recommender and (2) a 
+
+portability gate . Code and full metrics ship with the artifact (harness/eval-companion.mjs ). 
+
+Table 8: Predicting pdfLaTeX failure from static +graph fea-tures ( 𝑁 =809 , OOF).             
+
+> Method AUC Prec. Rec. F1
+> Rule (font/CJK/thesis) 0.78 0.23 0.75 0.36
+> LogReg OOF 0.89 0.68 0.61 0.64
+
+## 6.1 Design 
+
+Features (no compile required). From catalog metadata and the main source file we extract: font-stack signals ( fontspec ,
+
+unicode-math , \setmainfont ), CJK packages, TikZ/beamer, thesis/CV/letter categories, package count, log size, and source stratum (GitHub, Overleaf, CTAN, templates). 
+
+Recommender. Porta outputs a primary authoring engine, an ordered authoring list, a CI gate set, and per-engine risk scores. We evaluate: 
+
+• Rules: deterministic policy distilled from ETB principles (font-stack ⇒ avoid pdf-first, thesis ⇒ multi-engine CI, default Tectonic +pdf gate). 
+
+• Hybrid: rules plus class-weighted logistic regression that pre-dicts pdfLaTeX failure. High risk demotes pdf from primary and 
+
+forces pdf into CI for venue safety. 
+
+Portability gate. Given required engines 𝑅 and compile outcomes, pass ⇔ ∀ 𝑒 ∈ 𝑅 : success (𝑒 ) (optional min 𝑆 pdf ≥ 𝜏 in the online API). The gate operationalizes multi-engine CI without always running all |𝑅 |=4 engines. 
+
+## 6.2 Experiment 
+
+Data. All 𝑁 =809 LaTeX ETB documents with complete four-engine outcomes. pdfLaTeX failure base rate = 9.4%. Predictor features do not include compile outcomes as inputs. 
+
+Protocol. Five-fold out-of-fold (OOF) logistic regression for fail-pdf metrics, class-weighted L2 training. Threshold chosen for best OOF F1. Recommenders and gates evaluated on the full set against realized ETB outcomes. Baselines: always-pdf, always-Tectonic, always-all-four. Gates: single-engine, all-four, hybrid, hybrid +forced pdf. 
+
+System hypotheses. S-H1: static features predict pdf failure (AUC ≫ 0.5). S-H2: Porta primary success ≥ 99% at CI cost ≪ 4. 
+
+S-H3: Porta gate cuts dangerous green (CI green while pdf fails and pdf was not scheduled) vs. Tectonic-only, cheaper than all-four. 
+
+S-H4: On engine-specific templates, always-pdf primary collapses, Porta does not. 
+
+## 6.3 Results 
+
+S-H1 (supported). With include-graph features, OOF LogReg achieves AUC 0.89 , F1 0.64 (precision 0.68, recall 0.61) vs. a font/thesis rule baseline F1 0.36 (AUC 0.78). Failures are partially predictable before compile. 
+
+S-H2 & S-H4 (supported). Table 9: always-pdfLaTeX achieves only 
+
+29% primary success on engine-specific templates. Always-Tectonic is 100% primary but catches 0% of pdf failures in CI. Porta hybrid keeps 99.9% primary success (99.1% on engine-specific) at mean CI Prajwal S. Venkateshmurthy 
+
+Table 9: Recommender comparison on ETB LaTeX set (𝑁 =809 ).                         
+
+> System Prim.ok Spec.ok CI cost pdf catch
+> always pdfLaTeX 90.6% 29.0% 1.00 100% always Tectonic 100% 100% 1.00 0% always all-four 100% 100% 4.00 100% Porta rules 99.9% 99.1% 2.00 40.8%
+> Porta hybrid 99.9% 99.1% 2.05 78.9%
+
+Table 10: Portability gate policies. Dangerous green: gate passes while pdfLaTeX fails and pdf was not required.                   
+
+> Gate Pass Cost Dangerous green
+> Tectonic only 100% 1.00 9.39% pdfLaTeX only 90.6% 1.00 0% All four engines 86.8% 4.00 0% Porta hybrid CI 89.6% 2.05 1.61%
+> Porta hybrid +pdf 88.0% 2.33 0%
+
+cost 2.05 vs. 4.00 for all-four, while catching 78.9% of pdf failures in CI. 
+
+S-H3 (supported). Table 10: Tectonic-only CI passes on all docu-ments but yields 9.39% dangerous green for arXiv-style workflows (pdf fails silently). All-four removes danger at cost 4. hybrid +pdf 
+
+achieves 0% dangerous green at mean cost 2.33 (≈42% fewer CI en-gines than all-four). Live multi-engine +𝑆 pdf gating is implemented in the etb-porta gate CLI for online CI. 
+
+Cross-environment robustness. A leave-one-source-out holdout (train on three corpus sources, test on the held-out source) probes whether Porta’s in-sample numbers survive distribution shift. Porta hybrid primary success stays at 99.7% on held-out GitHub ( 𝑛 =332. Pdf-fail base rate 13.3%) and 100% on held-out Overleaf ( 𝑛 =275. Base 11.3%), CTAN ( 𝑛 =98), and template-packs ( 𝑛 =104). The fail-pdf predictor’s OOF F1 drops from 0.64 in-sample to 0.54 on the two held-out sources with nonzero base rates (GitHub, Overleaf), a modest degradation consistent with source-specific preamble conventions, while the safety-relevant recommender metrics are essentially unchanged. Multi-OS T1 success rates on identical seeds appear in §8.1 (GHA macOS/Ubuntu/Windows). 
+
+## 6.4 What this shows about ETB 
+
+Porta is not a generic ML demo: every label, split, and metric is defined by ETB tasks (T1 outcomes, regime-aware evaluation on engine-specific templates, and CI cost as an operationalization of T2 budgets). Without ETB’s multi-engine ledger, neither the fail-pdf predictor nor the dangerous-green metric would be measurable. Conversely, Porta indicates that ETB enables new systems research beyond rankings. 
+
+## 7 What ETB Enables 
+
+Beyond Porta, ETB unlocks: standardized engine release scores. Multi-engine CI with 𝑆 pdf gates [7]. Training data for richer recom-menders, multi-engine reporting for AI document tools [2, 10, 11], and differential testing seeds on the portable set. ETB’s corpus 
+
+Table 11: GHA multi-OS T1 success rates (%). Same seeds and harness. No timing comparison. 𝑁 =809 LaTeX docs per classic engine, 𝑁 =975 Typst.                                       
+
+> Engine macOS Ubuntu Windows Gap All-3 OK
+> Tectonic 97.0 96.3 97.2 0.9 93.4% pdfLaTeX 88.8 76.6 87.9 12.2 72.4% XeLaTeX 88.8 74.3 91.3 17.0 70.5% LuaLaTeX 93.4 73.8 90.7 19.6 70.1% Typst 95.2 83.0 †83.0 †12.2 83.0%
+> Gap =max −min host rate (pp). All-3 OK =fraction of docs succeeding on every host. Pairwise outcome agreement: macOS–Windows 90.9%, Windows–Ubuntu 86.9%, macOS–Ubuntu 86.2%.
+> †Ubuntu and Windows Typst rates are identical at 809 /975 =83 .0% by raw count, not a copy-paste error. Both hosts fail on the same 166 documents under a shared non-mac Typst/font environment. MacOS GHA succeeds on those seeds (95.2%). Shared non-mac CI gap, not a LaTeX-distribution effect.
+
+has been adopted as the seed pool for TeXFix-Bench v0.4 [8], indi-cating that ETB serves as shared infrastructure across document-compilation research. 
+
+Adoption checklist for papers using ETB. Declare engine versions and OS, report T1 on the full, portable, and engine-specific sets, report T2 with paired effect sizes on the portable set, report T3 at multiple 𝜏 , and release per-document JSONL. 
+
+## 8 Closing the Closed Loop 
+
+Beyond the in-corpus reference campaign we add a completed multi-OS GHA campaign (§8.1), external stress tests, and resource metrics. 
+
+## 8.1 Cross-platform success rates 
+
+We re-ran the full ETB compilation track on three GitHub Actions hosts with the same catalog (1 ,784 seeds, 𝑁 =4,211 host-tagged compiles per OS, markdown skipped). Public harness: https://github. com/prajwal-svm/etb-cross-os. Hosts: macOS arm64 (BasicTeX + collections), Ubuntu x64 (apt TeX Live subset), Windows x64 (Basic MiKTeX with AutoInstall=1 ). We compare success rates only ,wall times are not comparable across VMs. 
+
+Findings. (1) Tectonic is OS-portable on CI: rates 96.3–97.2% (gap 0.9 pp), 93.4% of documents succeed on all three hosts. (2) Classic engines track TeX distribution policy , not OS kernel: Ubuntu’s fixed apt package set loses 12–20 pp vs. macOS BasicTeX / Windows MiKTeX auto-install. Windows and macOS GHA stay within ∼1–5 pp of each other for pdf/Xe/Lua. (3) Typst: 
+
+macOS GHA matches a full desktop-style rate (95.2%), Ubuntu and Windows both sit at 83.0% (same 809 /975 successes, see footnote), a shared non-mac CI gap (fonts/network), not a LaTeX-distribution effect. (4) Disagreements concentrate on missing_package / font errors under thin package sets. This is a finding about deployment environments, not a harness bug. 
+
+## 8.2 Single-engine overstatement 
+
+On working ETB LaTeX sources, 𝐻 1(Tectonic )=100% but only 
+
+86.8% succeed under all four engines, a 13.2 pp overstatement if multi-engine portability is the estimand (Table 12). A benign 
+
+strip_comments rewrite on 80 docs drops all four engines together Engine-Transfer-Bench: An Evidence-Based Benchmark for Document Compilation Engine Selection 
+
+Table 12: Multi-engine baseline rescoring. Δ = 𝐻 1(Tec ) − 
+
+𝐻 1(all4 ).          
+
+> Baseline H1 Tec H1 all4 Δ
+> identity ( 𝑁 =809 )100.0% 86.8% 13.2 pp
+> strip_comments ( 𝑛 =80 )78.8% 78.8% 0.0 pp
+
+to 78.8% ( Δ=0), illustrating architecture-agnostic fragility under edit. 
+
+## 8.3 External repositories and resource pilots 
+
+We report two explicit pilot campaigns in Appendix C (not full-scale external validity): (i) held-out GitHub projects ( 𝑛 =25 attempted, 𝑛 =13 evaluated, three dangerous greens all blocked by Porta hybrid +pdf), (ii) resource pilot ( 𝑛 =12 portable docs, Tectonic warm ≈ 1.8×, pdfLaTeX lowest RSS). Expand or re-run before claiming production-scale external validity. 
+
+## 9 Threats to Validity 
+
+Construct. 𝑆 pdf is not layout equivalence. We report 𝜏 -sensitivity and restrict T3 to portable successes. Success does not imply pub-lisher acceptance. T4 categories are actionable approximations, not a formal fault ontology. 
+
+Internal. Sequential timing. Pre-warmed Tectonic cache. Rule-based taxonomy (improved priority rules, not double-annotated gold), T4 categories are rule-based and author-adjudicated. A future revision should add an independent second rater on a sample of failure logs. Paired sign tests and Cliff’s 𝛿 assume document inde-pendence. Shared packages may induce weak dependence across seeds. 
+
+External. Open templates only. Reference latency/consistency tables use a developer macOS host. Multi-OS T1 claims use GHA macOS/Ubuntu/Windows (Table 11) with host-tagged JSONL. Font and package sets differ by distribution (apt vs. BasicTeX vs. MiK-TeX). We report this as environment variance, not a single “OS effect.” Source-holdout primary success remains ≥99.7% on major slices. The 107 engine-specific templates are defined by construc-tion probes, other partitions may move boundary documents. Typst vs. TeX is stack-level. Markdown track is conversion-confounded and exploratory. 
+
+Dataset evolution. The dataset of 1,784 documents was collected from five open sources at a single point in time. Document for-matting practices, package ecosystems, and engine implementa-tions evolve continuously. The benchmark should be periodically refreshed to remain representative. We document the collection methodology to enable future replication with updated sources. Host-tagged JSONL and the public cross-OS harness support longi-tudinal re-measurement without redefining tasks T1–T4. 
+
+Conclusion. Fixed-design census. Statistical tests strengthen within-corpus claims, not ecological super-population inference. Selection dependence is handled by conditioning sets and an explicit adoption protocol (§7), not denied. 
+
+Benchmark adoption risk. Like early Defects4J, ETB’s impact depends on whether others use the tasks. We mitigate by open data, pinned versions, JSONL schemas, and a short adoption checklist. Community uptake is an external validity threat for the artifact ,not for the reference measurements. 
+
+## 10 Conclusion 
+
+We provide reusable empirical infrastructure and evidence that compilation engines are not interchangeable . ETB ships an open corpus, four tasks, a pinned multi-OS protocol, and conditioning sets that separate reliability regimes from latency regimes. Host-tagged results show ecosystem behavior under real CI hosts rather than a single developer machine. Within ETB, H1–H4 indicate that font stacks drive compatibility, runtime architecture drives portable latency, and exit-code success is insufficient for semantic identity. A multi-OS GHA campaign (Table 11) shows that Tec-tonic is portable across macOS/Ubuntu/Windows (gap ≤0.9 pp), whereas classic-engine rates track package-set policy more than OS kernels. ETB-Porta is infrastructure others can embed: 99.9% primary-engine success at mean CI cost 2.05 (vs. 4 for all-four), 78.9% of pdfLaTeX failures caught in hybrid CI, and a hybrid +pdf gate with 0% dangerous-green at cost 2.33. We release ETB, Porta, and the public multi-OS harness (https://github.com/prajwal-svm/etb-cross-os) so evaluation, multi-engine CI, and companion repair research [8] can share substrate rather than folklore. 
+
+## A Reference Campaign Accounting 
+
+Native rows 809 × 4 + 975 = 4,211. Markdown 99 × 3 = 297. To-tal attempts 4,508. Wall 4,565 s. Timeouts 0. Exact successes: Tec 809 /809, pdf 733 /809, Xe 749 /809, Lua 750 /809, Typst 928 /975. 
+
+Multi-OS GHA campaign (Table 11). Identical seeds and har-ness, 𝑁 =4,211 compiles per host (markdown skipped). Hosts: ma-cOS arm64 (BasicTeX), Ubuntu x64 (apt TeX Live subset), Win-dows x64 (MiKTeX AutoInstall). Exact successes (macOS / Ubuntu / Windows): Tec 785 /779 /786. Pdf 718 /620 /711. Xe 718 /601 /739. Lua 756 /597 /734 of 809. Typst 928 /809 /809 of 975. Pairwise out-come agreement: macOS–Windows 90.9%, Windows–Ubuntu 86.9%, macOS–Ubuntu 86.2%. Public artifact: https://github.com/prajwal-svm/etb-cross-os. 
+
+## B Extended Statistics 
+
+Full-set p90/p99 (success only): Tec 1,583/5,904. Pdf 1,586/5,381. Xe 2,144/5,668. Lua 2,296/7,351. Typst 332/900 ms. Mean PDF sizes: Tec 26 KiB, pdf 92 KiB, Xe 25 KiB, Lua 49 KiB, Typst 59 KiB. 
+
+## C Pilot Campaigns (Not Full-Scale) 
+
+External repositories (pilot, 𝑛 =13 evaluated). We applied Porta live gates to held-out GitHub LaTeX projects ( 𝑛 =25 attempted, 𝑛 =13 with a resolvable main file, 5 clone failures, 7 no main .tex ). On the evaluated set, Tectonic and pdfLaTeX each succeed on only 23.1% 
+
+(3 /13), three dangerous greens (Tectonic OK, pdf fail) occurred, all caught by Porta’s hybrid +pdf gate. 
+
+Root cause of the 10 /13 failures. (1) Custom class dependency 
+
+(7/10): CV/thesis templates (awesome-cv, moderncv, ucasthesis, SJTUThesis, zjuthesis, ElegantBook, ElegantPaper) ship proprietary Prajwal S. Venkateshmurthy 
+
+.cls /.sty files with multi-file 
+
+input layouts assuming project-root working directories. ETB’s single-file corpus model deliberately excludes this class. (2) Font-stack mismatch (3/10): templates require XeLaTeX-only fonts not installed on the host. Tectonic resolves CTAN packages but cannot install system fonts. Zero failures stem from missing CTAN packages, the same architectural pattern as H4 within ETB. This confirms that ETB’s scope (single-file, redistributable templates) is narrower than the full GitHub LaTeX ecosystem, not that in-corpus metrics are inflated. 
+
+Resource pilot ( 𝑛 =12 portable docs). On 12 portable docs, Tectonic median warm recompile is 488 ms vs. cold 868 ms ( ≈ 1.8×). PdfLa-TeX uses the least peak RSS ( ∼56 MiB) but almost no warm gain. PDF byte determinism is rare (0–25% across engines). Full multi-OS resource tables use the same harness flags, expand 𝑛 before treating RSS/warm numbers as primary results. 
+
+## Data Availability 
+
+The ETB corpus (1,784 seeds with license metadata), host-tagged multi-OS results, analysis summaries, harness, and the ETB-Porta evaluation are archived on Zenodo (https://doi.org/10.5281/zenodo. 21831918). The cross-OS harness is public at https://github.com/ prajwal-svm/etb-cross-os. 
+
+## References 
+
+[1] Mark Chen et al. 2021. Evaluating Large Language Models Trained on Code. 
+
+arXiv preprint arXiv:2107.03374 (2021). [2] Junyi Hou, A. Lin Huikai, Nuo Chen, Yi Gong, and Bingsheng He. 2026. Pa-perDebugger: A Plugin-Based Multi-Agent System for In-Editor Academic Writing, Review, and Editing. In Companion Proc. ACM Web Conf. 144–147. https://doi.org/10.1145/3774905.3793122 [3] Yue Jia and Mark Harman. 2011. An Analysis and Survey of the Development of Mutation Testing. IEEE Trans. Softw. Eng. 37, 5 (2011), 649–678. https: //doi.org/10.1109/TSE.2010.62 [4] Carlos E. Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, and Karthik Narasimhan. 2024. SWE-bench: Can Language Models Resolve Real-World GitHub Issues?. In Proc. ICLR .[5] René Just, Darioush Jalali, and Michael D. Ernst. 2014. Defects4J: A Database of Existing Faults to Enable Controlled Testing Studies for Java Programs. In Proc. ISSTA . 437–440. https://doi.org/10.1145/2610384.2628055 [6] Claire Le Goues, Neal Holtschulte, Edward K. Smith, Yuriy Brun, Premkumar Devanbu, Stephanie Forrest, and Westley Weimer. 2015. The ManyBugs and IntroClass Benchmarks for Automated Repair of C Programs. IEEE Trans. Softw. Eng. 41, 12 (2015), 1236–1256. https://doi.org/10.1109/TSE.2015.2454513 [7] Jialun Tan and Manuel Rigger. 2024. Inconsistencies in TeX-Produced Documents. In Proc. ISSTA . 1415–1427. https://doi.org/10.1145/3650212.3680370 [8] Prajwal S. Venkateshmurthy. 2026. TeXFix-Bench: A Multi-Format Benchmark for LLM-Based Document Source Repair. Manuscript in preparation. [9] Cheng Wang, Lihua Fu, Zhongming Kuang, and Yuhang Zhao. 2026. TexOCR: Ad-vancing Document OCR Models for Compilable Page-to-LaTeX Reconstruction. In Proc. ACL . 35821–35845. https://doi.org/10.18653/v1/2026.acl-long.1658 [10] Haoran Wen et al. 2024. OverleafCopilot: Empowering Academic Writing in Overleaf with Large Language Models. arXiv preprint arXiv:2403.09733 (2024). [11] Fengmin Zhu and Fei He. 2022. EqFix: Fixing LaTeX Equation Errors by Examples. In SETTA 2022 (LNCS, Vol. 13649) . Springer, 106–124. https://doi.org/10.1007/978-3-031-21213-0_7
