@@ -1,0 +1,54 @@
+{
+  "label": "2026-08-22",
+  "date": "2026-08-22",
+  "generated_at": "2026-08-22T20:26:34",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202608/22/2608.19622v1-shift-or-curtail-how-much-data-center-flexibility-is-worth-depends-on-the-host-power-grid",
+      "section": "deep",
+      "title_en": "Shift or curtail? How much data-center flexibility is worth depends on the host power grid",
+      "authors": "Saroj Khanal, Geon Roh, Boyu Yao, Abraham Silverman, Dennice Gayme, Charalambos Konstantinou, Jip Kim, Yury Dvorkin",
+      "date": "2026-08-20",
+      "pdf": "https://arxiv.org/pdf/2608.19622v1",
+      "score": "9.0",
+      "evidence": "数据中心灵活性与电网调度价值",
+      "tldr": "数据中心扩张可能造成电网基础设施过度投资。本文将负载分为固定、灵活与可中断三类，嵌入容量扩展模型，评估PJM与韩国电网。结果显示：PJM中跨区转移负载使系统成本降低6%和19%，避免4.4/8.9GW发电；韩国中转移到午间可增0.5GW太阳能并避免1.2GW燃气及0.3GW电池。现实事件形状限制会削弱削减价值，灵活性采购应因网制宜。",
+      "tags": "query:code-paper",
+      "abstract_en": "Data-center growth risks overbuilding power grid infrastructure and stranding capital. Flexible data-center operation can defer infrastructure investments, but its value depends on the flexibility mechanism and the host power grid characteristics. We classify data-center load as firm, flexible or interruptible, and embed them in capacity expansion applied to market-organized, fossil-heavy PJM and carbon-capped, centrally coordinated Korea. In PJM, the flexibility value is spatial: shifting workloads between zones reduces system cost by 6% in 2028 and 19% in 2038, avoiding 4.4 GW and 8.9 GW of gas and nuclear generation. In Korea, it is temporal: shifting load into midday solar hours makes 0.5 GW of additional solar worth building in 2028 and avoids 1.2 GW of gas and 0.3 GW of batteries in 2038. In both, realistic event-shape limits diminish the value of curtailment. The results show that flexibility procurement and its value are driven by grid characteristics and policy objectives.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/22/2608.19799v1-swe-bench-science-can-coding-agents-resolve-engineering-tasks-in-science",
+      "section": "deep",
+      "title_en": "SWE-bench Science: Can Coding Agents Resolve Engineering Tasks in Science?",
+      "authors": "Zhipeng Xu, Jiahao Lu, Yining Zheng, Yuxin Wang, Xipeng Qiu",
+      "date": "2026-08-20",
+      "pdf": "https://arxiv.org/pdf/2608.19799v1",
+      "score": "9.0",
+      "evidence": "基于 GitHub 仓库构建的基准，天然附带源码与评测代码",
+      "tldr": "科学软件故障可能危及科研结论，但现有编码智能体评估多聚焦整体成功率，缺乏失败原因分析。为此，作者提出SWE-bench Science基准，涵盖119个任务、98个仓库和20个领域，并设计三种任务范式。实验显示最佳智能体pass@1低于50%，识别出四种失败机制；消融实验表明科学知识并非总是有益。该基准为研究科学软件工程中的智能体能力与失败机制提供了广泛测试平台。",
+      "tags": "query:code-paper",
+      "abstract_en": "Software increasingly functions as part of the scientific instrument itself, making failures in scientific code capable of compromising not only program behavior but also the evidence underlying scientific conclusions. Yet existing evaluations of coding agents largely emphasize aggregate task success, providing limited insight into why agents fail when repairing scientific software. We introduce \\textbf{SWE-bench Science}, a repository-level benchmark for scientific software engineering comprising 119 tasks from 98 GitHub repositories across 20 scientific domains. Each task is organized into one of three paradigms: Issue-driven, Expert-exploratory, and Engineering-integration. Even the best-performing agent, \\textbf{Claude Code with Opus-5 (max), achieves a pass@1 below 50\\%}, highlighting the substantial challenges posed by scientific software engineering. We identify four recurring failure mechanisms: deficits in scientific knowledge or abstraction, misguided exploration or surface-level repair, incomplete repair coverage or system integration, and failures to generalize scientific knowledge beyond observed cases in our analysis. We further conduct a paired ablation that removes explicit scientific guidance while preserving the repository and executable engineering context. The results show that scientific knowledge is not uniformly beneficial: well-grounded information can constrain repair and improve average performance and token efficiency, whereas poorly aligned guidance can induce anchoring and does not necessarily improve exact repair success. Together, SWE-bench Science provides a broad testbed for studying both the capabilities and failure mechanisms of coding agents in scientific software engineering.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/22/2608.16645v2-reconstruction-a-blind-benchmark-for-recovering-research-ideas-from-pre-publication-bibliographies",
+      "section": "quick",
+      "title_en": "Reconstruction: A Blind Benchmark for Recovering Research Ideas from Pre-Publication Bibliographies",
+      "authors": "Shaolong Chen, Yanlin Fei, Nazhou Liu, Xinmiao Yu, Lei Li, Rahul Thapa, Madalina Ciobanu, Qingqing Mao, Ritankar Das",
+      "date": "2026-08-17",
+      "pdf": "https://arxiv.org/pdf/2608.16645v2",
+      "score": "6.0",
+      "evidence": "盲基准评测，通常附带评估代码",
+      "tldr": "现有研究思想推断缺少盲测，易受信息泄漏影响。本文提出Reconstruction盲基准：仅提供论文的预发表参考文献，隐藏原文及一切同时代或未来文献，并采用时间引用截止、匿名参考ID和冻结书目等反泄漏协议，由独立LLM裁判将模型假设与真实思想匹配。在六个科学领域共643篇论文上，七个前沿模型的匹配率仅约3%-15%；经过跨模型评审与瑞士制锦标赛选择的多智能体顶层管线，匹配率提升至约23%-42%，为最佳单模型2.4倍。这表明参考文献蕴含可恢复的研究思想信号，但盲恢复仍具挑战，需要更强模型。",
+      "tags": "query:code-paper",
+      "abstract_en": "Can a language model recover the true research idea of a published paper when given only that paper's pre-publication bibliography? We introduce Reconstruction, a blind idea-recovery benchmark that withholds the seed paper and all contemporaneous or future literature, and asks models to propose hypotheses that an independent large language model judge matches against the held-out ground-truth idea. A strict anti-leakage protocol-temporal citation cutoff, anonymous reference IDs, and frozen per-paper bibliographies, which prevents prompt-time leakage of the seed idea. Across six scientific domains and 643 evaluated papers, seven frontier models achieve only modest Match rates (approx. 3-15%). We then evaluate a reference-only multi-agent (top 4) pipeline that combines cross-model review with a Swiss tournament over aligned hypothesis slots, without external web search. Cross-model review plus tournament selection raises Match rates to approx. 23-42% across all six domains, which is an observed approx. 2.4x lift over the best single-model baseline. This draft reports the protocol, anti-leakage design, and current results as an arXiv timestamp.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

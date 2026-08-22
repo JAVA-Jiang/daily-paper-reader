@@ -1,0 +1,144 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-22T20:23:08.767292+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2608.19622v1",
+      "source": "arxiv",
+      "title": "Shift or curtail? How much data-center flexibility is worth depends on the host power grid",
+      "abstract": "Data-center growth risks overbuilding power grid infrastructure and stranding capital. Flexible data-center operation can defer infrastructure investments, but its value depends on the flexibility mechanism and the host power grid characteristics. We classify data-center load as firm, flexible or interruptible, and embed them in capacity expansion applied to market-organized, fossil-heavy PJM and carbon-capped, centrally coordinated Korea. In PJM, the flexibility value is spatial: shifting workloads between zones reduces system cost by 6% in 2028 and 19% in 2038, avoiding 4.4 GW and 8.9 GW of gas and nuclear generation. In Korea, it is temporal: shifting load into midday solar hours makes 0.5 GW of additional solar worth building in 2028 and avoids 1.2 GW of gas and 0.3 GW of batteries in 2038. In both, realistic event-shape limits diminish the value of curtailment. The results show that flexibility procurement and its value are driven by grid characteristics and policy objectives.",
+      "authors": [
+        "Saroj Khanal",
+        "Geon Roh",
+        "Boyu Yao",
+        "Abraham Silverman",
+        "Dennice Gayme",
+        "Charalambos Konstantinou",
+        "Jip Kim",
+        "Yury Dvorkin"
+      ],
+      "primary_category": "physics.soc-ph",
+      "categories": [
+        "physics.soc-ph",
+        "eess.SY"
+      ],
+      "published": "2026-08-20T04:15:52+00:00",
+      "link": "https://arxiv.org/pdf/2608.19622v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "data-center flexibility and power grid value",
+      "llm_evidence_cn": "数据中心灵活性与电网调度价值",
+      "llm_evidence": "数据中心灵活性与电网调度价值",
+      "canonical_evidence": "数据中心灵活性与电网调度价值",
+      "llm_tldr_en": "This paper quantifies how the value of data-center flexibility for deferring grid investment depends on the flexibility mechanism and the host power grid, using capacity expansion models for PJM and Korea to classify load as firm, flexible, or interruptible.",
+      "llm_tldr_cn": "现有研究常忽视电网特征对数据中心灵活运行价值的影响，本文对此展开量化分析。论文将数据中心负荷分为固定、可调与可中断三类，嵌入容量扩展模型，并应用于化石能源为主的PJM和碳上限约束的韩国电网。结果显示，PJM中负荷跨区转移可降低系统成本6%至19%，韩国则将额外光伏装机变为经济可行。研究表明数据中心灵活性价值高度依赖电网特性，需按具体电网机制评估其调度作用。",
+      "llm_tldr": "现有研究常忽视电网特征对数据中心灵活运行价值的影响，本文对此展开量化分析。论文将数据中心负荷分为固定、可调与可中断三类，嵌入容量扩展模型，并应用于化石能源为主的PJM和碳上限约束的韩国电网。结果显示，PJM中负荷跨区转移可降低系统成本6%至19%，韩国则将额外光伏装机变为经济可行。研究表明数据中心灵活性价值高度依赖电网特性，需按具体电网机制评估其调度作用。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.19799v1",
+      "source": "arxiv",
+      "title": "SWE-bench Science: Can Coding Agents Resolve Engineering Tasks in Science?",
+      "abstract": "Software increasingly functions as part of the scientific instrument itself, making failures in scientific code capable of compromising not only program behavior but also the evidence underlying scientific conclusions. Yet existing evaluations of coding agents largely emphasize aggregate task success, providing limited insight into why agents fail when repairing scientific software. We introduce \\textbf{SWE-bench Science}, a repository-level benchmark for scientific software engineering comprising 119 tasks from 98 GitHub repositories across 20 scientific domains. Each task is organized into one of three paradigms: Issue-driven, Expert-exploratory, and Engineering-integration. Even the best-performing agent, \\textbf{Claude Code with Opus-5 (max), achieves a pass@1 below 50\\%}, highlighting the substantial challenges posed by scientific software engineering. We identify four recurring failure mechanisms: deficits in scientific knowledge or abstraction, misguided exploration or surface-level repair, incomplete repair coverage or system integration, and failures to generalize scientific knowledge beyond observed cases in our analysis. We further conduct a paired ablation that removes explicit scientific guidance while preserving the repository and executable engineering context. The results show that scientific knowledge is not uniformly beneficial: well-grounded information can constrain repair and improve average performance and token efficiency, whereas poorly aligned guidance can induce anchoring and does not necessarily improve exact repair success. Together, SWE-bench Science provides a broad testbed for studying both the capabilities and failure mechanisms of coding agents in scientific software engineering.",
+      "authors": [
+        "Zhipeng Xu",
+        "Jiahao Lu",
+        "Yining Zheng",
+        "Yuxin Wang",
+        "Xipeng Qiu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.SE"
+      ],
+      "published": "2026-08-20T08:53:15+00:00",
+      "link": "https://arxiv.org/pdf/2608.19799v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Benchmark constructed from GitHub repositories, inherently provides source code and evaluation harness",
+      "llm_evidence_cn": "基于 GitHub 仓库构建的基准，天然附带源码与评测代码",
+      "llm_evidence": "基于 GitHub 仓库构建的基准，天然附带源码与评测代码",
+      "canonical_evidence": "基于 GitHub 仓库构建的基准，天然附带源码与评测代码",
+      "llm_tldr_en": "SWE-bench Science is a repository-level benchmark of 119 scientific software engineering tasks from 98 GitHub repositories across 20 domains, offering issue-driven, expert-exploratory, and engineering-integration paradigms to diagnose coding agent failures.",
+      "llm_tldr_cn": "针对科学软件故障会影响研究证据、而现有编码智能体评测过于看重整体成功率的现状，论文提出 SWE-bench Science，一个覆盖 20 个科学领域、98 个 GitHub 仓库、119 个任务的仓库级科学软件工程基准。基准分为问题驱动、专家探索和工程集成三类范式。即使最强智能体 Claude Code with Opus-5 也未完全解决问题，表明科学代码修复仍具挑战，该基准为评估编码智能体提供了更丰富的诊断维度。",
+      "llm_tldr": "针对科学软件故障会影响研究证据、而现有编码智能体评测过于看重整体成功率的现状，论文提出 SWE-bench Science，一个覆盖 20 个科学领域、98 个 GitHub 仓库、119 个任务的仓库级科学软件工程基准。基准分为问题驱动、专家探索和工程集成三类范式。即使最强智能体 Claude Code with Opus-5 也未完全解决问题，表明科学代码修复仍具挑战，该基准为评估编码智能体提供了更丰富的诊断维度。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.16645v2",
+      "source": "arxiv",
+      "title": "Reconstruction: A Blind Benchmark for Recovering Research Ideas from Pre-Publication Bibliographies",
+      "abstract": "Can a language model recover the true research idea of a published paper when given only that paper's pre-publication bibliography? We introduce Reconstruction, a blind idea-recovery benchmark that withholds the seed paper and all contemporaneous or future literature, and asks models to propose hypotheses that an independent large language model judge matches against the held-out ground-truth idea. A strict anti-leakage protocol-temporal citation cutoff, anonymous reference IDs, and frozen per-paper bibliographies, which prevents prompt-time leakage of the seed idea. Across six scientific domains and 643 evaluated papers, seven frontier models achieve only modest Match rates (approx. 3-15%). We then evaluate a reference-only multi-agent (top 4) pipeline that combines cross-model review with a Swiss tournament over aligned hypothesis slots, without external web search. Cross-model review plus tournament selection raises Match rates to approx. 23-42% across all six domains, which is an observed approx. 2.4x lift over the best single-model baseline. This draft reports the protocol, anti-leakage design, and current results as an arXiv timestamp.",
+      "authors": [
+        "Shaolong Chen",
+        "Yanlin Fei",
+        "Nazhou Liu",
+        "Xinmiao Yu",
+        "Lei Li",
+        "Rahul Thapa",
+        "Madalina Ciobanu",
+        "Qingqing Mao",
+        "Ritankar Das"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.MA"
+      ],
+      "published": "2026-08-17T14:44:30+00:00",
+      "link": "https://arxiv.org/pdf/2608.16645v2",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Blind benchmark with strict protocol, likely accompanied by evaluation code",
+      "llm_evidence_cn": "盲基准评测，通常附带评估代码",
+      "llm_evidence": "盲基准评测，通常附带评估代码",
+      "canonical_evidence": "盲基准评测，通常附带评估代码",
+      "llm_tldr_en": "Reconstruction is a blind benchmark that recovers research ideas from pre-publication bibliographies with strict anti-leakage protocols; seven frontier models achieve only 3-15% match rates across six domains, showing extreme difficulty.",
+      "llm_tldr_cn": "针对仅凭论文预印本参考文献能否恢复其真实研究想法的问题，论文提出 Reconstruction 盲基准，通过时间引用截断、匿名参考文献 ID 和冻结每篇论文的参考文献表防止提示泄漏，要求模型提出假设并由独立 LLM 评判与真实想法的匹配。在六个科学领域 643 篇论文上，七个前沿模型仅获得约 3%-15% 的匹配率，显示该任务极具挑战。",
+      "llm_tldr": "针对仅凭论文预印本参考文献能否恢复其真实研究想法的问题，论文提出 Reconstruction 盲基准，通过时间引用截断、匿名参考文献 ID 和冻结每篇论文的参考文献表防止提示泄漏，要求模型提出假设并由独立 LLM 评判与真实想法的匹配。在六个科学领域 643 篇论文上，七个前沿模型仅获得约 3%-15% 的匹配率，显示该任务极具挑战。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
