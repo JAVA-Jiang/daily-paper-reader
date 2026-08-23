@@ -1,0 +1,383 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-23T20:20:27.603131+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 6,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2608.15579v1",
+      "source": "arxiv",
+      "title": "Kozuchi Agent: A Language-Agnostic Open-Weight Agent for Software Repair",
+      "abstract": "Industrial software-engineering teams increasingly need LLM agents that turn bug reports into correct patches, yet benchmark-scale operation adds long horizons, tool-use discipline, context persistence, heterogeneous clusters, and evaluation reuse. We present Kozuchi Agent, a language-agnostic open-weight repair agent and CI-operated evaluation pipeline. Explicit phases, persistent state, deterministic tools, a model-independent action interface, and cross-agent test-time selection make runs auditable and repeatable. With locally hosted Qwen3.5-27B, no fine-tuning, and TTS@8, Kozuchi resolves 374/500 SWE-bench Verified instances on the official evaluator. Unchanged on Multi-SWE-bench Java, the same 27-billion-parameter agent resolves 41/128 instances (32.03%), ranking first among strict open-weight submissions and fourth of 42 overall; on Python it ranks 12th of 135 and first among open-weight systems. Per-phase behavior remains within +/-5 percentage points across languages. Remaining failures mainly reflect semantic correctness, Java-specific harness issues, and selection errors. Across both tracks, results compare favorably with open/local peers by parameter count. Analysis of candidate diversity, selector regret, and patch reliability shows that the remaining gap is primarily semantic correctness and selection rather than edit formatting or proprietary-model access. Operationally, reusable CI stages reduce operator touch-points from five to one across heterogeneous internal clusters.",
+      "authors": [
+        "Mehdi Bahrami",
+        "Kosaku Kimura",
+        "Satoshi Munakata",
+        "Satoshi Nakashima",
+        "Yu Ishikawa",
+        "Kosuke Maeda",
+        "Nao Soma",
+        "Kenichi Kobayashi",
+        "Keisuke Miyazaki",
+        "Keizo Kato",
+        "Shigeki Fukuta",
+        "Tatsuo Kumano",
+        "Nobutaka Imamura",
+        "Kevin Musgrave",
+        "Shahbaz Abdul Khader",
+        "Kwun Ho Ngan",
+        "Joe Townsend",
+        "Fayas Asharindavida",
+        "Matthieu Parizy",
+        "Akira Sakai",
+        "Yuma Ichikawa",
+        "Yang Zhao",
+        "Michiaki Takizawa",
+        "Taku Fukui",
+        "Hiroki Ohtsuji",
+        "Wei-Peng Chen",
+        "Hiromichi Kobashi"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.ET",
+        "cs.PL"
+      ],
+      "published": "2026-08-16T07:06:37+00:00",
+      "link": "https://arxiv.org/pdf/2608.15579v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "open-weight agent with CI operation pipeline emphasizes auditable repeatable runs, indicating source code availability",
+      "llm_evidence_cn": "开放权重代理与 CI 可运行管线强调可审计可重复，表明代码可用",
+      "llm_evidence": "开放权重代理与 CI 可运行管线强调可审计可重复，表明代码可用",
+      "canonical_evidence": "开放权重代理与 CI 可运行管线强调可审计可重复，表明代码可用",
+      "llm_tldr_en": "Presents Kozuchi Agent, a language-agnostic open-weight LLM agent for software repair with CI evaluation pipeline; resolves 374/500 SWE-bench Verified instances and emphasizes reproducible, auditable runs, likely with code.",
+      "llm_tldr_cn": "本文解决工业软件修复中 LLM 代理在大规模基准下的可扩展性和可重复性问题，提出 Kozuchi Agent，一个语言无关的开放权重修复代理及 CI 评估管线。通过显式的阶段划分、持久状态、确定性工具和模型无关接口，确保运行可审计和可重复。在本地运行 Qwen3.5-27B 且无微调的情况下，以 TTS@8 解决了 SWE-bench Verified 中 374/500 个实例，并在 Multi-SWE-bench Java 上解决 41/128。由于开放权重与完整管线，该工作直接提供了可获取的代码，满足含代码论文的首要要求。",
+      "llm_tldr": "本文解决工业软件修复中 LLM 代理在大规模基准下的可扩展性和可重复性问题，提出 Kozuchi Agent，一个语言无关的开放权重修复代理及 CI 评估管线。通过显式的阶段划分、持久状态、确定性工具和模型无关接口，确保运行可审计和可重复。在本地运行 Qwen3.5-27B 且无微调的情况下，以 TTS@8 解决了 SWE-bench Verified 中 374/500 个实例，并在 Multi-SWE-bench Java 上解决 41/128。由于开放权重与完整管线，该工作直接提供了可获取的代码，满足含代码论文的首要要求。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.16022v1",
+      "source": "arxiv",
+      "title": "OpenHarmony Bench: Evaluating LLMs and Coding Agents on OpenHarmony App Development",
+      "abstract": "We present OPENHARMONY BENCH, an app-level coding benchmark for evaluating LLM-based coding agents on OpenHarmony ArkTS applications. Unlike function-level benchmarks, it evaluates complete app-level changes: each task requires an agent to modify a buildable ArkTS project so that a requested behavior works end to end, involving UI state, data persistence, build configuration, and platform APIs. The benchmark installs and drives the delivered application on a device to check whether the behavior is observable. It covers three input sources: natural-language feature requests (new-feature), structured scenario specifications (spec-driven), and bug descriptions (bug-fix). The benchmark contains 153 top-level tasks and 242 Feature points (F-points), where an F-point is one executable behavior check. The snapshot includes 32 new-feature tasks, 50 spec-driven tasks with 139 F-points, and 71 bug-fix tasks. The main leaderboard is scored over top-level tasks rather than independently weighted F-points. We describe the benchmark construction, statistics, and build-and-test evaluation pipeline, and evaluate DevEco Code with eight LLMs across three independent full-suite runs per configuration. Three findings emerge. First, newer generations complete more tasks than their predecessors within evaluated model-family pairs. Second, buildability is close to saturated while behavioral correctness is not: mean Final Build Success Rate is 94.77% to 100.00%, whereas mean Task Completion is 48.36% to 58.39%. Third, spec-driven tasks have the lowest Task Completion under all-checks task scoring, with no configuration exceeding 35%. The code, data, tasks, reference solutions, tests, evaluation scripts, and leaderboard are released through the official OPENHARMONY BENCH website at https://bench.matrix.openharmony.cn/.",
+      "authors": [
+        "Li Li",
+        "Han Hu",
+        "Tianjian Zhang",
+        "Xin Peng",
+        "Fangzhu Mao",
+        "Qingyu Zhang",
+        "Xiaoheng Xie",
+        "Zhongmin Tang",
+        "Zhihao Lin",
+        "Haolin Ruan",
+        "Miaomiao Dong",
+        "Liuchuan Zhu",
+        "Yue Li",
+        "Chi Chen",
+        "Wenkang Zhong",
+        "Mingfei Zhang",
+        "Yang Yu",
+        "Bo Sun",
+        "Chaorui Zhang",
+        "Weixi Zhang",
+        "Wei Han",
+        "Bo Bai",
+        "Kui Liu",
+        "Gang Fan",
+        "Siru Liu",
+        "Jiaqian Zhou",
+        "Jiali Sun",
+        "Yunbiao Dong",
+        "Wenhao Zhong",
+        "Yunhong Xu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE"
+      ],
+      "published": "2026-08-17T02:27:10+00:00",
+      "link": "https://arxiv.org/pdf/2608.16022v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Open benchmark for evaluating coding agents with app-level tasks, likely open-source",
+      "llm_evidence_cn": "提供了评估编程智能体的开放基准，包含完整应用任务",
+      "llm_evidence": "提供了评估编程智能体的开放基准，包含完整应用任务",
+      "canonical_evidence": "提供了评估编程智能体的开放基准，包含完整应用任务",
+      "llm_tldr_en": "OpenHarmony Bench is an app-level coding benchmark with 153 tasks for evaluating LLM coding agents, designed to run and verify on real devices.",
+      "llm_tldr_cn": "现有编码基准多为函数级，难以评估完整应用开发能力。本文推出OpenHarmony Bench，针对OpenHarmony ArkTS应用，要求代理修改可构建项目并在真实设备上验证行为。基准包含153个顶层任务和242个功能点，覆盖新功能、规格驱动和缺陷修复三类输入。该基准可复现，为评估编码智能体提供开放工具。",
+      "llm_tldr": "现有编码基准多为函数级，难以评估完整应用开发能力。本文推出OpenHarmony Bench，针对OpenHarmony ArkTS应用，要求代理修改可构建项目并在真实设备上验证行为。基准包含153个顶层任务和242个功能点，覆盖新功能、规格驱动和缺陷修复三类输入。该基准可复现，为评估编码智能体提供开放工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.16319v1",
+      "source": "arxiv",
+      "title": "Advancing Open and Reproducible Relational Learning: RelArena-$α$, TabPFN-Rel and RPI",
+      "abstract": "This first release of Prior Labs in relational learning shows our continued commitment to open science. We open-source three pieces of software that we expect to accelerate research in the field towards meaningful real-world impact. We aim to steer further development based on feedback from, and in collaboration with, the community. Given the early stage of development, our $α$-release targets researchers and early-adopting practitioners. Over the past years, a variety of datasets and tasks for relational learning have emerged, but the community has not converged on a reliable, reproducible way to compare different methods on these tasks. Our $α$-release, RelArena-$α$, provides a unified framework for running and comparing baselines on RelBench v1 by standardizing data loading, evaluation protocols, tuning regimes, and support for systems with custom tuning, inspired by established tabular benchmarks such as TabArena. We plan to work with the research community to further develop RelArena-$α$ into a catalyst for progress in the relational learning community. We release the initial version of TabPFN-Rel, a purpose-built relational harness for TabPFN-3. Currently ranked first among models on RelArena-$α$, TabPFN-Rel makes key improvements upon RDBLearn. Beyond its ranking, TabPFN-Rel serves as a strong baseline, adding to the growing evidence that flattening a relational database into a single table remains competitive with specialized relational architectures on real-world tasks.   To facilitate adoption of relational learning methods in research and industry, we release an initial $α$-version of our Relational Predictive Interface, RPI, an open-source, model-agnostic interface that enables early adopters to easily define problems on new databases and apply any model implemented in RelArena-$α$, including TabPFN-Rel, to these problems.",
+      "authors": [
+        "Adrian Hayler",
+        "Klemens Flöge",
+        "Alan Arazi",
+        "Rishabh Ranjan",
+        "Jure Leskovec",
+        "Felix Birkel",
+        "Brendan Roof",
+        "Anurag Garg",
+        "Kristina Collins",
+        "Lydia Sidhoum",
+        "Jonas Kübler",
+        "Siyuan Guo",
+        "Oscar Key",
+        "Jan Hendrik Metzen",
+        "Rylee Grace",
+        "David Salinas",
+        "Arthur Cahu",
+        "Simon Bing",
+        "Benjamin Jäger",
+        "Tuana Çelik",
+        "Mihir Manium",
+        "Vitor Monteiro",
+        "Jake Robertson",
+        "Jerry Chen",
+        "Eliott Kalfon",
+        "Tomás Pereda",
+        "Lilly Wehrhahn",
+        "Dominik Safaric",
+        "Tobias Schroeder",
+        "Georg Grab",
+        "Diana Kriuchkova",
+        "Clara Cornu",
+        "Philipp Singer",
+        "Nick Erickson",
+        "Vahid Balazadeh",
+        "Marie Salmon",
+        "Simone Alessi",
+        "Kürşat Kaya",
+        "Philipp Jund",
+        "Léo Grinsztajn",
+        "Yann LeCun",
+        "Bernhard Schölkopf",
+        "Madelon Hulsebos",
+        "Lennart Purucker",
+        "Sauraj Gambhir",
+        "Frank Hutter",
+        "Noah Hollmann"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-17T09:25:05+00:00",
+      "link": "https://arxiv.org/pdf/2608.16319v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Open-source α-release of relational learning framework and models",
+      "llm_evidence_cn": "开源了关系学习框架RelArena及相关模型",
+      "llm_evidence": "开源了关系学习框架RelArena及相关模型",
+      "canonical_evidence": "开源了关系学习框架RelArena及相关模型",
+      "llm_tldr_en": "RelArena-α unifies reproducible benchmarking for relational learning, with open-source releases of TabPFN-Rel and RPI.",
+      "llm_tldr_cn": "关系学习领域缺少统一、可复现的评估方式。作者开源三款软件：RelArena统一基准框架、TabPFN-Rel和RPI，旨在加速社区对关系学习方法的比较和落地。该版本面向研究者和早期实践者，体现了作者对开放科学的承诺，有助于建立可复现的基准标准。",
+      "llm_tldr": "关系学习领域缺少统一、可复现的评估方式。作者开源三款软件：RelArena统一基准框架、TabPFN-Rel和RPI，旨在加速社区对关系学习方法的比较和落地。该版本面向研究者和早期实践者，体现了作者对开放科学的承诺，有助于建立可复现的基准标准。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.17356v1",
+      "source": "arxiv",
+      "title": "ArguLens: An Open-Source System for Automated Essay Scoring and Label-Aware Feedback Generation",
+      "abstract": "Most automated essay scoring (AES) systems output a single holistic score without interpretable evidence and rely on closed APIs that introduce data privacy and cost barriers. We present ArguLens, an opensource, locally deployable system that decomposes AES into three decoupled components: a discourse-move classifier (Qwen2.5-7B-Instruct fine-tuned with LoRA on PERSUADE 2.0), a grade-independent LightGBM scorer over 31 linguistic and discourse features, and a label-aware feedback generator served through vLLM with a Qwen2.5-14BInstruct backbone. A Gradio web UI exposes pluggable inference backends and supports single-essay and batch scoring with downloadable per-essay breakdowns. On an essaydisjoint PERSUADE 2.0 test split, the logitprobe classifier achieves 82.6% accuracy and 0.727 macro-F1; under prompt-grouped 5-fold cross-validation the scorer reaches a mean QWK of 0.813 under an oracle discoursefeature protocol, and an ablation shows that adding gold discourse annotations yields an increment of +0.055 QWK over the lexical+syntactic configuration (paired t-test, p = 0.010). This is a component-level diagnostic rather than an end-to-end classifier-to-scorer result. The feedback generator ships with a structured evaluation protocol; its human-rater study is left to future work. The system is released under Apache 2.0 at https://github.com/wwrwbs/AI_AWE.",
+      "authors": [
+        "Weiran Wang",
+        "Hongxiang Shi",
+        "Huitao Tang",
+        "Wenjuan Qin"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-18T04:23:50+00:00",
+      "link": "https://arxiv.org/pdf/2608.17356v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Explicitly open-source system with locally deployable code",
+      "llm_evidence_cn": "明确开源且可本地部署的完整系统",
+      "llm_evidence": "明确开源且可本地部署的完整系统",
+      "canonical_evidence": "明确开源且可本地部署的完整系统",
+      "llm_tldr_en": "ArguLens is an open-source, locally deployable AES system that combines discourse classification, LightGBM scoring, and label-aware feedback generation, making scoring interpretable and affordable.",
+      "llm_tldr_cn": "针对自动作文评分缺乏可解释证据且依赖封闭API的问题，ArguLens提出一个开源、可本地部署的三组件系统：基于LoRA微调的论述动作分类器、基于LightGBM的31维特征评分器以及基于Qwen2.5-14B的标签感知反馈生成器。通过Gradio界面支持单篇与批量评分，并提供逐篇评分细粒度输出。在PERSUADE 2.0的测试集上验证了系统各组件的有效性，为可解释、私有化的作文评分研究提供了完整代码与复现环境。",
+      "llm_tldr": "针对自动作文评分缺乏可解释证据且依赖封闭API的问题，ArguLens提出一个开源、可本地部署的三组件系统：基于LoRA微调的论述动作分类器、基于LightGBM的31维特征评分器以及基于Qwen2.5-14B的标签感知反馈生成器。通过Gradio界面支持单篇与批量评分，并提供逐篇评分细粒度输出。在PERSUADE 2.0的测试集上验证了系统各组件的有效性，为可解释、私有化的作文评分研究提供了完整代码与复现环境。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "papers that provide source code",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.19622v1",
+      "source": "arxiv",
+      "title": "Shift or curtail? How much data-center flexibility is worth depends on the host power grid",
+      "abstract": "Data-center growth risks overbuilding power grid infrastructure and stranding capital. Flexible data-center operation can defer infrastructure investments, but its value depends on the flexibility mechanism and the host power grid characteristics. We classify data-center load as firm, flexible or interruptible, and embed them in capacity expansion applied to market-organized, fossil-heavy PJM and carbon-capped, centrally coordinated Korea. In PJM, the flexibility value is spatial: shifting workloads between zones reduces system cost by 6% in 2028 and 19% in 2038, avoiding 4.4 GW and 8.9 GW of gas and nuclear generation. In Korea, it is temporal: shifting load into midday solar hours makes 0.5 GW of additional solar worth building in 2028 and avoids 1.2 GW of gas and 0.3 GW of batteries in 2038. In both, realistic event-shape limits diminish the value of curtailment. The results show that flexibility procurement and its value are driven by grid characteristics and policy objectives.",
+      "authors": [
+        "Saroj Khanal",
+        "Geon Roh",
+        "Boyu Yao",
+        "Abraham Silverman",
+        "Dennice Gayme",
+        "Charalambos Konstantinou",
+        "Jip Kim",
+        "Yury Dvorkin"
+      ],
+      "primary_category": "physics.soc-ph",
+      "categories": [
+        "physics.soc-ph",
+        "eess.SY"
+      ],
+      "published": "2026-08-20T04:15:52+00:00",
+      "link": "https://arxiv.org/pdf/2608.19622v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Directly combines data centers, power grid, and load shifting/scheduling; empirical study likely with code",
+      "llm_evidence_cn": "直接结合数据中心、电网与负荷转移/调度，实证研究可能含代码",
+      "llm_evidence": "直接结合数据中心、电网与负荷转移/调度，实证研究可能含代码",
+      "canonical_evidence": "直接结合数据中心、电网与负荷转移/调度，实证研究可能含代码",
+      "llm_tldr_en": "This study quantifies the value of flexible data-center operation across PJM and Korean grids, finding spatial load shifting cuts PJM system cost by 19% by 2038 while temporal shifting supports 0.5 GW extra solar in Korea; it directly addresses data-center task scheduling and power-grid interaction.",
+      "llm_tldr_cn": "数据中心快速增长可能造成电网过度建设，灵活运行价值取决于机制和宿主电网。本文将数据中心负荷分为固定、可转移和可中断三类，嵌入容量扩展模型，应用于PJM和韩国电网。结果显示在PJM空间转移负荷可使2038年系统成本降低19%，在韩国时间转移可在午间光伏时段增加0.5GW光伏装机。该研究与电网、电力调度、数据中心任务调度高度契合，且属于可复现实证研究。",
+      "llm_tldr": "数据中心快速增长可能造成电网过度建设，灵活运行价值取决于机制和宿主电网。本文将数据中心负荷分为固定、可转移和可中断三类，嵌入容量扩展模型，应用于PJM和韩国电网。结果显示在PJM空间转移负荷可使2038年系统成本降低19%，在韩国时间转移可在午间光伏时段增加0.5GW光伏装机。该研究与电网、电力调度、数据中心任务调度高度契合，且属于可复现实证研究。",
+      "llm_tags": [
+        "query:code-paper:composite"
+      ],
+      "matched_query_tag": "query:code-paper:composite",
+      "matched_query_text": "Papers central to 帮我找含代码的论文，文章含代码作为首要要求。其他优先一区二区论文，顶会优先。然后电网相关，任务调度，电力调度。数据中心。, especially work that connects or combines: D; G; j; papers that provide source code; Search thesis which has code with it.; Retrieve reproducible research papers with open source code.; Papers with code for task scheduling in data centers.",
+      "matched_requirement_id": "req-composite-code-paper",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.19557v1",
+      "source": "arxiv",
+      "title": "When Do LLM Agents Help? Deadline-Aware Mixed-Criticality Task Scheduling at the Autonomous-Vehicle Edge",
+      "abstract": "Autonomous vehicles offload latency-sensitive perception tasks to nearby mobile edge computing (MEC) servers, where a missed safety-critical task is unsafe rather than merely degraded. Large language models (LLMs) are increasingly proposed as adaptive, explainable schedulers, yet evidence of when they help is scarce. We study deadline-aware, mixed-criticality scheduling on heterogeneous MEC servers, where time-critical (TC) tasks must be protected at a controlled cost to best-effort traffic, and ask whether a multi-agent LLM control layer improves on a strong heuristic. We answer in two steps. First we build the heuristic: a windowed contract-net auction that orders each admission window time-critical-first by earliest deadline and places tasks by earliest-finish-time. Across 60 instances on three topologies and 15 baselines under an identical online constraint, it attains a TC completion rate of 0.902, above every baseline (Holm-corrected p < 0.001; best baseline 0.838) and at 0.87 of a CP-SAT upper bound. Second, we add the LLM control plane. A controlled decomposition traces the scheduler's advantage to two ordinary factors, the batching horizon and time-critical-first ordering; the auction, the per-window LLM policy, and online adaptation add nothing while the load is stationary, where the heuristic is already near-optimal. Under a mid-run surge of safety-critical tasks the picture changes, and the LLM control plane gains significantly over both the static heuristic and the bandit. LLM orchestration therefore earns its cost only when non-stationarity opens headroom a fixed policy cannot use. We report control-plane latency and rationale, and release all code and seeded instances.",
+      "authors": [
+        "Reza Zakerian"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.MA"
+      ],
+      "published": "2026-08-20T01:55:40+00:00",
+      "link": "https://arxiv.org/pdf/2608.19557v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Task scheduling in edge computing, relevant to data center scheduling with code",
+      "llm_evidence_cn": "边缘计算中的任务调度，与数据中心调度及代码需求直接相关",
+      "llm_evidence": "边缘计算中的任务调度，与数据中心调度及代码需求直接相关",
+      "canonical_evidence": "边缘计算中的任务调度，与数据中心调度及代码需求直接相关",
+      "llm_tldr_en": "Investigates when multi-agent LLM schedulers help for deadline-aware mixed-criticality tasks on heterogeneous MEC servers, comparing a windowed contract-net auction heuristic with an LLM control layer.",
+      "llm_tldr_cn": "自主车辆边缘计算中错过安全关键任务会带来危险，混合关键性调度至关重要。本文提出窗口化合同网拍卖启发式，并比较多智能体LLM控制层的增益。实验表明LLM智能体并非总是有帮助，结果界定了其适用条件和性能边界。研究为边缘场景下的任务调度器设计提供了可靠证据和实际指导。",
+      "llm_tldr": "自主车辆边缘计算中错过安全关键任务会带来危险，混合关键性调度至关重要。本文提出窗口化合同网拍卖启发式，并比较多智能体LLM控制层的增益。实验表明LLM智能体并非总是有帮助，结果界定了其适用条件和性能边界。研究为边缘场景下的任务调度器设计提供了可靠证据和实际指导。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Papers with code for task scheduling in data centers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.16645v1",
+      "source": "arxiv",
+      "title": "Reconstruction: A Blind Benchmark for Recovering Research Ideas from Pre-Publication Bibliographies",
+      "abstract": "Can a language model recover the true research idea of a published paper when given only that paper's pre-publication bibliography? We introduce Reconstruction, a blind idea-recovery benchmark that withholds the seed paper and all contemporaneous or future literature, and asks models to propose hypotheses that an independent large language model judge matches against the held-out ground-truth idea. A strict anti-leakage protocol-temporal citation cutoff, anonymous reference IDs, and frozen per-paper bibliographies, which prevents prompt-time leakage of the seed idea. Across six scientific domains and 643 evaluated papers, seven frontier models achieve only modest Match rates (approx. 3-15%). We then evaluate a reference-only multi-agent (top 4) pipeline that combines cross-model review with a Swiss tournament over aligned hypothesis slots, without external web search. Cross-model review plus tournament selection raises Match rates to approx. 23-42% across all six domains, which is an observed approx. 2.4x lift over the best single-model baseline. This draft reports the protocol, anti-leakage design, and current results as an arXiv timestamp.",
+      "authors": [
+        "Shaolong Chen",
+        "Yanlin Fei",
+        "Nazhou Liu",
+        "Xinmiao Yu",
+        "Lei Li",
+        "Rahul Thapa",
+        "Madalina Ciobanu",
+        "Qingqing Mao",
+        "Ritankar Das"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.MA"
+      ],
+      "published": "2026-08-17T14:44:30+00:00",
+      "link": "https://arxiv.org/pdf/2608.16645v1",
+      "tags": [
+        "keyword:code-paper",
+        "query:code-paper"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "introduces a blind benchmark with strict anti-leakage protocol; benchmark papers usually provide code and data for reproducibility",
+      "llm_evidence_cn": "提出了带严格防泄漏协议的盲测基准；基准类论文通常会提供代码与数据以支持可复现",
+      "llm_evidence": "提出了带严格防泄漏协议的盲测基准；基准类论文通常会提供代码与数据以支持可复现",
+      "canonical_evidence": "提出了带严格防泄漏协议的盲测基准；基准类论文通常会提供代码与数据以支持可复现",
+      "llm_tldr_en": "Introduces Reconstruction, a blind benchmark for recovering research ideas from pre-publication bibliographies, with anti-leakage protocol and seven frontier models evaluated; a benchmark paper likely providing code and data.",
+      "llm_tldr_cn": "本文针对仅依据论文预发表参考文献来恢复其真实研究思想的任务，提出盲测基准 Reconstruction。基准采用严格防泄漏协议，隐藏种子论文及同时代与未来文献，并要求模型提出假设，由独立大模型评审与真实思想匹配。在六个科学领域 643 篇论文上，七种前沿模型的匹配率仅约 3%-15%。随后还评估了仅依赖参考文献的变体。该基准类工作通常会附带代码与数据，有助于可复现研究，并为模型防泄漏能力测评提供了新工具。",
+      "llm_tldr": "本文针对仅依据论文预发表参考文献来恢复其真实研究思想的任务，提出盲测基准 Reconstruction。基准采用严格防泄漏协议，隐藏种子论文及同时代与未来文献，并要求模型提出假设，由独立大模型评审与真实思想匹配。在六个科学领域 643 篇论文上，七种前沿模型的匹配率仅约 3%-15%。随后还评估了仅依赖参考文献的变体。该基准类工作通常会附带代码与数据，有助于可复现研究，并为模型防泄漏能力测评提供了新工具。",
+      "llm_tags": [
+        "query:code-paper"
+      ],
+      "matched_query_tag": "query:code-paper",
+      "matched_query_text": "Retrieve reproducible research papers with open source code.",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
